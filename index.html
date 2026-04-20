@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>swapl — trade your home for someone else's</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=DM+Serif+Display&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-direction="editorial" data-theme="light" data-fonts="serif">
+
+<div id="root"></div>
+
+<aside class="tweaks-panel" id="tweaks">
+  <h4>
+    Tweaks
+    <button id="tweaks-close" style="font-size:18px;line-height:1;color:var(--ink-3);" title="Close">×</button>
+  </h4>
+
+  <div class="tweak-row">
+    <label>Direction</label>
+    <div class="tweak-choices">
+      <button class="tweak-btn" data-tweak="direction" data-val="editorial">Editorial</button>
+      <button class="tweak-btn" data-tweak="direction" data-val="modern">Modern</button>
+      <button class="tweak-btn" data-tweak="direction" data-val="playful">Playful</button>
+    </div>
+  </div>
+
+  <div class="tweak-row">
+    <label>Hero layout</label>
+    <div class="tweak-choices">
+      <button class="tweak-btn" data-tweak="hero" data-val="split">Split</button>
+      <button class="tweak-btn" data-tweak="hero" data-val="centered">Centered</button>
+      <button class="tweak-btn" data-tweak="hero" data-val="map">Map</button>
+    </div>
+  </div>
+
+  <div class="tweak-row">
+    <label>Theme</label>
+    <div class="tweak-choices two-col">
+      <button class="tweak-btn" data-tweak="theme" data-val="light">Light</button>
+      <button class="tweak-btn" data-tweak="theme" data-val="dark">Dark</button>
+    </div>
+  </div>
+
+  <div class="tweak-row">
+    <label>Font pairing</label>
+    <div class="tweak-choices two-col">
+      <button class="tweak-btn" data-tweak="fonts" data-val="serif">Fraunces / Inter</button>
+      <button class="tweak-btn" data-tweak="fonts" data-val="grotesk">Space Grotesk</button>
+      <button class="tweak-btn" data-tweak="fonts" data-val="mono">Mono display</button>
+      <button class="tweak-btn" data-tweak="fonts" data-val="humanist">DM Serif / Work</button>
+    </div>
+  </div>
+
+  <div class="tweak-row">
+    <label>Accent color</label>
+    <div class="tweak-choices five-col">
+      <div class="swatch" data-tweak="accent" data-val="#C2410C" style="background:#C2410C"></div>
+      <div class="swatch" data-tweak="accent" data-val="#0F172A" style="background:#0F172A"></div>
+      <div class="swatch" data-tweak="accent" data-val="#047857" style="background:#047857"></div>
+      <div class="swatch" data-tweak="accent" data-val="#3730A3" style="background:#3730A3"></div>
+      <div class="swatch" data-tweak="accent" data-val="#FF4D8F" style="background:#FF4D8F"></div>
+    </div>
+  </div>
+
+  <div class="tweak-row">
+    <label>Density</label>
+    <div class="tweak-choices two-col">
+      <button class="tweak-btn" data-tweak="density" data-val="1">Spacious</button>
+      <button class="tweak-btn" data-tweak="density" data-val="0.72">Compact</button>
+    </div>
+  </div>
+</aside>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="illustrations.jsx"></script>
+<script type="text/babel" src="sections.jsx"></script>
+
+<script type="text/babel">
+const { Nav, Hero, HowItWorks, Listings, FilterDemo, Trust, CTA, Footer } = window;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "direction": "playful",
+  "hero": "split",
+  "theme": "light",
+  "fonts": "serif",
+  "accent": "#C2410C",
+  "density": "0.72"
+}/*EDITMODE-END*/;
+
+const state = { ...TWEAK_DEFAULTS };
+
+// Try loading persisted state
+try {
+  const saved = localStorage.getItem("swapl-tweaks");
+  if (saved) Object.assign(state, JSON.parse(saved));
+} catch {}
+
+function applyState() {
+  document.body.setAttribute("data-direction", state.direction);
+  document.body.setAttribute("data-theme", state.theme);
+  document.body.setAttribute("data-fonts", state.fonts);
+  document.documentElement.style.setProperty("--accent", state.accent);
+  document.documentElement.style.setProperty("--density", state.density);
+
+  // Derive accent-ink based on luminance
+  const hex = state.accent.replace("#","");
+  const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+  const lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+  document.documentElement.style.setProperty("--accent-ink", lum > 0.6 ? "#0A0A09" : "#FFFFFF");
+
+  // Sync Tweaks panel UI
+  document.querySelectorAll(".tweak-btn, .swatch").forEach(el => {
+    const key = el.dataset.tweak, val = el.dataset.val;
+    if (!key) return;
+    el.classList.toggle("is-on", String(state[key]) === String(val));
+  });
+}
+
+function setTweak(key, val) {
+  state[key] = val;
+  applyState();
+  renderApp();
+  try { localStorage.setItem("swapl-tweaks", JSON.stringify(state)); } catch {}
+  // Persist via parent host
+  try {
+    window.parent.postMessage({type:'__edit_mode_set_keys', edits:{ [key]: val }}, '*');
+  } catch {}
+}
+
+// Wire up panel
+document.querySelectorAll(".tweak-btn, .swatch").forEach(el => {
+  el.addEventListener("click", () => {
+    const { tweak, val } = el.dataset;
+    if (tweak) setTweak(tweak, val);
+  });
+});
+
+document.getElementById("tweaks-close").addEventListener("click", () => {
+  document.getElementById("tweaks").classList.remove("is-open");
+});
+
+// Edit mode protocol
+window.addEventListener("message", e => {
+  const d = e.data;
+  if (!d || typeof d !== "object") return;
+  if (d.type === "__activate_edit_mode") {
+    document.getElementById("tweaks").classList.add("is-open");
+  } else if (d.type === "__deactivate_edit_mode") {
+    document.getElementById("tweaks").classList.remove("is-open");
+  }
+});
+
+try {
+  window.parent.postMessage({type:'__edit_mode_available'}, '*');
+} catch {}
+
+// Render
+function App() {
+  return (
+    <React.Fragment>
+      <Nav/>
+      <Hero heroVariant={state.hero}/>
+      <HowItWorks palette={
+        state.direction === "modern" ? "cool" :
+        state.direction === "playful" ? "playful" : "warm"
+      }/>
+      <Listings/>
+      <FilterDemo/>
+      <Trust/>
+      <CTA/>
+      <Footer/>
+    </React.Fragment>
+  );
+}
+
+let root;
+function renderApp() {
+  if (!root) root = ReactDOM.createRoot(document.getElementById("root"));
+  root.render(<App/>);
+}
+
+applyState();
+renderApp();
+</script>
+</body>
+</html>
