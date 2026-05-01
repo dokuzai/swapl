@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
+import { insuranceProvider } from "@/lib/insurance";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -94,11 +95,54 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     if (proposal.status !== "PENDING" && proposal.status !== "COUNTERED") {
       return NextResponse.json({ error: "Cannot accept at this stage." }, { status: 400 });
     }
-    // Whoever accepts must NOT be the same person who countered last (you can't accept your own counter).
-    // We allow either side to accept the latest dates.
-    const policyNumber = `SC-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000)
-      .toString()
-      .padStart(6, "0")}`;
+
+    // Pre-issue the policy with the underwriter BEFORE the agreement tx so
+    // we can persist the real premium / platform-share / external id atomically
+    // with the rest of the swap state. If the provider call fails we still
+    // create the agreement, but with policy.status = "pending" so retries
+    // can fix it without blocking the user.
+    const provider = insuranceProvider();
+    const partyA = {
+      userId: proposal.proposerListing.user.id,
+      fullName: proposal.proposerListing.user.name ?? proposal.proposerListing.user.email,
+      email: proposal.proposerListing.user.email,
+      listing: {
+        id: proposal.proposerListing.id,
+        city: proposal.proposerListing.city,
+        neighbourhood: proposal.proposerListing.neighbourhood,
+        country: proposal.proposerListing.country,
+        address: proposal.proposerListing.address,
+        sizeSqm: proposal.proposerListing.sizeSqm,
+      },
+    };
+    const partyB = {
+      userId: proposal.targetListing.user.id,
+      fullName: proposal.targetListing.user.name ?? proposal.targetListing.user.email,
+      email: proposal.targetListing.user.email,
+      listing: {
+        id: proposal.targetListing.id,
+        city: proposal.targetListing.city,
+        neighbourhood: proposal.targetListing.neighbourhood,
+        country: proposal.targetListing.country,
+        address: proposal.targetListing.address,
+        sizeSqm: proposal.targetListing.sizeSqm,
+      },
+    };
+
+    let policyResult: Awaited<ReturnType<typeof provider.createPolicy>> | null = null;
+    try {
+      policyResult = await provider.createPolicy({
+        agreementId: id,
+        parties: [partyA, partyB],
+        dateFrom: proposal.dateFrom,
+        dateTo: proposal.dateTo,
+      });
+    } catch (err) {
+      console.error("[insurance:create]", err);
+    }
+
+    const fallbackPolicyNumber = `SC-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`;
+    const fallbackExpiry = new Date(proposal.dateTo.getTime() + 30 * 24 * 60 * 60 * 1000);
 
     const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.swapProposal.update({
@@ -120,11 +164,15 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       await tx.insurancePolicy.create({
         data: {
           agreementId: agreement.id,
-          provider: "swapl-cover",
-          policyNumber,
-          coverageAmount: 150000,
-          // Cover lasts until 30 days after the swap window ends.
-          expiresAt: new Date(updated.dateTo.getTime() + 30 * 24 * 60 * 60 * 1000),
+          provider: provider.name,
+          policyNumber: policyResult?.policyNumber ?? fallbackPolicyNumber,
+          coverageAmount: policyResult?.coverageAmount ?? 150_000,
+          status: policyResult ? "active" : "pending",
+          premiumCents: policyResult?.premiumCents ?? 0,
+          platformShareCents: policyResult?.platformShareCents ?? 0,
+          externalId: policyResult?.externalId ?? null,
+          documentsUrl: policyResult?.documentsUrl ?? null,
+          expiresAt: policyResult?.expiresAt ?? fallbackExpiry,
         },
       });
       return agreement;

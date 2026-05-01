@@ -1,0 +1,12 @@
+{
+  "city": "Brooklyn",
+  "country": "USA",
+  "hero": "Brooklyn is brownstones and basement bars, summer stoops and snow days. Walk the bridge once at dawn — that's the whole pitch.",
+  "sections": [
+    { "kind": "neighbourhoods", "title": "Neighbourhoods to know", "body": "Fort Greene for tree-lined streets and Sunday at the Greenmarket.\nWilliamsburg for wine bars and waterfront sunsets.\nProspect Heights for the museum, the park, and quieter bagels." },
+    { "kind": "transport", "title": "Getting around", "body": "Tap any contactless card on the OMNY readers; no MetroCard needed.\nCitiBike is everywhere — day pass available in the app.\nUber/Lyft work; yellow cabs are mostly Manhattan." },
+    { "kind": "food", "title": "Eat", "body": "Pizza: L'industrie (Williamsburg).\nBagels: Apollo (Greenpoint).\nSunday roast: The Finch (closed) → try Olmsted instead.\nLate-night bowl: Lucky Dog ramen." },
+    { "kind": "etiquette", "title": "Local customs", "body": "Tipping is 18–20%, even on takeout.\nDon't stop in the middle of the sidewalk.\nFood-cart cash is appreciated; cards are fine but slow up the line." },
+    { "kind": "emergencies", "title": "If something goes wrong", "body": "Emergency 911.\nNon-emergency 311 (city services).\nMt. Sinai Brooklyn: +1 718 252 3000 for ER." }
+  ]
+}

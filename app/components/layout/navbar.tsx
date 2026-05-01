@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { href: "/listings", label: "Homes" },
   { href: "/insurance", label: "Insurance" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/corporate", label: "Companies" },
 ];
 
 export async function Navbar() {

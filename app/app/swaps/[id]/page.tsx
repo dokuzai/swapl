@@ -6,6 +6,9 @@ import { CityIllust, SwapArrows } from "@/components/illustrations";
 import { paletteForCity } from "@/lib/cities";
 import { formatDateRange } from "@/lib/listing-utils";
 import SwapActions from "./swap-actions";
+import { AffiliateLink } from "@/components/affiliate/affiliate-link";
+import { ConciergeSection, type AddOn as ConciergeAddOn } from "@/components/concierge/concierge-section";
+import { getEffectivePlan } from "@/lib/billing/limits";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +37,33 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
   const otherName = isProposer ? proposal.targetListing.user.name : proposal.proposer.name;
   const canRespondAsTarget = isTarget && (proposal.status === "PENDING" || proposal.status === "COUNTERED");
   const canCounter = proposal.status === "PENDING" || proposal.status === "COUNTERED";
+
+  // Concierge sidebar uses a small DB read; only do it when there's an active
+  // agreement so the pre-acceptance thread stays cheap.
+  let conciergeAddOns: ConciergeAddOn[] = [];
+  let purchasedSlugs: string[] = [];
+  let cityGuideIncluded = false;
+  if (proposal.status === "ACCEPTED" && proposal.agreement) {
+    const [addOnRows, orders, plan] = await Promise.all([
+      prisma.addOn.findMany({ where: { isActive: true }, orderBy: { priceCents: "desc" } }),
+      prisma.orderAddOn.findMany({
+        where: { agreementId: proposal.agreement.id, userId: session.userId, status: "paid" },
+        select: { addOn: { select: { slug: true } } },
+      }),
+      getEffectivePlan(session.userId),
+    ]);
+    conciergeAddOns = addOnRows.map((a) => ({
+      id: a.id,
+      slug: a.slug,
+      name: a.name,
+      description: a.description,
+      priceCents: a.priceCents,
+      type: a.type as ConciergeAddOn["type"],
+      category: a.category,
+    }));
+    purchasedSlugs = orders.map((o) => o.addOn.slug);
+    cityGuideIncluded = plan.id !== "free";
+  }
 
   return (
     <div className="wrap py-10 lg:py-14">
@@ -122,6 +152,46 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
             currentDateFrom={proposal.dateFrom.toISOString().slice(0, 10)}
             currentDateTo={proposal.dateTo.toISOString().slice(0, 10)}
           />
+
+          {proposal.status === "ACCEPTED" && proposal.agreement && (
+            <>
+              <ConciergeSection
+                agreementId={proposal.agreement.id}
+                destinationCity={theirListing.city}
+                destinationCountry={theirListing.country}
+                addOns={conciergeAddOns}
+                alreadyPurchasedSlugs={purchasedSlugs}
+                cityGuideIncluded={cityGuideIncluded}
+              />
+
+              <section className="mt-10">
+                <p className="kicker mb-3">Plan your trip</p>
+                <h2 className="font-display text-2xl tracking-[-0.01em] mb-4">Travel partners for {theirListing.city}</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <AffiliateLink partner="skyscanner" city={theirListing.city} agreementId={proposal.agreement.id} campaign="post_swap_flights" variant="card">
+                    <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1" style={{ color: "var(--navy-3)" }}>Flights · Skyscanner</div>
+                    <div className="font-display text-lg tracking-[-0.01em]">Find flights to {theirListing.city}</div>
+                  </AffiliateLink>
+                  <AffiliateLink partner="battleface" city={theirListing.city} agreementId={proposal.agreement.id} campaign="post_swap_insurance_upgrade" variant="card">
+                    <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1" style={{ color: "var(--navy-3)" }}>Premium cover · Battleface</div>
+                    <div className="font-display text-lg tracking-[-0.01em]">Top up your travel insurance</div>
+                  </AffiliateLink>
+                </div>
+                <p className="mt-3 text-xs" style={{ color: "var(--navy-3)" }}>
+                  Disclosure: swapl earns a small referral when you book through these partners — never tied to your swap acceptance.
+                </p>
+              </section>
+
+              <p className="mt-8">
+                <Link
+                  href={`/guides/${theirListing.city.toLowerCase()}`}
+                  className="pill-ghost"
+                >
+                  Read the {theirListing.city} city guide →
+                </Link>
+              </p>
+            </>
+          )}
         </div>
 
         <aside className="space-y-5">
