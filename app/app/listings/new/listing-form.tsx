@@ -7,6 +7,7 @@ import { PROPERTY_TYPES, propertyLabel, type PropertyType } from "@/lib/types";
 import { CityIllust, type CityMotif } from "@/components/illustrations";
 import type { Palette } from "@/components/illustrations";
 import type { Postcard } from "@/lib/ai/postcard-types";
+import { CityCombobox } from "@/components/listing/city-combobox";
 
 type FormState = {
   // Step 1 — Location
@@ -373,34 +374,24 @@ function LocationStep({ state, set }: { state: FormState; set: <K extends keyof 
 
       <div className="rounded-xl border p-4" style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}>
         <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
-          …or somewhere new — generate the cover via AI
+          …or pick a city we cover
         </div>
-        <div className="flex gap-2 flex-col sm:flex-row">
-          <input
-            value={customCity}
-            onChange={(e) => setCustomCity(e.target.value)}
-            placeholder="City name (e.g. Mexico City, Cape Town)"
-            className="flex-1 px-3 py-2.5 rounded-lg border outline-none"
-            style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
-          />
-          <button
-            type="button"
-            disabled={!customCity || genState === "loading"}
-            className="pill-primary"
-            onClick={async () => {
-              await generateCover(customCity);
-              if (customCity) {
-                set("city", customCity);
-                if (!state.country) set("country", "");
-              }
-            }}
-          >
-            {genState === "loading" ? "Generating…" : "Generate cover"}
-          </button>
-        </div>
+        <p className="text-xs mb-3" style={{ color: "var(--navy-3)" }}>
+          We hand-design or AI-generate the postcard for any city in this list. Type a few letters
+          to search by name, alias, or local form (Roma, München, 京都).
+        </p>
+        <CityCombobox
+          value={customCity}
+          onSelect={async (city) => {
+            setCustomCity(city.name);
+            set("city", city.name);
+            set("country", city.country);
+            await generateCover(city.name, city.country);
+          }}
+        />
         {genState === "error" && (
           <p className="text-sm mt-2" style={{ color: "#dc2626" }}>
-            Couldn&rsquo;t generate. Check your AI provider settings in /account.
+            Couldn&rsquo;t generate the cover. Check your AI provider settings in /account.
           </p>
         )}
       </div>

@@ -248,34 +248,51 @@ export async function generateCityPostcard(
   const config = resolveAIConfig(resolveOpts);
   let decision: CityArtDecision;
   if (!config) {
+    console.warn(`[ai:postcard] no provider configured — falling back for ${city}`);
     decision = deterministic(city, country);
   } else {
     try {
+      console.log(`[ai:postcard] requesting ${city} via ${config.provider}/${config.model}`);
       const text = await chat({
         config,
         responseJson: true,
-        maxTokens: 600,
+        maxTokens: 700,
         temperature: 0.5,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           {
             role: "user",
-            content: `City: ${city}${country ? `, ${country}` : ""}. Design the postcard. Reply with JSON only.`,
+            content: `City: ${city}${country ? `, ${country}` : ""}. Design the postcard. Reply with the JSON object only — no prose, no markdown fences.`,
           },
         ],
       });
-      const candidate = JSON.parse(extractJson(text));
+      let candidate: unknown;
+      try {
+        candidate = JSON.parse(extractJson(text));
+      } catch (parseErr) {
+        console.error(
+          `[ai:postcard] JSON parse failed for ${city}: ${(parseErr as Error).message}; first 200 chars of output: ${text.slice(0, 200)}`,
+        );
+        throw parseErr;
+      }
       const postcard = sanitizePostcard(candidate, city);
+      // If sanitisePostcard had to substitute the fallback elements (which
+      // happens when the AI returned nothing usable), tag the source as
+      // fallback so callers can tell the AI succeeded structurally but
+      // produced nothing renderable.
+      const fellBackOnElements =
+        postcard.elements === deterministic(city, country).postcard.elements;
       decision = {
         city,
         country,
         palette: postcard.palette,
         motif: motifFromPostcard(postcard),
         postcard,
-        source: "ai",
+        source: fellBackOnElements ? "fallback" : "ai",
       };
+      console.log(`[ai:postcard] ${city}: source=${decision.source}, elements=${postcard.elements.length}`);
     } catch (err) {
-      console.error("[ai:postcard]", err);
+      console.error(`[ai:postcard] ${city} failed:`, err instanceof Error ? err.message : err);
       decision = deterministic(city, country);
     }
   }
@@ -370,7 +387,25 @@ export function parseMotif(raw: string | null | undefined): CityMotif[] {
 
 export { isPostcard, safeParsePostcard };
 
+// Tolerates Kimi/OpenAI/Anthropic outputs that wrap the JSON in markdown
+// fences ("```json ...```"), prose ("Sure! Here is..."), or trailing text.
 function extractJson(text: string): string {
-  const match = text.match(/\{[\s\S]*\}/);
-  return match ? match[0] : text;
+  if (!text) return "{}";
+  // 1. Strip ```json or ``` fences if present.
+  let t = text.replace(/```(?:json)?\s*/gi, "").replace(/```/g, "").trim();
+  // 2. Find the outermost balanced { ... } block.
+  const start = t.indexOf("{");
+  if (start === -1) return t;
+  let depth = 0;
+  for (let i = start; i < t.length; i++) {
+    if (t[i] === "{") depth++;
+    else if (t[i] === "}") {
+      depth--;
+      if (depth === 0) return t.slice(start, i + 1);
+    }
+  }
+  // Unbalanced — fall through to a regex match for anything that looks like
+  // a JSON object so JSON.parse at least gets a chance.
+  const m = t.match(/\{[\s\S]*\}/);
+  return m ? m[0] : t;
 }
