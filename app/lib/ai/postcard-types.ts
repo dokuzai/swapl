@@ -12,6 +12,10 @@ export type Ground = (typeof GROUND_KINDS)[number];
 // Order matters here: the AI prompt embeds this exact list as the allowed
 // vocabulary, and the renderer in components/illustrations/postcard.tsx
 // renders unknown types as a no-op so old-format postcards never throw.
+//
+// Z-layering convention: the renderer draws elements in array order, so
+// callers should put far-background items first (mountains, distant
+// silhouettes) and foreground details last (people, vehicles, palms).
 export const POSTCARD_ELEMENTS = [
   // Istanbul
   "hagia-sophia",
@@ -76,6 +80,30 @@ export const POSTCARD_ELEMENTS = [
   "cypress-tree",
   "olive-tree",
   "cathedral-spire",
+  // ----- Phase 2: more iconic landmarks + atmospheric details -----
+  "gondola",
+  "vespa",
+  "bicycle-leaning",
+  "cherry-blossoms",
+  "trolley-cable-car",
+  "double-decker-bus",
+  "fishing-boat",
+  "stoop-with-railings",
+  "plane-trail",
+  "hot-air-balloon",
+  // city-specific landmarks (shareable across many real cities)
+  "london-eye",
+  "opera-house-sails",
+  "christ-redeemer",
+  "taj-mahal",
+  "marina-bay-sands",
+  "shanghai-pearl",
+  "golden-gate-bridge",
+  "egyptian-pyramid",
+  "duomo-dome",
+  "alpine-chalet",
+  "santorini-domes",
+  "siena-tower",
 ] as const;
 export type PostcardElement = (typeof POSTCARD_ELEMENTS)[number];
 
@@ -92,6 +120,8 @@ export type Postcard = {
   ground: Ground;
   elements: PostcardElementInstance[];
   stamp?: string; // city name shown in the postcard stamp; falls back to listing.city
+  country?: string; // small country label in the stamp under the city name
+  weather?: "clear" | "cloudy" | "misty"; // affects atmospheric overlays
 };
 
 export function isPostcard(v: unknown): v is Postcard {

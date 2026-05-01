@@ -74,22 +74,36 @@ const PALETTE_TONES: Record<Palette, Tones> = {
 };
 
 // Sky & ground modifiers shift the base palette tones for time-of-day.
-function applySky(t: Tones, sky: Sky): Tones {
-  if (sky === "day") return t;
+// Each variant returns the tone overrides + a tiny `mood` flag the renderer
+// uses for cloud opacity and atmospheric haze.
+function applySky(t: Tones, sky: Sky): Tones & { mood: "warmlit" | "neutral" | "cool" } {
+  if (sky === "day") return { ...t, mood: "neutral" };
   if (sky === "dawn") {
-    return { ...t, skyTop: "#FBA94A", skyBottom: "#FFE0B5", sun: "#FFF1A8" };
+    return { ...t, skyTop: "#FBA94A", skyBottom: "#FFE0B5", sun: "#FFF1A8", mood: "warmlit" };
   }
   if (sky === "dusk") {
-    return { ...t, skyTop: "#5B5093", skyBottom: "#F38BA0", sun: "#FFE066" };
+    return { ...t, skyTop: "#5B5093", skyBottom: "#F38BA0", sun: "#FFE066", mood: "warmlit" };
   }
-  // night
+  // night — soften windows, swap sun colour for moon, light the building
+  // facades a touch via a darker building tone.
   return {
     ...t,
     skyTop: "#11142A",
     skyBottom: "#1E1F4A",
     sun: "#F5E5A8",
     window: t.accent,
+    building: shade(t.building, 0.7),
+    buildingLight: shade(t.buildingLight, 0.7),
+    mood: "cool",
   };
+}
+
+function shade(hex: string, factor: number): string {
+  const m = hex.replace(/^#/, "");
+  const r = Math.round(parseInt(m.slice(0, 2), 16) * factor);
+  const g = Math.round(parseInt(m.slice(2, 4), 16) * factor);
+  const b = Math.round(parseInt(m.slice(4, 6), 16) * factor);
+  return `#${[r, g, b].map((c) => Math.max(0, Math.min(255, c)).toString(16).padStart(2, "0")).join("")}`;
 }
 
 // ---------- Element library ----------
@@ -679,6 +693,346 @@ const E: Record<PostcardElement, (r: R) => React.ReactElement> = {
       <rect x={3} y={-22} width={4} height={6} fill={t.window} />
     </g>
   ),
+
+  // ===== Phase 2: more landmarks + atmosphere =====
+
+  // Venice gondola — slim black hull with a curved prow on a water surface.
+  gondola: ({ t, cx, scale, flip }) => (
+    <g transform={`translate(${cx} ${BASELINE}) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+      <path d="M -16 -2 Q -10 -6 0 -6 Q 12 -6 18 -2 L 16 0 L -14 0 Z" fill="#0A0A09" />
+      <path d="M -16 -2 Q -22 -6 -20 -10" stroke="#0A0A09" strokeWidth={1.4} fill="none" strokeLinecap="round" />
+      <rect x={-2} y={-12} width={1.6} height={10} fill="#0A0A09" />
+      <ellipse cx={-1} cy={-12.5} rx={2.5} ry={1.2} fill={t.accent} />
+    </g>
+  ),
+
+  // Vespa silhouette — a small Italian-street cue, used in the foreground.
+  vespa: ({ t, cx, scale, flip }) => {
+    const colour = "#3B7A3F";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+        <ellipse cx={0} cy={-3} rx={9} ry={4} fill={colour} />
+        <rect x={-2} y={-9} width={2} height={6} fill={colour} />
+        <path d="M -2 -9 q -3 -1 -4 1" stroke={colour} strokeWidth={1.2} fill="none" />
+        <circle cx={-7} cy={-1} r={3} fill="#1F2937" />
+        <circle cx={6} cy={-1} r={3} fill="#1F2937" />
+        <circle cx={-7} cy={-1} r={1} fill={t.accent} />
+        <circle cx={6} cy={-1} r={1} fill={t.accent} />
+      </g>
+    );
+  },
+
+  // Bicycle leaning against the kerb — Amsterdam, Copenhagen vibes.
+  "bicycle-leaning": ({ t, cx, scale, flip }) => (
+    <g transform={`translate(${cx} ${BASELINE}) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+      <circle cx={-5} cy={-2} r={3} fill="none" stroke={t.roof} strokeWidth={1} />
+      <circle cx={5} cy={-2} r={3} fill="none" stroke={t.roof} strokeWidth={1} />
+      <path d="M -5 -2 L 1 -8 L 5 -2" stroke={t.roof} strokeWidth={1} fill="none" strokeLinecap="round" />
+      <path d="M -5 -2 L 5 -2" stroke={t.roof} strokeWidth={1} fill="none" />
+      <rect x={0} y={-9} width={1.2} height={2} fill={t.roof} />
+      <rect x={1.2} y={-9.5} width={3} height={1} fill={t.roof} />
+    </g>
+  ),
+
+  // Cherry-blossoms — pink puff on a slender trunk for Tokyo, Kyoto, Seoul.
+  "cherry-blossoms": ({ t, cx, scale, flip }) => (
+    <g transform={`translate(${cx} ${BASELINE}) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+      <rect x={-1} y={-22} width={2} height={22} fill={"#5C3A2E"} />
+      <path d="M -2 -22 q -3 -2 -6 -1" stroke="#5C3A2E" strokeWidth={1} fill="none" />
+      <path d="M 2 -22 q 3 -2 6 -1" stroke="#5C3A2E" strokeWidth={1} fill="none" />
+      {[[0, -28, 9], [-7, -23, 6], [7, -24, 6], [-3, -32, 5], [4, -31, 5]].map(([x, y, r], i) => (
+        <circle key={i} cx={x} cy={y} r={r} fill="#FBCFE8" />
+      ))}
+      {[[-2, -30], [3, -27], [-5, -25], [6, -29]].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r={1.2} fill="#F472B6" />
+      ))}
+    </g>
+  ),
+
+  // San Francisco / Lisbon trolley — boxy car on a wire above.
+  "trolley-cable-car": ({ t, cx, scale, flip }) => {
+    const body = "#9C2A20";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+        <line x1={-22} y1={-22} x2={22} y2={-22} stroke="#1F2937" strokeWidth={0.5} />
+        <line x1={-2} y1={-22} x2={-2} y2={-16} stroke="#1F2937" strokeWidth={0.6} />
+        <rect x={-18} y={-16} width={36} height={12} fill={body} />
+        <rect x={-18} y={-19} width={36} height={3} fill="#FACC15" />
+        {[-14, -7, 0, 7, 14].map((x, i) => (
+          <rect key={i} x={x - 2} y={-14} width={4} height={4} fill={t.window} />
+        ))}
+        <circle cx={-12} cy={-3} r={2.2} fill="#1F2937" />
+        <circle cx={12} cy={-3} r={2.2} fill="#1F2937" />
+      </g>
+    );
+  },
+
+  // London double-decker bus.
+  "double-decker-bus": ({ t, cx, scale, flip }) => {
+    const red = "#C8102E";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+        <rect x={-22} y={-20} width={44} height={18} fill={red} />
+        <rect x={-22} y={-22} width={44} height={3} fill="#7E0E1E" />
+        <rect x={-19} y={-18} width={6} height={6} fill={t.window} />
+        <rect x={-11} y={-18} width={6} height={6} fill={t.window} />
+        <rect x={-3} y={-18} width={6} height={6} fill={t.window} />
+        <rect x={5} y={-18} width={6} height={6} fill={t.window} />
+        <rect x={13} y={-18} width={6} height={6} fill={t.window} />
+        <rect x={-19} y={-10} width={36} height={6} fill={t.window} opacity={0.6} />
+        <circle cx={-14} cy={-1} r={2.2} fill="#1F2937" />
+        <circle cx={14} cy={-1} r={2.2} fill="#1F2937" />
+      </g>
+    );
+  },
+
+  // Small fishing boat for Mediterranean / Aegean coastal cards.
+  "fishing-boat": ({ t, cx, scale, flip }) => (
+    <g transform={`translate(${cx} ${BASELINE}) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+      <path d="M -12 -2 L 12 -2 L 9 2 L -9 2 Z" fill={"#5C3A2E"} />
+      <rect x={-2} y={-9} width={4} height={7} fill={t.accent} />
+      <line x1={0} y1={-9} x2={0} y2={-15} stroke={t.roof} strokeWidth={0.7} />
+      <polygon points={`0,-15 0,-10 5,-10`} fill={"#FFFFFF"} stroke={t.roof} strokeWidth={0.4} />
+    </g>
+  ),
+
+  // Brownstone-style stoop with railings — adds urban-residential foreground.
+  "stoop-with-railings": ({ t, cx, scale }) => (
+    <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+      <rect x={-7} y={0} width={14} height={2} fill={t.groundShade} />
+      <rect x={-6} y={-2} width={12} height={2} fill={t.groundShade} />
+      <rect x={-5} y={-4} width={10} height={2} fill={t.groundShade} />
+      <rect x={-7} y={-10} width={1.5} height={10} fill={t.roof} />
+      <rect x={5.5} y={-10} width={1.5} height={10} fill={t.roof} />
+      <line x1={-6} y1={-10} x2={6} y2={-10} stroke={t.roof} strokeWidth={1.2} />
+    </g>
+  ),
+
+  // High-altitude plane trail — small dot + curved exhaust trail across the sky.
+  "plane-trail": ({ t, cx, scale }) => (
+    <g transform={`translate(${cx} 28) scale(${scale})`}>
+      <path d="M -32 8 Q -16 0 0 0" stroke={"#FFFFFF"} strokeWidth={1.4} fill="none" opacity={0.8} strokeLinecap="round" />
+      <polygon points="0,0 -3,-2 -6,-1 -3,1" fill={t.roof} opacity={0.85} />
+    </g>
+  ),
+
+  // Hot-air balloon — Cappadocia, Albuquerque, Tuscany etc.
+  "hot-air-balloon": ({ t, cx, scale, flip }) => {
+    const stripe1 = "#E11D48";
+    const stripe2 = "#FBBF24";
+    return (
+      <g transform={`translate(${cx} 50) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+        <path d="M -10 0 A 10 12 0 0 1 10 0 L 8 4 L -8 4 Z" fill={stripe1} />
+        <path d="M -8 4 L -7 6 L -6 4" fill={stripe2} />
+        <path d="M -6 4 L -5 6 L -4 4" fill={stripe1} />
+        <path d="M -4 4 L -3 6 L -2 4" fill={stripe2} />
+        <path d="M -2 4 L -1 6 L 0 4" fill={stripe1} />
+        <path d="M 0 4 L 1 6 L 2 4" fill={stripe2} />
+        <path d="M 2 4 L 3 6 L 4 4" fill={stripe1} />
+        <path d="M 4 4 L 5 6 L 6 4" fill={stripe2} />
+        <path d="M 6 4 L 7 6 L 8 4" fill={stripe1} />
+        <line x1={-5} y1={6} x2={-3} y2={12} stroke={t.roof} strokeWidth={0.5} />
+        <line x1={5} y1={6} x2={3} y2={12} stroke={t.roof} strokeWidth={0.5} />
+        <rect x={-3} y={11} width={6} height={3} fill={"#5C3A2E"} />
+      </g>
+    );
+  },
+
+  // London Eye — observation wheel with passenger pods.
+  "london-eye": ({ t, cx, scale }) => {
+    const arm = t.roof;
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <line x1={0} y1={0} x2={0} y2={-26} stroke={arm} strokeWidth={1} />
+        <circle cx={0} cy={-46} r={20} fill="none" stroke={arm} strokeWidth={1.2} />
+        {Array.from({ length: 8 }).map((_, k) => {
+          const a = (k / 8) * Math.PI * 2;
+          const x = Math.sin(a) * 20;
+          const y = -46 + Math.cos(a) * 20;
+          return <line key={k} x1={0} y1={-46} x2={x} y2={y} stroke={arm} strokeWidth={0.5} />;
+        })}
+        {Array.from({ length: 8 }).map((_, k) => {
+          const a = (k / 8) * Math.PI * 2;
+          const x = Math.sin(a) * 20;
+          const y = -46 + Math.cos(a) * 20;
+          return <rect key={k} x={x - 1.4} y={y - 1.4} width={2.8} height={2.8} fill={t.window} stroke={arm} strokeWidth={0.4} />;
+        })}
+      </g>
+    );
+  },
+
+  // Sydney Opera House — three concentric sails.
+  "opera-house-sails": ({ t, cx, scale }) => {
+    const sail = "#F8FAFC";
+    const shade1 = "#CBD5E1";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <rect x={-30} y={-2} width={60} height={2} fill={t.roof} />
+        <path d="M -28 -2 Q -22 -22 -10 -2 Z" fill={sail} stroke={t.roof} strokeWidth={0.5} />
+        <path d="M -16 -2 Q -8 -28 4 -2 Z" fill={sail} stroke={t.roof} strokeWidth={0.5} />
+        <path d="M -4 -2 Q 6 -32 18 -2 Z" fill={sail} stroke={t.roof} strokeWidth={0.5} />
+        <path d="M 8 -2 Q 16 -22 26 -2 Z" fill={shade1} stroke={t.roof} strokeWidth={0.5} />
+      </g>
+    );
+  },
+
+  // Christ the Redeemer on Corcovado.
+  "christ-redeemer": ({ t, cx, scale }) => {
+    const stone = "#D6D1C2";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <polygon points={`-30,0 0,-26 30,0`} fill={t.groundShade} opacity={0.6} />
+        <rect x={-3} y={-32} width={6} height={6} fill={stone} />
+        <rect x={-1.4} y={-44} width={2.8} height={12} fill={stone} />
+        <circle cx={0} cy={-46} r={2} fill={stone} />
+        <line x1={-7} y1={-39} x2={7} y2={-39} stroke={stone} strokeWidth={2.4} />
+        <line x1={-2} y1={-39} x2={-7} y2={-37} stroke={stone} strokeWidth={1.8} />
+        <line x1={2} y1={-39} x2={7} y2={-37} stroke={stone} strokeWidth={1.8} />
+      </g>
+    );
+  },
+
+  // Taj Mahal — central onion dome + four minarets + reflecting platform.
+  "taj-mahal": ({ t, cx, scale }) => {
+    const ivory = "#FAF6E8";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <rect x={-32} y={-4} width={64} height={4} fill={t.roof} />
+        <rect x={-22} y={-22} width={44} height={18} fill={ivory} stroke={t.roof} strokeWidth={0.5} />
+        <path d="M -10 -22 q 0 -16 10 -16 q 10 0 10 16 Z" fill={ivory} stroke={t.roof} strokeWidth={0.5} />
+        <rect x={-1} y={-44} width={2} height={6} fill={t.roof} />
+        <rect x={-32} y={-26} width={4} height={26} fill={ivory} />
+        <rect x={28} y={-26} width={4} height={26} fill={ivory} />
+        <polygon points={`-32,-26 -30,-30 -28,-26`} fill={ivory} />
+        <polygon points={`28,-26 30,-30 32,-26`} fill={ivory} />
+        <rect x={-22} y={-22} width={6} height={4} fill={t.roof} opacity={0.3} />
+        <rect x={16} y={-22} width={6} height={4} fill={t.roof} opacity={0.3} />
+      </g>
+    );
+  },
+
+  // Marina Bay Sands — three slim towers with the boat-roof on top.
+  "marina-bay-sands": ({ t, cx, scale }) => {
+    const tower = t.buildingLight;
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        {[-14, 0, 14].map((x, k) => (
+          <rect key={k} x={x - 4} y={-44} width={8} height={44} fill={tower} />
+        ))}
+        <path d="M -22 -44 L 22 -44 L 18 -50 L -10 -50 Z" fill={t.roof} />
+        {[-14, 0, 14].map((x, k) => (
+          <g key={k}>
+            {[10, 18, 26, 34].map((dy, j) => (
+              <rect key={j} x={x - 2} y={-dy} width={4} height={2} fill={t.window} />
+            ))}
+          </g>
+        ))}
+      </g>
+    );
+  },
+
+  // Shanghai Pearl Tower — two spheres on a slim mast.
+  "shanghai-pearl": ({ t, cx, scale }) => {
+    const stem = "#7E1414";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <rect x={-1.4} y={-44} width={2.8} height={44} fill={stem} />
+        <circle cx={0} cy={-32} r={5} fill={stem} stroke={t.roof} strokeWidth={0.5} />
+        <circle cx={0} cy={-46} r={4} fill={stem} stroke={t.roof} strokeWidth={0.5} />
+        <rect x={-1.4} y={-58} width={2.8} height={12} fill={stem} />
+        <circle cx={0} cy={-60} r={1.6} fill={t.accent} />
+      </g>
+    );
+  },
+
+  // Golden Gate — twin red towers, suspension cables, deck.
+  "golden-gate-bridge": ({ t, cx, scale }) => {
+    const red = "#C0392B";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <rect x={-46} y={-2} width={92} height={3} fill={red} />
+        <rect x={-22} y={-44} width={4} height={44} fill={red} />
+        <rect x={18} y={-44} width={4} height={44} fill={red} />
+        <rect x={-23} y={-46} width={6} height={2} fill={red} />
+        <rect x={17} y={-46} width={6} height={2} fill={red} />
+        <path d={`M -46 -2 Q -20 -42 0 -10 Q 20 -42 46 -2`} stroke={red} strokeWidth={1} fill="none" />
+        {[-38, -32, -10, 10, 32, 38].map((x, k) => (
+          <line key={k} x1={x} y1={-2} x2={x} y2={-22} stroke={red} strokeWidth={0.4} />
+        ))}
+      </g>
+    );
+  },
+
+  // Egyptian pyramid — single pyramid silhouette with a thin sun stripe.
+  "egyptian-pyramid": ({ t, cx, scale }) => (
+    <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+      <polygon points={`-32,0 0,-30 32,0`} fill={"#D9B27B"} stroke={t.roof} strokeWidth={0.6} />
+      <polygon points={`0,-30 32,0 16,0`} fill={"#B8884F"} />
+      <line x1={-16} y1={-15} x2={16} y2={-15} stroke={t.roof} strokeWidth={0.4} opacity={0.4} />
+    </g>
+  ),
+
+  // Florence Duomo — terracotta dome on octagonal drum.
+  "duomo-dome": ({ t, cx, scale }) => {
+    const terracotta = "#B8442C";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <rect x={-18} y={-18} width={36} height={18} fill={t.buildingLight} />
+        <path d="M -16 -18 A 16 18 0 0 1 16 -18 Z" fill={terracotta} stroke={t.roof} strokeWidth={0.5} />
+        <line x1={-12} y1={-30} x2={-12} y2={-18} stroke={t.roof} strokeWidth={0.4} />
+        <line x1={-6} y1={-34} x2={-6} y2={-18} stroke={t.roof} strokeWidth={0.4} />
+        <line x1={0} y1={-36} x2={0} y2={-18} stroke={t.roof} strokeWidth={0.4} />
+        <line x1={6} y1={-34} x2={6} y2={-18} stroke={t.roof} strokeWidth={0.4} />
+        <line x1={12} y1={-30} x2={12} y2={-18} stroke={t.roof} strokeWidth={0.4} />
+        <rect x={-2} y={-44} width={4} height={8} fill={t.buildingLight} />
+        <circle cx={0} cy={-46} r={1.4} fill={t.accent} />
+      </g>
+    );
+  },
+
+  // Alpine chalet — pitched roof, balcony, snow-capped corners.
+  "alpine-chalet": ({ t, cx, scale, flip }) => (
+    <g transform={`translate(${cx} ${BASELINE}) scale(${scale * (flip ? -1 : 1)} ${scale})`}>
+      <rect x={-14} y={-18} width={28} height={18} fill={"#7C5235"} />
+      <polygon points={`-18,-18 0,-30 18,-18`} fill={"#3A2A1B"} />
+      <polygon points={`-18,-18 0,-32 -8,-18`} fill={"#FFFFFF"} opacity={0.9} />
+      <rect x={-10} y={-12} width={4} height={4} fill={t.window} />
+      <rect x={6} y={-12} width={4} height={4} fill={t.window} />
+      <rect x={-2} y={-8} width={4} height={8} fill={"#3A2A1B"} />
+      <rect x={-14} y={-2} width={28} height={2} fill={"#FFFFFF"} opacity={0.85} />
+    </g>
+  ),
+
+  // Santorini — three blue domes on white cube terraces, descending.
+  "santorini-domes": ({ t, cx, scale }) => {
+    const blue = "#1D4ED8";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <rect x={-22} y={-12} width={44} height={12} fill={"#FFFFFF"} stroke={t.roof} strokeWidth={0.4} />
+        <rect x={-12} y={-22} width={24} height={10} fill={"#FFFFFF"} stroke={t.roof} strokeWidth={0.4} />
+        <path d="M -16 -22 A 5 6 0 0 1 -6 -22 Z" fill={blue} />
+        <path d="M -2 -22 A 5 6 0 0 1 8 -22 Z" fill={blue} />
+        <path d="M -10 -32 A 4 5 0 0 1 -2 -32 Z" fill={blue} />
+        <rect x={-19} y={-7} width={3} height={3} fill={blue} opacity={0.5} />
+        <rect x={16} y={-7} width={3} height={3} fill={blue} opacity={0.5} />
+      </g>
+    );
+  },
+
+  // Siena-style brick tower — single tall slender bell tower, classic Tuscan red.
+  "siena-tower": ({ t, cx, scale }) => {
+    const brick = "#A4422C";
+    return (
+      <g transform={`translate(${cx} ${BASELINE}) scale(${scale})`}>
+        <rect x={-3} y={-58} width={6} height={58} fill={brick} />
+        <rect x={-5} y={-60} width={10} height={3} fill={brick} />
+        <rect x={-4} y={-50} width={8} height={3} fill={"#7C2D12"} />
+        <rect x={-2} y={-46} width={4} height={4} fill={t.window} />
+        <rect x={-2} y={-32} width={4} height={4} fill={t.window} />
+        <rect x={-2} y={-18} width={4} height={4} fill={t.window} />
+      </g>
+    );
+  },
 };
 
 // ---------- Top-level renderer ----------
@@ -697,7 +1051,14 @@ export function PostcardSvg({
   const baseTones = PALETTE_TONES[postcard.palette] ?? PALETTE_TONES.warm;
   const t = applySky(baseTones, postcard.sky);
   const stamp = (postcard.stamp ?? city).toUpperCase();
+  const country = postcard.country?.toUpperCase();
   const isNight = postcard.sky === "night";
+  const isCloudy = postcard.weather === "cloudy" || (postcard.weather !== "clear" && postcard.sky !== "night");
+  const isMisty = postcard.weather === "misty";
+
+  // Deterministic star positions via a small PRNG seeded by stamp/city so a
+  // given postcard's stars never jitter between renders.
+  const stars = useMemoStars(`${postcard.palette}-${postcard.sky}-${stamp}`);
 
   return (
     <svg
@@ -714,10 +1075,28 @@ export function PostcardSvg({
           <stop offset="0%" stopColor={t.skyTop} />
           <stop offset="100%" stopColor={t.skyBottom} />
         </linearGradient>
+        <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor={t.sun} stopOpacity="0.6" />
+          <stop offset="100%" stopColor={t.sun} stopOpacity="0" />
+        </radialGradient>
       </defs>
+
+      {/* sky */}
       <rect width={VIEW_W} height={VIEW_H} fill={`url(#sky-${postcard.sky})`} />
 
-      {/* Sun / moon */}
+      {/* Stars (night only) — layered with a subtle moon glow */}
+      {isNight && (
+        <>
+          <circle cx={168} cy={28} r={22} fill="url(#moonGlow)" />
+          <g fill="#FFFFFF">
+            {stars.map(([x, y, r], i) => (
+              <circle key={i} cx={x} cy={y} r={r} opacity={0.85} />
+            ))}
+          </g>
+        </>
+      )}
+
+      {/* Sun / moon disc */}
       <circle
         cx={isNight ? 168 : 160}
         cy={isNight ? 28 : 32}
@@ -725,23 +1104,38 @@ export function PostcardSvg({
         fill={t.sun}
         opacity={isNight ? 0.95 : 0.9}
       />
-      {isNight && (
-        <g fill="#FFFFFF" opacity={0.85}>
-          {[
-            [25, 18], [50, 28], [80, 14], [110, 26], [140, 18], [60, 50], [100, 44], [130, 56],
-          ].map(([x, y], i) => (
-            <circle key={i} cx={x} cy={y} r={0.7} />
-          ))}
+
+      {/* Day / dawn / dusk clouds — three of them, drifting at slightly
+          different altitudes for cheap depth. Always behind elements. */}
+      {!isNight && isCloudy && (
+        <g opacity={t.mood === "warmlit" ? 0.85 : 0.95}>
+          <Cloud cx={28} cy={22} scale={1.0} fill={t.mood === "warmlit" ? "#FFE9C9" : "#FFFFFF"} />
+          <Cloud cx={92} cy={14} scale={0.7} fill="#FFFFFF" />
+          <Cloud cx={132} cy={36} scale={0.85} fill={t.mood === "warmlit" ? "#FFD9A8" : "#F4F4F2"} />
         </g>
       )}
 
-      {/* Distant haze / hill backdrop hints at depth */}
-      {postcard.ground !== "snow" && (
+      {/* Far mountains — only when ground isn't water (water reads better
+          unobstructed). Adds genuine depth versus the existing single
+          accent haze. */}
+      {postcard.ground !== "water" && (
         <path
-          d={`M 0 ${BASELINE - 8} Q 50 ${BASELINE - 14} 100 ${BASELINE - 8} T 200 ${BASELINE - 4} L 200 ${BASELINE} L 0 ${BASELINE} Z`}
+          d={`M 0 ${BASELINE - 18} L 32 ${BASELINE - 32} L 60 ${BASELINE - 22} L 92 ${BASELINE - 38} L 132 ${BASELINE - 24} L 168 ${BASELINE - 32} L 200 ${BASELINE - 18} L 200 ${BASELINE - 6} L 0 ${BASELINE - 6} Z`}
           fill={t.accent}
-          opacity={0.35}
+          opacity={0.22}
         />
+      )}
+
+      {/* Atmospheric haze just above the ground line */}
+      <path
+        d={`M 0 ${BASELINE - 8} Q 50 ${BASELINE - 14} 100 ${BASELINE - 8} T 200 ${BASELINE - 4} L 200 ${BASELINE} L 0 ${BASELINE} Z`}
+        fill={t.accent}
+        opacity={0.35}
+      />
+
+      {/* Misty overlay — translucent fog band across the lower middle */}
+      {isMisty && (
+        <rect x={0} y={BASELINE - 30} width={VIEW_W} height={26} fill="#FFFFFF" opacity={0.18} />
       )}
 
       {/* Elements, ordered back-to-front by array position */}
@@ -750,13 +1144,17 @@ export function PostcardSvg({
       {/* Ground band */}
       <GroundBand ground={postcard.ground} t={t} />
 
+      {/* Postcard side stripes (PAR AVION feel) — narrow red+blue dashes
+          along the left and right edges. */}
+      <ParAvionStripes />
+
       {/* Postcard stamp */}
       <g transform={`translate(${VIEW_W - 56} 8)`}>
-        <rect width={48} height={18} rx={2} fill="#FFFBF3" stroke={t.roof} strokeWidth={0.6} />
-        <rect x={2} y={2} width={44} height={14} fill="none" stroke={t.roof} strokeWidth={0.3} strokeDasharray="1.4 1.2" />
+        <rect width={48} height={country ? 22 : 18} rx={2} fill="#FFFBF3" stroke={t.roof} strokeWidth={0.6} />
+        <rect x={2} y={2} width={44} height={country ? 18 : 14} fill="none" stroke={t.roof} strokeWidth={0.3} strokeDasharray="1.4 1.2" />
         <text
           x={24}
-          y={13}
+          y={country ? 11 : 13}
           textAnchor="middle"
           fontFamily="monospace"
           fontSize={7}
@@ -766,6 +1164,20 @@ export function PostcardSvg({
         >
           {stamp.length > 11 ? stamp.slice(0, 11) : stamp}
         </text>
+        {country && (
+          <text
+            x={24}
+            y={19}
+            textAnchor="middle"
+            fontFamily="monospace"
+            fontSize={5}
+            letterSpacing={0.8}
+            fill={t.roof}
+            opacity={0.7}
+          >
+            {country.length > 13 ? country.slice(0, 13) : country}
+          </text>
+        )}
       </g>
 
       {/* Tiny caption strip bottom-left so the postcard reads like a postcard */}
@@ -778,10 +1190,66 @@ export function PostcardSvg({
         fill={t.roof}
         opacity={0.6}
       >
-        SWAPL · {stamp}
+        SWAPL · {stamp}{country ? ` · ${country}` : ""}
       </text>
     </svg>
   );
+}
+
+// ---------- Atmospheric helpers ----------
+
+function Cloud({ cx, cy, scale, fill }: { cx: number; cy: number; scale: number; fill: string }) {
+  return (
+    <g transform={`translate(${cx} ${cy}) scale(${scale})`}>
+      <ellipse cx={-6} cy={2} rx={6} ry={3} fill={fill} />
+      <ellipse cx={0} cy={-1} rx={9} ry={4} fill={fill} />
+      <ellipse cx={7} cy={2} rx={5} ry={3} fill={fill} />
+    </g>
+  );
+}
+
+function ParAvionStripes() {
+  // Subtle red/blue dashes like an airmail border, narrow enough not to fight
+  // the artwork. Only on the left + right.
+  const dashes = Array.from({ length: 14 });
+  return (
+    <g opacity={0.5}>
+      {dashes.map((_, i) => {
+        const y = 6 + i * 9;
+        return (
+          <g key={i}>
+            <rect x={1.5} y={y} width={3} height={4} fill={i % 2 === 0 ? "#C8102E" : "#1E40AF"} />
+            <rect x={VIEW_W - 4.5} y={y} width={3} height={4} fill={i % 2 === 0 ? "#1E40AF" : "#C8102E"} />
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
+// Deterministic star generator — small in-file PRNG keyed by the postcard
+// signature so a given (palette, sky, stamp) tuple always produces the same
+// star field, but distinct postcards differ.
+function useMemoStars(seed: string): Array<[number, number, number]> {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  const rng = () => {
+    h ^= h << 13;
+    h ^= h >>> 17;
+    h ^= h << 5;
+    return ((h >>> 0) % 10000) / 10000;
+  };
+  const out: Array<[number, number, number]> = [];
+  for (let i = 0; i < 38; i++) {
+    const x = Math.round(rng() * 200);
+    const y = Math.round(rng() * 90); // keep stars above the skyline
+    const r = rng() < 0.15 ? 1 : 0.5 + rng() * 0.4;
+    out.push([x, y, r]);
+  }
+  return out;
 }
 
 function renderElement(inst: PostcardElementInstance, t: Tones, idx: number): React.ReactElement {

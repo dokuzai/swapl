@@ -129,53 +129,93 @@ function deterministic(city: string, country: string | null): CityArtDecision {
   const sky = SKY_KINDS[(h >>> 4) % SKY_KINDS.length];
   const ground = GROUND_KINDS[(h >>> 8) % GROUND_KINDS.length];
 
-  const generics: PostcardElement[] = [
-    "skyscraper",
-    "dome",
-    "minaret",
-    "lighthouse",
-    "bridge-arch",
-    "clock-tower",
-    "rowhouse-stack",
-    "mountain-range",
-    "palm-row",
-    "fortress",
-    "cathedral-spire",
+  // Curated layer pools so the deterministic fallback still produces a
+  // back-to-front composition rather than a flat row of three buildings.
+  const backgrounds: PostcardElement[] = ["mountain-range", "hill", "fortress"];
+  const heroes: PostcardElement[] = [
+    "dome", "minaret", "skyscraper", "clock-tower", "cathedral-spire",
+    "duomo-dome", "siena-tower", "shanghai-pearl", "marina-bay-sands",
   ];
-  const a = generics[(h >>> 12) % generics.length];
-  const b = generics[(h >>> 16) % generics.length];
-  const c = generics[(h >>> 20) % generics.length];
-  const elements: PostcardElementInstance[] = [
-    { type: a, x: 0.22, scale: 0.95 },
-    { type: b, x: 0.55, scale: 1.05 },
+  const supports: PostcardElement[] = [
+    "rowhouse-stack", "lighthouse", "bridge-arch",
+    "alpine-chalet", "santorini-domes", "egyptian-pyramid",
   ];
-  if (c !== a && c !== b) elements.push({ type: c, x: 0.85, scale: 0.95 });
+  const foregrounds: PostcardElement[] = [
+    "palm-row", "palm", "vespa", "bicycle-leaning", "fishing-boat",
+    "trolley-cable-car", "double-decker-bus", "cherry-blossoms",
+    "stoop-with-railings", "sailboat",
+  ];
 
-  const postcard: Postcard = { palette, sky, ground, elements, stamp: city };
+  const bg = backgrounds[(h >>> 12) % backgrounds.length];
+  const hero = heroes[(h >>> 16) % heroes.length];
+  const support = supports[(h >>> 20) % supports.length];
+  const foreground = foregrounds[(h >>> 24) % foregrounds.length];
+
+  const elements: PostcardElementInstance[] = [
+    { type: bg, x: 0.22, scale: 1.05 },
+    { type: hero, x: 0.55, scale: 1.2 },
+    { type: support, x: 0.84, scale: 0.95 },
+    { type: foreground, x: 0.18, scale: 0.85 },
+  ];
+
+  const weather: Postcard["weather"] = sky === "night" ? "clear" : ((h >>> 28) % 3 === 0 ? "cloudy" : "clear");
+
+  const postcard: Postcard = {
+    palette, sky, ground, elements,
+    stamp: city,
+    country: country ?? undefined,
+    weather,
+  };
   return { city, country, palette, motif: motifFromPostcard(postcard), postcard, source: "fallback" };
 }
 
-const SYSTEM_PROMPT = `You design swapl postcards. Each postcard is a flat geometric SVG composition that should evoke a city's history, architecture, and silhouette so a viewer recognizes the city instantly.
+const SYSTEM_PROMPT = `You design swapl postcards. Each postcard is a flat geometric SVG composition that must instantly read as the named city. Imagine a 1960s-style travel postcard: clear silhouette, three or four iconic shapes, atmospheric depth.
 
 Reply ONLY with strict JSON (no prose, no markdown), shape:
 {
-  "palette": "warm" | "cool" | "rose" | "sage" | "dusk" | "sand" | "mono",
-  "sky":     "dawn" | "day" | "dusk" | "night",
-  "ground":  "street" | "water" | "sand" | "grass" | "snow",
-  "elements":[ { "type": <one of the allowed element types>, "x": 0..1, "scale": 0.7..1.3 } ],
-  "stamp":   "<short uppercase city name>"
+  "palette":  "warm" | "cool" | "rose" | "sage" | "dusk" | "sand" | "mono",
+  "sky":      "dawn" | "day" | "dusk" | "night",
+  "ground":   "street" | "water" | "sand" | "grass" | "snow",
+  "weather":  "clear" | "cloudy" | "misty",
+  "elements": [ { "type": <one of the allowed element types>, "x": 0..1, "scale": 0.7..1.4 } ],
+  "stamp":    "<short uppercase city name, max 12 chars>",
+  "country":  "<short uppercase country name, max 13 chars>"
 }
 
-Pick 3–5 elements layered back-to-front. Lower x = left side. Use the most iconic landmarks first if they exist in the allowed vocabulary; otherwise pick generic elements (skyscraper, dome, minaret, mountain-range, palm-row, bridge-arch, clock-tower, lighthouse, rowhouse-stack, fortress, cathedral-spire) that match the city's character.
+Composition rules:
+- Pick 4–6 elements arranged back-to-front (first item drawn first).
+- Use 1 background element (mountain-range, hill, bukhansan, mount-fuji, fortress) at scale 1.0–1.2 and x≈0.15–0.3 OR x≈0.7–0.85.
+- Use 1 hero landmark — the city's most iconic structure if present in the vocabulary — at scale 1.05–1.4 around x=0.5.
+- Use 1 supporting landmark (different size/shape, not duplicating the hero) on the opposite side.
+- Use 1 foreground detail (vespa, gondola, bicycle-leaning, cherry-blossoms, palm, sailboat, fishing-boat, stoop-with-railings, trolley-cable-car, double-decker-bus) at scale 0.75–1.0 close to a corner.
+- Optional: a hot-air-balloon, plane-trail or cloud-mood for character.
+- Never repeat the same element type twice with x within 0.2 of each other.
+
+Region cues for palette + sky + ground:
+- Mediterranean (Athens, Rome, Lisbon, Barcelona, Florence, Naples) → palette sand, sky day or dawn, ground street or water, weather clear.
+- Northern Europe (Copenhagen, Stockholm, Oslo, Berlin, Amsterdam) → palette cool, sky day, ground water or street, weather cloudy.
+- Tropical / coastal (Rio, Honolulu, Cape Town, Lisbon coast) → palette warm or sand, sky day or dawn, ground sand or water.
+- East Asia (Tokyo, Kyoto, Seoul, Shanghai, Hong Kong, Singapore) → palette rose or dusk, sky dusk, ground street or water.
+- South Asia (Delhi, Mumbai, Jaipur) → palette warm or sand, sky day, ground sand or street.
+- Latin America (CDMX, Buenos Aires) → palette sage or warm, sky day, ground street.
+- Middle East / North Africa (Marrakesh, Cairo, Istanbul-Asia-side, Doha) → palette warm or sand, sky day or dawn, ground sand.
+- Cold-weather (Reykjavík, Helsinki, Innsbruck, Zermatt) → palette mono or cool, sky day, ground snow, weather misty.
 
 Allowed element types: ${POSTCARD_ELEMENTS.join(", ")}.
 
-Examples:
-- Istanbul → palette warm, sky dawn, ground water, elements: bosphorus-bridge, hagia-sophia, galata-tower, sailboat
-- Paris → palette sand, sky dawn, ground street, elements: sacre-coeur, eiffel, arc-de-triomphe
-- Tokyo → palette rose, sky dusk, ground street, elements: mount-fuji, tokyo-tower, pagoda
-- Sydney → palette cool, sky day, ground water, elements: bridge-arch, dome, sailboat, lighthouse
-- Marrakesh → palette warm, sky day, ground sand, elements: palm, koutoubia, riad-arch, palm`;
+Examples — these are the *target* density and composition:
+- Istanbul, Türkiye → palette warm, sky dawn, ground water, weather clear, elements: [hill, bosphorus-bridge, hagia-sophia, galata-tower, sailboat, fishing-boat], stamp ISTANBUL, country TÜRKİYE.
+- Paris, France → palette sand, sky dawn, ground street, weather clear, elements: [sacre-coeur, arc-de-triomphe, eiffel, vespa, plane-trail], stamp PARIS, country FRANCE.
+- Tokyo, Japan → palette rose, sky dusk, ground street, weather clear, elements: [mount-fuji, tokyo-tower, pagoda, cherry-blossoms, bicycle-leaning], stamp TOKYO, country JAPAN.
+- Sydney, Australia → palette cool, sky day, ground water, weather cloudy, elements: [hill, opera-house-sails, bridge-arch, sailboat, fishing-boat], stamp SYDNEY, country AUSTRALIA.
+- Rome, Italy → palette sand, sky day, ground street, weather clear, elements: [hill, fortress, dome, duomo-dome, vespa], stamp ROMA, country ITALIA.
+- Venice, Italy → palette sand, sky dawn, ground water, weather misty, elements: [siena-tower, dome, bridge-arch, gondola, gondola], stamp VENEZIA, country ITALIA.
+- Rio, Brazil → palette warm, sky dawn, ground water, weather clear, elements: [hill, christ-redeemer, palm-row, fishing-boat, palm], stamp RIO, country BRASIL.
+- Cairo, Egypt → palette sand, sky day, ground sand, weather clear, elements: [egyptian-pyramid, egyptian-pyramid, minaret, palm, hot-air-balloon], stamp CAIRO, country EGYPT.
+- Singapore → palette cool, sky dusk, ground water, weather clear, elements: [marina-bay-sands, skyscraper, bridge-arch, sailboat, palm], stamp SINGAPORE, country SINGAPORE.
+- New York → palette dusk, sky dusk, ground water, weather clear, elements: [manhattan-skyline, statue-of-liberty, brooklyn-bridge, sailboat, plane-trail], stamp NEW YORK, country USA.
+
+Voice for the stamp: ALL CAPS, native short form when there is one (PARIS, ROMA, VENEZIA, BRASIL, NIPPON, ESPAÑA). For country, use the spoken English form unless the native form is recognisably international (ITALIA, BRASIL, NIPPON OK; otherwise USA, FRANCE, JAPAN).`;
 
 export async function generateCityPostcard(
   rawCity: string,
@@ -298,7 +338,13 @@ function sanitizePostcard(raw: unknown, city: string): Postcard {
     : [];
 
   const stampRaw = typeof r.stamp === "string" ? r.stamp : city;
-  const stamp = stampRaw.slice(0, 16);
+  const stamp = stampRaw.slice(0, 14);
+
+  const countryRaw = typeof r.country === "string" ? r.country.trim() : "";
+  const countryOut = countryRaw ? countryRaw.slice(0, 14) : undefined;
+
+  const weatherRaw = typeof r.weather === "string" ? r.weather : "clear";
+  const weather: Postcard["weather"] = weatherRaw === "cloudy" || weatherRaw === "misty" ? weatherRaw : "clear";
 
   return {
     palette,
@@ -306,6 +352,8 @@ function sanitizePostcard(raw: unknown, city: string): Postcard {
     ground,
     elements: elements.length ? elements : fallback.elements,
     stamp,
+    country: countryOut,
+    weather,
   };
 }
 
