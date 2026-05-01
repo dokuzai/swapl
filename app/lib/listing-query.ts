@@ -4,8 +4,27 @@ import { computeMatchScore } from "@/lib/match/score";
 import type { ListingFilters } from "@/lib/listing-filters";
 
 const PAGE_SIZE = 12;
+const FEATURED_PER_CITY_CAP = 5;
 
-export type ListingWithScore = { listing: ListingDTO; matchScore: number | null };
+export type ListingWithScore = {
+  listing: ListingDTO;
+  matchScore: number | null;
+  band: "featured" | "verified" | "standard";
+};
+
+// Rank order: featured (within cap) > verified > standard. Within each band we
+// use the caller-requested sort.
+function rankBand(l: ListingDTO): ListingWithScore["band"] {
+  if (l.isFeatured) return "featured";
+  if (l.isVerified) return "verified";
+  return "standard";
+}
+
+const BAND_WEIGHT: Record<ListingWithScore["band"], number> = {
+  featured: 0,
+  verified: 1,
+  standard: 2,
+};
 
 export async function queryListings(
   filters: ListingFilters,
@@ -35,7 +54,6 @@ export async function queryListings(
       include: { user: { select: { name: true } } },
       take: PAGE_SIZE * 6,
     });
-    const total = pool.length;
     const scored: ListingWithScore[] = pool.map((l) => {
       const dto = toDTO(l);
       const score = computeMatchScore(
@@ -62,10 +80,16 @@ export async function queryListings(
           neighbourhood: dto.neighbourhood,
         }
       );
-      return { listing: dto, matchScore: score };
+      return { listing: dto, matchScore: score, band: rankBand(dto) };
     });
-    scored.sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0));
-    return { items: scored.slice(skip, skip + PAGE_SIZE), total, pageSize: PAGE_SIZE, page: filters.page };
+
+    const ranked = applyFeaturedCap(
+      scored.sort((a, b) => {
+        if (BAND_WEIGHT[a.band] !== BAND_WEIGHT[b.band]) return BAND_WEIGHT[a.band] - BAND_WEIGHT[b.band];
+        return (b.matchScore ?? 0) - (a.matchScore ?? 0);
+      })
+    );
+    return { items: ranked.slice(skip, skip + PAGE_SIZE), total: ranked.length, pageSize: PAGE_SIZE, page: filters.page };
   }
 
   const orderBy: Record<string, "asc" | "desc"> =
@@ -80,18 +104,47 @@ export async function queryListings(
       where,
       include: { user: { select: { name: true } } },
       orderBy,
-      take: PAGE_SIZE,
+      take: PAGE_SIZE * 4,
       skip,
     }),
     prisma.listing.count({ where }),
   ]);
 
+  // Apply the featured/verified band ordering on top of the primary sort.
+  const ranked = applyFeaturedCap(
+    rows.map((l) => {
+      const dto = toDTO(l);
+      return { listing: dto, matchScore: null, band: rankBand(dto) };
+    })
+  );
+
   return {
-    items: rows.map((l) => ({ listing: toDTO(l), matchScore: null })),
+    items: ranked.slice(0, PAGE_SIZE).map((r) => ({ listing: r.listing, matchScore: r.matchScore, band: r.band })),
     total,
     pageSize: PAGE_SIZE,
     page: filters.page,
   };
+}
+
+// Caps featured slots at FEATURED_PER_CITY_CAP per city; the rest demote to
+// verified or standard depending on their flags. After re-banding we
+// re-stable-sort so demoted entries fall into their correct slot.
+function applyFeaturedCap(items: ListingWithScore[]): ListingWithScore[] {
+  const featuredByCity = new Map<string, number>();
+  const adjusted: ListingWithScore[] = items.map((item) => {
+    if (item.band !== "featured") return item;
+    const used = featuredByCity.get(item.listing.city) ?? 0;
+    if (used >= FEATURED_PER_CITY_CAP) {
+      const fallback: ListingWithScore["band"] = item.listing.isVerified ? "verified" : "standard";
+      return { ...item, band: fallback };
+    }
+    featuredByCity.set(item.listing.city, used + 1);
+    return item;
+  });
+  return adjusted.sort((a, b) => {
+    if (BAND_WEIGHT[a.band] !== BAND_WEIGHT[b.band]) return BAND_WEIGHT[a.band] - BAND_WEIGHT[b.band];
+    return (b.matchScore ?? 0) - (a.matchScore ?? 0);
+  });
 }
 
 export async function getViewerListing(userId: string | undefined | null): Promise<ListingDTO | null> {

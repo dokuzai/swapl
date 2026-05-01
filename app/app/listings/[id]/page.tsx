@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/session";
 import { getViewerListing } from "@/lib/listing-query";
 import { computeMatchScore } from "@/lib/match/score";
 import ProposeSwapButton from "./propose-swap-button";
+import { VerifiedBadge, FeaturedRibbon } from "@/components/listing/badges";
 
 export const dynamic = "force-dynamic";
 
@@ -80,6 +81,7 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
             {matchScore !== null && (
               <span className="absolute top-4 left-4 match-badge text-sm py-1 px-3">{matchScore}% match</span>
             )}
+            {dto.isFeatured && <FeaturedRibbon />}
           </div>
 
           {dto.photos.length > 0 && (
@@ -99,7 +101,10 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
           )}
 
           <header className="mb-6">
-            <p className="kicker mb-3">{dto.country}</p>
+            <p className="kicker mb-3 inline-flex items-center gap-2">
+              <span>{dto.country}</span>
+              {dto.isVerified && <VerifiedBadge size={16} />}
+            </p>
             <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">
               {dto.title}
             </h1>

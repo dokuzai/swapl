@@ -50,6 +50,8 @@ export type ListingDTO = {
   postcard: Postcard | null;
   lat: number | null;
   lng: number | null;
+  isFeatured: boolean;
+  isVerified: boolean;
 };
 
 type ListingRecord = {
@@ -96,6 +98,9 @@ type ListingRecord = {
   postcard: string | null;
   lat: number | null;
   lng: number | null;
+  isFeatured?: boolean;
+  isVerified?: boolean;
+  featuredUntil?: Date | null;
 };
 
 export function toDTO(l: ListingRecord): ListingDTO {
@@ -143,6 +148,8 @@ export function toDTO(l: ListingRecord): ListingDTO {
     postcard: safeParsePostcard(l.postcard),
     lat: l.lat,
     lng: l.lng,
+    isFeatured: Boolean(l.isFeatured && l.featuredUntil && l.featuredUntil > new Date()),
+    isVerified: Boolean(l.isVerified),
   };
 }
 

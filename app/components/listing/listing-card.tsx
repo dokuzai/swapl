@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CityIllust, Pin } from "@/components/illustrations";
 import { type ListingDTO, formatDateRange, amenityChips } from "@/lib/listing-utils";
 import { propertyLabel } from "@/lib/types";
+import { VerifiedBadge, FeaturedRibbon } from "@/components/listing/badges";
 
 export function ListingCard({
   listing,
@@ -29,11 +30,13 @@ export function ListingCard({
         {typeof matchScore === "number" && (
           <span className="absolute top-3 left-3 match-badge">{matchScore}% match</span>
         )}
+        {listing.isFeatured && <FeaturedRibbon />}
       </div>
       <div className="p-5">
         <div className="flex items-baseline justify-between gap-3">
-          <div className="font-display text-lg tracking-[-0.01em] font-medium leading-tight">
-            {listing.neighbourhood} · {listing.city}
+          <div className="font-display text-lg tracking-[-0.01em] font-medium leading-tight inline-flex items-center gap-2">
+            <span>{listing.neighbourhood} · {listing.city}</span>
+            {listing.isVerified && <VerifiedBadge size={18} />}
           </div>
           <div className="text-xs whitespace-nowrap" style={{ color: "var(--navy-3)" }}>
             <Pin color="var(--pink)" size={10} style={{ display: "inline-block", verticalAlign: "middle", marginRight: 4 }} />
