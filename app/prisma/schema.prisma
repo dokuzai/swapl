@@ -47,6 +47,7 @@ model User {
   orderAddOns     OrderAddOn[]
   affiliateClicks AffiliateClick[]
   orgMemberships  OrganizationMember[]
+  savedSearches   SavedSearch[]
 }
 
 // ---------- LISTING ----------
@@ -454,6 +455,21 @@ model AffiliatePartner {
   metadata        String?
 
   clicks          AffiliateClick[]
+}
+
+// Plus/Pro members can save filter presets and get a daily email digest of
+// new matches.
+model SavedSearch {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  query           String   // serialized URLSearchParams from /listings
+  alertEnabled    Boolean  @default(true)
+  lastNotifiedAt  DateTime?
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model AffiliateClick {

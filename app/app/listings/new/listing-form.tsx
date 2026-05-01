@@ -693,8 +693,121 @@ function PhotosStep({ state, set }: { state: FormState; set: <K extends keyof Fo
 }
 
 function DescriptionStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [source, setSource] = useState<"ai" | "fallback" | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  function selectedAmenities(): string[] {
+    const out: string[] = [];
+    if (state.balcony) out.push("Balcony");
+    if (state.rooftop) out.push("Rooftop");
+    if (state.garden) out.push("Garden");
+    if (state.courtyard) out.push("Courtyard");
+    if (state.pool) out.push("Pool");
+    if (state.piano) out.push("Piano");
+    if (state.bikeIncluded) out.push("Bike included");
+    if (state.hasParking) out.push("Parking");
+    if (state.ac) out.push("Air conditioning");
+    if (state.dishwasher) out.push("Dishwasher");
+    if (state.washer) out.push("Washer");
+    if (state.dryer) out.push("Dryer");
+    return out;
+  }
+
+  async function generate() {
+    setErr(null);
+    setBusy(true);
+    setSource(null);
+    try {
+      const res = await fetch("/api/ai/listing-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          city: state.city,
+          neighbourhood: state.neighbourhood,
+          country: state.country,
+          propertyType: state.propertyType,
+          sizeSqm: state.sizeSqm,
+          sleeps: state.sleeps,
+          bedrooms: state.bedrooms,
+          bathrooms: state.bathrooms,
+          floor: state.floor,
+          hasElevator: state.hasElevator,
+          stepFreeAccess: state.stepFreeAccess,
+          petsAllowed: state.petsAllowed,
+          petTypes: (Object.keys(state.petTypes) as Array<keyof FormState["petTypes"]>).filter((k) => state.petTypes[k]),
+          wfhSetup: state.wfhSetup,
+          wfhDesks: state.wfhDesks,
+          amenities: selectedAmenities(),
+          availableFrom: state.availableFrom,
+          availableTo: state.availableTo,
+          hostNotes: notes || undefined,
+        }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j.error ?? "Couldn't draft");
+      set("title", j.title);
+      set("description", j.description);
+      setSource(j.source);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Couldn't draft");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const ready = state.city && state.neighbourhood && state.sizeSqm > 0;
+
   return (
     <div className="space-y-5">
+      <div
+        className="rounded-xl border p-5"
+        style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}
+      >
+        <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
+          Draft with AI · optional
+        </div>
+        <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>
+          We'll draft a title and description from the facts you've already entered, in swapl's voice. Add a few personal notes below if you want them woven in. You can edit anything after.
+        </p>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          rows={2}
+          placeholder="Anything specific to mention — quiet street, view at sunset, the bakery downstairs…"
+          className="w-full px-3 py-2.5 rounded-lg border outline-none mb-3"
+          style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
+        />
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={generate}
+            disabled={!ready || busy}
+            className="pill-primary"
+          >
+            {busy ? "Drafting…" : "Draft with AI"}
+          </button>
+          {source && (
+            <span
+              className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-0.5 rounded-full"
+              style={{
+                background: source === "ai" ? "var(--pink-light)" : "var(--cream-2)",
+                color: source === "ai" ? "var(--pink)" : "var(--navy-3)",
+              }}
+            >
+              {source === "ai" ? "AI draft" : "Template draft"}
+            </span>
+          )}
+          {err && <span className="text-sm" style={{ color: "#dc2626" }}>{err}</span>}
+        </div>
+        {!ready && (
+          <p className="mt-2 text-xs" style={{ color: "var(--navy-3)" }}>
+            Finish steps 1–2 first so the draft has somewhere to anchor.
+          </p>
+        )}
+      </div>
+
       <Field label="Title">
         <Input
           value={state.title}

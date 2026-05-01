@@ -32,6 +32,8 @@ export default function ProposeSwapButton({
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const [upgrade, setUpgrade] = useState<{ reason: string; upgradeTo: "plus" | "pro" } | null>(null);
+  const [draftBusy, setDraftBusy] = useState(false);
+  const [draftSource, setDraftSource] = useState<"ai" | "fallback" | null>(null);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -129,17 +131,64 @@ export default function ProposeSwapButton({
               </div>
 
               <label className="block text-sm">
-                <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-                  Message (optional)
-                </span>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
+                    Message (optional)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setDraftBusy(true);
+                      setDraftSource(null);
+                      setError(null);
+                      try {
+                        const res = await fetch("/api/ai/proposal-message", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            proposerListingId: proposerListing.id,
+                            targetListingId: targetListing.id,
+                            dateFrom,
+                            dateTo,
+                            hostNotes: message || undefined,
+                          }),
+                        });
+                        const j = await res.json();
+                        if (!res.ok) throw new Error(j.error ?? "Couldn't draft");
+                        setMessage(j.message);
+                        setDraftSource(j.source);
+                      } catch (e) {
+                        setError(e instanceof Error ? e.message : "Couldn't draft");
+                      } finally {
+                        setDraftBusy(false);
+                      }
+                    }}
+                    disabled={draftBusy}
+                    className="font-mono text-[10px] uppercase tracking-[.08em] underline"
+                    style={{ color: "var(--pink)" }}
+                  >
+                    {draftBusy ? "Drafting…" : "✦ Draft with AI"}
+                  </button>
+                </div>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  rows={4}
-                  placeholder="Who's coming, why this place, anything they should know."
+                  rows={5}
+                  placeholder="Who's coming, why this place, anything they should know. Or tap 'Draft with AI' above to start."
                   className="w-full px-3 py-2.5 rounded-lg border outline-none resize-none"
                   style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
                 />
+                {draftSource && (
+                  <span
+                    className="mt-1 inline-block font-mono text-[10px] uppercase tracking-[.08em] px-2 py-0.5 rounded-full"
+                    style={{
+                      background: draftSource === "ai" ? "var(--pink-light)" : "var(--cream-2)",
+                      color: draftSource === "ai" ? "var(--pink)" : "var(--navy-3)",
+                    }}
+                  >
+                    {draftSource === "ai" ? "AI draft — feel free to edit" : "Template draft — feel free to edit"}
+                  </span>
+                )}
               </label>
 
               {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}

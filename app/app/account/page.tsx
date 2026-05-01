@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { getSession } from "@/lib/auth/session";
+import Link from "next/link";
 import { AISettings } from "@/components/account/ai-settings";
 
 export const dynamic = "force-dynamic";
@@ -67,6 +68,15 @@ export default async function AccountPage() {
           </section>
 
           <AISettings />
+
+          <section className="surface-card p-6 mb-6">
+            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Saved searches</h2>
+            <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
+              Pin a filter combination from /listings and we'll email you a daily digest of new
+              homes that match. Plus and Pro members can keep up to 20 saved searches.
+            </p>
+            <Link href="/account/saved-searches" className="pill-ghost">Manage saved searches</Link>
+          </section>
 
           <section className="surface-card p-6 mb-6">
             <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Notifications</h2>
