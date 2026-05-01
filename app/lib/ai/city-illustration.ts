@@ -43,6 +43,9 @@ export type CityArtDecision = {
   motif: CityMotif[];
   postcard: Postcard;
   source: "ai" | "fallback" | "preset" | "cache";
+  // Filled when the AI path was attempted but degraded to fallback. Surfaced
+  // to the API only when ?debug=1 is set + caller is admin.
+  aiError?: string;
 };
 
 function presetDecision(city: string): CityArtDecision | null {
@@ -292,8 +295,9 @@ export async function generateCityPostcard(
       };
       console.log(`[ai:postcard] ${city}: source=${decision.source}, elements=${postcard.elements.length}`);
     } catch (err) {
-      console.error(`[ai:postcard] ${city} failed:`, err instanceof Error ? err.message : err);
-      decision = deterministic(city, country);
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`[ai:postcard] ${city} failed:`, msg);
+      decision = { ...deterministic(city, country), aiError: msg };
     }
   }
 

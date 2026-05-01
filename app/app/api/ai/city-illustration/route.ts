@@ -35,8 +35,17 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { aiProvider: true, aiModel: true, aiApiKey: true },
+    select: { aiProvider: true, aiModel: true, aiApiKey: true, role: true },
   });
+
+  // Admins can bypass the postcard cache by appending ?debug=1 — useful
+  // while iterating on the AI prompt or when we suspect a stale fallback
+  // entry was cached.
+  const url = new URL(req.url);
+  const debug = url.searchParams.get("debug") === "1";
+  if (debug && user?.role === "swapl_admin") {
+    await prisma.cityArt.deleteMany({ where: { city: known.name } });
+  }
 
   // Always pass the canonical city name + country so the cache key is stable
   // regardless of which alias the user typed.
@@ -46,5 +55,8 @@ export async function POST(req: Request) {
       : undefined,
   });
 
-  return NextResponse.json(decision);
+  // Only admins with ?debug=1 see the AI error; everyone else gets a
+  // clean response.
+  const shouldExpose = debug && user?.role === "swapl_admin";
+  return NextResponse.json(shouldExpose ? decision : { ...decision, aiError: undefined });
 }
