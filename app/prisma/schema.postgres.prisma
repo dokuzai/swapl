@@ -29,11 +29,24 @@ model User {
   aiModel    String?
   aiApiKey   String?
 
+  // ---- Roles + Monetization v1 ----
+  role                       String   @default("member") // "member" | "swapl_admin"
+  proposalsThisMonthCount    Int      @default(0)
+  proposalsCounterResetAt    DateTime @default(now())
+  hideSponsoredContent       Boolean  @default(false)
+
   listings        Listing[]
   proposalsSent   SwapProposal[]  @relation("ProposalsSent")
   betaSignup      BetaSignup?
   reportsFiled    Report[]        @relation("ReportsFiled")
   reportsReceived Report[]        @relation("ReportsReceived")
+
+  subscription    Subscription?
+  invoices        BillingInvoice[]
+  stripeCustomer  StripeCustomer?
+  orderAddOns     OrderAddOn[]
+  affiliateClicks AffiliateClick[]
+  orgMemberships  OrganizationMember[]
 }
 
 // ---------- LISTING ----------
@@ -97,6 +110,16 @@ model Listing {
   motifHint      String?  // legacy: comma-separated motif tags
   postcard       String?  // JSON-encoded Postcard composition (preferred over motifHint)
 
+  // Trust + visibility (Feature 4)
+  verificationStatus       String   @default("none")    // none | pending | approved | rejected
+  verificationVideoUrl     String?
+  verificationSubmittedAt  DateTime?
+  verificationReviewedAt   DateTime?
+  verificationReviewerId   String?
+  isVerified               Boolean  @default(false)
+  isFeatured               Boolean  @default(false)
+  featuredUntil            DateTime?
+
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -106,10 +129,14 @@ model Listing {
   agreementsAsListing1 SwapAgreement[] @relation("AgreementListing1")
   agreementsAsListing2 SwapAgreement[] @relation("AgreementListing2")
   reports              Report[]
+  verificationPayment  ListingVerificationPayment?
+  featuredPurchases    ListingFeaturedPurchase[]
 
   @@index([city])
   @@index([userId])
   @@index([isActive])
+  @@index([isFeatured, featuredUntil])
+  @@index([isVerified])
 }
 
 // ---------- SWAP PROPOSAL ----------
@@ -178,17 +205,26 @@ model SwapAgreement {
   status      String       @default("ACTIVE")
 
   insurancePolicy InsurancePolicy?
+  orderAddOns     OrderAddOn[]
 
   createdAt   DateTime     @default(now())
 }
 
 model InsurancePolicy {
-  id             String        @id @default(cuid())
-  agreementId    String        @unique
-  agreement      SwapAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
-  provider       String        @default("swapl-cover")
-  policyNumber   String
-  coverageAmount Int           @default(150000)
+  id                 String        @id @default(cuid())
+  agreementId        String        @unique
+  agreement          SwapAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  provider           String        @default("swapl-cover")
+  policyNumber       String
+  coverageAmount     Int           @default(150000)
+
+  // Feature 2 — partnership economics + lifecycle
+  status             String        @default("active")  // pending | active | cancelled | claimed
+  premiumCents       Int           @default(0)
+  platformShareCents Int           @default(0)
+  documentsUrl       String?
+  externalId         String?
+
   expiresAt      DateTime
   createdAt      DateTime      @default(now())
 }
@@ -224,4 +260,215 @@ model Report {
   reason       String
   detail       String?
   createdAt    DateTime @default(now())
+}
+
+// =====================================================================
+// Monetization v1 — Plans, Subscriptions, Add-ons, Affiliates, Corporate
+// =====================================================================
+
+// Feature 1 — Plan definitions (free | plus | pro). Seeded; not edited at runtime.
+model Plan {
+  id                 String  @id                       // "free" | "plus" | "pro"
+  label              String
+  monthlyCents       Int     @default(0)
+  yearlyCents        Int     @default(0)
+  stripePriceMonthly String?
+  stripePriceYearly  String?
+
+  // Mirrored in lib/billing/limits.ts so server checks stay statically typed.
+  maxListings        Int     @default(0)               // 0 means unlimited
+  maxProposalsMonth  Int     @default(0)               // 0 means unlimited
+  prioritySearch     String  @default("standard")      // standard | priority | top
+  fullFilters        Boolean @default(false)
+  calendarSync       Boolean @default(false)
+  matchBreakdown     Boolean @default(false)
+  listingAnalytics   Boolean @default(false)
+  multiHomeTeams     Boolean @default(false)
+
+  subscriptions      Subscription[]
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  planId               String                                  // FK to Plan.id
+  stripeCustomerId     String
+  stripeSubscriptionId String?  @unique
+  status               String                                  // active | past_due | canceled | trialing | unpaid | incomplete
+  cancelAtPeriodEnd    Boolean  @default(false)
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  source               String   @default("stripe")             // stripe | grandfather | dev_seed
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user                 User     @relation(fields: [userId], references: [id])
+  plan                 Plan     @relation(fields: [planId], references: [id])
+
+  @@index([planId, status])
+}
+
+model StripeCustomer {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  stripeId    String   @unique
+  email       String
+  taxId       String?
+  countryCode String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model BillingEvent {
+  id        String   @id @default(cuid())
+  stripeId  String   @unique
+  type      String
+  payload   String   // raw JSON of the Stripe event
+  createdAt DateTime @default(now())
+}
+
+model BillingInvoice {
+  id              String   @id @default(cuid())
+  userId          String
+  stripeInvoiceId String   @unique
+  amountCents     Int
+  currency        String   @default("EUR")
+  status          String                                       // paid | open | uncollectible | void
+  pdfUrl          String?
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+// Feature 3 — Concierge add-ons
+model AddOn {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  priceCents  Int
+  currency    String   @default("EUR")
+  type        String                                            // flat_fee | affiliate | included_in_plan
+  provider    String                                            // keynest | airalo | skyscanner | swapl | ...
+  category    String                                            // cleaning | lockbox | transfer | esim | guide
+  isActive    Boolean  @default(true)
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  orders      OrderAddOn[]
+}
+
+model OrderAddOn {
+  id                    String   @id @default(cuid())
+  userId                String
+  agreementId           String
+  addOnId               String
+  status                String   @default("paid")              // paid | refunded | failed | clicked
+  amountCents           Int
+  stripePaymentIntentId String?
+  notes                 String?
+  createdAt             DateTime @default(now())
+
+  user      User          @relation(fields: [userId], references: [id])
+  agreement SwapAgreement @relation(fields: [agreementId], references: [id])
+  addOn     AddOn         @relation(fields: [addOnId], references: [id])
+
+  @@index([userId])
+  @@index([agreementId])
+}
+
+// Feature 4 — Verified Listing payment + Featured Placement purchases
+model ListingVerificationPayment {
+  id                    String   @id @default(cuid())
+  listingId             String   @unique
+  amountCents           Int
+  stripePaymentIntentId String   @unique
+  refunded              Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  listing               Listing  @relation(fields: [listingId], references: [id])
+}
+
+model ListingFeaturedPurchase {
+  id                    String   @id @default(cuid())
+  listingId             String
+  durationDays          Int                                     // 14 or 30
+  amountCents           Int
+  startsAt              DateTime
+  endsAt                DateTime
+  stripePaymentIntentId String   @unique
+  createdAt             DateTime @default(now())
+  listing               Listing  @relation(fields: [listingId], references: [id])
+
+  @@index([listingId, endsAt])
+}
+
+// Feature 5 — Corporate B2B
+model Organization {
+  id                   String   @id @default(cuid())
+  name                 String
+  billingEmail         String
+  stripeCustomerId     String?
+  stripeSubscriptionId String?  @unique
+  seatCount            Int      @default(5)
+  planStatus           String   @default("active")              // active | past_due | canceled
+  createdAt            DateTime @default(now())
+  members              OrganizationMember[]
+}
+
+model OrganizationMember {
+  id        String   @id @default(cuid())
+  orgId     String
+  userId    String
+  role      String   @default("member")                         // admin | member
+  invitedAt DateTime @default(now())
+  joinedAt  DateTime?
+
+  org  Organization @relation(fields: [orgId], references: [id])
+  user User         @relation(fields: [userId], references: [id])
+
+  @@unique([orgId, userId])
+  @@index([userId])
+}
+
+model CorporateLead {
+  id            String   @id @default(cuid())
+  companyName   String
+  contactName   String
+  email         String
+  phone         String?
+  employeeCount Int?
+  useCase       String?
+  status        String   @default("new")                        // new | contacted | won | lost
+  createdAt     DateTime @default(now())
+}
+
+// Feature 6 — Affiliate revenue
+model AffiliatePartner {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  category        String                                        // flights | esim | activities | insurance
+  baseUrl         String
+  trackingParam   String                                        // e.g. "aff_id"
+  commissionModel String                                        // cpa | rev_share | percent_booking
+  isActive        Boolean  @default(true)
+  metadata        String?
+
+  clicks          AffiliateClick[]
+}
+
+model AffiliateClick {
+  id              String   @id @default(cuid())
+  userId          String?
+  agreementId     String?
+  partnerSlug     String
+  partnerId       String?
+  destinationCity String?
+  utmCampaign     String?
+  clickedAt       DateTime @default(now())
+
+  user    User?             @relation(fields: [userId], references: [id])
+  partner AffiliatePartner? @relation(fields: [partnerId], references: [id])
+
+  @@index([partnerSlug])
+  @@index([destinationCity])
 }

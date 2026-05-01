@@ -4,6 +4,7 @@ import { swapProposalSchema } from "@/lib/validators";
 import { getSession } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { ensureCanCreateProposal, bumpProposalCounter, PlanLimitError } from "@/lib/billing/limits";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -13,11 +14,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   }
 
-  // 10 proposals / day per user.
+  // Plan-aware monthly cap (R6): Free = 3/mo, Plus/Pro = unlimited.
+  try {
+    await ensureCanCreateProposal(session.userId);
+  } catch (err) {
+    if (err instanceof PlanLimitError) {
+      return NextResponse.json(
+        { error: err.reason, upgradeTo: err.upgradeTo, currentPlan: err.currentPlan },
+        { status: 402 }
+      );
+    }
+    throw err;
+  }
+
+  // Anti-burst safety net for every plan tier (kept from v0).
   const rl = checkRateLimit(`proposals:${session.userId}`, 10, DAY_MS);
   if (!rl.ok) {
     return NextResponse.json(
-      { error: "Daily proposal limit reached. Try again tomorrow." },
+      { error: "You're sending proposals faster than we can deliver. Try again later." },
       { status: 429 }
     );
   }
@@ -56,6 +70,10 @@ export async function POST(req: Request) {
       status: "PENDING",
     },
   });
+
+  // Bump the per-user counter only after a successful create so failed
+  // validation paths don't burn quota.
+  await bumpProposalCounter(session.userId);
 
   // Notify target
   if (target.user?.email) {

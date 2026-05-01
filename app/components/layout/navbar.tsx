@@ -5,8 +5,8 @@ import { getSession } from "@/lib/auth/session";
 const NAV_LINKS = [
   { href: "/how-it-works", label: "How it works" },
   { href: "/listings", label: "Homes" },
-  { href: "/listings?sort=match", label: "Matching" },
   { href: "/insurance", label: "Insurance" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 export async function Navbar() {

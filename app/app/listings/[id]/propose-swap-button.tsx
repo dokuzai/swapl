@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { ListingDTO } from "@/lib/listing-utils";
 import { CityIllust, SwapArrows } from "@/components/illustrations";
+import { UpgradeRequiredModal } from "@/components/billing/upgrade-required-modal";
 
 export default function ProposeSwapButton({
   proposerListing,
@@ -30,10 +31,12 @@ export default function ProposeSwapButton({
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  const [upgrade, setUpgrade] = useState<{ reason: string; upgradeTo: "plus" | "pro" } | null>(null);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setUpgrade(null);
     start(async () => {
       const res = await fetch("/api/proposals", {
         method: "POST",
@@ -50,9 +53,14 @@ export default function ProposeSwapButton({
         const j = (await res.json()) as { id: string };
         router.push(`/swaps/${j.id}`);
         router.refresh();
+        return;
+      }
+      const j = await res.json().catch(() => ({} as Record<string, unknown>));
+      if (res.status === 402 && (j.upgradeTo === "plus" || j.upgradeTo === "pro")) {
+        setOpen(false);
+        setUpgrade({ reason: String(j.error ?? "Plan limit reached"), upgradeTo: j.upgradeTo });
       } else {
-        const j = await res.json().catch(() => ({}));
-        setError(j.error ?? "Could not send proposal.");
+        setError(String(j.error ?? "Could not send proposal."));
       }
     });
   }
@@ -63,6 +71,13 @@ export default function ProposeSwapButton({
         <SwapArrows color="currentColor" size={16} />
         Propose swap
       </button>
+
+      <UpgradeRequiredModal
+        open={Boolean(upgrade)}
+        onClose={() => setUpgrade(null)}
+        reason={upgrade?.reason ?? ""}
+        upgradeTo={upgrade?.upgradeTo ?? "plus"}
+      />
 
       {open && (
         <div className="fixed inset-0 z-[100] grid place-items-center p-4" style={{ background: "rgba(26,31,60,.5)" }}>

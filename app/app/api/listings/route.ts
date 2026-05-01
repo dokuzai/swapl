@@ -4,10 +4,23 @@ import { listingCreateSchema } from "@/lib/validators";
 import { getSession } from "@/lib/auth/session";
 import { generateCityArt } from "@/lib/ai/city-illustration";
 import { coordForCity, jitterCoord } from "@/lib/city-coords";
+import { ensureCanCreateListing, PlanLimitError } from "@/lib/billing/limits";
 
 export async function POST(req: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+
+  try {
+    await ensureCanCreateListing(session.userId);
+  } catch (err) {
+    if (err instanceof PlanLimitError) {
+      return NextResponse.json(
+        { error: err.reason, upgradeTo: err.upgradeTo, currentPlan: err.currentPlan },
+        { status: 402 }
+      );
+    }
+    throw err;
+  }
 
   const body = await req.json().catch(() => null);
   const parsed = listingCreateSchema.safeParse(body);

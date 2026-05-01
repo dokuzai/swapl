@@ -708,8 +708,41 @@ const SEEDS: Seed[] = [
   },
 ];
 
+// PLAN_LIMITS rows seeded into Stripe-agnostic Plan table. Mirrors
+// lib/billing/limits.ts; ids must stay stable.
+const PLANS = [
+  {
+    id: "free", label: "Free", monthlyCents: 0, yearlyCents: 0,
+    maxListings: 1, maxProposalsMonth: 3, prioritySearch: "standard",
+    fullFilters: false, calendarSync: false, matchBreakdown: false,
+    listingAnalytics: false, multiHomeTeams: false,
+  },
+  {
+    id: "plus", label: "swapl Plus", monthlyCents: 1200, yearlyCents: 9900,
+    maxListings: 3, maxProposalsMonth: 0, prioritySearch: "priority",
+    fullFilters: true, calendarSync: true, matchBreakdown: true,
+    listingAnalytics: false, multiHomeTeams: false,
+  },
+  {
+    id: "pro", label: "swapl Pro", monthlyCents: 2900, yearlyCents: 24900,
+    maxListings: 0, maxProposalsMonth: 0, prioritySearch: "top",
+    fullFilters: true, calendarSync: true, matchBreakdown: true,
+    listingAnalytics: true, multiHomeTeams: true,
+  },
+] as const;
+
 async function main() {
   console.log("Resetting database…");
+  await prisma.affiliateClick.deleteMany();
+  await prisma.orderAddOn.deleteMany();
+  await prisma.listingFeaturedPurchase.deleteMany();
+  await prisma.listingVerificationPayment.deleteMany();
+  await prisma.billingInvoice.deleteMany();
+  await prisma.billingEvent.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.stripeCustomer.deleteMany();
+  await prisma.organizationMember.deleteMany();
+  await prisma.organization.deleteMany();
   await prisma.report.deleteMany();
   await prisma.swapMessage.deleteMany();
   await prisma.insurancePolicy.deleteMany();
@@ -718,6 +751,33 @@ async function main() {
   await prisma.listing.deleteMany();
   await prisma.betaSignup.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.plan.deleteMany();
+  await prisma.addOn.deleteMany();
+  await prisma.affiliatePartner.deleteMany();
+
+  console.log("Seeding plans…");
+  for (const p of PLANS) await prisma.plan.create({ data: { ...p } });
+
+  console.log("Seeding affiliate partners…");
+  await prisma.affiliatePartner.createMany({
+    data: [
+      { slug: "skyscanner",   name: "Skyscanner",   category: "flights",   baseUrl: "https://www.skyscanner.com/transport/flights/",       trackingParam: "associateid", commissionModel: "cpa" },
+      { slug: "airalo",       name: "Airalo",       category: "esim",      baseUrl: "https://www.airalo.com/",                              trackingParam: "ref",         commissionModel: "rev_share" },
+      { slug: "getyourguide", name: "GetYourGuide", category: "activities",baseUrl: "https://www.getyourguide.com/s/",                      trackingParam: "partner_id",  commissionModel: "percent_booking" },
+      { slug: "battleface",   name: "Battleface",   category: "insurance", baseUrl: "https://www.battleface.com/en-gb/",                    trackingParam: "ref",         commissionModel: "percent_booking" },
+    ],
+  });
+
+  console.log("Seeding add-ons…");
+  await prisma.addOn.createMany({
+    data: [
+      { slug: "cleaning-mid",  name: "Pre-stay cleaning",      description: "Mid-size home, 90-minute professional clean before arrival.", priceCents: 6900, type: "flat_fee",        provider: "swapl",       category: "cleaning" },
+      { slug: "lockbox",       name: "Smart key lockbox",      description: "Pick up keys at a KeyNest store nearby — no in-person handover.", priceCents: 1900, type: "flat_fee",  provider: "keynest",     category: "lockbox" },
+      { slug: "transfer",      name: "Airport transfer",       description: "Pre-book a private transfer for your destination.",            priceCents: 0,    type: "affiliate",       provider: "getyourguide",category: "transfer" },
+      { slug: "esim",          name: "Travel eSIM",            description: "Stay connected the moment you land.",                           priceCents: 0,    type: "affiliate",       provider: "airalo",      category: "esim" },
+      { slug: "city-guide",    name: "Local city guide",       description: "Curated, neighbourhood-by-neighbourhood guide for your stay.",  priceCents: 900,  type: "flat_fee",        provider: "swapl",       category: "guide" },
+    ],
+  });
 
   console.log("Creating users + listings…");
   const passwordHash = await bcrypt.hash("swapl-demo", 10);
@@ -875,8 +935,50 @@ async function main() {
   await prisma.betaSignup.create({ data: { email: "future-host@demo.swapl" } });
   await prisma.betaSignup.create({ data: { email: "another@demo.swapl" } });
 
-  console.log(`✅ Seeded ${SEEDS.length} listings + 5 proposals (1 active swap agreement) + 2 beta signups.`);
-  console.log(`   Login with any seed email + password "${PASSWORD}" (e.g. asli@demo.swapl).`);
+  console.log("Seeding admin + demo subscriptions…");
+  // Owner / first admin. Same shared demo password so it's easy to log in
+  // during development; rotate this in production immediately.
+  await prisma.user.upsert({
+    where: { email: "gert@dokuz.ai" },
+    create: {
+      email: "gert@dokuz.ai",
+      name: "Gert (admin)",
+      passwordHash,
+      verified: true,
+      role: "swapl_admin",
+    },
+    update: { role: "swapl_admin" },
+  });
+
+  // Two demo users on paid plans so gates can be tested without Stripe.
+  // source = "dev_seed" makes it obvious in the DB and easy to wipe.
+  const now = new Date();
+  const inOneMonth = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const asliId = userIds["asli@demo.swapl"];
+  const maartjeId = userIds["maartje@demo.swapl"];
+  if (asliId) {
+    await prisma.subscription.create({
+      data: {
+        userId: asliId, planId: "plus", status: "active",
+        stripeCustomerId: "cus_dev_seed_asli",
+        currentPeriodStart: now, currentPeriodEnd: inOneMonth,
+        source: "dev_seed",
+      },
+    });
+  }
+  if (maartjeId) {
+    await prisma.subscription.create({
+      data: {
+        userId: maartjeId, planId: "pro", status: "active",
+        stripeCustomerId: "cus_dev_seed_maartje",
+        currentPeriodStart: now, currentPeriodEnd: inOneMonth,
+        source: "dev_seed",
+      },
+    });
+  }
+
+  console.log(`✅ Seeded ${SEEDS.length} listings + 5 proposals (1 active swap agreement) + 2 beta signups + 3 plans + admin + 2 dev subscriptions.`);
+  console.log(`   Login with any seed email + password "${PASSWORD}" (e.g. asli@demo.swapl, maartje@demo.swapl, gert@dokuz.ai).`);
 }
 
 main()
