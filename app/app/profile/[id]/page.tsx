@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ListingCard } from "@/components/listing/listing-card";
 import { toDTO } from "@/lib/listing-utils";
+import { parseInterests, INTEREST_CATEGORIES } from "@/lib/interests";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,14 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
   });
   if (!user) notFound();
 
+  const interests = parseInterests(user.interests);
+  const grouped = new Map<string, typeof interests>();
+  for (const t of interests) {
+    const arr = grouped.get(t.category) ?? [];
+    arr.push(t);
+    grouped.set(t.category, arr);
+  }
+
   return (
     <>
       <Navbar />
@@ -33,6 +42,11 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
               <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">
                 {user.name ?? user.email.split("@")[0]}
               </h1>
+              {user.bioVibe && (
+                <p className="mt-3 max-w-2xl font-display italic text-[20px]" style={{ color: "var(--navy)" }}>
+                  &ldquo;{user.bioVibe}&rdquo;
+                </p>
+              )}
               {user.bio && (
                 <p className="mt-3 max-w-2xl text-[16px]" style={{ color: "var(--navy-2)" }}>
                   {user.bio}
@@ -45,6 +59,32 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
               </span>
             )}
           </header>
+
+          {interests.length > 0 && (
+            <section className="mb-10">
+              <p className="kicker mb-3">Interests</p>
+              <div className="surface-card p-6 space-y-4">
+                {INTEREST_CATEGORIES.map((cat) => {
+                  const items = grouped.get(cat.id);
+                  if (!items?.length) return null;
+                  return (
+                    <div key={cat.id}>
+                      <p className="font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
+                        {cat.label}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {items.map((t) => (
+                          <span key={t.slug} className="tag-chip" style={{ background: "var(--pink-light)", color: "var(--navy)" }}>
+                            {t.label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
           <section>
             <h2 className="font-display text-2xl tracking-[-0.01em] mb-4">

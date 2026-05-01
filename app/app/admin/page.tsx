@@ -1,9 +1,12 @@
 import { prisma } from "@/lib/db";
+import { requireAdminPage } from "@/lib/auth/abilities";
+import { EmailTestButton } from "@/components/admin/email-test-button";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Admin · swapl" };
 
 export default async function AdminOverview() {
+  const me = await requireAdminPage();
   const [users, listings, agreements, policies, beta, freeSubs, plusSubs, proSubs, leads] = await Promise.all([
     prisma.user.count(),
     prisma.listing.count({ where: { isActive: true } }),
@@ -46,6 +49,15 @@ export default async function AdminOverview() {
           </div>
         ))}
       </div>
+
+      <section className="mt-10">
+        <p className="kicker mb-3">Email transport check</p>
+        <EmailTestButton defaultEmail={me.email} />
+        <p className="mt-2 text-xs" style={{ color: "var(--navy-3)" }}>
+          Sends a real email via Resend if RESEND_API_KEY is configured; otherwise logs to the
+          server console. The reply tells you which path ran.
+        </p>
+      </section>
     </>
   );
 }

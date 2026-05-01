@@ -9,13 +9,15 @@ export function Hero() {
           <div>
             <span className="kicker mb-5 inline-flex items-center gap-2">
               <span className="block w-6 h-px bg-navy-3" style={{ background: "var(--navy-3)" }} />
-              Home swap · No money, just keys
+              Collecting listings now · Launching September 2026
             </span>
             <h1 className="font-display font-medium leading-[0.98] tracking-[-0.035em]" style={{ fontSize: "clamp(44px, 7vw, 96px)" }}>
               Trade your home<br />for <span className="h-em">someone else&rsquo;s</span>.
             </h1>
             <p className="mt-7 text-[clamp(16px,1.4vw,20px)] text-[color-mix(in_oklab,var(--navy)_75%,transparent)] max-w-[52ch] leading-[1.5]">
-              List your place with ruthless accuracy. Browse thousands of homes from Istanbul to Amsterdam, Tokyo to CDMX. When you find a match, you swap — keys for keys, no cash changing hands. Every stay is insured, end to end.
+              We&rsquo;re collecting listings ahead of the September 2026 launch. List your place with
+              ruthless accuracy now and you&rsquo;ll be among the first homes that show up when swaps go live —
+              keys for keys, no cash changing hands, every stay insured end to end.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link href="/listings/new" className="pill-primary">

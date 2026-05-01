@@ -38,13 +38,13 @@ export const templates = {
   betaWelcome: (email: string) =>
     build({
       to: email,
-      subject: "You're on the swapl beta list",
-      preview: "Welcome to swapl — keys for keys, no money.",
-      heading: "Welcome to swapl.",
-      intro: "You'll be one of the first to swap homes when the beta opens. We'll send your invite link directly here — usually within a week of signup.",
-      ctaLabel: "Browse homes",
-      ctaHref: `${APP_URL}/listings`,
-      text: "Welcome to swapl. You'll be one of the first to swap homes when the beta opens. We'll send your invite link directly here.",
+      subject: "You're on the swapl list — see you in September",
+      preview: "We're collecting listings — swaps go live September 2026.",
+      heading: "You're on the list.",
+      intro: "We're collecting listings now and launching swaps in September 2026. List your home before then and you'll surface above standard results when matches start.",
+      ctaLabel: "List your home",
+      ctaHref: `${APP_URL}/listings/new`,
+      text: "You're on the swapl list. We're collecting listings ahead of the September 2026 launch. List your home now and you'll surface first when swaps go live.",
     }),
 
   proposalReceived: (toEmail: string, proposerName: string, targetCity: string) =>

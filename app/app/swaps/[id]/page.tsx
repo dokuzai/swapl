@@ -8,6 +8,7 @@ import { formatDateRange } from "@/lib/listing-utils";
 import SwapActions from "./swap-actions";
 import { AffiliateLink } from "@/components/affiliate/affiliate-link";
 import { ConciergeSection, type AddOn as ConciergeAddOn } from "@/components/concierge/concierge-section";
+import { PersonalisedSuggestions } from "@/components/affiliate/personalised-suggestions";
 import { getEffectivePlan } from "@/lib/billing/limits";
 
 export const dynamic = "force-dynamic";
@@ -164,8 +165,18 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
                 cityGuideIncluded={cityGuideIncluded}
               />
 
+              {/* Interest-aware AI picks. Falls back to interest-keyed
+                  templates when AI is unavailable, both with the same
+                  card UI. Click attribution still flows through
+                  /api/affiliate/[partnerSlug]. */}
+              <PersonalisedSuggestions
+                agreementId={proposal.agreement.id}
+                destinationCity={theirListing.city}
+                destinationCountry={theirListing.country}
+              />
+
               <section className="mt-10">
-                <p className="kicker mb-3">Plan your trip</p>
+                <p className="kicker mb-3">Plan the basics</p>
                 <h2 className="font-display text-2xl tracking-[-0.01em] mb-4">Travel partners for {theirListing.city}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <AffiliateLink partner="skyscanner" city={theirListing.city} agreementId={proposal.agreement.id} campaign="post_swap_flights" variant="card">

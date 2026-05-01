@@ -52,7 +52,7 @@ export async function Navbar() {
                 Sign in
               </Link>
               <Link href="/register" className="pill-primary">
-                Join the beta
+                List your home
               </Link>
             </>
           )}

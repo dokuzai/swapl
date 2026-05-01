@@ -77,16 +77,12 @@ export async function draftProposalMessage(facts: ProposalFacts, opts: ResolveOp
   }
 }
 
-function sanitise(raw: unknown, facts: ProposalFacts): string | null {
+function sanitise(raw: unknown, _facts: ProposalFacts): string | null {
+  // Lenient by design: the user can edit before sending. We only reject
+  // empty / runaway-length output.
   if (typeof raw !== "string") return null;
   const trimmed = raw.trim();
-  if (trimmed.length < 30 || trimmed.length > 1500) return null;
-  // Sanity: must reference the destination city or neighbourhood.
-  const lower = trimmed.toLowerCase();
-  if (!lower.includes(facts.targetListing.cityTo.toLowerCase()) &&
-      !lower.includes(facts.targetListing.neighbourhoodTo.toLowerCase())) {
-    return null;
-  }
+  if (trimmed.length < 20 || trimmed.length > 1500) return null;
   return trimmed;
 }
 

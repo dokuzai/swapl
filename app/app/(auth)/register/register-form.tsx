@@ -32,9 +32,9 @@ export default function RegisterForm() {
 
   return (
     <div className="w-full max-w-md surface-card p-8">
-      <h1 className="font-display text-3xl tracking-[-0.02em] mb-2">Join the beta.</h1>
+      <h1 className="font-display text-3xl tracking-[-0.02em] mb-2">List your home before launch.</h1>
       <p className="text-sm mb-6" style={{ color: "var(--navy-2)" }}>
-        It takes 30 seconds. Your home stays private until you publish a listing.
+        We&rsquo;re collecting listings ahead of the September 2026 launch. Sign up takes 30 seconds and your listing surfaces above standard results once swaps go live.
       </p>
 
       <form onSubmit={submit} className="flex flex-col gap-4">

@@ -35,6 +35,11 @@ model User {
   proposalsCounterResetAt    DateTime @default(now())
   hideSponsoredContent       Boolean  @default(false)
 
+  // Social profile: interests are comma-separated slugs from
+  // lib/interests.ts INTEREST_CATALOG (SQLite-friendly TEXT JSON array).
+  interests                  String   @default("[]")
+  bioVibe                    String?  // optional one-line "vibe" shown on /profile
+
   listings        Listing[]
   proposalsSent   SwapProposal[]  @relation("ProposalsSent")
   betaSignup      BetaSignup?

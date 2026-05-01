@@ -9,6 +9,7 @@ export type LinkContext = {
   dateFrom?: string;
   dateTo?: string;
   campaign?: string;
+  searchQuery?: string;
 };
 
 const AFF_IDS: Record<LinkContext["partnerSlug"], string | undefined> = {
@@ -45,8 +46,10 @@ export function buildAffiliateUrl(ctx: LinkContext): string {
       return withUtm(url, ctx);
     }
     case "getyourguide": {
-      const path = ctx.destinationCity ? `${slug(ctx.destinationCity)}-l` : "";
-      const url = new URL(`https://www.getyourguide.com/${path}`);
+      // Search-aware link when we have a query (e.g. "Vinyl shops in Tokyo").
+      const url = ctx.searchQuery
+        ? new URL(`https://www.getyourguide.com/s/?q=${encodeURIComponent(ctx.searchQuery)}`)
+        : new URL(`https://www.getyourguide.com/${ctx.destinationCity ? `${slug(ctx.destinationCity)}-l` : ""}`);
       if (AFF_IDS.getyourguide) url.searchParams.set("partner_id", AFF_IDS.getyourguide);
       return withUtm(url, ctx);
     }

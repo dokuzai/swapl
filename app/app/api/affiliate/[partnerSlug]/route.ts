@@ -20,6 +20,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/affiliate
   const destinationCountry = url.searchParams.get("country") ?? undefined;
   const agreementId = url.searchParams.get("agreement") ?? undefined;
   const campaign = url.searchParams.get("utm_campaign") ?? undefined;
+  const searchQuery = url.searchParams.get("q") ?? undefined;
 
   const session = await getSession();
   const ctx: LinkContext = {
@@ -27,6 +28,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/affiliate
     destinationCity,
     destinationCountry,
     campaign,
+    searchQuery,
   };
   const target = buildAffiliateUrl(ctx);
 

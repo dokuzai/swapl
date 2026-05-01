@@ -94,28 +94,25 @@ export async function draftListingCopy(facts: ListingFacts, opts: ResolveOptions
   }
 }
 
-function sanitiseTitle(raw: unknown, facts: ListingFacts): string | null {
+// Validators are intentionally lenient — we'd rather edit a slightly
+// imperfect AI output than fall back to the templated copy. Hard rejections
+// only for empty / runaway-length / pure-clickbait outputs.
+function sanitiseTitle(raw: unknown, _facts: ListingFacts): string | null {
   if (typeof raw !== "string") return null;
   const trimmed = raw.trim().replace(/\s+/g, " ");
-  if (trimmed.length < 6) return null;
+  if (trimmed.length < 4) return null;
   if (trimmed.length > 120) return trimmed.slice(0, 117) + "…";
-  // Reject obviously generic outputs.
-  if (/beautiful|stunning|cozy|gorgeous/i.test(trimmed) && !trimmed.includes(facts.neighbourhood)) {
-    return null;
-  }
+  // Only reject titles that pile on three or more clickbait words.
+  const banned = trimmed.match(/\b(beautiful|stunning|cozy|gorgeous|amazing|perfect|ultimate)\b/gi) ?? [];
+  if (banned.length >= 3) return null;
   return trimmed;
 }
 
-function sanitiseDescription(raw: unknown, facts: ListingFacts): string | null {
+function sanitiseDescription(raw: unknown, _facts: ListingFacts): string | null {
   if (typeof raw !== "string") return null;
   const trimmed = raw.trim();
-  if (trimmed.length < 80) return null;
+  if (trimmed.length < 60) return null;
   if (trimmed.length > 4000) return trimmed.slice(0, 3997) + "…";
-  // Sanity check the place is actually mentioned somewhere.
-  if (!trimmed.toLowerCase().includes(facts.neighbourhood.toLowerCase()) &&
-      !trimmed.toLowerCase().includes(facts.city.toLowerCase())) {
-    return null;
-  }
   return trimmed;
 }
 

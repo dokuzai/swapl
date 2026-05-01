@@ -70,6 +70,16 @@ export default async function AccountPage() {
           <AISettings />
 
           <section className="surface-card p-6 mb-6">
+            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Your interests</h2>
+            <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
+              Pick the things you actually love about a place — coffee, jazz, surfing, vintage, you
+              name it. They show on your public profile and steer the AI recommendations during
+              your swap toward partners that match what you like.
+            </p>
+            <Link href="/account/interests" className="pill-ghost">Edit interests</Link>
+          </section>
+
+          <section className="surface-card p-6 mb-6">
             <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Saved searches</h2>
             <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
               Pin a filter combination from /listings and we'll email you a daily digest of new

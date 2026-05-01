@@ -35,7 +35,7 @@ export function CtaWaitlist() {
           Your home is worth<br />a thousand trips.
         </h2>
         <p className="mb-9 text-[18px]" style={{ color: "var(--navy-2)" }}>
-          Early access opens May 2026. Listings from beta users surface first.
+          We&rsquo;re collecting listings now — early access opens September 2026. Hosts who list before launch surface first.
         </p>
 
         <form
