@@ -1,0 +1,298 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   swapl design tokens
+   Two layers: editorial palette (cream/navy/pink) maps onto
+   shadcn's semantic tokens so primitives (Button etc.) stay
+   coherent with the swapl brand.
+   ============================================================ */
+:root {
+  /* swapl raw tokens */
+  --cream: #FAF6E8;
+  --cream-2: #F5EFD9;
+  --navy: #1A1F3C;
+  --navy-2: #2A3066;
+  --navy-3: #5E63A0;
+  --pink: #F24B8E;
+  --pink-light: #FDEEF5;
+  --card-bg: #FFFFFF;
+  --line: #E5E0D0;
+  --tag-bg: #F0EBD8;
+
+  /* type */
+  --font-display: var(--font-fraunces, "Fraunces", "Times New Roman", serif);
+  --font-body: var(--font-inter, "Inter", -apple-system, sans-serif);
+  --font-mono: var(--font-jetbrains, "JetBrains Mono", ui-monospace, monospace);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+  --font-heading: var(--font-display);
+
+  --color-cream: var(--cream);
+  --color-cream-2: var(--cream-2);
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-navy-3: var(--navy-3);
+  --color-pink: var(--pink);
+  --color-pink-light: var(--pink-light);
+  --color-line: var(--line);
+  --color-tag-bg: var(--tag-bg);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* shadcn tokens — mapped to swapl palette */
+:root {
+  --background: var(--cream);
+  --foreground: var(--navy);
+
+  --card: var(--card-bg);
+  --card-foreground: var(--navy);
+
+  --popover: var(--card-bg);
+  --popover-foreground: var(--navy);
+
+  --primary: var(--pink);
+  --primary-foreground: #ffffff;
+
+  --secondary: var(--tag-bg);
+  --secondary-foreground: var(--navy);
+
+  --muted: var(--cream-2);
+  --muted-foreground: #5E63A0;
+
+  --accent: var(--pink-light);
+  --accent-foreground: var(--navy);
+
+  --destructive: oklch(0.577 0.245 27.325);
+
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--pink);
+
+  --chart-1: #F24B8E;
+  --chart-2: #1A1F3C;
+  --chart-3: #C2410C;
+  --chart-4: #1E40AF;
+  --chart-5: #047857;
+
+  --radius: 0.875rem;
+
+  --sidebar: var(--cream-2);
+  --sidebar-foreground: var(--navy);
+  --sidebar-primary: var(--pink);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--pink-light);
+  --sidebar-accent-foreground: var(--navy);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--pink);
+}
+
+.dark {
+  --background: #11142A;
+  --foreground: var(--cream);
+  --card: #1A1F3C;
+  --card-foreground: var(--cream);
+  --popover: #1A1F3C;
+  --popover-foreground: var(--cream);
+  --primary: var(--pink);
+  --primary-foreground: #ffffff;
+  --secondary: #2A3066;
+  --secondary-foreground: var(--cream);
+  --muted: #2A3066;
+  --muted-foreground: #A0A4C8;
+  --accent: #2A3066;
+  --accent-foreground: var(--cream);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: var(--pink);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body);
+  }
+  html { @apply font-sans; }
+  h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  ::selection { background: var(--pink); color: #fff; }
+}
+
+/* ============================================================
+   swapl utility classes — keep close to landing-page prototype
+   ============================================================ */
+@layer components {
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+  /* nav */
+  .nav-link { font-size: 14px; color: color-mix(in oklab, var(--navy) 75%, transparent); transition: color .15s; }
+  .nav-link:hover { color: var(--navy); }
+
+  /* generic CTA pill */
+  .pill-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 24px; border-radius: 999px;
+    background: var(--pink); color: #fff;
+    font-weight: 500; font-size: 14px;
+    transition: transform .15s, filter .15s;
+  }
+  .pill-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
+  .pill-ghost {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 24px; border-radius: 999px;
+    border: 1px solid var(--navy);
+    color: var(--navy); background: transparent;
+    font-weight: 500; font-size: 14px;
+    transition: all .15s;
+  }
+  .pill-ghost:hover { background: var(--navy); color: var(--cream); }
+
+  /* match badge */
+  .match-badge {
+    display: inline-block;
+    padding: 3px 10px; border-radius: 999px;
+    background: var(--pink); color: #fff;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: .03em;
+  }
+
+  /* tag chip */
+  .tag-chip {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 4px;
+    background: var(--tag-bg);
+    color: var(--navy-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  /* swap card panel */
+  .surface-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    transition: transform .25s, box-shadow .25s, border-color .2s;
+  }
+  .surface-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 24px 48px -28px rgba(26, 31, 60, .25);
+    border-color: var(--navy-3);
+  }
+
+  /* dashed divider used in card sections */
+  .divider-dashed { border-top: 1px dashed var(--line); }
+
+  /* section kicker */
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--navy-3);
+  }
+  .kicker::before { content: "§ "; color: var(--pink); }
+
+  /* italic emphasis used in headings */
+  .h-em { font-style: italic; color: var(--pink); font-weight: 500; }
+
+  /* section title */
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4vw, 56px);
+    line-height: 1.05; letter-spacing: -0.02em;
+    font-weight: 500; max-width: 18ch;
+    text-wrap: balance;
+  }
+
+  /* toggle switch (for filter sidebar) */
+  .swapl-switch {
+    width: 38px; height: 22px;
+    border-radius: 999px;
+    background: var(--line);
+    position: relative; cursor: pointer;
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+  .swapl-switch::after {
+    content: ""; position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    transition: left .2s;
+  }
+  .swapl-switch[data-on="true"] { background: var(--pink); }
+  .swapl-switch[data-on="true"]::after { left: 18px; }
+}
+
+/* nav backdrop blur on scroll */
+.nav-blurred {
+  backdrop-filter: blur(16px);
+  background: color-mix(in oklab, var(--cream) 78%, transparent);
+}
+
+/* range-input accent */
+input[type="range"] { accent-color: var(--pink); }
+
+/* skeleton shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--cream-2) 25%, #efe8d3 50%, var(--cream-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}

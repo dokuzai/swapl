@@ -1,0 +1,227 @@
+// swapl — Prisma schema
+// SQLite for local dev. Switch provider to "postgresql" + DATABASE_URL for prod.
+// SQLite limitations honored: no native enums, no scalar arrays — both stored as JSON-encoded TEXT.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ---------- USER ----------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  avatar       String?
+  bio          String?
+  passwordHash String?
+  verified     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  // AI provider preferences (override the env-wide default).
+  // apiKey is stored verbatim for the demo; in prod, encrypt at rest.
+  aiProvider String? // "kimi" | "openai" | "anthropic"
+  aiModel    String?
+  aiApiKey   String?
+
+  listings        Listing[]
+  proposalsSent   SwapProposal[]  @relation("ProposalsSent")
+  betaSignup      BetaSignup?
+  reportsFiled    Report[]        @relation("ReportsFiled")
+  reportsReceived Report[]        @relation("ReportsReceived")
+}
+
+// ---------- LISTING ----------
+// propertyType: APARTMENT | HOUSE | LOFT | TOWNHOUSE
+// petTypes, photos, tags: JSON arrays of strings (SQLite has no array type).
+
+model Listing {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title          String
+  description    String
+
+  propertyType   String
+  city           String
+  neighbourhood  String
+  country        String
+  address        String?
+  lat            Float?
+  lng            Float?
+
+  sizeSqm        Int
+  sleeps         Int
+  bedrooms       Int
+  bathrooms      Int
+  floor          Int?
+
+  hasElevator    Boolean  @default(false)
+  stepFreeAccess Boolean  @default(false)
+
+  petsAllowed    Boolean  @default(false)
+  petTypes       String   @default("[]")
+
+  wfhSetup       Boolean  @default(false)
+  wfhDesks       Int      @default(0)
+
+  hasParking     Boolean  @default(false)
+  bikeIncluded   Boolean  @default(false)
+  rooftop        Boolean  @default(false)
+  balcony        Boolean  @default(false)
+  garden         Boolean  @default(false)
+  courtyard      Boolean  @default(false)
+  piano          Boolean  @default(false)
+  pool           Boolean  @default(false)
+  gym            Boolean  @default(false)
+  ac             Boolean  @default(false)
+  dishwasher     Boolean  @default(false)
+  washer         Boolean  @default(false)
+  dryer          Boolean  @default(false)
+
+  availableFrom  DateTime
+  availableTo    DateTime
+  minStayDays    Int      @default(3)
+  maxStayDays    Int      @default(30)
+
+  photos         String   @default("[]")
+  tags           String   @default("[]")
+
+  paletteHint    String?
+  motifHint      String?  // legacy: comma-separated motif tags
+  postcard       String?  // JSON-encoded Postcard composition (preferred over motifHint)
+
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  proposalsAsProposer  SwapProposal[]  @relation("ProposerListing")
+  proposalsAsTarget    SwapProposal[]  @relation("TargetListing")
+  agreementsAsListing1 SwapAgreement[] @relation("AgreementListing1")
+  agreementsAsListing2 SwapAgreement[] @relation("AgreementListing2")
+  reports              Report[]
+
+  @@index([city])
+  @@index([userId])
+  @@index([isActive])
+}
+
+// ---------- SWAP PROPOSAL ----------
+// status: PENDING | ACCEPTED | DECLINED | COUNTERED | WITHDRAWN
+
+model SwapProposal {
+  id                String   @id @default(cuid())
+  proposerId        String
+  proposer          User     @relation("ProposalsSent", fields: [proposerId], references: [id], onDelete: Cascade)
+
+  proposerListingId String
+  proposerListing   Listing  @relation("ProposerListing", fields: [proposerListingId], references: [id], onDelete: Cascade)
+
+  targetListingId   String
+  targetListing     Listing  @relation("TargetListing", fields: [targetListingId], references: [id], onDelete: Cascade)
+
+  dateFrom          DateTime
+  dateTo            DateTime
+  message           String?
+
+  status            String   @default("PENDING")
+
+  counterDateFrom   DateTime?
+  counterDateTo     DateTime?
+  counterMessage    String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  agreement         SwapAgreement?
+  messages          SwapMessage[]
+
+  @@index([proposerId])
+  @@index([targetListingId])
+  @@index([status])
+}
+
+model SwapMessage {
+  id         String       @id @default(cuid())
+  proposalId String
+  proposal   SwapProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  authorId   String
+  body       String
+  createdAt  DateTime     @default(now())
+}
+
+// ---------- SWAP AGREEMENT ----------
+// status: ACTIVE | COMPLETED | INTERRUPTED
+
+model SwapAgreement {
+  id          String       @id @default(cuid())
+  proposalId  String       @unique
+  proposal    SwapProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  listing1Id  String
+  listing1    Listing      @relation("AgreementListing1", fields: [listing1Id], references: [id])
+  listing2Id  String
+  listing2    Listing      @relation("AgreementListing2", fields: [listing2Id], references: [id])
+
+  dateFrom    DateTime
+  dateTo      DateTime
+
+  keyCode1    String?
+  keyCode2    String?
+
+  status      String       @default("ACTIVE")
+
+  insurancePolicy InsurancePolicy?
+
+  createdAt   DateTime     @default(now())
+}
+
+model InsurancePolicy {
+  id             String        @id @default(cuid())
+  agreementId    String        @unique
+  agreement      SwapAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  provider       String        @default("swapl-cover")
+  policyNumber   String
+  coverageAmount Int           @default(150000)
+  expiresAt      DateTime
+  createdAt      DateTime      @default(now())
+}
+
+model BetaSignup {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  userId    String?  @unique
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// Cached AI palette/motif decisions for cities not in the static catalog.
+model CityArt {
+  id        String   @id @default(cuid())
+  city      String   @unique
+  country   String?
+  palette   String   // warm | cool | rose | sage | dusk | sand | mono
+  motif     String?  // legacy: comma-separated motif keywords
+  postcard  String?  // JSON-encoded Postcard composition
+  source    String   @default("ai") // ai | fallback | manual | preset
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id           String   @id @default(cuid())
+  reporterId   String
+  reporter     User     @relation("ReportsFiled", fields: [reporterId], references: [id])
+  targetUserId String?
+  targetUser   User?    @relation("ReportsReceived", fields: [targetUserId], references: [id])
+  listingId    String?
+  listing      Listing? @relation(fields: [listingId], references: [id])
+  reason       String
+  detail       String?
+  createdAt    DateTime @default(now())
+}

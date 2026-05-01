@@ -1,0 +1,18 @@
+.vercel
+.DS_Store
+.claude/
+node_modules/
+.next/
+*.tsbuildinfo
+.env*
+!.env.example
+
+# Local SQLite database used for dev only
+app/dev.db
+app/dev.db-journal
+
+# Generated Prisma clients (regenerated on install)
+app/app/generated/
+
+# Local production env pulled from Vercel
+.env.production.local
