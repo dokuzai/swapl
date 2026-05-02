@@ -1,6 +1,6 @@
 // swapl seed — 20+ listings across 10 cities + sample proposals + an accepted agreement.
 import "dotenv/config";
-import { PrismaClient } from "../app/generated/prisma/client";
+import { PrismaClient } from "../generated/prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import bcrypt from "bcryptjs";
 import { CITIES, paletteForCity } from "../lib/cities";
