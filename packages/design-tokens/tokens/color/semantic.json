@@ -1,0 +1,40 @@
+{
+  "semantic": {
+    "light": {
+      "background":          { "value": "{color.cream.value}", "type": "color" },
+      "foreground":          { "value": "{color.navy.value}", "type": "color" },
+      "card":                { "value": "{color.card-bg.value}", "type": "color" },
+      "card-foreground":     { "value": "{color.navy.value}", "type": "color" },
+      "primary":             { "value": "{color.pink.value}", "type": "color" },
+      "primary-foreground":  { "value": "{color.white.value}", "type": "color" },
+      "secondary":           { "value": "{color.tag-bg.value}", "type": "color" },
+      "secondary-foreground":{ "value": "{color.navy.value}", "type": "color" },
+      "muted":               { "value": "{color.cream-2.value}", "type": "color" },
+      "muted-foreground":    { "value": "{color.navy-3.value}", "type": "color" },
+      "accent":              { "value": "{color.pink-light.value}", "type": "color" },
+      "accent-foreground":   { "value": "{color.navy.value}", "type": "color" },
+      "border":              { "value": "{color.line.value}", "type": "color" },
+      "input":               { "value": "{color.line.value}", "type": "color" },
+      "ring":                { "value": "{color.pink.value}", "type": "color" },
+      "destructive":         { "value": "#DC2626", "type": "color" }
+    },
+    "dark": {
+      "background":          { "value": "{color.navy-dark.value}", "type": "color" },
+      "foreground":          { "value": "{color.cream.value}", "type": "color" },
+      "card":                { "value": "{color.navy.value}", "type": "color" },
+      "card-foreground":     { "value": "{color.cream.value}", "type": "color" },
+      "primary":             { "value": "{color.pink.value}", "type": "color" },
+      "primary-foreground":  { "value": "{color.white.value}", "type": "color" },
+      "secondary":           { "value": "{color.navy-2.value}", "type": "color" },
+      "secondary-foreground":{ "value": "{color.cream.value}", "type": "color" },
+      "muted":               { "value": "{color.navy-2.value}", "type": "color" },
+      "muted-foreground":    { "value": "#A0A4C8", "type": "color" },
+      "accent":              { "value": "{color.navy-2.value}", "type": "color" },
+      "accent-foreground":   { "value": "{color.cream.value}", "type": "color" },
+      "border":              { "value": "#2A2F4D", "type": "color" },
+      "input":               { "value": "#3A3F5D", "type": "color" },
+      "ring":                { "value": "{color.pink.value}", "type": "color" },
+      "destructive":         { "value": "#F87171", "type": "color" }
+    }
+  }
+}

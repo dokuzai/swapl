@@ -57,6 +57,8 @@ model User {
   orgMemberships  OrganizationMember[]
   savedSearches   SavedSearch[]
   emailTokens     EmailToken[]
+  authTokens      AuthToken[]
+  devices         Device[]
 }
 
 // One-shot tokens for email verification + password reset. We store only the
@@ -66,7 +68,7 @@ model User {
 model EmailToken {
   id         String   @id @default(cuid())
   userId     String
-  // "verify" → email verification, "reset" → password reset
+  // "verify" -> email verification, "reset" -> password reset
   kind       String
   // SHA-256 hex of the random 32-byte token
   tokenHash  String   @unique
@@ -78,6 +80,39 @@ model EmailToken {
 
   @@index([userId, kind])
   @@index([expiresAt])
+}
+
+// Mobile clients exchange credentials for an opaque bearer token; only the
+// sha256 hash is persisted. Cookie sessions on the web are unaffected.
+model AuthToken {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String   @unique
+  platform   String                                          // "ios" | "android" | "web-pwa"
+  appVersion String?
+  lastSeenAt DateTime @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}
+
+// Push notification targets for a given user. One row per device per user.
+model Device {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform   String                                          // "ios" | "android"
+  pushToken  String                                          // APNs token or FCM registration token
+  locale     String?
+  appVersion String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, pushToken])
+  @@index([userId])
 }
 
 // ---------- LISTING ----------

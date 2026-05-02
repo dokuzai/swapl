@@ -1,0 +1,53 @@
+{
+  "city": {
+    "warm": {
+      "sky":      { "value": "#F5D9B5", "type": "color" },
+      "building": { "value": "#C2410C", "type": "color" },
+      "roof":     { "value": "#7C2D12", "type": "color" },
+      "window":   { "value": "#FED7AA", "type": "color" },
+      "accent":   { "value": "#FDBA74", "type": "color" }
+    },
+    "cool": {
+      "sky":      { "value": "#DBEAFE", "type": "color" },
+      "building": { "value": "#1E3A8A", "type": "color" },
+      "roof":     { "value": "#1E293B", "type": "color" },
+      "window":   { "value": "#BFDBFE", "type": "color" },
+      "accent":   { "value": "#93C5FD", "type": "color" }
+    },
+    "rose": {
+      "sky":      { "value": "#FCE7F3", "type": "color" },
+      "building": { "value": "#9D174D", "type": "color" },
+      "roof":     { "value": "#500724", "type": "color" },
+      "window":   { "value": "#FBCFE8", "type": "color" },
+      "accent":   { "value": "#F9A8D4", "type": "color" }
+    },
+    "sage": {
+      "sky":      { "value": "#D1FAE5", "type": "color" },
+      "building": { "value": "#065F46", "type": "color" },
+      "roof":     { "value": "#064E3B", "type": "color" },
+      "window":   { "value": "#A7F3D0", "type": "color" },
+      "accent":   { "value": "#6EE7B7", "type": "color" }
+    },
+    "dusk": {
+      "sky":      { "value": "#E0E7FF", "type": "color" },
+      "building": { "value": "#3730A3", "type": "color" },
+      "roof":     { "value": "#1E1B4B", "type": "color" },
+      "window":   { "value": "#C7D2FE", "type": "color" },
+      "accent":   { "value": "#A5B4FC", "type": "color" }
+    },
+    "sand": {
+      "sky":      { "value": "#FEF3C7", "type": "color" },
+      "building": { "value": "#92400E", "type": "color" },
+      "roof":     { "value": "#451A03", "type": "color" },
+      "window":   { "value": "#FDE68A", "type": "color" },
+      "accent":   { "value": "#FCD34D", "type": "color" }
+    },
+    "mono": {
+      "sky":      { "value": "#E5E5E2", "type": "color" },
+      "building": { "value": "#1C1A17", "type": "color" },
+      "roof":     { "value": "#0A0A09", "type": "color" },
+      "window":   { "value": "#FAF6E8", "type": "color" },
+      "accent":   { "value": "#999999", "type": "color" }
+    }
+  }
+}

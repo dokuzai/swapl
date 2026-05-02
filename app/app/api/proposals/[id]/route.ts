@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
+import { sendPush, pushTemplates } from "@/lib/push";
 import { insuranceProvider } from "@/lib/insurance";
+import { toDTO } from "@/lib/listing-utils";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -17,8 +19,73 @@ const actionSchema = z.discriminatedUnion("action", [
   }),
 ]);
 
+// Mobile thread view. Returns the full proposal, both listings, the other
+// party, and (for participants only on ACCEPTED) the agreement + insurance.
+export async function GET(req: Request, { params }: RouteContext<"/api/proposals/[id]">) {
+  const session = await getSessionFromRequest(req);
+  if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+
+  const { id } = await params;
+  const proposal = await prisma.swapProposal.findUnique({
+    where: { id },
+    include: {
+      proposerListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true } } } },
+      targetListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true } } } },
+      agreement: { include: { insurancePolicy: true } },
+    },
+  });
+  if (!proposal) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const isProposer = proposal.proposerId === session.userId;
+  const isTarget = proposal.targetListing.userId === session.userId;
+  if (!isProposer && !isTarget) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const other = isProposer ? proposal.targetListing.user : proposal.proposerListing.user;
+  const agreement = proposal.agreement
+    ? {
+        id: proposal.agreement.id,
+        dateFrom: proposal.agreement.dateFrom.toISOString(),
+        dateTo: proposal.agreement.dateTo.toISOString(),
+        // Only participants reach this branch, so it's safe to include keys.
+        keyCode1: proposal.agreement.keyCode1,
+        keyCode2: proposal.agreement.keyCode2,
+        status: proposal.agreement.status,
+        insurance: proposal.agreement.insurancePolicy
+          ? {
+              policyNumber: proposal.agreement.insurancePolicy.policyNumber,
+              coverageAmount: proposal.agreement.insurancePolicy.coverageAmount,
+              status: proposal.agreement.insurancePolicy.status,
+              expiresAt: proposal.agreement.insurancePolicy.expiresAt.toISOString(),
+            }
+          : null,
+      }
+    : null;
+
+  return NextResponse.json({
+    proposal: {
+      id: proposal.id,
+      status: proposal.status,
+      meSide: isProposer ? "proposer" : "target",
+      dateFrom: proposal.dateFrom.toISOString(),
+      dateTo: proposal.dateTo.toISOString(),
+      message: proposal.message,
+      counterDateFrom: proposal.counterDateFrom?.toISOString() ?? null,
+      counterDateTo: proposal.counterDateTo?.toISOString() ?? null,
+      counterMessage: proposal.counterMessage,
+      createdAt: proposal.createdAt.toISOString(),
+      updatedAt: proposal.updatedAt.toISOString(),
+    },
+    proposerListing: toDTO(proposal.proposerListing),
+    targetListing: toDTO(proposal.targetListing),
+    other,
+    agreement,
+  });
+}
+
 export async function POST(req: Request, { params }: RouteContext<"/api/proposals/[id]">) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
   const { id } = await params;
@@ -62,6 +129,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     if (proposal.proposerListing.user.email) {
       sendEmail(emailTemplates.proposalDeclined(proposal.proposerListing.user.email)).catch(console.error);
     }
+    sendPush(proposal.proposerId, pushTemplates.proposalDeclined(proposal.id)).catch(console.error);
     return NextResponse.json({ ok: true });
   }
 
@@ -87,6 +155,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     });
     const otherEmail = isProposer ? proposal.targetListing.user.email : proposal.proposerListing.user.email;
     if (otherEmail) sendEmail(emailTemplates.proposalCountered(otherEmail)).catch(console.error);
+    const otherUserId = isProposer ? proposal.targetListing.userId : proposal.proposerId;
+    sendPush(otherUserId, pushTemplates.proposalCountered(proposal.id)).catch(console.error);
     return NextResponse.json({ ok: true });
   }
 
@@ -181,6 +251,9 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     // Notify both sides
     [proposal.proposerListing.user.email, proposal.targetListing.user.email].forEach((e) => {
       if (e) sendEmail(emailTemplates.proposalAccepted(e)).catch(console.error);
+    });
+    [proposal.proposerId, proposal.targetListing.userId].forEach((uid) => {
+      sendPush(uid, pushTemplates.proposalAccepted(proposal.id)).catch(console.error);
     });
 
     return NextResponse.json({ ok: true, agreementId: result.id });

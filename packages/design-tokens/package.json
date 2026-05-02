@@ -1,0 +1,19 @@
+{
+  "name": "@swapl/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Single source of truth for swapl colors, typography, radius, spacing — emits TS (web), Swift (iOS), Kotlin (Android).",
+  "main": "build/ts/index.js",
+  "types": "build/ts/index.d.ts",
+  "files": [
+    "build",
+    "tokens"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "clean": "rm -rf build && mkdir build"
+  },
+  "devDependencies": {
+    "style-dictionary": "^4.3.0"
+  }
+}

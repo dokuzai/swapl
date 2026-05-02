@@ -1,0 +1,14 @@
+{
+  "font": {
+    "family": {
+      "display": { "value": "Fraunces", "type": "fontFamily" },
+      "body":    { "value": "Inter", "type": "fontFamily" },
+      "mono":    { "value": "JetBrainsMono", "type": "fontFamily" }
+    },
+    "weight": {
+      "regular":  { "value": 400, "type": "fontWeight" },
+      "medium":   { "value": 500, "type": "fontWeight" },
+      "semibold": { "value": 600, "type": "fontWeight" }
+    }
+  }
+}

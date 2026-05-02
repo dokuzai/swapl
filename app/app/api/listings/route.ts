@@ -1,13 +1,39 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { listingCreateSchema } from "@/lib/validators";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { generateCityArt } from "@/lib/ai/city-illustration";
 import { coordForCity, jitterCoord } from "@/lib/city-coords";
 import { ensureCanCreateListing, PlanLimitError } from "@/lib/billing/limits";
+import { parseFiltersFromSearchParams } from "@/lib/listing-filters";
+import { queryListings, getViewerListing } from "@/lib/listing-query";
+
+// Mobile / SPA-friendly listing search. Mirrors what the /listings RSC page
+// does today, returning pre-scored results so clients don't recompute.
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const sp: Record<string, string> = {};
+  url.searchParams.forEach((v, k) => {
+    sp[k] = v;
+  });
+  const filters = parseFiltersFromSearchParams(sp);
+
+  // Match scoring needs the viewer's own listing; use either auth mode.
+  const session = await getSessionFromRequest(req);
+  const viewer = session ? await getViewerListing(session.userId) : null;
+
+  const result = await queryListings(filters, viewer);
+  return NextResponse.json({
+    items: result.items,
+    page: result.page,
+    pageSize: result.pageSize,
+    total: result.total,
+    viewerListingId: viewer?.id ?? null,
+  });
+}
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
   try {
