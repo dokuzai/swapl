@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd app && echo '=== before npm ci ===' && (ls node_modules/next/package.json 2>/dev/null && head -3 node_modules/next/package.json || echo 'no node_modules/next yet') && rm -rf node_modules && npm ci && echo '=== after npm ci ===' && head -3 node_modules/next/package.json && npm ls next",
-  "buildCommand": "cd app && echo '=== before next build ===' && head -3 node_modules/next/package.json && rm -rf .next .turbo && prisma generate --schema prisma/schema.postgres.prisma && next build --webpack",
+  "installCommand": "cd app && echo PRE && (head -3 node_modules/next/package.json || true) && rm -rf node_modules && npm ci && echo POST && head -3 node_modules/next/package.json",
+  "buildCommand": "cd app && echo BUILD && head -3 node_modules/next/package.json && rm -rf .next .turbo && prisma generate --schema prisma/schema.postgres.prisma && next build --webpack",
   "outputDirectory": "app/.next",
   "crons": [
     { "path": "/api/cron/featured-expire", "schedule": "0 1 * * *" },
