@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useMemo } from "react";
+import { useTransition, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CITIES } from "@/lib/cities";
 import { PROPERTY_TYPES, propertyLabel } from "@/lib/types";
@@ -16,6 +16,7 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
   const pathname = usePathname();
   const sp = useSearchParams();
   const [pending, start] = useTransition();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const filters = useMemo<ListingFilters>(() => {
     const obj: Record<string, string> = {};
@@ -33,24 +34,61 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
     return arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
   }
 
-  const dirty =
-    filters.cities.length ||
-    filters.propertyTypes.length ||
-    filters.minSqm !== FILTER_DEFAULTS.minSqm ||
-    filters.minSleeps !== FILTER_DEFAULTS.minSleeps ||
-    filters.petsRequired ||
-    filters.wfhRequired ||
-    filters.stepFreeRequired ||
-    filters.mutualOnly ||
-    filters.dateFrom ||
-    filters.dateTo;
+  const activeCount =
+    filters.cities.length +
+    filters.propertyTypes.length +
+    (filters.minSqm !== FILTER_DEFAULTS.minSqm ? 1 : 0) +
+    (filters.minSleeps !== FILTER_DEFAULTS.minSleeps ? 1 : 0) +
+    (filters.petsRequired ? 1 : 0) +
+    (filters.wfhRequired ? 1 : 0) +
+    (filters.stepFreeRequired ? 1 : 0) +
+    (filters.mutualOnly ? 1 : 0) +
+    (filters.dateFrom ? 1 : 0) +
+    (filters.dateTo ? 1 : 0);
+
+  const dirty = activeCount > 0;
 
   return (
     <aside
-      className="surface-card overflow-hidden p-7 sticky top-24 self-start"
+      className="surface-card overflow-hidden lg:p-7 lg:sticky lg:top-24 self-start"
       style={{ background: "var(--cream-2)" }}
     >
-      <div className="mb-5 flex items-baseline justify-between">
+      <button
+        type="button"
+        className="lg:hidden w-full flex items-center justify-between gap-3 px-5 py-4 text-left"
+        onClick={() => setMobileOpen((v) => !v)}
+        aria-expanded={mobileOpen}
+        aria-controls="filter-sidebar-content"
+      >
+        <span className="flex items-baseline gap-2">
+          <span className="font-display text-lg tracking-[-0.01em] font-medium">Filters</span>
+          {activeCount > 0 ? (
+            <span
+              className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-0.5 rounded-full"
+              style={{ background: "var(--pink)", color: "#fff" }}
+            >
+              {activeCount} active
+            </span>
+          ) : (
+            <span className="text-xs" style={{ color: "var(--navy-3)" }}>
+              {resultCount.toLocaleString()} matches
+            </span>
+          )}
+        </span>
+        <span
+          aria-hidden
+          className="font-mono text-xs transition-transform"
+          style={{ color: "var(--navy-3)", transform: mobileOpen ? "rotate(180deg)" : "none" }}
+        >
+          ▾
+        </span>
+      </button>
+
+      <div
+        id="filter-sidebar-content"
+        className={`${mobileOpen ? "block" : "hidden"} px-5 pb-5 lg:block lg:p-0`}
+      >
+      <div className="mb-5 hidden lg:flex items-baseline justify-between">
         <h2 className="font-display text-lg tracking-[-0.01em] font-medium">Filters</h2>
         {dirty ? (
           <button
@@ -63,6 +101,19 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
           </button>
         ) : null}
       </div>
+
+      {dirty ? (
+        <div className="mb-5 lg:hidden flex justify-end">
+          <button
+            className="font-mono text-[10px] uppercase tracking-[.08em] underline"
+            style={{ color: "var(--pink)" }}
+            onClick={() => start(() => router.push(pathname))}
+            disabled={pending}
+          >
+            Reset
+          </button>
+        </div>
+      ) : null}
 
       <Group label="Destination city">
         <div className="flex flex-wrap gap-1.5">
@@ -149,6 +200,17 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
       <p className="text-xs mt-2" style={{ color: "var(--navy-3)" }}>
         {pending ? "Updating…" : `${resultCount.toLocaleString()} matches`}
       </p>
+
+      <div className="mt-5 lg:hidden flex justify-end">
+        <button
+          type="button"
+          className="pill-primary"
+          onClick={() => setMobileOpen(false)}
+        >
+          Show {resultCount.toLocaleString()} homes
+        </button>
+      </div>
+      </div>
     </aside>
   );
 }
