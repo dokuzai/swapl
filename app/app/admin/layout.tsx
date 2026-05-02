@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Footer } from "@/components/layout/footer";
 import { requireAdminPage } from "@/lib/auth/abilities";
+import { I18nProviderShell } from "@/components/i18n/provider-shell";
+
+export const dynamic = "force-dynamic";
 
 const SECTIONS = [
   { href: "/admin",                  label: "Overview" },
@@ -15,7 +18,7 @@ const SECTIONS = [
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const me = await requireAdminPage();
   return (
-    <>
+    <I18nProviderShell>
       <header
         className="sticky top-0 z-50 border-b backdrop-blur"
         style={{ background: "color-mix(in oklab, var(--navy) 92%, transparent)", color: "var(--cream)", borderColor: "color-mix(in oklab, var(--cream) 12%, transparent)" }}
@@ -52,6 +55,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </main>
       <Footer />
-    </>
+    </I18nProviderShell>
   );
 }

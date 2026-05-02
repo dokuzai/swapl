@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { LocaleProvider } from "@/lib/i18n/client";
-import { getI18n } from "@/lib/i18n/server";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -31,7 +29,7 @@ export const metadata: Metadata = {
   title: "swapl — trade your home for someone else's",
   description:
     "Home swap marketplace. List your place, browse thousands of homes, swap keys for keys. Every stay insured, end to end.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   openGraph: {
     title: "swapl",
     description: "Home swap marketplace — keys for keys, no money, fully insured.",
@@ -41,18 +39,15 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-// Force-dynamic so getLocale() can read cookies + Accept-Language on every
-// request. Locale detection happens once at the root and the resolved
-// dictionary is handed to the client through context.
-export const dynamic = "force-dynamic";
-
-export default async function RootLayout({
+// Root layout is intentionally pure-static — no cookies(), no headers(), no
+// async fetch. Per-section layouts wrap their children in <I18nProviderShell>
+// so /_global-error can prerender without crashing on a missing workStore.
+export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { locale, dict } = await getI18n();
   return (
     <html
-      lang={locale}
+      lang="en"
       className={cn(
         "h-full antialiased",
         fraunces.variable,
@@ -61,9 +56,7 @@ export default async function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <LocaleProvider locale={locale} dict={dict}>
-          {children}
-        </LocaleProvider>
+        {children}
       </body>
     </html>
   );

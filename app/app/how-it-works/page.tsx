@@ -2,7 +2,9 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { HowItWorks } from "@/components/marketing/how-it-works";
 import { CtaWaitlist } from "@/components/marketing/cta";
+import { I18nProviderShell } from "@/components/i18n/provider-shell";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "How it works · swapl" };
 
 // The HowItWorks marketing component already owns the "Four steps. No
@@ -10,13 +12,13 @@ export const metadata = { title: "How it works · swapl" };
 // page header.
 export default function HowItWorksPage() {
   return (
-    <>
+    <I18nProviderShell>
       <Navbar />
       <main className="flex-1">
         <HowItWorks />
         <CtaWaitlist />
       </main>
       <Footer />
-    </>
+    </I18nProviderShell>
   );
 }

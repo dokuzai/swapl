@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/illustrations";
 import { getSession } from "@/lib/auth/session";
-import { getDictionary } from "@/lib/i18n/server";
+import { getI18n } from "@/lib/i18n/server";
 import type { DictKey } from "@/lib/i18n/dict-en";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
@@ -14,7 +14,7 @@ const NAV_LINKS: { href: string; key: DictKey }[] = [
 ];
 
 export async function Navbar() {
-  const [session, dict] = await Promise.all([getSession(), getDictionary()]);
+  const [session, { locale, dict }] = await Promise.all([getSession(), getI18n()]);
 
   return (
     <header className="sticky top-0 z-50 nav-blurred border-b border-line">
@@ -35,7 +35,7 @@ export async function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <LocaleSwitcher />
+          <LocaleSwitcher locale={locale} label={dict["locale.label"]} />
           {session ? (
             <>
               <Link href="/swaps" className="hidden sm:inline-flex nav-link">

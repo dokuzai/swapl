@@ -2,12 +2,14 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { InsuranceSection } from "@/components/marketing/insurance";
 import { CtaWaitlist } from "@/components/marketing/cta";
+import { I18nProviderShell } from "@/components/i18n/provider-shell";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "Insurance · swapl" };
 
 export default function InsurancePage() {
   return (
-    <>
+    <I18nProviderShell>
       <Navbar />
       <main className="flex-1">
         <section className="py-20 wrap">
@@ -54,6 +56,6 @@ export default function InsurancePage() {
         <CtaWaitlist />
       </main>
       <Footer />
-    </>
+    </I18nProviderShell>
   );
 }

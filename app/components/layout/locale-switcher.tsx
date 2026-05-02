@@ -1,16 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { useLocale, useT } from "@/lib/i18n/client";
 import { LOCALES, LOCALE_FLAG, LOCALE_LABELS, type Locale } from "@/lib/i18n/locales";
 
 // Compact pill that opens a flag-grid menu. POSTs the chosen locale to the
 // cookie endpoint then refreshes so the next server render hydrates the right
-// dictionary. We don't use next/navigation router.refresh() because the layout
-// is force-dynamic and a hard reload is the simplest cache-bust here.
-export function LocaleSwitcher() {
-  const locale = useLocale();
-  const t = useT();
+// dictionary. Receives the resolved locale as a prop (no useT/useLocale) so it
+// can sit in the navbar on pages that don't mount the LocaleProvider.
+export function LocaleSwitcher({ locale, label }: { locale: Locale; label: string }) {
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -45,7 +42,7 @@ export function LocaleSwitcher() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         disabled={pending}
-        aria-label={t("locale.label")}
+        aria-label={label}
         className="inline-flex items-center gap-1 rounded-full border border-line px-2.5 h-9 text-sm hover:bg-cream-2"
         style={{ background: "transparent" }}
       >
