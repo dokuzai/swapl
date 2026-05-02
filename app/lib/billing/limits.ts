@@ -10,7 +10,7 @@
 //   3. Else "free".
 
 import { prisma } from "@/lib/db";
-import type { SubscriptionModel, OrganizationMemberModel } from "@/generated/prisma/models";
+import type { SubscriptionModel, OrganizationMemberModel } from "../../generated/prisma/models";
 
 export const PLAN_IDS = ["free", "plus", "pro"] as const;
 export type PlanId = (typeof PLAN_IDS)[number];
