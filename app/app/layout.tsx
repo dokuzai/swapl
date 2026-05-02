@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { LocaleProvider } from "@/lib/i18n/client";
+import { getI18n } from "@/lib/i18n/server";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -39,12 +41,18 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-export default function RootLayout({
+// Force-dynamic so getLocale() can read cookies + Accept-Language on every
+// request. Locale detection happens once at the root and the resolved
+// dictionary is handed to the client through context.
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const { locale, dict } = await getI18n();
   return (
     <html
-      lang="en"
+      lang={locale}
       className={cn(
         "h-full antialiased",
         fraunces.variable,
@@ -53,7 +61,9 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        {children}
+        <LocaleProvider locale={locale} dict={dict}>
+          {children}
+        </LocaleProvider>
       </body>
     </html>
   );

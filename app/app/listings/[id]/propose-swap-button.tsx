@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { ListingDTO } from "@/lib/listing-utils";
 import { CityIllust, SwapArrows } from "@/components/illustrations";
@@ -15,6 +15,19 @@ export default function ProposeSwapButton({
 }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+
+  // Body-scroll lock while the modal is open. Without this the underlying
+  // page can keep scrolling under the overlay and the sticky navbar's
+  // backdrop-blur causes a paint reflow that visibly shifts the modal the
+  // first time the cursor enters the navbar.
+  useEffect(() => {
+    if (!open) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [open]);
 
   // Default proposed dates = overlap of the two windows.
   const overlapFrom = new Date(
@@ -82,8 +95,19 @@ export default function ProposeSwapButton({
       />
 
       {open && (
-        <div className="fixed inset-0 z-[100] grid place-items-center p-4" style={{ background: "rgba(26,31,60,.5)" }}>
-          <div className="surface-card max-w-lg w-full p-7 max-h-[90vh] overflow-y-auto">
+        <div
+          className="fixed inset-0 z-[100] overflow-y-auto flex items-center justify-center p-4"
+          style={{ background: "rgba(26,31,60,.5)" }}
+          onClick={(e) => {
+            // Click outside the card → close. Stop the inner card from
+            // bubbling.
+            if (e.target === e.currentTarget) setOpen(false);
+          }}
+        >
+          <div
+            className="surface-card max-w-lg w-full p-7 my-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-baseline justify-between mb-5">
               <h2 className="font-display text-2xl tracking-[-0.01em]">Propose a swap</h2>
               <button onClick={() => setOpen(false)} className="font-mono text-[11px]" aria-label="Close">×</button>
