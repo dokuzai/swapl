@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useT } from "@/lib/i18n/client";
 
 export function CtaWaitlist() {
+  const t = useT();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
   const [pending, start] = useTransition();
@@ -32,10 +34,10 @@ export function CtaWaitlist() {
           className="font-display font-medium leading-[1.02] tracking-[-0.03em] mb-6 mx-auto max-w-[20ch] text-balance"
           style={{ fontSize: "clamp(40px, 5vw, 72px)" }}
         >
-          Your home is worth<br />a thousand trips.
+          {t("cta.title")}
         </h2>
         <p className="mb-9 text-[18px]" style={{ color: "var(--navy-2)" }}>
-          We&rsquo;re collecting listings now — early access opens September 2026. Hosts who list before launch surface first.
+          {t("cta.body")}
         </p>
 
         <form
@@ -48,26 +50,26 @@ export function CtaWaitlist() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
+            placeholder={t("cta.placeholder")}
             className="flex-1 bg-transparent border-0 px-5 py-3 outline-none"
             disabled={pending || status === "ok"}
           />
           <button type="submit" className="pill-primary" disabled={pending || status === "ok"}>
-            {status === "ok" ? "On the list ✓" : pending ? "Sending…" : "Request invite"}
+            {status === "ok" ? t("cta.sent") : pending ? t("auth.forgot.submitting") : t("cta.button")}
           </button>
         </form>
 
         {status === "error" && (
           <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>
-            Something went wrong. Try again in a moment.
+            {t("cta.error")}
           </p>
         )}
 
         <div className="mt-12 flex flex-wrap gap-6 justify-center font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-          <span>◦ 92 countries</span>
-          <span>◦ Insurance included</span>
-          <span>◦ No host fees</span>
-          <span>◦ No platform commission</span>
+          <span>{t("cta.stat.countries")}</span>
+          <span>{t("cta.stat.insurance")}</span>
+          <span>{t("cta.stat.noFees")}</span>
+          <span>{t("cta.stat.noCommission")}</span>
         </div>
       </div>
     </section>

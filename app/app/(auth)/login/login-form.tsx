@@ -3,8 +3,10 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useT } from "@/lib/i18n/client";
 
 export default function LoginForm() {
+  const t = useT();
   const router = useRouter();
   const next = useSearchParams().get("next") ?? "/dashboard";
 
@@ -34,14 +36,14 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md surface-card p-8">
-      <h1 className="font-display text-3xl tracking-[-0.02em] mb-2">Welcome back.</h1>
+      <h1 className="font-display text-3xl tracking-[-0.02em] mb-2">{t("auth.login.title")}</h1>
       <p className="text-sm mb-6" style={{ color: "var(--navy-2)" }}>
-        Sign in to manage your listing and swap proposals.
+        {t("auth.login.lede")}
       </p>
 
       <form onSubmit={submit} className="flex flex-col gap-4">
         <label className="block text-sm">
-          <span className="block mb-1.5 font-medium">Email</span>
+          <span className="block mb-1.5 font-medium">{t("auth.login.email")}</span>
           <input
             type="email"
             required
@@ -54,9 +56,9 @@ export default function LoginForm() {
         </label>
         <label className="block text-sm">
           <div className="flex items-baseline justify-between mb-1.5">
-            <span className="font-medium">Password</span>
+            <span className="font-medium">{t("auth.login.password")}</span>
             <Link href="/forgot-password" className="text-xs" style={{ color: "var(--pink)" }}>
-              Forgot?
+              {t("auth.login.forgot")}
             </Link>
           </div>
           <input
@@ -72,14 +74,14 @@ export default function LoginForm() {
         </label>
         {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
         <button type="submit" className="pill-primary justify-center" disabled={pending}>
-          {pending ? "Signing in…" : "Sign in"}
+          {pending ? t("auth.login.submitting") : t("auth.login.submit")}
         </button>
       </form>
 
       <p className="mt-6 text-sm" style={{ color: "var(--navy-2)" }}>
-        New here?{" "}
+        {t("auth.login.newHere")}{" "}
         <Link href="/register" className="font-medium" style={{ color: "var(--pink)" }}>
-          Create an account
+          {t("auth.login.createAccount")}
         </Link>
       </p>
 

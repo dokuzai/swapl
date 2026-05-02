@@ -3,7 +3,7 @@
 // Adding a locale = (1) new dict-XX.ts, (2) entry in LOCALES,
 // (3) the locale's BCP-47 prefix in detectLocaleFromHeader().
 
-export const LOCALES = ["en", "it", "fr", "de", "es", "pt", "nl"] as const;
+export const LOCALES = ["en", "it", "fr", "de", "es", "pt", "nl", "tr"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "en";
@@ -16,6 +16,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   es: "Español",
   pt: "Português",
   nl: "Nederlands",
+  tr: "Türkçe",
 };
 
 // Small flag glyphs for the locale-switcher chips. Pure unicode.
@@ -27,6 +28,7 @@ export const LOCALE_FLAG: Record<Locale, string> = {
   es: "🇪🇸",
   pt: "🇵🇹",
   nl: "🇳🇱",
+  tr: "🇹🇷",
 };
 
 export function isLocale(value: unknown): value is Locale {

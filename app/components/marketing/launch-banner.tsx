@@ -2,8 +2,10 @@
 // listing they create now ranks higher when swaps go live in September.
 
 import Link from "next/link";
+import { getDictionary } from "@/lib/i18n/server";
 
-export function LaunchBanner() {
+export async function LaunchBanner() {
+  const dict = await getDictionary();
   return (
     <div
       className="border-b text-center py-2 px-4 text-sm"
@@ -14,11 +16,11 @@ export function LaunchBanner() {
       }}
     >
       <span className="font-mono uppercase tracking-[.08em] text-[10px] mr-3" style={{ color: "var(--pink)" }}>
-        Pre-launch
+        {dict["launchBanner.tag"]}
       </span>
-      Collecting listings now — swaps go live <strong>September 2026</strong>.{" "}
+      {dict["launchBanner.body"]} <strong>{dict["launchBanner.month"]}</strong>.{" "}
       <Link href="/listings/new" className="underline font-medium" style={{ color: "var(--pink)" }}>
-        List your home →
+        {dict["launchBanner.cta"]}
       </Link>
     </div>
   );

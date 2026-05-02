@@ -5,6 +5,7 @@ import { ListingCard } from "@/components/listing/listing-card";
 import { AISuggestions } from "@/components/listing/ai-suggestions";
 import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
 import { toDTO, formatDateRange } from "@/lib/listing-utils";
+import { getDictionary } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Dashboard · swapl" };
@@ -13,7 +14,7 @@ export default async function DashboardPage() {
   const session = await getSession();
   if (!session) return null;
 
-  const [user, listings, incoming, outgoing, agreements] = await Promise.all([
+  const [user, listings, incoming, outgoing, agreements, dict] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.userId } }),
     prisma.listing.findMany({
       where: { userId: session.userId },
@@ -32,22 +33,23 @@ export default async function DashboardPage() {
         status: "ACTIVE",
       },
     }),
+    getDictionary(),
   ]);
 
   return (
     <div className="wrap py-10 lg:py-14">
       {user && !user.emailVerifiedAt && <VerifyEmailBanner email={user.email} />}
       <header className="mb-10">
-        <p className="kicker mb-3">Hi {user?.name ?? user?.email.split("@")[0]} 👋</p>
+        <p className="kicker mb-3">{dict["dashboard.greeting"]} {user?.name ?? user?.email.split("@")[0]} 👋</p>
         <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">
-          Your swap dashboard
+          {dict["dashboard.title"]}
         </h1>
       </header>
 
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
-        <Stat label="Waiting on you" value={incoming} href="/swaps" />
-        <Stat label="Sent — awaiting reply" value={outgoing} href="/swaps" />
-        <Stat label="Active swaps" value={agreements} href="/swaps" accent />
+        <Stat label={dict["dashboard.statWaitingOnYou"]} value={incoming} href="/swaps" />
+        <Stat label={dict["dashboard.statSentAwaiting"]} value={outgoing} href="/swaps" />
+        <Stat label={dict["dashboard.statActiveSwaps"]} value={agreements} href="/swaps" accent />
       </section>
 
       <section className="mb-12">
@@ -56,16 +58,16 @@ export default async function DashboardPage() {
 
       <section className="mb-12">
         <div className="flex items-baseline justify-between mb-4">
-          <h2 className="font-display text-2xl tracking-[-0.01em]">Your listings</h2>
-          <Link href="/listings/new" className="pill-primary">+ List a new home</Link>
+          <h2 className="font-display text-2xl tracking-[-0.01em]">{dict["dashboard.yourListings"]}</h2>
+          <Link href="/listings/new" className="pill-primary">{dict["dashboard.newListing"]}</Link>
         </div>
         {listings.length === 0 ? (
           <div className="surface-card p-10 text-center">
-            <h3 className="font-display text-xl mb-2">No listings yet.</h3>
+            <h3 className="font-display text-xl mb-2">{dict["dashboard.empty.title"]}</h3>
             <p className="mb-5" style={{ color: "var(--navy-2)" }}>
-              You need to publish a home before you can propose swaps.
+              {dict["dashboard.empty.body"]}
             </p>
-            <Link href="/listings/new" className="pill-primary">List my home</Link>
+            <Link href="/listings/new" className="pill-primary">{dict["dashboard.empty.cta"]}</Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -77,17 +79,17 @@ export default async function DashboardPage() {
       </section>
 
       <section className="surface-card p-6">
-        <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Account</h2>
+        <h2 className="font-display text-xl tracking-[-0.01em] mb-3">{dict["dashboard.account"]}</h2>
         <p className="text-sm mb-2" style={{ color: "var(--navy-2)" }}>
-          Signed in as <span className="font-medium">{session.email}</span>
+          {dict["dashboard.signedInAs"]} <span className="font-medium">{session.email}</span>
         </p>
         <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
-          Joined {user?.createdAt && formatDateRange(user.createdAt.toISOString(), user.createdAt.toISOString()).split(" – ")[0]}
+          {dict["account.joined"]} {user?.createdAt && formatDateRange(user.createdAt.toISOString(), user.createdAt.toISOString()).split(" – ")[0]}
         </p>
         <div className="flex gap-3">
-          <Link href="/account" className="pill-ghost">Account settings</Link>
+          <Link href="/account" className="pill-ghost">{dict["dashboard.accountSettings"]}</Link>
           <form action="/api/auth/logout" method="post">
-            <button className="pill-ghost" type="submit">Sign out</button>
+            <button className="pill-ghost" type="submit">{dict["dashboard.signOut"]}</button>
           </form>
         </div>
       </section>

@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { CityIllust, SwapArrows } from "@/components/illustrations";
+import { getDictionary } from "@/lib/i18n/server";
 
-export function Hero() {
+export async function Hero() {
+  const dict = await getDictionary();
   return (
     <section className="hero relative overflow-hidden py-20 lg:py-28">
       <div className="wrap">
@@ -9,23 +11,21 @@ export function Hero() {
           <div>
             <span className="kicker mb-5 inline-flex items-center gap-2">
               <span className="block w-6 h-px bg-navy-3" style={{ background: "var(--navy-3)" }} />
-              Collecting listings now · Launching September 2026
+              {dict["hero.kicker"]}
             </span>
             <h1 className="font-display font-medium leading-[0.98] tracking-[-0.035em]" style={{ fontSize: "clamp(44px, 7vw, 96px)" }}>
-              Trade your home<br />for <span className="h-em">someone else&rsquo;s</span>.
+              {dict["hero.titleA"]}<br />{dict["hero.titleB"]} <span className="h-em">{dict["hero.titleEm"]}</span>.
             </h1>
             <p className="mt-7 text-[clamp(16px,1.4vw,20px)] text-[color-mix(in_oklab,var(--navy)_75%,transparent)] max-w-[52ch] leading-[1.5]">
-              We&rsquo;re collecting listings ahead of the September 2026 launch. List your place with
-              ruthless accuracy now and you&rsquo;ll be among the first homes that show up when swaps go live —
-              keys for keys, no cash changing hands, every stay insured end to end.
+              {dict["hero.intro"]}
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link href="/listings/new" className="pill-primary">
-                List my home
+                {dict["hero.ctaList"]}
                 <SwapArrows color="currentColor" size={16} />
               </Link>
               <Link href="/how-it-works" className="pill-ghost">
-                See how it works
+                {dict["hero.ctaHow"]}
               </Link>
             </div>
           </div>

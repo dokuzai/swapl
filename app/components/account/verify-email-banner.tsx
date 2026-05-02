@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useT } from "@/lib/i18n/client";
 
 // Pre-launch we never block the app on email verification — we just nudge.
 // Set the resend-cap on the API side; here we just let the user try.
 export function VerifyEmailBanner({ email }: { email: string }) {
+  const t = useT();
   const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -32,17 +34,17 @@ export function VerifyEmailBanner({ email }: { email: string }) {
           className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-0.5 rounded-full mr-2 align-middle"
           style={{ background: "var(--pink)", color: "#fff" }}
         >
-          Verify
+          {t("verifyBanner.label")}
         </span>
-        Confirm your email at <b>{email}</b> to unlock everything. The link in your inbox works for 7 days.
+        {t("verifyBanner.bodyA")} <b>{email}</b> {t("verifyBanner.bodyB")}
       </div>
       {status === "sent" ? (
         <span className="text-sm font-medium" style={{ color: "var(--pink)" }}>
-          ✓ Email resent
+          {t("verifyBanner.sent")}
         </span>
       ) : (
         <button onClick={resend} disabled={pending} className="pill-ghost shrink-0">
-          {pending ? "Sending…" : "Resend email"}
+          {pending ? t("verifyBanner.sending") : t("verifyBanner.resend")}
         </button>
       )}
       {error && <span className="text-xs sm:ml-3" style={{ color: "#dc2626" }}>{error}</span>}

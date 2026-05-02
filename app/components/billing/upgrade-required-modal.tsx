@@ -25,7 +25,7 @@ export function UpgradeRequiredModal({
       : "Pro adds unlimited listings, listing analytics, the verified badge and multi-home / team accounts.";
   return (
     <div className="fixed inset-0 z-[100] grid place-items-center p-4" style={{ background: "rgba(26,31,60,.5)" }}>
-      <div className="surface-card max-w-md w-full p-7">
+      <div className="surface-card surface-card--static max-w-md w-full p-7">
         <p className="kicker mb-2">Upgrade required</p>
         <h2 className="font-display text-2xl tracking-[-0.01em] mb-3">{target}</h2>
         <p className="text-sm mb-2" style={{ color: "var(--navy-2)" }}>{reason}</p>

@@ -13,6 +13,9 @@ import { it } from "./dict-it";
 import { fr } from "./dict-fr";
 import { de } from "./dict-de";
 import { es } from "./dict-es";
+import { pt } from "./dict-pt";
+import { nl } from "./dict-nl";
+import { tr } from "./dict-tr";
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
@@ -21,10 +24,9 @@ import {
   type Locale,
 } from "./locales";
 
-// Partial registry: locales without a shipped dict (currently pt, nl) fall
-// back to English at runtime. Lets us advertise the full locale list while
-// translations roll out incrementally.
-const DICTIONARIES: Partial<Record<Locale, Record<DictKey, string>>> = { en, it, fr, de, es };
+// Partial registry: any locale missing here falls back to English at runtime.
+// Currently every advertised locale ships a dict.
+const DICTIONARIES: Partial<Record<Locale, Record<DictKey, string>>> = { en, it, fr, de, es, pt, nl, tr };
 
 export async function getLocale(): Promise<Locale> {
   const c = await cookies();

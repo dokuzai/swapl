@@ -105,7 +105,7 @@ export default function ProposeSwapButton({
           }}
         >
           <div
-            className="surface-card max-w-lg w-full p-7 my-auto"
+            className="surface-card surface-card--static max-w-lg w-full p-7 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-baseline justify-between mb-5">
