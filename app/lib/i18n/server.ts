@@ -29,11 +29,18 @@ import {
 const DICTIONARIES: Partial<Record<Locale, Record<DictKey, string>>> = { en, it, fr, de, es, pt, nl, tr };
 
 export async function getLocale(): Promise<Locale> {
-  const c = await cookies();
-  const fromCookie = c.get(LOCALE_COOKIE)?.value;
-  if (isLocale(fromCookie)) return fromCookie;
-  const h = await headers();
-  return detectLocaleFromHeader(h.get("accept-language"));
+  // cookies()/headers() throw at build time when there is no request scope
+  // (e.g. while Next prerenders /_global-error). Quietly fall back to the
+  // default locale instead of bringing the build down.
+  try {
+    const c = await cookies();
+    const fromCookie = c.get(LOCALE_COOKIE)?.value;
+    if (isLocale(fromCookie)) return fromCookie;
+    const h = await headers();
+    return detectLocaleFromHeader(h.get("accept-language"));
+  } catch {
+    return DEFAULT_LOCALE;
+  }
 }
 
 export type Dict = Record<DictKey, string>;

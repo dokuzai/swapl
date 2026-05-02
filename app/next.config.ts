@@ -1,13 +1,10 @@
 import type { NextConfig } from "next";
-import path from "node:path";
 
 const nextConfig: NextConfig = {
-  // Pin Turbopack's workspace root. Without this Next 16 can pick the wrong
-  // root when multiple lockfiles are visible (warning at dev start, hard
-  // alias-resolution failure on Vercel).
-  turbopack: {
-    root: path.join(import.meta.dirname),
-  },
+  // Vercel sets outputFileTracingRoot to /vercel/path0 (the repo root, one
+  // level above the app/) and Next requires turbopack.root to match it. We
+  // already use relative imports for the generated Prisma client to avoid
+  // alias-resolution edge cases, so leaving turbopack.root unset is fine.
 };
 
 export default nextConfig;
