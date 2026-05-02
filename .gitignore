@@ -16,3 +16,17 @@ app/app/generated/
 
 # Local production env pulled from Vercel
 .env.production.local
+
+# iOS
+ios/**/Build/
+ios/**/DerivedData/
+ios/**/*.xcuserdata*
+ios/**/.swiftpm/
+
+# Android
+android/**/.gradle/
+android/**/build/
+android/**/local.properties
+android/**/google-services.json
+android/**/.idea/
+*.iml

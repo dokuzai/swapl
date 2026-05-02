@@ -76,6 +76,20 @@ export const credentialsSchema = z.object({
   password: z.string().min(6).max(128),
 });
 
+// Mobile-only: same fields as credentials plus device metadata so we can stamp
+// the issued AuthToken with platform info.
+export const tokenIssueSchema = credentialsSchema.extend({
+  platform: z.enum(["ios", "android", "web-pwa"]),
+  appVersion: z.string().max(40).optional(),
+});
+
+export const deviceRegisterSchema = z.object({
+  platform: z.enum(["ios", "android"]),
+  pushToken: z.string().min(8).max(4096),
+  locale: z.string().max(20).optional(),
+  appVersion: z.string().max(40).optional(),
+});
+
 export const reportSchema = z.object({
   reason: z.string().min(2).max(80),
   detail: z.string().max(2000).optional(),

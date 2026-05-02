@@ -53,6 +53,41 @@ model User {
   affiliateClicks AffiliateClick[]
   orgMemberships  OrganizationMember[]
   savedSearches   SavedSearch[]
+  authTokens      AuthToken[]
+  devices         Device[]
+}
+
+// Mobile clients exchange credentials for an opaque bearer token; only the
+// sha256 hash is persisted. Cookie sessions on the web are unaffected.
+model AuthToken {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String   @unique
+  platform   String                                          // "ios" | "android" | "web-pwa"
+  appVersion String?
+  lastSeenAt DateTime @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}
+
+// Push notification targets for a given user. One row per device per user.
+model Device {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform   String                                          // "ios" | "android"
+  pushToken  String                                          // APNs token or FCM registration token
+  locale     String?
+  appVersion String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, pushToken])
+  @@index([userId])
 }
 
 // ---------- LISTING ----------

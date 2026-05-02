@@ -1,0 +1,16 @@
+{
+  "color": {
+    "cream":      { "value": "#FAF6E8", "type": "color" },
+    "cream-2":    { "value": "#F5EFD9", "type": "color" },
+    "navy":       { "value": "#1A1F3C", "type": "color" },
+    "navy-2":     { "value": "#2A3066", "type": "color" },
+    "navy-3":     { "value": "#5E63A0", "type": "color" },
+    "pink":       { "value": "#F24B8E", "type": "color" },
+    "pink-light": { "value": "#FDEEF5", "type": "color" },
+    "card-bg":    { "value": "#FFFFFF", "type": "color" },
+    "line":       { "value": "#E5E0D0", "type": "color" },
+    "tag-bg":     { "value": "#F0EBD8", "type": "color" },
+    "white":      { "value": "#FFFFFF", "type": "color" },
+    "navy-dark":  { "value": "#11142A", "type": "color" }
+  }
+}
