@@ -11,7 +11,7 @@
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force && tsx prisma/seed.ts",
-    "vercel-build": "prisma generate --schema prisma/schema.postgres.prisma && next build",
+    "vercel-build": "prisma generate --schema prisma/schema.postgres.prisma && ls -la generated/prisma/ && next build",
     "postinstall": "node -e \"const s=process.env.VERCEL?'prisma/schema.postgres.prisma':'prisma/schema.prisma';require('child_process').execSync('prisma generate --schema '+s,{stdio:'inherit'})\""
   },
   "dependencies": {
