@@ -1,5 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "prisma generate --schema prisma/schema.postgres.prisma && next build",
+  "installCommand": "npm install",
   "crons": [
     { "path": "/api/cron/featured-expire", "schedule": "0 1 * * *" },
     { "path": "/api/cron/saved-searches", "schedule": "0 9 * * *" }
