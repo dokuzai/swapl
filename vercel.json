@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd app && rm -rf node_modules && npm install",
+  "installCommand": "cd app && npm ci",
   "buildCommand": "cd app && rm -rf .next .turbo && prisma generate --schema prisma/schema.postgres.prisma && next build --webpack",
   "outputDirectory": "app/.next",
   "crons": [

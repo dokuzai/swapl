@@ -79,6 +79,6 @@
     "typescript": "^5"
   },
   "overrides": {
-    "next": "$next"
+    "next": "16.3.0-canary.8"
   }
 }
