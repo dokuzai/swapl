@@ -1,10 +1,17 @@
 "use client";
 
-// Replaces the root layout when the layout itself throws. Must be a client
-// component and must render its own <html> + <body>. Kept dependency-free
-// (no i18n, no cookies, no DB) so Next can prerender it without a request
-// scope — that prerender is the build step that was failing on Vercel.
-export default function GlobalError({ reset }: { error: Error; reset: () => void }) {
+// Replaces the root layout when something in it throws. Must be a Client
+// Component, must own its own <html>+<body>, and must NOT export `metadata`
+// or `generateMetadata` (Next 16 docs/03-file-conventions/error.md). Kept
+// dependency-free so the static-generation pass for /_global-error doesn't
+// pull anything that needs a request scope.
+
+export default function GlobalError({
+  unstable_retry,
+}: {
+  error: Error & { digest?: string };
+  unstable_retry: () => void;
+}) {
   return (
     <html lang="en">
       <body
@@ -41,7 +48,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             <button
-              onClick={() => reset()}
+              onClick={() => unstable_retry()}
               style={{
                 background: "#d8467b",
                 color: "#fff",
