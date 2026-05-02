@@ -53,7 +53,12 @@ export default function LoginForm() {
           />
         </label>
         <label className="block text-sm">
-          <span className="block mb-1.5 font-medium">Password</span>
+          <div className="flex items-baseline justify-between mb-1.5">
+            <span className="font-medium">Password</span>
+            <Link href="/forgot-password" className="text-xs" style={{ color: "var(--pink)" }}>
+              Forgot?
+            </Link>
+          </div>
           <input
             type="password"
             required

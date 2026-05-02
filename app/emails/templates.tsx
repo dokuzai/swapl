@@ -190,4 +190,34 @@ export const templates = {
       ctaHref: `${APP_URL}/org`,
       text: `Your team completed ${completedSwaps} swaps this month. Estimated savings €${savings.toLocaleString()}.`,
     }),
+
+  // ---- Auth flows ----
+
+  verifyEmail: (toEmail: string, token: string) => {
+    const link = `${APP_URL}/api/auth/verify-email/${token}`;
+    return build({
+      to: toEmail,
+      subject: "Confirm your swapl email",
+      preview: "Click to verify your email — link valid for 7 days.",
+      heading: "Confirm your email.",
+      intro: "Just one click to finish setting up your swapl account. The link works for 7 days; ignore this message if you didn't sign up.",
+      ctaLabel: "Verify email",
+      ctaHref: link,
+      text: `Confirm your swapl email by opening this link (valid for 7 days):\n\n${link}\n\nIf you didn't sign up, ignore this message.`,
+    });
+  },
+
+  resetPassword: (toEmail: string, token: string) => {
+    const link = `${APP_URL}/reset-password?token=${token}`;
+    return build({
+      to: toEmail,
+      subject: "Reset your swapl password",
+      preview: "We received a request to reset your password.",
+      heading: "Reset your password.",
+      intro: "Click below to set a new password. The link works for 1 hour. If you didn't ask for this, ignore the email — your account stays untouched.",
+      ctaLabel: "Set a new password",
+      ctaHref: link,
+      text: `We received a request to reset your swapl password. Open this link within the next hour:\n\n${link}\n\nIf you didn't ask for this, no action is needed.`,
+    });
+  },
 };

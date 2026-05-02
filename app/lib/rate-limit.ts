@@ -1,7 +1,19 @@
 // Trivial in-memory rate limiter — fine for dev / single-node demo.
-// Replace with Upstash Ratelimit in prod.
+// Replace with Upstash Ratelimit in prod (the Vercel Postgres adapter is
+// not safe across function invocations).
 
 const buckets = new Map<string, { count: number; resetAt: number }>();
+
+// Best-effort client IP for unauthenticated rate limits. Vercel sets
+// x-forwarded-for; fall back to remote-addr-style headers; finally to a
+// constant so the bucket still functions in tests.
+export function clientIpFromRequest(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  const real = req.headers.get("x-real-ip");
+  if (real) return real;
+  return "unknown";
+}
 
 export function checkRateLimit(
   key: string,

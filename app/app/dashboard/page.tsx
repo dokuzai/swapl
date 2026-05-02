@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { ListingCard } from "@/components/listing/listing-card";
 import { AISuggestions } from "@/components/listing/ai-suggestions";
+import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
 import { toDTO, formatDateRange } from "@/lib/listing-utils";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +36,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="wrap py-10 lg:py-14">
+      {user && !user.emailVerifiedAt && <VerifyEmailBanner email={user.email} />}
       <header className="mb-10">
         <p className="kicker mb-3">Hi {user?.name ?? user?.email.split("@")[0]} 👋</p>
         <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">

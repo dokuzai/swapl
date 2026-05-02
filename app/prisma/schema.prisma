@@ -21,6 +21,9 @@ model User {
   bio          String?
   passwordHash String?
   verified     Boolean  @default(false)
+  // Inbox-confirmed email. Distinct from `verified` (the listing-trust KYC
+  // badge). Set when the user clicks the link in the verification email.
+  emailVerifiedAt DateTime?
   createdAt    DateTime @default(now())
 
   // AI provider preferences (override the env-wide default).
@@ -53,6 +56,28 @@ model User {
   affiliateClicks AffiliateClick[]
   orgMemberships  OrganizationMember[]
   savedSearches   SavedSearch[]
+  emailTokens     EmailToken[]
+}
+
+// One-shot tokens for email verification + password reset. We store only the
+// SHA-256 hash of the token; the cleartext is sent in the email URL exactly
+// once and never persisted. Expired and used tokens stay in the table for
+// short-term audit, then a daily cron sweeps them.
+model EmailToken {
+  id         String   @id @default(cuid())
+  userId     String
+  // "verify" → email verification, "reset" → password reset
+  kind       String
+  // SHA-256 hex of the random 32-byte token
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, kind])
+  @@index([expiresAt])
 }
 
 // ---------- LISTING ----------

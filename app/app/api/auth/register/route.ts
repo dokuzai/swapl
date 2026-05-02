@@ -3,24 +3,53 @@ import { prisma } from "@/lib/db";
 import { credentialsSchema } from "@/lib/validators";
 import { hashPassword } from "@/lib/auth/passwords";
 import { setSession } from "@/lib/auth/session";
+import { issueToken, normaliseEmail } from "@/lib/auth/tokens";
+import { sendEmail, emailTemplates } from "@/lib/email";
+import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+
+const HOUR_MS = 60 * 60 * 1000;
 
 export async function POST(req: Request) {
+  // Per-IP rate limit (10 registrations / hour) — keeps casual abuse off
+  // without hurting honest signups. Replace with a stronger limit + CAPTCHA
+  // before launch.
+  const ip = clientIpFromRequest(req);
+  const rl = checkRateLimit(`register:${ip}`, 10, HOUR_MS);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many sign-ups from this network. Try again in an hour." },
+      { status: 429 }
+    );
+  }
+
   const body = await req.json().catch(() => null);
   const parsed = credentialsSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
 
-  const { email, password } = parsed.data;
+  const email = normaliseEmail(parsed.data.email);
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     return NextResponse.json({ error: "Email already in use" }, { status: 409 });
   }
 
-  const passwordHash = await hashPassword(password);
+  const passwordHash = await hashPassword(parsed.data.password);
   const user = await prisma.user.create({
     data: { email, passwordHash, name: email.split("@")[0] },
   });
+
+  // Issue + send the verification email. The token is one-shot, hashed in
+  // the DB. Send is best-effort — registration succeeds even if Resend
+  // fails (the user can request a resend from /account).
+  try {
+    const token = await issueToken(user.id, "verify");
+    sendEmail(emailTemplates.verifyEmail(user.email, token)).catch((err) =>
+      console.error("[register:verify-email]", err)
+    );
+  } catch (err) {
+    console.error("[register:issue-token]", err);
+  }
 
   await setSession({ userId: user.id, email: user.email, name: user.name });
   return NextResponse.json({ ok: true, userId: user.id });
