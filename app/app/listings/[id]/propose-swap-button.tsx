@@ -97,7 +97,7 @@ export default function ProposeSwapButton({
       {open && (
         <div
           className="fixed inset-0 z-[100] overflow-y-auto flex items-center justify-center p-4"
-          style={{ background: "rgba(26,31,60,.5)" }}
+          style={{ background: "rgba(245,238,224,.65)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
           onClick={(e) => {
             // Click outside the card → close. Stop the inner card from
             // bubbling.

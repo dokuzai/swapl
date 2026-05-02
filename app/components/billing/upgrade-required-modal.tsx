@@ -24,7 +24,7 @@ export function UpgradeRequiredModal({
       ? "Plus unlocks unlimited proposals, up to 3 listings, advanced filters, calendar sync and saved-search alerts."
       : "Pro adds unlimited listings, listing analytics, the verified badge and multi-home / team accounts.";
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center p-4" style={{ background: "rgba(26,31,60,.5)" }}>
+    <div className="fixed inset-0 z-[100] grid place-items-center p-4" style={{ background: "rgba(245,238,224,.65)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}>
       <div className="surface-card surface-card--static max-w-md w-full p-7">
         <p className="kicker mb-2">Upgrade required</p>
         <h2 className="font-display text-2xl tracking-[-0.01em] mb-3">{target}</h2>

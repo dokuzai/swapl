@@ -228,10 +228,14 @@
     box-shadow: 0 24px 48px -28px rgba(26, 31, 60, .25);
     border-color: var(--navy-3);
   }
-  /* Opt-out of the lift/darken — for non-interactive panels (e.g. modals). */
+  /* Opt-out of the lift/darken — for non-interactive panels (e.g. modals).
+     Keeps a soft shadow so the card reads as elevated above the page. */
+  .surface-card--static {
+    box-shadow: 0 30px 60px -28px rgba(26, 31, 60, .35);
+  }
   .surface-card--static:hover {
     transform: none;
-    box-shadow: none;
+    box-shadow: 0 30px 60px -28px rgba(26, 31, 60, .35);
     border-color: var(--line);
   }
 
