@@ -4,8 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,7 +33,11 @@ fun LoginScreen(vm: AuthViewModel) {
     var password by remember { mutableStateOf("") }
 
     Column(
-        Modifier.fillMaxSize().padding(SwaplSpacing.s8),
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding()
+            .padding(SwaplSpacing.s8),
         verticalArrangement = Arrangement.Center
     ) {
         KickerLabel("Welcome back")
@@ -42,7 +50,7 @@ fun LoginScreen(vm: AuthViewModel) {
             label = { Text("Email") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxSize(0.999f)
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(SwaplSpacing.s3))
         OutlinedTextField(
@@ -51,7 +59,7 @@ fun LoginScreen(vm: AuthViewModel) {
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             singleLine = true,
-            modifier = Modifier.fillMaxSize(0.999f)
+            modifier = Modifier.fillMaxWidth()
         )
         vm.uiState.error?.let {
             Spacer(Modifier.height(SwaplSpacing.s2))

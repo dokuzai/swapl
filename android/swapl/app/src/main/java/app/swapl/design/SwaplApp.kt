@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import app.swapl.R
 import app.swapl.designtokens.SwaplFontFamily
 import app.swapl.designtokens.SwaplSemanticDark
 import app.swapl.designtokens.SwaplSemanticLight
@@ -52,9 +53,10 @@ private val DarkSwaplColors = darkColorScheme(
 )
 
 // Place TTFs in res/font/ named to match SwaplFontFamily constants.
-val DisplayFamily = FontFamily(Font(resourceId = R.font.fraunces))
-val BodyFamily = FontFamily(Font(resourceId = R.font.inter))
-val MonoFamily = FontFamily(Font(resourceId = R.font.jetbrains_mono))
+// For now, using default fonts as placeholders since resource files are missing.
+val DisplayFamily = FontFamily.Serif
+val BodyFamily = FontFamily.Default
+val MonoFamily = FontFamily.Monospace
 
 private val SwaplTypography = Typography(
     displayLarge = TextStyle(fontFamily = DisplayFamily, fontWeight = FontWeight.Medium, fontSize = 56.sp, letterSpacing = (-0.02).sp),
