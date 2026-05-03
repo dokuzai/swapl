@@ -1,0 +1,543 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09510D369FFD86683685D48E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE15DAF7CB60D8091AAB48 /* Theme.swift */; };
+		12A73281C203C687F50C0A01 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DF9FF9E682ED439398C38D /* LoginView.swift */; };
+		1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC7EF0654A2A456B14E52A5 /* AuthService.swift */; };
+		23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967B9C41F5F9438E30143514 /* APIClient.swift */; };
+		274DA2C25CEC164CB11256CC /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FBD4B316B85673A7BD2D2E /* Auth.swift */; };
+		2E03DA0A20134F3722419077 /* Proposal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9105E39884B94E60E5BF0FCB /* Proposal.swift */; };
+		3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */; };
+		3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E0749085C3E362B239A25 /* ProposalRepository.swift */; };
+		65EFA92459406FAB1651014D /* SurfaceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC848E7485CD6912E46E61BE /* SurfaceCard.swift */; };
+		6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEEE99CFDC981E6B91926F5 /* PushService.swift */; };
+		6FD9E408F7CFD3F2D3F0E862 /* Listing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC5F71B34111A6A25719F4 /* Listing.swift */; };
+		762691A8EE338BA81B65CA9B /* ListingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348C7476795E59B9F7C4360C /* ListingDetailView.swift */; };
+		817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E72A38E93BF07A269B5A860 /* AccountView.swift */; };
+		8631C6131E59F65FAD09B6D4 /* PrimaryPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD681952D45568C94F736A2 /* PrimaryPill.swift */; };
+		8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C16E51E119668C1E262BDB /* ListingRepository.swift */; };
+		8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988E469B97C24C69D3CF04E2 /* CityIllust.swift */; };
+		DA8C3FCC1426E8B95A52BD96 /* SwaplDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = A8D80844D3E9A3B2227C620A /* SwaplDesignTokens */; };
+		DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */; };
+		EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */; };
+		F9616C2B39409158D02A511F /* SwaplApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C55A61B818770C1E2FFE8 /* SwaplApp.swift */; };
+		FFB628B21B3C9A6DA0C2BD15 /* KeychainTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0FB5692D60E8AAFB8D3017D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseListView.swift; sourceTree = "<group>"; };
+		348C7476795E59B9F7C4360C /* ListingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingDetailView.swift; sourceTree = "<group>"; };
+		3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapsInboxView.swift; sourceTree = "<group>"; };
+		3EC7EF0654A2A456B14E52A5 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		482C55A61B818770C1E2FFE8 /* SwaplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplApp.swift; sourceTree = "<group>"; };
+		6E72A38E93BF07A269B5A860 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		88FE15DAF7CB60D8091AAB48 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		9105E39884B94E60E5BF0FCB /* Proposal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proposal.swift; sourceTree = "<group>"; };
+		967B9C41F5F9438E30143514 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		988E469B97C24C69D3CF04E2 /* CityIllust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityIllust.swift; sourceTree = "<group>"; };
+		98DF9FF9E682ED439398C38D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		9CCC5F71B34111A6A25719F4 /* Listing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Listing.swift; sourceTree = "<group>"; };
+		A1E4A3420C9FC28FE105C9A4 /* Swapl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swapl.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTokenStore.swift; sourceTree = "<group>"; };
+		A9FBD4B316B85673A7BD2D2E /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
+		B0C16E51E119668C1E262BDB /* ListingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingRepository.swift; sourceTree = "<group>"; };
+		B2ECF15F803E263DBFEB14FC /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = "../packages/design-tokens/build/swift"; sourceTree = SOURCE_ROOT; };
+		B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplFonts.swift; sourceTree = "<group>"; };
+		BC848E7485CD6912E46E61BE /* SurfaceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurfaceCard.swift; sourceTree = "<group>"; };
+		CAEEE99CFDC981E6B91926F5 /* PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushService.swift; sourceTree = "<group>"; };
+		CCD681952D45568C94F736A2 /* PrimaryPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryPill.swift; sourceTree = "<group>"; };
+		F39E0749085C3E362B239A25 /* ProposalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProposalRepository.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		41F063BFE64049F4CA08E977 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA8C3FCC1426E8B95A52BD96 /* SwaplDesignTokens in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0EA051C9F1519EEF833938DB = {
+			isa = PBXGroup;
+			children = (
+				FB1C98F18B4F5486C00E60E1 /* Packages */,
+				BD437EA44DBE112FC0D7B43D /* Swapl */,
+				F18B78D06D59639966229328 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		419D45CE450828EE48D44A5B /* Push */ = {
+			isa = PBXGroup;
+			children = (
+				CAEEE99CFDC981E6B91926F5 /* PushService.swift */,
+			);
+			path = Push;
+			sourceTree = "<group>";
+		};
+		47D59144756EF65FE9EA96A6 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				3EC7EF0654A2A456B14E52A5 /* AuthService.swift */,
+				A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		514178AAFBA433B4FB51C2EE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				CCD681952D45568C94F736A2 /* PrimaryPill.swift */,
+				BC848E7485CD6912E46E61BE /* SurfaceCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		5655254325D25B334967473A /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				B0C16E51E119668C1E262BDB /* ListingRepository.swift */,
+				F39E0749085C3E362B239A25 /* ProposalRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		58C8CE26DE660BACBC4EB06C /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				594E17D3124F526B1BB9509D /* Auth */,
+				9062091F7BC2CFA3011D3F11 /* Listings */,
+				9ED48DF98918CA096D774EBD /* Profile */,
+				E931644CBEED9106DB254E61 /* Swaps */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		594E17D3124F526B1BB9509D /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				98DF9FF9E682ED439398C38D /* LoginView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		89D9DD3312F713275D58A326 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				967B9C41F5F9438E30143514 /* APIClient.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		8C4D4EBDAE0EFE3873306222 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A9FBD4B316B85673A7BD2D2E /* Auth.swift */,
+				9CCC5F71B34111A6A25719F4 /* Listing.swift */,
+				9105E39884B94E60E5BF0FCB /* Proposal.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		9062091F7BC2CFA3011D3F11 /* Listings */ = {
+			isa = PBXGroup;
+			children = (
+				1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */,
+				348C7476795E59B9F7C4360C /* ListingDetailView.swift */,
+			);
+			path = Listings;
+			sourceTree = "<group>";
+		};
+		9ED48DF98918CA096D774EBD /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				6E72A38E93BF07A269B5A860 /* AccountView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		BD437EA44DBE112FC0D7B43D /* Swapl */ = {
+			isa = PBXGroup;
+			children = (
+				0FB5692D60E8AAFB8D3017D8 /* Info.plist */,
+				E3F0605B68321C873190B989 /* App */,
+				E7374CB43A82D1797063FE3B /* Core */,
+				DC4B1C0567901A9F8715A839 /* Design */,
+				58C8CE26DE660BACBC4EB06C /* Features */,
+			);
+			path = Swapl;
+			sourceTree = "<group>";
+		};
+		DC4B1C0567901A9F8715A839 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */,
+				88FE15DAF7CB60D8091AAB48 /* Theme.swift */,
+				514178AAFBA433B4FB51C2EE /* Components */,
+				EE65BF6EFF1CEB06F97B072F /* Illustrations */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		E3F0605B68321C873190B989 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				482C55A61B818770C1E2FFE8 /* SwaplApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E7374CB43A82D1797063FE3B /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				47D59144756EF65FE9EA96A6 /* Auth */,
+				8C4D4EBDAE0EFE3873306222 /* Models */,
+				89D9DD3312F713275D58A326 /* Networking */,
+				419D45CE450828EE48D44A5B /* Push */,
+				5655254325D25B334967473A /* Repositories */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		E931644CBEED9106DB254E61 /* Swaps */ = {
+			isa = PBXGroup;
+			children = (
+				3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */,
+			);
+			path = Swaps;
+			sourceTree = "<group>";
+		};
+		EE65BF6EFF1CEB06F97B072F /* Illustrations */ = {
+			isa = PBXGroup;
+			children = (
+				988E469B97C24C69D3CF04E2 /* CityIllust.swift */,
+			);
+			path = Illustrations;
+			sourceTree = "<group>";
+		};
+		F18B78D06D59639966229328 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1E4A3420C9FC28FE105C9A4 /* Swapl.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FB1C98F18B4F5486C00E60E1 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				B2ECF15F803E263DBFEB14FC /* swift */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4CEF102A42868339131384FC /* Swapl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C7BEB355E7564D701A27D3F8 /* Build configuration list for PBXNativeTarget "Swapl" */;
+			buildPhases = (
+				535C70920D4012563F61B995 /* Sources */,
+				41F063BFE64049F4CA08E977 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Swapl;
+			packageProductDependencies = (
+				A8D80844D3E9A3B2227C620A /* SwaplDesignTokens */,
+			);
+			productName = Swapl;
+			productReference = A1E4A3420C9FC28FE105C9A4 /* Swapl.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A8AF8FF63E9E2D8F7FFB7603 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					4CEF102A42868339131384FC = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A6BE3E3EB13E27DE7A9866AB /* Build configuration list for PBXProject "Swapl" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0EA051C9F1519EEF833938DB;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BA51FFC53B11E9A73DE571C5 /* XCLocalSwiftPackageReference "../packages/design-tokens/build/swift" */,
+			);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4CEF102A42868339131384FC /* Swapl */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		535C70920D4012563F61B995 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */,
+				817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */,
+				274DA2C25CEC164CB11256CC /* Auth.swift in Sources */,
+				1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */,
+				EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */,
+				8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */,
+				FFB628B21B3C9A6DA0C2BD15 /* KeychainTokenStore.swift in Sources */,
+				6FD9E408F7CFD3F2D3F0E862 /* Listing.swift in Sources */,
+				762691A8EE338BA81B65CA9B /* ListingDetailView.swift in Sources */,
+				8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */,
+				12A73281C203C687F50C0A01 /* LoginView.swift in Sources */,
+				8631C6131E59F65FAD09B6D4 /* PrimaryPill.swift in Sources */,
+				2E03DA0A20134F3722419077 /* Proposal.swift in Sources */,
+				3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */,
+				6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */,
+				65EFA92459406FAB1651014D /* SurfaceCard.swift in Sources */,
+				F9616C2B39409158D02A511F /* SwaplApp.swift in Sources */,
+				DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */,
+				3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */,
+				09510D369FFD86683685D48E /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4AB2CEE05304891F9E5A6910 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Swapl/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Swapl;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.swapl;
+				PRODUCT_NAME = Swapl;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5788CEA7113CC6D6A0689E30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 65H83C7GYT;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		83BB2470C9C05B62C076429B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Swapl/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Swapl;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.swapl;
+				PRODUCT_NAME = Swapl;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C5BE03655482ABC7FE06846F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 65H83C7GYT;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A6BE3E3EB13E27DE7A9866AB /* Build configuration list for PBXProject "Swapl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5788CEA7113CC6D6A0689E30 /* Debug */,
+				C5BE03655482ABC7FE06846F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C7BEB355E7564D701A27D3F8 /* Build configuration list for PBXNativeTarget "Swapl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83BB2470C9C05B62C076429B /* Debug */,
+				4AB2CEE05304891F9E5A6910 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		BA51FFC53B11E9A73DE571C5 /* XCLocalSwiftPackageReference "../packages/design-tokens/build/swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../packages/design-tokens/build/swift";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A8D80844D3E9A3B2227C620A /* SwaplDesignTokens */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwaplDesignTokens;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A8AF8FF63E9E2D8F7FFB7603 /* Project object */;
+}
