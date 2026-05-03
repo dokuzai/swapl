@@ -1,24 +1,39 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 import { useT } from "@/lib/i18n/client";
+import { attributionFromSearchParams, trackMarketingEvent } from "@/lib/marketing/attribution";
 
 export function CtaWaitlist() {
   const t = useT();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
   const [pending, start] = useTransition();
+
+  function attributionPayload() {
+    return attributionFromSearchParams(searchParams, pathname);
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     start(async () => {
       try {
+        const attribution = attributionPayload();
         const res = await fetch("/api/beta", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email, ...attribution }),
         });
         if (!res.ok) throw new Error(await res.text());
+        trackMarketingEvent("subscriber_signup", {
+          ...attribution,
+          metadata: { placement: "footer_cta" },
+        });
         setStatus("ok");
         setEmail("");
       } catch {
@@ -40,24 +55,40 @@ export function CtaWaitlist() {
           {t("cta.body")}
         </p>
 
-        <form
-          onSubmit={submit}
-          className="inline-flex items-center gap-2 p-1.5 border rounded-full max-w-[480px] w-full"
-          style={{ background: "var(--card-bg)", borderColor: "var(--line)" }}
-        >
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={t("cta.placeholder")}
-            className="flex-1 bg-transparent border-0 px-5 py-3 outline-none"
-            disabled={pending || status === "ok"}
-          />
-          <button type="submit" className="pill-primary" disabled={pending || status === "ok"}>
-            {status === "ok" ? t("cta.sent") : pending ? t("auth.forgot.submitting") : t("cta.button")}
-          </button>
-        </form>
+        <div className="mx-auto grid max-w-[820px] gap-3 md:grid-cols-[1fr_auto] md:items-center">
+          <form
+            onSubmit={submit}
+            className="flex w-full flex-col gap-2 border p-1.5 sm:flex-row sm:items-center"
+            style={{ background: "var(--card-bg)", borderColor: "var(--line)", borderRadius: 8 }}
+          >
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("cta.placeholder")}
+              className="min-h-12 flex-1 bg-transparent px-4 py-3 outline-none"
+              disabled={pending || status === "ok"}
+            />
+            <button type="submit" className="pill-primary justify-center" disabled={pending || status === "ok"}>
+              {status === "ok" ? t("cta.sent") : pending ? t("auth.forgot.submitting") : t("cta.button")}
+            </button>
+          </form>
+
+          <Link
+            href="/register"
+            className="pill-ghost justify-center whitespace-nowrap"
+            onClick={() =>
+              trackMarketingEvent("listing_intent_click", {
+                ...attributionPayload(),
+                metadata: { placement: "footer_cta" },
+              })
+            }
+          >
+            List before September
+            <ArrowRight size={16} />
+          </Link>
+        </div>
 
         {status === "error" && (
           <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>

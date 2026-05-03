@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		09510D369FFD86683685D48E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE15DAF7CB60D8091AAB48 /* Theme.swift */; };
+		0A51AF88E20341AC9B72A501 /* AirbnbStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51AF87E20341AC9B72A501 /* AirbnbStyle.swift */; };
 		12A73281C203C687F50C0A01 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DF9FF9E682ED439398C38D /* LoginView.swift */; };
 		1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC7EF0654A2A456B14E52A5 /* AuthService.swift */; };
 		23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967B9C41F5F9438E30143514 /* APIClient.swift */; };
@@ -32,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		0FB5692D60E8AAFB8D3017D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0A51AF87E20341AC9B72A501 /* AirbnbStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirbnbStyle.swift; sourceTree = "<group>"; };
 		1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseListView.swift; sourceTree = "<group>"; };
 		348C7476795E59B9F7C4360C /* ListingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingDetailView.swift; sourceTree = "<group>"; };
 		3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapsInboxView.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 		DC4B1C0567901A9F8715A839 /* Design */ = {
 			isa = PBXGroup;
 			children = (
+				0A51AF87E20341AC9B72A501 /* AirbnbStyle.swift */,
 				B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */,
 				88FE15DAF7CB60D8091AAB48 /* Theme.swift */,
 				514178AAFBA433B4FB51C2EE /* Components */,
@@ -270,7 +273,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					4CEF102A42868339131384FC = {
 						ProvisioningStyle = Automatic;
@@ -304,6 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */,
+				0A51AF88E20341AC9B72A501 /* AirbnbStyle.swift in Sources */,
 				817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */,
 				274DA2C25CEC164CB11256CC /* Auth.swift in Sources */,
 				1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */,
@@ -336,6 +340,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 65H83C7GYT;
 				INFOPLIST_FILE = Swapl/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Swapl;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -355,6 +360,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -426,6 +432,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 65H83C7GYT;
 				INFOPLIST_FILE = Swapl/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Swapl;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -445,6 +452,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

@@ -4,6 +4,7 @@ import Observation
 @Observable
 final class AuthService {
     var session: AuthUser?
+    var isBootstrapping = true
     var isAuthenticating = false
     var errorMessage: String?
 
@@ -18,6 +19,8 @@ final class AuthService {
     // Called once on app launch — if there's a token in the keychain, fetch
     // /api/me to confirm it's still valid and prime the session.
     func bootstrap() async {
+        guard isBootstrapping else { return }
+        defer { isBootstrapping = false }
         guard keychain.read() != nil else { return }
         do {
             let me: MeResponse = try await APIClient.shared.send("GET", "/api/me")

@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { tokenIssueSchema } from "@/lib/validators";
 import { verifyPassword } from "@/lib/auth/passwords";
 import { issueAuthToken } from "@/lib/auth/session";
+import { normaliseEmail } from "@/lib/auth/tokens";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -14,7 +15,8 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
-  const { email, password, platform, appVersion } = parsed.data;
+  const { password, platform, appVersion } = parsed.data;
+  const email = normaliseEmail(parsed.data.email);
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await verifyPassword(password, user.passwordHash))) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });

@@ -5,14 +5,22 @@ import { FilterDemo } from "@/components/marketing/filter-demo";
 import { InsuranceSection } from "@/components/marketing/insurance";
 import { CtaWaitlist } from "@/components/marketing/cta";
 import { LaunchBanner } from "@/components/marketing/launch-banner";
+import { LaunchQueue } from "@/components/marketing/launch-queue";
+import { CityLaunchPlan } from "@/components/marketing/city-launch-plan";
+import { MarketingStructuredData } from "@/components/marketing/structured-data";
+import { MarketingTracker } from "@/components/marketing/marketing-tracker";
 
 export default function MarketingHome() {
   return (
     <>
+      <MarketingStructuredData />
+      <MarketingTracker pageType="homepage" />
       <LaunchBanner />
       <Hero />
+      <LaunchQueue />
       <HowItWorks />
       <LivePairs />
+      <CityLaunchPlan />
       <FilterDemo />
       <InsuranceSection />
       <CtaWaitlist />

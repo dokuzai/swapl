@@ -11,6 +11,7 @@ import app.swapl.core.model.TokenResponse
 import app.swapl.core.network.ApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -50,10 +51,13 @@ class AuthViewModel @Inject constructor(
             try {
                 val res: TokenResponse = api.client.post("${api.baseUrl}/api/auth/token") {
                     contentType(ContentType.Application.Json)
-                    setBody(TokenIssueBody(email, password, "android", BuildConfig.VERSION_NAME))
+                    setBody(TokenIssueBody(email.trim().lowercase(), password, "android", BuildConfig.VERSION_NAME))
                 }.body()
                 tokenStore.write(res.token)
                 uiState = uiState.copy(session = res.user, isAuthenticating = false)
+            } catch (t: ClientRequestException) {
+                val error = runCatching { t.response.body<ApiError>().error }.getOrNull()
+                uiState = uiState.copy(error = error ?: "Invalid email or password", isAuthenticating = false)
             } catch (t: Throwable) {
                 uiState = uiState.copy(error = t.message ?: "Sign in failed", isAuthenticating = false)
             }
@@ -80,6 +84,9 @@ class AuthViewModel @Inject constructor(
 
     @Serializable
     private data class MeResponse(val user: AuthUser)
+
+    @Serializable
+    private data class ApiError(val error: String? = null)
 
     data class UiState(
         val session: AuthUser? = null,

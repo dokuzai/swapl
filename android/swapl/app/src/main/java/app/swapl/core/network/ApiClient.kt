@@ -18,6 +18,8 @@ class ApiClient @Inject constructor(private val tokenStore: TokenStore) {
     val baseUrl: String = BuildConfig.API_BASE_URL
 
     val client: HttpClient = HttpClient(OkHttp) {
+        expectSuccess = true
+
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true

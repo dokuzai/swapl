@@ -33,15 +33,16 @@ struct TagChip: View {
 }
 
 struct MatchBadge: View {
+    @Environment(\.swaplTheme) private var theme
     let percent: Int
     var body: some View {
         Text("\(percent)% MATCH")
             .font(.swaplMono(11, weight: .medium))
             .tracking(0.08 * 11)
-            .foregroundStyle(SwaplSemanticLight.primaryForeground)
+            .foregroundStyle(theme.primaryForeground)
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
-            .background(SwaplSemanticLight.primary, in: Capsule())
+            .background(theme.primary, in: Capsule())
     }
 }
 

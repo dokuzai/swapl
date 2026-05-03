@@ -296,11 +296,36 @@ model InsurancePolicy {
 }
 
 model BetaSignup {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  userId    String?  @unique
-  user      User?    @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  email       String   @unique
+  userId      String?  @unique
+  user        User?    @relation(fields: [userId], references: [id])
+  source      String?
+  medium      String?
+  campaign    String?
+  term        String?
+  content     String?
+  landingPage String?
+  referrer    String?
+  createdAt   DateTime @default(now())
+}
+
+model MarketingEvent {
+  id          String   @id @default(cuid())
+  eventName   String
+  path        String?
+  source      String?
+  medium      String?
+  campaign    String?
+  term        String?
+  content     String?
+  referrer    String?
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  @@index([eventName, createdAt])
+  @@index([campaign])
+  @@index([source])
 }
 
 // Cached AI palette/motif decisions for cities not in the static catalog.

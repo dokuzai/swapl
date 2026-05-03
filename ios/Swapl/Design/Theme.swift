@@ -19,6 +19,7 @@ struct SwaplTheme {
     var accentForeground: Color { scheme == .dark ? SwaplSemanticDark.accentForeground : SwaplSemanticLight.accentForeground }
     var border: Color { scheme == .dark ? SwaplSemanticDark.border : SwaplSemanticLight.border }
     var ring: Color { scheme == .dark ? SwaplSemanticDark.ring : SwaplSemanticLight.ring }
+    var destructive: Color { scheme == .dark ? SwaplSemanticDark.destructive : SwaplSemanticLight.destructive }
 }
 
 private struct SwaplThemeKey: EnvironmentKey {

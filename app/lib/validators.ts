@@ -69,6 +69,25 @@ export const swapCounterSchema = z.object({
 
 export const betaSignupSchema = z.object({
   email: z.string().email(),
+  source: z.string().max(80).optional(),
+  medium: z.string().max(80).optional(),
+  campaign: z.string().max(120).optional(),
+  term: z.string().max(120).optional(),
+  content: z.string().max(120).optional(),
+  landingPage: z.string().max(500).optional(),
+  referrer: z.string().max(500).optional(),
+});
+
+export const marketingEventSchema = z.object({
+  eventName: z.string().min(1).max(80),
+  path: z.string().max(500).optional(),
+  source: z.string().max(80).optional(),
+  medium: z.string().max(80).optional(),
+  campaign: z.string().max(120).optional(),
+  term: z.string().max(120).optional(),
+  content: z.string().max(120).optional(),
+  referrer: z.string().max(500).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const credentialsSchema = z.object({

@@ -15,12 +15,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
 
-  const { email } = parsed.data;
+  const { email, source, medium, campaign, term, content, landingPage, referrer } = parsed.data;
   // Idempotent — `email` is unique.
   await prisma.betaSignup.upsert({
     where: { email },
-    create: { email },
-    update: {},
+    create: { email, source, medium, campaign, term, content, landingPage, referrer },
+    update: {
+      source,
+      medium,
+      campaign,
+      term,
+      content,
+      landingPage,
+      referrer,
+    },
   });
 
   // Fire and forget the welcome email.
