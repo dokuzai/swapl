@@ -2,7 +2,7 @@
 
 import type { DictKey } from "./dict-en";
 
-export const nl: Record<DictKey, string> = {
+export const nl: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "Hoe het werkt",
   "nav.homes": "Woningen",
@@ -31,7 +31,7 @@ export const nl: Record<DictKey, string> = {
   "hero.titleB": "voor",
   "hero.titleEm": "dat van iemand anders",
   "hero.intro":
-    "We verzamelen listings vóór de lancering in september 2026. Plaats je woning nu met meedogenloze precisie en je bent een van de eerste huizen die verschijnen zodra ruilen live gaat — sleutels voor sleutels, geen geld dat van eigenaar wisselt, elk verblijf van begin tot eind verzekerd.",
+    "We verzamelen listings vóór de lancering in september 2026. Plaats je woning nu met zorg en oog voor detail en je bent een van de eerste huizen die verschijnen zodra ruilen live gaat — sleutels voor sleutels, geen geld dat van eigenaar wisselt, elk verblijf van begin tot eind verzekerd.",
   "hero.ctaList": "Plaats mijn woning",
   "hero.ctaHow": "Bekijk hoe het werkt",
 
