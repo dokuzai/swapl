@@ -40,24 +40,41 @@ export function CtaWaitlist() {
           {t("cta.body")}
         </p>
 
-        <form
-          onSubmit={submit}
-          className="inline-flex items-center gap-2 p-1.5 border rounded-full max-w-[480px] w-full"
-          style={{ background: "var(--card-bg)", borderColor: "var(--line)" }}
-        >
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={t("cta.placeholder")}
-            className="flex-1 bg-transparent border-0 px-5 py-3 outline-none"
-            disabled={pending || status === "ok"}
-          />
-          <button type="submit" className="pill-primary" disabled={pending || status === "ok"}>
-            {status === "ok" ? t("cta.sent") : pending ? t("auth.forgot.submitting") : t("cta.button")}
-          </button>
-        </form>
+        {status === "ok" ? (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mx-auto max-w-[480px] rounded-2xl border p-6 text-left"
+            style={{ background: "var(--card-bg)", borderColor: "var(--line)" }}
+          >
+            <div className="flex items-center gap-2 font-display text-[20px] tracking-[-0.01em] font-medium">
+              <span aria-hidden style={{ color: "var(--pink)" }}>✓</span>
+              {t("cta.sent")}
+            </div>
+            <p className="mt-2 text-[15px] leading-[1.55]" style={{ color: "var(--navy-2)" }}>
+              {t("cta.confirmation")}
+            </p>
+          </div>
+        ) : (
+          <form
+            onSubmit={submit}
+            className="inline-flex items-center gap-2 p-1.5 border rounded-full max-w-[480px] w-full"
+            style={{ background: "var(--card-bg)", borderColor: "var(--line)" }}
+          >
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("cta.placeholder")}
+              className="flex-1 bg-transparent border-0 px-5 py-3 outline-none"
+              disabled={pending}
+            />
+            <button type="submit" className="pill-primary" disabled={pending}>
+              {pending ? t("auth.forgot.submitting") : t("cta.button")}
+            </button>
+          </form>
+        )}
 
         {status === "error" && (
           <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>

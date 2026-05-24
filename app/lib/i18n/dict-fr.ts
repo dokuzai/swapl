@@ -1,6 +1,6 @@
 import type { DictKey } from "./dict-en";
 
-export const fr: Record<DictKey, string> = {
+export const fr: Partial<Record<DictKey, string>> = {
   "nav.howItWorks": "Comment ça marche",
   "nav.homes": "Maisons",
   "nav.insurance": "Assurance",

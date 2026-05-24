@@ -26,7 +26,19 @@ import {
 
 // Partial registry: any locale missing here falls back to English at runtime.
 // Currently every advertised locale ships a dict.
-const DICTIONARIES: Partial<Record<Locale, Record<DictKey, string>>> = { en, it, fr, de, es, pt, nl, tr };
+const RAW_DICTIONARIES: Partial<Record<Locale, Partial<Record<DictKey, string>>>> = { en, it, fr, de, es, pt, nl, tr };
+
+// Merge each non-English dictionary on top of English so missing or empty
+// translations transparently use the English string.
+const DICTIONARIES: Partial<Record<Locale, Record<DictKey, string>>> = Object.fromEntries(
+  Object.entries(RAW_DICTIONARIES).map(([locale, dict]) => {
+    const merged = { ...en } as Record<DictKey, string>;
+    for (const [k, v] of Object.entries(dict ?? {})) {
+      if (typeof v === "string" && v.length > 0) merged[k as DictKey] = v;
+    }
+    return [locale, merged];
+  }),
+) as Partial<Record<Locale, Record<DictKey, string>>>;
 
 export async function getLocale(): Promise<Locale> {
   // cookies()/headers() throw at build time when there is no request scope

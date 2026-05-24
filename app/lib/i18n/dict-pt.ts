@@ -2,7 +2,7 @@
 
 import type { DictKey } from "./dict-en";
 
-export const pt: Record<DictKey, string> = {
+export const pt: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "Como funciona",
   "nav.homes": "Casas",
