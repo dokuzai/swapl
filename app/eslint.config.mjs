@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Throwaway design prototype — not shipped, not type-checked.
+    "legacy-prototype/**",
   ]),
 ]);
 
