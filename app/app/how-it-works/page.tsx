@@ -5,8 +5,19 @@ import { Faq } from "@/components/marketing/faq";
 import { CtaWaitlist } from "@/components/marketing/cta";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
 
+export const metadata = {
+  title: "How it works · swapl",
+  description:
+    "How swapl works: list your home, match with verified hosts, and swap keys. Every stay covered up to €150,000.",
+  openGraph: {
+    title: "How swapl works",
+    description:
+      "List your home, match with verified hosts, and swap keys. Every stay covered up to €150,000.",
+    images: ["/opengraph-image"],
+  },
+};
+
 export const dynamic = "force-dynamic";
-export const metadata = { title: "How it works · swapl" };
 
 // The HowItWorks marketing component already owns the "Four steps. No
 // invoices. Just keys." title + lede, so we don't repeat it as a separate

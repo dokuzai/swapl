@@ -5,7 +5,17 @@ import { CtaWaitlist } from "@/components/marketing/cta";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Insurance · swapl" };
+export const metadata = {
+  title: "Insurance · swapl",
+  description:
+    "Every swapl stay includes €150,000 cover for property damage, liability and trip interruption — auto-issued, no upsell.",
+  openGraph: {
+    title: "€150,000 cover on every swap",
+    description:
+      "Every swapl stay includes cover for property damage, liability and trip interruption — auto-issued, no upsell.",
+    images: ["/opengraph-image"],
+  },
+};
 
 export default function InsurancePage() {
   return (
