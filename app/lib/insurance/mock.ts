@@ -1,20 +1,33 @@
 // Deterministic mock underwriter. Returns plausible policy numbers so
 // integration tests can assert on shape without an external network call.
-//
-// Pricing model (mock-only):
-//   premium = 1.4€/m² of the smaller home × number of nights, capped at €120
-//   platformShare = round(premium * 0.20)          // 20% partner kickback
-// These numbers exist so the admin "Revenue share" tile shows realistic data.
+// Pricing lives in ./pricing so the quote preview and the bound policy
+// always agree.
 
-import type { CreatePolicyInput, CreatePolicyResult, InsuranceProvider, CancelPolicyResult } from "./provider";
+import { nightsBetween, quotePremium } from "./pricing";
+import type {
+  CancelPolicyResult,
+  CreatePolicyInput,
+  CreatePolicyResult,
+  InsuranceProvider,
+  QuoteInput,
+  QuoteResult,
+} from "./provider";
+
+function priceFor(input: QuoteInput): QuoteResult {
+  const nights = nightsBetween(input.dateFrom, input.dateTo);
+  const smallerSqm = Math.min(...input.parties.map((p) => p.listing.sizeSqm));
+  return { nights, ...quotePremium(smallerSqm, nights) };
+}
 
 export const mockInsuranceProvider: InsuranceProvider = {
   name: "swapl-cover",
+
+  quote(input: QuoteInput): QuoteResult {
+    return priceFor(input);
+  },
+
   async createPolicy(input: CreatePolicyInput): Promise<CreatePolicyResult> {
-    const nights = Math.max(1, Math.round((input.dateTo.getTime() - input.dateFrom.getTime()) / (24 * 60 * 60 * 1000)));
-    const smallerSqm = Math.min(...input.parties.map((p) => p.listing.sizeSqm));
-    const premiumCents = Math.min(Math.round(smallerSqm * 1.4 * nights), 12000);
-    const platformShareCents = Math.round(premiumCents * 0.2);
+    const { premiumCents, platformShareCents, coverageAmount } = priceFor(input);
 
     const policyNumber = `SC-${new Date().getFullYear()}-${randomBlock()}`;
     const externalId = `mock_${policyNumber.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${input.agreementId.slice(-6)}`;
@@ -24,7 +37,7 @@ export const mockInsuranceProvider: InsuranceProvider = {
       externalId,
       premiumCents,
       platformShareCents,
-      coverageAmount: 150_000,
+      coverageAmount,
       expiresAt: new Date(input.dateTo.getTime() + 30 * 24 * 60 * 60 * 1000),
       documentsUrl: `/api/insurance/documents/${policyNumber}`,
     };
