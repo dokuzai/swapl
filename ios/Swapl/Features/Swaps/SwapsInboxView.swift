@@ -14,9 +14,11 @@ final class SwapsInboxViewModel {
 
 struct SwapsInboxView: View {
     @State private var vm = SwapsInboxViewModel()
+    @State private var path: [String] = []
+    @Environment(AppRouter.self) private var router
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 VStack(alignment: .leading, spacing: SwaplSpacing.s5) {
                     if let inbox = vm.inbox {
@@ -34,10 +36,23 @@ struct SwapsInboxView: View {
             }
             .background(SwaplSemanticLight.background)
             .navigationTitle("Swap inbox")
+            .navigationDestination(for: String.self) { id in
+                SwapThreadView(proposalId: id)
+            }
             .task { await vm.load() }
             .refreshable { await vm.load() }
+            .onAppear { consumePendingDeepLink() }
+            .onChange(of: router.pendingDestination) { _, _ in consumePendingDeepLink() }
         }
         .swaplTheme()
+    }
+
+    private func consumePendingDeepLink() {
+        guard router.selectedTab == .swaps else { return }
+        if case let .swapThread(id) = router.pendingDestination {
+            path = [id]
+            router.pendingDestination = nil
+        }
     }
 
     @ViewBuilder
@@ -48,20 +63,23 @@ struct SwapsInboxView: View {
                 SurfaceCard { Text("Nothing here yet.").font(.swaplBody(14)).foregroundStyle(SwaplSemanticLight.mutedForeground) }
             } else {
                 ForEach(items) { p in
-                    SurfaceCard {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text("\(p.myCity) ⇄ \(p.theirCity)")
-                                    .font(.swaplDisplay(16))
-                                Text(p.otherName.map { "with \($0)" } ?? "")
-                                    .font(.swaplMono(11))
-                                    .foregroundStyle(SwaplSemanticLight.mutedForeground)
+                    NavigationLink(value: p.id) {
+                        SurfaceCard {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("\(p.myCity) ⇄ \(p.theirCity)")
+                                        .font(.swaplDisplay(16))
+                                    Text(p.otherName.map { "with \($0)" } ?? "")
+                                        .font(.swaplMono(11))
+                                        .foregroundStyle(SwaplSemanticLight.mutedForeground)
+                                }
+                                Spacer()
+                                TagChip(label: p.status)
                             }
-                            Spacer()
-                            TagChip(label: p.status)
                         }
+                        .opacity(muted ? 0.7 : 1)
                     }
-                    .opacity(muted ? 0.7 : 1)
+                    .buttonStyle(.plain)
                 }
             }
         }

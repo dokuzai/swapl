@@ -114,3 +114,56 @@ data class InboxBuckets(
 
 @Serializable
 data class InboxResponse(val buckets: InboxBuckets)
+
+// ---------- proposal detail ----------
+
+@Serializable
+data class Proposal(
+    val id: String,
+    val status: String,
+    val meSide: String,
+    val dateFrom: String,
+    val dateTo: String,
+    val message: String? = null,
+    val counterDateFrom: String? = null,
+    val counterDateTo: String? = null,
+    val counterMessage: String? = null,
+    val createdAt: String,
+    val updatedAt: String,
+)
+
+@Serializable
+data class OtherParty(
+    val id: String,
+    val name: String? = null,
+    val avatar: String? = null,
+    val verified: Boolean,
+)
+
+@Serializable
+data class Insurance(
+    val policyNumber: String,
+    val coverageAmount: Int,
+    val status: String,
+    val expiresAt: String,
+)
+
+@Serializable
+data class Agreement(
+    val id: String,
+    val dateFrom: String,
+    val dateTo: String,
+    val keyCode1: String? = null,
+    val keyCode2: String? = null,
+    val status: String,
+    val insurance: Insurance? = null,
+)
+
+@Serializable
+data class ProposalDetail(
+    val proposal: Proposal,
+    val proposerListing: Listing,
+    val targetListing: Listing,
+    val other: OtherParty,
+    val agreement: Agreement? = null,
+)

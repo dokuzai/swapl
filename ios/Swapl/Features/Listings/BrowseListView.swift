@@ -23,9 +23,12 @@ final class BrowseListViewModel {
 
 struct BrowseListView: View {
     @State private var vm = BrowseListViewModel()
+    @State private var path: [String] = []
+    @State private var showCreate = false
+    @Environment(AppRouter.self) private var router
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 LazyVStack(spacing: SwaplSpacing.s4) {
                     ForEach(vm.items) { item in
@@ -39,13 +42,36 @@ struct BrowseListView: View {
             }
             .background(SwaplSemanticLight.background)
             .navigationTitle("Browse")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showCreate = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundStyle(SwaplColor.pink)
+                    }
+                }
+            }
             .navigationDestination(for: String.self) { id in
                 ListingDetailView(listingId: id)
             }
             .task { await vm.load() }
             .refreshable { await vm.load() }
+            .onAppear { consumePendingDeepLink() }
+            .onChange(of: router.pendingDestination) { _, _ in consumePendingDeepLink() }
+            .sheet(isPresented: $showCreate, onDismiss: { Task { await vm.load() } }) {
+                ListingCreateView()
+            }
         }
         .swaplTheme()
+    }
+
+    private func consumePendingDeepLink() {
+        guard router.selectedTab == .browse else { return }
+        if case let .listing(id) = router.pendingDestination {
+            path = [id]
+            router.pendingDestination = nil
+        }
     }
 }
 

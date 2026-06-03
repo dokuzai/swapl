@@ -20,7 +20,9 @@ final class ListingDetailViewModel {
 }
 
 struct ListingDetailView: View {
+    @Environment(AuthService.self) private var auth
     @State private var vm: ListingDetailViewModel
+    @State private var showPropose = false
 
     init(listingId: String) {
         _vm = State(initialValue: ListingDetailViewModel(listingId: listingId))
@@ -58,10 +60,13 @@ struct ListingDetailView: View {
                                         .font(.swaplBody(14))
                                         .foregroundStyle(SwaplSemanticLight.mutedForeground)
                                 }
+                                if d.host.verified {
+                                    TagChip(label: "ID verified")
+                                }
                             }
                         }
 
-                        PrimaryPill(title: "Propose a swap", action: {})
+                        proposeCTA(d)
                     }
                     .padding(.horizontal, SwaplSpacing.s4)
                 }
@@ -74,6 +79,30 @@ struct ListingDetailView: View {
         }
         .background(SwaplSemanticLight.background)
         .task { await vm.load() }
+        .sheet(isPresented: $showPropose) {
+            if let viewerListingId = vm.detail?.viewerListingId, let targetId = vm.detail?.listing.id {
+                ProposeSwapSheet(vm: ProposeSwapViewModel(
+                    proposerListingId: viewerListingId,
+                    targetListingId: targetId
+                ))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func proposeCTA(_ d: ListingDetailResponse) -> some View {
+        if auth.session == nil {
+            PrimaryPill(title: "Sign in to propose", action: {}, isDisabled: true)
+        } else if d.viewerListingId == nil {
+            VStack(alignment: .leading, spacing: SwaplSpacing.s2) {
+                PrimaryPill(title: "List your home first", action: {}, isDisabled: true)
+                Text("Add your own listing before you can propose swaps.")
+                    .font(.swaplBody(13))
+                    .foregroundStyle(SwaplSemanticLight.mutedForeground)
+            }
+        } else {
+            PrimaryPill(title: "Propose a swap", action: { showPropose = true })
+        }
     }
 
     private func amenityChips(_ l: Listing) -> [String] {
@@ -98,8 +127,6 @@ struct ListingDetailView: View {
     }
 }
 
-// Minimal flowing-tag layout. Replace with `FlowLayout` from iOS 16+ Layout
-// API in a later slice.
 struct FlowLayout: View {
     let items: [String]
     var body: some View {
