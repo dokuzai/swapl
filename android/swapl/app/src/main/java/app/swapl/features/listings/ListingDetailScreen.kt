@@ -1,5 +1,6 @@
 package app.swapl.features.listings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -55,10 +56,14 @@ class ListingDetailViewModel @Inject constructor(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ListingDetailScreen(vm: ListingDetailViewModel = hiltViewModel()) {
+fun ListingDetailScreen(
+    onOpenHost: (String) -> Unit = {},
+    vm: ListingDetailViewModel = hiltViewModel(),
+) {
     LaunchedEffect(Unit) { vm.load() }
     val d = vm.detail
     var showPropose by remember { mutableStateOf(false) }
+    var showReport by remember { mutableStateOf(false) }
 
     if (d == null) return
 
@@ -83,7 +88,7 @@ fun ListingDetailScreen(vm: ListingDetailViewModel = hiltViewModel()) {
             amenityChips(d.listing).take(8).forEach { TagChip(it) }
         }
 
-        SurfaceCard {
+        SurfaceCard(modifier = androidx.compose.ui.Modifier.clickable { onOpenHost(d.host.id) }) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 KickerLabel("Hosted by")
                 Text(d.host.name ?: "Anonymous", style = MaterialTheme.typography.titleLarge)
@@ -93,6 +98,10 @@ fun ListingDetailScreen(vm: ListingDetailViewModel = hiltViewModel()) {
         }
 
         ProposeCta(d, onPropose = { showPropose = true })
+
+        androidx.compose.material3.TextButton(onClick = { showReport = true }) {
+            Text("Report this listing", color = MaterialTheme.colorScheme.error)
+        }
     }
 
     if (showPropose && d.viewerListingId != null) {
@@ -100,6 +109,14 @@ fun ListingDetailScreen(vm: ListingDetailViewModel = hiltViewModel()) {
             proposerListingId = d.viewerListingId,
             targetListingId = d.listing.id,
             onDismiss = { showPropose = false },
+        )
+    }
+
+    if (showReport) {
+        app.swapl.features.profile.ReportDialog(
+            targetUserId = d.host.id,
+            listingId = d.listing.id,
+            onDismiss = { showReport = false },
         )
     }
 }

@@ -167,3 +167,91 @@ data class ProposalDetail(
     val other: OtherParty,
     val agreement: Agreement? = null,
 )
+
+// ---------- public profile ----------
+
+@Serializable
+data class PublicProfileUser(
+    val id: String,
+    val name: String? = null,
+    val avatar: String? = null,
+    val bio: String? = null,
+    val bioVibe: String? = null,
+    val verified: Boolean,
+    val memberSince: String,
+    val interests: List<String>,
+)
+
+@Serializable
+data class PublicProfile(
+    val user: PublicProfileUser,
+    val listings: List<Listing>,
+)
+
+// ---------- interests catalog ----------
+
+@Serializable
+data class InterestTag(val slug: String, val label: String, val category: String)
+
+@Serializable
+data class InterestCategory(val id: String, val label: String)
+
+@Serializable
+data class InterestsCatalog(
+    val catalog: List<InterestTag>,
+    val categories: List<InterestCategory>,
+    val selected: List<String>,
+)
+
+// ---------- saved searches ----------
+
+@Serializable
+data class SavedSearch(
+    val id: String,
+    val name: String,
+    val query: String,
+    val alertEnabled: Boolean,
+    val createdAt: String,
+)
+
+@Serializable
+data class SavedSearchesResponse(val items: List<SavedSearch>)
+
+// ---------- me ----------
+
+@Serializable
+data class MeUser(
+    val id: String,
+    val email: String,
+    val name: String? = null,
+    val avatar: String? = null,
+    val bio: String? = null,
+    val bioVibe: String? = null,
+    val verified: Boolean,
+    val role: String,
+    val interests: List<String>,
+    val createdAt: String,
+)
+
+@Serializable
+data class MeCounts(
+    val listings: Int,
+    val incomingProposals: Int,
+    val outgoingProposals: Int,
+    val activeSwaps: Int,
+)
+
+@Serializable
+data class MeSubscription(
+    val planId: String,
+    val status: String,
+    val currentPeriodEnd: String,
+    val cancelAtPeriodEnd: Boolean,
+)
+
+@Serializable
+data class MeResponse(
+    val user: MeUser,
+    val counts: MeCounts,
+    val subscription: MeSubscription? = null,
+)

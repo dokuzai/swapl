@@ -37,6 +37,9 @@ import app.swapl.features.listings.BrowseScreen
 import app.swapl.features.listings.ListingCreateScreen
 import app.swapl.features.listings.ListingDetailScreen
 import app.swapl.features.profile.AccountScreen
+import app.swapl.features.profile.InterestsEditorScreen
+import app.swapl.features.profile.PublicProfileScreen
+import app.swapl.features.profile.SavedSearchesScreen
 import app.swapl.features.swaps.SwapThreadScreen
 import app.swapl.features.swaps.SwapsInboxScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -137,7 +140,10 @@ private fun HomeShell(
                     )
                 }
                 composable("detail/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
-                    ListingDetailScreen()
+                    ListingDetailScreen(onOpenHost = { id -> browseNav.navigate("profile/$id") })
+                }
+                composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+                    PublicProfileScreen(onOpenListing = { id -> browseNav.navigate("detail/$id") })
                 }
                 composable("new") {
                     ListingCreateScreen(onDone = { browseNav.popBackStack() })
@@ -149,7 +155,25 @@ private fun HomeShell(
                     SwapThreadScreen()
                 }
             }
-            HomeDest.Account -> AccountScreen()
+            HomeDest.Account -> {
+                val accountNav = rememberNavController()
+                NavHost(navController = accountNav, startDestination = "home") {
+                    composable("home") {
+                        AccountScreen(
+                            onOpenInterests = { accountNav.navigate("interests") },
+                            onOpenSavedSearches = { accountNav.navigate("savedSearches") },
+                            onOpenPublicProfile = { id -> accountNav.navigate("profile/$id") },
+                        )
+                    }
+                    composable("interests") {
+                        InterestsEditorScreen(onDone = { accountNav.popBackStack() })
+                    }
+                    composable("savedSearches") { SavedSearchesScreen() }
+                    composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+                        PublicProfileScreen()
+                    }
+                }
+            }
         }
     }
 }

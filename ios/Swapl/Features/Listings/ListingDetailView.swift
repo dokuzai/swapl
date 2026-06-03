@@ -23,6 +23,7 @@ struct ListingDetailView: View {
     @Environment(AuthService.self) private var auth
     @State private var vm: ListingDetailViewModel
     @State private var showPropose = false
+    @State private var showReport = false
 
     init(listingId: String) {
         _vm = State(initialValue: ListingDetailViewModel(listingId: listingId))
@@ -50,23 +51,32 @@ struct ListingDetailView: View {
 
                         FlowLayout(items: amenityChips(d.listing))
 
-                        SurfaceCard {
-                            VStack(alignment: .leading, spacing: SwaplSpacing.s2) {
-                                KickerLabel(text: "Hosted by")
-                                Text(d.host.name ?? "Anonymous")
-                                    .font(.swaplDisplay(20))
-                                if let bio = d.host.bio {
-                                    Text(bio)
-                                        .font(.swaplBody(14))
-                                        .foregroundStyle(SwaplSemanticLight.mutedForeground)
-                                }
-                                if d.host.verified {
-                                    TagChip(label: "ID verified")
+                        NavigationLink(value: ListingDetailRoute.host(d.host.id)) {
+                            SurfaceCard {
+                                VStack(alignment: .leading, spacing: SwaplSpacing.s2) {
+                                    KickerLabel(text: "Hosted by")
+                                    Text(d.host.name ?? "Anonymous")
+                                        .font(.swaplDisplay(20))
+                                        .foregroundStyle(SwaplSemanticLight.foreground)
+                                    if let bio = d.host.bio {
+                                        Text(bio)
+                                            .font(.swaplBody(14))
+                                            .foregroundStyle(SwaplSemanticLight.mutedForeground)
+                                    }
+                                    if d.host.verified {
+                                        TagChip(label: "ID verified")
+                                    }
                                 }
                             }
                         }
+                        .buttonStyle(.plain)
 
                         proposeCTA(d)
+
+                        Button("Report this listing") { showReport = true }
+                            .font(.swaplBody(13))
+                            .foregroundStyle(SwaplSemanticLight.destructive)
+                            .padding(.top, SwaplSpacing.s2)
                     }
                     .padding(.horizontal, SwaplSpacing.s4)
                 }
@@ -79,6 +89,11 @@ struct ListingDetailView: View {
         }
         .background(SwaplSemanticLight.background)
         .task { await vm.load() }
+        .navigationDestination(for: ListingDetailRoute.self) { route in
+            switch route {
+            case .host(let id): PublicProfileView(userId: id)
+            }
+        }
         .sheet(isPresented: $showPropose) {
             if let viewerListingId = vm.detail?.viewerListingId, let targetId = vm.detail?.listing.id {
                 ProposeSwapSheet(vm: ProposeSwapViewModel(
@@ -87,6 +102,15 @@ struct ListingDetailView: View {
                 ))
             }
         }
+        .sheet(isPresented: $showReport) {
+            if let d = vm.detail {
+                ReportSheet(targetUserId: d.host.id, listingId: d.listing.id)
+            }
+        }
+    }
+
+    enum ListingDetailRoute: Hashable {
+        case host(String)
     }
 
     @ViewBuilder
