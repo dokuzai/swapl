@@ -2,6 +2,7 @@ import SwiftUI
 import Observation
 import SwaplDesignTokens
 
+@MainActor
 @Observable
 final class BrowseListViewModel {
     var items: [ListingWithScore] = []
@@ -32,7 +33,7 @@ final class BrowseListViewModel {
     var sortTitle: String {
         switch filters.sort {
         case "newest": "Newest"
-        case "size": "Largest"
+        case "size_desc": "Largest"
         default: "Best match"
         }
     }
@@ -68,7 +69,7 @@ struct BrowseListView: View {
                     exploreContent
                 }
             }
-            .background(Color(.systemBackground))
+            .background(AirbnbPalette.background)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
@@ -92,30 +93,30 @@ struct BrowseListView: View {
             }
             .padding(.bottom, 110)
         }
-        .background(Color(.systemBackground))
+        .background(AirbnbPalette.background)
     }
 
     private var searchHeader: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 20, weight: .semibold))
+                .font(.system(size: SwaplDesignSystem.FontSize.h3, weight: .semibold))
             Text("Start your search")
-                .font(.system(size: 17, weight: .semibold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
             Spacer()
             Menu {
                 sortButton("Best match", value: "match")
                 sortButton("Newest", value: "newest")
-                sortButton("Largest", value: "size")
+                sortButton("Largest", value: "size_desc")
             } label: {
                 Image(systemName: "slider.horizontal.3")
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: SwaplDesignSystem.FontSize.body, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
             }
         }
         .foregroundStyle(AirbnbPalette.text)
         .padding(.horizontal, 22)
         .padding(.vertical, 18)
-        .background(Color(.systemBackground), in: Capsule())
+        .background(AirbnbPalette.card, in: Capsule())
         .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
         .padding(.horizontal, 22)
         .padding(.top, 18)
@@ -136,7 +137,7 @@ struct BrowseListView: View {
             Image(systemName: icon)
                 .font(.system(size: 26, weight: .regular))
             Text(title)
-                .font(.system(size: 14, weight: .semibold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
             Rectangle()
                 .fill(selected ? AirbnbPalette.text : .clear)
                 .frame(width: 42, height: 3)
@@ -150,21 +151,21 @@ struct BrowseListView: View {
             HStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Continue planning your \(item.listing.city) swap")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(2)
                     Text("\(item.listing.sleeps) guests")
-                        .font(.system(size: 15, weight: .regular))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .regular))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                 }
                 Spacer()
-                ListingPhotoView(listing: item.listing, cornerRadius: 14)
+                ListingPhotoView(listing: item.listing, cornerRadius: SwaplDesignSystem.CornerRadius.medium)
                     .frame(width: 92, height: 92)
             }
             .padding(22)
-            .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .background(AirbnbPalette.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
                     .stroke(AirbnbPalette.hairline)
             )
             .shadow(color: .black.opacity(0.06), radius: 18, x: 0, y: 10)
@@ -177,11 +178,11 @@ struct BrowseListView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text(title)
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Spacer()
                 Image(systemName: "arrow.right")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: SwaplDesignSystem.FontSize.body, weight: .bold))
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(width: 42, height: 42)
                     .background(AirbnbPalette.softBackground, in: Circle())
@@ -235,7 +236,7 @@ struct ListingCardView: View {
 
     private var cardWidth: CGFloat { compact ? 100 : 214 }
     private var imageHeight: CGFloat { compact ? 96 : 214 }
-    private var cornerRadius: CGFloat { compact ? 16 : 22 }
+    private var cornerRadius: CGFloat { compact ? SwaplDesignSystem.CornerRadius.medium : SwaplDesignSystem.CornerRadius.large }
 
     var body: some View {
         VStack(alignment: .leading, spacing: compact ? 7 : 9) {
@@ -245,14 +246,14 @@ struct ListingCardView: View {
                     .clipped()
 
                 Image(systemName: "heart")
-                    .font(.system(size: compact ? 18 : 22, weight: .semibold))
+                    .font(.system(size: compact ? 18 : SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(.white)
                     .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 1)
                     .padding(compact ? 9 : 12)
 
                 if !compact && (item.band == "featured" || item.matchScore != nil) {
                     Text(item.matchScore.map { "\($0)% match" } ?? "Guest favorite")
-                        .font(.system(size: 13, weight: .bold))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
                         .foregroundStyle(AirbnbPalette.text)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 7)
@@ -262,23 +263,23 @@ struct ListingCardView: View {
                 }
             }
 
-            Text("\(item.listing.neighbourhood), \(item.listing.city)")
-                .font(.system(size: compact ? 13 : 16, weight: .semibold))
+            Text(primaryLocation)
+                .font(.swaplBody(compact ? SwaplDesignSystem.FontSize.small : SwaplDesignSystem.FontSize.body, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
                 .lineLimit(1)
                 .padding(.top, compact ? 3 : 0)
             Text(compact ? "\(item.listing.bedrooms) beds · \(ratingText)" : "\(item.listing.sleeps) guests · \(item.listing.bedrooms) beds")
-                .font(.system(size: compact ? 12 : 14, weight: .regular))
+                .font(.swaplBody(compact ? SwaplDesignSystem.FontSize.small : SwaplDesignSystem.FontSize.caption, weight: .regular))
                 .foregroundStyle(AirbnbPalette.secondaryText)
             Text("Available \(SwaplDateText.range(from: item.listing.availableFrom, to: item.listing.availableTo))")
-                .font(.system(size: 14, weight: .regular))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .regular))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .lineLimit(1)
                 .opacity(compact ? 0 : 1)
                 .frame(height: compact ? 0 : nil)
         }
         .frame(width: cardWidth, alignment: .leading)
-        .background(Color(.systemBackground))
+        .background(AirbnbPalette.background)
     }
 
     private var ratingText: String {
@@ -286,5 +287,26 @@ struct ListingCardView: View {
             return String(format: "%.2f", max(4.5, Double(score) / 20))
         }
         return "4.8"
+    }
+
+    private var primaryLocation: String {
+        compact ? "\(item.listing.city), \(compactCountry)" : "\(item.listing.neighbourhood), \(item.listing.city)"
+    }
+
+    private var compactCountry: String {
+        let country = item.listing.country
+        let codes = [
+            "South Korea": "KR",
+            "United States": "US",
+            "USA": "US",
+            "Germany": "DE",
+            "Turkey": "TR",
+            "Türkiye": "TR",
+            "Mexico": "MX",
+            "Netherlands": "NL",
+            "Greece": "GR",
+            "Lebanon": "LB"
+        ]
+        return codes[country] ?? country
     }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 import Observation
 import SwaplDesignTokens
 
+@MainActor
 @Observable
 final class ListingDetailViewModel {
     let listingId: String
@@ -51,7 +52,7 @@ struct ListingDetailView: View {
                     .accessibilityLabel("Loading home")
             }
         }
-        .background(Color(.systemBackground))
+        .background(AirbnbPalette.background)
         .navigationTitle(vm.detail?.listing.city ?? "Home")
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
@@ -84,22 +85,29 @@ struct ListingDetailView: View {
 
     private func listingContent(_ detail: ListingDetailResponse) -> some View {
         VStack(alignment: .leading, spacing: 26) {
-            ListingPhotoView(listing: detail.listing, cornerRadius: 0)
+            // Color.clear defines the layout size (full width × 330) so the
+            // scaledToFill photo — which reports an oversized width — can never
+            // widen the enclosing column and push content off-screen.
+            Color.clear
+                .frame(maxWidth: .infinity)
                 .frame(height: 330)
+                .overlay {
+                    ListingPhotoView(listing: detail.listing, cornerRadius: 0)
+                }
                 .clipped()
 
             VStack(alignment: .leading, spacing: 12) {
                 Text(detail.listing.title)
-                    .font(.system(size: 30, weight: .bold))
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .lineLimit(3)
 
                 Text("\(detail.listing.neighbourhood), \(detail.listing.city), \(detail.listing.country)")
-                    .font(.system(size: 17))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                     .foregroundStyle(AirbnbPalette.text)
 
                 Text("\(detail.listing.sleeps) guests · \(detail.listing.bedrooms) bedrooms · \(detail.listing.bathrooms) baths")
-                    .font(.system(size: 16))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                     .foregroundStyle(AirbnbPalette.secondaryText)
 
                 if let score = detail.matchScore {
@@ -107,7 +115,7 @@ struct ListingDetailView: View {
                         Image(systemName: "sparkles")
                         Text("\(score)% match for your next swap")
                     }
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
@@ -129,20 +137,20 @@ struct ListingDetailView: View {
     private func hostSection(_ detail: ListingDetailResponse) -> some View {
         HStack(spacing: 16) {
             Circle()
-                .fill(AirbnbPalette.accent)
+                .fill(AirbnbPalette.primary)
                 .frame(width: 58, height: 58)
                 .overlay(
                     Text(String((detail.host.name ?? "H").prefix(1)))
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                         .foregroundStyle(.white)
                 )
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Hosted by \(detail.host.name ?? "Anonymous")")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Text(detail.host.verified ? "Verified host" : "Swapl host")
-                    .font(.system(size: 15))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
             Spacer()
@@ -153,10 +161,10 @@ struct ListingDetailView: View {
     private func descriptionSection(_ description: String) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("About this home")
-                .font(.system(size: 22, weight: .bold))
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
             Text(description)
-                .font(.system(size: 16))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                 .foregroundStyle(AirbnbPalette.text)
                 .lineSpacing(4)
         }
@@ -166,7 +174,7 @@ struct ListingDetailView: View {
     private func amenitySection(_ listing: Listing) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("What this place offers")
-                .font(.system(size: 22, weight: .bold))
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 14) {
@@ -175,7 +183,7 @@ struct ListingDetailView: View {
                         Image(systemName: amenityIcon(amenity))
                             .frame(width: 22)
                         Text(amenity)
-                            .font(.system(size: 15))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     }
                     .foregroundStyle(AirbnbPalette.text)
                 }
@@ -188,10 +196,10 @@ struct ListingDetailView: View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(SwaplDateText.range(from: detail.listing.availableFrom, to: detail.listing.availableTo))
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Text(detail.viewerListingId == nil ? "Create a listing first" : "Send a swap proposal")
-                    .font(.system(size: 13))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
             Spacer()
@@ -199,18 +207,18 @@ struct ListingDetailView: View {
                 isShowingProposalSheet = true
             } label: {
                 Text("Propose")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.white)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                    .foregroundStyle(AirbnbPalette.primaryForeground)
                     .padding(.horizontal, 26)
                     .padding(.vertical, 15)
-                    .background(AirbnbPalette.accent, in: Capsule())
+                    .background(AirbnbPalette.primary, in: Capsule())
             }
             .disabled(detail.viewerListingId == nil)
             .opacity(detail.viewerListingId == nil ? 0.45 : 1)
         }
         .padding(.horizontal, 22)
         .padding(.vertical, 14)
-        .background(.ultraThinMaterial)
+        .background(AirbnbPalette.card)
         .overlay(alignment: .top) {
             AirbnbPalette.hairline.frame(height: 1)
         }
@@ -292,7 +300,7 @@ struct ProposalSheetView: View {
                 if let error {
                     Section {
                         Text(error)
-                            .foregroundStyle(AirbnbPalette.accent)
+                            .foregroundStyle(AirbnbPalette.destructive)
                     }
                 }
             }

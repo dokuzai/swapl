@@ -1,33 +1,81 @@
 import SwiftUI
 import SwaplDesignTokens
 
+// Design system constants
+enum SwaplDesignSystem {
+    // Corner radii - increased for more rounded appearance
+    enum CornerRadius {
+        static let small: CGFloat = 12      // Small components (chips, badges)
+        static let medium: CGFloat = 20     // Cards, tiles
+        static let large: CGFloat = 28      // Featured cards, modals
+        static let xLarge: CGFloat = 32     // Hero cards, large containers
+    }
+    
+    // Typography scale - consistent font sizing
+    enum FontSize {
+        static let display: CGFloat = 40    // Page titles
+        static let h1: CGFloat = 32         // Section headers
+        static let h2: CGFloat = 24         // Subsection headers
+        static let h3: CGFloat = 20         // Card titles
+        static let body: CGFloat = 16       // Body text
+        static let bodySmall: CGFloat = 15  // Secondary body text
+        static let caption: CGFloat = 14    // Captions, metadata
+        static let small: CGFloat = 13      // Small labels
+        static let tiny: CGFloat = 11       // Badges, tags
+    }
+}
+
+// Theme-aware color extensions - use environment colorScheme
+extension EnvironmentValues {
+    var accent: Color { colorScheme == .dark ? SwaplSemanticDark.accent : SwaplSemanticLight.accent }
+    var textColor: Color { colorScheme == .dark ? SwaplSemanticDark.foreground : SwaplSemanticLight.foreground }
+    var secondaryTextColor: Color { colorScheme == .dark ? SwaplSemanticDark.mutedForeground : SwaplSemanticLight.mutedForeground }
+    var hairline: Color { colorScheme == .dark ? SwaplSemanticDark.border : SwaplSemanticLight.border }
+    var softBg: Color { colorScheme == .dark ? SwaplSemanticDark.muted : SwaplSemanticLight.muted }
+}
+
+// Legacy compatibility - static colors (light mode only, for UIKit interop)
 enum AirbnbPalette {
-    static let accent = Color(red: 1.0, green: 0.22, blue: 0.36)
-    static let text = Color(red: 0.13, green: 0.13, blue: 0.13)
-    static let secondaryText = Color(red: 0.43, green: 0.43, blue: 0.43)
-    static let hairline = Color(red: 0.90, green: 0.90, blue: 0.90)
-    static let softBackground = Color(red: 0.97, green: 0.97, blue: 0.97)
+    static let background = SwaplSemanticLight.background
+    static let card = SwaplSemanticLight.card
+    /// Brand action color (pink #F24B8E) — CTAs, selected states, tint.
+    static let primary = SwaplSemanticLight.primary
+    static let primaryForeground = SwaplSemanticLight.primaryForeground
+    /// Soft pink tint (#FDEEF5) — subtle backgrounds only, never as an action color.
+    static let accent = SwaplSemanticLight.accent
+    static let text = SwaplSemanticLight.foreground
+    static let secondaryText = SwaplSemanticLight.mutedForeground
+    static let hairline = SwaplSemanticLight.border
+    static let softBackground = SwaplSemanticLight.muted
+    static let destructive = SwaplSemanticLight.destructive
 }
 
 struct AirbnbChip: View {
     let title: String
     var selected = false
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
+        let textColor = scheme == .dark ? SwaplSemanticDark.foreground : SwaplSemanticLight.foreground
+        let bgColor = scheme == .dark ? SwaplSemanticDark.muted : SwaplSemanticLight.muted
+        
         Text(title)
-            .font(.system(size: 15, weight: .semibold))
-            .foregroundStyle(selected ? .white : AirbnbPalette.text)
+            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+            .foregroundStyle(selected ? SwaplSemanticLight.primaryForeground : textColor)
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(selected ? AirbnbPalette.text : AirbnbPalette.softBackground, in: Capsule())
+            .background(selected ? SwaplSemanticLight.primary : bgColor, in: Capsule())
     }
 }
 
 struct ListingPhotoView: View {
     let listing: Listing
-    var cornerRadius: CGFloat = 22
+    var cornerRadius: CGFloat = SwaplDesignSystem.CornerRadius.medium
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
+        let softBg = scheme == .dark ? SwaplSemanticDark.muted : SwaplSemanticLight.muted
+        
         Group {
             if let url = preferredPhotoURL {
                 AsyncImage(url: url) { phase in
@@ -40,11 +88,11 @@ struct ListingPhotoView: View {
                         CityIllust(palette: SwaplCityPalettes.forName(listing.palette))
                     case .empty:
                         ZStack {
-                            AirbnbPalette.softBackground
+                            softBg
                             ProgressView()
                         }
                     @unknown default:
-                        AirbnbPalette.softBackground
+                        softBg
                     }
                 }
             } else {

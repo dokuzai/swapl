@@ -29,7 +29,7 @@ struct LoginView: View {
                 SecureField("password", text: $password)
                     .textContentType(.password)
                     .submitLabel(.go)
-                    .onSubmit(signIn)
+                    .onSubmit { signIn() }
                     .padding(14)
                     .background(theme.card, in: RoundedRectangle(cornerRadius: SwaplRadius.md))
                     .overlay(RoundedRectangle(cornerRadius: SwaplRadius.md).stroke(theme.border))
@@ -42,7 +42,7 @@ struct LoginView: View {
 
                 PrimaryPill(
                     title: "Sign in",
-                    action: signIn,
+                    action: { signIn() },
                     isLoading: auth.isAuthenticating,
                     isDisabled: email.isEmpty || password.count < 6
                 )
@@ -57,6 +57,8 @@ struct LoginView: View {
 
     private func signIn() {
         guard !email.isEmpty, password.count >= 6, !auth.isAuthenticating else { return }
-        Task { await auth.signIn(email: email, password: password) }
+        Task {
+            await auth.signIn(email: email, password: password)
+        }
     }
 }

@@ -15,7 +15,7 @@ struct SwaplApp: App {
             RootView()
                 .environment(auth)
                 .environment(pushService)
-                .tint(AirbnbPalette.accent)
+                .tint(SwaplSemanticLight.primary)
         }
     }
 }
@@ -83,6 +83,26 @@ struct MainTabView: View {
                 AccountView()
                     .tabItem { Label("Profile", systemImage: "person.crop.circle") }
             }
+            .tint(AirbnbPalette.primary)
+            .onAppear {
+                let appearance = UITabBarAppearance()
+                appearance.configureWithDefaultBackground()
+                appearance.backgroundColor = UIColor(AirbnbPalette.background)
+                
+                // Customize icon colors
+                let itemAppearance = UITabBarItemAppearance()
+                itemAppearance.normal.iconColor = UIColor(AirbnbPalette.secondaryText)
+                itemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor(AirbnbPalette.secondaryText)]
+                itemAppearance.selected.iconColor = UIColor(AirbnbPalette.primary)
+                itemAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(AirbnbPalette.primary)]
+                
+                appearance.stackedLayoutAppearance = itemAppearance
+                appearance.inlineLayoutAppearance = itemAppearance
+                appearance.compactInlineLayoutAppearance = itemAppearance
+                
+                UITabBar.appearance().standardAppearance = appearance
+                UITabBar.appearance().scrollEdgeAppearance = appearance
+            }
         }
     }
 }
@@ -127,7 +147,7 @@ struct SidebarView: View {
                     selection = section
                 } label: {
                     Label(section.title, systemImage: section.systemImage)
-                        .foregroundStyle(selection == section ? AirbnbPalette.accent : AirbnbPalette.text)
+                        .foregroundStyle(selection == section ? AirbnbPalette.primary : AirbnbPalette.text)
                 }
             }
         }
@@ -148,7 +168,7 @@ struct AirbnbPlaceholderView: View {
                 Text(message)
             }
             .navigationTitle(title)
-            .background(Color(.systemBackground))
+            .background(AirbnbPalette.background)
         }
     }
 }
