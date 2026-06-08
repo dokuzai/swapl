@@ -5,16 +5,15 @@ import { hashPassword } from "@/lib/auth/passwords";
 import { setSession, issueAuthToken } from "@/lib/auth/session";
 import { issueToken, normaliseEmail } from "@/lib/auth/tokens";
 import { sendEmail, emailTemplates } from "@/lib/email";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 
 const HOUR_MS = 60 * 60 * 1000;
 
 export async function POST(req: Request) {
-  // Per-IP rate limit (10 registrations / hour) — keeps casual abuse off
-  // without hurting honest signups. Replace with a stronger limit + CAPTCHA
-  // before launch.
+  // Per-IP rate limit (10 registrations / hour) — durable across serverless
+  // invocations via Upstash, falling back to in-memory when unconfigured.
   const ip = clientIpFromRequest(req);
-  const rl = checkRateLimit(`register:${ip}`, 10, HOUR_MS);
+  const rl = await checkRateLimitDurable(`register:${ip}`, 10, HOUR_MS);
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many sign-ups from this network. Try again in an hour." },

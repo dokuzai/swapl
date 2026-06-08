@@ -2,8 +2,22 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { betaSignupSchema } from "@/lib/validators";
 import { sendEmail, emailTemplates } from "@/lib/email";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
+
+const HOUR_MS = 60 * 60 * 1000;
 
 export async function POST(req: Request) {
+  // Public funnel — durable per-IP limit so a single source can't flood the
+  // waitlist (20 signups / hour / IP).
+  const ip = clientIpFromRequest(req);
+  const rl = await checkRateLimitDurable(`beta:${ip}`, 20, HOUR_MS);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many sign-ups from this network. Try again later." },
+      { status: 429 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();
