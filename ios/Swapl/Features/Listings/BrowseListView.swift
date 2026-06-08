@@ -1,5 +1,6 @@
 import SwiftUI
 import Observation
+import MapKit
 import SwaplDesignTokens
 
 @MainActor
@@ -39,8 +40,12 @@ final class BrowseListViewModel {
     }
 }
 
+enum BrowseViewMode { case list, map }
+
 struct BrowseListView: View {
     @State private var vm = BrowseListViewModel()
+    @State private var viewMode: BrowseViewMode = .list
+    @State private var selectedMapId: String?
 
     var body: some View {
         NavigationStack {
@@ -66,10 +71,17 @@ struct BrowseListView: View {
                         Button("Refresh") { Task { await vm.load() } }
                     }
                 } else {
-                    exploreContent
+                    ZStack(alignment: .bottom) {
+                        if viewMode == .map {
+                            mapContent
+                        } else {
+                            exploreContent
+                        }
+                        floatingControls
+                    }
                 }
             }
-            .background(AirbnbPalette.background)
+            .background(SwaplSemanticLight.background)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
@@ -78,6 +90,90 @@ struct BrowseListView: View {
             .task { await vm.load() }
             .refreshable { await vm.load() }
         }
+    }
+
+    private var mapContent: some View {
+        VStack(spacing: 0) {
+            searchHeader
+            BrowseMapView(items: vm.items, selectedId: $selectedMapId)
+        }
+        .background(SwaplSemanticLight.background)
+    }
+
+    @ViewBuilder
+    private var floatingControls: some View {
+        VStack(spacing: 12) {
+            if viewMode == .map,
+               let selected = vm.items.first(where: { $0.id == selectedMapId }) {
+                mapSelectionCard(selected)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+            viewModeToggle
+        }
+        .padding(.bottom, 24)
+    }
+
+    private var viewModeToggle: some View {
+        Button {
+            withAnimation(.snappy) {
+                if viewMode == .list {
+                    viewMode = .map
+                } else {
+                    viewMode = .list
+                    selectedMapId = nil
+                }
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Text(viewMode == .list ? "Map" : "List")
+                Image(systemName: viewMode == .list ? "map.fill" : "list.bullet")
+            }
+            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 22)
+            .padding(.vertical, 14)
+            .background(AirbnbPalette.text, in: Capsule())
+            .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
+        }
+        .accessibilityLabel(viewMode == .list ? "Show map" : "Show list")
+    }
+
+    private func mapSelectionCard(_ item: ListingWithScore) -> some View {
+        NavigationLink(value: item.listing.id) {
+            HStack(spacing: 14) {
+                ListingPhotoView(listing: item.listing, cornerRadius: SwaplDesignSystem.CornerRadius.medium)
+                    .frame(width: 96, height: 96)
+                    .clipped()
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("\(item.listing.neighbourhood), \(item.listing.city)")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+                    Text("\(item.listing.sleeps) guests · \(item.listing.bedrooms) beds")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                    if let score = item.matchScore {
+                        Text("\(score)% match")
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
+                            .foregroundStyle(AirbnbPalette.text)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(AirbnbPalette.softBackground, in: Capsule())
+                            .padding(.top, 2)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(12)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            )
+            .shadow(color: .black.opacity(0.12), radius: 16, x: 0, y: 8)
+            .padding(.horizontal, 22)
+        }
+        .buttonStyle(.plain)
     }
 
     private var exploreContent: some View {
@@ -93,7 +189,7 @@ struct BrowseListView: View {
             }
             .padding(.bottom, 110)
         }
-        .background(AirbnbPalette.background)
+        .background(SwaplSemanticLight.background)
     }
 
     private var searchHeader: some View {
@@ -116,7 +212,7 @@ struct BrowseListView: View {
         .foregroundStyle(AirbnbPalette.text)
         .padding(.horizontal, 22)
         .padding(.vertical, 18)
-        .background(AirbnbPalette.card, in: Capsule())
+        .background(SwaplSemanticLight.card, in: Capsule())
         .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
         .padding(.horizontal, 22)
         .padding(.top, 18)
@@ -163,7 +259,7 @@ struct BrowseListView: View {
                     .frame(width: 92, height: 92)
             }
             .padding(22)
-            .background(AirbnbPalette.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
                     .stroke(AirbnbPalette.hairline)
@@ -279,7 +375,7 @@ struct ListingCardView: View {
                 .frame(height: compact ? 0 : nil)
         }
         .frame(width: cardWidth, alignment: .leading)
-        .background(AirbnbPalette.background)
+        .background(SwaplSemanticLight.background)
     }
 
     private var ratingText: String {
@@ -308,5 +404,125 @@ struct ListingCardView: View {
             "Lebanon": "LB"
         ]
         return codes[country] ?? country
+    }
+}
+
+// MARK: - Map
+
+struct BrowseMapView: View {
+    let items: [ListingWithScore]
+    @Binding var selectedId: String?
+
+    @State private var camera: MapCameraPosition = .automatic
+    @State private var didFocus = false
+
+    private var points: [ListingMapPoint] { items.map(ListingMapPoint.init) }
+
+    var body: some View {
+        Map(position: $camera) {
+            ForEach(points) { point in
+                Annotation(point.title, coordinate: point.coordinate) {
+                    MapListingPin(point: point, selected: selectedId == point.id) {
+                        withAnimation(.snappy) { selectedId = point.id }
+                    }
+                }
+            }
+            .annotationTitles(.hidden)
+        }
+        .mapStyle(.standard(pointsOfInterest: .excludingAll))
+        .mapControls { MapUserLocationButton() }
+        .ignoresSafeArea(edges: .bottom)
+        .onAppear(perform: focusInitial)
+    }
+
+    private func focusInitial() {
+        guard !didFocus, let first = points.first else { return }
+        didFocus = true
+        camera = .region(
+            MKCoordinateRegion(
+                center: first.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.18, longitudeDelta: 0.18)
+            )
+        )
+    }
+}
+
+struct MapListingPin: View {
+    let point: ListingMapPoint
+    let selected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Group {
+                if let score = point.matchScore {
+                    Text("\(score)%")
+                } else {
+                    Image(systemName: "house.fill")
+                }
+            }
+            .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
+            .foregroundStyle(selected ? AirbnbPalette.primaryForeground : AirbnbPalette.text)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(selected ? AirbnbPalette.primary : SwaplSemanticLight.card, in: Capsule())
+            .overlay(
+                Capsule().stroke(AirbnbPalette.hairline, lineWidth: selected ? 0 : 1)
+            )
+            .shadow(color: .black.opacity(0.18), radius: 6, x: 0, y: 2)
+            .scaleEffect(selected ? 1.1 : 1)
+        }
+        .buttonStyle(.plain)
+        .animation(.snappy(duration: 0.25), value: selected)
+    }
+}
+
+struct ListingMapPoint: Identifiable {
+    let item: ListingWithScore
+
+    var id: String { item.listing.id }
+    var title: String { item.listing.title }
+    var matchScore: Int? { item.matchScore }
+    var coordinate: CLLocationCoordinate2D { ListingGeo.coordinate(for: item.listing) }
+}
+
+// Resolves a map coordinate for a listing. Uses the listing's own lat/lng when
+// present; otherwise falls back to a known city centroid plus a small, stable
+// per-listing offset so multiple homes in the same city don't stack exactly.
+enum ListingGeo {
+    static func coordinate(for listing: Listing) -> CLLocationCoordinate2D {
+        if let lat = listing.lat, let lng = listing.lng {
+            return CLLocationCoordinate2D(latitude: lat, longitude: lng)
+        }
+        let base = centroid(for: listing.city)
+        let offset = jitter(for: listing.id)
+        return CLLocationCoordinate2D(latitude: base.latitude + offset.lat,
+                                      longitude: base.longitude + offset.lng)
+    }
+
+    private static func centroid(for city: String) -> CLLocationCoordinate2D {
+        switch city {
+        case "Amsterdam": return .init(latitude: 52.3676, longitude: 4.9041)
+        case "Berlin":    return .init(latitude: 52.5200, longitude: 13.4050)
+        case "Brooklyn":  return .init(latitude: 40.6782, longitude: -73.9442)
+        case "CDMX":      return .init(latitude: 19.4326, longitude: -99.1332)
+        case "Istanbul":  return .init(latitude: 41.0082, longitude: 28.9784)
+        case "Lisbon":    return .init(latitude: 38.7223, longitude: -9.1393)
+        case "Marrakesh": return .init(latitude: 31.6295, longitude: -7.9811)
+        case "Paris":     return .init(latitude: 48.8566, longitude: 2.3522)
+        case "Seoul":     return .init(latitude: 37.5665, longitude: 126.9780)
+        case "Tokyo":     return .init(latitude: 35.6762, longitude: 139.6503)
+        default:          return .init(latitude: 41.0082, longitude: 28.9784)
+        }
+    }
+
+    // Deterministic FNV-1a hash so the same listing always lands in the same spot
+    // (Swift's String.hashValue is randomized per launch and unsuitable here).
+    private static func jitter(for id: String) -> (lat: Double, lng: Double) {
+        var hash: UInt64 = 1469598103934665603
+        for byte in id.utf8 { hash = (hash ^ UInt64(byte)) &* 1099511628211 }
+        let dlat = (Double(hash % 1000) / 1000.0 - 0.5) * 0.06
+        let dlng = (Double((hash / 1000) % 1000) / 1000.0 - 0.5) * 0.06
+        return (dlat, dlng)
     }
 }
