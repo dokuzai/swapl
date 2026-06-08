@@ -93,11 +93,11 @@ struct BrowseListView: View {
     }
 
     private var mapContent: some View {
-        VStack(spacing: 0) {
-            searchHeader
+        ZStack(alignment: .top) {
             BrowseMapView(items: vm.items, selectedId: $selectedMapId)
+            mapTopFade
+            mapSearchHeader
         }
-        .background(SwaplSemanticLight.background)
     }
 
     @ViewBuilder
@@ -128,7 +128,8 @@ struct BrowseListView: View {
                 Text(viewMode == .list ? "Map" : "List")
                 Image(systemName: viewMode == .list ? "map.fill" : "list.bullet")
             }
-            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+            .font(.subheadline)
+            .fontWeight(.bold)
             .foregroundStyle(.white)
             .padding(.horizontal, 22)
             .padding(.vertical, 14)
@@ -146,15 +147,17 @@ struct BrowseListView: View {
                     .clipped()
                 VStack(alignment: .leading, spacing: 6) {
                     Text("\(item.listing.neighbourhood), \(item.listing.city)")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .font(.body)
+                        .fontWeight(.semibold)
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(1)
                     Text("\(item.listing.sleeps) guests · \(item.listing.bedrooms) beds")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                        .font(.caption)
                         .foregroundStyle(AirbnbPalette.secondaryText)
                     if let score = item.matchScore {
                         Text("\(score)% match")
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
+                            .font(.caption2)
+                            .fontWeight(.bold)
                             .foregroundStyle(AirbnbPalette.text)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 5)
@@ -192,12 +195,14 @@ struct BrowseListView: View {
         .background(SwaplSemanticLight.background)
     }
 
-    private var searchHeader: some View {
+    private var searchBarContent: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                .font(.title3)
+                .fontWeight(.semibold)
             Text("Start your search")
-                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                .font(.body)
+                .fontWeight(.semibold)
             Spacer()
             Menu {
                 sortButton("Best match", value: "match")
@@ -205,17 +210,44 @@ struct BrowseListView: View {
                 sortButton("Largest", value: "size_desc")
             } label: {
                 Image(systemName: "slider.horizontal.3")
-                    .font(.system(size: SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .font(.body)
+                    .fontWeight(.semibold)
                     .foregroundStyle(AirbnbPalette.text)
             }
         }
         .foregroundStyle(AirbnbPalette.text)
         .padding(.horizontal, 22)
         .padding(.vertical, 18)
-        .background(SwaplSemanticLight.card, in: Capsule())
-        .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
-        .padding(.horizontal, 22)
-        .padding(.top, 18)
+    }
+
+    // List mode: solid card search bar.
+    private var searchHeader: some View {
+        searchBarContent
+            .background(SwaplSemanticLight.card, in: Capsule())
+            .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
+            .padding(.horizontal, 22)
+            .padding(.top, 18)
+    }
+
+    // Map mode: floating Liquid Glass search bar (iOS 26) over the full-bleed map.
+    private var mapSearchHeader: some View {
+        searchBarContent
+            .glassEffect(.regular, in: Capsule())
+            .padding(.horizontal, 22)
+            .padding(.top, 10)
+    }
+
+    // Soft fade so the map recedes behind the floating search bar and status bar.
+    private var mapTopFade: some View {
+        LinearGradient(
+            colors: [SwaplSemanticLight.background, SwaplSemanticLight.background.opacity(0)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .frame(height: 150)
+        .frame(maxWidth: .infinity, alignment: .top)
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
     }
 
     private var categoryStrip: some View {
@@ -233,7 +265,8 @@ struct BrowseListView: View {
             Image(systemName: icon)
                 .font(.system(size: 26, weight: .regular))
             Text(title)
-                .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
+                .font(.caption)
+                .fontWeight(.semibold)
             Rectangle()
                 .fill(selected ? AirbnbPalette.text : .clear)
                 .frame(width: 42, height: 3)
@@ -247,11 +280,12 @@ struct BrowseListView: View {
             HStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Continue planning your \(item.listing.city) swap")
-                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                        .font(.title3)
+                        .fontWeight(.bold)
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(2)
                     Text("\(item.listing.sleeps) guests")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .regular))
+                        .font(.subheadline)
                         .foregroundStyle(AirbnbPalette.secondaryText)
                 }
                 Spacer()
@@ -274,11 +308,13 @@ struct BrowseListView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text(title)
-                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
+                    .font(.title2)
+                    .fontWeight(.bold)
                     .foregroundStyle(AirbnbPalette.text)
                 Spacer()
                 Image(systemName: "arrow.right")
-                    .font(.system(size: SwaplDesignSystem.FontSize.body, weight: .bold))
+                    .font(.body)
+                    .fontWeight(.bold)
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(width: 42, height: 42)
                     .background(AirbnbPalette.softBackground, in: Circle())
@@ -431,7 +467,7 @@ struct BrowseMapView: View {
         }
         .mapStyle(.standard(pointsOfInterest: .excludingAll))
         .mapControls { MapUserLocationButton() }
-        .ignoresSafeArea(edges: .bottom)
+        .ignoresSafeArea()
         .onAppear(perform: focusInitial)
     }
 
@@ -462,10 +498,10 @@ struct MapListingPin: View {
                 }
             }
             .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
-            .foregroundStyle(selected ? AirbnbPalette.primaryForeground : AirbnbPalette.text)
+            .foregroundStyle(selected ? SwaplSemanticLight.primaryForeground : AirbnbPalette.text)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(selected ? AirbnbPalette.primary : SwaplSemanticLight.card, in: Capsule())
+            .background(selected ? SwaplSemanticLight.primary : SwaplSemanticLight.card, in: Capsule())
             .overlay(
                 Capsule().stroke(AirbnbPalette.hairline, lineWidth: selected ? 0 : 1)
             )
