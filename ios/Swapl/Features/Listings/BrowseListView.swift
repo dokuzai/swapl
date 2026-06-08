@@ -142,9 +142,9 @@ struct BrowseListView: View {
     private func mapSelectionCard(_ item: ListingWithScore) -> some View {
         NavigationLink(value: item.listing.id) {
             HStack(spacing: 14) {
-                ListingPhotoView(listing: item.listing, cornerRadius: SwaplDesignSystem.CornerRadius.medium)
+                ListingPhotoView(listing: item.listing, cornerRadius: 0)
                     .frame(width: 96, height: 96)
-                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
                 VStack(alignment: .leading, spacing: 6) {
                     Text("\(item.listing.neighbourhood), \(item.listing.city)")
                         .font(.body)
@@ -289,8 +289,9 @@ struct BrowseListView: View {
                         .foregroundStyle(AirbnbPalette.secondaryText)
                 }
                 Spacer()
-                ListingPhotoView(listing: item.listing, cornerRadius: SwaplDesignSystem.CornerRadius.medium)
+                ListingPhotoView(listing: item.listing, cornerRadius: 0)
                     .frame(width: 92, height: 92)
+                    .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
             }
             .padding(22)
             .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
@@ -373,9 +374,12 @@ struct ListingCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: compact ? 7 : 9) {
             ZStack(alignment: .topTrailing) {
-                ListingPhotoView(listing: item.listing, cornerRadius: cornerRadius)
+                // Round the FRAMED bounds. `.clipped()` here re-crops the
+                // scaledToFill photo to a square rectangle, erasing the rounded
+                // corners; clipShape on the framed size keeps them.
+                ListingPhotoView(listing: item.listing, cornerRadius: 0)
                     .frame(width: cardWidth, height: imageHeight)
-                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
 
                 Image(systemName: "heart")
                     .font(.system(size: compact ? 18 : SwaplDesignSystem.FontSize.h3, weight: .semibold))

@@ -22,6 +22,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>SwaplApiBaseURL</key>
 	<string>http://localhost:3000</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Swapl uses your location to prefill the address for the home you are listing.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

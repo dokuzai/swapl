@@ -76,31 +76,41 @@ struct ListingPhotoView: View {
     var body: some View {
         let softBg = scheme == .dark ? SwaplSemanticDark.muted : SwaplSemanticLight.muted
         
-        Group {
-            if let url = preferredPhotoURL {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure:
-                        CityIllust(palette: SwaplCityPalettes.forName(listing.palette))
-                    case .empty:
-                        ZStack {
-                            softBg
-                            ProgressView()
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+
+        // Color.clear defines this view's size, so the scaledToFill image —
+        // which overflows its frame — can't dictate the bounds. Clipping the
+        // base to the rounded shape keeps corners rounded no matter how a
+        // caller frames this view. (Without it, an outer `.frame().clipped()`
+        // re-crops to a square rect and the rounding is silently lost.)
+        Color.clear
+            .overlay {
+                Group {
+                    if let url = preferredPhotoURL {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            case .failure:
+                                CityIllust(palette: SwaplCityPalettes.forName(listing.palette))
+                            case .empty:
+                                ZStack {
+                                    softBg
+                                    ProgressView()
+                                }
+                            @unknown default:
+                                softBg
+                            }
                         }
-                    @unknown default:
-                        softBg
+                    } else {
+                        CityIllust(palette: SwaplCityPalettes.forName(listing.palette))
                     }
                 }
-            } else {
-                CityIllust(palette: SwaplCityPalettes.forName(listing.palette))
             }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-        .contentShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .clipShape(shape)
+            .contentShape(shape)
     }
 
     private var preferredPhotoURL: URL? {

@@ -8,6 +8,8 @@ struct SwaplApp: App {
 
     init() {
         SwaplFonts.register()
+        // Register App Shortcuts for Siri
+        SwaplAppShortcuts.updateAppShortcutParameters()
     }
 
     var body: some Scene {
@@ -83,18 +85,18 @@ struct MainTabView: View {
                 AccountView()
                     .tabItem { Label("Profile", systemImage: "person.crop.circle") }
             }
-            .tint(AirbnbPalette.primary)
+            .tint(SwaplSemanticLight.primary)
             .onAppear {
                 let appearance = UITabBarAppearance()
                 appearance.configureWithDefaultBackground()
-                appearance.backgroundColor = UIColor(AirbnbPalette.background)
+                appearance.backgroundColor = UIColor(SwaplSemanticLight.background)
                 
                 // Customize icon colors
                 let itemAppearance = UITabBarItemAppearance()
                 itemAppearance.normal.iconColor = UIColor(AirbnbPalette.secondaryText)
                 itemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor(AirbnbPalette.secondaryText)]
-                itemAppearance.selected.iconColor = UIColor(AirbnbPalette.primary)
-                itemAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(AirbnbPalette.primary)]
+                itemAppearance.selected.iconColor = UIColor(SwaplSemanticLight.primary)
+                itemAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(SwaplSemanticLight.primary)]
                 
                 appearance.stackedLayoutAppearance = itemAppearance
                 appearance.inlineLayoutAppearance = itemAppearance
@@ -147,7 +149,7 @@ struct SidebarView: View {
                     selection = section
                 } label: {
                     Label(section.title, systemImage: section.systemImage)
-                        .foregroundStyle(selection == section ? AirbnbPalette.primary : AirbnbPalette.text)
+                        .foregroundStyle(selection == section ? SwaplSemanticLight.primary : AirbnbPalette.text)
                 }
             }
         }
@@ -168,7 +170,7 @@ struct AirbnbPlaceholderView: View {
                 Text(message)
             }
             .navigationTitle(title)
-            .background(AirbnbPalette.background)
+            .background(SwaplSemanticLight.background)
         }
     }
 }
