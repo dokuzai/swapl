@@ -1,6 +1,8 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import PhotosUI
+import UIKit
 import SwaplDesignTokens
 
 struct AccountView: View {
@@ -311,6 +313,8 @@ struct ListingCreationView: View {
     @State private var error: String?
     @State private var isPublishing = false
     @State private var createdListingId: String?
+    @State private var photoItems: [PhotosPickerItem] = []
+    @State private var uploadingPhotos = false
 
     private let steps = ["Location", "Space", "Amenities", "Dates", "Review"]
 
@@ -472,8 +476,90 @@ struct ListingCreationView: View {
             DateCard(title: "Available to", date: $draft.availableTo)
             StepperCard(title: "Minimum stay", value: $draft.minStayDays, range: 1...180, suffix: "nights")
             StepperCard(title: "Maximum stay", value: $draft.maxStayDays, range: 1...365, suffix: "nights")
-            ListingField(title: "Photo URL", text: $draft.photoURL, placeholder: "https://...")
+            photosSection
         }
+    }
+
+    private var photosSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Photos")
+                    .font(.swaplBody(16, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Spacer()
+                if uploadingPhotos { ProgressView() }
+            }
+            PhotosPicker(selection: $photoItems, maxSelectionCount: 10, matching: .images) {
+                HStack(spacing: 10) {
+                    Image(systemName: "photo.on.rectangle.angled")
+                    Text(draft.photos.isEmpty ? "Add photos" : "Add or replace photos")
+                }
+                .font(.swaplBody(15, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .frame(maxWidth: .infinity)
+                .frame(height: 52)
+                .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                        .stroke(AirbnbPalette.hairline)
+                }
+            }
+            if !draft.photos.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(draft.photos, id: \.self) { url in
+                            AsyncImage(url: URL(string: url)) { img in
+                                img.resizable().scaledToFill()
+                            } placeholder: {
+                                SwaplSemanticLight.muted
+                            }
+                            .frame(width: 84, height: 84)
+                            .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.small, style: .continuous))
+                        }
+                    }
+                }
+                Text("\(draft.photos.count) photo\(draft.photos.count == 1 ? "" : "s") uploaded")
+                    .font(.swaplBody(13))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+        }
+        .onChange(of: photoItems) { _, items in
+            Task { await uploadPhotos(items) }
+        }
+    }
+
+    private func uploadPhotos(_ items: [PhotosPickerItem]) async {
+        guard !items.isEmpty else { return }
+        uploadingPhotos = true
+        error = nil
+        defer { uploadingPhotos = false }
+        var urls: [String] = []
+        for item in items {
+            guard
+                let data = try? await item.loadTransferable(type: Data.self),
+                let jpeg = Self.downscaledJPEG(from: data)
+            else { continue }
+            do {
+                let url = try await APIClient.shared.uploadListingPhoto(jpeg)
+                urls.append(url)
+            } catch {
+                self.error = "Couldn't upload a photo. Check your connection and try again."
+            }
+        }
+        if !urls.isEmpty { draft.photos = urls }
+    }
+
+    // Re-encode to a reasonably-sized JPEG so HEIC/large originals upload
+    // reliably under the 8MB server cap.
+    private static func downscaledJPEG(from data: Data, maxDimension: CGFloat = 1600, quality: CGFloat = 0.8) -> Data? {
+        guard let image = UIImage(data: data) else { return nil }
+        let longest = max(image.size.width, image.size.height)
+        let scale = longest > maxDimension ? maxDimension / longest : 1
+        if scale >= 1 { return image.jpegData(compressionQuality: quality) }
+        let newSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        let resized = renderer.image { _ in image.draw(in: CGRect(origin: .zero, size: newSize)) }
+        return resized.jpegData(compressionQuality: quality)
     }
 
     private var reviewStep: some View {
@@ -584,6 +670,10 @@ struct ListingCreationView: View {
         do {
             let response = try await ListingRepository.shared.create(draft.payload)
             createdListingId = response.id
+        } catch APIClient.APIError.status(403, _) {
+            self.error = "Verify your email before publishing — see the banner at the top of the app."
+        } catch APIClient.APIError.status(402, _) {
+            self.error = "You've reached your plan's listing limit. Upgrade to publish more homes."
         } catch {
             self.error = error.localizedDescription
         }
@@ -600,14 +690,16 @@ struct ListingCreationView: View {
 }
 
 private struct ListingCreationDraft {
-    var city = "Istanbul"
-    var neighbourhood = "Cihangir"
-    var country = "Turkey"
+    // Location/title/description start empty so hosts enter their own home
+    // (validation enforces it); only neutral numeric/amenity defaults remain.
+    var city = ""
+    var neighbourhood = ""
+    var country = ""
     var address = ""
     var lat: Double?
     var lng: Double?
-    var title = "Sunny apartment in Cihangir"
-    var description = "A calm, light-filled home close to cafes, galleries, transit, and long walks by the water."
+    var title = ""
+    var description = ""
     var propertyType = "APARTMENT"
     var sizeSqm = 80
     var sleeps = 3
@@ -625,7 +717,7 @@ private struct ListingCreationDraft {
     var availableTo = Calendar.current.date(byAdding: .day, value: 90, to: Date()) ?? Date()
     var minStayDays = 7
     var maxStayDays = 30
-    var photoURL = ""
+    var photos: [String] = []
 
     init() {}
 
@@ -690,7 +782,7 @@ private struct ListingCreationDraft {
             availableTo: SwaplDateText.apiString(from: availableTo),
             minStayDays: minStayDays,
             maxStayDays: maxStayDays,
-            photos: photoURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? [] : [photoURL],
+            photos: photos,
             tags: []
         )
     }

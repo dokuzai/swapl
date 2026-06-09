@@ -95,6 +95,43 @@ final class APIClient: @unchecked Sendable {
             throw APIError.transport(error)
         }
     }
+
+    // Multipart image upload for native clients → /api/uploads/listing-photo
+    // (bearer-authed; stored in UploadThing server-side). Returns the photo URL.
+    func uploadListingPhoto(_ imageData: Data, filename: String = "photo.jpg", mimeType: String = "image/jpeg") async throws -> String {
+        let boundary = "swapl-\(UUID().uuidString)"
+        var req = URLRequest(url: baseURL.appendingPathComponent("/api/uploads/listing-photo"))
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        if let token = tokenProvider?() {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        func append(_ s: String) { body.append(s.data(using: .utf8)!) }
+        append("--\(boundary)\r\n")
+        append("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n")
+        append("Content-Type: \(mimeType)\r\n\r\n")
+        body.append(imageData)
+        append("\r\n--\(boundary)--\r\n")
+        req.httpBody = body
+
+        do {
+            let (data, response) = try await session.data(for: req)
+            let http = response as! HTTPURLResponse
+            if http.statusCode == 401 { throw APIError.unauthenticated }
+            guard (200..<300).contains(http.statusCode) else {
+                throw APIError.status(http.statusCode, String(data: data, encoding: .utf8))
+            }
+            struct UploadResponse: Decodable { let url: String }
+            return try decoder.decode(UploadResponse.self, from: data).url
+        } catch let err as APIError {
+            throw err
+        } catch {
+            throw APIError.transport(error)
+        }
+    }
 }
 
 private struct AnyEncodable: Encodable {

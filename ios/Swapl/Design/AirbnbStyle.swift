@@ -114,6 +114,11 @@ struct ListingPhotoView: View {
     }
 
     private var preferredPhotoURL: URL? {
+        // Prefer the listing's own uploaded photos; fall back to curated stock
+        // imagery (keyed stably by id) only when a listing has none yet.
+        if let first = listing.photos.first(where: { !$0.isEmpty }), let url = URL(string: first) {
+            return url
+        }
         let curated = [
             "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200",
             "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200",
