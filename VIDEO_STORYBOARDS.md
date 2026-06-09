@@ -11,7 +11,7 @@ TikTok + Reels + Shorts.
 - **One CTA**, spoken + on-screen + in caption: "Link in bio — list before September."
 - **Specs:** 1080×1920, 30fps, safe margins (keep text out of top 220px / bottom 320px where the UI sits), MP4 H.264.
 - **Bio link:** point at a corridor page with UTM, e.g.
-  `swapl.app/swap/lisbon-home-swap-from-cdmx?utm_source=tiktok&utm_medium=video&utm_campaign=founding_hosts`
+  `swapl.fun/swap/lisbon-home-swap-from-cdmx?utm_source=tiktok&utm_medium=video&utm_campaign=founding_hosts`
 
 ---
 

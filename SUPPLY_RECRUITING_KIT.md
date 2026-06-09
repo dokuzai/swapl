@@ -4,7 +4,7 @@ _Goal: hand-recruit the first ~150 founding-host listings, concentrated in 2-3
 corridors, before the September 2026 launch._ Companion to
 [CHANNELS_AND_OUTREACH.md](CHANNELS_AND_OUTREACH.md).
 
-> **Replace `swapl.app`** below with your live domain before sending.
+> **Live domain: `swapl.fun`** · `NEXT_PUBLIC_APP_URL=https://swapl.fun` (Vercel prod).
 > Priority corridors (from your demand-pairings): **Istanbul ⇄ Amsterdam**,
 > **Lisbon ⇄ CDMX**, plus **Brooklyn** as the long-haul anchor.
 
@@ -45,13 +45,13 @@ swappers), creators in your corridor cities, your own waitlist.
 ## 2. UTM link cheat-sheet (so attribution works)
 
 Pattern:
-`https://swapl.app/swap/<corridor>?utm_source=<src>&utm_medium=<med>&utm_campaign=founding_hosts&utm_content=<note>`
+`https://swapl.fun/swap/<corridor>?utm_source=<src>&utm_medium=<med>&utm_campaign=founding_hosts&utm_content=<note>`
 
 Ready-made:
-- Reddit, IST⇄AMS: `https://swapl.app/swap/istanbul-home-swap-from-amsterdam?utm_source=reddit&utm_medium=social&utm_campaign=founding_hosts&utm_content=ist_ams`
-- Reddit, LIS⇄CDMX: `https://swapl.app/swap/lisbon-home-swap-from-cdmx?utm_source=reddit&utm_medium=social&utm_campaign=founding_hosts&utm_content=lis_cdmx`
-- FB group, Amsterdam: `https://swapl.app/amsterdam-home-swap?utm_source=facebook&utm_medium=group&utm_campaign=founding_hosts&utm_content=ams_expats`
-- DM, generic: `https://swapl.app/register?utm_source=dm&utm_medium=direct&utm_campaign=founding_hosts`
+- Reddit, IST⇄AMS: `https://swapl.fun/swap/istanbul-home-swap-from-amsterdam?utm_source=reddit&utm_medium=social&utm_campaign=founding_hosts&utm_content=ist_ams`
+- Reddit, LIS⇄CDMX: `https://swapl.fun/swap/lisbon-home-swap-from-cdmx?utm_source=reddit&utm_medium=social&utm_campaign=founding_hosts&utm_content=lis_cdmx`
+- FB group, Amsterdam: `https://swapl.fun/amsterdam-home-swap?utm_source=facebook&utm_medium=group&utm_campaign=founding_hosts&utm_content=ams_expats`
+- DM, generic: `https://swapl.fun/register?utm_source=dm&utm_medium=direct&utm_campaign=founding_hosts`
 
 ---
 

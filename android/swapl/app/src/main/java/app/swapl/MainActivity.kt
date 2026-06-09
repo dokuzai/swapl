@@ -99,12 +99,12 @@ private fun HomeShell(
     val browseNav = rememberNavController()
     val swapsNav = rememberNavController()
 
-    // Route the incoming swapl:// or https://swapl.app/... deep link.
+    // Route the incoming swapl:// or https://swapl.fun/... deep link.
     LaunchedEffect(deepLink) {
         val uri = deepLink ?: return@LaunchedEffect
         val segs = uri.pathSegments
-        val head = uri.host?.takeIf { it != "swapl.app" } ?: segs.firstOrNull() ?: return@LaunchedEffect
-        val id = if (uri.host == null || uri.host == "swapl.app") segs.getOrNull(1) else segs.getOrNull(0)
+        val head = uri.host?.takeIf { it != "swapl.fun" } ?: segs.firstOrNull() ?: return@LaunchedEffect
+        val id = if (uri.host == null || uri.host == "swapl.fun") segs.getOrNull(1) else segs.getOrNull(0)
         when (head) {
             "swaps" -> id?.let {
                 current = HomeDest.Swaps

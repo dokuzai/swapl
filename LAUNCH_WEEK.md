@@ -4,10 +4,10 @@ _Day-by-day, channel-by-channel, copy-ready. Keyed to **T‑0 = launch day**
 (September 2026). Companion to [MARKETING_PLAN.md](MARKETING_PLAN.md),
 [PAID_ADS_SETUP.md](PAID_ADS_SETUP.md), [VIDEO_STORYBOARDS.md](VIDEO_STORYBOARDS.md)._
 
-> Replace `swapl.app` with your live domain. Email is wired via Resend; use your
-> `BetaSignup` list. **Gate:** only announce a corridor publicly once a new user
-> sees **≥5 plausible matches** on first search. If a corridor isn't ready, soft-launch
-> the ready ones and hold the rest.
+> **Live domain: `swapl.fun`** · `NEXT_PUBLIC_APP_URL=https://swapl.fun` (Vercel prod).
+> Email is wired via Resend; use your `BetaSignup` list. **Gate:** only announce a
+> corridor publicly once a new user sees **≥5 plausible matches** on first search.
+> If a corridor isn't ready, soft-launch the ready ones and hold the rest.
 
 ---
 
@@ -22,7 +22,7 @@ Every asset this week repeats *no money + insured*. Don't dilute it.
 > You joined early — here's your heads-up. Swaps go live **[date]**. Founding hosts
 > (that's you, if you've listed) get first pick when matching opens in [City].
 > Not listed yet? This is the week to do it — list before launch and you're in the
-> first batch shown: **[swapl.app/register?utm_source=email&utm_medium=lifecycle&utm_campaign=launch_t7]**
+> first batch shown: **[swapl.fun/register?utm_source=email&utm_medium=lifecycle&utm_campaign=launch_t7]**
 
 **Social (all platforms):** Storyboard 5 ("build in public") finale — "7 days. [N] founding homes across [cities]. Here's what's about to go live 👇"
 **Creators:** confirm your seeded creators will post their swap-reveal on T‑0; send them the link + hashtags.
@@ -63,7 +63,7 @@ Sequence the day; don't fire everything at 9am.
 > • Browse your matches, ranked by fit
 > • Propose a swap in two taps
 > • Founding hosts show first
-> **[Open swapl → swapl.app/listings?utm_source=email&utm_medium=lifecycle&utm_campaign=launch_day]**
+> **[Open swapl → swapl.fun/listings?utm_source=email&utm_medium=lifecycle&utm_campaign=launch_day]**
 > Thank you for being early. This only works because you listed first.
 
 **2) Product Hunt (00:01 PT) — tagline:** "Swapl — Home swapping. No money, every stay insured."
@@ -97,7 +97,7 @@ Sequence the day; don't fire everything at 9am.
 **Email — subject:** "No subscription. No points. Just keys."
 > If you've used HomeExchange or Love Home Swap, here's the difference in one line:
 > no annual fee, no GuestPoints to manage — keys for keys, insured. Read the honest
-> comparison: **[swapl.app/blog/home-swap-without-a-subscription-vs-homeexchange?utm_campaign=launch_t3]**
+> comparison: **[swapl.fun/blog/home-swap-without-a-subscription-vs-homeexchange?utm_campaign=launch_t3]**
 
 **Channels:** boost the comparison blog post; run Google Search ads on "homeexchange alternative" (already in the ads plan); pitch a travel/tech reporter the "free, insured home swapping" angle.
 

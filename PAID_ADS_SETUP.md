@@ -7,7 +7,7 @@ tracking. Companion to [VIDEO_STORYBOARDS.md](VIDEO_STORYBOARDS.md) and
 
 > **I won't create ad accounts, enter payment details, or spend money** — those
 > are yours to do. Everything below is configured and ready to paste in.
-> Replace `swapl.app` with your live domain.
+> **Live domain: `swapl.fun`** · `NEXT_PUBLIC_APP_URL=https://swapl.fun` (Vercel prod).
 
 ---
 

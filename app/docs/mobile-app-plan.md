@@ -152,7 +152,7 @@ Both apps **bundle the Fraunces/Inter/JetBrains Mono TTFs** (downloaded once fro
 - **Maps**: MapKit (`Map` SwiftUI view) with custom annotation views drawing the city‑palette `Pin`. Mapbox optional later via `MapboxMaps`.
 - **Image loading**: **Nuke** (`LazyImage`) — same modifiers as SwiftUI `Image`, prefetches in lists, low memory.
 - **Payments**: Stripe Mobile SDK (`StripePaymentSheet`) for subscription, verification (€39), featured (€19+), concierge add‑ons. Backend already issues PaymentIntents via existing `/api/billing/*` and `/api/listings/{verify,featured}` routes — they just need to return `client_secret` instead of the web `Checkout` URL.
-- **Deep linking**: Universal Links (`apple-app-site-association` hosted at `https://swapl.app/.well-known/`) covering `/listings/:id`, `/swaps/:id`, `/profile/:id`, `/account/saved-searches`. Custom `swapl://` scheme for push payloads.
+- **Deep linking**: Universal Links (`apple-app-site-association` hosted at `https://swapl.fun/.well-known/`) covering `/listings/:id`, `/swaps/:id`, `/profile/:id`, `/account/saved-searches`. Custom `swapl://` scheme for push payloads.
 
 ---
 
@@ -173,7 +173,7 @@ Both apps **bundle the Fraunces/Inter/JetBrains Mono TTFs** (downloaded once fro
 - **Maps**: Google Maps Compose (`com.google.maps.android:maps-compose`).
 - **Image loading**: **Coil 3** Compose API.
 - **Payments**: Stripe Android SDK `PaymentSheet`.
-- **Deep linking**: App Links (`assetlinks.json` at `https://swapl.app/.well-known/`) on the same paths as iOS, plus `swapl://` scheme.
+- **Deep linking**: App Links (`assetlinks.json` at `https://swapl.fun/.well-known/`) on the same paths as iOS, plus `swapl://` scheme.
 
 ---
 
@@ -265,7 +265,7 @@ Even with full parity as the goal, ship in slices to get user value early:
 - `ios/Swapl/` (Xcode project, all folders described in §3)
 - `android/swapl/` (Gradle project, all folders described in §4)
 - `pnpm-workspace.yaml` at repo root.
-- `swapl.app/.well-known/{apple-app-site-association,assetlinks.json}` deployed via the existing Vercel project.
+- `swapl.fun/.well-known/{apple-app-site-association,assetlinks.json}` deployed via the existing Vercel project.
 
 **Reuse (do NOT duplicate):**
 - `app/lib/match/score.ts` — match scoring stays server‑side; mobile receives precomputed score.
