@@ -21,17 +21,17 @@ export const pt: Record<DictKey, string> = {
 
   // ---- Launch banner ----
   "launchBanner.tag": "Pré-lançamento",
-  "launchBanner.body": "Coletando anúncios agora — as trocas começam em",
+  "launchBanner.body": "Sem taxas, cada troca segurada — as trocas começam em",
   "launchBanner.month": "Setembro de 2026",
   "launchBanner.cta": "Anuncie sua casa →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "Coletando anúncios agora · Lançamento em setembro de 2026",
-  "hero.titleA": "Troque sua casa",
-  "hero.titleB": "pela",
-  "hero.titleEm": "de outra pessoa",
+  "hero.kicker": "Sem taxas · Cada troca segurada · Lançamento em setembro de 2026",
+  "hero.titleA": "Chaves por chaves.",
+  "hero.titleB": "Sem dinheiro, tudo",
+  "hero.titleEm": "segurado",
   "hero.intro":
-    "Estamos coletando anúncios antes do lançamento de setembro de 2026. Anuncie seu lugar com precisão impecável agora e estará entre as primeiras casas a aparecerem quando as trocas começarem — chaves por chaves, sem dinheiro envolvido, todas as estadias seguradas de ponta a ponta.",
+    "Cada troca aceita está segurada de ponta a ponta e nenhum dinheiro muda de mãos — apenas chaves por chaves. Estamos reunindo casas fundadoras antes do lançamento de setembro de 2026: anuncie a sua com precisão impecável agora e estará entre as primeiras a aparecer quando as trocas começarem.",
   "hero.ctaList": "Anunciar minha casa",
   "hero.ctaHow": "Veja como funciona",
 

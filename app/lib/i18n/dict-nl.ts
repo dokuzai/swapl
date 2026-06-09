@@ -21,17 +21,17 @@ export const nl: Record<DictKey, string> = {
 
   // ---- Launch banner ----
   "launchBanner.tag": "Pre-launch",
-  "launchBanner.body": "We verzamelen nu listings — ruilen gaat live in",
+  "launchBanner.body": "Geen kosten, elke swap verzekerd — ruilen gaat live in",
   "launchBanner.month": "September 2026",
   "launchBanner.cta": "Plaats je woning →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "Listings worden nu verzameld · Live in september 2026",
-  "hero.titleA": "Ruil je huis",
-  "hero.titleB": "voor",
-  "hero.titleEm": "dat van iemand anders",
+  "hero.kicker": "Geen kosten · Elke swap verzekerd · Live in september 2026",
+  "hero.titleA": "Sleutels voor sleutels.",
+  "hero.titleB": "Geen geld, volledig",
+  "hero.titleEm": "verzekerd",
   "hero.intro":
-    "We verzamelen listings vóór de lancering in september 2026. Plaats je woning nu met meedogenloze precisie en je bent een van de eerste huizen die verschijnen zodra ruilen live gaat — sleutels voor sleutels, geen geld dat van eigenaar wisselt, elk verblijf van begin tot eind verzekerd.",
+    "Elke geaccepteerde swap is van begin tot eind verzekerd en er wisselt nooit geld van eigenaar — alleen sleutels voor sleutels. We verzamelen oprichter-huizen vóór de lancering in september 2026: plaats je woning nu met meedogenloze precisie en je bent een van de eerste huizen die verschijnen zodra ruilen live gaat.",
   "hero.ctaList": "Plaats mijn woning",
   "hero.ctaHow": "Bekijk hoe het werkt",
 

@@ -17,16 +17,16 @@ export const fr: Record<DictKey, string> = {
   "footer.account": "Compte",
 
   "launchBanner.tag": "Avant-lancement",
-  "launchBanner.body": "On collecte les annonces — les échanges démarrent",
+  "launchBanner.body": "Sans frais, chaque échange assuré — les échanges démarrent",
   "launchBanner.month": "en septembre 2026",
   "launchBanner.cta": "Publier la mienne →",
 
-  "hero.kicker": "Collecte des annonces · Lancement en septembre 2026",
-  "hero.titleA": "Échangez votre maison",
-  "hero.titleB": "contre",
-  "hero.titleEm": "celle d'un autre",
+  "hero.kicker": "Sans frais · Chaque échange assuré · Lancement en septembre 2026",
+  "hero.titleA": "Clés contre clés.",
+  "hero.titleB": "Sans argent, entièrement",
+  "hero.titleEm": "assuré",
   "hero.intro":
-    "Nous rassemblons les annonces avant le lancement de septembre 2026. Publiez la vôtre dès maintenant, avec des détails précis, et vous serez parmi les premières à apparaître quand les échanges démarreront — clés contre clés, sans argent, chaque séjour assuré de bout en bout.",
+    "Chaque échange accepté est assuré de bout en bout et aucun argent ne change de mains — juste des clés contre des clés. Nous réunissons les hôtes fondateurs avant le lancement de septembre 2026 : publiez votre annonce dès maintenant, avec des détails précis, et vous serez parmi les premières à apparaître quand les échanges démarreront.",
   "hero.ctaList": "Publier ma maison",
   "hero.ctaHow": "Voir comment ça marche",
 

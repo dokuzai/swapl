@@ -17,16 +17,16 @@ export const de: Record<DictKey, string> = {
   "footer.account": "Konto",
 
   "launchBanner.tag": "Vor dem Start",
-  "launchBanner.body": "Wir sammeln Inserate — Tausche starten",
+  "launchBanner.body": "Keine Gebühren, jeder Tausch versichert — Tausche starten",
   "launchBanner.month": "im September 2026",
   "launchBanner.cta": "Wohnung inserieren →",
 
-  "hero.kicker": "Wir sammeln Inserate · Start im September 2026",
-  "hero.titleA": "Tausche dein Zuhause",
-  "hero.titleB": "gegen",
-  "hero.titleEm": "ein anderes",
+  "hero.kicker": "Keine Gebühren · Jeder Tausch versichert · Start im September 2026",
+  "hero.titleA": "Schlüssel gegen Schlüssel.",
+  "hero.titleB": "Ohne Geld, voll",
+  "hero.titleEm": "versichert",
   "hero.intro":
-    "Wir sammeln Inserate vor dem Start im September 2026. Inseriere jetzt mit präzisen Details und du gehörst zu den ersten Wohnungen, die erscheinen, wenn die Tausche live gehen — Schlüssel gegen Schlüssel, ohne Geld, jeder Aufenthalt versichert.",
+    "Jeder angenommene Tausch ist von Anfang bis Ende versichert und es wechselt nie Geld den Besitzer — nur Schlüssel gegen Schlüssel. Wir gewinnen Gründungs-Gastgeber vor dem Start im September 2026: inseriere jetzt mit präzisen Details und du gehörst zu den ersten Wohnungen, die erscheinen, wenn die Tausche live gehen.",
   "hero.ctaList": "Wohnung inserieren",
   "hero.ctaHow": "So funktioniert's",
 

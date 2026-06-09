@@ -17,16 +17,16 @@ export const es: Record<DictKey, string> = {
   "footer.account": "Cuenta",
 
   "launchBanner.tag": "Antes del lanzamiento",
-  "launchBanner.body": "Recogiendo casas — los intercambios arrancan",
+  "launchBanner.body": "Sin comisiones, cada intercambio asegurado — los intercambios arrancan",
   "launchBanner.month": "en septiembre 2026",
   "launchBanner.cta": "Publica la tuya →",
 
-  "hero.kicker": "Recogiendo casas · Lanzamiento septiembre 2026",
-  "hero.titleA": "Cambia tu casa",
-  "hero.titleB": "por la de",
-  "hero.titleEm": "otra persona",
+  "hero.kicker": "Sin comisiones · Cada intercambio asegurado · Lanzamiento septiembre 2026",
+  "hero.titleA": "Llaves por llaves.",
+  "hero.titleB": "Sin dinero, todo",
+  "hero.titleEm": "asegurado",
   "hero.intro":
-    "Estamos recogiendo casas antes del lanzamiento de septiembre 2026. Publica la tuya con todo el detalle ahora y serás de las primeras en aparecer cuando arranquen los intercambios — llaves por llaves, sin dinero, cada estancia asegurada de extremo a extremo.",
+    "Cada intercambio aceptado está asegurado de extremo a extremo y nunca cambia dinero de manos: solo llaves por llaves. Estamos reuniendo casas fundadoras antes del lanzamiento de septiembre 2026: publica la tuya con todo el detalle ahora y serás de las primeras en aparecer cuando arranquen los intercambios.",
   "hero.ctaList": "Publicar mi casa",
   "hero.ctaHow": "Ver cómo funciona",
 

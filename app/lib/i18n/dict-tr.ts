@@ -21,17 +21,17 @@ export const tr: Record<DictKey, string> = {
 
   // ---- Launch banner ----
   "launchBanner.tag": "Lansman öncesi",
-  "launchBanner.body": "İlanlar şimdi toplanıyor — takaslar başlıyor",
+  "launchBanner.body": "Komisyon yok, her takas sigortalı — takaslar başlıyor",
   "launchBanner.month": "Eylül 2026",
   "launchBanner.cta": "Evini ekle →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "İlanlar şimdi toplanıyor · Eylül 2026'da başlıyor",
-  "hero.titleA": "Evini takas et",
-  "hero.titleB": "başkasının",
-  "hero.titleEm": "eviyle",
+  "hero.kicker": "Komisyon yok · Her takas sigortalı · Eylül 2026'da başlıyor",
+  "hero.titleA": "Anahtar için anahtar.",
+  "hero.titleB": "Para yok, tamamen",
+  "hero.titleEm": "sigortalı",
   "hero.intro":
-    "Eylül 2026 lansmanı öncesinde ilanları topluyoruz. Evini şimdi titiz bir doğrulukla ekle ve takaslar başladığında ilk gösterilen evler arasında ol — anahtar için anahtar, hiç para el değiştirmiyor, her konaklama baştan sona sigortalı.",
+    "Kabul edilen her takas baştan sona sigortalıdır ve hiç para el değiştirmez — yalnızca anahtar için anahtar. Eylül 2026 lansmanı öncesinde kurucu ev sahiplerini topluyoruz: evini şimdi titiz bir doğrulukla ekle ve takaslar başladığında ilk gösterilen evler arasında ol.",
   "hero.ctaList": "Evimi ekle",
   "hero.ctaHow": "Nasıl çalıştığını gör",
 

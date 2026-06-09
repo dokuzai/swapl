@@ -1,0 +1,10 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="112" fill="#1A1F3C"/>
+  <!-- two keys-for-keys arrows forming a swap loop -->
+  <g fill="none" stroke="#F24B8E" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 196 H362"/>
+    <path d="M322 156 L362 196 L322 236"/>
+    <path d="M362 316 H150"/>
+    <path d="M190 276 L150 316 L190 356"/>
+  </g>
+</svg>

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { CITY_GUIDES } from "@/app/content/city-guides";
 import { CITY_LAUNCH_PAGES } from "@/lib/marketing/city-launch";
+import { CORRIDORS } from "@/lib/marketing/corridors";
 
 const STATIC_ROUTES = [
   "",
@@ -31,6 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: 0.85,
   }));
+  const corridorRoutes = CORRIDORS.map((corridor) => ({
+    url: siteUrl(`/swap/${corridor.slug}`),
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
 
   return [
     ...STATIC_ROUTES.map((path) => ({
@@ -40,6 +47,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: path === "" ? 1 : 0.8,
     })),
     ...launchCityRoutes,
+    ...corridorRoutes,
     ...cityRoutes,
   ];
 }

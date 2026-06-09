@@ -20,17 +20,17 @@ export const en = {
 
   // ---- Launch banner ----
   "launchBanner.tag": "Pre-launch",
-  "launchBanner.body": "Collecting listings now — swaps go live",
+  "launchBanner.body": "No fees, every swap insured — swaps go live",
   "launchBanner.month": "September 2026",
   "launchBanner.cta": "List your home →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "Collecting listings now · Launching September 2026",
-  "hero.titleA": "Trade your home",
-  "hero.titleB": "for",
-  "hero.titleEm": "someone else's",
+  "hero.kicker": "No fees · Every swap insured · Launching September 2026",
+  "hero.titleA": "Trade keys for keys.",
+  "hero.titleB": "No money, fully",
+  "hero.titleEm": "insured",
   "hero.intro":
-    "We're collecting listings ahead of the September 2026 launch. List your place with ruthless accuracy now and you'll be among the first homes that show up when swaps go live — keys for keys, no cash changing hands, every stay insured end to end.",
+    "Every accepted swap is insured end to end and no money ever changes hands — just keys for keys. We're signing up founding hosts ahead of the September 2026 launch: list your place with ruthless accuracy now and you'll be among the first homes shown when swaps go live.",
   "hero.ctaList": "List my home",
   "hero.ctaHow": "See how it works",
 
