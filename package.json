@@ -1,0 +1,13 @@
+{
+  "name": "swapl-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.18.3",
+  "scripts": {
+    "dev:web": "pnpm --filter app dev",
+    "dev:marketing": "pnpm --filter marketing dev",
+    "build:web": "pnpm --filter app build",
+    "build:marketing": "pnpm --filter marketing build",
+    "test": "pnpm --filter app test",
+    "typecheck": "pnpm --filter app typecheck"
+  }
+}

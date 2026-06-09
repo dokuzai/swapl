@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "rm -rf .next .turbo && pnpm exec prisma generate --schema prisma/schema.postgres.prisma && pnpm exec next build --webpack",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ':(top)app' ':(top)packages' ':(top)pnpm-lock.yaml' ':(top)pnpm-workspace.yaml'",
+  "crons": [
+    { "path": "/api/cron/featured-expire", "schedule": "0 1 * * *" },
+    { "path": "/api/cron/saved-searches", "schedule": "0 9 * * *" },
+    { "path": "/api/cron/agreements-complete", "schedule": "0 2 * * *" },
+    { "path": "/api/cron/pre-trip-reminders", "schedule": "0 */6 * * *" }
+  ]
+}
