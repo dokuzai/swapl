@@ -3,9 +3,10 @@
 // client stays in lockstep with the API contract. Regenerate with:
 //   pnpm --filter @swapl/api-spec gen:ts
 //
-// Imported by relative path (types only — erased at runtime) so the web app
-// doesn't take a workspace dependency that Vercel's `npm install` can't resolve.
-import type { components } from "../../packages/api-spec/generated/ts/schema";
+// The schema is generated into app/lib/generated/ (synced by gen:ts) so the
+// web build is self-contained: no workspace dep (Vercel installs with npm) and
+// no reliance on files outside the app/ root directory.
+import type { components } from "./generated/api-schema";
 
 export type Schemas = components["schemas"];
 
