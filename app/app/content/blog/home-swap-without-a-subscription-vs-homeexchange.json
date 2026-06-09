@@ -3,6 +3,7 @@
   "title": "Home swapping without a subscription: how swapl compares to HomeExchange",
   "description": "HomeExchange charges an annual fee and runs on GuestPoints. swapl is free and pure keys-for-keys. Here's an honest comparison so you can pick the right one.",
   "category": "Compare",
+  "cities": [],
   "publishedAt": "2026-06-08",
   "readingMinutes": 6,
   "hero": "HomeExchange built the biggest home-swap network in the world. swapl is taking a different bet: no subscription, no points, and real city-by-city liquidity. Here's a fair side-by-side.",
@@ -32,5 +33,8 @@
       "body": "Choose HomeExchange if you want the biggest existing catalogue right now and you're comfortable with a subscription and a points system.\nChoose swapl if you'd rather pay nothing, keep it simple (keys for keys), and you're in or travelling to one of our launch corridors — especially if you list early as a founding host.\nPlenty of people will keep accounts on both. That's fine."
     }
   ],
-  "cta": { "label": "List free as a founding host", "href": "/register" }
+  "cta": {
+    "label": "List free as a founding host",
+    "href": "/register"
+  }
 }

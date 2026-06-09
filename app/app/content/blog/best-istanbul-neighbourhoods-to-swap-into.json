@@ -3,6 +3,9 @@
   "title": "6 Istanbul neighbourhoods made for a longer swap",
   "description": "Swapping into Istanbul for a few weeks? Skip the tourist core. These six neighbourhoods are where to actually live — for remote work, walks, and the Bosphorus.",
   "category": "Guides",
+  "cities": [
+    "Istanbul"
+  ],
   "publishedAt": "2026-05-28",
   "readingMinutes": 6,
   "hero": "Istanbul rewards a long stay more than almost any city — but only if you live in the right part of it. Here's where to swap into for weeks, not days.",
@@ -44,5 +47,8 @@
       "body": "Istanbul is founding supply for one of swapl's earliest September corridors, with strong demand from Amsterdam, Berlin, Lisbon and London.\nList your Istanbul home before launch to become a founding host — shown first when reciprocal matches open."
     }
   ],
-  "cta": { "label": "See Istanbul ⇄ Amsterdam swaps", "href": "/swap/istanbul-home-swap-from-amsterdam" }
+  "cta": {
+    "label": "See Istanbul ⇄ Amsterdam swaps",
+    "href": "/swap/istanbul-home-swap-from-amsterdam"
+  }
 }

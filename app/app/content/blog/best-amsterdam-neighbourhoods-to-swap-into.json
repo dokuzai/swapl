@@ -3,6 +3,9 @@
   "title": "The 8 best Amsterdam neighbourhoods to swap into",
   "description": "Planning a home swap into Amsterdam? These are the eight neighbourhoods that actually suit a longer stay — for remote work, families, and slow travel.",
   "category": "Guides",
+  "cities": [
+    "Amsterdam"
+  ],
   "publishedAt": "2026-06-02",
   "readingMinutes": 7,
   "hero": "A weekend in Amsterdam and a month in Amsterdam want different neighbourhoods. If you're swapping in for a longer stay, here's where to actually live.",
@@ -52,5 +55,8 @@
       "body": "Amsterdam is one of swapl's anchor cities, with early demand from Istanbul, Paris, Brooklyn and Tokyo. If you have a home here, it's some of the most-requested supply on the platform.\nList it before September to become a founding host — shown first when reciprocal matches open."
     }
   ],
-  "cta": { "label": "List your Amsterdam home", "href": "/amsterdam-home-swap" }
+  "cta": {
+    "label": "List your Amsterdam home",
+    "href": "/amsterdam-home-swap"
+  }
 }

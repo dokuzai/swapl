@@ -8,6 +8,7 @@ export const en = {
   "nav.insurance": "Insurance",
   "nav.pricing": "Pricing",
   "nav.companies": "Companies",
+  "nav.blog": "Blog",
   "nav.signIn": "Sign in",
   "nav.listMyHome": "List your home",
   "nav.mySwaps": "My swaps",

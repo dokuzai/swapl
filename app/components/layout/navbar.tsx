@@ -8,6 +8,7 @@ import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 const NAV_LINKS: { href: string; key: DictKey }[] = [
   { href: "/how-it-works", key: "nav.howItWorks" },
   { href: "/listings", key: "nav.homes" },
+  { href: "/blog", key: "nav.blog" },
   { href: "/insurance", key: "nav.insurance" },
   { href: "/pricing", key: "nav.pricing" },
   { href: "/corporate", key: "nav.companies" },

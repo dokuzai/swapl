@@ -3,6 +3,7 @@
   "title": "Is home swapping safe? How money-free, insured swaps actually work",
   "description": "The number-one reason people hesitate to swap homes is trust. Here's exactly how insurance, identity verification, and key exchange make a modern home swap safe.",
   "category": "Trust",
+  "cities": [],
   "publishedAt": "2026-06-05",
   "readingMinutes": 5,
   "hero": "\"A stranger, in my home, while I'm away?\" It's the first thing everyone asks about home swapping. It's a fair question — and it has a concrete answer.",
@@ -36,5 +37,8 @@
       "body": "Before you accept a swap: confirm the other host is verified.\nRead the agreement and the dates carefully.\nMessage about the practical stuff (keys, parking, pets) in the app, not over email.\nLock away valuables and leave a short house guide.\nKeep all communication on-platform — it's your record if anything's ever disputed."
     }
   ],
-  "cta": { "label": "How swapl insurance works", "href": "/insurance" }
+  "cta": {
+    "label": "How swapl insurance works",
+    "href": "/insurance"
+  }
 }

@@ -19,6 +19,7 @@ export type BlogPost = {
   title: string;
   description: string;
   category: string;
+  cities: string[]; // city tags for filtering (empty = not city-specific)
   publishedAt: string; // ISO date (YYYY-MM-DD)
   readingMinutes: number;
   hero: string;

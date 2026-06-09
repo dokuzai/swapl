@@ -3,6 +3,9 @@
   "title": "Home swap vs. Airbnb: what a month in Lisbon really costs",
   "description": "Hotel, Airbnb, or a home swap for a month in Lisbon? We break down the real September numbers — including the fees nobody quotes you up front.",
   "category": "Cost",
+  "cities": [
+    "Lisbon"
+  ],
   "publishedAt": "2026-06-09",
   "readingMinutes": 6,
   "hero": "A month in Lisbon sounds like a splurge. Depending on how you book it, it can cost €3,900, €2,400, or almost nothing. Here's the honest math.",
@@ -36,5 +39,8 @@
       "body": "Two things usually kill a home swap: trust and matching.\nTrust: every accepted swap on swapl is insured end to end the moment it's agreed, hosts are ID-verified, and each swap gets its own key-exchange codes.\nMatching: we open city by city and build real corridors — Lisbon ⇄ CDMX is one of the first — so when swaps go live there are actually homes on the other side to trade with.\nList your place before September and you're a founding host: shown first when matches open."
     }
   ],
-  "cta": { "label": "See Lisbon ⇄ CDMX swaps", "href": "/swap/lisbon-home-swap-from-cdmx" }
+  "cta": {
+    "label": "See Lisbon ⇄ CDMX swaps",
+    "href": "/swap/lisbon-home-swap-from-cdmx"
+  }
 }

@@ -3,6 +3,9 @@
   "title": "The best Mexico City neighbourhoods to swap into",
   "description": "Planning a home swap into CDMX? These are the neighbourhoods that suit a longer stay — walkable, café-rich, and built for remote work and slow travel.",
   "category": "Guides",
+  "cities": [
+    "CDMX"
+  ],
   "publishedAt": "2026-05-26",
   "readingMinutes": 6,
   "hero": "Mexico City is a place you settle into, not rush through. For a home swap of a few weeks or more, these are the neighbourhoods that make it feel like home.",
@@ -44,5 +47,8 @@
       "body": "CDMX is a creative-city corridor on swapl with demand from Brooklyn, Lisbon, Paris and Berlin, where longer stays and flexible dates are the norm.\nList your CDMX home before September to become a founding host — shown first when matches open."
     }
   ],
-  "cta": { "label": "See Lisbon ⇄ CDMX swaps", "href": "/swap/lisbon-home-swap-from-cdmx" }
+  "cta": {
+    "label": "See Lisbon ⇄ CDMX swaps",
+    "href": "/swap/lisbon-home-swap-from-cdmx"
+  }
 }
