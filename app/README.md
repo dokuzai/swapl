@@ -136,3 +136,5 @@ prisma/
 ```
 
 > Infrastructure overview: see [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) at the repo root.
+
+Production domains since 2026-06-10: app.swapl.fun (this app), swapl.fun (marketing/).
