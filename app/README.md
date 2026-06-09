@@ -134,3 +134,5 @@ prisma/
   schema.prisma       User · Listing · SwapProposal · SwapAgreement · InsurancePolicy · BetaSignup · Report
   seed.ts             21 listings · 5 proposals · 1 active agreement · 2 beta signups
 ```
+
+> Infrastructure overview: see [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) at the repo root.
