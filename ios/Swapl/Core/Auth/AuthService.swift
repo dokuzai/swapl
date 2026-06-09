@@ -5,6 +5,7 @@ import Observation
 @Observable
 final class AuthService {
     var session: AuthUser?
+    var isVerified = false
     var isBootstrapping = true
     var isAuthenticating = false
     var errorMessage: String?
@@ -52,14 +53,35 @@ final class AuthService {
         guard keychain.read() != nil else { return }
         do {
             let me: MeResponse = try await APIClient.shared.send("GET", "/api/me")
-            session = AuthUser(
-                id: me.user.id, email: me.user.email,
-                name: me.user.name, avatar: me.user.avatar
-            )
+            applyMe(me)
         } catch APIClient.APIError.unauthenticated {
             keychain.delete()
         } catch {
             // Network error — keep token, retry next launch.
+        }
+    }
+
+    private func applyMe(_ me: MeResponse) {
+        session = AuthUser(id: me.user.id, email: me.user.email, name: me.user.name, avatar: me.user.avatar)
+        isVerified = me.user.verified
+    }
+
+    // Re-fetch /api/me to pick up a freshly-verified email (e.g. after the user
+    // taps the verification link in their email and returns to the app).
+    func refreshSession() async {
+        guard keychain.read() != nil else { return }
+        if let me: MeResponse = try? await APIClient.shared.send("GET", "/api/me") {
+            applyMe(me)
+        }
+    }
+
+    // Re-send the verification email for the signed-in user.
+    func resendVerification() async -> Bool {
+        do {
+            _ = try await APIClient.shared.send("POST", "/api/auth/resend-verification", as: EmptyResponse.self)
+            return true
+        } catch {
+            return false
         }
     }
 
@@ -80,6 +102,7 @@ final class AuthService {
             )
             keychain.write(res.token)
             session = res.user
+            await refreshSession()   // pick up email-verified status
         } catch APIClient.APIError.status(401, _) {
             errorMessage = "Invalid email or password."
         } catch {
@@ -117,9 +140,10 @@ final class AuthService {
     private func loadSession(fallbackId: String, fallbackEmail: String) async {
         do {
             let me: MeResponse = try await APIClient.shared.send("GET", "/api/me")
-            session = AuthUser(id: me.user.id, email: me.user.email, name: me.user.name, avatar: me.user.avatar)
+            applyMe(me)
         } catch {
             session = AuthUser(id: fallbackId, email: fallbackEmail, name: nil, avatar: nil)
+            isVerified = false
         }
     }
 
@@ -128,5 +152,6 @@ final class AuthService {
         _ = try? await APIClient.shared.send("DELETE", "/api/devices", as: EmptyResponse.self)
         keychain.delete()
         session = nil
+        isVerified = false
     }
 }
