@@ -23,6 +23,29 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
+  // Product paths that lived on swapl.fun before the marketing split keep
+  // working after the domain cutover by bouncing to the app domain.
+  async redirects() {
+    const productPaths = [
+      "/login",
+      "/register",
+      "/forgot-password",
+      "/reset-password",
+      "/verify",
+      "/dashboard",
+      "/listings",
+      "/swaps",
+      "/account",
+      "/profile",
+      "/admin",
+    ];
+    return productPaths.map((path) => ({
+      source: `${path}/:path*`,
+      destination: `${APP_URL}${path}/:path*`,
+      permanent: false,
+    }));
+  },
 };
 
 export default nextConfig;
