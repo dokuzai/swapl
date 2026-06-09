@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { betaSignupSchema } from "@/lib/validators";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -24,6 +25,13 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+
+  // Captcha (web). No-op when TURNSTILE_SECRET_KEY is unset.
+  const turnstileToken = (body as { turnstileToken?: unknown } | null)?.turnstileToken;
+  if (!(await verifyTurnstile(typeof turnstileToken === "string" ? turnstileToken : null, ip))) {
+    return NextResponse.json({ error: "Captcha verification failed." }, { status: 400 });
+  }
+
   const parsed = betaSignupSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });

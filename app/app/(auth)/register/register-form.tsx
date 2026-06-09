@@ -4,12 +4,14 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
+import { TurnstileWidget, turnstileEnabled } from "@/components/turnstile";
 
 export default function RegisterForm() {
   const t = useT();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
@@ -20,7 +22,7 @@ export default function RegisterForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, turnstileToken: captchaToken }),
       });
       if (res.ok) {
         router.replace("/dashboard");
@@ -65,8 +67,9 @@ export default function RegisterForm() {
             style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
           />
         </label>
+        {turnstileEnabled && <TurnstileWidget onVerify={setCaptchaToken} />}
         {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
-        <button type="submit" className="pill-primary justify-center" disabled={pending}>
+        <button type="submit" className="pill-primary justify-center" disabled={pending || (turnstileEnabled && !captchaToken)}>
           {pending ? t("auth.register.submitting") : t("auth.register.submit")}
         </button>
       </form>

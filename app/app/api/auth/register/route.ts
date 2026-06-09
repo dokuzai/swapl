@@ -6,6 +6,7 @@ import { setSession, issueAuthToken } from "@/lib/auth/session";
 import { issueToken, normaliseEmail } from "@/lib/auth/tokens";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -22,6 +23,14 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json().catch(() => null);
+
+  // Captcha (web). No-op when TURNSTILE_SECRET_KEY is unset; native clients use
+  // App Attest / Play Integrity instead (added alongside their attestation).
+  const turnstileToken = (body as { turnstileToken?: unknown } | null)?.turnstileToken;
+  if (!(await verifyTurnstile(typeof turnstileToken === "string" ? turnstileToken : null, ip))) {
+    return NextResponse.json({ error: "Captcha verification failed." }, { status: 400 });
+  }
+
   const parsed = credentialsSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });

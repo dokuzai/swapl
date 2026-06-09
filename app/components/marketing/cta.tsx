@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { useT } from "@/lib/i18n/client";
 import { attributionFromSearchParams, trackMarketingEvent } from "@/lib/marketing/attribution";
+import { TurnstileWidget, turnstileEnabled } from "@/components/turnstile";
 
 export function CtaWaitlist() {
   const t = useT();
@@ -13,6 +14,7 @@ export function CtaWaitlist() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
   function attributionPayload() {
@@ -27,7 +29,7 @@ export function CtaWaitlist() {
         const res = await fetch("/api/beta", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, ...attribution }),
+          body: JSON.stringify({ email, ...attribution, turnstileToken: captchaToken }),
         });
         if (!res.ok) throw new Error(await res.text());
         trackMarketingEvent("subscriber_signup", {
@@ -71,7 +73,8 @@ export function CtaWaitlist() {
             </p>
           </div>
         ) : (
-          <div className="mx-auto grid max-w-[820px] gap-3 md:grid-cols-[1fr_auto] md:items-center">
+          <div className="mx-auto max-w-[820px]">
+          <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
             <form
               onSubmit={submit}
               className="flex w-full flex-col gap-2 border p-1.5 sm:flex-row sm:items-center"
@@ -86,7 +89,7 @@ export function CtaWaitlist() {
                 className="min-h-12 flex-1 bg-transparent px-4 py-3 outline-none"
                 disabled={pending}
               />
-              <button type="submit" className="pill-primary justify-center" disabled={pending}>
+              <button type="submit" className="pill-primary justify-center" disabled={pending || (turnstileEnabled && !captchaToken)}>
                 {pending ? t("auth.forgot.submitting") : t("cta.button")}
               </button>
             </form>
@@ -104,6 +107,12 @@ export function CtaWaitlist() {
               List before September
               <ArrowRight size={16} />
             </Link>
+          </div>
+            {turnstileEnabled && (
+              <div className="mt-3 flex justify-center">
+                <TurnstileWidget onVerify={setCaptchaToken} />
+              </div>
+            )}
           </div>
         )}
 
