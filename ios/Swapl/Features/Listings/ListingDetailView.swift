@@ -52,7 +52,7 @@ struct ListingDetailView: View {
                     .accessibilityLabel("Loading home")
             }
         }
-        .background(AirbnbPalette.background)
+        .background(SwaplSemanticLight.background)
         .navigationTitle(vm.detail?.listing.city ?? "Home")
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
@@ -137,7 +137,7 @@ struct ListingDetailView: View {
     private func hostSection(_ detail: ListingDetailResponse) -> some View {
         HStack(spacing: 16) {
             Circle()
-                .fill(AirbnbPalette.primary)
+                .fill(SwaplSemanticLight.primary)
                 .frame(width: 58, height: 58)
                 .overlay(
                     Text(String((detail.host.name ?? "H").prefix(1)))
@@ -208,17 +208,17 @@ struct ListingDetailView: View {
             } label: {
                 Text("Propose")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
-                    .foregroundStyle(AirbnbPalette.primaryForeground)
+                    .foregroundStyle(SwaplSemanticLight.primaryForeground)
                     .padding(.horizontal, 26)
                     .padding(.vertical, 15)
-                    .background(AirbnbPalette.primary, in: Capsule())
+                    .background(SwaplSemanticLight.primary, in: Capsule())
             }
             .disabled(detail.viewerListingId == nil)
             .opacity(detail.viewerListingId == nil ? 0.45 : 1)
         }
         .padding(.horizontal, 22)
         .padding(.vertical, 14)
-        .background(AirbnbPalette.card)
+        .background(SwaplSemanticLight.card)
         .overlay(alignment: .top) {
             AirbnbPalette.hairline.frame(height: 1)
         }
@@ -300,7 +300,7 @@ struct ProposalSheetView: View {
                 if let error {
                     Section {
                         Text(error)
-                            .foregroundStyle(AirbnbPalette.destructive)
+                            .foregroundStyle(SwaplSemanticLight.destructive)
                     }
                 }
             }

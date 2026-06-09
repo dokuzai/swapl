@@ -8,6 +8,8 @@ struct SwaplApp: App {
 
     init() {
         SwaplFonts.register()
+        // Register App Shortcuts for Siri
+        SwaplAppShortcuts.updateAppShortcutParameters()
     }
 
     var body: some Scene {
@@ -31,9 +33,63 @@ struct RootView: View {
                 LoginView()
             } else {
                 MainTabView()
+                    .safeAreaInset(edge: .top) {
+                        if !auth.isVerified {
+                            VerifyEmailBanner()
+                        }
+                    }
             }
         }
         .task { await auth.bootstrap() }
+    }
+}
+
+struct VerifyEmailBanner: View {
+    @Environment(AuthService.self) private var auth
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var status: String?
+    @State private var busy = false
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "envelope.badge")
+                .foregroundStyle(SwaplSemanticLight.primary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Verify your email")
+                    .font(.swaplBody(14, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.foreground)
+                Text(status ?? "Required before you can publish a home.")
+                    .font(.swaplBody(12))
+                    .foregroundStyle(SwaplSemanticLight.mutedForeground)
+            }
+            Spacer()
+            if busy {
+                ProgressView()
+            } else {
+                Button("Resend") { resend() }
+                    .font(.swaplBody(13, weight: .bold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+            }
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity)
+        .background(.ultraThinMaterial)
+        .overlay(alignment: .bottom) { Divider() }
+        // Re-check verification when returning to the app (e.g. after tapping
+        // the email link, which verifies server-side on the web page).
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { Task { await auth.refreshSession() } }
+        }
+    }
+
+    private func resend() {
+        busy = true
+        Task {
+            let ok = await auth.resendVerification()
+            status = ok ? "Sent — check your inbox, then return here." : "Couldn't send. Try again."
+            busy = false
+        }
     }
 }
 
@@ -83,18 +139,18 @@ struct MainTabView: View {
                 AccountView()
                     .tabItem { Label("Profile", systemImage: "person.crop.circle") }
             }
-            .tint(AirbnbPalette.primary)
+            .tint(SwaplSemanticLight.primary)
             .onAppear {
                 let appearance = UITabBarAppearance()
                 appearance.configureWithDefaultBackground()
-                appearance.backgroundColor = UIColor(AirbnbPalette.background)
+                appearance.backgroundColor = UIColor(SwaplSemanticLight.background)
                 
                 // Customize icon colors
                 let itemAppearance = UITabBarItemAppearance()
                 itemAppearance.normal.iconColor = UIColor(AirbnbPalette.secondaryText)
                 itemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor(AirbnbPalette.secondaryText)]
-                itemAppearance.selected.iconColor = UIColor(AirbnbPalette.primary)
-                itemAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(AirbnbPalette.primary)]
+                itemAppearance.selected.iconColor = UIColor(SwaplSemanticLight.primary)
+                itemAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(SwaplSemanticLight.primary)]
                 
                 appearance.stackedLayoutAppearance = itemAppearance
                 appearance.inlineLayoutAppearance = itemAppearance
@@ -147,7 +203,7 @@ struct SidebarView: View {
                     selection = section
                 } label: {
                     Label(section.title, systemImage: section.systemImage)
-                        .foregroundStyle(selection == section ? AirbnbPalette.primary : AirbnbPalette.text)
+                        .foregroundStyle(selection == section ? SwaplSemanticLight.primary : AirbnbPalette.text)
                 }
             }
         }
@@ -168,7 +224,7 @@ struct AirbnbPlaceholderView: View {
                 Text(message)
             }
             .navigationTitle(title)
-            .background(AirbnbPalette.background)
+            .background(SwaplSemanticLight.background)
         }
     }
 }

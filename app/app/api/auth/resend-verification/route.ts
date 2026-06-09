@@ -3,15 +3,15 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { issueToken } from "@/lib/auth/tokens";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 const HOUR_MS = 60 * 60 * 1000;
 
-export async function POST() {
-  const session = await getSession();
+export async function POST(req: Request) {
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
   const rl = checkRateLimit(`verify-resend:${session.userId}`, 5, HOUR_MS);

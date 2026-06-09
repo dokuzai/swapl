@@ -13,6 +13,57 @@ final class ListingRepository: @unchecked Sendable {
     func detail(id: String) async throws -> ListingDetailResponse {
         try await APIClient.shared.send("GET", "/api/listings/\(id)")
     }
+
+    func create(_ draft: ListingCreateDraft) async throws -> ListingCreateResponse {
+        try await APIClient.shared.send("POST", "/api/listings", body: draft)
+    }
+}
+
+struct ListingCreateResponse: Decodable, Sendable {
+    let ok: Bool
+    let id: String
+}
+
+struct ListingCreateDraft: Encodable, Sendable {
+    var title: String
+    var description: String
+    var propertyType: String
+    var city: String
+    var neighbourhood: String
+    var country: String
+    var address: String?
+    var lat: Double?
+    var lng: Double?
+    var sizeSqm: Int
+    var sleeps: Int
+    var bedrooms: Int
+    var bathrooms: Int
+    var floor: Int?
+    var hasElevator: Bool
+    var stepFreeAccess: Bool
+    var petsAllowed: Bool
+    var petTypes: [String]
+    var wfhSetup: Bool
+    var wfhDesks: Int
+    var hasParking: Bool
+    var bikeIncluded: Bool
+    var rooftop: Bool
+    var balcony: Bool
+    var garden: Bool
+    var courtyard: Bool
+    var piano: Bool
+    var pool: Bool
+    var gym: Bool
+    var ac: Bool
+    var dishwasher: Bool
+    var washer: Bool
+    var dryer: Bool
+    var availableFrom: String
+    var availableTo: String
+    var minStayDays: Int
+    var maxStayDays: Int
+    var photos: [String]
+    var tags: [String]
 }
 
 struct SearchFilters: Sendable {

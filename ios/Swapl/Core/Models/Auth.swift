@@ -18,6 +18,13 @@ struct RefreshResponse: Decodable, Sendable {
     let expiresAt: Date
 }
 
+struct RegisterResponse: Decodable, Sendable {
+    let ok: Bool
+    let userId: String
+    let token: String?       // present for native platforms
+    let expiresAt: Date?
+}
+
 struct MeResponse: Decodable, Sendable {
     let user: User
     let counts: Counts

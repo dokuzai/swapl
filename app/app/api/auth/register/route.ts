@@ -2,19 +2,18 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { credentialsSchema } from "@/lib/validators";
 import { hashPassword } from "@/lib/auth/passwords";
-import { setSession } from "@/lib/auth/session";
+import { setSession, issueAuthToken } from "@/lib/auth/session";
 import { issueToken, normaliseEmail } from "@/lib/auth/tokens";
 import { sendEmail, emailTemplates } from "@/lib/email";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 
 const HOUR_MS = 60 * 60 * 1000;
 
 export async function POST(req: Request) {
-  // Per-IP rate limit (10 registrations / hour) — keeps casual abuse off
-  // without hurting honest signups. Replace with a stronger limit + CAPTCHA
-  // before launch.
+  // Per-IP rate limit (10 registrations / hour) — durable across serverless
+  // invocations via Upstash, falling back to in-memory when unconfigured.
   const ip = clientIpFromRequest(req);
-  const rl = checkRateLimit(`register:${ip}`, 10, HOUR_MS);
+  const rl = await checkRateLimitDurable(`register:${ip}`, 10, HOUR_MS);
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Too many sign-ups from this network. Try again in an hour." },
@@ -52,5 +51,22 @@ export async function POST(req: Request) {
   }
 
   await setSession({ userId: user.id, email: user.email, name: user.name });
+
+  // Native clients (iOS/Android) can't use the web cookie. If they identify
+  // their platform, hand back a Bearer token so sign-up is a single round-trip
+  // (mirrors POST /api/auth/token). Web callers omit `platform` and get the cookie.
+  const rawPlatform = (body as { platform?: unknown } | null)?.platform;
+  if (rawPlatform === "ios" || rawPlatform === "android" || rawPlatform === "web-pwa") {
+    const rawVersion = (body as { appVersion?: unknown } | null)?.appVersion;
+    const appVersion = typeof rawVersion === "string" ? rawVersion : undefined;
+    const issued = await issueAuthToken(user.id, rawPlatform, appVersion);
+    return NextResponse.json({
+      ok: true,
+      userId: user.id,
+      token: issued.token,
+      expiresAt: issued.expiresAt,
+    });
+  }
+
   return NextResponse.json({ ok: true, userId: user.id });
 }

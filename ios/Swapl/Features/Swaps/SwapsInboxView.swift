@@ -65,7 +65,7 @@ struct SwapsInboxView: View {
                     messagesContent
                 }
             }
-            .background(AirbnbPalette.background)
+            .background(SwaplSemanticLight.background)
             .navigationDestination(for: String.self) { id in
                 ProposalDetailView(proposalId: id)
             }
@@ -122,14 +122,14 @@ struct SwapsInboxView: View {
                         .font(.system(size: 19, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                         .frame(width: 48, height: 48)
-                        .background(AirbnbPalette.card, in: Circle())
+                        .background(SwaplSemanticLight.card, in: Circle())
                 }
                 Button(action: {}) {
                     Image(systemName: "gearshape")
                         .font(.system(size: 19, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                         .frame(width: 48, height: 48)
-                        .background(AirbnbPalette.card, in: Circle())
+                        .background(SwaplSemanticLight.card, in: Circle())
                 }
             }
         }
@@ -199,7 +199,7 @@ struct ProposalAvatar: View {
                 .font(.swaplDisplay(30, weight: .semibold))
                 .foregroundStyle(.white)
             Circle()
-                .fill(AirbnbPalette.primary)
+                .fill(SwaplSemanticLight.primary)
                 .frame(width: 28, height: 28)
                 .overlay(
                     Text(String((proposal.otherName ?? proposal.myCity).prefix(1)))
@@ -283,7 +283,8 @@ struct ProposalDetailView: View {
                 tripContent(detail)
             }
         }
-        .background(AirbnbPalette.background)
+        .frame(maxWidth: .infinity)
+        .background(SwaplSemanticLight.background)
         .navigationTitle("Trip")
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
@@ -300,16 +301,24 @@ struct ProposalDetailView: View {
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .lineLimit(2)
+                    .minimumScaleFactor(0.86)
                 Text(SwaplDateText.range(from: detail.proposal.dateFrom, to: detail.proposal.dateTo))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.h3))
                     .foregroundStyle(AirbnbPalette.secondaryText)
+                    .lineLimit(1)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 22)
             .padding(.top, 20)
 
             VStack(alignment: .leading, spacing: 18) {
-                ListingPhotoView(listing: tripListing, cornerRadius: SwaplDesignSystem.CornerRadius.large)
+                Color.clear
+                    .frame(maxWidth: .infinity)
                     .frame(height: 270)
+                    .overlay {
+                        ListingPhotoView(listing: tripListing, cornerRadius: SwaplDesignSystem.CornerRadius.large)
+                    }
+                    .clipped()
                     .overlay(alignment: .topLeading) {
                         Text(detail.proposal.status.capitalized)
                             .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
@@ -324,10 +333,14 @@ struct ProposalDetailView: View {
                     Text("\(tripListing.propertyType.capitalized) in \(tripListing.city)")
                         .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.82)
                     Text("\(tripListing.neighbourhood) · Hosted by \(detail.other.name ?? "your swap partner")")
                         .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                         .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(1)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 4)
 
                 Divider()
@@ -345,10 +358,12 @@ struct ProposalDetailView: View {
                     Spacer()
                     ListingPhotoView(listing: homeListing, cornerRadius: SwaplDesignSystem.CornerRadius.medium)
                         .frame(width: 96, height: 76)
+                        .clipped()
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
-            .background(AirbnbPalette.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.xLarge, style: .continuous))
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.xLarge, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.xLarge, style: .continuous)
                     .stroke(AirbnbPalette.hairline)
@@ -362,6 +377,7 @@ struct ProposalDetailView: View {
 
             itineraryRows(detail)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.bottom, 34)
     }
 
@@ -379,13 +395,15 @@ struct ProposalDetailView: View {
             Text(title)
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
+                .lineLimit(2)
             Text(body)
                 .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                 .foregroundStyle(AirbnbPalette.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(22)
-        .background(AirbnbPalette.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
                 .stroke(AirbnbPalette.hairline)
@@ -417,14 +435,16 @@ struct ProposalDetailView: View {
                 Text(title)
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
+                    .lineLimit(1)
                 Text(subtitle)
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                     .foregroundStyle(AirbnbPalette.secondaryText)
+                    .lineLimit(1)
             }
             Spacer()
         }
         .padding(18)
-        .background(AirbnbPalette.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
                 .stroke(AirbnbPalette.hairline)

@@ -36,6 +36,20 @@ export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
+  // Look up the calling user once: gate publishing on a verified email, and
+  // reuse their AI provider prefs for the city-art generation below.
+  const user = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { emailVerifiedAt: true, aiProvider: true, aiModel: true, aiApiKey: true },
+  });
+  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+  if (!user.emailVerifiedAt) {
+    return NextResponse.json(
+      { error: "EMAIL_NOT_VERIFIED", message: "Verify your email before publishing a listing." },
+      { status: 403 }
+    );
+  }
+
   try {
     await ensureCanCreateListing(session.userId);
   } catch (err) {
@@ -58,14 +72,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "End date must be after start." }, { status: 400 });
   }
 
-  // Look up the calling user so AI calls can use their preferred provider/key.
-  const user = await prisma.user.findUnique({
-    where: { id: session.userId },
-    select: { aiProvider: true, aiModel: true, aiApiKey: true },
-  });
-  const userOverride = user
-    ? { provider: user.aiProvider, model: user.aiModel, apiKey: user.aiApiKey }
-    : undefined;
+  // AI city-art uses the caller's preferred provider/key (looked up above).
+  const userOverride = { provider: user.aiProvider, model: user.aiModel, apiKey: user.aiApiKey };
   const art = await generateCityArt(data.city, data.country, { userOverride });
 
   // Geocode if coords weren't supplied — known cities have a centroid table,

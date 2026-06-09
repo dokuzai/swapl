@@ -1,0 +1,755 @@
+openapi: 3.1.0
+info:
+  title: Swapl API
+  version: 0.1.0
+  description: >-
+    Shared contract for the Swapl home-swap API consumed by the web (Next.js),
+    iOS, and Android clients. Server-authoritative: every platform calls this
+    one API, which owns the single Postgres database. Schemas mirror the
+    client DTOs proven to decode the live responses today.
+servers:
+  - url: http://localhost:3000
+    description: Local dev
+  - url: https://swapl.fun
+    description: Production
+
+tags:
+  - name: auth
+  - name: me
+  - name: listings
+  - name: proposals
+  - name: devices
+  - name: waitlist
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Opaque token from POST /api/auth/token (native clients).
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: swapl_session
+      description: Signed session cookie (web).
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        message: { type: string }
+
+    AuthUser:
+      type: object
+      required: [id, email]
+      properties:
+        id: { type: string }
+        email: { type: string, format: email }
+        name: { type: string, nullable: true }
+        avatar: { type: string, nullable: true }
+
+    TokenRequest:
+      type: object
+      required: [email, password, platform]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 6 }
+        platform: { $ref: '#/components/schemas/Platform' }
+        appVersion: { type: string }
+
+    TokenResponse:
+      type: object
+      required: [token, expiresAt, user]
+      properties:
+        token: { type: string }
+        expiresAt: { type: string, format: date-time }
+        user: { $ref: '#/components/schemas/AuthUser' }
+
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 6 }
+        platform:
+          $ref: '#/components/schemas/Platform'
+          description: When set, the response also includes a bearer token (single round-trip native sign-up).
+        appVersion: { type: string }
+        marketingOptIn: { type: boolean, default: false }
+        turnstileToken: { type: string, description: Cloudflare Turnstile token (web). }
+        attestation: { type: string, description: App Attest / Play Integrity token (native). }
+
+    RegisterResponse:
+      type: object
+      required: [ok, userId]
+      properties:
+        ok: { type: boolean }
+        userId: { type: string }
+        token: { type: string, description: Present only for native platforms. }
+        expiresAt: { type: string, format: date-time }
+
+    RefreshResponse:
+      type: object
+      required: [token, expiresAt]
+      properties:
+        token: { type: string }
+        expiresAt: { type: string, format: date-time }
+
+    OkResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
+        alreadyVerified: { type: boolean }
+
+    Platform:
+      type: string
+      enum: [ios, android, web-pwa]
+
+    MeResponse:
+      type: object
+      required: [user, counts]
+      properties:
+        user:
+          type: object
+          required: [id, email, verified, role]
+          properties:
+            id: { type: string }
+            email: { type: string, format: email }
+            name: { type: string, nullable: true }
+            avatar: { type: string, nullable: true }
+            bio: { type: string, nullable: true }
+            bioVibe: { type: string, nullable: true }
+            verified: { type: boolean }
+            role: { type: string }
+            interests:
+              type: array
+              items: { type: string }
+            createdAt: { type: string, format: date-time }
+        counts:
+          type: object
+          required: [listings, incomingProposals, outgoingProposals, activeSwaps]
+          properties:
+            listings: { type: integer }
+            incomingProposals: { type: integer }
+            outgoingProposals: { type: integer }
+            activeSwaps: { type: integer }
+        subscription:
+          type: object
+          nullable: true
+          properties:
+            planId: { type: string }
+            status: { type: string }
+            currentPeriodEnd: { type: string, format: date-time }
+            cancelAtPeriodEnd: { type: boolean }
+
+    Listing:
+      type: object
+      required:
+        - id
+        - userId
+        - title
+        - description
+        - propertyType
+        - city
+        - neighbourhood
+        - country
+        - sizeSqm
+        - sleeps
+        - bedrooms
+        - bathrooms
+        - hasElevator
+        - stepFreeAccess
+        - petsAllowed
+        - petTypes
+        - wfhSetup
+        - wfhDesks
+        - hasParking
+        - bikeIncluded
+        - rooftop
+        - balcony
+        - garden
+        - courtyard
+        - piano
+        - pool
+        - ac
+        - washer
+        - dryer
+        - dishwasher
+        - availableFrom
+        - availableTo
+        - minStayDays
+        - maxStayDays
+        - photos
+        - tags
+        - palette
+        - isFeatured
+        - isVerified
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        ownerName: { type: string, nullable: true }
+        title: { type: string }
+        description: { type: string }
+        propertyType: { type: string }
+        city: { type: string }
+        neighbourhood: { type: string }
+        country: { type: string }
+        sizeSqm: { type: integer }
+        sleeps: { type: integer }
+        bedrooms: { type: integer }
+        bathrooms: { type: integer }
+        floor: { type: integer, nullable: true }
+        hasElevator: { type: boolean }
+        stepFreeAccess: { type: boolean }
+        petsAllowed: { type: boolean }
+        petTypes:
+          type: array
+          items: { type: string }
+        wfhSetup: { type: boolean }
+        wfhDesks: { type: integer }
+        hasParking: { type: boolean }
+        bikeIncluded: { type: boolean }
+        rooftop: { type: boolean }
+        balcony: { type: boolean }
+        garden: { type: boolean }
+        courtyard: { type: boolean }
+        piano: { type: boolean }
+        pool: { type: boolean }
+        ac: { type: boolean }
+        washer: { type: boolean }
+        dryer: { type: boolean }
+        dishwasher: { type: boolean }
+        availableFrom: { type: string, description: 'yyyy-MM-dd' }
+        availableTo: { type: string, description: 'yyyy-MM-dd' }
+        minStayDays: { type: integer }
+        maxStayDays: { type: integer }
+        photos:
+          type: array
+          items: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        palette: { type: string }
+        lat: { type: number, format: double, nullable: true }
+        lng: { type: number, format: double, nullable: true }
+        isFeatured: { type: boolean }
+        isVerified: { type: boolean }
+
+    ListingWithScore:
+      type: object
+      required: [listing, band]
+      properties:
+        listing: { $ref: '#/components/schemas/Listing' }
+        matchScore: { type: integer, nullable: true }
+        band: { type: string }
+
+    ListingSearchResponse:
+      type: object
+      required: [items, page, pageSize, total]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/ListingWithScore' }
+        page: { type: integer }
+        pageSize: { type: integer }
+        total: { type: integer }
+        viewerListingId: { type: string, nullable: true }
+
+    Host:
+      type: object
+      required: [id, verified, memberSince]
+      properties:
+        id: { type: string }
+        name: { type: string, nullable: true }
+        avatar: { type: string, nullable: true }
+        bio: { type: string, nullable: true }
+        bioVibe: { type: string, nullable: true }
+        verified: { type: boolean }
+        memberSince: { type: string }
+
+    ListingDetailResponse:
+      type: object
+      required: [listing, host]
+      properties:
+        listing: { $ref: '#/components/schemas/Listing' }
+        host: { $ref: '#/components/schemas/Host' }
+        matchScore: { type: integer, nullable: true }
+        viewerListingId: { type: string, nullable: true }
+
+    ListingCreateDraft:
+      type: object
+      required:
+        - title
+        - description
+        - propertyType
+        - city
+        - neighbourhood
+        - country
+        - sizeSqm
+        - sleeps
+        - bedrooms
+        - bathrooms
+        - availableFrom
+        - availableTo
+        - minStayDays
+        - maxStayDays
+        - photos
+        - tags
+      properties:
+        title: { type: string }
+        description: { type: string }
+        propertyType: { type: string }
+        city: { type: string }
+        neighbourhood: { type: string }
+        country: { type: string }
+        address: { type: string, nullable: true }
+        lat: { type: number, format: double, nullable: true }
+        lng: { type: number, format: double, nullable: true }
+        sizeSqm: { type: integer }
+        sleeps: { type: integer }
+        bedrooms: { type: integer }
+        bathrooms: { type: integer }
+        floor: { type: integer, nullable: true }
+        hasElevator: { type: boolean }
+        stepFreeAccess: { type: boolean }
+        petsAllowed: { type: boolean }
+        petTypes:
+          type: array
+          items: { type: string }
+        wfhSetup: { type: boolean }
+        wfhDesks: { type: integer }
+        hasParking: { type: boolean }
+        bikeIncluded: { type: boolean }
+        rooftop: { type: boolean }
+        balcony: { type: boolean }
+        garden: { type: boolean }
+        courtyard: { type: boolean }
+        piano: { type: boolean }
+        pool: { type: boolean }
+        gym: { type: boolean }
+        ac: { type: boolean }
+        dishwasher: { type: boolean }
+        washer: { type: boolean }
+        dryer: { type: boolean }
+        availableFrom: { type: string }
+        availableTo: { type: string }
+        minStayDays: { type: integer }
+        maxStayDays: { type: integer }
+        photos:
+          type: array
+          items: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+
+    ListingCreateResponse:
+      type: object
+      required: [ok, id]
+      properties:
+        ok: { type: boolean }
+        id: { type: string }
+
+    ProposalSummary:
+      type: object
+      required: [id, status, meSide, dateFrom, dateTo, myCity, myNeighbourhood, theirCity, theirNeighbourhood, updatedAt]
+      properties:
+        id: { type: string }
+        status: { type: string }
+        meSide: { type: string }
+        dateFrom: { type: string }
+        dateTo: { type: string }
+        message: { type: string, nullable: true }
+        myCity: { type: string }
+        myNeighbourhood: { type: string }
+        theirCity: { type: string }
+        theirNeighbourhood: { type: string }
+        otherName: { type: string, nullable: true }
+        updatedAt: { type: string, format: date-time }
+
+    InboxResponse:
+      type: object
+      required: [buckets]
+      properties:
+        buckets:
+          type: object
+          required: [waitingOnYou, sent, active, archived]
+          properties:
+            waitingOnYou:
+              type: array
+              items: { $ref: '#/components/schemas/ProposalSummary' }
+            sent:
+              type: array
+              items: { $ref: '#/components/schemas/ProposalSummary' }
+            active:
+              type: array
+              items: { $ref: '#/components/schemas/ProposalSummary' }
+            archived:
+              type: array
+              items: { $ref: '#/components/schemas/ProposalSummary' }
+
+    ProposalDraft:
+      type: object
+      required: [proposerListingId, targetListingId, dateFrom, dateTo]
+      properties:
+        proposerListingId: { type: string }
+        targetListingId: { type: string }
+        dateFrom: { type: string }
+        dateTo: { type: string }
+        message: { type: string, nullable: true }
+
+    ProposalCreateResponse:
+      type: object
+      required: [id]
+      properties:
+        ok: { type: boolean }
+        id: { type: string }
+
+    ProposalAction:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum: [accept, decline, counter, withdraw]
+        counterDateFrom: { type: string }
+        counterDateTo: { type: string }
+        counterMessage: { type: string }
+
+    DeviceRegister:
+      type: object
+      required: [platform, pushToken]
+      properties:
+        platform: { $ref: '#/components/schemas/Platform' }
+        pushToken: { type: string }
+        appVersion: { type: string }
+
+    DeviceRegisterResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
+        deviceId: { type: string }
+
+    BetaSignupRequest:
+      type: object
+      required: [email]
+      properties:
+        email: { type: string, format: email }
+        source: { type: string }
+        medium: { type: string }
+        campaign: { type: string }
+        term: { type: string }
+        content: { type: string }
+        landingPage: { type: string }
+        referrer: { type: string }
+        turnstileToken: { type: string }
+        attestation: { type: string }
+
+paths:
+  /api/auth/token:
+    post:
+      tags: [auth]
+      summary: Issue a bearer token (native login)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TokenRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /api/auth/register:
+    post:
+      tags: [auth]
+      summary: Register a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RegisterResponse' }
+        '409':
+          description: Email already in use
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /api/auth/token/refresh:
+    post:
+      tags: [auth]
+      summary: Rotate the bearer token
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RefreshResponse' }
+        '401': { description: Unauthenticated }
+
+  /api/auth/token/revoke:
+    post:
+      tags: [auth]
+      summary: Revoke the current bearer token
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+
+  /api/auth/resend-verification:
+    post:
+      tags: [auth]
+      summary: Re-send the email verification link
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+        '429': { description: Rate limited }
+
+  /api/auth/forgot-password:
+    post:
+      tags: [auth]
+      summary: Request a password-reset email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        '200':
+          description: Always OK (anti-enumeration)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+
+  /api/auth/reset-password:
+    post:
+      tags: [auth]
+      summary: Complete a password reset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token: { type: string }
+                password: { type: string, minLength: 6 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+
+  /api/me:
+    get:
+      tags: [me]
+      summary: Current-user snapshot
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MeResponse' }
+        '401': { description: Unauthenticated }
+
+  /api/listings:
+    get:
+      tags: [listings]
+      summary: Search listings
+      parameters:
+        - { name: city, in: query, schema: { type: string }, description: CSV of cities }
+        - { name: type, in: query, schema: { type: string }, description: CSV of property types }
+        - { name: minSqm, in: query, schema: { type: integer } }
+        - { name: minSleeps, in: query, schema: { type: integer } }
+        - { name: pets, in: query, schema: { type: integer, enum: [1] } }
+        - { name: wfh, in: query, schema: { type: integer, enum: [1] } }
+        - { name: stepFree, in: query, schema: { type: integer, enum: [1] } }
+        - { name: from, in: query, schema: { type: string } }
+        - { name: to, in: query, schema: { type: string } }
+        - { name: sort, in: query, schema: { type: string, enum: [match, newest, size_desc] } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListingSearchResponse' }
+    post:
+      tags: [listings]
+      summary: Create (publish) a listing
+      description: Requires a verified email; plan-gated.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ListingCreateDraft' }
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListingCreateResponse' }
+        '401': { description: Unauthenticated }
+        '403':
+          description: EMAIL_NOT_VERIFIED
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '402':
+          description: Plan limit reached
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /api/listings/{id}:
+    get:
+      tags: [listings]
+      summary: Listing detail
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }, {}]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListingDetailResponse' }
+        '404': { description: Not found }
+
+  /api/proposals:
+    get:
+      tags: [proposals]
+      summary: Proposal inbox (bucketed)
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InboxResponse' }
+        '401': { description: Unauthenticated }
+    post:
+      tags: [proposals]
+      summary: Create a proposal
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProposalDraft' }
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProposalCreateResponse' }
+
+  /api/proposals/{id}:
+    get:
+      tags: [proposals]
+      summary: Proposal thread + agreement
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200': { description: OK }
+        '401': { description: Unauthenticated }
+    post:
+      tags: [proposals]
+      summary: Act on a proposal (accept/decline/counter/withdraw)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProposalAction' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+
+  /api/devices:
+    post:
+      tags: [devices]
+      summary: Register a push token
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DeviceRegister' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DeviceRegisterResponse' }
+    delete:
+      tags: [devices]
+      summary: Unregister the current device's push token
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+
+  /api/beta:
+    post:
+      tags: [waitlist]
+      summary: Join the waitlist (subscriber capture)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BetaSignupRequest' }
+      responses:
+        '200':
+          description: OK (idempotent on email)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '429': { description: Rate limited }

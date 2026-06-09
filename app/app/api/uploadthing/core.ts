@@ -9,7 +9,7 @@
 
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 
 const f = createUploadthing();
 
@@ -17,8 +17,10 @@ export const ourFileRouter = {
   verificationVideo: f({
     video: { maxFileSize: "512MB", maxFileCount: 1 },
   })
-    .middleware(async () => {
-      const session = await getSession();
+    // Accepts either a web cookie session or a native Bearer token so iOS /
+    // Android hosts can upload directly.
+    .middleware(async ({ req }) => {
+      const session = await getSessionFromRequest(req);
       if (!session) throw new UploadThingError("UNAUTHENTICATED");
       return { userId: session.userId };
     })
@@ -31,8 +33,8 @@ export const ourFileRouter = {
   listingPhoto: f({
     image: { maxFileSize: "8MB", maxFileCount: 20 },
   })
-    .middleware(async () => {
-      const session = await getSession();
+    .middleware(async ({ req }) => {
+      const session = await getSessionFromRequest(req);
       if (!session) throw new UploadThingError("UNAUTHENTICATED");
       return { userId: session.userId };
     })
