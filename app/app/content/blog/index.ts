@@ -5,6 +5,9 @@
 import lisbonCost from "./home-swap-vs-airbnb-month-in-lisbon.json";
 import safety from "./is-home-swapping-safe.json";
 import amsterdam from "./best-amsterdam-neighbourhoods-to-swap-into.json";
+import vsHomeExchange from "./home-swap-without-a-subscription-vs-homeexchange.json";
+import istanbul from "./best-istanbul-neighbourhoods-to-swap-into.json";
+import cdmx from "./best-mexico-city-neighbourhoods-to-swap-into.json";
 
 export type BlogSection = {
   heading?: string;
@@ -28,6 +31,9 @@ export const BLOG_POSTS: BlogPost[] = [
   lisbonCost as BlogPost,
   safety as BlogPost,
   amsterdam as BlogPost,
+  vsHomeExchange as BlogPost,
+  istanbul as BlogPost,
+  cdmx as BlogPost,
 ].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 
 export function getBlogPost(slug: string): BlogPost | null {
