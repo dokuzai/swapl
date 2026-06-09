@@ -1,0 +1,17 @@
+{
+  "name": "@swapl/api-spec",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OpenAPI contract for the Swapl API — single source of truth for web/iOS/Android client types.",
+  "files": [
+    "openapi.yaml",
+    "generated"
+  ],
+  "scripts": {
+    "gen:ts": "openapi-typescript openapi.yaml -o generated/ts/schema.d.ts",
+    "generate": "pnpm run gen:ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.4.0"
+  }
+}
