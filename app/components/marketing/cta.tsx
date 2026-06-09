@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { useT } from "@/lib/i18n/client";
 import { attributionFromSearchParams, trackMarketingEvent } from "@/lib/marketing/attribution";
 import { TurnstileWidget, turnstileEnabled } from "@/components/turnstile";
+import type { BetaSignupRequest } from "@/lib/api-types";
 
 export function CtaWaitlist() {
   const t = useT();
@@ -26,10 +27,15 @@ export function CtaWaitlist() {
     start(async () => {
       try {
         const attribution = attributionPayload();
+        const payload: BetaSignupRequest = {
+          email,
+          ...attribution,
+          turnstileToken: captchaToken ?? undefined,
+        };
         const res = await fetch("/api/beta", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, ...attribution, turnstileToken: captchaToken }),
+          body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error(await res.text());
         trackMarketingEvent("subscriber_signup", {

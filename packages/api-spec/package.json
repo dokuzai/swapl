@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "description": "OpenAPI contract for the Swapl API — single source of truth for web/iOS/Android client types.",
+  "types": "generated/ts/schema.d.ts",
+  "exports": {
+    ".": {
+      "types": "./generated/ts/schema.d.ts"
+    }
+  },
   "files": [
     "openapi.yaml",
     "generated"

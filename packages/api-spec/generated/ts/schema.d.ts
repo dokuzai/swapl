@@ -794,8 +794,6 @@ export interface components {
             /** @description When set, the response also includes a bearer token (single round-trip native sign-up). */
             platform?: components["schemas"]["Platform"];
             appVersion?: string;
-            /** @default false */
-            marketingOptIn: boolean;
             /** @description Cloudflare Turnstile token (web). */
             turnstileToken?: string;
             /** @description App Attest / Play Integrity token (native). */

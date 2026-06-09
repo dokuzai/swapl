@@ -77,7 +77,6 @@ components:
           $ref: '#/components/schemas/Platform'
           description: When set, the response also includes a bearer token (single round-trip native sign-up).
         appVersion: { type: string }
-        marketingOptIn: { type: boolean, default: false }
         turnstileToken: { type: string, description: Cloudflare Turnstile token (web). }
         attestation: { type: string, description: App Attest / Play Integrity token (native). }
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
 import { TurnstileWidget, turnstileEnabled } from "@/components/turnstile";
+import type { RegisterRequest } from "@/lib/api-types";
 
 export default function RegisterForm() {
   const t = useT();
@@ -19,10 +20,11 @@ export default function RegisterForm() {
     e.preventDefault();
     setError(null);
     start(async () => {
+      const payload: RegisterRequest = { email, password, turnstileToken: captchaToken ?? undefined };
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, turnstileToken: captchaToken }),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         router.replace("/dashboard");
