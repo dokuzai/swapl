@@ -17,31 +17,33 @@ jobs:
   verify:
     name: typecheck + tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
     steps:
       - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: app/package-lock.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       # postinstall runs `prisma generate` against the SQLite schema (no VERCEL
       # env here), producing the typed client that typecheck and tests rely on.
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Typecheck
-        run: npm run typecheck
+      - name: Typecheck (web)
+        run: pnpm --filter app typecheck
 
-      - name: Tests
-        run: npm test
+      - name: Tests (web)
+        run: pnpm --filter app test
+
+      - name: Typecheck (marketing)
+        run: pnpm --filter marketing typecheck
 
       # Lint has a pre-existing backlog of errors in real-app files; surface it
       # without blocking merges until that backlog is cleared.
       - name: Lint (non-blocking)
-        run: npm run lint
+        run: pnpm --filter app lint
         continue-on-error: true
