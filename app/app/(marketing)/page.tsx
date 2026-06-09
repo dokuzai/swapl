@@ -4,6 +4,7 @@ import { LivePairs } from "@/components/marketing/live-pairs";
 import { FilterDemo } from "@/components/marketing/filter-demo";
 import { InsuranceSection } from "@/components/marketing/insurance";
 import { CtaWaitlist } from "@/components/marketing/cta";
+import { Faq } from "@/components/marketing/faq";
 import { LaunchBanner } from "@/components/marketing/launch-banner";
 import { LaunchQueue } from "@/components/marketing/launch-queue";
 import { CityLaunchPlan } from "@/components/marketing/city-launch-plan";
@@ -23,6 +24,7 @@ export default function MarketingHome() {
       <CityLaunchPlan />
       <FilterDemo />
       <InsuranceSection />
+      <Faq />
       <CtaWaitlist />
     </>
   );

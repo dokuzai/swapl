@@ -12,8 +12,26 @@ const ITEMS: { q: DictKey; a: DictKey }[] = [
 
 export async function Faq() {
   const dict = await getDictionary();
+
+  // FAQPage structured data — wins rich results on Google and feeds answer
+  // engines (ChatGPT/Perplexity/Claude) the canonical answers about fees,
+  // insurance and how swapping works.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: ITEMS.map(({ q, a }) => ({
+      "@type": "Question",
+      name: dict[q],
+      acceptedAnswer: { "@type": "Answer", text: dict[a] },
+    })),
+  };
+
   return (
     <section id="faq" className="border-t border-line py-24" style={{ borderColor: "var(--line)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="wrap">
         <div className="mb-12 max-w-[780px]">
           <span className="kicker">{dict["faq.kicker"]}</span>
