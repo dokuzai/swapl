@@ -29,6 +29,7 @@ export type PushKind =
   | "proposalAccepted"
   | "proposalDeclined"
   | "proposalCountered"
+  | "swapMessageReceived"
   | "insurancePolicyCreated"
   | "preTripReminder"
   | "verificationApproved"
@@ -135,6 +136,13 @@ export const pushTemplates = {
       title: "You got a counter-offer",
       body: "Tap to review the new dates.",
       data: { kind: "proposalCountered", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  swapMessageReceived(proposalId: string, fromName: string): PushPayload {
+    return {
+      title: `${fromName} sent a message`,
+      body: "Tap to open your swap thread.",
+      data: { kind: "swapMessageReceived", proposalId, deepLink: deepLinkProposal(proposalId) },
     };
   },
   insurancePolicyCreated(proposalId: string, policyNumber: string): PushPayload {

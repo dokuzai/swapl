@@ -95,6 +95,18 @@ export const templates = {
       text: `The other side proposed different dates. Open the thread at ${APP_URL}/swaps to accept or counter back.`,
     }),
 
+  swapMessageReceived: (toEmail: string, fromName: string) =>
+    build({
+      to: toEmail,
+      subject: `${fromName} sent you a message on swapl`,
+      preview: `New message from ${fromName}.`,
+      heading: `${fromName} wrote.`,
+      intro: "There's a new message in your swap thread. Open it to keep the conversation moving.",
+      ctaLabel: "Open thread",
+      ctaHref: `${APP_URL}/swaps`,
+      text: `${fromName} sent you a message in your swap thread. Read it: ${APP_URL}/swaps`,
+    }),
+
   insurancePolicyCreated: (toEmail: string, policyNumber: string) =>
     build({
       to: toEmail,

@@ -270,6 +270,10 @@ model SwapAgreement {
 
   status      String       @default("ACTIVE")
 
+  // Set by the pre-trip reminder cron once the 48h heads-up has been sent
+  // to both parties, so the sweep never double-sends.
+  preTripReminderSentAt DateTime?
+
   insurancePolicy InsurancePolicy?
   orderAddOns     OrderAddOn[]
 

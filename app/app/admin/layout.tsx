@@ -7,6 +7,10 @@ export const dynamic = "force-dynamic";
 
 const SECTIONS = [
   { href: "/admin",                  label: "Overview" },
+  { href: "/admin/signups",          label: "Signups" },
+  { href: "/admin/users",            label: "Users" },
+  { href: "/admin/listings",         label: "Listings" },
+  { href: "/admin/reports",          label: "Reports" },
   { href: "/admin/insurance",        label: "Insurance" },
   { href: "/admin/verifications",    label: "Verifications" },
   { href: "/admin/featured",         label: "Featured" },
