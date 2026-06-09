@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "gen:ts": "openapi-typescript openapi.yaml -o generated/ts/schema.d.ts",
-    "generate": "pnpm run gen:ts"
+    "gen:swift-spec": "cp openapi.yaml ../swapl-api-client/Sources/SwaplAPIClient/openapi.yaml",
+    "generate": "pnpm run gen:ts && pnpm run gen:swift-spec"
   },
   "devDependencies": {
     "openapi-typescript": "^7.4.0"

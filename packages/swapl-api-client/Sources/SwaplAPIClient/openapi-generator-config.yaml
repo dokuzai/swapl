@@ -1,0 +1,7 @@
+# swift-openapi-generator config. `openapi.yaml` here is copied from the
+# canonical contract (packages/api-spec/openapi.yaml); resync with:
+#   pnpm --filter @swapl/api-spec gen:swift-spec
+generate:
+  - types
+  - client
+accessModifier: public
