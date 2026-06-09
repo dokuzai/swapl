@@ -1,0 +1,44 @@
+{
+  "slug": "is-home-swapping-safe",
+  "title": "Is home swapping safe? How money-free, insured swaps actually work",
+  "description": "The number-one reason people hesitate to swap homes is trust. Here's exactly how insurance, identity verification, and key exchange make a modern home swap safe.",
+  "category": "Trust",
+  "cities": [],
+  "publishedAt": "2026-06-05",
+  "readingMinutes": 5,
+  "hero": "\"A stranger, in my home, while I'm away?\" It's the first thing everyone asks about home swapping. It's a fair question — and it has a concrete answer.",
+  "sections": [
+    {
+      "heading": "The real fear",
+      "body": "Almost nobody hesitates to swap because of the money. They hesitate because of a mental image: someone they've never met, alone in their home, near their things.\nThat fear is reasonable. The job of a good swap platform is to make it the wrong fear — to make swapping demonstrably safer than handing your place to a random short-term renter."
+    },
+    {
+      "heading": "What could actually go wrong",
+      "body": "Be specific and the fear gets smaller. The real risks are: accidental damage, a no-show or last-minute cancellation, and — rarely — someone who isn't who they said they were.\nEach of those has a control. Insurance handles damage. Agreements and verification handle the rest."
+    },
+    {
+      "heading": "How insurance changes the math",
+      "body": "On swapl, the moment a swap is accepted, an insurance policy is issued automatically — covering both homes for the dates of the swap. You don't buy it, file paperwork, or remember to opt in.\nThat single fact removes most of the anxiety: if something is damaged, there's a policy, not an argument."
+    },
+    {
+      "heading": "Identity verification",
+      "body": "You're not swapping with an anonymous handle. Hosts are identity-verified, and you can see a partner's verification status and reviews before you ever agree.\nA swap is also mutual by nature: they're trusting you with their home at the same time you're trusting them with yours. That symmetry keeps everyone honest in a way one-directional renting doesn't."
+    },
+    {
+      "heading": "The key exchange",
+      "body": "Once a swap is agreed, it gets its own key-exchange codes tied to that specific agreement — not a key floating around from booking to booking.\nYou'll also agree the practical details in writing inside the app: arrival time, where the keys are, house rules, the cat's feeding schedule."
+    },
+    {
+      "heading": "What insurance covers — and what it doesn't",
+      "body": "Coverage is for the swap: accidental damage to the home and its contents during the agreed dates. It is not a substitute for common sense — lock away anything irreplaceable, and treat someone's home the way you'd want yours treated.\nYou can see the exact coverage and policy details on the swap and in your account once an agreement is active."
+    },
+    {
+      "heading": "A safer-swap checklist",
+      "body": "Before you accept a swap: confirm the other host is verified.\nRead the agreement and the dates carefully.\nMessage about the practical stuff (keys, parking, pets) in the app, not over email.\nLock away valuables and leave a short house guide.\nKeep all communication on-platform — it's your record if anything's ever disputed."
+    }
+  ],
+  "cta": {
+    "label": "How swapl insurance works",
+    "href": "/insurance"
+  }
+}

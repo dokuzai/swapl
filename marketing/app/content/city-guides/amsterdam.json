@@ -1,0 +1,12 @@
+{
+  "city": "Amsterdam",
+  "country": "Netherlands",
+  "hero": "Amsterdam rewards bicycles and patience in equal measure. Eat outside, leave the canals to the sleeping ducks, and pretend the wind doesn't bother you.",
+  "sections": [
+    { "kind": "neighbourhoods", "title": "Neighbourhoods to know", "body": "Jordaan for canals and brown cafés.\nDe Pijp for markets and weekend brunches.\nNDSM for the post-industrial art crowd and a free ferry across the IJ." },
+    { "kind": "transport", "title": "Getting around", "body": "Bike everywhere; if your swap host has bikes, use them.\nGVB tram and metro pass works on phone (OVpay) — just tap your bank card.\nThe airport-to-Centraal sprinter takes 17 minutes and costs €5.65." },
+    { "kind": "food", "title": "Eat", "body": "Stroopwafels off the iron at Albert Cuypmarkt.\nRijsttafel: Sampurna or Tempo Doeloe.\nPancakes: De Vier Pilaren.\nDinner with a view: Hannekes Boom on the IJ." },
+    { "kind": "etiquette", "title": "Local customs", "body": "Tipping is rounded up, never percentage-based.\nDon't stop in a bike lane; the locals will tell you, loudly.\nOpen windows in winter are normal — the Dutch like fresh air." },
+    { "kind": "emergencies", "title": "If something goes wrong", "body": "All emergency services 112.\nNon-emergency police: 0900-8844.\nAfter-hours GP (huisartsenpost) is regional; ask your swap host." }
+  ]
+}

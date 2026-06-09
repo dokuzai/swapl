@@ -1,0 +1,12 @@
+{
+  "city": "CDMX",
+  "country": "Mexico",
+  "hero": "Mexico City is colour, courtyards, ten-peso tacos, and the friendliest 7am you'll ever experience. Show up slow, leave late.",
+  "sections": [
+    { "kind": "neighbourhoods", "title": "Neighbourhoods to know", "body": "Roma Norte for art-deco buildings and good coffee.\nCondesa for jacarandas and tree-shaded brunches.\nCoyoacán for Sunday markets and Frida Kahlo's blue house." },
+    { "kind": "transport", "title": "Getting around", "body": "Uber/Didi work everywhere; cheaper than a metro day-pass for short hops.\nMetro is fast but very busy; women-only carriages at the front during rush.\nEcobici day passes are great for Roma/Condesa loops." },
+    { "kind": "food", "title": "Eat", "body": "Tacos al pastor: El Vilsito (after 8pm only).\nBreakfast: Lalo! in Roma.\nMezcal: La Clandestina.\nMercado treats: Mercado Roma for a full afternoon." },
+    { "kind": "etiquette", "title": "Local customs", "body": "10% tip is normal; 15% is generous.\nLunch is the big meal (14:00–16:00).\n\"Provecho\" said when leaving a restaurant — say it back, you'll fit right in." },
+    { "kind": "emergencies", "title": "If something goes wrong", "body": "Emergency 911.\nTourist police (English): 5658-1111.\nInternational hospital: ABC Santa Fe +52 55 5230 8000." }
+  ]
+}

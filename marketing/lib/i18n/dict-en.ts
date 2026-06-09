@@ -1,0 +1,368 @@
+// English dictionary. Keys are namespaced "section.key". Mirror every key in
+// dict-it.ts; missing keys fall through to the English string at runtime.
+
+export const en = {
+  // ---- Navbar + footer ----
+  "nav.howItWorks": "How it works",
+  "nav.homes": "Homes",
+  "nav.insurance": "Insurance",
+  "nav.pricing": "Pricing",
+  "nav.companies": "Companies",
+  "nav.blog": "Blog",
+  "nav.signIn": "Sign in",
+  "nav.listMyHome": "List your home",
+  "nav.mySwaps": "My swaps",
+  "nav.dashboard": "Dashboard",
+  "footer.tagline": "© 2026 swapl · keys for keys, no money",
+  "footer.howItWorks": "How it works",
+  "footer.insurance": "Insurance",
+  "footer.browseHomes": "Browse homes",
+  "footer.blog": "Blog",
+  "footer.account": "Account",
+
+  // ---- Launch banner ----
+  "launchBanner.tag": "Pre-launch",
+  "launchBanner.body": "No fees, every swap insured — swaps go live",
+  "launchBanner.month": "September 2026",
+  "launchBanner.cta": "List your home →",
+
+  // ---- Marketing landing ----
+  "hero.kicker": "No fees · Every swap insured · Launching September 2026",
+  "hero.titleA": "Trade keys for keys.",
+  "hero.titleB": "No money, fully",
+  "hero.titleEm": "insured",
+  "hero.intro":
+    "Every accepted swap is insured end to end and no money ever changes hands — just keys for keys. We're signing up founding hosts ahead of the September 2026 launch: list your place with ruthless accuracy now and you'll be among the first homes shown when swaps go live.",
+  "hero.ctaList": "List my home",
+  "hero.ctaHow": "See how it works",
+
+  "how.kicker": "01 · How it works",
+  "how.title": "Four steps. No invoices. Just keys.",
+  "how.lede":
+    "Home swapping isn't renting and isn't subletting. It's the oldest form of travel hospitality, with modern tools to make it safe.",
+  "how.step1.title": "List with precision",
+  "how.step1.desc":
+    "Every window, every socket, every stair. Our listing form captures the details that matter — so your swap partner lands somewhere they already know.",
+  "how.step2.title": "Filter & match",
+  "how.step2.desc":
+    "Dial in city, dates, square meters, pets, work-from-home readiness, accessibility. Only homes whose owners want to swap back with you show up.",
+  "how.step3.title": "Propose & agree",
+  "how.step3.desc":
+    "Send a swap request with your own home attached. They accept, decline, or counter. Price isn't part of it — one home for the other.",
+  "how.step4.title": "Travel, insured",
+  "how.step4.desc":
+    "Every accepted swap is automatically covered: property, liability, and trip interruption. You both get keys, codes, and a 24/7 line.",
+
+  "live.kicker": "02 · Homes looking to swap",
+  "live.title": "Real homes. Real swaps. Right now.",
+  "live.lede":
+    "Three live pairs — each home's owner wants the other's. Size, price, and square-meters don't have to match. The only rule: you offer yours to get theirs.",
+  "live.yours": "Yours",
+  "live.theirs": "Theirs",
+
+  "filter.kicker": "03 · Find your match",
+  "filter.title": "Filters sharp enough to find the one.",
+  "filter.lede":
+    "Most listing sites give you city and price. We let you dial in 40+ attributes and — crucially — only show homes whose owners want to swap back with yours.",
+  "filter.destinationCity": "Destination city",
+  "filter.propertyType": "Property type",
+  "filter.minSize": "Minimum size",
+  "filter.sleepsAtLeast": "Sleeps at least",
+  "filter.mustHaves": "Must-haves",
+  "filter.petFriendly": "Pet-friendly",
+  "filter.wfh": "Work-from-home setup",
+  "filter.stepFree": "Step-free access",
+  "filter.mutualOnly": "Only",
+  "filter.mutualEm": "mutual",
+  "filter.mutualSwaps": "swaps",
+  "filter.homesReady": "homes ready to swap",
+  "filter.sortMatch": "Sort: match score ↓",
+  "filter.proposeSwap": "Propose swap",
+
+  "insuranceBand.kicker": "04 · Insurance, always on",
+  "insuranceBand.title": "Every swap covered.",
+  "insuranceBand.titleEm": "No opt-in.",
+  "insuranceBand.lede":
+    "Swaps aren't rentals, but they're still two families trusting each other with their homes. We underwrite every accepted exchange automatically — no checkbox, no upsell.",
+  "insuranceBand.cardA.title": "Property damage to €150k",
+  "insuranceBand.cardA.body":
+    "If something breaks, cracks, floods, or walks off during a swap, it's covered — both directions, both homes.",
+  "insuranceBand.cardB.title": "Third-party liability",
+  "insuranceBand.cardB.body":
+    "A guest slips in your kitchen. A pipe bursts next door. Our policy handles it so the swap doesn't turn into a lawsuit.",
+  "insuranceBand.cardC.title": "Trip interruption",
+  "insuranceBand.cardC.body":
+    "Flight cancelled, partner pulls out, pandemic? You're reimbursed — or rematched with a home of equal fit within 48 hours.",
+
+  "cta.title": "Your home is worth a thousand trips.",
+  "cta.body":
+    "We're collecting listings now — early access opens September 2026. Hosts who list before launch surface first.",
+  "cta.button": "Request invite",
+  "cta.sent": "On the list ✓",
+  "cta.confirmation": "You're on the list. We'll email you the moment swaps go live — and earlier still if you're in a city where matches are stacking up.",
+  "cta.error": "Something went wrong. Try again in a moment.",
+  "cta.placeholder": "your@email.com",
+  "cta.stat.countries": "◦ 92 countries",
+  "cta.stat.insurance": "◦ Insurance included",
+  "cta.stat.noFees": "◦ No host fees",
+  "cta.stat.noCommission": "◦ No platform commission",
+
+  // ---- Auth ----
+  "auth.login.title": "Welcome back.",
+  "auth.login.lede": "Sign in to manage your listing and swap proposals.",
+  "auth.login.email": "Email",
+  "auth.login.password": "Password",
+  "auth.login.forgot": "Forgot?",
+  "auth.login.submit": "Sign in",
+  "auth.login.submitting": "Signing in…",
+  "auth.login.newHere": "New here?",
+  "auth.login.createAccount": "Create an account",
+  "auth.register.title": "List your home before launch.",
+  "auth.register.lede":
+    "We're collecting listings ahead of the September 2026 launch. Sign up takes 30 seconds and your listing surfaces above standard results once swaps go live.",
+  "auth.register.submit": "Create account",
+  "auth.register.submitting": "Creating…",
+  "auth.register.haveAccount": "Already have one?",
+  "auth.forgot.title": "Reset by email.",
+  "auth.forgot.lede":
+    "Enter the email you signed up with — we'll send a one-time link valid for an hour.",
+  "auth.forgot.submit": "Send reset link",
+  "auth.forgot.submitting": "Sending…",
+  "auth.forgot.sentTitle": "Reset link on its way.",
+  "auth.forgot.sentBody":
+    "If that email matches an account, we've emailed a reset link. It works for one hour. No email arriving? Check spam, then try again.",
+  "auth.forgot.backLogin": "Back to sign in",
+  "auth.reset.title": "Pick a new one.",
+  "auth.reset.lede":
+    "Choose a password you don't use anywhere else. Six characters minimum.",
+  "auth.reset.newPassword": "New password",
+  "auth.reset.confirm": "Confirm password",
+  "auth.reset.submit": "Set new password",
+  "auth.reset.submitting": "Resetting…",
+  "auth.reset.mismatch": "Those passwords don't match.",
+  "auth.reset.tooShort": "Password must be at least 6 characters.",
+  "auth.reset.missingTitle": "Missing reset token.",
+  "auth.reset.missingBody": "Open the link from the email we sent you, or request a new one.",
+  "auth.reset.requestLink": "Request a reset link",
+  "auth.verify.okTitle": "You're verified.",
+  "auth.verify.okBody": "Your email is confirmed — every feature is unlocked. Welcome aboard.",
+  "auth.verify.expiredTitle": "That link has expired.",
+  "auth.verify.expiredBody":
+    "Verification links work for 7 days. We can send a fresh one to your inbox.",
+  "auth.verify.usedTitle": "Link already used.",
+  "auth.verify.usedBody":
+    "This verification link has been consumed. Your email is already verified.",
+  "auth.verify.invalidTitle": "Hmm, that link doesn't look right.",
+  "auth.verify.invalidBody":
+    "Either it was tampered with or it never existed. Request a new one from /account.",
+  "auth.verify.toDashboard": "Go to dashboard",
+  "auth.verify.resend": "Resend verification email",
+  "auth.verify.resending": "Sending…",
+  "auth.verify.resent": "Sent — check your inbox",
+
+  // ---- Verify-email banner ----
+  "verifyBanner.label": "Verify",
+  "verifyBanner.bodyA": "Confirm your email at",
+  "verifyBanner.bodyB":
+    "to unlock everything. The link in your inbox works for 7 days.",
+  "verifyBanner.resend": "Resend email",
+  "verifyBanner.sending": "Sending…",
+  "verifyBanner.sent": "✓ Email resent",
+
+  // ---- Pricing ----
+  "pricing.kicker": "Pricing",
+  "pricing.title": "Swapping homes is free.",
+  "pricing.titleEm": "Forever.",
+  "pricing.lede":
+    "We don't take a cut of your swap. Pay only if you want power-user tools — saved searches with alerts, priority placement, multi-home accounts, listing analytics. The core swap is, and will stay, the same for everyone.",
+  "pricing.tags.noFees": "◦ No swap fees",
+  "pricing.tags.noCommission": "◦ No platform commission",
+  "pricing.tags.insurance": "◦ Insurance included on every plan",
+  "pricing.toggle.monthly": "Monthly",
+  "pricing.toggle.yearly": "Yearly · save 30%",
+  "pricing.popular": "Most popular",
+  "pricing.cycle.month": "/month",
+  "pricing.cycle.year": "/year",
+  "pricing.billedAnnually": "billed annually",
+  "pricing.cta.getStarted": "Get started",
+  "pricing.cta.upgradePlus": "Upgrade to Plus",
+  "pricing.cta.upgradePro": "Upgrade to Pro",
+  "pricing.legal":
+    "All prices in EUR. VAT shown at checkout based on your billing country. Cancel anytime — your access continues until the end of the current period.",
+  "pricing.manageBilling": "Manage billing",
+  "pricing.checkoutSoon":
+    "Checkout isn't available yet — Stripe will be turned on at launch.",
+  "pricing.checkoutFailed": "Couldn't start checkout.",
+  "pricing.loading": "Loading…",
+
+  // ---- Dashboard ----
+  "dashboard.greeting": "Hi",
+  "dashboard.title": "Your swap dashboard",
+  "dashboard.statWaitingOnYou": "Waiting on you",
+  "dashboard.statSentAwaiting": "Sent — awaiting reply",
+  "dashboard.statActiveSwaps": "Active swaps",
+  "dashboard.yourListings": "Your listings",
+  "dashboard.newListing": "+ List a new home",
+  "dashboard.empty.title": "No listings yet.",
+  "dashboard.empty.body": "You need to publish a home before you can propose swaps.",
+  "dashboard.empty.cta": "List my home",
+  "dashboard.account": "Account",
+  "dashboard.accountSettings": "Account settings",
+  "dashboard.signOut": "Sign out",
+  "dashboard.signedInAs": "Signed in as",
+
+  // ---- Account ----
+  "account.title": "Settings",
+  "account.kicker": "Account",
+  "account.email": "Email",
+  "account.name": "Name",
+  "account.joined": "Joined",
+  "account.identityTitle": "Identity verification",
+  "account.identityVerified": "Verified",
+  "account.identityUnverified": "Unverified",
+  "account.identityRequired": "Required before your first swap acceptance.",
+  "account.identityBlurb":
+    "We use a one-time KYC check (passport / national ID) at proposal acceptance. Your data isn't shared with the other host.",
+  "account.interests.title": "Your interests",
+  "account.interests.body":
+    "Pick the things you actually love about a place — coffee, jazz, surfing, vintage, you name it. They show on your public profile and steer the AI recommendations during your swap toward partners that match what you like.",
+  "account.interests.cta": "Edit interests",
+  "account.savedSearches.title": "Saved searches",
+  "account.savedSearches.body":
+    "Pin a filter combination from /listings and we'll email you a daily digest of new homes that match. Plus and Pro members can keep up to 20 saved searches.",
+  "account.savedSearches.cta": "Manage saved searches",
+  "account.notifications.title": "Notifications",
+  "account.notifications.body":
+    "Email is on by default for new proposals, replies, and accepted swaps. We'll never email you about marketing.",
+  "account.signOut.title": "Sign out",
+  "account.signOut.cta": "Sign out of swapl",
+
+  // ---- Browse + listing ----
+  "listings.title": "Homes ready to swap",
+  "listings.totalSuffix": "homes match your filters. Match scores adapt to your own listing.",
+  "listings.matchingAgainst": "Matching against",
+  "listings.listFirst.cta": "List your home",
+  "listings.listFirst.body": "to see personalised match scores",
+  "listings.empty.title": "No homes match those filters.",
+  "listings.empty.body": "Loosen a filter or two — most homes are flexible on dates within their window.",
+  "listings.empty.reset": "Reset filters",
+  "listings.previous": "← Previous",
+  "listings.next": "Next →",
+  "listings.pageOf": "Page {n} of {total}",
+  "listing.about": "About this home",
+  "listing.theSpace": "The space",
+  "listing.amenities": "Amenities",
+  "listing.available": "Available",
+  "listing.hostedBy": "Hosted by",
+  "listing.tradeBlurb":
+    "Send a swap proposal with your own listing attached. They accept, decline, or counter — never any money.",
+  "listing.editYours": "Edit it",
+  "listing.signInToPropose": "Sign in to propose a swap",
+  "listing.listFirst": "List your home first",
+  "listing.proposeSwap": "Propose swap",
+  "listing.match.title": "Why this could be a great match",
+
+  // ---- Swap thread ----
+  "swap.allSwaps": "← All swaps",
+  "swap.statusLabel": "Proposal ·",
+  "swap.original": "Original proposal",
+  "swap.counter": "Counter-offer",
+  "swap.agreementTitle": "Swap agreed — keys for keys",
+  "swap.guestCode": "Your guest's code (theirs to use at your place)",
+  "swap.yourCode": "Your code (yours to use at their place)",
+  "swap.policyLine":
+    "Policy {policy} · €{coverage} cover · 24/7 line: +44 800 000 swap",
+
+  // ---- Common UI ----
+  "ui.cancel": "Cancel",
+  "ui.save": "Save",
+  "ui.continue": "Continue",
+  "ui.back": "Back",
+  "ui.close": "×",
+  "ui.optional": "(optional)",
+  "ui.required": "Required",
+
+  // ---- Locale switcher ----
+  "locale.label": "Language",
+  "locale.changeTo": "Change to",
+  "contact.emailLabel": "Email us",
+  "contact.emailValue": "hello@swapl.fun",
+  "contact.kicker": "Contact",
+  "contact.lede":
+    "We read every message. Most replies go out within one business day — faster if you're already a host with a swap in motion.",
+  "contact.pressLabel": "Press & partnerships",
+  "contact.pressValue": "press@swapl.fun",
+  "contact.responseNote":
+    "We're a small team based in Amsterdam. If your message is about an active swap, please mention the swap ID so we can route it straight to support.",
+  "contact.supportLabel": "Active-swap support (24/7)",
+  "contact.supportValue": "+44 800 000 swap",
+  "contact.title": "Talk to a human.",
+  "faq.kicker": "FAQ",
+  "faq.title": "Questions hosts ask before their first swap.",
+  "footer.contact": "Contact",
+  "footer.legalHeading": "Legal",
+  "footer.privacy": "Privacy",
+  "footer.productHeading": "Product",
+  "footer.terms": "Terms",
+  "privacy.lede":
+    "swapl is built around trust. We collect the minimum we need to make swaps safe, and we never sell your data. This page summarises what we hold, why, and what you can do about it.",
+  "privacy.title": "Privacy",
+  "privacy.updated": "Last updated · 24 May 2026",
+  "terms.lede":
+    "These terms cover what swapl is, what it isn't, and what we each agree to when you use the service. By creating an account you agree to them.",
+  "terms.title": "Terms of service",
+  "terms.updated": "Last updated · 24 May 2026",
+  "faq.q1": "What if a swap partner damages my home?",
+  "faq.a1":
+    "Every accepted swap is automatically covered for property damage up to €150,000 — both directions, both homes. You don't opt in, fill a form, or pay a premium. If something breaks during the stay, file a claim through your dashboard and the policy handles repair or replacement.",
+  "faq.q2": "How do you handle key exchange?",
+  "faq.a2":
+    "You and your swap partner pick what works for you: meet in person, hand keys to a neighbour, use a lockbox, or share a smart-lock code through swapl. We generate a one-time guest code for each swap so neither party shares a permanent credential.",
+  "faq.q3": "Can I swap with someone whose dates don't overlap mine?",
+  "faq.a3":
+    "Yes. Non-simultaneous swaps (sometimes called \"hospitality points\") are coming after launch. You'll bank a stay at someone's home now and redeem yours back to them — or to a third member — later. At launch we start with same-week swaps because they're the safest to underwrite.",
+  "faq.q4": "What about pets?",
+  "faq.a4":
+    "Filter for pet-friendly homes and you'll only see places whose owners welcome animals. Some hosts will also pet-sit yours during the swap. Insurance covers damage caused by guest pets exactly as it covers any other damage.",
+  "faq.q5": "Do I have to be a swapl member to swap?",
+  "faq.a5":
+    "Both sides need to be members so we can verify identity, attach insurance, and process the agreement. Membership is free forever for the core swap; Plus and Pro add power-user tools (saved-search alerts, priority placement, listing analytics) but never gate the swap itself.",
+  "faq.q6": "How is this different from Airbnb?",
+  "faq.a6":
+    "No money changes hands and nobody is a paying guest. You trade keys with another homeowner who wants your city while you want theirs. That alignment changes the dynamic — both sides are owners, both sides are guests, both sides have skin in the game.",
+  "privacy.s1.title": "What we collect",
+  "privacy.s1.body":
+    "Account email and name, listing details you publish, swap proposals and messages with other members, identity-verification metadata (we don't store passport scans — our KYC partner does), and basic device + analytics signals (page, locale, viewport). That's it.",
+  "privacy.s2.title": "Why we collect it",
+  "privacy.s2.body":
+    "To run the swap (matching, messaging, insurance), to verify you're a real person before your first acceptance, and to improve the product. We use a small set of privacy-respecting analytics — no advertising trackers, no cross-site profiling.",
+  "privacy.s3.title": "Who sees what",
+  "privacy.s3.body":
+    "Your listing is public to other members. Your real name is shared with a swap partner only after both sides accept. Identity verification is shared back to you only — partners see a verified badge, not your documents.",
+  "privacy.s4.title": "Your rights",
+  "privacy.s4.body":
+    "Export, edit, or delete your data from /account at any time. Under GDPR you can also email privacy@swapl.fun for a portable copy or a full erasure. We action requests within 30 days.",
+  "privacy.s5.title": "Contact",
+  "privacy.s5.body":
+    "Questions about how we handle your data go to privacy@swapl.fun. swapl is operated from Amsterdam, Netherlands.",
+  "terms.s1.title": "What swapl is",
+  "terms.s1.body":
+    "swapl is a marketplace that helps homeowners find each other and exchange stays in their homes. We provide tools (listings, search, messaging, agreements, insurance) but we are not the host. The two members in a swap are the parties to the arrangement; swapl facilitates it.",
+  "terms.s2.title": "Account & eligibility",
+  "terms.s2.body":
+    "You need to be 18+ and the legal occupant (owner or long-term tenant with permission to host) of any home you list. Provide accurate listing details — misrepresenting your home is grounds for removal.",
+  "terms.s3.title": "Swaps & insurance",
+  "terms.s3.body":
+    "Every accepted swap is automatically covered by our underwriter for property damage, third-party liability, and trip interruption. Coverage attaches when both sides accept. Insurance is not a substitute for reasonable care — you remain responsible for following the partner's house rules.",
+  "terms.s4.title": "Payments",
+  "terms.s4.body":
+    "The core swap is free forever. Optional Plus / Pro plans are billed by Stripe; cancel anytime from /account/billing. We do not take a commission on the swap itself.",
+  "terms.s5.title": "Disputes",
+  "terms.s5.body":
+    "If something goes wrong during a swap, contact 24/7 support first. If a claim is needed, our insurer handles it. For disputes with swapl itself, Dutch law applies and the Amsterdam courts have jurisdiction.",
+  "terms.s6.title": "Changes",
+  "terms.s6.body":
+    "We'll email you at least 30 days before any material change to these terms. Continued use after the change date means acceptance; you can always delete your account if you'd rather not continue.",
+} as const;
+
+export type DictKey = keyof typeof en;

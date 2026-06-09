@@ -1,0 +1,12 @@
+{
+  "city": "Tokyo",
+  "country": "Japan",
+  "hero": "Tokyo runs on quiet courtesy and unreasonably good coffee. Take the trains, look up at the alleyways, and let yourself be small for a while.",
+  "sections": [
+    { "kind": "neighbourhoods", "title": "Neighbourhoods to know", "body": "Shimokitazawa for vintage shops and live houses.\nYanaka for old-Tokyo wooden lanes and koi ponds.\nNakameguro for cherry blossoms in April and patisseries the rest of the year." },
+    { "kind": "transport", "title": "Getting around", "body": "Get a Suica/Pasmo on your iPhone wallet — works on every train, vending machine and konbini.\nThe last train is around midnight; check times before drinks.\nUber is rare; LINE Taxi or just hailing a green-light cab works." },
+    { "kind": "food", "title": "Eat", "body": "Ramen counter: Afuri or Mensho.\nCoffee: Glitch (Kanda), % Arabica (Daikanyama).\nIzakaya: Donjaca (Sangenjaya).\nKonbini at 2am — Lawson egg sando saves lives." },
+    { "kind": "etiquette", "title": "Local customs", "body": "Don't tip; it confuses servers.\nDon't eat while walking on streets, except near festival stalls.\nQuiet on trains and bullet trains — phone calls are taboo." },
+    { "kind": "emergencies", "title": "If something goes wrong", "body": "Police 110 · Ambulance/Fire 119.\nEnglish helpline: +81 3 5774 0992 (Tokyo Metropolitan).\nTourist info: +81 3 3201 3331 (24h)." }
+  ]
+}
