@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -192,7 +193,14 @@ private fun KeyCard(title: String, code: String?, modifier: Modifier = Modifier)
         verticalArrangement = Arrangement.spacedBy(4.dp())
     ) {
         Text(title, style = MaterialTheme.typography.labelSmall, color = SwaplColors.Cream.copy(alpha = 0.6f))
-        Text(code ?: "----", style = MaterialTheme.typography.displaySmall, color = SwaplColors.Cream, fontWeight = FontWeight.Medium)
+        Text(
+            code ?: "----",
+            fontFamily = app.swapl.design.MonoFamily,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 4.sp,
+            color = SwaplColors.Cream,
+        )
     }
 }
 
@@ -217,17 +225,19 @@ private fun ActionRow(d: ProposalDetail, vm: SwapThreadViewModel, onCounter: () 
 
 @Composable
 private fun CounterDialog(onDismiss: () -> Unit, onSubmit: (String, String, String?) -> Unit) {
-    var from by remember { mutableStateOf("") }
-    var to by remember { mutableStateOf("") }
+    val today = java.time.LocalDate.now()
+    val fmt = java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
+    var from by remember { mutableStateOf(today.plusDays(30).format(fmt)) }
+    var to by remember { mutableStateOf(today.plusDays(37).format(fmt)) }
     var msg by remember { mutableStateOf("") }
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Counter-offer") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                OutlinedTextField(from, { from = it }, label = { Text("From (YYYY-MM-DD)") }, singleLine = true)
-                OutlinedTextField(to, { to = it }, label = { Text("To (YYYY-MM-DD)") }, singleLine = true)
-                OutlinedTextField(msg, { msg = it }, label = { Text("Message (optional)") })
+                app.swapl.design.components.DateField("From", from, { from = it }, modifier = androidx.compose.ui.Modifier.fillMaxWidth())
+                app.swapl.design.components.DateField("To", to, { to = it }, modifier = androidx.compose.ui.Modifier.fillMaxWidth())
+                OutlinedTextField(msg, { msg = it }, label = { Text("Message (optional)") }, modifier = androidx.compose.ui.Modifier.fillMaxWidth())
             }
         },
         confirmButton = {

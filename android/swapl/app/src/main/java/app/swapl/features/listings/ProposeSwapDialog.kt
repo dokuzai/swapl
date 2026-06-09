@@ -2,6 +2,7 @@ package app.swapl.features.listings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -12,13 +13,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import app.swapl.core.repository.ProposalRepository
+import app.swapl.design.components.DateField
 import app.swapl.designtokens.SwaplSpacing
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,8 +62,10 @@ fun ProposeSwapDialog(
     onDismiss: () -> Unit,
     vm: ProposeSwapViewModel = hiltViewModel(),
 ) {
-    var from by remember { mutableStateOf("") }
-    var to by remember { mutableStateOf("") }
+    // Default to 30-37 days out — same heuristic as the iOS sheet's default.
+    val today = LocalDate.now()
+    var from by remember { mutableStateOf(today.plusDays(30).format(DateTimeFormatter.ISO_LOCAL_DATE)) }
+    var to by remember { mutableStateOf(today.plusDays(37).format(DateTimeFormatter.ISO_LOCAL_DATE)) }
     var msg by remember { mutableStateOf("") }
 
     if (vm.didSubmit) {
@@ -71,9 +78,14 @@ fun ProposeSwapDialog(
         title = { Text("Propose a swap") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                OutlinedTextField(from, { from = it }, label = { Text("From (YYYY-MM-DD)") }, singleLine = true)
-                OutlinedTextField(to, { to = it }, label = { Text("To (YYYY-MM-DD)") }, singleLine = true)
-                OutlinedTextField(msg, { msg = it }, label = { Text("Message (optional)") })
+                DateField("From", from, { from = it }, modifier = Modifier.fillMaxWidth())
+                DateField("To", to, { to = it }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(
+                    msg, { msg = it },
+                    label = { Text("Message (optional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                )
                 vm.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             }
         },

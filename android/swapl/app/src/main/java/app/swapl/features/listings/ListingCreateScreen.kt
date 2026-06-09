@@ -2,11 +2,23 @@ package app.swapl.features.listings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -15,15 +27,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.swapl.core.network.ApiClient
+import app.swapl.design.components.DateField
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.PrimaryPill
 import app.swapl.designtokens.SwaplSpacing
@@ -35,8 +52,11 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
+// Matches lib/validators.ts listingCreateSchema exactly.
 @Serializable
 data class ListingCreateBody(
     val title: String,
@@ -45,29 +65,31 @@ data class ListingCreateBody(
     val city: String,
     val neighbourhood: String,
     val country: String,
+    val address: String? = null,
     val sizeSqm: Int,
     val sleeps: Int,
     val bedrooms: Int,
     val bathrooms: Int,
+    val floor: Int? = null,
+    val hasElevator: Boolean = false,
+    val stepFreeAccess: Boolean = false,
     val petsAllowed: Boolean = false,
     val petTypes: List<String> = emptyList(),
     val wfhSetup: Boolean = false,
     val wfhDesks: Int = 0,
-    val balcony: Boolean = false,
-    val rooftop: Boolean = false,
-    val garden: Boolean = false,
-    val courtyard: Boolean = false,
-    val pool: Boolean = false,
-    val ac: Boolean = false,
-    val washer: Boolean = false,
-    val dryer: Boolean = false,
-    val dishwasher: Boolean = false,
-    val stepFreeAccess: Boolean = false,
-    val hasElevator: Boolean = false,
     val hasParking: Boolean = false,
     val bikeIncluded: Boolean = false,
+    val rooftop: Boolean = false,
+    val balcony: Boolean = false,
+    val garden: Boolean = false,
+    val courtyard: Boolean = false,
     val piano: Boolean = false,
+    val pool: Boolean = false,
     val gym: Boolean = false,
+    val ac: Boolean = false,
+    val dishwasher: Boolean = false,
+    val washer: Boolean = false,
+    val dryer: Boolean = false,
     val availableFrom: String,
     val availableTo: String,
     val minStayDays: Int = 3,
@@ -83,31 +105,82 @@ private data class CreateResponse(val ok: Boolean, val id: String)
 class ListingCreateViewModel @Inject constructor(
     private val api: ApiClient,
 ) : ViewModel() {
+
+    // Step 1: Location
     var title by mutableStateOf("")
     var city by mutableStateOf("")
     var neighbourhood by mutableStateOf("")
     var country by mutableStateOf("")
-    var description by mutableStateOf("")
+    var address by mutableStateOf("")
+
+    // Step 2: Space
+    var propertyType by mutableStateOf("APARTMENT")
     var sizeSqm by mutableStateOf(60)
-    var sleeps by mutableStateOf(2)
     var bedrooms by mutableStateOf(1)
     var bathrooms by mutableStateOf(1)
-    var propertyType by mutableStateOf("APARTMENT")
-    var petsAllowed by mutableStateOf(false)
-    var wfhSetup by mutableStateOf(false)
+    var sleeps by mutableStateOf(2)
+    var floor by mutableStateOf(1)
+
+    // Step 3: Access & pets
+    var hasElevator by mutableStateOf(false)
     var stepFreeAccess by mutableStateOf(false)
+    var petsAllowed by mutableStateOf(false)
+
+    // Step 4: Amenities
+    var wfhSetup by mutableStateOf(false)
+    var wfhDesks by mutableStateOf(0)
+    var hasParking by mutableStateOf(false)
+    var bikeIncluded by mutableStateOf(false)
     var balcony by mutableStateOf(false)
+    var rooftop by mutableStateOf(false)
+    var garden by mutableStateOf(false)
+    var courtyard by mutableStateOf(false)
+    var piano by mutableStateOf(false)
     var pool by mutableStateOf(false)
     var ac by mutableStateOf(false)
-    var availableFromIso by mutableStateOf("")     // YYYY-MM-DD
-    var availableToIso by mutableStateOf("")
+    var dishwasher by mutableStateOf(false)
+    var washer by mutableStateOf(false)
+    var dryer by mutableStateOf(false)
 
+    // Step 5: Dates — default 60-90 days out, matching iOS.
+    var availableFrom by mutableStateOf(LocalDate.now().plusDays(60).format(DateTimeFormatter.ISO_LOCAL_DATE))
+    var availableTo by mutableStateOf(LocalDate.now().plusDays(90).format(DateTimeFormatter.ISO_LOCAL_DATE))
+    var minStayDays by mutableStateOf(3)
+    var maxStayDays by mutableStateOf(30)
+
+    // Step 6: Photos (URLs — full upload pipeline lands when R2 sign endpoint ships)
+    val photoUrls = mutableStateListOf<String>()
+
+    // Step 7: Description (title is on step 1)
+    var description by mutableStateOf("")
+
+    // Wizard state
     var step by mutableStateOf(0)
     var isSubmitting by mutableStateOf(false); private set
     var error by mutableStateOf<String?>(null); private set
     var createdId by mutableStateOf<String?>(null); private set
 
-    val stepCount = 4   // location / space / amenities / dates+description
+    val stepTitles = listOf(
+        "Location",
+        "Space",
+        "Access & pets",
+        "Amenities",
+        "Dates",
+        "Photos",
+        "Description",
+        "Review",
+    )
+
+    fun canProceed(): Boolean = when (step) {
+        0 -> city.length >= 2 && neighbourhood.length >= 2 && country.length >= 2 && title.length >= 4
+        1 -> sizeSqm >= 20 && sleeps >= 1
+        4 -> availableTo > availableFrom
+        6 -> description.length >= 20
+        else -> true
+    }
+
+    fun next() { if (step < stepTitles.size - 1) step += 1 }
+    fun prev() { if (step > 0) step -= 1 }
 
     fun submit() = viewModelScope.launch {
         isSubmitting = true; error = null
@@ -119,18 +192,34 @@ class ListingCreateViewModel @Inject constructor(
                 city = city,
                 neighbourhood = neighbourhood,
                 country = country,
+                address = address.ifEmpty { null },
                 sizeSqm = sizeSqm,
                 sleeps = sleeps,
                 bedrooms = bedrooms,
                 bathrooms = bathrooms,
+                floor = floor,
+                hasElevator = hasElevator,
+                stepFreeAccess = stepFreeAccess,
                 petsAllowed = petsAllowed,
                 wfhSetup = wfhSetup,
-                stepFreeAccess = stepFreeAccess,
+                wfhDesks = wfhDesks,
+                hasParking = hasParking,
+                bikeIncluded = bikeIncluded,
+                rooftop = rooftop,
                 balcony = balcony,
+                garden = garden,
+                courtyard = courtyard,
+                piano = piano,
                 pool = pool,
                 ac = ac,
-                availableFrom = "${availableFromIso}T00:00:00.000Z",
-                availableTo = "${availableToIso}T00:00:00.000Z",
+                dishwasher = dishwasher,
+                washer = washer,
+                dryer = dryer,
+                availableFrom = "${availableFrom}T00:00:00.000Z",
+                availableTo = "${availableTo}T00:00:00.000Z",
+                minStayDays = minStayDays,
+                maxStayDays = maxStayDays,
+                photos = photoUrls.toList(),
             )
             val res: CreateResponse = api.client.post("${api.baseUrl}/api/listings") {
                 contentType(ContentType.Application.Json)
@@ -145,99 +234,204 @@ class ListingCreateViewModel @Inject constructor(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListingCreateScreen(
     onDone: () -> Unit,
     vm: ListingCreateViewModel = hiltViewModel(),
 ) {
-    if (vm.createdId != null) {
-        onDone()
-        return
-    }
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(SwaplSpacing.s5),
-        verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4)
-    ) {
-        KickerLabel("Step ${vm.step + 1} of ${vm.stepCount}")
-        LinearProgressIndicator(
-            progress = { (vm.step + 1f) / vm.stepCount.toFloat() },
-            modifier = Modifier.fillMaxSize(0.999f).align(Alignment.Start),
-        )
+    if (vm.createdId != null) { onDone(); return }
 
-        when (vm.step) {
-            0 -> {
-                OutlinedTextField(vm.title, { vm.title = it }, label = { Text("Title") })
-                OutlinedTextField(vm.city, { vm.city = it }, label = { Text("City") })
-                OutlinedTextField(vm.neighbourhood, { vm.neighbourhood = it }, label = { Text("Neighbourhood") })
-                OutlinedTextField(vm.country, { vm.country = it }, label = { Text("Country") })
-            }
-            1 -> {
-                Text("Size: ${vm.sizeSqm} m²", style = MaterialTheme.typography.bodyMedium)
-                NumberStepperRow("− size", "+ size",
-                    onMinus = { vm.sizeSqm = (vm.sizeSqm - 5).coerceAtLeast(20) },
-                    onPlus = { vm.sizeSqm = (vm.sizeSqm + 5).coerceAtMost(800) })
-                Text("Sleeps: ${vm.sleeps}", style = MaterialTheme.typography.bodyMedium)
-                NumberStepperRow("−", "+",
-                    onMinus = { vm.sleeps = (vm.sleeps - 1).coerceAtLeast(1) },
-                    onPlus = { vm.sleeps = (vm.sleeps + 1).coerceAtMost(20) })
-            }
-            2 -> {
-                SwitchRow("Pets allowed", vm.petsAllowed) { vm.petsAllowed = it }
-                SwitchRow("WFH setup", vm.wfhSetup) { vm.wfhSetup = it }
-                SwitchRow("Step-free access", vm.stepFreeAccess) { vm.stepFreeAccess = it }
-                SwitchRow("Balcony", vm.balcony) { vm.balcony = it }
-                SwitchRow("Pool", vm.pool) { vm.pool = it }
-                SwitchRow("AC", vm.ac) { vm.ac = it }
-            }
-            else -> {
-                OutlinedTextField(vm.availableFromIso, { vm.availableFromIso = it }, label = { Text("Available from (YYYY-MM-DD)") }, singleLine = true)
-                OutlinedTextField(vm.availableToIso, { vm.availableToIso = it }, label = { Text("Available to (YYYY-MM-DD)") }, singleLine = true)
-                OutlinedTextField(vm.description, { vm.description = it }, label = { Text("Description (min 20 chars)") })
-            }
-        }
-
-        vm.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-
-        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-        if (vm.step < vm.stepCount - 1) {
-            PrimaryPill("Next", onClick = { vm.step += 1 })
-        } else {
-            PrimaryPill(
-                if (vm.isSubmitting) "Publishing…" else "Publish listing",
-                onClick = { vm.submit() },
-                enabled = !vm.isSubmitting
-                    && vm.title.length >= 4
-                    && vm.description.length >= 20
-                    && vm.availableFromIso.length == 10
-                    && vm.availableToIso.length == 10
+    Column(Modifier.fillMaxSize()) {
+        // Progress header
+        Column(
+            Modifier.padding(horizontal = SwaplSpacing.s5, vertical = SwaplSpacing.s3),
+            verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)
+        ) {
+            LinearProgressIndicator(
+                progress = { (vm.step + 1f) / vm.stepTitles.size.toFloat() },
+                modifier = Modifier.fillMaxWidth(),
             )
+            KickerLabel("Step ${vm.step + 1} of ${vm.stepTitles.size}")
+            Text(vm.stepTitles[vm.step], style = MaterialTheme.typography.displaySmall)
         }
-        if (vm.step > 0) {
-            TextButton(onClick = { vm.step -= 1 }) { Text("Back") }
+
+        Column(
+            Modifier
+                .weight(1f)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = SwaplSpacing.s5),
+            verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
+        ) {
+            when (vm.step) {
+                0 -> LocationStep(vm)
+                1 -> SpaceStep(vm)
+                2 -> AccessStep(vm)
+                3 -> AmenitiesStep(vm)
+                4 -> DatesStep(vm)
+                5 -> PhotosStep(vm)
+                6 -> DescriptionStep(vm)
+                else -> ReviewStep(vm)
+            }
+            vm.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            Spacer(Modifier.height(SwaplSpacing.s2))
+        }
+
+        // Footer
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(SwaplSpacing.s4),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            if (vm.step > 0) {
+                TextButton(onClick = { vm.prev() }) { Text("Back") }
+            } else {
+                Spacer(Modifier)
+            }
+            if (vm.step < vm.stepTitles.size - 1) {
+                TextButton(onClick = { vm.next() }, enabled = vm.canProceed()) { Text("Next") }
+            } else {
+                PrimaryPill(
+                    text = if (vm.isSubmitting) "Publishing…" else "Publish listing",
+                    onClick = { vm.submit() },
+                    enabled = !vm.isSubmitting && vm.canProceed(),
+                    modifier = Modifier.fillMaxWidth(0.6f),
+                )
+            }
         }
     }
 }
 
 @Composable
+private fun LocationStep(vm: ListingCreateViewModel) {
+    OutlinedTextField(vm.title, { vm.title = it }, label = { Text("Title (e.g. Sunlit canal apartment)") }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.city, { vm.city = it }, label = { Text("City") }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.neighbourhood, { vm.neighbourhood = it }, label = { Text("Neighbourhood") }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.country, { vm.country = it }, label = { Text("Country") }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.address, { vm.address = it }, label = { Text("Address (optional)") }, modifier = Modifier.fillMaxWidth())
+}
+
+@Composable
+private fun SpaceStep(vm: ListingCreateViewModel) {
+    KickerLabel("Property type")
+    Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+        listOf("APARTMENT", "HOUSE", "LOFT", "TOWNHOUSE").forEach { t ->
+            FilterChip(
+                selected = vm.propertyType == t,
+                onClick = { vm.propertyType = t },
+                label = { Text(t.lowercase().replaceFirstChar { it.uppercase() }) },
+            )
+        }
+    }
+    Stepper("Size: ${vm.sizeSqm} m²", { vm.sizeSqm = (vm.sizeSqm - 5).coerceAtLeast(20) }, { vm.sizeSqm = (vm.sizeSqm + 5).coerceAtMost(800) })
+    Stepper("Sleeps: ${vm.sleeps}", { vm.sleeps = (vm.sleeps - 1).coerceAtLeast(1) }, { vm.sleeps = (vm.sleeps + 1).coerceAtMost(20) })
+    Stepper("Bedrooms: ${vm.bedrooms}", { vm.bedrooms = (vm.bedrooms - 1).coerceAtLeast(0) }, { vm.bedrooms = (vm.bedrooms + 1).coerceAtMost(15) })
+    Stepper("Bathrooms: ${vm.bathrooms}", { vm.bathrooms = (vm.bathrooms - 1).coerceAtLeast(0) }, { vm.bathrooms = (vm.bathrooms + 1).coerceAtMost(10) })
+    Stepper("Floor: ${vm.floor}", { vm.floor = (vm.floor - 1).coerceAtLeast(-2) }, { vm.floor = (vm.floor + 1).coerceAtMost(60) })
+}
+
+@Composable
+private fun AccessStep(vm: ListingCreateViewModel) {
+    SwitchRow("Has elevator", vm.hasElevator) { vm.hasElevator = it }
+    SwitchRow("Step-free access", vm.stepFreeAccess) { vm.stepFreeAccess = it }
+    SwitchRow("Pets allowed", vm.petsAllowed) { vm.petsAllowed = it }
+}
+
+@Composable
+private fun AmenitiesStep(vm: ListingCreateViewModel) {
+    SwitchRow("WFH setup", vm.wfhSetup) { vm.wfhSetup = it }
+    if (vm.wfhSetup) {
+        Stepper("Desks: ${vm.wfhDesks}", { vm.wfhDesks = (vm.wfhDesks - 1).coerceAtLeast(0) }, { vm.wfhDesks = (vm.wfhDesks + 1).coerceAtMost(10) })
+    }
+    SwitchRow("Parking", vm.hasParking) { vm.hasParking = it }
+    SwitchRow("Bike included", vm.bikeIncluded) { vm.bikeIncluded = it }
+    SwitchRow("Balcony", vm.balcony) { vm.balcony = it }
+    SwitchRow("Rooftop", vm.rooftop) { vm.rooftop = it }
+    SwitchRow("Garden", vm.garden) { vm.garden = it }
+    SwitchRow("Courtyard", vm.courtyard) { vm.courtyard = it }
+    SwitchRow("Piano", vm.piano) { vm.piano = it }
+    SwitchRow("Pool", vm.pool) { vm.pool = it }
+    SwitchRow("AC", vm.ac) { vm.ac = it }
+    SwitchRow("Dishwasher", vm.dishwasher) { vm.dishwasher = it }
+    SwitchRow("Washer", vm.washer) { vm.washer = it }
+    SwitchRow("Dryer", vm.dryer) { vm.dryer = it }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DatesStep(vm: ListingCreateViewModel) {
+    DateField("Available from", vm.availableFrom, { vm.availableFrom = it }, modifier = Modifier.fillMaxWidth())
+    DateField("Available to", vm.availableTo, { vm.availableTo = it }, modifier = Modifier.fillMaxWidth())
+    Stepper("Min stay: ${vm.minStayDays} days", { vm.minStayDays = (vm.minStayDays - 1).coerceAtLeast(1) }, { vm.minStayDays = (vm.minStayDays + 1).coerceAtMost(180) })
+    Stepper("Max stay: ${vm.maxStayDays} days", { vm.maxStayDays = (vm.maxStayDays - 1).coerceAtLeast(1) }, { vm.maxStayDays = (vm.maxStayDays + 1).coerceAtMost(365) })
+}
+
+@Composable
+private fun PhotosStep(vm: ListingCreateViewModel) {
+    Text(
+        "Paste image URLs (one per line). Native upload via the R2 signed-PUT endpoint lands in the upload-pipeline slice.",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    val slots = (0..vm.photoUrls.size).toList()
+    slots.forEach { idx ->
+        OutlinedTextField(
+            value = vm.photoUrls.getOrNull(idx) ?: "",
+            onValueChange = { v ->
+                if (idx < vm.photoUrls.size) {
+                    if (v.isEmpty()) vm.photoUrls.removeAt(idx) else vm.photoUrls[idx] = v
+                } else if (v.isNotEmpty()) {
+                    vm.photoUrls.add(v)
+                }
+            },
+            label = { Text("https://…") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+private fun DescriptionStep(vm: ListingCreateViewModel) {
+    OutlinedTextField(
+        value = vm.description,
+        onValueChange = { vm.description = it },
+        label = { Text("Describe your home (min 20 chars)") },
+        modifier = Modifier.fillMaxWidth(),
+        minLines = 6,
+    )
+    Text(
+        "${vm.description.length} characters",
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+@Composable
+private fun ReviewStep(vm: ListingCreateViewModel) {
+    Text("${vm.title} — ${vm.city}", style = MaterialTheme.typography.titleLarge)
+    Text("${vm.sizeSqm} m² · sleeps ${vm.sleeps} · ${vm.bedrooms} br / ${vm.bathrooms} ba", style = MaterialTheme.typography.bodyMedium)
+    Text(vm.description, style = MaterialTheme.typography.bodyMedium)
+    Text("Available ${vm.availableFrom} → ${vm.availableTo}", style = MaterialTheme.typography.labelMedium)
+}
+
+@Composable
 private fun SwitchRow(label: String, value: Boolean, onChange: (Boolean) -> Unit) {
-    androidx.compose.foundation.layout.Row(
-        modifier = Modifier.padding(vertical = 4.dp()),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Text(label, modifier = Modifier.weight(1f))
         Switch(checked = value, onCheckedChange = onChange)
     }
 }
 
 @Composable
-private fun NumberStepperRow(minusLabel: String, plusLabel: String, onMinus: () -> Unit, onPlus: () -> Unit) {
-    androidx.compose.foundation.layout.Row {
-        TextButton(onClick = onMinus) { Text(minusLabel) }
-        TextButton(onClick = onPlus) { Text(plusLabel) }
+private fun Stepper(label: String, onMinus: () -> Unit, onPlus: () -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+        Text(label, modifier = Modifier.weight(1f))
+        IconButton(onClick = onMinus, modifier = Modifier.size(36.dp)) { Icon(Icons.Default.Remove, contentDescription = "decrease") }
+        IconButton(onClick = onPlus, modifier = Modifier.size(36.dp)) { Icon(Icons.Default.Add, contentDescription = "increase") }
     }
 }
-
-private fun Int.dp() = androidx.compose.ui.unit.Dp(this.toFloat())
