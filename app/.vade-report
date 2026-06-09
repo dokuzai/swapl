@@ -1,0 +1,62 @@
+## Vercel Web Analytics Implementation
+
+Successfully installed and configured Vercel Web Analytics for the swapl project.
+
+### Changes Made
+
+**Modified Files:**
+
+1. **app/layout.tsx** - Added Analytics component to the root layout
+   - Imported `Analytics` from `@vercel/analytics/next`
+   - Added `<Analytics />` component before the closing `</body>` tag
+   - This follows the official Vercel documentation for Next.js App Router
+
+2. **package.json** - Added dependency
+   - Added `@vercel/analytics` version `^2.0.1`
+
+3. **package-lock.json** - Updated with new dependency tree
+   - NPM lock file updated with `@vercel/analytics` and its dependencies
+
+### Implementation Details
+
+- **Framework**: Next.js with App Router (detected from project structure)
+- **Package Manager**: NPM (detected from package-lock.json)
+- **Installation Source**: Official Vercel Analytics documentation (https://vercel.com/docs/analytics/quickstart)
+- **Analytics Version**: @vercel/analytics@2.0.1
+
+### Framework-Specific Configuration
+
+Following the official Vercel documentation for Next.js App Router, the Analytics component was added to the root layout file (`app/layout.tsx`). This ensures analytics tracking is active across all pages of the application.
+
+The implementation preserves the existing code structure:
+- Maintained all existing imports and font configurations
+- Kept the pure-static root layout pattern (no async operations)
+- Added Analytics component as the last child in the body element
+
+### Verification
+
+✅ **TypeScript**: Type checking passed without errors
+✅ **Linter**: ESLint passed (no new errors introduced)
+✅ **Tests**: All 56 tests passed across 7 test suites
+✅ **Dependencies**: Lock file successfully updated
+
+### Next Steps for User
+
+To complete the setup and start collecting analytics data:
+
+1. **Enable Analytics in Vercel Dashboard**: 
+   - Navigate to your Vercel project dashboard
+   - Go to the Analytics section
+   - Click "Enable" in the header
+
+2. **Deploy the Application**:
+   - Push these changes to your repository
+   - Deploy to Vercel (automatic if connected to Git)
+   - Or run `vercel deploy` from the command line
+
+3. **Verify Installation**:
+   - After deployment, visit your site
+   - Open browser DevTools > Network tab
+   - Look for requests to `/<unique-path>/view` confirming analytics is working
+
+Analytics data will begin appearing in your Vercel dashboard after user visits accumulate.
