@@ -23,6 +23,12 @@
 		802FC8A22FD769830058861E /* SwaplCreateListingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 802FC8A12FD769830058861E /* SwaplCreateListingIntent.swift */; };
 		802FC8A42FD769A10058861E /* SwaplCreateListingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 802FC8A32FD769A10058861E /* SwaplCreateListingView.swift */; };
 		817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E72A38E93BF07A269B5A860 /* AccountView.swift */; };
+		BBB0000000000000000B0001 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0001 /* Profile.swift */; };
+		BBB0000000000000000B0002 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0002 /* ProfileRepository.swift */; };
+		BBB0000000000000000B0003 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0003 /* ReportSheet.swift */; };
+		BBB0000000000000000B0004 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0004 /* SavedSearchesView.swift */; };
+		BBB0000000000000000B0005 /* PublicProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0005 /* PublicProfileView.swift */; };
+		BBB0000000000000000B0006 /* InterestsEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0006 /* InterestsEditorView.swift */; };
 		8631C6131E59F65FAD09B6D4 /* PrimaryPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD681952D45568C94F736A2 /* PrimaryPill.swift */; };
 		8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C16E51E119668C1E262BDB /* ListingRepository.swift */; };
 		8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988E469B97C24C69D3CF04E2 /* CityIllust.swift */; };
@@ -42,6 +48,12 @@
 		3EC7EF0654A2A456B14E52A5 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		482C55A61B818770C1E2FFE8 /* SwaplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplApp.swift; sourceTree = "<group>"; };
 		6E72A38E93BF07A269B5A860 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		AAA0000000000000000F0001 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		AAA0000000000000000F0002 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
+		AAA0000000000000000F0003 /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
+		AAA0000000000000000F0004 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
+		AAA0000000000000000F0005 /* PublicProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicProfileView.swift; sourceTree = "<group>"; };
+		AAA0000000000000000F0006 /* InterestsEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsEditorView.swift; sourceTree = "<group>"; };
 		802FC8A12FD769830058861E /* SwaplCreateListingIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingIntent.swift; sourceTree = "<group>"; };
 		802FC8A32FD769A10058861E /* SwaplCreateListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingView.swift; sourceTree = "<group>"; };
 		802FC8A52FD769F80058861E /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGES.md; sourceTree = "<group>"; };
@@ -115,6 +127,7 @@
 			children = (
 				B0C16E51E119668C1E262BDB /* ListingRepository.swift */,
 				F39E0749085C3E362B239A25 /* ProposalRepository.swift */,
+				AAA0000000000000000F0002 /* ProfileRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -152,6 +165,7 @@
 				A9FBD4B316B85673A7BD2D2E /* Auth.swift */,
 				9CCC5F71B34111A6A25719F4 /* Listing.swift */,
 				9105E39884B94E60E5BF0FCB /* Proposal.swift */,
+				AAA0000000000000000F0001 /* Profile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -171,6 +185,10 @@
 			isa = PBXGroup;
 			children = (
 				6E72A38E93BF07A269B5A860 /* AccountView.swift */,
+				AAA0000000000000000F0003 /* ReportSheet.swift */,
+				AAA0000000000000000F0004 /* SavedSearchesView.swift */,
+				AAA0000000000000000F0005 /* PublicProfileView.swift */,
+				AAA0000000000000000F0006 /* InterestsEditorView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -317,6 +335,12 @@
 				23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */,
 				0A51AF88E20341AC9B72A501 /* AirbnbStyle.swift in Sources */,
 				817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */,
+				BBB0000000000000000B0001 /* Profile.swift in Sources */,
+				BBB0000000000000000B0002 /* ProfileRepository.swift in Sources */,
+				BBB0000000000000000B0003 /* ReportSheet.swift in Sources */,
+				BBB0000000000000000B0004 /* SavedSearchesView.swift in Sources */,
+				BBB0000000000000000B0005 /* PublicProfileView.swift in Sources */,
+				BBB0000000000000000B0006 /* InterestsEditorView.swift in Sources */,
 				274DA2C25CEC164CB11256CC /* Auth.swift in Sources */,
 				1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */,
 				EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */,

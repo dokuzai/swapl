@@ -20,6 +20,11 @@ struct AccountView: View {
                         Color.clear.frame(height: 42)
                         menuSection(primaryMenu)
                         menuSection(hostMenu)
+
+                        NavigationLink { InterestsEditorView() } label: { portedMenuRow("Interests", "heart.text.square") }
+                            .buttonStyle(.plain)
+                        NavigationLink { SavedSearchesView() } label: { portedMenuRow("Saved searches", "magnifyingglass") }
+                            .buttonStyle(.plain)
                         signOutRow
                     }
                     .padding(.horizontal, 22)
@@ -52,6 +57,19 @@ struct AccountView: View {
                 Button("Cancel", role: .cancel) {}
             }
         }
+    }
+
+    private func portedMenuRow(_ title: String, _ icon: String) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon).font(.system(size: 18, weight: .semibold))
+            Text(title).font(.swaplBody(16, weight: .semibold))
+            Spacer()
+            Image(systemName: "chevron.right").font(.system(size: 14, weight: .semibold)).foregroundStyle(AirbnbPalette.secondaryText)
+        }
+        .foregroundStyle(AirbnbPalette.text)
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var header: some View {

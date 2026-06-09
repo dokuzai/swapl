@@ -398,6 +398,15 @@ struct ProposalDetailView: View {
 
             itineraryRows(detail)
 
+            NavigationLink { PublicProfileView(userId: detail.other.id) } label: {
+                Text("View \(detail.other.name ?? "host")'s profile")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 22)
+            }
+            .buttonStyle(.plain)
+
             actionSection(detail)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
