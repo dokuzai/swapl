@@ -2,7 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "[ -f package.json ] || cd app; rm -rf node_modules && npm ci",
   "buildCommand": "[ -f package.json ] || cd app; ./node_modules/.bin/next --version && rm -rf .next .turbo && ./node_modules/.bin/prisma generate --schema prisma/schema.postgres.prisma && ./node_modules/.bin/next build --webpack",
-  "outputDirectory": "app/.next",
   "crons": [
     { "path": "/api/cron/featured-expire", "schedule": "0 1 * * *" },
     { "path": "/api/cron/saved-searches", "schedule": "0 9 * * *" }
