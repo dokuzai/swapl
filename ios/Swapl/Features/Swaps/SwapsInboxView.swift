@@ -239,6 +239,13 @@ final class ProposalDetailViewModel {
     var detail: ProposalDetail?
     var error: String?
     var isLoading = false
+    var isActing = false
+    var actionError: String?
+
+    // counter-offer draft
+    var counterFrom = Date()
+    var counterTo = Date()
+    var counterMessage = ""
 
     init(proposalId: String) {
         self.proposalId = proposalId
@@ -254,10 +261,23 @@ final class ProposalDetailViewModel {
             self.error = error.localizedDescription
         }
     }
+
+    func act(_ action: ProposalRepository.Action) async {
+        isActing = true
+        actionError = nil
+        defer { isActing = false }
+        do {
+            _ = try await ProposalRepository.shared.act(proposalId: proposalId, action)
+            await load()
+        } catch {
+            actionError = error.localizedDescription
+        }
+    }
 }
 
 struct ProposalDetailView: View {
     @State private var vm: ProposalDetailViewModel
+    @State private var showCounter = false
 
     init(proposalId: String) {
         _vm = State(initialValue: ProposalDetailViewModel(proposalId: proposalId))
@@ -288,6 +308,7 @@ struct ProposalDetailView: View {
         .navigationTitle("Trip")
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
+        .sheet(isPresented: $showCounter) { counterSheet }
     }
 
     private func tripContent(_ detail: ProposalDetail) -> some View {
@@ -376,9 +397,74 @@ struct ProposalDetailView: View {
             }
 
             itineraryRows(detail)
+
+            actionSection(detail)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.bottom, 34)
+    }
+
+    // Mirrors the web proposal thread: the recipient of a PENDING/COUNTERED
+    // proposal can accept, decline, or counter; the sender can withdraw.
+    @ViewBuilder
+    private func actionSection(_ detail: ProposalDetail) -> some View {
+        let status = detail.proposal.status
+        let isTarget = detail.proposal.meSide == "target"
+        let isProposer = detail.proposal.meSide == "proposer"
+        let canRespond = status == "PENDING" || status == "COUNTERED"
+
+        if canRespond && (isTarget || isProposer) {
+            VStack(spacing: 12) {
+                if let actionError = vm.actionError {
+                    Text(actionError)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.destructive)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                if canRespond && isTarget {
+                    PrimaryPill(title: "Accept swap", action: { Task { await vm.act(.accept) } }, isLoading: vm.isActing)
+                    GhostPill(title: "Counter offer", action: { showCounter = true })
+                    GhostPill(title: "Decline", action: { Task { await vm.act(.decline) } })
+                }
+                if canRespond && isProposer {
+                    GhostPill(title: "Withdraw proposal", action: { Task { await vm.act(.withdraw) } })
+                }
+            }
+            .padding(.horizontal, 22)
+            .padding(.top, 8)
+        }
+    }
+
+    private var counterSheet: some View {
+        NavigationStack {
+            Form {
+                Section("New dates") {
+                    DatePicker("From", selection: $vm.counterFrom, displayedComponents: .date)
+                    DatePicker("To", selection: $vm.counterTo, displayedComponents: .date)
+                }
+                Section("Note (optional)") {
+                    TextField("e.g. would these dates work?", text: $vm.counterMessage, axis: .vertical)
+                }
+            }
+            .navigationTitle("Counter offer")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { showCounter = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Send") {
+                        let from = SwaplDateText.apiString(from: vm.counterFrom)
+                        let to = SwaplDateText.apiString(from: vm.counterTo)
+                        let msg = vm.counterMessage.isEmpty ? nil : vm.counterMessage
+                        showCounter = false
+                        Task { await vm.act(.counter(dateFrom: from, dateTo: to, message: msg)) }
+                    }
+                    .disabled(vm.counterTo <= vm.counterFrom)
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 
     private func statusBadge(_ status: String) -> some View {
