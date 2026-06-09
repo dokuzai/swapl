@@ -9,6 +9,9 @@ const STATIC_ROUTES = [
   "/pricing",
   "/insurance",
   "/corporate",
+  "/contact",
+  "/privacy",
+  "/terms",
   "/login",
   "/register",
 ];
