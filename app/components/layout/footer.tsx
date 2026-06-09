@@ -19,6 +19,7 @@ export async function Footer() {
             <Link href="/how-it-works" className="hover:text-navy">{dict["footer.howItWorks"]}</Link>
             <Link href="/insurance" className="hover:text-navy">{dict["footer.insurance"]}</Link>
             <Link href="/listings" className="hover:text-navy">{dict["footer.browseHomes"]}</Link>
+            <Link href="/blog" className="hover:text-navy">{dict["footer.blog"]}</Link>
             <Link href="/dashboard" className="hover:text-navy">{dict["footer.account"]}</Link>
           </div>
         </nav>

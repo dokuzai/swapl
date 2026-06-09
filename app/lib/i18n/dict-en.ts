@@ -16,6 +16,7 @@ export const en = {
   "footer.howItWorks": "How it works",
   "footer.insurance": "Insurance",
   "footer.browseHomes": "Browse homes",
+  "footer.blog": "Blog",
   "footer.account": "Account",
 
   // ---- Launch banner ----

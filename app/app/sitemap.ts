@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { CITY_GUIDES } from "@/app/content/city-guides";
 import { CITY_LAUNCH_PAGES } from "@/lib/marketing/city-launch";
 import { CORRIDORS } from "@/lib/marketing/corridors";
+import { BLOG_POSTS } from "@/app/content/blog";
 
 const STATIC_ROUTES = [
   "",
@@ -12,6 +13,7 @@ const STATIC_ROUTES = [
   "/contact",
   "/privacy",
   "/terms",
+  "/blog",
   "/login",
   "/register",
 ];
@@ -41,6 +43,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
+  const blogRoutes = BLOG_POSTS.map((post) => ({
+    url: siteUrl(`/blog/${post.slug}`),
+    lastModified: new Date(post.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
 
   return [
     ...STATIC_ROUTES.map((path) => ({
@@ -51,6 +59,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...launchCityRoutes,
     ...corridorRoutes,
+    ...blogRoutes,
     ...cityRoutes,
   ];
 }
