@@ -22,7 +22,7 @@ export function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new BillingNotConfigured("connect to Stripe");
   cached = new Stripe(key, {
-    apiVersion: "2026-04-22.dahlia",
+    apiVersion: "2026-05-27.dahlia",
     typescript: true,
     appInfo: { name: "swapl", version: "1.0.0" },
   });

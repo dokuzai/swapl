@@ -15,7 +15,7 @@ if (!key) {
   console.error("STRIPE_SECRET_KEY missing. Aborting.");
   process.exit(1);
 }
-const stripe = new Stripe(key, { apiVersion: "2026-04-22.dahlia" });
+const stripe = new Stripe(key, { apiVersion: "2026-05-27.dahlia" });
 
 type SwaplKey =
   | "plus_monthly" | "plus_yearly"
