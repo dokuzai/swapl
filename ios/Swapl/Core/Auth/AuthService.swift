@@ -10,11 +10,38 @@ final class AuthService {
     var errorMessage: String?
 
     private let keychain = KeychainTokenStore()
+    private var refreshTask: Task<Bool, Never>?
 
     init() {
         APIClient.shared.tokenProvider = { [weak self] in
             self?.keychain.read()
         }
+        APIClient.shared.tokenRefresher = { [weak self] in
+            guard let self else { return false }
+            return await self.refreshToken()
+        }
+    }
+
+    // Single-flight token refresh. Concurrent 401s share one refresh call so we
+    // don't rotate the token out from under each other.
+    func refreshToken() async -> Bool {
+        if let task = refreshTask { return await task.value }
+        let task = Task { () -> Bool in
+            guard self.keychain.read() != nil else { return false }
+            do {
+                let res: RefreshResponse = try await APIClient.shared.send(
+                    "POST", "/api/auth/token/refresh", allowRefresh: false
+                )
+                self.keychain.write(res.token)
+                return true
+            } catch {
+                return false
+            }
+        }
+        refreshTask = task
+        let result = await task.value
+        refreshTask = nil
+        return result
     }
 
     // Called once on app launch — if there's a token in the keychain, fetch

@@ -13,6 +13,9 @@ final class APIClient: @unchecked Sendable {
     let baseURL: URL
 
     var tokenProvider: (() -> String?)?
+    // Invoked once on a 401; returns true if a fresh token is now available, in
+    // which case the failed request is retried a single time.
+    var tokenRefresher: (() async -> Bool)?
 
     init() {
         let config = URLSessionConfiguration.default
@@ -53,7 +56,8 @@ final class APIClient: @unchecked Sendable {
         _ path: String,
         query: [URLQueryItem] = [],
         body: Encodable? = nil,
-        as: Response.Type = Response.self
+        as: Response.Type = Response.self,
+        allowRefresh: Bool = true
     ) async throws -> Response {
         var components = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)!
         if !query.isEmpty { components.queryItems = query }
@@ -71,7 +75,12 @@ final class APIClient: @unchecked Sendable {
         do {
             let (data, response) = try await session.data(for: req)
             let http = response as! HTTPURLResponse
-            if http.statusCode == 401 { throw APIError.unauthenticated }
+            if http.statusCode == 401 {
+                if allowRefresh, let refresher = tokenRefresher, await refresher() {
+                    return try await send(method, path, query: query, body: body, as: Response.self, allowRefresh: false)
+                }
+                throw APIError.unauthenticated
+            }
             guard (200..<300).contains(http.statusCode) else {
                 throw APIError.status(http.statusCode, String(data: data, encoding: .utf8))
             }
