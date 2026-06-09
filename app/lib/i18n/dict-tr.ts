@@ -2,7 +2,7 @@
 
 import type { DictKey } from "./dict-en";
 
-export const tr: Record<DictKey, string> = {
+export const tr: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "Nasıl çalışır",
   "nav.homes": "Evler",
@@ -98,6 +98,7 @@ export const tr: Record<DictKey, string> = {
     "İlanları şimdi topluyoruz — erken erişim Eylül 2026'da açılıyor. Lansmandan önce listeleyen ev sahipleri ilk önce görünür.",
   "cta.button": "Davet iste",
   "cta.sent": "Listedesin ✓",
+  "cta.confirmation": "Listedesin. Takaslar başlar başlamaz sana e-posta göndereceğiz — eşleşmelerin arttığı bir şehirdeysen daha da erken.",
   "cta.error": "Bir şeyler ters gitti. Birazdan tekrar dene.",
   "cta.placeholder": "sen@email.com",
   "cta.stat.countries": "◦ 92 ülke",

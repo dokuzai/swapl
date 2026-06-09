@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
@@ -49,7 +52,7 @@
     "iron-session": "^8.0.4",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.14.0",
-    "next": "16.2.4",
+    "next": "16.3.0-canary.8",
     "next-auth": "^4.24.14",
     "pg": "^8.20.0",
     "prisma": "^7.8.0",
@@ -74,9 +77,13 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.4",
+    "eslint-config-next": "16.3.0-canary.8",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.7"
+  },
+  "overrides": {
+    "next": "16.3.0-canary.8"
   }
 }

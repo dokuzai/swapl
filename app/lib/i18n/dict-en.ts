@@ -97,6 +97,7 @@ export const en = {
     "We're collecting listings now — early access opens September 2026. Hosts who list before launch surface first.",
   "cta.button": "Request invite",
   "cta.sent": "On the list ✓",
+  "cta.confirmation": "You're on the list. We'll email you the moment swaps go live — and earlier still if you're in a city where matches are stacking up.",
   "cta.error": "Something went wrong. Try again in a moment.",
   "cta.placeholder": "your@email.com",
   "cta.stat.countries": "◦ 92 countries",
@@ -282,6 +283,84 @@ export const en = {
   // ---- Locale switcher ----
   "locale.label": "Language",
   "locale.changeTo": "Change to",
+  "contact.emailLabel": "Email us",
+  "contact.emailValue": "hello@swapl.fun",
+  "contact.kicker": "Contact",
+  "contact.lede":
+    "We read every message. Most replies go out within one business day — faster if you're already a host with a swap in motion.",
+  "contact.pressLabel": "Press & partnerships",
+  "contact.pressValue": "press@swapl.fun",
+  "contact.responseNote":
+    "We're a small team based in Amsterdam. If your message is about an active swap, please mention the swap ID so we can route it straight to support.",
+  "contact.supportLabel": "Active-swap support (24/7)",
+  "contact.supportValue": "+44 800 000 swap",
+  "contact.title": "Talk to a human.",
+  "faq.kicker": "FAQ",
+  "faq.title": "Questions hosts ask before their first swap.",
+  "footer.contact": "Contact",
+  "footer.legalHeading": "Legal",
+  "footer.privacy": "Privacy",
+  "footer.productHeading": "Product",
+  "footer.terms": "Terms",
+  "privacy.lede":
+    "swapl is built around trust. We collect the minimum we need to make swaps safe, and we never sell your data. This page summarises what we hold, why, and what you can do about it.",
+  "privacy.title": "Privacy",
+  "privacy.updated": "Last updated · 24 May 2026",
+  "terms.lede":
+    "These terms cover what swapl is, what it isn't, and what we each agree to when you use the service. By creating an account you agree to them.",
+  "terms.title": "Terms of service",
+  "terms.updated": "Last updated · 24 May 2026",
+  "faq.q1": "What if a swap partner damages my home?",
+  "faq.a1":
+    "Every accepted swap is automatically covered for property damage up to €150,000 — both directions, both homes. You don't opt in, fill a form, or pay a premium. If something breaks during the stay, file a claim through your dashboard and the policy handles repair or replacement.",
+  "faq.q2": "How do you handle key exchange?",
+  "faq.a2":
+    "You and your swap partner pick what works for you: meet in person, hand keys to a neighbour, use a lockbox, or share a smart-lock code through swapl. We generate a one-time guest code for each swap so neither party shares a permanent credential.",
+  "faq.q3": "Can I swap with someone whose dates don't overlap mine?",
+  "faq.a3":
+    "Yes. Non-simultaneous swaps (sometimes called \"hospitality points\") are coming after launch. You'll bank a stay at someone's home now and redeem yours back to them — or to a third member — later. At launch we start with same-week swaps because they're the safest to underwrite.",
+  "faq.q4": "What about pets?",
+  "faq.a4":
+    "Filter for pet-friendly homes and you'll only see places whose owners welcome animals. Some hosts will also pet-sit yours during the swap. Insurance covers damage caused by guest pets exactly as it covers any other damage.",
+  "faq.q5": "Do I have to be a swapl member to swap?",
+  "faq.a5":
+    "Both sides need to be members so we can verify identity, attach insurance, and process the agreement. Membership is free forever for the core swap; Plus and Pro add power-user tools (saved-search alerts, priority placement, listing analytics) but never gate the swap itself.",
+  "faq.q6": "How is this different from Airbnb?",
+  "faq.a6":
+    "No money changes hands and nobody is a paying guest. You trade keys with another homeowner who wants your city while you want theirs. That alignment changes the dynamic — both sides are owners, both sides are guests, both sides have skin in the game.",
+  "privacy.s1.title": "What we collect",
+  "privacy.s1.body":
+    "Account email and name, listing details you publish, swap proposals and messages with other members, identity-verification metadata (we don't store passport scans — our KYC partner does), and basic device + analytics signals (page, locale, viewport). That's it.",
+  "privacy.s2.title": "Why we collect it",
+  "privacy.s2.body":
+    "To run the swap (matching, messaging, insurance), to verify you're a real person before your first acceptance, and to improve the product. We use a small set of privacy-respecting analytics — no advertising trackers, no cross-site profiling.",
+  "privacy.s3.title": "Who sees what",
+  "privacy.s3.body":
+    "Your listing is public to other members. Your real name is shared with a swap partner only after both sides accept. Identity verification is shared back to you only — partners see a verified badge, not your documents.",
+  "privacy.s4.title": "Your rights",
+  "privacy.s4.body":
+    "Export, edit, or delete your data from /account at any time. Under GDPR you can also email privacy@swapl.fun for a portable copy or a full erasure. We action requests within 30 days.",
+  "privacy.s5.title": "Contact",
+  "privacy.s5.body":
+    "Questions about how we handle your data go to privacy@swapl.fun. swapl is operated from Amsterdam, Netherlands.",
+  "terms.s1.title": "What swapl is",
+  "terms.s1.body":
+    "swapl is a marketplace that helps homeowners find each other and exchange stays in their homes. We provide tools (listings, search, messaging, agreements, insurance) but we are not the host. The two members in a swap are the parties to the arrangement; swapl facilitates it.",
+  "terms.s2.title": "Account & eligibility",
+  "terms.s2.body":
+    "You need to be 18+ and the legal occupant (owner or long-term tenant with permission to host) of any home you list. Provide accurate listing details — misrepresenting your home is grounds for removal.",
+  "terms.s3.title": "Swaps & insurance",
+  "terms.s3.body":
+    "Every accepted swap is automatically covered by our underwriter for property damage, third-party liability, and trip interruption. Coverage attaches when both sides accept. Insurance is not a substitute for reasonable care — you remain responsible for following the partner's house rules.",
+  "terms.s4.title": "Payments",
+  "terms.s4.body":
+    "The core swap is free forever. Optional Plus / Pro plans are billed by Stripe; cancel anytime from /account/billing. We do not take a commission on the swap itself.",
+  "terms.s5.title": "Disputes",
+  "terms.s5.body":
+    "If something goes wrong during a swap, contact 24/7 support first. If a claim is needed, our insurer handles it. For disputes with swapl itself, Dutch law applies and the Amsterdam courts have jurisdiction.",
+  "terms.s6.title": "Changes",
+  "terms.s6.body":
+    "We'll email you at least 30 days before any material change to these terms. Continued use after the change date means acceptance; you can always delete your account if you'd rather not continue.",
 } as const;
 
 export type DictKey = keyof typeof en;

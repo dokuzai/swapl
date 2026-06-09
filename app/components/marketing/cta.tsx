@@ -55,40 +55,57 @@ export function CtaWaitlist() {
           {t("cta.body")}
         </p>
 
-        <div className="mx-auto grid max-w-[820px] gap-3 md:grid-cols-[1fr_auto] md:items-center">
-          <form
-            onSubmit={submit}
-            className="flex w-full flex-col gap-2 border p-1.5 sm:flex-row sm:items-center"
-            style={{ background: "var(--card-bg)", borderColor: "var(--line)", borderRadius: 8 }}
+        {status === "ok" ? (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mx-auto max-w-[480px] rounded-2xl border p-6 text-left"
+            style={{ background: "var(--card-bg)", borderColor: "var(--line)" }}
           >
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t("cta.placeholder")}
-              className="min-h-12 flex-1 bg-transparent px-4 py-3 outline-none"
-              disabled={pending || status === "ok"}
-            />
-            <button type="submit" className="pill-primary justify-center" disabled={pending || status === "ok"}>
-              {status === "ok" ? t("cta.sent") : pending ? t("auth.forgot.submitting") : t("cta.button")}
-            </button>
-          </form>
+            <div className="flex items-center gap-2 font-display text-[20px] tracking-[-0.01em] font-medium">
+              <span aria-hidden style={{ color: "var(--pink)" }}>✓</span>
+              {t("cta.sent")}
+            </div>
+            <p className="mt-2 text-[15px] leading-[1.55]" style={{ color: "var(--navy-2)" }}>
+              {t("cta.confirmation")}
+            </p>
+          </div>
+        ) : (
+          <div className="mx-auto grid max-w-[820px] gap-3 md:grid-cols-[1fr_auto] md:items-center">
+            <form
+              onSubmit={submit}
+              className="flex w-full flex-col gap-2 border p-1.5 sm:flex-row sm:items-center"
+              style={{ background: "var(--card-bg)", borderColor: "var(--line)", borderRadius: 8 }}
+            >
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t("cta.placeholder")}
+                className="min-h-12 flex-1 bg-transparent px-4 py-3 outline-none"
+                disabled={pending}
+              />
+              <button type="submit" className="pill-primary justify-center" disabled={pending}>
+                {pending ? t("auth.forgot.submitting") : t("cta.button")}
+              </button>
+            </form>
 
-          <Link
-            href="/register"
-            className="pill-ghost justify-center whitespace-nowrap"
-            onClick={() =>
-              trackMarketingEvent("listing_intent_click", {
-                ...attributionPayload(),
-                metadata: { placement: "footer_cta" },
-              })
-            }
-          >
-            List before September
-            <ArrowRight size={16} />
-          </Link>
-        </div>
+            <Link
+              href="/register"
+              className="pill-ghost justify-center whitespace-nowrap"
+              onClick={() =>
+                trackMarketingEvent("listing_intent_click", {
+                  ...attributionPayload(),
+                  metadata: { placement: "footer_cta" },
+                })
+              }
+            >
+              List before September
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+        )}
 
         {status === "error" && (
           <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>

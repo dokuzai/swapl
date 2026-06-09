@@ -34,8 +34,24 @@ export type CreatePolicyResult = {
 
 export type CancelPolicyResult = { ok: true; cancelledAt: Date };
 
+// A non-binding price preview. Only needs the property sizes and the dates —
+// no personal data — so it can be shown before a swap is accepted.
+export type QuoteInput = {
+  parties: Array<{ listing: { sizeSqm: number } }>;
+  dateFrom: Date;
+  dateTo: Date;
+};
+
+export type QuoteResult = {
+  nights: number;
+  premiumCents: number;
+  platformShareCents: number;
+  coverageAmount: number;
+};
+
 export interface InsuranceProvider {
   readonly name: string;
+  quote(input: QuoteInput): QuoteResult;
   createPolicy(input: CreatePolicyInput): Promise<CreatePolicyResult>;
   cancelPolicy(externalId: string): Promise<CancelPolicyResult>;
 }

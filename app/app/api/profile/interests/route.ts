@@ -1,8 +1,24 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
-import { serialiseInterests, INTEREST_BY_SLUG } from "@/lib/interests";
+import { getSessionFromRequest } from "@/lib/auth/session";
+import { serialiseInterests, INTEREST_BY_SLUG, INTEREST_CATALOG, INTEREST_CATEGORIES, parseInterests } from "@/lib/interests";
+
+// Mobile-friendly catalog + current selection. Categories let clients group
+// the chips exactly like the web /account/interests page.
+export async function GET(req: Request) {
+  const session = await getSessionFromRequest(req);
+  const selected = session
+    ? parseInterests(
+        (await prisma.user.findUnique({ where: { id: session.userId }, select: { interests: true, bioVibe: true } }))?.interests ?? "[]"
+      ).map((t) => t.slug)
+    : [];
+  return NextResponse.json({
+    catalog: INTEREST_CATALOG,
+    categories: INTEREST_CATEGORIES,
+    selected,
+  });
+}
 
 const schema = z.object({
   interests: z.array(z.string()).max(12),
@@ -10,7 +26,7 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });

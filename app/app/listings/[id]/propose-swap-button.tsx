@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import type { ListingDTO } from "@/lib/listing-utils";
 import { CityIllust, SwapArrows } from "@/components/illustrations";
@@ -16,10 +17,8 @@ export default function ProposeSwapButton({
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  // Body-scroll lock while the modal is open. Without this the underlying
-  // page can keep scrolling under the overlay and the sticky navbar's
-  // backdrop-blur causes a paint reflow that visibly shifts the modal the
-  // first time the cursor enters the navbar.
+  // Lock body scroll while the modal is open so the page underneath doesn't
+  // scroll behind the overlay.
   useEffect(() => {
     if (!open) return;
     const original = document.body.style.overflow;
@@ -94,7 +93,7 @@ export default function ProposeSwapButton({
         upgradeTo={upgrade?.upgradeTo ?? "plus"}
       />
 
-      {open && (
+      {open && typeof document !== "undefined" && createPortal(
         <div
           className="fixed inset-0 z-[100] overflow-y-auto flex items-center justify-center p-4"
           style={{ background: "rgba(245,238,224,.65)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
@@ -227,7 +226,8 @@ export default function ProposeSwapButton({
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

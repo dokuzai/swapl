@@ -1,6 +1,6 @@
 import type { DictKey } from "./dict-en";
 
-export const fr: Record<DictKey, string> = {
+export const fr: Partial<Record<DictKey, string>> = {
   "nav.howItWorks": "Comment ça marche",
   "nav.homes": "Maisons",
   "nav.insurance": "Assurance",
@@ -93,6 +93,7 @@ export const fr: Record<DictKey, string> = {
     "On collecte les annonces — l'accès anticipé ouvre en septembre 2026. Les hôtes inscrits avant le lancement apparaissent en premier.",
   "cta.button": "Demander une invitation",
   "cta.sent": "Inscrit ✓",
+  "cta.confirmation": "Vous êtes sur la liste. On vous écrit dès que les échanges démarrent — et encore plus tôt si vous êtes dans une ville où les correspondances s'accumulent.",
   "cta.error": "Une erreur est survenue. Réessayez dans un instant.",
   "cta.placeholder": "votre@email.com",
   "cta.stat.countries": "◦ 92 pays",

@@ -1,6 +1,6 @@
 import type { DictKey } from "./dict-en";
 
-export const es: Record<DictKey, string> = {
+export const es: Partial<Record<DictKey, string>> = {
   "nav.howItWorks": "Cómo funciona",
   "nav.homes": "Casas",
   "nav.insurance": "Seguro",
@@ -93,6 +93,7 @@ export const es: Record<DictKey, string> = {
     "Estamos recogiendo casas — el acceso anticipado abre en septiembre 2026. Quien publique antes del lanzamiento sale primero.",
   "cta.button": "Pedir invitación",
   "cta.sent": "Estás en la lista ✓",
+  "cta.confirmation": "Estás en la lista. Te escribiremos en cuanto los intercambios estén activos — y antes aún si estás en una ciudad donde las coincidencias se acumulan.",
   "cta.error": "Algo salió mal. Inténtalo en un momento.",
   "cta.placeholder": "tu@email.com",
   "cta.stat.countries": "◦ 92 países",

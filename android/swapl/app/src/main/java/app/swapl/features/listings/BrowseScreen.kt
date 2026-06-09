@@ -1,5 +1,6 @@
 package app.swapl.features.listings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,30 +31,38 @@ import app.swapl.designtokens.SwaplCityPalettes
 import app.swapl.designtokens.SwaplSpacing
 
 @Composable
-fun BrowseScreen(vm: BrowseViewModel = hiltViewModel()) {
+fun BrowseScreen(
+    onOpen: (String) -> Unit = {},
+    onNew: () -> Unit = {},
+    vm: BrowseViewModel = hiltViewModel(),
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) { vm.load() }
 
     Column(Modifier.fillMaxSize()) {
-        Text(
-            "Browse",
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(SwaplSpacing.s5)
-        )
+        Row(
+            modifier = Modifier.padding(SwaplSpacing.s5).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("Browse", style = MaterialTheme.typography.displaySmall, modifier = Modifier.weight(1f))
+            androidx.compose.material3.TextButton(onClick = onNew) {
+                Text("+ List a home")
+            }
+        }
         LazyColumn(
             contentPadding = PaddingValues(horizontal = SwaplSpacing.s4, vertical = SwaplSpacing.s2),
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
         ) {
             items(state.items, key = { it.listing.id }) { item ->
-                ListingCard(item)
+                ListingCard(item, onClick = { onOpen(item.listing.id) })
             }
         }
     }
 }
 
 @Composable
-private fun ListingCard(item: ListingWithScore) {
-    SurfaceCard {
+private fun ListingCard(item: ListingWithScore, onClick: () -> Unit) {
+    SurfaceCard(modifier = Modifier.clickable(onClick = onClick)) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
             CityIllust(palette = SwaplCityPalettes.forName(item.listing.palette))
             Row(verticalAlignment = Alignment.CenterVertically) {

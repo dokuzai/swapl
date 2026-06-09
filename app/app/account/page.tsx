@@ -15,6 +15,19 @@ export default async function AccountPage() {
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
   if (!user) redirect("/login");
 
+  // Insurance policies across the user's swaps (either side of the agreement).
+  const policies = await prisma.insurancePolicy.findMany({
+    where: {
+      agreement: {
+        OR: [{ listing1: { userId: session.userId } }, { listing2: { userId: session.userId } }],
+      },
+    },
+    include: { agreement: { include: { listing1: true, listing2: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const shortDate = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
   return (
     <>
       <Navbar />
@@ -87,6 +100,50 @@ export default async function AccountPage() {
             </p>
             <Link href="/account/saved-searches" className="pill-ghost">Manage saved searches</Link>
           </section>
+
+          {policies.length > 0 && (
+            <section className="surface-card p-6 mb-6">
+              <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Your coverage</h2>
+              <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
+                Every accepted swap is insured automatically. Your active and past policies live here.
+              </p>
+              <ul className="space-y-3">
+                {policies.map((p) => (
+                  <li
+                    key={p.id}
+                    className="flex flex-wrap items-center justify-between gap-3 border-t pt-3"
+                    style={{ borderColor: "var(--cream-2)" }}
+                  >
+                    <div>
+                      <div className="text-sm font-medium">
+                        {p.agreement.listing1.city} ↔ {p.agreement.listing2.city}
+                      </div>
+                      <div className="font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
+                        {p.policyNumber} · €{p.coverageAmount.toLocaleString()} ·{" "}
+                        {shortDate(p.agreement.dateFrom)}–{shortDate(p.agreement.dateTo)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full"
+                        style={{
+                          background: p.status === "active" ? "var(--pink)" : "var(--cream-2)",
+                          color: p.status === "active" ? "#fff" : "var(--navy-3)",
+                        }}
+                      >
+                        {p.status}
+                      </span>
+                      {p.documentsUrl && (
+                        <a href={p.documentsUrl} target="_blank" rel="noreferrer" className="pill-ghost">
+                          Certificate →
+                        </a>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className="surface-card p-6 mb-6">
             <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Notifications</h2>

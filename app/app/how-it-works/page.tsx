@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { HowItWorks } from "@/components/marketing/how-it-works";
+import { Faq } from "@/components/marketing/faq";
 import { CtaWaitlist } from "@/components/marketing/cta";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
 
@@ -16,6 +17,7 @@ export default function HowItWorksPage() {
       <Navbar />
       <main className="flex-1">
         <HowItWorks />
+        <Faq />
         <CtaWaitlist />
       </main>
       <Footer />

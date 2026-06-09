@@ -10,6 +10,7 @@ import { AffiliateLink } from "@/components/affiliate/affiliate-link";
 import { ConciergeSection, type AddOn as ConciergeAddOn } from "@/components/concierge/concierge-section";
 import { PersonalisedSuggestions } from "@/components/affiliate/personalised-suggestions";
 import { getEffectivePlan } from "@/lib/billing/limits";
+import { RetryCoverButton } from "@/components/insurance/retry-cover-button";
 
 export const dynamic = "force-dynamic";
 
@@ -210,25 +211,69 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
             <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-2" style={{ color: "var(--navy-3)" }}>
               Insurance
             </div>
-            {proposal.agreement?.insurancePolicy ? (
-              <>
-                <div className="font-display text-lg mb-2">€150,000 cover · active</div>
-                <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-                  Auto-issued on acceptance. Property damage, third-party liability and trip interruption — both directions.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="font-display text-lg mb-2">Auto-issued on acceptance</div>
-                <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-                  When this swap is accepted, both homes are insured automatically. No checkbox, no upsell.
-                </p>
-              </>
-            )}
+            <InsuranceAside
+              policy={proposal.agreement?.insurancePolicy ?? null}
+              agreementId={proposal.agreement?.id ?? null}
+            />
           </div>
         </aside>
       </div>
     </div>
+  );
+}
+
+function InsuranceAside({
+  policy,
+  agreementId,
+}: {
+  policy: { status: string; coverageAmount: number; policyNumber: string; documentsUrl: string | null } | null;
+  agreementId: string | null;
+}) {
+  if (!policy) {
+    return (
+      <>
+        <div className="font-display text-lg mb-2">Auto-issued on acceptance</div>
+        <p className="text-sm" style={{ color: "var(--navy-2)" }}>
+          When this swap is accepted, both homes are insured automatically. No checkbox, no upsell.
+        </p>
+      </>
+    );
+  }
+
+  if (policy.status === "pending" && agreementId) {
+    return (
+      <>
+        <div className="font-display text-lg mb-2">Finalising your cover…</div>
+        <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>
+          Your swap is confirmed. We&rsquo;re issuing the policy with our underwriter — this usually takes a moment.
+        </p>
+        <RetryCoverButton agreementId={agreementId} />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="font-display text-lg mb-2">
+        €{policy.coverageAmount.toLocaleString()} cover · {policy.status}
+      </div>
+      <p className="text-sm" style={{ color: "var(--navy-2)" }}>
+        Auto-issued on acceptance. Property damage, third-party liability and trip interruption — both directions.
+      </p>
+      <p className="mt-2 font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
+        Policy {policy.policyNumber}
+      </p>
+      {policy.documentsUrl && (
+        <a
+          href={policy.documentsUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="pill-ghost mt-3 inline-block"
+        >
+          View certificate of cover →
+        </a>
+      )}
+    </>
   );
 }
 

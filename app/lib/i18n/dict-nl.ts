@@ -2,7 +2,7 @@
 
 import type { DictKey } from "./dict-en";
 
-export const nl: Record<DictKey, string> = {
+export const nl: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "Hoe het werkt",
   "nav.homes": "Woningen",
@@ -98,6 +98,7 @@ export const nl: Record<DictKey, string> = {
     "We verzamelen nu listings — vroege toegang opent in september 2026. Hosts die vóór de lancering plaatsen verschijnen eerst.",
   "cta.button": "Vraag uitnodiging",
   "cta.sent": "Op de lijst ✓",
+  "cta.confirmation": "Je staat op de lijst. We mailen je zodra ruilen live gaat — en nog eerder als je in een stad zit waar de matches zich opstapelen.",
   "cta.error": "Er ging iets mis. Probeer het zo nog eens.",
   "cta.placeholder": "jouw@email.com",
   "cta.stat.countries": "◦ 92 landen",

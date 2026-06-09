@@ -8,13 +8,30 @@ export async function Footer() {
       className="mt-auto border-t border-line py-10 font-mono text-[13px] text-navy-3"
       style={{ borderColor: "var(--line)" }}
     >
-      <div className="wrap flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <span>{dict["footer.tagline"]}</span>
-        <nav className="flex items-center gap-6 flex-wrap">
-          <Link href="/how-it-works" className="hover:text-navy">{dict["footer.howItWorks"]}</Link>
-          <Link href="/insurance" className="hover:text-navy">{dict["footer.insurance"]}</Link>
-          <Link href="/listings" className="hover:text-navy">{dict["footer.browseHomes"]}</Link>
-          <Link href="/dashboard" className="hover:text-navy">{dict["footer.account"]}</Link>
+      <div className="wrap grid gap-8 sm:grid-cols-[1fr_auto_auto]">
+        <span className="self-center">{dict["footer.tagline"]}</span>
+
+        <nav className="flex flex-col gap-2 sm:items-end">
+          <span className="text-[11px] uppercase tracking-[.14em]" style={{ color: "var(--navy-3)" }}>
+            {dict["footer.productHeading"]}
+          </span>
+          <div className="flex items-center gap-5 flex-wrap sm:justify-end">
+            <Link href="/how-it-works" className="hover:text-navy">{dict["footer.howItWorks"]}</Link>
+            <Link href="/insurance" className="hover:text-navy">{dict["footer.insurance"]}</Link>
+            <Link href="/listings" className="hover:text-navy">{dict["footer.browseHomes"]}</Link>
+            <Link href="/dashboard" className="hover:text-navy">{dict["footer.account"]}</Link>
+          </div>
+        </nav>
+
+        <nav className="flex flex-col gap-2 sm:items-end">
+          <span className="text-[11px] uppercase tracking-[.14em]" style={{ color: "var(--navy-3)" }}>
+            {dict["footer.legalHeading"]}
+          </span>
+          <div className="flex items-center gap-5 flex-wrap sm:justify-end">
+            <Link href="/privacy" className="hover:text-navy">{dict["footer.privacy"]}</Link>
+            <Link href="/terms" className="hover:text-navy">{dict["footer.terms"]}</Link>
+            <Link href="/contact" className="hover:text-navy">{dict["footer.contact"]}</Link>
+          </div>
         </nav>
       </div>
     </footer>
