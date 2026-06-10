@@ -47,7 +47,7 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
 
   return (
     <aside
-      className="surface-card overflow-hidden p-7 sticky top-24 self-start"
+      className="surface-card overflow-hidden p-7 lg:sticky lg:top-24 lg:self-start"
       style={{ background: "var(--cream-2)" }}
     >
       <div className="mb-5 flex items-baseline justify-between">
