@@ -45,6 +45,9 @@ targets:
         # localhost is ATS-exempt by default, the LAN is not.
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
+        # The design system is light-only (SwaplSemanticLight tokens); without
+        # this, dark-mode devices render system text white on cream.
+        UIUserInterfaceStyle: Light
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.swapl
