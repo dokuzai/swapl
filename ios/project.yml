@@ -37,7 +37,10 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        SwaplApiBaseURL: "http://localhost:3000"
+        # Mac's LAN IP so both the simulator and a physical iPhone on the same
+        # Wi-Fi reach the dev server. If your network changes, update it here
+        # (ipconfig getifaddr en0) or override via SWAPL_API_BASE_URL.
+        SwaplApiBaseURL: "http://192.168.1.104:3000"
         # Dev on a physical device talks plain http to the Mac's LAN IP;
         # localhost is ATS-exempt by default, the LAN is not.
         NSAppTransportSecurity:
