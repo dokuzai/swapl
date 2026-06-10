@@ -997,7 +997,10 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
         }
     }
 
-    // Pre-iOS 26 fallback: CLGeocoder, same shape of result.
+    // Pre-iOS 26 fallback: CLGeocoder, same shape of result. Only reached on
+    // iOS 17–25 (resolve() branches on #available); the deprecation annotation
+    // matches CLGeocoder's own so the compiler doesn't warn about using it here.
+    @available(iOS, introduced: 17.0, deprecated: 26.0, message: "Uses CLGeocoder; iOS 26+ takes the MapKit path")
     private func resolveWithGeocoder(_ location: CLLocation) async {
         do {
             let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
