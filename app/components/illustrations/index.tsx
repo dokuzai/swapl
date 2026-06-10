@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import type { Postcard } from "@/lib/ai/postcard-types";
-import { PostcardSvg } from "./postcard";
+import { PostcardSvg, type PostcardStyleMode } from "./postcard";
 
 export type Palette =
   | "warm"   // Istanbul / Marrakesh
@@ -42,6 +42,7 @@ export function CityIllust({
   postcard,
   className,
   ariaLabel,
+  styleMode = "filled",
 }: {
   city?: string;
   palette?: Palette;
@@ -49,14 +50,25 @@ export function CityIllust({
   postcard?: Postcard | null;
   className?: string;
   ariaLabel?: string;
+  /** "linear" = thin uniform ink outlines over paper (hand-drafted look). */
+  styleMode?: PostcardStyleMode;
 }) {
   // Postcards are the primary cover format. The legacy palette/motif rendering
   // below stays as a fallback for listings that haven't been backfilled yet.
   if (postcard) {
-    return <PostcardSvg postcard={postcard} city={city} className={className} ariaLabel={ariaLabel} />;
+    return <PostcardSvg postcard={postcard} city={city} className={className} ariaLabel={ariaLabel} styleMode={styleMode} />;
   }
 
   const p = cityPalettes[palette] ?? cityPalettes.warm;
+  const linear = styleMode === "linear";
+  // Same scoped-CSS line-art override the postcard renderer uses: every shape
+  // inside the marked group becomes a thin ink outline with a 6% tint fill.
+  const lpClass = `swapl-lpl-${palette}`;
+  const linearCss = [
+    `.${lpClass} :is(rect,circle,ellipse,polygon,path){fill:${p.roof};fill-opacity:.06;stroke:${p.roof};stroke-width:.7px;stroke-linejoin:round;stroke-linecap:round}`,
+    `.${lpClass} :is(line,polyline){fill:none;stroke:${p.roof};stroke-width:.7px;stroke-linecap:round}`,
+    `.${lpClass} [fill="none"]{fill:none}`,
+  ].join("\n");
   return (
     <svg
       viewBox="0 0 200 140"
@@ -67,7 +79,9 @@ export function CityIllust({
       role="img"
       aria-label={ariaLabel ?? `${city} illustration`}
     >
-      <rect width="200" height="140" fill={p.sky} />
+      {linear && <style>{linearCss}</style>}
+      <rect width="200" height="140" fill={linear ? "#FCF8EF" : p.sky} />
+      <g className={linear ? lpClass : undefined}>
       <circle cx="160" cy="32" r="14" fill={p.accent} opacity="0.85" />
       <path d="M0 110 Q 40 88 80 100 T 160 92 T 200 104 L 200 140 L 0 140 Z" fill={p.accent} opacity="0.4" />
 
@@ -126,8 +140,9 @@ export function CityIllust({
 
       {/* AI-chosen motifs sit in front of the building row so they read as silhouettes. */}
       <Motifs motifs={motif} p={p} />
+      </g>
 
-      <text x="10" y="16" fontFamily="monospace" fontSize="8" fill={p.building} letterSpacing="1" fontWeight="600">
+      <text x="10" y="16" fontFamily="monospace" fontSize="8" fill={linear ? p.roof : p.building} letterSpacing="1" fontWeight="600">
         {city.toUpperCase()}
       </text>
     </svg>

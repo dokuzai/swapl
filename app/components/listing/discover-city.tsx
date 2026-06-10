@@ -9,7 +9,8 @@
 // No hotels card: the seeded partners are skyscanner / airalo / getyourguide
 // / battleface only — we never invent partner secrets.
 
-import { getCityMedia, type CityPhoto } from "@/lib/city-media";
+import { getCityMedia } from "@/lib/city-media";
+import { DiscoverPhotoGrid } from "@/components/listing/photo-lightbox";
 
 const CAMPAIGN = "discover_city";
 
@@ -21,52 +22,6 @@ function affiliateHref(
   for (const [k, v] of Object.entries(params)) if (v) qs.set(k, v);
   qs.set("utm_campaign", CAMPAIGN);
   return `/api/affiliate/${partner}?${qs.toString()}`;
-}
-
-function Attribution({ photo }: { photo: CityPhoto }) {
-  if (photo.provider === "pexels" && photo.photographer) {
-    // Pexels requires a visible photographer + Pexels credit.
-    return (
-      <span>
-        Photo:{" "}
-        {photo.photographerUrl ? (
-          <a href={photo.photographerUrl} target="_blank" rel="noopener noreferrer" className="underline">
-            {photo.photographer}
-          </a>
-        ) : (
-          photo.photographer
-        )}{" "}
-        /{" "}
-        <a href={photo.sourceUrl ?? "https://www.pexels.com"} target="_blank" rel="noopener noreferrer" className="underline">
-          Pexels
-        </a>
-      </span>
-    );
-  }
-  if (photo.provider === "unsplash" && photo.photographer) {
-    return (
-      <span>
-        Photo:{" "}
-        {photo.photographerUrl ? (
-          <a href={photo.photographerUrl} target="_blank" rel="noopener noreferrer" className="underline">
-            {photo.photographer}
-          </a>
-        ) : (
-          photo.photographer
-        )}{" "}
-        / Unsplash
-      </span>
-    );
-  }
-  // Wikimedia: link the file page.
-  return (
-    <span>
-      {photo.photographer ? `Photo: ${photo.photographer} / ` : "Photo: "}
-      <a href={photo.sourceUrl ?? "https://commons.wikimedia.org"} target="_blank" rel="noopener noreferrer" className="underline">
-        Wikimedia
-      </a>
-    </span>
-  );
 }
 
 function BookCard({
@@ -102,23 +57,7 @@ export async function DiscoverCity({ city, country }: { city: string; country: s
 
       {photos.length > 0 && (
         <div className="mb-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {photos.map((photo, i) => (
-              <figure key={photo.url} className="m-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={photo.url}
-                  alt={photo.alt}
-                  className="aspect-[4/3] w-full object-cover rounded-2xl border"
-                  style={{ borderColor: "var(--line)" }}
-                  loading={i < 3 ? "eager" : "lazy"}
-                />
-                <figcaption className="mt-1 text-[10px] font-mono truncate" style={{ color: "var(--navy-3)" }}>
-                  <Attribution photo={photo} />
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+          <DiscoverPhotoGrid photos={photos} />
         </div>
       )}
 

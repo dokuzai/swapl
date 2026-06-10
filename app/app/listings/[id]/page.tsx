@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { getCachedCityMedia } from "@/lib/city-media";
 import { DiscoverCity, DiscoverCitySkeleton } from "@/components/listing/discover-city";
+import { ListingPhotoGrid } from "@/components/listing/photo-lightbox";
 import { toDTO, formatDateRange, amenityChips } from "@/lib/listing-utils";
 import { CityIllust, SwapArrows, Pin } from "@/components/illustrations";
 import { propertyLabel } from "@/lib/types";
@@ -72,11 +72,6 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
 
   const chips = amenityChips(dto);
 
-  // Real city photo for the hero — cached-only read (no upstream fetch, so
-  // the page never blocks). The Discover section below does the full
-  // read-through fetch inside <Suspense>, which populates this cache.
-  const cityHeroPhoto = dto.photos.length === 0 ? (await getCachedCityMedia(dto.city, dto.country))[0] ?? null : null;
-
   return (
     <div className="wrap py-10 lg:py-14">
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
@@ -85,47 +80,17 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
             className="surface-card overflow-hidden mb-8 aspect-[16/10] relative"
             style={{ background: "var(--cream-2)" }}
           >
-            {cityHeroPhoto ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={cityHeroPhoto.url}
-                  alt={cityHeroPhoto.alt}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                {/* Postcard stamp shrinks to an overlay badge over the real photo. */}
-                <div
-                  className="absolute bottom-3 right-3 w-24 sm:w-28 aspect-[16/10] rounded-2xl overflow-hidden border shadow-sm"
-                  style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}
-                  aria-hidden="true"
-                >
-                  <CityIllust city={dto.city} palette={dto.palette} motif={dto.motif} postcard={dto.postcard} />
-                </div>
-              </>
-            ) : (
-              <CityIllust city={dto.city} palette={dto.palette} motif={dto.motif} postcard={dto.postcard} />
-            )}
+            {/* The hero is always the city-postcard illustration, drawn in the
+                hand-drafted linear style. Real city photos live in the
+                Discover section below. */}
+            <CityIllust city={dto.city} palette={dto.palette} motif={dto.motif} postcard={dto.postcard} styleMode="linear" />
             {matchScore !== null && (
               <span className="absolute top-4 left-4 match-badge text-sm py-1 px-3">{matchScore}% match</span>
             )}
             {dto.isFeatured && <FeaturedRibbon />}
           </div>
 
-          {dto.photos.length > 0 && (
-            <div className="grid grid-cols-2 gap-3 mb-8">
-              {dto.photos.slice(0, 4).map((url) => (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  key={url}
-                  src={url}
-                  alt=""
-                  className="aspect-[4/3] object-cover rounded-xl border"
-                  style={{ borderColor: "var(--line)" }}
-                  loading="lazy"
-                />
-              ))}
-            </div>
-          )}
+          {dto.photos.length > 0 && <ListingPhotoGrid photos={dto.photos.slice(0, 4)} />}
 
           <header className="mb-6">
             <p className="kicker mb-3 inline-flex items-center gap-2">

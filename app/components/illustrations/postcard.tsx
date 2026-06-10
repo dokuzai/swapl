@@ -1037,16 +1037,41 @@ const E: Record<PostcardElement, (r: R) => React.ReactElement> = {
 
 // ---------- Top-level renderer ----------
 
+/**
+ * "filled" is the original flat-geometric look. "linear" redraws the same
+ * composition as hand-drafted line art: every shape becomes a uniform thin
+ * ink outline (the palette's darkest tone) over paper, with a faint 6% tint
+ * fill — the Istanbul-linear-illustration aesthetic. Implemented as a scoped
+ * CSS override so all ~60 landmark renderers stay untouched; per-element
+ * stroke width is divided by the instance scale so the pen weight stays
+ * constant across the whole card.
+ */
+export type PostcardStyleMode = "filled" | "linear";
+
+const LINEAR_STROKE = 0.55; // viewBox units ≈ a fine pen on a 200×140 card
+
+function linearCss(cls: string, ink: string): string {
+  return [
+    // One pen weight, soft joins, near-empty shapes.
+    `.${cls} :is(rect,circle,ellipse,polygon,path){fill:${ink};fill-opacity:.06;stroke:${ink};stroke-width:var(--lp-sw,${LINEAR_STROKE}px);stroke-linejoin:round;stroke-linecap:round}`,
+    `.${cls} :is(line,polyline){fill:none;stroke:${ink};stroke-width:var(--lp-sw,${LINEAR_STROKE}px);stroke-linecap:round}`,
+    // Shapes that were stroke-only (bridge cables, fronds…) stay open.
+    `.${cls} [fill="none"]{fill:none}`,
+  ].join("\n");
+}
+
 export function PostcardSvg({
   postcard,
   city,
   className,
   ariaLabel,
+  styleMode = "filled",
 }: {
   postcard: Postcard;
   city: string;
   className?: string;
   ariaLabel?: string;
+  styleMode?: PostcardStyleMode;
 }) {
   const baseTones = PALETTE_TONES[postcard.palette] ?? PALETTE_TONES.warm;
   const t = applySky(baseTones, postcard.sky);
@@ -1055,6 +1080,11 @@ export function PostcardSvg({
   const isNight = postcard.sky === "night";
   const isCloudy = postcard.weather === "cloudy" || (postcard.weather !== "clear" && postcard.sky !== "night");
   const isMisty = postcard.weather === "misty";
+  const linear = styleMode === "linear";
+  const ink = t.roof;
+  // Class is palette-keyed so two same-palette postcards on one page emit
+  // identical (harmlessly duplicated) rules — inline-SVG <style> is global.
+  const lpClass = `swapl-lp-${postcard.palette}`;
 
   // Deterministic star positions via a small PRNG seeded by stamp/city so a
   // given postcard's stars never jitter between renders.
@@ -1070,6 +1100,7 @@ export function PostcardSvg({
       role="img"
       aria-label={ariaLabel ?? `${stamp.toLowerCase()} postcard`}
     >
+      {linear && <style>{linearCss(lpClass, ink)}</style>}
       <defs>
         <linearGradient id={`sky-${postcard.sky}`} x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor={t.skyTop} />
@@ -1081,72 +1112,85 @@ export function PostcardSvg({
         </radialGradient>
       </defs>
 
-      {/* sky */}
-      <rect width={VIEW_W} height={VIEW_H} fill={`url(#sky-${postcard.sky})`} />
-
-      {/* Stars (night only) — layered with a subtle moon glow */}
-      {isNight && (
-        <>
-          <circle cx={168} cy={28} r={22} fill="url(#moonGlow)" />
-          <g fill="#FFFFFF">
-            {stars.map(([x, y, r], i) => (
-              <circle key={i} cx={x} cy={y} r={r} opacity={0.85} />
-            ))}
-          </g>
-        </>
+      {/* sky — flat paper in linear mode, gradient otherwise */}
+      {linear ? (
+        <rect width={VIEW_W} height={VIEW_H} fill="#FCF8EF" />
+      ) : (
+        <rect width={VIEW_W} height={VIEW_H} fill={`url(#sky-${postcard.sky})`} />
       )}
 
-      {/* Sun / moon disc */}
-      <circle
-        cx={isNight ? 168 : 160}
-        cy={isNight ? 28 : 32}
-        r={isNight ? 9 : 13}
-        fill={t.sun}
-        opacity={isNight ? 0.95 : 0.9}
-      />
+      <g className={linear ? lpClass : undefined}>
+        {/* Stars (night only) — moon glow + star field stay a filled-mode
+            flourish; in linear the night moon is just an outlined disc. */}
+        {isNight && !linear && (
+          <>
+            <circle cx={168} cy={28} r={22} fill="url(#moonGlow)" />
+            <g fill="#FFFFFF">
+              {stars.map(([x, y, r], i) => (
+                <circle key={i} cx={x} cy={y} r={r} opacity={0.85} />
+              ))}
+            </g>
+          </>
+        )}
 
-      {/* Day / dawn / dusk clouds — three of them, drifting at slightly
-          different altitudes for cheap depth. Always behind elements. */}
-      {!isNight && isCloudy && (
-        <g opacity={t.mood === "warmlit" ? 0.85 : 0.95}>
-          <Cloud cx={28} cy={22} scale={1.0} fill={t.mood === "warmlit" ? "#FFE9C9" : "#FFFFFF"} />
-          <Cloud cx={92} cy={14} scale={0.7} fill="#FFFFFF" />
-          <Cloud cx={132} cy={36} scale={0.85} fill={t.mood === "warmlit" ? "#FFD9A8" : "#F4F4F2"} />
-        </g>
-      )}
-
-      {/* Far mountains — only when ground isn't water (water reads better
-          unobstructed). Adds genuine depth versus the existing single
-          accent haze. */}
-      {postcard.ground !== "water" && (
-        <path
-          d={`M 0 ${BASELINE - 18} L 32 ${BASELINE - 32} L 60 ${BASELINE - 22} L 92 ${BASELINE - 38} L 132 ${BASELINE - 24} L 168 ${BASELINE - 32} L 200 ${BASELINE - 18} L 200 ${BASELINE - 6} L 0 ${BASELINE - 6} Z`}
-          fill={t.accent}
-          opacity={0.22}
+        {/* Sun / moon disc */}
+        <circle
+          cx={isNight ? 168 : 160}
+          cy={isNight ? 28 : 32}
+          r={isNight ? 9 : 13}
+          fill={t.sun}
+          opacity={linear ? 1 : isNight ? 0.95 : 0.9}
         />
-      )}
 
-      {/* Atmospheric haze just above the ground line */}
-      <path
-        d={`M 0 ${BASELINE - 8} Q 50 ${BASELINE - 14} 100 ${BASELINE - 8} T 200 ${BASELINE - 4} L 200 ${BASELINE} L 0 ${BASELINE} Z`}
-        fill={t.accent}
-        opacity={0.35}
-      />
+        {/* Day / dawn / dusk clouds — three of them, drifting at slightly
+            different altitudes for cheap depth. Always behind elements. */}
+        {!isNight && isCloudy && (
+          <g opacity={linear ? 1 : t.mood === "warmlit" ? 0.85 : 0.95}>
+            <Cloud cx={28} cy={22} scale={1.0} fill={t.mood === "warmlit" ? "#FFE9C9" : "#FFFFFF"} linear={linear} />
+            <Cloud cx={92} cy={14} scale={0.7} fill="#FFFFFF" linear={linear} />
+            <Cloud cx={132} cy={36} scale={0.85} fill={t.mood === "warmlit" ? "#FFD9A8" : "#F4F4F2"} linear={linear} />
+          </g>
+        )}
 
-      {/* Misty overlay — translucent fog band across the lower middle */}
-      {isMisty && (
-        <rect x={0} y={BASELINE - 30} width={VIEW_W} height={26} fill="#FFFFFF" opacity={0.18} />
-      )}
+        {/* Far mountains — only when ground isn't water (water reads better
+            unobstructed). Adds genuine depth versus the existing single
+            accent haze. */}
+        {postcard.ground !== "water" && (
+          <path
+            d={`M 0 ${BASELINE - 18} L 32 ${BASELINE - 32} L 60 ${BASELINE - 22} L 92 ${BASELINE - 38} L 132 ${BASELINE - 24} L 168 ${BASELINE - 32} L 200 ${BASELINE - 18} L 200 ${BASELINE - 6} L 0 ${BASELINE - 6} Z`}
+            fill={t.accent}
+            opacity={linear ? 0.18 : 0.22}
+          />
+        )}
 
-      {/* Elements, ordered back-to-front by array position */}
-      {postcard.elements.map((el, idx) => renderElement(el, t, idx))}
+        {/* Atmospheric haze just above the ground line — pure flat-mode
+            texture; in linear it would read as stray pen marks. */}
+        {!linear && (
+          <path
+            d={`M 0 ${BASELINE - 8} Q 50 ${BASELINE - 14} 100 ${BASELINE - 8} T 200 ${BASELINE - 4} L 200 ${BASELINE} L 0 ${BASELINE} Z`}
+            fill={t.accent}
+            opacity={0.35}
+          />
+        )}
 
-      {/* Ground band */}
-      <GroundBand ground={postcard.ground} t={t} />
+        {/* Misty overlay — translucent fog band across the lower middle */}
+        {isMisty && !linear && (
+          <rect x={0} y={BASELINE - 30} width={VIEW_W} height={26} fill="#FFFFFF" opacity={0.18} />
+        )}
+
+        {/* Elements, ordered back-to-front by array position */}
+        {postcard.elements.map((el, idx) => renderElement(el, t, idx, linear))}
+
+        {/* Ground band */}
+        <GroundBand ground={postcard.ground} t={t} />
+      </g>
 
       {/* Postcard side stripes (PAR AVION feel) — narrow red+blue dashes
-          along the left and right edges. */}
-      <ParAvionStripes />
+          along the left and right edges. Kept as the linear card's one
+          sparse flat-colour accent, just dialled down. */}
+      <g opacity={linear ? 0.65 : 1}>
+        <ParAvionStripes />
+      </g>
 
       {/* Postcard stamp */}
       <g transform={`translate(${VIEW_W - 56} 8)`}>
@@ -1198,7 +1242,16 @@ export function PostcardSvg({
 
 // ---------- Atmospheric helpers ----------
 
-function Cloud({ cx, cy, scale, fill }: { cx: number; cy: number; scale: number; fill: string }) {
+function Cloud({ cx, cy, scale, fill, linear }: { cx: number; cy: number; scale: number; fill: string; linear?: boolean }) {
+  if (linear) {
+    // One closed puffy outline instead of three overlapping ellipses, so the
+    // pen drawing has no interior seams. Stroke compensated for the scale.
+    return (
+      <g transform={`translate(${cx} ${cy}) scale(${scale})`} style={{ "--lp-sw": `${(LINEAR_STROKE / scale).toFixed(3)}px` } as React.CSSProperties}>
+        <path d="M -14 5 Q -16 -1 -10 -2 Q -9 -6 -2 -6 Q 5 -7 7 -2 Q 13 -2 12 5 Z" fill="none" />
+      </g>
+    );
+  }
   return (
     <g transform={`translate(${cx} ${cy}) scale(${scale})`}>
       <ellipse cx={-6} cy={2} rx={6} ry={3} fill={fill} />
@@ -1252,12 +1305,18 @@ function useMemoStars(seed: string): Array<[number, number, number]> {
   return out;
 }
 
-function renderElement(inst: PostcardElementInstance, t: Tones, idx: number): React.ReactElement {
+function renderElement(inst: PostcardElementInstance, t: Tones, idx: number, linear = false): React.ReactElement {
   const renderer = E[inst.type];
   if (!renderer) return <g key={idx} />;
   const x = Math.max(0.04, Math.min(0.96, inst.x ?? 0.5)) * VIEW_W;
   const scale = Math.max(0.4, Math.min(1.6, inst.scale ?? 1));
-  return <g key={idx}>{renderer({ t, cx: x, scale, flip: inst.flip ?? false })}</g>;
+  // In linear mode the instance scale would also scale the pen width, so we
+  // counter it via the CSS variable the linear stylesheet reads. Custom
+  // properties inherit, so one wrapper covers the whole landmark.
+  const style = linear
+    ? ({ "--lp-sw": `${(LINEAR_STROKE / scale).toFixed(3)}px` } as React.CSSProperties)
+    : undefined;
+  return <g key={idx} style={style}>{renderer({ t, cx: x, scale, flip: inst.flip ?? false })}</g>;
 }
 
 function GroundBand({ ground, t }: { ground: Ground; t: Tones }) {
