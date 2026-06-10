@@ -34,8 +34,8 @@ export async function GET(req: Request, { params }: RouteContext<"/api/listings/
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const dto = toDTO(listing);
   const session = await getSessionFromRequest(req);
+  const dto = toDTO(listing, { includeAddress: session?.userId === listing.userId });
   const viewer = session ? await getViewerListing(session.userId) : null;
   const matchScore =
     viewer && viewer.id !== dto.id

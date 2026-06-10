@@ -508,7 +508,57 @@ export interface paths {
                 };
             };
         };
-        put?: never;
+        /**
+         * Update a listing (owner only)
+         * @description Accepts the full create field set; city art and geocode are regenerated only when the city changes.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ListingCreateDraft"];
+                };
+            };
+            responses: {
+                /** @description Updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListingCreateResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not the owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         post?: never;
         delete?: never;
         options?: never;
@@ -880,6 +930,9 @@ export interface components {
             washer: boolean;
             dryer: boolean;
             dishwasher: boolean;
+            gym?: boolean;
+            /** @description Street address — only returned to the listing's owner */
+            address?: string | null;
             /** @description yyyy-MM-dd */
             availableFrom: string;
             /** @description yyyy-MM-dd */

@@ -221,6 +221,8 @@ components:
         washer: { type: boolean }
         dryer: { type: boolean }
         dishwasher: { type: boolean }
+        gym: { type: boolean }
+        address: { type: string, nullable: true, description: "Street address — only returned to the listing's owner" }
         availableFrom: { type: string, description: 'yyyy-MM-dd' }
         availableTo: { type: string, description: 'yyyy-MM-dd' }
         minStayDays: { type: integer }
@@ -651,6 +653,27 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ListingDetailResponse' }
+        '404': { description: Not found }
+    put:
+      tags: [listings]
+      summary: Update a listing (owner only)
+      description: Accepts the full create field set; city art and geocode are regenerated only when the city changes.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ListingCreateDraft' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListingCreateResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the owner }
         '404': { description: Not found }
 
   /api/proposals:

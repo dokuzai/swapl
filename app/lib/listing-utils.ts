@@ -39,6 +39,9 @@ export type ListingDTO = {
   washer: boolean;
   dryer: boolean;
   dishwasher: boolean;
+  gym: boolean;
+  // Street address — only present for the listing's owner.
+  address: string | null;
   availableFrom: string;
   availableTo: string;
   minStayDays: number;
@@ -87,6 +90,8 @@ type ListingRecord = {
   washer: boolean;
   dryer: boolean;
   dishwasher: boolean;
+  gym: boolean;
+  address: string | null;
   availableFrom: Date;
   availableTo: Date;
   minStayDays: number;
@@ -103,7 +108,7 @@ type ListingRecord = {
   featuredUntil?: Date | null;
 };
 
-export function toDTO(l: ListingRecord): ListingDTO {
+export function toDTO(l: ListingRecord, opts?: { includeAddress?: boolean }): ListingDTO {
   return {
     id: l.id,
     userId: l.userId,
@@ -137,6 +142,8 @@ export function toDTO(l: ListingRecord): ListingDTO {
     washer: l.washer,
     dryer: l.dryer,
     dishwasher: l.dishwasher,
+    gym: l.gym,
+    address: opts?.includeAddress ? l.address : null,
     availableFrom: l.availableFrom.toISOString(),
     availableTo: l.availableTo.toISOString(),
     minStayDays: l.minStayDays,
