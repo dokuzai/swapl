@@ -55,6 +55,8 @@ Each app carries its own `vercel.json` (inside its directory, where Vercel reads
 
 ## Backend (app/) — how it works
 
+> Database schema map and ready-to-run control queries: [docs/DATABASE.md](DATABASE.md).
+
 Custom lightweight stack, no framework magic:
 
 - **Database** — Prisma. Two identical schemas: `prisma/schema.prisma` (SQLite, local dev) and `prisma/schema.postgres.prisma` (Postgres, production; selected automatically when `VERCEL` is set). Any model change must be applied to **both** files.
