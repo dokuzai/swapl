@@ -14,6 +14,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -37,74 +39,32 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.swapl.core.network.ApiClient
+import app.swapl.core.model.Listing
+import app.swapl.core.model.ListingCreateBody
+import app.swapl.core.repository.ListingRepository
 import app.swapl.design.components.DateField
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.PrimaryPill
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-// Matches lib/validators.ts listingCreateSchema exactly.
-@Serializable
-data class ListingCreateBody(
-    val title: String,
-    val description: String,
-    val propertyType: String,
-    val city: String,
-    val neighbourhood: String,
-    val country: String,
-    val address: String? = null,
-    val sizeSqm: Int,
-    val sleeps: Int,
-    val bedrooms: Int,
-    val bathrooms: Int,
-    val floor: Int? = null,
-    val hasElevator: Boolean = false,
-    val stepFreeAccess: Boolean = false,
-    val petsAllowed: Boolean = false,
-    val petTypes: List<String> = emptyList(),
-    val wfhSetup: Boolean = false,
-    val wfhDesks: Int = 0,
-    val hasParking: Boolean = false,
-    val bikeIncluded: Boolean = false,
-    val rooftop: Boolean = false,
-    val balcony: Boolean = false,
-    val garden: Boolean = false,
-    val courtyard: Boolean = false,
-    val piano: Boolean = false,
-    val pool: Boolean = false,
-    val gym: Boolean = false,
-    val ac: Boolean = false,
-    val dishwasher: Boolean = false,
-    val washer: Boolean = false,
-    val dryer: Boolean = false,
-    val availableFrom: String,
-    val availableTo: String,
-    val minStayDays: Int = 3,
-    val maxStayDays: Int = 30,
-    val photos: List<String> = emptyList(),
-    val tags: List<String> = emptyList(),
-)
-
-@Serializable
-private data class CreateResponse(val ok: Boolean, val id: String)
-
+// Drives both the create wizard ("new" route) and the edit wizard
+// ("edit/{listingId}" route — prefilled from GET, submitted via PUT).
 @HiltViewModel
 class ListingCreateViewModel @Inject constructor(
-    private val api: ApiClient,
+    private val repo: ListingRepository,
+    savedState: SavedStateHandle,
 ) : ViewModel() {
+
+    private val editListingId: String? = savedState["listingId"]
+    val isEditing: Boolean get() = editListingId != null
 
     // Step 1: Location
     var title by mutableStateOf("")
@@ -137,6 +97,7 @@ class ListingCreateViewModel @Inject constructor(
     var courtyard by mutableStateOf(false)
     var piano by mutableStateOf(false)
     var pool by mutableStateOf(false)
+    var gym by mutableStateOf(false)
     var ac by mutableStateOf(false)
     var dishwasher by mutableStateOf(false)
     var washer by mutableStateOf(false)
@@ -154,11 +115,75 @@ class ListingCreateViewModel @Inject constructor(
     // Step 7: Description (title is on step 1)
     var description by mutableStateOf("")
 
+    // Set on the server, not editable in the wizard — carried through on update
+    // so a PUT doesn't wipe them.
+    private var petTypes: List<String> = emptyList()
+    private var tags: List<String> = emptyList()
+
     // Wizard state
     var step by mutableStateOf(0)
+    var isLoading by mutableStateOf(false); private set
     var isSubmitting by mutableStateOf(false); private set
     var error by mutableStateOf<String?>(null); private set
     var createdId by mutableStateOf<String?>(null); private set
+
+    init {
+        editListingId?.let { id ->
+            viewModelScope.launch {
+                isLoading = true
+                try {
+                    prefill(repo.detail(id).listing)
+                } catch (t: Throwable) {
+                    error = t.message ?: "Could not load listing"
+                } finally {
+                    isLoading = false
+                }
+            }
+        }
+    }
+
+    // Maps a fetched listing onto the wizard draft. Dates arrive as ISO
+    // datetimes ("2026-08-01T00:00:00.000Z") and the steps work in YYYY-MM-DD.
+    private fun prefill(l: Listing) {
+        title = l.title
+        city = l.city
+        neighbourhood = l.neighbourhood
+        country = l.country
+        address = l.address.orEmpty()
+        propertyType = l.propertyType
+        sizeSqm = l.sizeSqm
+        bedrooms = l.bedrooms
+        bathrooms = l.bathrooms
+        sleeps = l.sleeps
+        floor = l.floor ?: 1
+        hasElevator = l.hasElevator
+        stepFreeAccess = l.stepFreeAccess
+        petsAllowed = l.petsAllowed
+        wfhSetup = l.wfhSetup
+        wfhDesks = l.wfhDesks
+        hasParking = l.hasParking
+        bikeIncluded = l.bikeIncluded
+        balcony = l.balcony
+        rooftop = l.rooftop
+        garden = l.garden
+        courtyard = l.courtyard
+        piano = l.piano
+        pool = l.pool
+        gym = l.gym
+        ac = l.ac
+        dishwasher = l.dishwasher
+        washer = l.washer
+        dryer = l.dryer
+        availableFrom = l.availableFrom.take(10)
+        availableTo = l.availableTo.take(10)
+        minStayDays = l.minStayDays
+        maxStayDays = l.maxStayDays
+        photoUrls.clear()
+        photoUrls.addAll(l.photos)
+        description = l.description
+        petTypes = l.petTypes
+        tags = l.tags
+    }
 
     val stepTitles = listOf(
         "Location",
@@ -201,6 +226,7 @@ class ListingCreateViewModel @Inject constructor(
                 hasElevator = hasElevator,
                 stepFreeAccess = stepFreeAccess,
                 petsAllowed = petsAllowed,
+                petTypes = petTypes,
                 wfhSetup = wfhSetup,
                 wfhDesks = wfhDesks,
                 hasParking = hasParking,
@@ -211,6 +237,7 @@ class ListingCreateViewModel @Inject constructor(
                 courtyard = courtyard,
                 piano = piano,
                 pool = pool,
+                gym = gym,
                 ac = ac,
                 dishwasher = dishwasher,
                 washer = washer,
@@ -220,11 +247,9 @@ class ListingCreateViewModel @Inject constructor(
                 minStayDays = minStayDays,
                 maxStayDays = maxStayDays,
                 photos = photoUrls.toList(),
+                tags = tags,
             )
-            val res: CreateResponse = api.client.post("${api.baseUrl}/api/listings") {
-                contentType(ContentType.Application.Json)
-                setBody(body)
-            }.body()
+            val res = editListingId?.let { repo.update(it, body) } ?: repo.create(body)
             createdId = res.id
         } catch (t: Throwable) {
             error = t.message ?: "Submit failed"
@@ -242,6 +267,13 @@ fun ListingCreateScreen(
 ) {
     if (vm.createdId != null) { onDone(); return }
 
+    if (vm.isLoading) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     Column(Modifier.fillMaxSize()) {
         // Progress header
         Column(
@@ -252,7 +284,10 @@ fun ListingCreateScreen(
                 progress = { (vm.step + 1f) / vm.stepTitles.size.toFloat() },
                 modifier = Modifier.fillMaxWidth(),
             )
-            KickerLabel("Step ${vm.step + 1} of ${vm.stepTitles.size}")
+            KickerLabel(
+                if (vm.isEditing) "Edit your home — step ${vm.step + 1} of ${vm.stepTitles.size}"
+                else "Step ${vm.step + 1} of ${vm.stepTitles.size}"
+            )
             Text(vm.stepTitles[vm.step], style = MaterialTheme.typography.displaySmall)
         }
 
@@ -295,7 +330,12 @@ fun ListingCreateScreen(
                 TextButton(onClick = { vm.next() }, enabled = vm.canProceed()) { Text("Next") }
             } else {
                 PrimaryPill(
-                    text = if (vm.isSubmitting) "Publishing…" else "Publish listing",
+                    text = when {
+                        vm.isSubmitting && vm.isEditing -> "Saving…"
+                        vm.isSubmitting -> "Publishing…"
+                        vm.isEditing -> "Save changes"
+                        else -> "Publish listing"
+                    },
                     onClick = { vm.submit() },
                     enabled = !vm.isSubmitting && vm.canProceed(),
                     modifier = Modifier.fillMaxWidth(0.6f),
@@ -354,6 +394,7 @@ private fun AmenitiesStep(vm: ListingCreateViewModel) {
     SwitchRow("Courtyard", vm.courtyard) { vm.courtyard = it }
     SwitchRow("Piano", vm.piano) { vm.piano = it }
     SwitchRow("Pool", vm.pool) { vm.pool = it }
+    SwitchRow("Gym", vm.gym) { vm.gym = it }
     SwitchRow("AC", vm.ac) { vm.ac = it }
     SwitchRow("Dishwasher", vm.dishwasher) { vm.dishwasher = it }
     SwitchRow("Washer", vm.washer) { vm.washer = it }

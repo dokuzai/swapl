@@ -22,6 +22,7 @@ class BrowseViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val error: String? = null,
         val filters: SearchFilters = SearchFilters(),
+        val viewerListingId: String? = null,
     )
 
     private val _state = MutableStateFlow(State())
@@ -32,7 +33,11 @@ class BrowseViewModel @Inject constructor(
             _state.value = _state.value.copy(isLoading = true, error = null)
             try {
                 val res = repo.search(_state.value.filters)
-                _state.value = _state.value.copy(items = res.items, isLoading = false)
+                _state.value = _state.value.copy(
+                    items = res.items,
+                    isLoading = false,
+                    viewerListingId = res.viewerListingId,
+                )
             } catch (t: Throwable) {
                 _state.value = _state.value.copy(isLoading = false, error = t.message)
             }

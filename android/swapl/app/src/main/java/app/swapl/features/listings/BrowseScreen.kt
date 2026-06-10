@@ -34,6 +34,7 @@ import app.swapl.designtokens.SwaplSpacing
 fun BrowseScreen(
     onOpen: (String) -> Unit = {},
     onNew: () -> Unit = {},
+    onEditOwn: (String) -> Unit = {},
     vm: BrowseViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -45,8 +46,15 @@ fun BrowseScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text("Browse", style = MaterialTheme.typography.displaySmall, modifier = Modifier.weight(1f))
-            androidx.compose.material3.TextButton(onClick = onNew) {
-                Text("+ List a home")
+            val ownListingId = state.viewerListingId
+            if (ownListingId != null) {
+                androidx.compose.material3.TextButton(onClick = { onEditOwn(ownListingId) }) {
+                    Text("Edit your home")
+                }
+            } else {
+                androidx.compose.material3.TextButton(onClick = onNew) {
+                    Text("+ List a home")
+                }
             }
         }
         LazyColumn(

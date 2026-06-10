@@ -137,15 +137,22 @@ private fun HomeShell(
                     BrowseScreen(
                         onOpen = { id -> browseNav.navigate("detail/$id") },
                         onNew = { browseNav.navigate("new") },
+                        onEditOwn = { id -> browseNav.navigate("edit/$id") },
                     )
                 }
                 composable("detail/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
-                    ListingDetailScreen(onOpenHost = { id -> browseNav.navigate("profile/$id") })
+                    ListingDetailScreen(
+                        onOpenHost = { id -> browseNav.navigate("profile/$id") },
+                        onEdit = { id -> browseNav.navigate("edit/$id") },
+                    )
                 }
                 composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
                     PublicProfileScreen(onOpenListing = { id -> browseNav.navigate("detail/$id") })
                 }
                 composable("new") {
+                    ListingCreateScreen(onDone = { browseNav.popBackStack() })
+                }
+                composable("edit/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
                     ListingCreateScreen(onDone = { browseNav.popBackStack() })
                 }
             }

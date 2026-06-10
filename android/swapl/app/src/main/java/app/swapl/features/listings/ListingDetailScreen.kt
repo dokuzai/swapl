@@ -58,6 +58,7 @@ class ListingDetailViewModel @Inject constructor(
 @Composable
 fun ListingDetailScreen(
     onOpenHost: (String) -> Unit = {},
+    onEdit: (String) -> Unit = {},
     vm: ListingDetailViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) { vm.load() }
@@ -66,6 +67,7 @@ fun ListingDetailScreen(
     var showReport by remember { mutableStateOf(false) }
 
     if (d == null) return
+    val isOwner = d.viewerListingId == d.listing.id
 
     Column(
         Modifier
@@ -97,10 +99,14 @@ fun ListingDetailScreen(
             }
         }
 
-        ProposeCta(d, onPropose = { showPropose = true })
+        if (isOwner) {
+            PrimaryPill("Edit listing", onClick = { onEdit(d.listing.id) })
+        } else {
+            ProposeCta(d, onPropose = { showPropose = true })
 
-        androidx.compose.material3.TextButton(onClick = { showReport = true }) {
-            Text("Report this listing", color = MaterialTheme.colorScheme.error)
+            androidx.compose.material3.TextButton(onClick = { showReport = true }) {
+                Text("Report this listing", color = MaterialTheme.colorScheme.error)
+            }
         }
     }
 

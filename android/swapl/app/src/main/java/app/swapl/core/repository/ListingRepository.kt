@@ -1,11 +1,18 @@
 package app.swapl.core.repository
 
+import app.swapl.core.model.ListingCreateBody
 import app.swapl.core.model.ListingDetailResponse
+import app.swapl.core.model.ListingMutationResponse
 import app.swapl.core.model.ListingSearchResponse
 import app.swapl.core.network.ApiClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,6 +35,19 @@ class ListingRepository @Inject constructor(private val api: ApiClient) {
 
     suspend fun detail(id: String): ListingDetailResponse =
         api.client.get("${api.baseUrl}/api/listings/$id").body()
+
+    suspend fun create(body: ListingCreateBody): ListingMutationResponse =
+        api.client.post("${api.baseUrl}/api/listings") {
+            contentType(ContentType.Application.Json)
+            setBody(body)
+        }.body()
+
+    // PUT /api/listings/{id} — owner only, same body as create.
+    suspend fun update(id: String, body: ListingCreateBody): ListingMutationResponse =
+        api.client.put("${api.baseUrl}/api/listings/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(body)
+        }.body()
 }
 
 data class SearchFilters(
