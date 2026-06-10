@@ -229,12 +229,21 @@ struct BrowseListView: View {
             .padding(.top, 18)
     }
 
-    // Map mode: floating Liquid Glass search bar (iOS 26) over the full-bleed map.
+    // Map mode: floating search bar over the full-bleed map — Liquid Glass on
+    // iOS 26, card-on-capsule fallback on earlier releases (target is 17.0).
     private var mapSearchHeader: some View {
-        searchBarContent
-            .glassEffect(.regular, in: Capsule())
-            .padding(.horizontal, 22)
-            .padding(.top, 10)
+        Group {
+            if #available(iOS 26.0, *) {
+                searchBarContent
+                    .glassEffect(.regular, in: Capsule())
+            } else {
+                searchBarContent
+                    .background(SwaplSemanticLight.card, in: Capsule())
+                    .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
+            }
+        }
+        .padding(.horizontal, 22)
+        .padding(.top, 10)
     }
 
     // Soft fade so the map recedes behind the floating search bar and status bar.

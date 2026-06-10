@@ -964,10 +964,19 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
     }
 
     private func resolve(_ location: CLLocation) async {
+        if #available(iOS 26.0, *) {
+            await resolveWithMapKit(location)
+        } else {
+            await resolveWithGeocoder(location)
+        }
+        isResolving = false
+    }
+
+    @available(iOS 26.0, *)
+    private func resolveWithMapKit(_ location: CLLocation) async {
         do {
             guard let request = MKReverseGeocodingRequest(location: location) else {
                 statusText = "Location found, but address lookup failed. Enter the address manually."
-                isResolving = false
                 return
             }
             let mapItem = try await request.mapItems.first
@@ -982,21 +991,42 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
                 .filter { !$0.isEmpty }
                 .uniqued()
                 .joined(separator: ", ")
-            let neighbourhood = inferNeighbourhood(from: address, fallback: city)
-
-            detectedAddress = DetectedHomeAddress(
-                city: city,
-                neighbourhood: neighbourhood,
-                country: country,
-                address: address,
-                latitude: location.coordinate.latitude,
-                longitude: location.coordinate.longitude
-            )
-            statusText = city.isEmpty ? "Location found. Add the address details manually." : "Filled from your current location."
+            apply(city: city, country: country, address: address, location: location)
         } catch {
             statusText = "Location found, but address lookup failed. Enter the address manually."
         }
-        isResolving = false
+    }
+
+    // Pre-iOS 26 fallback: CLGeocoder, same shape of result.
+    private func resolveWithGeocoder(_ location: CLLocation) async {
+        do {
+            let placemark = try await CLGeocoder().reverseGeocodeLocation(location).first
+            let city = placemark?.locality ?? placemark?.name ?? ""
+            let country = placemark?.country ?? ""
+            let street = [placemark?.thoroughfare, placemark?.subThoroughfare]
+                .compactMap { $0 }
+                .joined(separator: " ")
+            let address = [street, placemark?.postalCode ?? "", city]
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+                .uniqued()
+                .joined(separator: ", ")
+            apply(city: city, country: country, address: address, location: location)
+        } catch {
+            statusText = "Location found, but address lookup failed. Enter the address manually."
+        }
+    }
+
+    private func apply(city: String, country: String, address: String, location: CLLocation) {
+        detectedAddress = DetectedHomeAddress(
+            city: city,
+            neighbourhood: inferNeighbourhood(from: address, fallback: city),
+            country: country,
+            address: address,
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude
+        )
+        statusText = city.isEmpty ? "Location found. Add the address details manually." : "Filled from your current location."
     }
 
     private func inferNeighbourhood(from address: String, fallback: String) -> String {

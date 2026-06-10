@@ -3,76 +3,77 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		09510D369FFD86683685D48E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE15DAF7CB60D8091AAB48 /* Theme.swift */; };
-		0A51AF88E20341AC9B72A501 /* AirbnbStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51AF87E20341AC9B72A501 /* AirbnbStyle.swift */; };
+		10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */; };
 		12A73281C203C687F50C0A01 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DF9FF9E682ED439398C38D /* LoginView.swift */; };
 		1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC7EF0654A2A456B14E52A5 /* AuthService.swift */; };
 		23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967B9C41F5F9438E30143514 /* APIClient.swift */; };
 		274DA2C25CEC164CB11256CC /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FBD4B316B85673A7BD2D2E /* Auth.swift */; };
 		2E03DA0A20134F3722419077 /* Proposal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9105E39884B94E60E5BF0FCB /* Proposal.swift */; };
+		2E0FDD5F1194477B07D92AC2 /* SwaplCreateListingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */; };
+		36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E87AFF2208189D059454DA /* PublicProfileView.swift */; };
 		3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */; };
 		3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E0749085C3E362B239A25 /* ProposalRepository.swift */; };
+		4B3AD0F138265FA3B1D96DEF /* InterestsEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */; };
+		56E1320794D62E4631157BE8 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03C53186E434F889C543582 /* ProfileRepository.swift */; };
 		65EFA92459406FAB1651014D /* SurfaceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC848E7485CD6912E46E61BE /* SurfaceCard.swift */; };
 		6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEEE99CFDC981E6B91926F5 /* PushService.swift */; };
+		6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */; };
 		6FD9E408F7CFD3F2D3F0E862 /* Listing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC5F71B34111A6A25719F4 /* Listing.swift */; };
 		762691A8EE338BA81B65CA9B /* ListingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348C7476795E59B9F7C4360C /* ListingDetailView.swift */; };
-		802FC8A22FD769830058861E /* SwaplCreateListingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 802FC8A12FD769830058861E /* SwaplCreateListingIntent.swift */; };
-		802FC8A42FD769A10058861E /* SwaplCreateListingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 802FC8A32FD769A10058861E /* SwaplCreateListingView.swift */; };
 		817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E72A38E93BF07A269B5A860 /* AccountView.swift */; };
-		BBB0000000000000000B0001 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0001 /* Profile.swift */; };
-		BBB0000000000000000B0002 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0002 /* ProfileRepository.swift */; };
-		BBB0000000000000000B0003 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0003 /* ReportSheet.swift */; };
-		BBB0000000000000000B0004 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0004 /* SavedSearchesView.swift */; };
-		BBB0000000000000000B0005 /* PublicProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0005 /* PublicProfileView.swift */; };
-		BBB0000000000000000B0006 /* InterestsEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA0000000000000000F0006 /* InterestsEditorView.swift */; };
 		8631C6131E59F65FAD09B6D4 /* PrimaryPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD681952D45568C94F736A2 /* PrimaryPill.swift */; };
+		8A383874E740D799C701825A /* CHANGES.md in Resources */ = {isa = PBXBuildFile; fileRef = 81DB4250C505E12AA24FD3B8 /* CHANGES.md */; };
 		8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C16E51E119668C1E262BDB /* ListingRepository.swift */; };
 		8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988E469B97C24C69D3CF04E2 /* CityIllust.swift */; };
+		9FB201F3E3C6723A6627AD92 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B69502AE21A819387C19F /* ReportSheet.swift */; };
 		DA8C3FCC1426E8B95A52BD96 /* SwaplDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = A8D80844D3E9A3B2227C620A /* SwaplDesignTokens */; };
+		DACBA4DA3BDA42660BC27C0B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8479450F71641A8B608B52 /* Profile.swift */; };
 		DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */; };
 		EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */; };
 		F9616C2B39409158D02A511F /* SwaplApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C55A61B818770C1E2FFE8 /* SwaplApp.swift */; };
+		FBEF57AC2F8FBE1ACBAF6DAD /* AirbnbStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FAC49377D43C349AE9CEC3 /* AirbnbStyle.swift */; };
 		FFB628B21B3C9A6DA0C2BD15 /* KeychainTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0A51AF87E20341AC9B72A501 /* AirbnbStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirbnbStyle.swift; sourceTree = "<group>"; };
 		0FB5692D60E8AAFB8D3017D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		10FAC49377D43C349AE9CEC3 /* AirbnbStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirbnbStyle.swift; sourceTree = "<group>"; };
 		1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseListView.swift; sourceTree = "<group>"; };
+		13E87AFF2208189D059454DA /* PublicProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicProfileView.swift; sourceTree = "<group>"; };
+		166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsEditorView.swift; sourceTree = "<group>"; };
 		348C7476795E59B9F7C4360C /* ListingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingDetailView.swift; sourceTree = "<group>"; };
 		3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapsInboxView.swift; sourceTree = "<group>"; };
 		3EC7EF0654A2A456B14E52A5 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		482C55A61B818770C1E2FFE8 /* SwaplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplApp.swift; sourceTree = "<group>"; };
+		4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingView.swift; sourceTree = "<group>"; };
 		6E72A38E93BF07A269B5A860 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
-		AAA0000000000000000F0001 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
-		AAA0000000000000000F0002 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
-		AAA0000000000000000F0003 /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
-		AAA0000000000000000F0004 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
-		AAA0000000000000000F0005 /* PublicProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicProfileView.swift; sourceTree = "<group>"; };
-		AAA0000000000000000F0006 /* InterestsEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsEditorView.swift; sourceTree = "<group>"; };
-		802FC8A12FD769830058861E /* SwaplCreateListingIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingIntent.swift; sourceTree = "<group>"; };
-		802FC8A32FD769A10058861E /* SwaplCreateListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingView.swift; sourceTree = "<group>"; };
-		802FC8A52FD769F80058861E /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGES.md; sourceTree = "<group>"; };
+		781B69502AE21A819387C19F /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
+		81DB4250C505E12AA24FD3B8 /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGES.md; sourceTree = "<group>"; };
 		88FE15DAF7CB60D8091AAB48 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		9105E39884B94E60E5BF0FCB /* Proposal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proposal.swift; sourceTree = "<group>"; };
 		967B9C41F5F9438E30143514 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		988E469B97C24C69D3CF04E2 /* CityIllust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityIllust.swift; sourceTree = "<group>"; };
 		98DF9FF9E682ED439398C38D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		9CCC5F71B34111A6A25719F4 /* Listing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Listing.swift; sourceTree = "<group>"; };
-		A1E4A3420C9FC28FE105C9A4 /* Swapl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swapl.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingIntent.swift; sourceTree = "<group>"; };
+		A1E4A3420C9FC28FE105C9A4 /* Swapl.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Swapl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTokenStore.swift; sourceTree = "<group>"; };
 		A9FBD4B316B85673A7BD2D2E /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		B0C16E51E119668C1E262BDB /* ListingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingRepository.swift; sourceTree = "<group>"; };
 		B2ECF15F803E263DBFEB14FC /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = "../packages/design-tokens/build/swift"; sourceTree = SOURCE_ROOT; };
+		B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
 		B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplFonts.swift; sourceTree = "<group>"; };
 		BC848E7485CD6912E46E61BE /* SurfaceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurfaceCard.swift; sourceTree = "<group>"; };
 		CAEEE99CFDC981E6B91926F5 /* PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushService.swift; sourceTree = "<group>"; };
 		CCD681952D45568C94F736A2 /* PrimaryPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryPill.swift; sourceTree = "<group>"; };
+		F03C53186E434F889C543582 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
 		F39E0749085C3E362B239A25 /* ProposalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProposalRepository.swift; sourceTree = "<group>"; };
+		FC8479450F71641A8B608B52 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,8 +127,8 @@
 			isa = PBXGroup;
 			children = (
 				B0C16E51E119668C1E262BDB /* ListingRepository.swift */,
+				F03C53186E434F889C543582 /* ProfileRepository.swift */,
 				F39E0749085C3E362B239A25 /* ProposalRepository.swift */,
-				AAA0000000000000000F0002 /* ProfileRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -164,8 +165,8 @@
 			children = (
 				A9FBD4B316B85673A7BD2D2E /* Auth.swift */,
 				9CCC5F71B34111A6A25719F4 /* Listing.swift */,
+				FC8479450F71641A8B608B52 /* Profile.swift */,
 				9105E39884B94E60E5BF0FCB /* Proposal.swift */,
-				AAA0000000000000000F0001 /* Profile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -175,8 +176,8 @@
 			children = (
 				1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */,
 				348C7476795E59B9F7C4360C /* ListingDetailView.swift */,
-				802FC8A12FD769830058861E /* SwaplCreateListingIntent.swift */,
-				802FC8A32FD769A10058861E /* SwaplCreateListingView.swift */,
+				9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */,
+				4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */,
 			);
 			path = Listings;
 			sourceTree = "<group>";
@@ -185,10 +186,10 @@
 			isa = PBXGroup;
 			children = (
 				6E72A38E93BF07A269B5A860 /* AccountView.swift */,
-				AAA0000000000000000F0003 /* ReportSheet.swift */,
-				AAA0000000000000000F0004 /* SavedSearchesView.swift */,
-				AAA0000000000000000F0005 /* PublicProfileView.swift */,
-				AAA0000000000000000F0006 /* InterestsEditorView.swift */,
+				166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */,
+				13E87AFF2208189D059454DA /* PublicProfileView.swift */,
+				781B69502AE21A819387C19F /* ReportSheet.swift */,
+				B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -208,7 +209,7 @@
 		DC4B1C0567901A9F8715A839 /* Design */ = {
 			isa = PBXGroup;
 			children = (
-				0A51AF87E20341AC9B72A501 /* AirbnbStyle.swift */,
+				10FAC49377D43C349AE9CEC3 /* AirbnbStyle.swift */,
 				B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */,
 				88FE15DAF7CB60D8091AAB48 /* Theme.swift */,
 				514178AAFBA433B4FB51C2EE /* Components */,
@@ -220,8 +221,8 @@
 		E3F0605B68321C873190B989 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				81DB4250C505E12AA24FD3B8 /* CHANGES.md */,
 				482C55A61B818770C1E2FFE8 /* SwaplApp.swift */,
-				802FC8A52FD769F80058861E /* CHANGES.md */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -278,6 +279,7 @@
 			buildConfigurationList = C7BEB355E7564D701A27D3F8 /* Build configuration list for PBXNativeTarget "Swapl" */;
 			buildPhases = (
 				535C70920D4012563F61B995 /* Sources */,
+				17A1AA9EE9A6716C9D379526 /* Resources */,
 				41F063BFE64049F4CA08E977 /* Frameworks */,
 			);
 			buildRules = (
@@ -299,7 +301,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2650;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					4CEF102A42868339131384FC = {
 						ProvisioningStyle = Automatic;
@@ -319,6 +321,7 @@
 			packageReferences = (
 				BA51FFC53B11E9A73DE571C5 /* XCLocalSwiftPackageReference "../packages/design-tokens/build/swift" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -327,38 +330,49 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		17A1AA9EE9A6716C9D379526 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A383874E740D799C701825A /* CHANGES.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		535C70920D4012563F61B995 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */,
-				0A51AF88E20341AC9B72A501 /* AirbnbStyle.swift in Sources */,
 				817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */,
-				BBB0000000000000000B0001 /* Profile.swift in Sources */,
-				BBB0000000000000000B0002 /* ProfileRepository.swift in Sources */,
-				BBB0000000000000000B0003 /* ReportSheet.swift in Sources */,
-				BBB0000000000000000B0004 /* SavedSearchesView.swift in Sources */,
-				BBB0000000000000000B0005 /* PublicProfileView.swift in Sources */,
-				BBB0000000000000000B0006 /* InterestsEditorView.swift in Sources */,
+				FBEF57AC2F8FBE1ACBAF6DAD /* AirbnbStyle.swift in Sources */,
 				274DA2C25CEC164CB11256CC /* Auth.swift in Sources */,
 				1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */,
 				EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */,
 				8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */,
+				4B3AD0F138265FA3B1D96DEF /* InterestsEditorView.swift in Sources */,
 				FFB628B21B3C9A6DA0C2BD15 /* KeychainTokenStore.swift in Sources */,
 				6FD9E408F7CFD3F2D3F0E862 /* Listing.swift in Sources */,
 				762691A8EE338BA81B65CA9B /* ListingDetailView.swift in Sources */,
 				8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */,
 				12A73281C203C687F50C0A01 /* LoginView.swift in Sources */,
 				8631C6131E59F65FAD09B6D4 /* PrimaryPill.swift in Sources */,
+				DACBA4DA3BDA42660BC27C0B /* Profile.swift in Sources */,
+				56E1320794D62E4631157BE8 /* ProfileRepository.swift in Sources */,
 				2E03DA0A20134F3722419077 /* Proposal.swift in Sources */,
-				802FC8A22FD769830058861E /* SwaplCreateListingIntent.swift in Sources */,
 				3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */,
+				36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */,
 				6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */,
+				9FB201F3E3C6723A6627AD92 /* ReportSheet.swift in Sources */,
+				6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */,
 				65EFA92459406FAB1651014D /* SurfaceCard.swift in Sources */,
 				F9616C2B39409158D02A511F /* SwaplApp.swift in Sources */,
+				10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */,
+				2E0FDD5F1194477B07D92AC2 /* SwaplCreateListingView.swift in Sources */,
 				DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */,
-				802FC8A42FD769A10058861E /* SwaplCreateListingView.swift in Sources */,
 				3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */,
 				09510D369FFD86683685D48E /* Theme.swift in Sources */,
 			);
@@ -374,11 +388,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 65H83C7GYT;
 				INFOPLIST_FILE = Swapl/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Swapl;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -386,7 +397,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.swapl;
 				PRODUCT_NAME = Swapl;
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -395,7 +405,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -428,10 +437,8 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 65H83C7GYT;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -446,14 +453,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
@@ -467,11 +473,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 65H83C7GYT;
 				INFOPLIST_FILE = Swapl/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Swapl;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -479,7 +482,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.swapl;
 				PRODUCT_NAME = Swapl;
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -488,7 +490,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -521,10 +522,8 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 65H83C7GYT;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -533,13 +532,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.9;
