@@ -68,15 +68,17 @@ export default async function EditListingPage(props: PageProps<"/listings/[id]/e
                 {featuredActive ? "Manage →" : "From €19 →"}
               </span>
             </Link>
-          </div>
 
-          <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-            Editing the listing fields is coming next — for now you can re-publish via{" "}
-            <Link href="/listings/new" className="font-medium" style={{ color: "var(--pink)" }}>
-              /listings/new
+            <Link href={`/listings/${id}/edit/details`} className="surface-card p-6 block">
+              <h2 className="font-display text-xl tracking-[-0.01em] mb-2">Edit details</h2>
+              <p className="text-sm" style={{ color: "var(--navy-2)" }}>
+                Update photos, availability, amenities and description.
+              </p>
+              <span className="mt-3 inline-block font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--pink)" }}>
+                Edit →
+              </span>
             </Link>
-            .
-          </p>
+          </div>
         </div>
       </main>
       <Footer />

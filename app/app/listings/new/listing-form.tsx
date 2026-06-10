@@ -110,10 +110,99 @@ const STEPS = [
   "Review",
 ] as const;
 
-export default function ListingForm() {
+// Serializable slice of a Listing the edit page passes in. JSON-string columns
+// (photos/tags/petTypes) must already be parsed into arrays by the caller.
+export type ListingEditInitial = {
+  id: string;
+  title: string;
+  description: string;
+  propertyType: PropertyType;
+  city: string;
+  neighbourhood: string;
+  country: string;
+  address: string | null;
+  floor: number | null;
+  sizeSqm: number;
+  sleeps: number;
+  bedrooms: number;
+  bathrooms: number;
+  stepFreeAccess: boolean;
+  hasElevator: boolean;
+  petsAllowed: boolean;
+  petTypes: string[];
+  wfhSetup: boolean;
+  wfhDesks: number;
+  bikeIncluded: boolean;
+  hasParking: boolean;
+  balcony: boolean;
+  rooftop: boolean;
+  garden: boolean;
+  courtyard: boolean;
+  piano: boolean;
+  pool: boolean;
+  gym: boolean;
+  ac: boolean;
+  dishwasher: boolean;
+  washer: boolean;
+  dryer: boolean;
+  availableFrom: string; // ISO datetime
+  availableTo: string; // ISO datetime
+  minStayDays: number;
+  maxStayDays: number;
+  photos: string[];
+  tags: string[];
+};
+
+function stateFromListing(l: ListingEditInitial): FormState {
+  return {
+    city: l.city,
+    neighbourhood: l.neighbourhood,
+    country: l.country,
+    address: l.address ?? "",
+    floor: l.floor ?? 0,
+    propertyType: l.propertyType,
+    sizeSqm: l.sizeSqm,
+    bedrooms: l.bedrooms,
+    sleeps: l.sleeps,
+    bathrooms: l.bathrooms,
+    stepFreeAccess: l.stepFreeAccess,
+    hasElevator: l.hasElevator,
+    petsAllowed: l.petsAllowed,
+    petTypes: {
+      dogs: l.petTypes.includes("dogs"),
+      cats: l.petTypes.includes("cats"),
+      other: l.petTypes.includes("other"),
+    },
+    wfhSetup: l.wfhSetup,
+    wfhDesks: l.wfhDesks,
+    bikeIncluded: l.bikeIncluded,
+    hasParking: l.hasParking,
+    balcony: l.balcony,
+    rooftop: l.rooftop,
+    garden: l.garden,
+    courtyard: l.courtyard,
+    piano: l.piano,
+    pool: l.pool,
+    gym: l.gym,
+    ac: l.ac,
+    dishwasher: l.dishwasher,
+    washer: l.washer,
+    dryer: l.dryer,
+    availableFrom: l.availableFrom.slice(0, 10),
+    availableTo: l.availableTo.slice(0, 10),
+    minStayDays: l.minStayDays,
+    maxStayDays: l.maxStayDays,
+    photos: l.photos,
+    title: l.title,
+    description: l.description,
+  };
+}
+
+export default function ListingForm({ listing }: { listing?: ListingEditInitial }) {
   const router = useRouter();
+  const editing = Boolean(listing);
   const [step, setStep] = useState(0);
-  const [state, setState] = useState<FormState>(INITIAL);
+  const [state, setState] = useState<FormState>(() => (listing ? stateFromListing(listing) : INITIAL));
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
@@ -181,12 +270,14 @@ export default function ListingForm() {
       minStayDays: state.minStayDays,
       maxStayDays: state.maxStayDays,
       photos: state.photos,
-      tags: [], // derived from amenities — kept empty here, can be used for free-text tags later
+      // Free-text tags aren't editable in the form yet — keep what the
+      // listing already has when editing, empty on create.
+      tags: listing?.tags ?? [],
     };
 
     start(async () => {
-      const res = await fetch("/api/listings", {
-        method: "POST",
+      const res = await fetch(listing ? `/api/listings/${listing.id}` : "/api/listings", {
+        method: listing ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -196,14 +287,15 @@ export default function ListingForm() {
         router.refresh();
       } else {
         const j = await res.json().catch(() => ({}));
-        setError(j.error ?? "Could not publish listing");
+        setError(j.error ?? (listing ? "Could not save changes" : "Could not publish listing"));
       }
     });
   }
 
   return (
     <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-      <Sidebar step={step} onJump={(i) => i < step && setStep(i)} />
+      {/* When editing, every step already holds valid data — allow free jumps. */}
+      <Sidebar step={step} onJump={(i) => (editing || i < step) && setStep(i)} freeJump={editing} />
 
       <div className="surface-card p-7">
         <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1.5" style={{ color: "var(--navy-3)" }}>
@@ -218,7 +310,7 @@ export default function ListingForm() {
         {step === 4 && <AvailabilityStep state={state} set={set} />}
         {step === 5 && <PhotosStep state={state} set={set} />}
         {step === 6 && <DescriptionStep state={state} set={set} />}
-        {step === 7 && <ReviewStep state={state} />}
+        {step === 7 && <ReviewStep state={state} editing={editing} />}
 
         {error && <p className="text-sm mt-4" style={{ color: "#dc2626" }}>{error}</p>}
 
@@ -232,7 +324,7 @@ export default function ListingForm() {
             </button>
           ) : (
             <button onClick={submit} disabled={pending} className="pill-primary">
-              {pending ? "Publishing…" : "Publish listing"}
+              {pending ? (editing ? "Saving…" : "Publishing…") : editing ? "Save changes" : "Publish listing"}
             </button>
           )}
         </div>
@@ -241,7 +333,7 @@ export default function ListingForm() {
   );
 }
 
-function Sidebar({ step, onJump }: { step: number; onJump: (i: number) => void }) {
+function Sidebar({ step, onJump, freeJump = false }: { step: number; onJump: (i: number) => void; freeJump?: boolean }) {
   return (
     <aside className="lg:sticky lg:top-24 lg:self-start">
       <ol className="space-y-1">
@@ -256,7 +348,7 @@ function Sidebar({ step, onJump }: { step: number; onJump: (i: number) => void }
                 style={{
                   background: current ? "var(--pink-light)" : "transparent",
                   color: current ? "var(--navy)" : done ? "var(--navy-2)" : "var(--navy-3)",
-                  cursor: i <= step ? "pointer" : "default",
+                  cursor: freeJump || i <= step ? "pointer" : "default",
                 }}
               >
                 <span
@@ -820,7 +912,7 @@ function DescriptionStep({ state, set }: { state: FormState; set: <K extends key
   );
 }
 
-function ReviewStep({ state }: { state: FormState }) {
+function ReviewStep({ state, editing = false }: { state: FormState; editing?: boolean }) {
   return (
     <div className="space-y-5">
       <div className="surface-card p-5 space-y-2 text-sm">
@@ -833,7 +925,9 @@ function ReviewStep({ state }: { state: FormState }) {
         <Row label="Photos" value={`${state.photos.length} of 20`} />
       </div>
       <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-        Once published, your listing surfaces in browse and others can propose swaps. You can edit anything later.
+        {editing
+          ? "Saving updates your live listing immediately — browse, matches and your profile all reflect the changes."
+          : "Once published, your listing surfaces in browse and others can propose swaps. You can edit anything later."}
       </p>
     </div>
   );
