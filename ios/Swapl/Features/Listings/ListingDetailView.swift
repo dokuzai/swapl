@@ -38,13 +38,13 @@ struct ListingDetailView: View {
             if let detail = vm.detail {
                 listingContent(detail)
             } else if let error = vm.error {
-                ContentUnavailableView {
-                    Label("Home unavailable", systemImage: "exclamationmark.triangle")
-                } description: {
-                    Text(error)
-                } actions: {
-                    Button("Try Again") { Task { await vm.load() } }
-                }
+                SwaplEmptyState(
+                    systemImage: "exclamationmark.triangle",
+                    title: "Home unavailable",
+                    description: error,
+                    actionTitle: "Try Again",
+                    action: { Task { await vm.load() } }
+                )
                 .padding(.top, 80)
             } else {
                 ProgressView()

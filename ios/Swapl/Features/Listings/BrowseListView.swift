@@ -55,21 +55,23 @@ struct BrowseListView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .accessibilityLabel("Loading homes")
                 } else if let error = vm.error {
-                    ContentUnavailableView {
-                        Label("Homes unavailable", systemImage: "wifi.exclamationmark")
-                    } description: {
-                        Text(error)
-                    } actions: {
-                        Button("Try Again") { Task { await vm.load() } }
-                    }
+                    SwaplEmptyState(
+                        systemImage: "wifi.exclamationmark",
+                        title: "Homes unavailable",
+                        description: error,
+                        actionTitle: "Try Again",
+                        action: { Task { await vm.load() } }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if vm.items.isEmpty {
-                    ContentUnavailableView {
-                        Label("No homes found", systemImage: "house")
-                    } description: {
-                        Text("Try a different city, date range, or sort order.")
-                    } actions: {
-                        Button("Refresh") { Task { await vm.load() } }
-                    }
+                    SwaplEmptyState(
+                        systemImage: "house",
+                        title: "No homes found",
+                        description: "Try a different city, date range, or sort order.",
+                        actionTitle: "Refresh",
+                        action: { Task { await vm.load() } }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ZStack(alignment: .bottom) {
                         if viewMode == .map {
@@ -128,9 +130,8 @@ struct BrowseListView: View {
                 Text(viewMode == .list ? "Map" : "List")
                 Image(systemName: viewMode == .list ? "map.fill" : "list.bullet")
             }
-            .font(.subheadline)
-            .fontWeight(.bold)
-            .foregroundStyle(.white)
+            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+            .foregroundStyle(SwaplSemanticLight.primaryForeground)
             .padding(.horizontal, 22)
             .padding(.vertical, 14)
             .background(AirbnbPalette.text, in: Capsule())
@@ -147,17 +148,15 @@ struct BrowseListView: View {
                     .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
                 VStack(alignment: .leading, spacing: 6) {
                     Text("\(item.listing.neighbourhood), \(item.listing.city)")
-                        .font(.body)
-                        .fontWeight(.semibold)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(1)
                     Text("\(item.listing.sleeps) guests · \(item.listing.bedrooms) beds")
-                        .font(.caption)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                     if let score = item.matchScore {
                         Text("\(score)% match")
-                            .font(.caption2)
-                            .fontWeight(.bold)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
                             .foregroundStyle(AirbnbPalette.text)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 5)
@@ -198,11 +197,9 @@ struct BrowseListView: View {
     private var searchBarContent: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
-                .font(.title3)
-                .fontWeight(.semibold)
+                .font(.system(size: 20, weight: .semibold))
             Text("Start your search")
-                .font(.body)
-                .fontWeight(.semibold)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
             Spacer()
             Menu {
                 sortButton("Best match", value: "match")
@@ -210,8 +207,7 @@ struct BrowseListView: View {
                 sortButton("Largest", value: "size_desc")
             } label: {
                 Image(systemName: "slider.horizontal.3")
-                    .font(.body)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
             }
         }
@@ -274,8 +270,7 @@ struct BrowseListView: View {
             Image(systemName: icon)
                 .font(.system(size: 26, weight: .regular))
             Text(title)
-                .font(.caption)
-                .fontWeight(.semibold)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
             Rectangle()
                 .fill(selected ? AirbnbPalette.text : .clear)
                 .frame(width: 42, height: 3)
@@ -289,12 +284,11 @@ struct BrowseListView: View {
             HStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Continue planning your \(item.listing.city) swap")
-                        .font(.title3)
-                        .fontWeight(.bold)
+                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(2)
                     Text("\(item.listing.sleeps) guests")
-                        .font(.subheadline)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                 }
                 Spacer()
@@ -318,13 +312,11 @@ struct BrowseListView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text(title)
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Spacer()
                 Image(systemName: "arrow.right")
-                    .font(.body)
-                    .fontWeight(.bold)
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(width: 42, height: 42)
                     .background(AirbnbPalette.softBackground, in: Circle())

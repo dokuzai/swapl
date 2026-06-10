@@ -218,13 +218,10 @@ struct AirbnbPlaceholderView: View {
 
     var body: some View {
         NavigationStack {
-            ContentUnavailableView {
-                Label(title, systemImage: systemImage)
-            } description: {
-                Text(message)
-            }
-            .navigationTitle(title)
-            .background(SwaplSemanticLight.background)
+            SwaplEmptyState(systemImage: systemImage, title: title, description: message)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationTitle(title)
+                .background(SwaplSemanticLight.background)
         }
     }
 }

@@ -87,6 +87,10 @@ struct ExtractedListingInfo: Codable {
 }
 
 // MARK: - Create Listing Snippet View
+// NOTE: This snippet is rendered out-of-process by Siri/Shortcuts (ShowsSnippetView),
+// where the brand fonts registered at app launch (CTFontManagerRegisterFontsForURL,
+// .process scope) are not available. System text styles are intentional here —
+// the swapl typography guideline does not apply to App Intents snippet UI.
 struct CreateListingSnippet: View {
     let startDate: Date?
     let endDate: Date?

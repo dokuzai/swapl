@@ -30,6 +30,7 @@
 		8A383874E740D799C701825A /* CHANGES.md in Resources */ = {isa = PBXBuildFile; fileRef = 81DB4250C505E12AA24FD3B8 /* CHANGES.md */; };
 		8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C16E51E119668C1E262BDB /* ListingRepository.swift */; };
 		8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988E469B97C24C69D3CF04E2 /* CityIllust.swift */; };
+		91F501F91EB061312E6E69A5 /* SwaplEmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */; };
 		9FB201F3E3C6723A6627AD92 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B69502AE21A819387C19F /* ReportSheet.swift */; };
 		DA8C3FCC1426E8B95A52BD96 /* SwaplDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = A8D80844D3E9A3B2227C620A /* SwaplDesignTokens */; };
 		DACBA4DA3BDA42660BC27C0B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8479450F71641A8B608B52 /* Profile.swift */; };
@@ -53,6 +54,7 @@
 		4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingView.swift; sourceTree = "<group>"; };
 		6E72A38E93BF07A269B5A860 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		781B69502AE21A819387C19F /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
+		7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplEmptyState.swift; sourceTree = "<group>"; };
 		81DB4250C505E12AA24FD3B8 /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGES.md; sourceTree = "<group>"; };
 		88FE15DAF7CB60D8091AAB48 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		9105E39884B94E60E5BF0FCB /* Proposal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proposal.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			children = (
 				CCD681952D45568C94F736A2 /* PrimaryPill.swift */,
 				BC848E7485CD6912E46E61BE /* SurfaceCard.swift */,
+				7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -372,6 +375,7 @@
 				F9616C2B39409158D02A511F /* SwaplApp.swift in Sources */,
 				10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */,
 				2E0FDD5F1194477B07D92AC2 /* SwaplCreateListingView.swift in Sources */,
+				91F501F91EB061312E6E69A5 /* SwaplEmptyState.swift in Sources */,
 				DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */,
 				3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */,
 				09510D369FFD86683685D48E /* Theme.swift in Sources */,

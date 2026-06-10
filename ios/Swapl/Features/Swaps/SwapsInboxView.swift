@@ -48,19 +48,21 @@ struct SwapsInboxView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .accessibilityLabel("Loading messages")
                 } else if let error = vm.error {
-                    ContentUnavailableView {
-                        Label("Messages unavailable", systemImage: "wifi.exclamationmark")
-                    } description: {
-                        Text(error)
-                    } actions: {
-                        Button("Try Again") { Task { await vm.load() } }
-                    }
+                    SwaplEmptyState(
+                        systemImage: "wifi.exclamationmark",
+                        title: "Messages unavailable",
+                        description: error,
+                        actionTitle: "Try Again",
+                        action: { Task { await vm.load() } }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if vm.proposals.isEmpty {
-                    ContentUnavailableView {
-                        Label("No messages yet", systemImage: "message")
-                    } description: {
-                        Text("When you send or receive a proposal, it appears here.")
-                    }
+                    SwaplEmptyState(
+                        systemImage: "message",
+                        title: "No messages yet",
+                        description: "When you send or receive a proposal, it appears here."
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     messagesContent
                 }
@@ -197,14 +199,14 @@ struct ProposalAvatar: View {
                 .fill(cityColor(proposal.theirCity))
             Text(String(proposal.theirCity.prefix(1)))
                 .font(.swaplDisplay(30, weight: .semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(SwaplSemanticLight.primaryForeground)
             Circle()
                 .fill(SwaplSemanticLight.primary)
                 .frame(width: 28, height: 28)
                 .overlay(
                     Text(String((proposal.otherName ?? proposal.myCity).prefix(1)))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(SwaplSemanticLight.primaryForeground)
                 )
                 .overlay(Circle().stroke(.white, lineWidth: 3))
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
@@ -291,13 +293,13 @@ struct ProposalDetailView: View {
                     .padding(40)
                     .accessibilityLabel("Loading trip")
             } else if let error = vm.error {
-                ContentUnavailableView {
-                    Label("Trip unavailable", systemImage: "exclamationmark.triangle")
-                } description: {
-                    Text(error)
-                } actions: {
-                    Button("Try Again") { Task { await vm.load() } }
-                }
+                SwaplEmptyState(
+                    systemImage: "exclamationmark.triangle",
+                    title: "Trip unavailable",
+                    description: error,
+                    actionTitle: "Try Again",
+                    action: { Task { await vm.load() } }
+                )
                 .padding(.top, 80)
             } else if let detail = vm.detail {
                 tripContent(detail)
