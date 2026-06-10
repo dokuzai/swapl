@@ -1,6 +1,9 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { getCachedCityMedia } from "@/lib/city-media";
+import { DiscoverCity, DiscoverCitySkeleton } from "@/components/listing/discover-city";
 import { toDTO, formatDateRange, amenityChips } from "@/lib/listing-utils";
 import { CityIllust, SwapArrows, Pin } from "@/components/illustrations";
 import { propertyLabel } from "@/lib/types";
@@ -69,6 +72,11 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
 
   const chips = amenityChips(dto);
 
+  // Real city photo for the hero — cached-only read (no upstream fetch, so
+  // the page never blocks). The Discover section below does the full
+  // read-through fetch inside <Suspense>, which populates this cache.
+  const cityHeroPhoto = dto.photos.length === 0 ? (await getCachedCityMedia(dto.city, dto.country))[0] ?? null : null;
+
   return (
     <div className="wrap py-10 lg:py-14">
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
@@ -77,7 +85,26 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
             className="surface-card overflow-hidden mb-8 aspect-[16/10] relative"
             style={{ background: "var(--cream-2)" }}
           >
-            <CityIllust city={dto.city} palette={dto.palette} motif={dto.motif} postcard={dto.postcard} />
+            {cityHeroPhoto ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={cityHeroPhoto.url}
+                  alt={cityHeroPhoto.alt}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {/* Postcard stamp shrinks to an overlay badge over the real photo. */}
+                <div
+                  className="absolute bottom-3 right-3 w-24 sm:w-28 aspect-[16/10] rounded-2xl overflow-hidden border shadow-sm"
+                  style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}
+                  aria-hidden="true"
+                >
+                  <CityIllust city={dto.city} palette={dto.palette} motif={dto.motif} postcard={dto.postcard} />
+                </div>
+              </>
+            ) : (
+              <CityIllust city={dto.city} palette={dto.palette} motif={dto.motif} postcard={dto.postcard} />
+            )}
             {matchScore !== null && (
               <span className="absolute top-4 left-4 match-badge text-sm py-1 px-3">{matchScore}% match</span>
             )}
@@ -144,6 +171,10 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               {formatDateRange(dto.availableFrom, dto.availableTo)} · stays from {dto.minStayDays}–{dto.maxStayDays} days
             </p>
           </Section>
+
+          <Suspense fallback={<DiscoverCitySkeleton city={dto.city} />}>
+            <DiscoverCity city={dto.city} country={dto.country} />
+          </Suspense>
         </div>
 
         <aside className="space-y-5">

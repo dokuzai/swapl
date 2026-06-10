@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/session";
 import SortControl from "./sort-control";
 import ViewToggle from "./view-toggle";
 import { ListingsMap } from "@/components/map/listings-map";
+import { getCachedCityMediaMap, cityMediaKey } from "@/lib/city-media";
 import { getDictionary, t as tt } from "@/lib/i18n/server";
 
 export const metadata = {
@@ -28,6 +29,12 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
   const { items, total, pageSize, page } = await queryListings(filters, viewerListing);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const dict = await getDictionary();
+
+  // Cached-only city photos for cards (single query, no upstream fetch —
+  // the cache is populated by listing detail page views).
+  const cityMedia = await getCachedCityMediaMap(
+    items.map(({ listing }) => ({ city: listing.city, country: listing.country }))
+  );
 
   return (
     <div className="wrap py-10 lg:py-14">
@@ -93,7 +100,12 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {items.map(({ listing, matchScore }) => (
-                <ListingCard key={listing.id} listing={listing} matchScore={matchScore} />
+                <ListingCard
+                  key={listing.id}
+                  listing={listing}
+                  matchScore={matchScore}
+                  cityPhoto={cityMedia.get(cityMediaKey(listing.city, listing.country))?.[0] ?? null}
+                />
               ))}
             </div>
           )}

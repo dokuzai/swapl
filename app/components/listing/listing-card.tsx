@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CityIllust, Pin } from "@/components/illustrations";
 import { type ListingDTO, formatDateRange, amenityChips } from "@/lib/listing-utils";
+import type { CityPhoto } from "@/lib/city-media/types";
 import { propertyLabel } from "@/lib/types";
 import { VerifiedBadge, FeaturedRibbon } from "@/components/listing/badges";
 
@@ -8,12 +9,19 @@ export function ListingCard({
   listing,
   matchScore,
   hrefSuffix,
+  cityPhoto,
 }: {
   listing: ListingDTO;
   matchScore?: number | null;
   hrefSuffix?: string;
+  /** Cached real city photo — used when the listing has no photos of its own. */
+  cityPhoto?: CityPhoto | null;
 }) {
   const chips = amenityChips(listing).slice(0, 3);
+  // Cover priority: the listing's own first photo → a real city photo →
+  // today's postcard illustration.
+  const coverUrl = listing.photos[0] ?? cityPhoto?.url ?? null;
+  const coverAlt = listing.photos[0] ? `${listing.title} in ${listing.city}` : cityPhoto?.alt ?? "";
   return (
     <Link
       href={`/listings/${listing.id}${hrefSuffix ?? ""}`}
@@ -21,12 +29,22 @@ export function ListingCard({
       aria-label={`${listing.title} in ${listing.city}`}
     >
       <div className="aspect-[16/10] relative overflow-hidden" style={{ background: "var(--cream-2)" }}>
-        <CityIllust
-          city={listing.city}
-          palette={listing.palette}
-          motif={listing.motif}
-          postcard={listing.postcard}
-        />
+        {coverUrl ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={coverUrl}
+            alt={coverAlt}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <CityIllust
+            city={listing.city}
+            palette={listing.palette}
+            motif={listing.motif}
+            postcard={listing.postcard}
+          />
+        )}
         {typeof matchScore === "number" && (
           <span className="absolute top-3 left-3 match-badge">{matchScore}% match</span>
         )}

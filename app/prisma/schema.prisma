@@ -344,6 +344,20 @@ model CityArt {
   createdAt DateTime @default(now())
 }
 
+// Cached real-photo sets per city, fetched server-side from a stock/wiki
+// provider (Pexels / Unsplash / Wikimedia). `photos` is a JSON-encoded array
+// of normalized CityPhoto objects (lib/city-media). 30-day TTL on fetchedAt.
+model CityMedia {
+  id        String   @id @default(cuid())
+  city      String
+  country   String
+  photos    String   // JSON array of { url, width, height, alt, photographer?, photographerUrl?, sourceUrl?, provider }
+  provider  String   // pexels | unsplash | wikimedia
+  fetchedAt DateTime @default(now())
+
+  @@unique([city, country])
+}
+
 model Report {
   id           String   @id @default(cuid())
   reporterId   String
