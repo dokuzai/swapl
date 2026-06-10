@@ -25,8 +25,10 @@ final class ListingDetailViewModel {
 }
 
 struct ListingDetailView: View {
+    @Environment(AuthService.self) private var auth
     @State private var vm: ListingDetailViewModel
     @State private var isShowingProposalSheet = false
+    @State private var isEditingListing = false
     @State private var sentProposalId: String?
 
     init(listingId: String) {
@@ -57,7 +59,18 @@ struct ListingDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             if let detail = vm.detail {
-                proposalCTA(detail)
+                if isOwner(detail) {
+                    ownerCTA(detail)
+                } else {
+                    proposalCTA(detail)
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $isEditingListing) {
+            if let listing = vm.detail?.listing {
+                ListingCreationView(editing: listing) {
+                    Task { await vm.load() }
+                }
             }
         }
         .sheet(isPresented: $isShowingProposalSheet) {
@@ -190,6 +203,42 @@ struct ListingDetailView: View {
             }
         }
         .padding(.horizontal, 22)
+    }
+
+    private func isOwner(_ detail: ListingDetailResponse) -> Bool {
+        guard let userId = auth.session?.id else { return false }
+        return detail.listing.userId == userId
+    }
+
+    // Shown instead of the proposal bar when the viewer owns this listing.
+    private func ownerCTA(_ detail: ListingDetailResponse) -> some View {
+        HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("This is your home")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Text("Update details, photos and dates")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            Spacer()
+            Button {
+                isEditingListing = true
+            } label: {
+                Label("Edit listing", systemImage: "square.and.pencil")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                    .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                    .padding(.horizontal, 22)
+                    .padding(.vertical, 15)
+                    .background(SwaplSemanticLight.primary, in: Capsule())
+            }
+        }
+        .padding(.horizontal, 22)
+        .padding(.vertical, 14)
+        .background(SwaplSemanticLight.card)
+        .overlay(alignment: .top) {
+            AirbnbPalette.hairline.frame(height: 1)
+        }
     }
 
     private func proposalCTA(_ detail: ListingDetailResponse) -> some View {

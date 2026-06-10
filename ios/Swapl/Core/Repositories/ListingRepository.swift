@@ -17,6 +17,10 @@ final class ListingRepository: @unchecked Sendable {
     func create(_ draft: ListingCreateDraft) async throws -> ListingCreateResponse {
         try await APIClient.shared.send("POST", "/api/listings", body: draft)
     }
+
+    func update(id: String, _ draft: ListingCreateDraft) async throws -> ListingCreateResponse {
+        try await APIClient.shared.send("PUT", "/api/listings/\(id)", body: draft)
+    }
 }
 
 struct ListingCreateResponse: Decodable, Sendable {

@@ -9,6 +9,8 @@ struct AccountView: View {
     @Environment(AuthService.self) private var auth
     @State private var isConfirmingSignOut = false
     @State private var isCreatingListing = false
+    @State private var myListing: Listing?
+    @State private var editingListing: Listing?
 
     var body: some View {
         NavigationStack {
@@ -49,9 +51,17 @@ struct AccountView: View {
                 .padding(.bottom, 18)
             }
             .toolbar(.hidden, for: .navigationBar)
-            .fullScreenCover(isPresented: $isCreatingListing) {
+            .fullScreenCover(isPresented: $isCreatingListing, onDismiss: {
+                Task { await loadMyListing() }
+            }) {
                 ListingCreationView()
             }
+            .fullScreenCover(item: $editingListing) { listing in
+                ListingCreationView(editing: listing) {
+                    Task { await loadMyListing() }
+                }
+            }
+            .task { await loadMyListing() }
             .confirmationDialog("Sign out of Swapl?", isPresented: $isConfirmingSignOut, titleVisibility: .visible) {
                 Button("Sign out", role: .destructive) {
                     Task { await auth.signOut() }
@@ -152,23 +162,28 @@ struct AccountView: View {
 
     private var becomeHostCard: some View {
         Button {
-            isCreatingListing = true
+            if let myListing {
+                editingListing = myListing
+            } else {
+                isCreatingListing = true
+            }
         } label: {
             HStack(spacing: 18) {
                 ZStack {
                     RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
                         .fill(SwaplSemanticLight.accent)
-                    Image(systemName: "house.and.flag")
+                    Image(systemName: myListing == nil ? "house.and.flag" : "square.and.pencil")
                         .font(.system(size: 32, weight: .semibold))
                         .foregroundStyle(SwaplSemanticLight.primary)
                 }
                 .frame(width: 86, height: 86)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Become a host")
+                    Text(myListing == nil ? "Become a host" : "Edit your home")
                         .font(.swaplDisplay(23, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
-                    Text("Create your home listing and start proposing swaps.")
+                    Text(myListing.map { "Update \"\($0.title)\" — photos, dates, amenities." }
+                        ?? "Create your home listing and start proposing swaps.")
                         .font(.swaplBody(15))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
@@ -258,6 +273,23 @@ struct AccountView: View {
         }
     }
 
+    // The user's own published listing, if any. The search response carries
+    // viewerListingId (the session user's active listing); the detail endpoint
+    // then provides the full model used to prefill the edit wizard.
+    private func loadMyListing() async {
+        guard auth.session != nil else { return }
+        do {
+            let search = try await ListingRepository.shared.search(filters: SearchFilters())
+            guard let id = search.viewerListingId else {
+                myListing = nil
+                return
+            }
+            myListing = try await ListingRepository.shared.detail(id: id).listing
+        } catch {
+            // Non-fatal: the card simply stays in "Become a host" mode.
+        }
+    }
+
     private var displayName: String {
         auth.session?.name ?? auth.session?.email.components(separatedBy: "@").first ?? "Guest"
     }
@@ -316,11 +348,26 @@ struct ListingCreationView: View {
     @State private var photoItems: [PhotosPickerItem] = []
     @State private var uploadingPhotos = false
 
+    // Edit mode: when set, the wizard is prefilled from the published listing
+    // and submit issues PUT /api/listings/{id} instead of POST /api/listings.
+    private let editingListingId: String?
+    private let onSaved: (() -> Void)?
+
     private let steps = ["Location", "Space", "Amenities", "Dates", "Review"]
 
     init(extractedInfo: ExtractedListingInfo? = nil) {
+        editingListingId = nil
+        onSaved = nil
         _draft = State(initialValue: ListingCreationDraft(extractedInfo: extractedInfo))
     }
+
+    init(editing listing: Listing, onSaved: (() -> Void)? = nil) {
+        editingListingId = listing.id
+        self.onSaved = onSaved
+        _draft = State(initialValue: ListingCreationDraft(listing: listing))
+    }
+
+    private var isEditing: Bool { editingListingId != nil }
 
     var body: some View {
         NavigationStack {
@@ -347,10 +394,13 @@ struct ListingCreationView: View {
             .safeAreaInset(edge: .bottom) {
                 bottomBar
             }
-            .alert("Listing published", isPresented: createdBinding) {
-                Button("Done") { dismiss() }
+            .alert(isEditing ? "Changes saved" : "Listing published", isPresented: createdBinding) {
+                Button("Done") {
+                    onSaved?()
+                    dismiss()
+                }
             } message: {
-                Text("Your home is now ready for swaps.")
+                Text(isEditing ? "Your listing has been updated." : "Your home is now ready for swaps.")
             }
             .toolbar(.hidden, for: .navigationBar)
             .onChange(of: locationService.detectedAddress) { _, address in
@@ -372,7 +422,7 @@ struct ListingCreationView: View {
                     .background(SwaplSemanticLight.card, in: Circle())
             }
             Spacer()
-            Text("Create listing")
+            Text(isEditing ? "Edit your home" : "Create listing")
                 .font(.swaplBody(17, weight: .bold))
                 .foregroundStyle(AirbnbPalette.text)
             Spacer()
@@ -492,7 +542,7 @@ struct ListingCreationView: View {
             PhotosPicker(selection: $photoItems, maxSelectionCount: 10, matching: .images) {
                 HStack(spacing: 10) {
                     Image(systemName: "photo.on.rectangle.angled")
-                    Text(draft.photos.isEmpty ? "Add photos" : "Add or replace photos")
+                    Text(draft.photos.isEmpty ? "Add photos" : "Add more photos")
                 }
                 .font(.swaplBody(15, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
@@ -515,8 +565,21 @@ struct ListingCreationView: View {
                             }
                             .frame(width: 84, height: 84)
                             .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.small, style: .continuous))
+                            .overlay(alignment: .topTrailing) {
+                                Button {
+                                    draft.photos.removeAll { $0 == url }
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(SwaplSemanticLight.primaryForeground, Color.black.opacity(0.55))
+                                        .padding(4)
+                                }
+                                .accessibilityLabel("Remove photo")
+                            }
                         }
                     }
+                    .padding(.vertical, 4)
                 }
                 Text("\(draft.photos.count) photo\(draft.photos.count == 1 ? "" : "s") uploaded")
                     .font(.swaplBody(13))
@@ -546,7 +609,12 @@ struct ListingCreationView: View {
                 self.error = "Couldn't upload a photo. Check your connection and try again."
             }
         }
-        if !urls.isEmpty { draft.photos = urls }
+        if !urls.isEmpty {
+            // Append so existing (already-published) photos survive an edit;
+            // each thumbnail has its own remove button.
+            draft.photos.append(contentsOf: urls.filter { !draft.photos.contains($0) })
+        }
+        photoItems = []
     }
 
     // Re-encode to a reasonably-sized JPEG so HEIC/large originals upload
@@ -584,7 +652,9 @@ struct ListingCreationView: View {
                     .stroke(AirbnbPalette.hairline)
             }
 
-            Text("Once published, your listing appears in Browse and can be used in swap proposals.")
+            Text(isEditing
+                ? "Saving updates your published listing right away — guests browsing Swapl will see the new details."
+                : "Once published, your listing appears in Browse and can be used in swap proposals.")
                 .font(.swaplBody(15))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .padding(.horizontal, 4)
@@ -612,7 +682,7 @@ struct ListingCreationView: View {
             } label: {
                 HStack {
                     if isPublishing { ProgressView().tint(SwaplSemanticLight.primaryForeground) }
-                    Text(step == steps.count - 1 ? "Publish" : "Continue")
+                    Text(step == steps.count - 1 ? (isEditing ? "Save changes" : "Publish") : "Continue")
                 }
                 .font(.swaplBody(16, weight: .bold))
                 .foregroundStyle(SwaplSemanticLight.primaryForeground)
@@ -668,10 +738,19 @@ struct ListingCreationView: View {
         error = nil
         defer { isPublishing = false }
         do {
-            let response = try await ListingRepository.shared.create(draft.payload)
+            let response: ListingCreateResponse
+            if let editingListingId {
+                response = try await ListingRepository.shared.update(id: editingListingId, draft.payload)
+            } else {
+                response = try await ListingRepository.shared.create(draft.payload)
+            }
             createdListingId = response.id
         } catch APIClient.APIError.status(403, _) {
-            self.error = "Verify your email before publishing — see the banner at the top of the app."
+            self.error = isEditing
+                ? "You can only edit your own listing."
+                : "Verify your email before publishing — see the banner at the top of the app."
+        } catch APIClient.APIError.status(404, _) where isEditing {
+            self.error = "This listing no longer exists."
         } catch APIClient.APIError.status(402, _) {
             self.error = "You've reached your plan's listing limit. Upgrade to publish more homes."
         } catch {
@@ -719,7 +798,68 @@ private struct ListingCreationDraft {
     var maxStayDays = 30
     var photos: [String] = []
 
+    // Fields the wizard has no UI for. They keep their create-flow defaults,
+    // but in edit mode they carry the published listing's values so a save
+    // doesn't silently wipe them.
+    var floor: Int?
+    var petTypes: [String] = []
+    var wfhDesks = 0
+    var hasParking = false
+    var bikeIncluded = false
+    var rooftop = false
+    var garden = false
+    var courtyard = false
+    var piano = false
+    var pool = false
+    var dryer = false
+    var gym = false
+    var tags: [String] = []
+
     init() {}
+
+    // Prefill from a published listing (edit mode).
+    init(listing: Listing) {
+        self.init()
+        gym = listing.gym ?? false
+        address = listing.address ?? ""
+        city = listing.city
+        neighbourhood = listing.neighbourhood
+        country = listing.country
+        lat = listing.lat
+        lng = listing.lng
+        title = listing.title
+        description = listing.description
+        propertyType = listing.propertyType
+        sizeSqm = listing.sizeSqm
+        sleeps = listing.sleeps
+        bedrooms = listing.bedrooms
+        bathrooms = listing.bathrooms
+        floor = listing.floor
+        hasElevator = listing.hasElevator
+        stepFreeAccess = listing.stepFreeAccess
+        petsAllowed = listing.petsAllowed
+        petTypes = listing.petTypes.filter { ["dogs", "cats", "other"].contains($0) }
+        wfhSetup = listing.wfhSetup
+        wfhDesks = listing.wfhDesks
+        hasParking = listing.hasParking
+        bikeIncluded = listing.bikeIncluded
+        rooftop = listing.rooftop
+        balcony = listing.balcony
+        garden = listing.garden
+        courtyard = listing.courtyard
+        piano = listing.piano
+        pool = listing.pool
+        ac = listing.ac
+        washer = listing.washer
+        dryer = listing.dryer
+        dishwasher = listing.dishwasher
+        if let from = SwaplDateText.parse(listing.availableFrom) { availableFrom = from }
+        if let to = SwaplDateText.parse(listing.availableTo) { availableTo = to }
+        minStayDays = listing.minStayDays
+        maxStayDays = listing.maxStayDays
+        photos = listing.photos
+        tags = listing.tags
+    }
 
     init(extractedInfo: ExtractedListingInfo?) {
         self.init()
@@ -758,32 +898,32 @@ private struct ListingCreationDraft {
             sleeps: sleeps,
             bedrooms: bedrooms,
             bathrooms: bathrooms,
-            floor: nil,
+            floor: floor,
             hasElevator: hasElevator,
             stepFreeAccess: stepFreeAccess,
             petsAllowed: petsAllowed,
-            petTypes: petsAllowed ? ["dogs", "cats"] : [],
+            petTypes: petsAllowed ? (petTypes.isEmpty ? ["dogs", "cats"] : petTypes) : [],
             wfhSetup: wfhSetup,
-            wfhDesks: wfhSetup ? 1 : 0,
-            hasParking: false,
-            bikeIncluded: false,
-            rooftop: false,
+            wfhDesks: wfhSetup ? max(wfhDesks, 1) : 0,
+            hasParking: hasParking,
+            bikeIncluded: bikeIncluded,
+            rooftop: rooftop,
             balcony: balcony,
-            garden: false,
-            courtyard: false,
-            piano: false,
-            pool: false,
-            gym: false,
+            garden: garden,
+            courtyard: courtyard,
+            piano: piano,
+            pool: pool,
+            gym: gym,
             ac: ac,
             dishwasher: dishwasher,
             washer: washer,
-            dryer: false,
+            dryer: dryer,
             availableFrom: SwaplDateText.apiString(from: availableFrom),
             availableTo: SwaplDateText.apiString(from: availableTo),
             minStayDays: minStayDays,
             maxStayDays: maxStayDays,
             photos: photos,
-            tags: []
+            tags: tags
         )
     }
 }

@@ -35,6 +35,9 @@ struct Listing: Identifiable, Codable, Hashable, Sendable {
     let washer: Bool
     let dryer: Bool
     let dishwasher: Bool
+    // Optional: older servers omit these; address only comes back for the owner.
+    let gym: Bool?
+    let address: String?
     let availableFrom: String
     let availableTo: String
     let minStayDays: Int
