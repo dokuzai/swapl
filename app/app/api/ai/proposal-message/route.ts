@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { draftProposalMessage } from "@/lib/ai/proposal-message";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -14,7 +14,7 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
   const rl = checkRateLimit(`ai:proposal:${session.userId}`, 20, 10 * 60_000);

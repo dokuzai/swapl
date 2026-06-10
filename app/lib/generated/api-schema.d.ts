@@ -566,6 +566,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/ai/proposal-message": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Draft a swap-proposal cover message
+         * @description Server-side AI draft built from both listings and the proposer's profile; falls back to a template when no AI key is configured. Rate-limited 20/10min per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        proposerListingId: string;
+                        targetListingId: string;
+                        /** @description yyyy-MM-dd */
+                        dateFrom?: string;
+                        /** @description yyyy-MM-dd */
+                        dateTo?: string;
+                        hostNotes?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Drafted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            message: string;
+                            /** @description ai | fallback */
+                            source?: string;
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/proposals": {
         parameters: {
             query?: never;

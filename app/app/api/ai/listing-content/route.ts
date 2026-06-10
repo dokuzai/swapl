@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { draftListingCopy } from "@/lib/ai/listing-content";
 import { PROPERTY_TYPES } from "@/lib/types";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -29,7 +29,7 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
   // 20 generations / 10 minutes is plenty for iterating a draft, low enough

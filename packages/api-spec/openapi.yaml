@@ -676,6 +676,39 @@ paths:
         '403': { description: Not the owner }
         '404': { description: Not found }
 
+  /api/ai/proposal-message:
+    post:
+      tags: [ai]
+      summary: Draft a swap-proposal cover message
+      description: Server-side AI draft built from both listings and the proposer's profile; falls back to a template when no AI key is configured. Rate-limited 20/10min per user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [proposerListingId, targetListingId]
+              properties:
+                proposerListingId: { type: string }
+                targetListingId: { type: string }
+                dateFrom: { type: string, description: 'yyyy-MM-dd' }
+                dateTo: { type: string, description: 'yyyy-MM-dd' }
+                hostNotes: { type: string, maxLength: 2000 }
+      responses:
+        '200':
+          description: Drafted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message]
+                properties:
+                  message: { type: string }
+                  source: { type: string, description: 'ai | fallback' }
+        '401': { description: Unauthenticated }
+        '429': { description: Rate limited }
+
   /api/proposals:
     get:
       tags: [proposals]
