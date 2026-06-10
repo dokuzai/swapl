@@ -17,6 +17,8 @@ cd app && pnpm exec prisma studio
 
 > ⚠️ Prisma creates **PascalCase tables and camelCase columns** — in Postgres they must be double-quoted: `SELECT "emailVerifiedAt" FROM "User"`. The JSON-ish fields (`photos`, `tags`, `interests`, `petTypes`) are JSON **strings**, not jsonb.
 
+**Applying schema changes to production:** there are no Postgres migration files — after changing both schema files, sync prod with `vercel env pull` (use the `sw_DATABASE_URL_UNPOOLED` Neon var; the plain `DATABASE_URL` is a sensitive env and cannot be pulled) and `DATABASE_URL=<prod-url> pnpm exec prisma db push --schema prisma/schema.postgres.prisma` from `app/`. Additive changes only; anything destructive deserves a real migration plan.
+
 ## Schema map (what matters operationally)
 
 | Table | Purpose | Key fields |
