@@ -26,7 +26,7 @@
 		<true/>
 	</dict>
 	<key>SwaplApiBaseURL</key>
-	<string>http://192.168.1.104:3000</string>
+	<string>https://app.swapl.fun</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
