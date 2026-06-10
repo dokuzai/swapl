@@ -2,3 +2,13 @@ packages:
   - app
   - marketing
   - packages/*
+onlyBuiltDependencies:
+  - better-sqlite3
+  - prisma
+  - "@prisma/client"
+  - "@prisma/engines"
+  - esbuild
+  - sharp
+  - msgpackr-extract
+  - style-dictionary
+  - unrs-resolver
