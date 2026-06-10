@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		09510D369FFD86683685D48E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE15DAF7CB60D8091AAB48 /* Theme.swift */; };
+		0FF9121641DAB4D4D85FDB4C /* Fraunces-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12CFB58AC5BAA13BBCFEAEC8 /* Fraunces-Variable.ttf */; };
 		10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */; };
 		12A73281C203C687F50C0A01 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DF9FF9E682ED439398C38D /* LoginView.swift */; };
 		1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC7EF0654A2A456B14E52A5 /* AuthService.swift */; };
@@ -18,8 +19,11 @@
 		36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E87AFF2208189D059454DA /* PublicProfileView.swift */; };
 		3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */; };
 		3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E0749085C3E362B239A25 /* ProposalRepository.swift */; };
+		42E7606893193D6EE6499537 /* Inter-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6834A289CE48A812B8A38852 /* Inter-Variable.ttf */; };
 		4B3AD0F138265FA3B1D96DEF /* InterestsEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */; };
+		510830DC97DA55495B08EBC9 /* JetBrainsMono-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CEA095CED7B7CAD626BC318 /* JetBrainsMono-Variable.ttf */; };
 		56E1320794D62E4631157BE8 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03C53186E434F889C543582 /* ProfileRepository.swift */; };
+		5BD0A88CF9AD53F7EE507582 /* Fraunces-Italic-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 66A0B174CF8A85F86C93F228 /* Fraunces-Italic-Variable.ttf */; };
 		65EFA92459406FAB1651014D /* SurfaceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC848E7485CD6912E46E61BE /* SurfaceCard.swift */; };
 		6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEEE99CFDC981E6B91926F5 /* PushService.swift */; };
 		6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */; };
@@ -44,6 +48,7 @@
 /* Begin PBXFileReference section */
 		0FB5692D60E8AAFB8D3017D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		10FAC49377D43C349AE9CEC3 /* AirbnbStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirbnbStyle.swift; sourceTree = "<group>"; };
+		12CFB58AC5BAA13BBCFEAEC8 /* Fraunces-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fraunces-Variable.ttf"; sourceTree = "<group>"; };
 		1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseListView.swift; sourceTree = "<group>"; };
 		13E87AFF2208189D059454DA /* PublicProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicProfileView.swift; sourceTree = "<group>"; };
 		166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsEditorView.swift; sourceTree = "<group>"; };
@@ -52,6 +57,9 @@
 		3EC7EF0654A2A456B14E52A5 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		482C55A61B818770C1E2FFE8 /* SwaplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplApp.swift; sourceTree = "<group>"; };
 		4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingView.swift; sourceTree = "<group>"; };
+		66A0B174CF8A85F86C93F228 /* Fraunces-Italic-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fraunces-Italic-Variable.ttf"; sourceTree = "<group>"; };
+		6834A289CE48A812B8A38852 /* Inter-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Variable.ttf"; sourceTree = "<group>"; };
+		6CEA095CED7B7CAD626BC318 /* JetBrainsMono-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Variable.ttf"; sourceTree = "<group>"; };
 		6E72A38E93BF07A269B5A860 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		781B69502AE21A819387C19F /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
 		7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplEmptyState.swift; sourceTree = "<group>"; };
@@ -99,12 +107,31 @@
 			);
 			sourceTree = "<group>";
 		};
+		0F04FED71D1B8A3C1641EBD6 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4532FA3401E257CB9E58EE02 /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		419D45CE450828EE48D44A5B /* Push */ = {
 			isa = PBXGroup;
 			children = (
 				CAEEE99CFDC981E6B91926F5 /* PushService.swift */,
 			);
 			path = Push;
+			sourceTree = "<group>";
+		};
+		4532FA3401E257CB9E58EE02 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				66A0B174CF8A85F86C93F228 /* Fraunces-Italic-Variable.ttf */,
+				12CFB58AC5BAA13BBCFEAEC8 /* Fraunces-Variable.ttf */,
+				6834A289CE48A812B8A38852 /* Inter-Variable.ttf */,
+				6CEA095CED7B7CAD626BC318 /* JetBrainsMono-Variable.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		47D59144756EF65FE9EA96A6 /* Auth */ = {
@@ -205,6 +232,7 @@
 				E7374CB43A82D1797063FE3B /* Core */,
 				DC4B1C0567901A9F8715A839 /* Design */,
 				58C8CE26DE660BACBC4EB06C /* Features */,
+				0F04FED71D1B8A3C1641EBD6 /* Resources */,
 			);
 			path = Swapl;
 			sourceTree = "<group>";
@@ -339,6 +367,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A383874E740D799C701825A /* CHANGES.md in Resources */,
+				5BD0A88CF9AD53F7EE507582 /* Fraunces-Italic-Variable.ttf in Resources */,
+				0FF9121641DAB4D4D85FDB4C /* Fraunces-Variable.ttf in Resources */,
+				42E7606893193D6EE6499537 /* Inter-Variable.ttf in Resources */,
+				510830DC97DA55495B08EBC9 /* JetBrainsMono-Variable.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
