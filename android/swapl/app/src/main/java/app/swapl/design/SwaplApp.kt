@@ -8,9 +8,12 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import app.swapl.R
@@ -52,11 +55,34 @@ private val DarkSwaplColors = darkColorScheme(
     outline = SwaplSemanticDark.Border,
 )
 
-// Place TTFs in res/font/ named to match SwaplFontFamily constants.
-// For now, using default fonts as placeholders since resource files are missing.
-val DisplayFamily = FontFamily.Serif
-val BodyFamily = FontFamily.Default
-val MonoFamily = FontFamily.Monospace
+// Variable TTFs in res/font/ — the same files iOS bundles, instantiated per
+// weight via fvar axis settings (minSdk 26 supports variable fonts).
+@OptIn(ExperimentalTextApi::class)
+private fun variableFont(resId: Int, weight: FontWeight, style: FontStyle = FontStyle.Normal) =
+    Font(resId, weight = weight, style = style, variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight)))
+
+@OptIn(ExperimentalTextApi::class)
+val DisplayFamily = FontFamily(
+    variableFont(R.font.fraunces_variable, FontWeight.Normal),
+    variableFont(R.font.fraunces_variable, FontWeight.Medium),
+    variableFont(R.font.fraunces_variable, FontWeight.SemiBold),
+    variableFont(R.font.fraunces_italic_variable, FontWeight.Normal, FontStyle.Italic),
+    variableFont(R.font.fraunces_italic_variable, FontWeight.Medium, FontStyle.Italic),
+)
+
+@OptIn(ExperimentalTextApi::class)
+val BodyFamily = FontFamily(
+    variableFont(R.font.inter_variable, FontWeight.Normal),
+    variableFont(R.font.inter_variable, FontWeight.Medium),
+    variableFont(R.font.inter_variable, FontWeight.SemiBold),
+    variableFont(R.font.inter_variable, FontWeight.Bold),
+)
+
+@OptIn(ExperimentalTextApi::class)
+val MonoFamily = FontFamily(
+    variableFont(R.font.jetbrains_mono_variable, FontWeight.Normal),
+    variableFont(R.font.jetbrains_mono_variable, FontWeight.Medium),
+)
 
 private val SwaplTypography = Typography(
     displayLarge = TextStyle(fontFamily = DisplayFamily, fontWeight = FontWeight.Medium, fontSize = 56.sp, letterSpacing = (-0.02).sp),

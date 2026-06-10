@@ -20,6 +20,8 @@ class BrowseViewModel @Inject constructor(
     data class State(
         val items: List<ListingWithScore> = emptyList(),
         val isLoading: Boolean = false,
+        val isRefreshing: Boolean = false,
+        val hasLoaded: Boolean = false,
         val error: String? = null,
         val filters: SearchFilters = SearchFilters(),
         val viewerListingId: String? = null,
@@ -29,17 +31,53 @@ class BrowseViewModel @Inject constructor(
     val state: StateFlow<State> = _state.asStateFlow()
 
     fun load() {
+        if (_state.value.hasLoaded || _state.value.isLoading) return
+        fetch(showSpinner = true)
+    }
+
+    fun refresh() = fetch(showSpinner = false)
+
+    fun setSort(sort: String) {
+        if (_state.value.filters.sort == sort) return
+        _state.value = _state.value.copy(filters = _state.value.filters.copy(sort = sort))
+        fetch(showSpinner = true)
+    }
+
+    fun setCityQuery(query: String) {
+        val cities = query.trim().takeIf { it.isNotEmpty() }?.let { listOf(it) } ?: emptyList()
+        if (_state.value.filters.cities == cities) return
+        _state.value = _state.value.copy(filters = _state.value.filters.copy(cities = cities))
+        fetch(showSpinner = true)
+    }
+
+    fun applyFilters(filters: SearchFilters) {
+        _state.value = _state.value.copy(filters = filters)
+        fetch(showSpinner = true)
+    }
+
+    private fun fetch(showSpinner: Boolean) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null)
+            _state.value = _state.value.copy(
+                isLoading = showSpinner,
+                isRefreshing = !showSpinner,
+                error = null,
+            )
             try {
                 val res = repo.search(_state.value.filters)
                 _state.value = _state.value.copy(
                     items = res.items,
                     isLoading = false,
+                    isRefreshing = false,
+                    hasLoaded = true,
                     viewerListingId = res.viewerListingId,
                 )
             } catch (t: Throwable) {
-                _state.value = _state.value.copy(isLoading = false, error = t.message)
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    isRefreshing = false,
+                    hasLoaded = true,
+                    error = t.message,
+                )
             }
         }
     }

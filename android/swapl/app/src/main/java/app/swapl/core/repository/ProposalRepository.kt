@@ -44,6 +44,19 @@ class ProposalRepository @Inject constructor(private val api: ApiClient) {
         counterMessage = message,
     ))
 
+    // Server-side AI draft of the proposal cover message (same endpoint as the
+    // web flow); the backend falls back to a template when no AI key is set.
+    suspend fun draftMessage(
+        proposerListingId: String,
+        targetListingId: String,
+        dateFrom: String? = null,
+        dateTo: String? = null,
+    ): AiDraftResponse =
+        api.client.post("${api.baseUrl}/api/ai/proposal-message") {
+            contentType(ContentType.Application.Json)
+            setBody(AiDraftBody(proposerListingId, targetListingId, dateFrom, dateTo))
+        }.body()
+
     private suspend fun postAction(id: String, body: ActionBody): ActionResponse =
         api.client.post("${api.baseUrl}/api/proposals/$id") {
             contentType(ContentType.Application.Json)
@@ -64,6 +77,17 @@ class ProposalRepository @Inject constructor(private val api: ApiClient) {
 
     @Serializable
     data class ActionResponse(val ok: Boolean, val agreementId: String? = null)
+
+    @Serializable
+    data class AiDraftResponse(val message: String, val source: String? = null)
+
+    @Serializable
+    private data class AiDraftBody(
+        val proposerListingId: String,
+        val targetListingId: String,
+        val dateFrom: String? = null,
+        val dateTo: String? = null,
+    )
 
     @Serializable
     private data class ActionBody(

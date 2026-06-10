@@ -1,5 +1,15 @@
 package app.swapl.features.listings
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +21,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,11 +62,17 @@ import app.swapl.core.model.ListingCreateBody
 import app.swapl.core.repository.ListingRepository
 import app.swapl.design.components.DateField
 import app.swapl.design.components.KickerLabel
+import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.PrimaryPill
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.time.LocalDate
+import java.util.Locale
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -60,6 +81,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ListingCreateViewModel @Inject constructor(
     private val repo: ListingRepository,
+    @ApplicationContext private val appContext: Context,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -109,11 +131,107 @@ class ListingCreateViewModel @Inject constructor(
     var minStayDays by mutableStateOf(3)
     var maxStayDays by mutableStateOf(30)
 
-    // Step 6: Photos (URLs — full upload pipeline lands when R2 sign endpoint ships)
+    // Step 6: Photos — picked from the photo library, downscaled and uploaded
+    // through /api/uploads/listing-photo (same pipeline as iOS).
     val photoUrls = mutableStateListOf<String>()
+    var uploadsInFlight by mutableStateOf(0); private set
+    var uploadError by mutableStateOf<String?>(null); private set
+
+    fun addPhotos(uris: List<Uri>) {
+        val room = MAX_PHOTOS - photoUrls.size - uploadsInFlight
+        uris.take(room.coerceAtLeast(0)).forEach { uri ->
+            viewModelScope.launch {
+                uploadsInFlight += 1
+                uploadError = null
+                try {
+                    val jpeg = withContext(Dispatchers.IO) { downscaleToJpeg(uri) }
+                    if (jpeg == null) {
+                        uploadError = "Couldn't read that image"
+                    } else {
+                        photoUrls.add(repo.uploadPhoto(jpeg))
+                    }
+                } catch (t: Throwable) {
+                    uploadError = t.message ?: "Upload failed"
+                } finally {
+                    uploadsInFlight -= 1
+                }
+            }
+        }
+    }
+
+    fun removePhoto(url: String) { photoUrls.remove(url) }
+
+    // Mirrors the iOS uploader: longest edge ≤ 1600px, JPEG at 80%.
+    private fun downscaleToJpeg(uri: Uri): ByteArray? {
+        val resolver = appContext.contentResolver
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) } ?: return null
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+
+        var sample = 1
+        while (maxOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= MAX_EDGE_PX) sample *= 2
+        val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+        val decoded = resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) } ?: return null
+
+        val longest = maxOf(decoded.width, decoded.height)
+        val bitmap = if (longest > MAX_EDGE_PX) {
+            val scale = MAX_EDGE_PX.toFloat() / longest
+            Bitmap.createScaledBitmap(decoded, (decoded.width * scale).toInt(), (decoded.height * scale).toInt(), true)
+        } else decoded
+
+        return ByteArrayOutputStream().use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out)
+            out.toByteArray()
+        }
+    }
+
+    private companion object {
+        const val MAX_PHOTOS = 10
+        const val MAX_EDGE_PX = 1600
+    }
 
     // Step 7: Description (title is on step 1)
     var description by mutableStateOf("")
+
+    // Location auto-fill (iOS parity): last known fix + reverse geocode.
+    var isLocating by mutableStateOf(false); private set
+    var locationError by mutableStateOf<String?>(null); private set
+
+    fun autofillLocation() = viewModelScope.launch {
+        isLocating = true; locationError = null
+        try {
+            val loc = withContext(Dispatchers.IO) { lastKnownLocation() }
+            val addr = loc?.let {
+                withContext(Dispatchers.IO) {
+                    @Suppress("DEPRECATION")
+                    Geocoder(appContext, Locale.getDefault())
+                        .getFromLocation(it.latitude, it.longitude, 1)
+                        ?.firstOrNull()
+                }
+            }
+            if (addr == null) {
+                locationError = "Couldn't determine your location — fill it in manually."
+            } else {
+                addr.locality?.let { city = it }
+                addr.subLocality?.let { neighbourhood = it }
+                addr.countryName?.let { country = it }
+            }
+        } catch (t: Throwable) {
+            locationError = "Couldn't determine your location — fill it in manually."
+        } finally {
+            isLocating = false
+        }
+    }
+
+    private fun lastKnownLocation(): Location? {
+        val lm = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return try {
+            lm.getProviders(true).mapNotNull { p -> runCatching { lm.getLastKnownLocation(p) }.getOrNull() }
+                .maxByOrNull { it.time }
+        } catch (se: SecurityException) {
+            null
+        }
+    }
 
     // Set on the server, not editable in the wizard — carried through on update
     // so a PUT doesn't wipe them.
@@ -200,6 +318,7 @@ class ListingCreateViewModel @Inject constructor(
         0 -> city.length >= 2 && neighbourhood.length >= 2 && country.length >= 2 && title.length >= 4
         1 -> sizeSqm >= 20 && sleeps >= 1
         4 -> availableTo > availableFrom
+        5 -> uploadsInFlight == 0
         6 -> description.length >= 20
         else -> true
     }
@@ -347,6 +466,21 @@ fun ListingCreateScreen(
 
 @Composable
 private fun LocationStep(vm: ListingCreateViewModel) {
+    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) vm.autofillLocation()
+    }
+    OutlinedButton(
+        onClick = { permission.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION) },
+        enabled = !vm.isLocating,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Icon(Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(SwaplSpacing.s2))
+        Text(if (vm.isLocating) "Locating…" else "Use my current location")
+    }
+    vm.locationError?.let {
+        Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+    }
     OutlinedTextField(vm.title, { vm.title = it }, label = { Text("Title (e.g. Sunlit canal apartment)") }, modifier = Modifier.fillMaxWidth())
     OutlinedTextField(vm.city, { vm.city = it }, label = { Text("City") }, modifier = Modifier.fillMaxWidth())
     OutlinedTextField(vm.neighbourhood, { vm.neighbourhood = it }, label = { Text("Neighbourhood") }, modifier = Modifier.fillMaxWidth())
@@ -412,27 +546,47 @@ private fun DatesStep(vm: ListingCreateViewModel) {
 
 @Composable
 private fun PhotosStep(vm: ListingCreateViewModel) {
+    val picker = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia(maxItems = 10),
+    ) { uris -> if (uris.isNotEmpty()) vm.addPhotos(uris) }
+
     Text(
-        "Paste image URLs (one per line). Native upload via the R2 signed-PUT endpoint lands in the upload-pipeline slice.",
+        "Add up to 10 photos of your home. We resize them before upload.",
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
-    val slots = (0..vm.photoUrls.size).toList()
-    slots.forEach { idx ->
-        OutlinedTextField(
-            value = vm.photoUrls.getOrNull(idx) ?: "",
-            onValueChange = { v ->
-                if (idx < vm.photoUrls.size) {
-                    if (v.isEmpty()) vm.photoUrls.removeAt(idx) else vm.photoUrls[idx] = v
-                } else if (v.isNotEmpty()) {
-                    vm.photoUrls.add(v)
-                }
-            },
-            label = { Text("https://…") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
+
+    OutlinedButton(
+        onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+        enabled = vm.photoUrls.size + vm.uploadsInFlight < 10,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Icon(Icons.Default.AddAPhoto, contentDescription = null, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(SwaplSpacing.s2))
+        Text("Choose photos")
+    }
+
+    if (vm.uploadsInFlight > 0) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+            CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+            Text(
+                "Uploading ${vm.uploadsInFlight} photo${if (vm.uploadsInFlight > 1) "s" else ""}…",
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+    vm.uploadError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+
+    vm.photoUrls.forEach { url ->
+        Box {
+            ListingPhoto(photoUrl = url, palette = "warm", height = 160.dp)
+            IconButton(
+                onClick = { vm.removePhoto(url) },
+                modifier = Modifier.align(Alignment.TopEnd),
+            ) {
+                Icon(Icons.Default.Close, contentDescription = "Remove photo", tint = MaterialTheme.colorScheme.onPrimary)
+            }
+        }
     }
 }
 

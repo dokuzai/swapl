@@ -7,11 +7,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Luggage
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -23,7 +33,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import app.swapl.designtokens.SwaplSpacing
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -36,6 +49,8 @@ import app.swapl.features.auth.LoginScreen
 import app.swapl.features.listings.BrowseScreen
 import app.swapl.features.listings.ListingCreateScreen
 import app.swapl.features.listings.ListingDetailScreen
+import app.swapl.features.placeholder.TripsScreen
+import app.swapl.features.placeholder.WishlistsScreen
 import app.swapl.features.profile.AccountScreen
 import app.swapl.features.profile.InterestsEditorScreen
 import app.swapl.features.profile.PublicProfileScreen
@@ -49,6 +64,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 private enum class HomeDest(val title: String, val icon: ImageVector, val route: String) {
     Browse("Browse", Icons.Default.Home, "browse"),
+    Wishlists("Wishlists", Icons.Default.FavoriteBorder, "wishlists"),
+    Trips("Trips", Icons.Default.Luggage, "trips"),
     Swaps("Swaps", Icons.Default.SwapHoriz, "swaps"),
     Account("Account", Icons.Default.Person, "account"),
 }
@@ -72,11 +89,19 @@ class MainActivity : ComponentActivity() {
                 if (authVm.uiState.session == null) {
                     LoginScreen(authVm)
                 } else {
-                    HomeShell(
-                        layoutType = if (isExpanded) NavigationSuiteType.NavigationRail else NavigationSuiteType.NavigationBar,
-                        deepLink = pendingDeepLink,
-                        onDeepLinkHandled = { pendingDeepLink = null },
-                    )
+                    Column {
+                        if (!authVm.uiState.emailVerified) {
+                            VerifyEmailBanner(
+                                isResending = authVm.uiState.isResendingVerification,
+                                onResend = { authVm.resendVerification() },
+                            )
+                        }
+                        HomeShell(
+                            layoutType = if (isExpanded) NavigationSuiteType.NavigationRail else NavigationSuiteType.NavigationBar,
+                            deepLink = pendingDeepLink,
+                            onDeepLinkHandled = { pendingDeepLink = null },
+                        )
+                    }
                 }
             }
         }
@@ -85,6 +110,29 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         pendingDeepLink = intent.data
+    }
+}
+
+// Mirrors the iOS unverified-email banner: persistent strip with a Resend action.
+@Composable
+private fun VerifyEmailBanner(isResending: Boolean, onResend: () -> Unit) {
+    Surface(color = MaterialTheme.colorScheme.secondaryContainer) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = SwaplSpacing.s4, vertical = SwaplSpacing.s1),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                "Verify your email to unlock swaps.",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.weight(1f),
+            )
+            TextButton(onClick = onResend, enabled = !isResending) {
+                Text(if (isResending) "Sending…" else "Resend")
+            }
+        }
     }
 }
 
@@ -156,10 +204,15 @@ private fun HomeShell(
                     ListingCreateScreen(onDone = { browseNav.popBackStack() })
                 }
             }
+            HomeDest.Wishlists -> WishlistsScreen()
+            HomeDest.Trips -> TripsScreen()
             HomeDest.Swaps -> NavHost(navController = swapsNav, startDestination = "inbox") {
                 composable("inbox") { SwapsInboxScreen(onOpen = { id -> swapsNav.navigate("thread/$id") }) }
                 composable("thread/{proposalId}", arguments = listOf(navArgument("proposalId") { type = NavType.StringType })) {
-                    SwapThreadScreen()
+                    SwapThreadScreen(onOpenProfile = { id -> swapsNav.navigate("profile/$id") })
+                }
+                composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+                    PublicProfileScreen()
                 }
             }
             HomeDest.Account -> {
@@ -170,6 +223,8 @@ private fun HomeShell(
                             onOpenInterests = { accountNav.navigate("interests") },
                             onOpenSavedSearches = { accountNav.navigate("savedSearches") },
                             onOpenPublicProfile = { id -> accountNav.navigate("profile/$id") },
+                            onBecomeHost = { accountNav.navigate("new") },
+                            onEditHome = { id -> accountNav.navigate("edit/$id") },
                         )
                     }
                     composable("interests") {
@@ -178,6 +233,12 @@ private fun HomeShell(
                     composable("savedSearches") { SavedSearchesScreen() }
                     composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
                         PublicProfileScreen()
+                    }
+                    composable("new") {
+                        ListingCreateScreen(onDone = { accountNav.popBackStack() })
+                    }
+                    composable("edit/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
+                        ListingCreateScreen(onDone = { accountNav.popBackStack() })
                     }
                 }
             }

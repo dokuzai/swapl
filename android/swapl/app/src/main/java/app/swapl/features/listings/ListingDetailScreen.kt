@@ -1,17 +1,42 @@
 package app.swapl.features.listings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsBike
+import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.Accessible
+import androidx.compose.material.icons.filled.Balcony
+import androidx.compose.material.icons.filled.Computer
+import androidx.compose.material.icons.filled.Countertops
+import androidx.compose.material.icons.filled.Deck
+import androidx.compose.material.icons.filled.Dry
+import androidx.compose.material.icons.filled.Elevator
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.LocalLaundryService
+import androidx.compose.material.icons.filled.LocalParking
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material.icons.filled.Piano
+import androidx.compose.material.icons.filled.Pool
+import androidx.compose.material.icons.filled.Roofing
+import androidx.compose.material.icons.filled.Yard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,6 +53,7 @@ import app.swapl.core.model.Listing
 import app.swapl.core.model.ListingDetailResponse
 import app.swapl.core.repository.ListingRepository
 import app.swapl.design.components.KickerLabel
+import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.MatchBadge
 import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
@@ -76,7 +102,7 @@ fun ListingDetailScreen(
             .padding(SwaplSpacing.s4),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
-        CityIllust(palette = SwaplCityPalettes.forName(d.listing.palette), modifier = Modifier.height(200.dp))
+        ListingPhoto(photoUrl = d.listing.photos.firstOrNull(), palette = d.listing.palette, height = 240.dp)
         d.matchScore?.let { MatchBadge(it) }
         Text(d.listing.title, style = MaterialTheme.typography.displaySmall)
         Text(
@@ -84,18 +110,47 @@ fun ListingDetailScreen(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        Text(
+            "${d.listing.sleeps} guests · ${d.listing.bedrooms} bedroom${if (d.listing.bedrooms == 1) "" else "s"} · " +
+                "${d.listing.bathrooms} bath${if (d.listing.bathrooms == 1) "" else "s"} · ${d.listing.sizeSqm} m²",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            "Available ${d.listing.availableFrom.take(10)} → ${d.listing.availableTo.take(10)} · " +
+                "${d.listing.minStayDays}–${d.listing.maxStayDays} day stays",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        KickerLabel("About this home")
         Text(d.listing.description, style = MaterialTheme.typography.bodyMedium)
 
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-            amenityChips(d.listing).take(8).forEach { TagChip(it) }
-        }
+        KickerLabel("What this place offers")
+        AmenityGrid(amenities(d.listing))
 
         SurfaceCard(modifier = androidx.compose.ui.Modifier.clickable { onOpenHost(d.host.id) }) {
-            Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("Hosted by")
-                Text(d.host.name ?: "Anonymous", style = MaterialTheme.typography.titleLarge)
-                d.host.bio?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                if (d.host.verified) TagChip("ID verified")
+            Row(
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), CircleShape),
+                    contentAlignment = androidx.compose.ui.Alignment.Center,
+                ) {
+                    Text(
+                        (d.host.name ?: "?").first().uppercase(),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    KickerLabel("Hosted by")
+                    Text(d.host.name ?: "Anonymous", style = MaterialTheme.typography.titleLarge)
+                    d.host.bio?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                }
+                if (d.host.verified) TagChip("Verified host")
             }
         }
 
@@ -115,6 +170,8 @@ fun ListingDetailScreen(
             proposerListingId = d.viewerListingId,
             targetListingId = d.listing.id,
             onDismiss = { showPropose = false },
+            availableFrom = d.listing.availableFrom,
+            availableTo = d.listing.availableTo,
         )
     }
 
@@ -144,17 +201,53 @@ private fun ProposeCta(d: ListingDetailResponse, onPropose: () -> Unit) {
     }
 }
 
-private fun amenityChips(l: Listing): List<String> = buildList {
-    if (l.balcony) add("Balcony")
-    if (l.rooftop) add("Rooftop")
-    if (l.garden) add("Garden")
-    if (l.pool) add("Pool")
-    if (l.wfhSetup) add("WFH")
-    if (l.petsAllowed) add("Pet-friendly")
-    if (l.stepFreeAccess) add("Step-free")
-    if (l.hasElevator) add("Elevator")
-    if (l.ac) add("AC")
-    if (l.dishwasher) add("Dishwasher")
-    if (l.washer) add("Washer")
-    if (l.dryer) add("Dryer")
+// Same amenity catalogue and ordering as the iOS amenity grid.
+private fun amenities(l: Listing): List<Pair<String, ImageVector>> = buildList {
+    if (l.balcony) add("Balcony" to Icons.Default.Balcony)
+    if (l.rooftop) add("Rooftop" to Icons.Default.Roofing)
+    if (l.garden) add("Garden" to Icons.Default.Yard)
+    if (l.courtyard) add("Courtyard" to Icons.Default.Deck)
+    if (l.pool) add("Pool" to Icons.Default.Pool)
+    if (l.gym) add("Gym" to Icons.Default.FitnessCenter)
+    if (l.piano) add("Piano" to Icons.Default.Piano)
+    if (l.bikeIncluded) add("Bike included" to Icons.AutoMirrored.Default.DirectionsBike)
+    if (l.hasParking) add("Parking" to Icons.Default.LocalParking)
+    if (l.wfhSetup) add("Workspace" to Icons.Default.Computer)
+    if (l.petsAllowed) add("Pet friendly" to Icons.Default.Pets)
+    if (l.stepFreeAccess) add("Step-free" to Icons.Default.Accessible)
+    if (l.hasElevator) add("Elevator" to Icons.Default.Elevator)
+    if (l.ac) add("AC" to Icons.Default.AcUnit)
+    if (l.dishwasher) add("Dishwasher" to Icons.Default.Countertops)
+    if (l.washer) add("Washer" to Icons.Default.LocalLaundryService)
+    if (l.dryer) add("Dryer" to Icons.Default.Dry)
+}
+
+// Two-column amenity grid with icons, like iOS's "What this place offers".
+@Composable
+private fun AmenityGrid(items: List<Pair<String, ImageVector>>) {
+    if (items.isEmpty()) {
+        Text(
+            "No amenities listed.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        return
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+        items.chunked(2).forEach { rowItems ->
+            Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2), modifier = Modifier.fillMaxWidth()) {
+                rowItems.forEach { (label, icon) ->
+                    Row(
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
+                        Text(label, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+                if (rowItems.size == 1) Box(Modifier.weight(1f))
+            }
+        }
+    }
 }

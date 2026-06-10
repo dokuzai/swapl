@@ -96,6 +96,10 @@ data class ListingCreateBody(
 @Serializable
 data class ListingMutationResponse(val ok: Boolean, val id: String)
 
+// `{ url }` from POST /api/uploads/listing-photo (multipart).
+@Serializable
+data class UploadResponse(val url: String)
+
 @Serializable
 data class ListingWithScore(
     val listing: Listing,

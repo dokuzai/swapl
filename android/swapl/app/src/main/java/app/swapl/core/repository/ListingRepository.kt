@@ -4,8 +4,13 @@ import app.swapl.core.model.ListingCreateBody
 import app.swapl.core.model.ListingDetailResponse
 import app.swapl.core.model.ListingMutationResponse
 import app.swapl.core.model.ListingSearchResponse
+import app.swapl.core.model.UploadResponse
 import app.swapl.core.network.ApiClient
 import io.ktor.client.call.body
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -48,6 +53,25 @@ class ListingRepository @Inject constructor(private val api: ApiClient) {
             contentType(ContentType.Application.Json)
             setBody(body)
         }.body()
+
+    // Multipart upload, same endpoint the iOS client uses. Returns the photo URL.
+    suspend fun uploadPhoto(bytes: ByteArray, filename: String = "photo.jpg"): String =
+        api.client.post("${api.baseUrl}/api/uploads/listing-photo") {
+            setBody(
+                MultiPartFormDataContent(
+                    formData {
+                        append(
+                            "file",
+                            bytes,
+                            Headers.build {
+                                append(HttpHeaders.ContentType, "image/jpeg")
+                                append(HttpHeaders.ContentDisposition, "filename=\"$filename\"")
+                            },
+                        )
+                    },
+                ),
+            )
+        }.body<UploadResponse>().url
 }
 
 data class SearchFilters(

@@ -40,6 +40,7 @@ import app.swapl.core.model.Listing
 import app.swapl.core.model.ProposalDetail
 import app.swapl.core.repository.ProposalRepository
 import app.swapl.design.components.KickerLabel
+import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
@@ -84,7 +85,10 @@ class SwapThreadViewModel @Inject constructor(
 }
 
 @Composable
-fun SwapThreadScreen(vm: SwapThreadViewModel = hiltViewModel()) {
+fun SwapThreadScreen(
+    onOpenProfile: (String) -> Unit = {},
+    vm: SwapThreadViewModel = hiltViewModel(),
+) {
     LaunchedEffect(Unit) { vm.load() }
     val d = vm.detail
     var showCounter by remember { mutableStateOf(false) }
@@ -113,6 +117,10 @@ fun SwapThreadScreen(vm: SwapThreadViewModel = hiltViewModel()) {
                 AgreedPanel(d.agreement, d.other.name ?: "your host")
             }
 
+            TextButton(onClick = { onOpenProfile(d.other.id) }) {
+                Text("View ${d.other.name ?: "host"}'s profile")
+            }
+
             ActionRow(d, vm, onCounter = { showCounter = true })
         }
     }
@@ -132,7 +140,7 @@ fun SwapThreadScreen(vm: SwapThreadViewModel = hiltViewModel()) {
 private fun ListingThumb(l: Listing, modifier: Modifier = Modifier) {
     SurfaceCard(modifier) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-            CityIllust(palette = SwaplCityPalettes.forName(l.palette))
+            ListingPhoto(photoUrl = l.photos.firstOrNull(), palette = l.palette, height = 90.dp())
             Text("${l.neighbourhood} · ${l.city}", style = MaterialTheme.typography.titleLarge)
             Text("${l.sizeSqm} m² · sleeps ${l.sleeps}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }

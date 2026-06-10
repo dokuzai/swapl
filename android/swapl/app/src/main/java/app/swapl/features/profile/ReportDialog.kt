@@ -82,7 +82,7 @@ fun ReportDialog(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                         modifier = Modifier.menuAnchor(),
                     )
-                    androidx.compose.material3.ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         PRESETS.forEach { p ->
                             DropdownMenuItem(text = { Text(p) }, onClick = { reason = p; expanded = false })
                         }
