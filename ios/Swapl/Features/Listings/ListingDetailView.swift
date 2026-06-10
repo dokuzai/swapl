@@ -99,13 +99,13 @@ struct ListingDetailView: View {
     private func listingContent(_ detail: ListingDetailResponse) -> some View {
         VStack(alignment: .leading, spacing: 26) {
             // Color.clear defines the layout size (full width × 330) so the
-            // scaledToFill photo — which reports an oversized width — can never
+            // scaledToFill photos — which report an oversized width — can never
             // widen the enclosing column and push content off-screen.
             Color.clear
                 .frame(maxWidth: .infinity)
                 .frame(height: 330)
                 .overlay {
-                    ListingPhotoView(listing: detail.listing, cornerRadius: 0)
+                    ListingPhotoGalleryView(listing: detail.listing)
                 }
                 .clipped()
 

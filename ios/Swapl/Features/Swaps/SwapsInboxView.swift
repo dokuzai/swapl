@@ -402,22 +402,43 @@ struct ProposalDetailView: View {
             .padding(.top, 20)
 
             VStack(alignment: .leading, spacing: 18) {
-                Color.clear
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 270)
-                    .overlay {
-                        ListingPhotoView(listing: tripListing, cornerRadius: SwaplDesignSystem.CornerRadius.large)
-                    }
-                    .clipped()
-                    .overlay(alignment: .topLeading) {
-                        Text(detail.proposal.status.capitalized)
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                // Tapping the trip photo opens the full listing — that's where
+                // the swipeable photo gallery and lightbox live.
+                NavigationLink {
+                    ListingDetailView(listingId: tripListing.id)
+                } label: {
+                    Color.clear
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 270)
+                        .overlay {
+                            ListingPhotoView(listing: tripListing, cornerRadius: SwaplDesignSystem.CornerRadius.large)
+                        }
+                        .clipped()
+                        .overlay(alignment: .topLeading) {
+                            Text(detail.proposal.status.capitalized)
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                                .foregroundStyle(AirbnbPalette.text)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .background(.white, in: Capsule())
+                                .padding(18)
+                        }
+                        .overlay(alignment: .bottomTrailing) {
+                            HStack(spacing: 6) {
+                                Text("View home & photos")
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
                             .foregroundStyle(AirbnbPalette.text)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background(.white, in: Capsule())
-                            .padding(18)
-                    }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 9)
+                            .background(.white.opacity(0.92), in: Capsule())
+                            .padding(14)
+                        }
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("View \(tripListing.city) home and all photos")
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("\(tripListing.propertyType.capitalized) in \(tripListing.city)")
