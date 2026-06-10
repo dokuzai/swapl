@@ -209,7 +209,10 @@ struct BrowseListView: View {
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
+            .accessibilityLabel("Sort homes")
         }
         .foregroundStyle(AirbnbPalette.text)
         .padding(.horizontal, 22)
@@ -320,6 +323,7 @@ struct BrowseListView: View {
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(width: 42, height: 42)
                     .background(AirbnbPalette.softBackground, in: Circle())
+                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 22)
 
@@ -387,6 +391,7 @@ struct ListingCardView: View {
                     .foregroundStyle(.white)
                     .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 1)
                     .padding(compact ? 9 : 12)
+                    .accessibilityHidden(true)
 
                 if !compact && (item.band == "featured" || item.matchScore != nil) {
                     Text(item.matchScore.map { "\($0)% match" } ?? "Guest favorite")
@@ -515,6 +520,7 @@ struct MapListingPin: View {
         }
         .buttonStyle(.plain)
         .animation(.snappy(duration: 0.25), value: selected)
+        .accessibilityLabel(point.matchScore.map { "\(point.title), \($0) percent match" } ?? point.title)
     }
 }
 

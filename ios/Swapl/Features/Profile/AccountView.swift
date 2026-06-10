@@ -22,9 +22,10 @@ struct AccountView: View {
                         quickCards
                         becomeHostCard
                         Color.clear.frame(height: 42)
-                        menuSection(primaryMenu)
-                        menuSection(hostMenu)
-
+                        if let userId = auth.session?.id {
+                            NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow("View profile", "person") }
+                                .buttonStyle(.plain)
+                        }
                         NavigationLink { InterestsEditorView() } label: { portedMenuRow("Interests", "heart.text.square") }
                             .buttonStyle(.plain)
                         NavigationLink { SavedSearchesView() } label: { portedMenuRow("Saved searches", "magnifyingglass") }
@@ -74,14 +75,14 @@ struct AccountView: View {
     private func portedMenuRow(_ title: String, _ icon: String) -> some View {
         HStack(spacing: 14) {
             Image(systemName: icon).font(.system(size: 18, weight: .semibold))
-            Text(title).font(.swaplBody(16, weight: .semibold))
+            Text(title).font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
             Spacer()
             Image(systemName: "chevron.right").font(.system(size: 14, weight: .semibold)).foregroundStyle(AirbnbPalette.secondaryText)
         }
         .foregroundStyle(AirbnbPalette.text)
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
     }
 
     private var header: some View {
@@ -90,19 +91,6 @@ struct AccountView: View {
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.display, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
             Spacer()
-            Button(action: {}) {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "bell")
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .frame(width: 54, height: 54)
-                        .background(SwaplSemanticLight.card, in: Circle())
-                    Circle()
-                        .fill(SwaplSemanticLight.primary)
-                        .frame(width: 10, height: 10)
-                        .padding(13)
-                }
-            }
         }
     }
 
@@ -130,7 +118,7 @@ struct AccountView: View {
                     .foregroundStyle(AirbnbPalette.text)
                     .lineLimit(1)
                 Text("Swapl member")
-                    .font(.swaplBody(15))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
             .frame(maxWidth: .infinity)
@@ -184,7 +172,7 @@ struct AccountView: View {
                         .foregroundStyle(AirbnbPalette.text)
                     Text(myListing.map { "Update \"\($0.title)\" — photos, dates, amenities." }
                         ?? "Create your home listing and start proposing swaps.")
-                        .font(.swaplBody(15))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
                 }
@@ -201,23 +189,6 @@ struct AccountView: View {
             }
         }
         .buttonStyle(.plain)
-    }
-
-    private var primaryMenu: [ProfileMenuItem] {
-        [
-            .init(title: "Account settings", systemImage: "gearshape"),
-            .init(title: "Get help", systemImage: "questionmark.circle"),
-            .init(title: "View profile", systemImage: "person"),
-            .init(title: "Privacy", systemImage: "hand.raised")
-        ]
-    }
-
-    private var hostMenu: [ProfileMenuItem] {
-        [
-            .init(title: "Your listings", systemImage: "rectangle.stack"),
-            .init(title: "Saved searches", systemImage: "bell.badge"),
-            .init(title: "Legal", systemImage: "book.closed")
-        ]
     }
 
     private var signOutRow: some View {
@@ -238,37 +209,13 @@ struct AccountView: View {
         .buttonStyle(.plain)
     }
 
-    private func menuSection(_ items: [ProfileMenuItem]) -> some View {
-        VStack(spacing: 0) {
-            ForEach(items) { item in
-                HStack(spacing: 18) {
-                    Image(systemName: item.systemImage)
-                        .font(.system(size: 24, weight: .regular))
-                        .frame(width: 34)
-                    Text(item.title)
-                        .font(.swaplBody(18, weight: .semibold))
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.secondaryText)
-                }
-                .foregroundStyle(AirbnbPalette.text)
-                .padding(.vertical, 18)
-
-                if item.id != items.last?.id {
-                    Divider().padding(.leading, 52)
-                }
-            }
-        }
-    }
-
     private func profileStat(_ value: String, _ label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(value)
                 .font(.swaplDisplay(28, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
             Text(label)
-                .font(.swaplBody(14, weight: .semibold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
         }
     }
@@ -299,12 +246,6 @@ struct AccountView: View {
     }
 }
 
-private struct ProfileMenuItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let systemImage: String
-}
-
 private struct ProfileFeatureCard: View {
     let title: String
     let subtitle: String
@@ -319,11 +260,11 @@ private struct ProfileFeatureCard: View {
                 .background(SwaplSemanticLight.accent, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
             Spacer(minLength: 10)
             Text(title)
-                .font(.swaplDisplay(20, weight: .semibold))
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
                 .lineLimit(1)
             Text(subtitle)
-                .font(.swaplBody(13))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .lineLimit(1)
         }
@@ -380,7 +321,7 @@ struct ListingCreationView: View {
                         currentStep
                         if let error {
                             Text(error)
-                                .font(.swaplBody(14, weight: .semibold))
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
                                 .foregroundStyle(SwaplSemanticLight.destructive)
                                 .padding(.top, 4)
                         }
@@ -421,18 +362,14 @@ struct ListingCreationView: View {
                     .frame(width: 44, height: 44)
                     .background(SwaplSemanticLight.card, in: Circle())
             }
+            .accessibilityLabel("Close")
             Spacer()
             Text(isEditing ? "Edit your home" : "Create listing")
                 .font(.swaplBody(17, weight: .bold))
                 .foregroundStyle(AirbnbPalette.text)
             Spacer()
-            Button(action: {}) {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .frame(width: 44, height: 44)
-                    .background(SwaplSemanticLight.card, in: Circle())
-            }
+            // Invisible counterweight keeps the title optically centered.
+            Color.clear.frame(width: 44, height: 44)
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 12)
@@ -442,7 +379,7 @@ struct ListingCreationView: View {
     private var progressHeader: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Step \(step + 1) of \(steps.count)")
-                .font(.swaplMono(11, weight: .medium))
+                .font(.swaplMono(SwaplDesignSystem.FontSize.tiny, weight: .medium))
                 .foregroundStyle(SwaplSemanticLight.primary)
                 .textCase(.uppercase)
             Text(steps[step])
@@ -478,7 +415,7 @@ struct ListingCreationView: View {
                 .font(.swaplDisplay(26, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
             Text("Most hosts create the listing while they are at home. Use location once to fill the address, city, neighbourhood, country and map pin.")
-                .font(.swaplBody(15))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -534,7 +471,7 @@ struct ListingCreationView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("Photos")
-                    .font(.swaplBody(16, weight: .semibold))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Spacer()
                 if uploadingPhotos { ProgressView() }
@@ -544,7 +481,7 @@ struct ListingCreationView: View {
                     Image(systemName: "photo.on.rectangle.angled")
                     Text(draft.photos.isEmpty ? "Add photos" : "Add more photos")
                 }
-                .font(.swaplBody(15, weight: .semibold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)
@@ -582,7 +519,7 @@ struct ListingCreationView: View {
                     .padding(.vertical, 4)
                 }
                 Text("\(draft.photos.count) photo\(draft.photos.count == 1 ? "" : "s") uploaded")
-                    .font(.swaplBody(13))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
         }
@@ -638,10 +575,10 @@ struct ListingCreationView: View {
                     .foregroundStyle(AirbnbPalette.text)
                     .lineLimit(2)
                 Text("\(draft.neighbourhood), \(draft.city), \(draft.country)")
-                    .font(.swaplBody(16))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                 Text("\(draft.sleeps) guests · \(draft.bedrooms) bedrooms · \(draft.bathrooms) baths")
-                    .font(.swaplBody(15))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
             .padding(22)
@@ -655,7 +592,7 @@ struct ListingCreationView: View {
             Text(isEditing
                 ? "Saving updates your published listing right away — guests browsing Swapl will see the new details."
                 : "Once published, your listing appears in Browse and can be used in swap proposals.")
-                .font(.swaplBody(15))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .padding(.horizontal, 4)
         }
@@ -668,7 +605,7 @@ struct ListingCreationView: View {
                 step = max(0, step - 1)
             } label: {
                 Text("Back")
-                    .font(.swaplBody(16, weight: .bold))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
@@ -684,7 +621,7 @@ struct ListingCreationView: View {
                     if isPublishing { ProgressView().tint(SwaplSemanticLight.primaryForeground) }
                     Text(step == steps.count - 1 ? (isEditing ? "Save changes" : "Publish") : "Continue")
                 }
-                .font(.swaplBody(16, weight: .bold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                 .foregroundStyle(SwaplSemanticLight.primaryForeground)
                 .frame(maxWidth: .infinity)
                 .frame(height: 54)
@@ -936,7 +873,7 @@ private struct ListingField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             Text(title)
-                .font(.swaplBody(15, weight: .bold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
                 .foregroundStyle(AirbnbPalette.text)
             TextField(placeholder, text: $text)
                 .font(.swaplBody(17))
@@ -957,7 +894,7 @@ private struct AddressSearchField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             Text("Address")
-                .font(.swaplBody(15, weight: .bold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
                 .foregroundStyle(AirbnbPalette.text)
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
@@ -974,7 +911,7 @@ private struct AddressSearchField: View {
                 Capsule().stroke(AirbnbPalette.hairline)
             }
             Text("Only the approximate area is shown publicly.")
-                .font(.swaplBody(13))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                 .foregroundStyle(AirbnbPalette.secondaryText)
         }
     }
@@ -1007,7 +944,7 @@ private struct LocationAutofillCard: View {
                         .font(.swaplBody(17, weight: .bold))
                         .foregroundStyle(AirbnbPalette.text)
                     Text(status)
-                        .font(.swaplBody(14))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
                 }
@@ -1197,7 +1134,7 @@ private struct ListingLongField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             Text(title)
-                .font(.swaplBody(15, weight: .bold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
                 .foregroundStyle(AirbnbPalette.text)
             TextEditor(text: $text)
                 .font(.swaplBody(17))
@@ -1231,7 +1168,7 @@ private struct ListingPicker: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             Text(title)
-                .font(.swaplBody(15, weight: .bold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
             Picker(title, selection: $selection) {
                 ForEach(values, id: \.self) { value in
                     Text(value.capitalized).tag(value)
@@ -1253,10 +1190,10 @@ private struct StepperCard: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.swaplBody(16, weight: .bold))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                     .foregroundStyle(AirbnbPalette.text)
                 Text("\(value) \(suffix)")
-                    .font(.swaplBody(15))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
             Spacer()
@@ -1280,7 +1217,7 @@ private struct ToggleCard: View {
     var body: some View {
         Toggle(isOn: $isOn) {
             Label(title, systemImage: systemImage)
-                .font(.swaplBody(16, weight: .bold))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                 .foregroundStyle(AirbnbPalette.text)
         }
         .tint(SwaplSemanticLight.primary)
@@ -1299,7 +1236,7 @@ private struct DateCard: View {
 
     var body: some View {
         DatePicker(title, selection: $date, displayedComponents: .date)
-            .font(.swaplBody(16, weight: .bold))
+            .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
             .tint(SwaplSemanticLight.primary)
             .padding(18)
             .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))

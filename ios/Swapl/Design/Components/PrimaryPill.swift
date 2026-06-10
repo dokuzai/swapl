@@ -14,7 +14,7 @@ struct PrimaryPill: View {
             HStack(spacing: SwaplSpacing.s2) {
                 if isLoading { ProgressView().tint(theme.primaryForeground) }
                 Text(title)
-                    .font(.swaplBody(15, weight: .medium))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
@@ -35,7 +35,7 @@ struct GhostPill: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.swaplBody(15, weight: .medium))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
                 .padding(.vertical, 12)
                 .padding(.horizontal, 24)
         }

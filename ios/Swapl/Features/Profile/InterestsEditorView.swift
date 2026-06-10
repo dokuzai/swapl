@@ -91,16 +91,21 @@ private struct FlowChips: View {
             ForEach(tags, id: \.slug) { t in
                 Button(action: { onToggle(t.slug) }) {
                     Text(t.label)
-                        .font(.swaplBody(13))
-                        .padding(.vertical, 6)
-                        .padding(.horizontal, 10)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
                         .background(
                             selected.contains(t.slug) ? SwaplColor.pink : SwaplColor.tagBg,
                             in: Capsule()
                         )
                         .foregroundStyle(
-                            selected.contains(t.slug) ? Color.white : SwaplColor.navy
+                            selected.contains(t.slug) ? SwaplSemanticLight.primaryForeground : SwaplColor.navy
                         )
+                        // Keep the visual chip compact while extending the
+                        // hit area to the HIG 44pt minimum.
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                        .accessibilityAddTraits(selected.contains(t.slug) ? .isSelected : [])
                 }
                 .buttonStyle(.plain)
             }

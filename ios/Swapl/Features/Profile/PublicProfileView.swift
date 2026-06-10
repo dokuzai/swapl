@@ -10,6 +10,7 @@ final class PublicProfileViewModel {
     var error: String?
     init(userId: String) { self.userId = userId }
     func load() async {
+        error = nil
         do { profile = try await ProfileRepository.shared.publicProfile(id: userId) }
         catch { self.error = error.localizedDescription }
     }
@@ -31,11 +32,24 @@ struct PublicProfileView: View {
                     reportLink
                 }
                 .padding(SwaplSpacing.s4)
+            } else if let error = vm.error {
+                SwaplEmptyState(
+                    systemImage: "person.crop.circle.badge.exclamationmark",
+                    title: "Profile unavailable",
+                    description: error,
+                    actionTitle: "Try Again",
+                    action: { Task { await vm.load() } }
+                )
+                .padding(.top, 80)
             } else {
-                ProgressView().padding(40)
+                ProgressView()
+                    .padding(40)
+                    .accessibilityLabel("Loading profile")
             }
         }
         .background(SwaplSemanticLight.background)
+        .navigationTitle("Profile")
+        .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
         .sheet(isPresented: $showReport) {
             if let p = vm.profile {
@@ -49,7 +63,7 @@ struct PublicProfileView: View {
         VStack(alignment: .leading, spacing: SwaplSpacing.s2) {
             KickerLabel(text: "Member since \(u.memberSince.prefix(7))")
             Text(u.name ?? "Anonymous host")
-                .font(.swaplDisplay(32))
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1))
                 .foregroundStyle(SwaplSemanticLight.foreground)
             if u.verified { TagChip(label: "ID verified") }
             if let vibe = u.bioVibe, !vibe.isEmpty {
@@ -59,7 +73,7 @@ struct PublicProfileView: View {
                     .foregroundStyle(SwaplColor.pink)
             }
             if let bio = u.bio, !bio.isEmpty {
-                Text(bio).font(.swaplBody(15))
+                Text(bio).font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
             }
         }
     }
@@ -92,7 +106,7 @@ struct PublicProfileView: View {
                                 Text("\(l.neighbourhood) · \(l.city)")
                                     .font(.swaplDisplay(18))
                                 Text("\(l.sizeSqm) m² · sleeps \(l.sleeps)")
-                                    .font(.swaplMono(11))
+                                    .font(.swaplMono(SwaplDesignSystem.FontSize.tiny))
                                     .foregroundStyle(SwaplSemanticLight.mutedForeground)
                             }
                         }
@@ -106,8 +120,11 @@ struct PublicProfileView: View {
     private var reportLink: some View {
         Button(action: { showReport = true }) {
             Text("Report this user")
-                .font(.swaplBody(13))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                 .foregroundStyle(SwaplSemanticLight.destructive)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
 }

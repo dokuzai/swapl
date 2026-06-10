@@ -56,7 +56,7 @@ struct VerifyEmailBanner: View {
                 .foregroundStyle(SwaplSemanticLight.primary)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Verify your email")
-                    .font(.swaplBody(14, weight: .semibold))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
                     .foregroundStyle(SwaplSemanticLight.foreground)
                 Text(status ?? "Required before you can publish a home.")
                     .font(.swaplBody(12))
@@ -66,9 +66,16 @@ struct VerifyEmailBanner: View {
             if busy {
                 ProgressView()
             } else {
-                Button("Resend") { resend() }
-                    .font(.swaplBody(13, weight: .bold))
-                    .foregroundStyle(SwaplSemanticLight.primary)
+                Button {
+                    resend()
+                } label: {
+                    Text("Resend")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 18)
@@ -119,7 +126,7 @@ struct MainTabView: View {
                 case .wishlists:
                     AirbnbPlaceholderView(title: "Wishlists", systemImage: "heart", message: "Saved homes will appear here.")
                 case .trips:
-                    AirbnbPlaceholderView(title: "Trips", systemImage: "a.circle", message: "Accepted swaps will become trips.")
+                    AirbnbPlaceholderView(title: "Trips", systemImage: "suitcase.rolling", message: "Accepted swaps will become trips.")
                 case .messages:
                     SwapsInboxView()
                 case .profile:
@@ -132,8 +139,8 @@ struct MainTabView: View {
                     .tabItem { Label("Explore", systemImage: "magnifyingglass") }
                 AirbnbPlaceholderView(title: "Wishlists", systemImage: "heart", message: "Saved homes will appear here.")
                     .tabItem { Label("Wishlists", systemImage: "heart") }
-                AirbnbPlaceholderView(title: "Trips", systemImage: "a.circle", message: "Accepted swaps will become trips.")
-                    .tabItem { Label("Trips", systemImage: "a.circle") }
+                AirbnbPlaceholderView(title: "Trips", systemImage: "suitcase.rolling", message: "Accepted swaps will become trips.")
+                    .tabItem { Label("Trips", systemImage: "suitcase.rolling") }
                 SwapsInboxView()
                     .tabItem { Label("Messages", systemImage: "message") }
                 AccountView()
@@ -186,7 +193,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         switch self {
         case .explore: "magnifyingglass"
         case .wishlists: "heart"
-        case .trips: "a.circle"
+        case .trips: "suitcase.rolling"
         case .messages: "message"
         case .profile: "person.crop.circle"
         }

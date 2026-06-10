@@ -20,7 +20,7 @@ struct LoginView: View {
                 Spacer()
                 KickerLabel(text: isRegister ? "Create your account" : "Welcome back")
                 Text(isRegister ? "Join Swapl." : "Keys for keys.")
-                    .font(.swaplDisplay(40))
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.display))
                     .foregroundStyle(theme.foreground)
 
                 TextField("you@example.com", text: $email)
@@ -42,13 +42,13 @@ struct LoginView: View {
 
                 if isRegister {
                     Text("Use at least 6 characters. You'll verify your email before publishing a home.")
-                        .font(.swaplBody(13))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(theme.mutedForeground)
                 }
 
                 if let err = auth.errorMessage {
                     Text(err)
-                        .font(.swaplBody(13))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(theme.destructive)
                 }
 
@@ -62,14 +62,23 @@ struct LoginView: View {
                 Button(action: toggleMode) {
                     Text(isRegister ? "Already have an account? Sign in"
                                     : "New to Swapl? Create an account")
-                        .font(.swaplBody(14, weight: .semibold))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
                         .foregroundStyle(theme.primary)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
                 }
-                .padding(.top, 2)
+                .buttonStyle(.plain)
 
-                Button("Not ready? Join the waitlist") { showWaitlist = true }
-                    .font(.swaplBody(13))
-                    .foregroundStyle(theme.mutedForeground)
+                Button {
+                    showWaitlist = true
+                } label: {
+                    Text("Not ready? Join the waitlist")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(theme.mutedForeground)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
 
                 Spacer()
             }
@@ -114,19 +123,19 @@ struct WaitlistView: View {
                     if done {
                         KickerLabel(text: "You're on the list")
                         Text("See you soon.")
-                            .font(.swaplDisplay(32))
+                            .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1))
                             .foregroundStyle(theme.foreground)
                         Text("We'll email you the moment swaps open in your city.")
-                            .font(.swaplBody(15))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                             .foregroundStyle(theme.mutedForeground)
                         PrimaryPill(title: "Done", action: { dismiss() })
                     } else {
                         KickerLabel(text: "Early access")
                         Text("Join the waitlist.")
-                            .font(.swaplDisplay(32))
+                            .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1))
                             .foregroundStyle(theme.foreground)
                         Text("Be first to swap when we launch near you.")
-                            .font(.swaplBody(15))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                             .foregroundStyle(theme.mutedForeground)
 
                         TextField("you@example.com", text: $email)
@@ -140,7 +149,7 @@ struct WaitlistView: View {
                             .overlay(RoundedRectangle(cornerRadius: SwaplRadius.md).stroke(theme.border))
 
                         if let error {
-                            Text(error).font(.swaplBody(13)).foregroundStyle(theme.destructive)
+                            Text(error).font(.swaplBody(SwaplDesignSystem.FontSize.small)).foregroundStyle(theme.destructive)
                         }
 
                         PrimaryPill(

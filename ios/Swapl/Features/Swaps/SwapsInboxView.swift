@@ -10,6 +10,7 @@ final class SwapsInboxViewModel {
     var isLoading = false
     var hasLoaded = false
     var selectedFilter = "All"
+    var searchText = ""
 
     func load() async {
         isLoading = true
@@ -25,19 +26,36 @@ final class SwapsInboxViewModel {
     }
 
     var proposals: [ProposalSummary] {
+        let base: [ProposalSummary]
         guard let inbox else { return [] }
         switch selectedFilter {
-        case "Hosting": return inbox.buckets.waitingOnYou
-        case "Traveling": return inbox.buckets.sent + inbox.buckets.active
-        case "Archived": return inbox.buckets.archived
+        case "Hosting": base = inbox.buckets.waitingOnYou
+        case "Traveling": base = inbox.buckets.sent + inbox.buckets.active
+        case "Archived": base = inbox.buckets.archived
         default:
-            return inbox.buckets.waitingOnYou + inbox.buckets.sent + inbox.buckets.active + inbox.buckets.archived
+            base = inbox.buckets.waitingOnYou + inbox.buckets.sent + inbox.buckets.active + inbox.buckets.archived
         }
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return base }
+        return base.filter { proposal in
+            [proposal.otherName ?? "", proposal.theirCity, proposal.theirNeighbourhood, proposal.myCity]
+                .contains { $0.localizedCaseInsensitiveContains(query) }
+        }
+    }
+
+    var isInboxEmpty: Bool {
+        guard let inbox else { return true }
+        return inbox.buckets.waitingOnYou.isEmpty &&
+            inbox.buckets.sent.isEmpty &&
+            inbox.buckets.active.isEmpty &&
+            inbox.buckets.archived.isEmpty
     }
 }
 
 struct SwapsInboxView: View {
     @State private var vm = SwapsInboxViewModel()
+    @State private var isSearching = false
+    @FocusState private var searchFieldFocused: Bool
     private let filters = ["All", "Hosting", "Traveling", "Archived"]
 
     var body: some View {
@@ -56,7 +74,7 @@ struct SwapsInboxView: View {
                         action: { Task { await vm.load() } }
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if vm.proposals.isEmpty {
+                } else if vm.isInboxEmpty {
                     SwaplEmptyState(
                         systemImage: "message",
                         title: "No messages yet",
@@ -83,6 +101,10 @@ struct SwapsInboxView: View {
             VStack(alignment: .leading, spacing: 24) {
                 messagesHeader
 
+                if isSearching {
+                    searchField
+                }
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
                         ForEach(filters, id: \.self) { filter in
@@ -98,18 +120,56 @@ struct SwapsInboxView: View {
                 }
                 .padding(.top, 8)
 
-                LazyVStack(spacing: 22) {
-                    ForEach(vm.proposals) { proposal in
-                        NavigationLink(value: proposal.id) {
-                            MessageRow(proposal: proposal)
+                if vm.proposals.isEmpty {
+                    SwaplEmptyState(
+                        systemImage: "magnifyingglass",
+                        title: "No matches",
+                        description: "No conversations match your current search or filter."
+                    )
+                    .padding(.top, 48)
+                } else {
+                    LazyVStack(spacing: 22) {
+                        ForEach(vm.proposals) { proposal in
+                            NavigationLink(value: proposal.id) {
+                                MessageRow(proposal: proposal)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .padding(.horizontal, 22)
+                    .padding(.bottom, 28)
                 }
-                .padding(.horizontal, 22)
-                .padding(.bottom, 28)
             }
         }
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+            TextField("Search by host or city", text: Bindable(vm).searchText)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body))
+                .foregroundStyle(AirbnbPalette.text)
+                .focused($searchFieldFocused)
+                .submitLabel(.search)
+            if !vm.searchText.isEmpty {
+                Button {
+                    vm.searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .frame(width: 44, height: 44)
+                }
+                .accessibilityLabel("Clear search")
+            }
+        }
+        .padding(.horizontal, 18)
+        .frame(height: 52)
+        .background(SwaplSemanticLight.card, in: Capsule())
+        .overlay(Capsule().stroke(AirbnbPalette.hairline))
+        .padding(.horizontal, 22)
     }
 
     private var messagesHeader: some View {
@@ -118,22 +178,23 @@ struct SwapsInboxView: View {
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.display, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
             Spacer()
-            HStack(spacing: 10) {
-                Button(action: {}) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 19, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .frame(width: 48, height: 48)
-                        .background(SwaplSemanticLight.card, in: Circle())
+            Button {
+                withAnimation(.snappy) {
+                    isSearching.toggle()
+                    if isSearching {
+                        searchFieldFocused = true
+                    } else {
+                        vm.searchText = ""
+                    }
                 }
-                Button(action: {}) {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 19, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .frame(width: 48, height: 48)
-                        .background(SwaplSemanticLight.card, in: Circle())
-                }
+            } label: {
+                Image(systemName: isSearching ? "xmark" : "magnifyingglass")
+                    .font(.system(size: 19, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .frame(width: 48, height: 48)
+                    .background(SwaplSemanticLight.card, in: Circle())
             }
+            .accessibilityLabel(isSearching ? "Close search" : "Search messages")
         }
         .padding(.horizontal, 22)
         .padding(.top, 22)
@@ -147,6 +208,7 @@ struct MessageRow: View {
         HStack(alignment: .top, spacing: 16) {
             ProposalAvatar(proposal: proposal)
                 .frame(width: 72, height: 72)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .firstTextBaseline) {
@@ -225,15 +287,6 @@ struct ProposalAvatar: View {
     }
 }
 
-private extension InboxResponse {
-    var isEmpty: Bool {
-        buckets.waitingOnYou.isEmpty &&
-        buckets.sent.isEmpty &&
-        buckets.active.isEmpty &&
-        buckets.archived.isEmpty
-    }
-}
-
 @MainActor
 @Observable
 final class ProposalDetailViewModel {
@@ -280,6 +333,8 @@ final class ProposalDetailViewModel {
 struct ProposalDetailView: View {
     @State private var vm: ProposalDetailViewModel
     @State private var showCounter = false
+    @State private var isConfirmingDecline = false
+    @State private var isConfirmingWithdraw = false
 
     init(proposalId: String) {
         _vm = State(initialValue: ProposalDetailViewModel(proposalId: proposalId))
@@ -311,6 +366,18 @@ struct ProposalDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
         .sheet(isPresented: $showCounter) { counterSheet }
+        .confirmationDialog("Decline this proposal?", isPresented: $isConfirmingDecline, titleVisibility: .visible) {
+            Button("Decline", role: .destructive) { Task { await vm.act(.decline) } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("The other host will be notified. This can't be undone.")
+        }
+        .confirmationDialog("Withdraw this proposal?", isPresented: $isConfirmingWithdraw, titleVisibility: .visible) {
+            Button("Withdraw", role: .destructive) { Task { await vm.act(.withdraw) } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes your proposal. You can always send a new one.")
+        }
     }
 
     private func tripContent(_ detail: ProposalDetail) -> some View {
@@ -435,10 +502,10 @@ struct ProposalDetailView: View {
                 if canRespond && isTarget {
                     PrimaryPill(title: "Accept swap", action: { Task { await vm.act(.accept) } }, isLoading: vm.isActing)
                     GhostPill(title: "Counter offer", action: { showCounter = true })
-                    GhostPill(title: "Decline", action: { Task { await vm.act(.decline) } })
+                    GhostPill(title: "Decline", action: { isConfirmingDecline = true })
                 }
                 if canRespond && isProposer {
-                    GhostPill(title: "Withdraw proposal", action: { Task { await vm.act(.withdraw) } })
+                    GhostPill(title: "Withdraw proposal", action: { isConfirmingWithdraw = true })
                 }
             }
             .padding(.horizontal, 22)
