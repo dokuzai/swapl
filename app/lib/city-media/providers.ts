@@ -8,10 +8,14 @@ export const FETCH_TIMEOUT_MS = 4_000;
 const PER_PAGE = 8;
 const USER_AGENT = "swapl/1.0 (https://swapl.fun; hello@swapl.fun)";
 
-async function fetchJSON(url: string, headers: Record<string, string> = {}): Promise<unknown> {
+async function fetchJSON(
+  url: string,
+  headers: Record<string, string> = {},
+  signal?: AbortSignal
+): Promise<unknown> {
   const res = await fetch(url, {
     headers: { "user-agent": USER_AGENT, ...headers },
-    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    signal: signal ?? AbortSignal.timeout(FETCH_TIMEOUT_MS),
     // Provider responses are cached in our own DB (CityMedia) — skip Next's
     // fetch cache so we never double-cache.
     cache: "no-store",
@@ -227,13 +231,191 @@ export const wikimediaProvider: CityMediaProvider = {
   },
 };
 
+// ---------- Openverse (keyless, CC-licensed illustrations) ----------
+// https://api.openverse.org/v1/ — anonymous access, no key. Probed live:
+// q="{city} illustration postcard" + category=illustration returns 0 for
+// almost every city, so we cascade two real-world queries instead (see
+// openverseProvider). Attribution links foreign_landing_url (Flickr/Commons/
+// museum page) and credits `creator`.
+
+const ILLUST_SKIP =
+  /\b(map|flag|coat of arms|logo|icon|locator|seal|emblem|chart|diagram|graph|plan|symbol)\b/i;
+const ILLUST_MIN_WIDTH = 800;
+
+type OpenverseResult = {
+  title?: string | null;
+  url?: string;
+  width?: number | null;
+  height?: number | null;
+  creator?: string | null;
+  creator_url?: string | null;
+  foreign_landing_url?: string | null;
+  tags?: Array<{ name?: string }> | null;
+};
+
+/** True when the result's title or tags mention the city (case-insensitive). */
+function mentionsCity(r: OpenverseResult, city: string): boolean {
+  const needle = city.toLowerCase();
+  if ((r.title ?? "").toLowerCase().includes(needle)) return true;
+  return (r.tags ?? []).some((t) => (t?.name ?? "").toLowerCase().includes(needle));
+}
+
+export function normalizeOpenverse(json: unknown, city: string): CityPhoto[] {
+  const results = (json as { results?: OpenverseResult[] })?.results;
+  if (!Array.isArray(results)) return [];
+  return results
+    .map((r): { photo: CityPhoto; cityMatch: boolean } | null => {
+      if (!r?.url) return null;
+      const title = (r.title ?? "").trim();
+      if (ILLUST_SKIP.test(title)) return null;
+      const width = r.width ?? 0;
+      const height = r.height ?? 0;
+      // Drop tiny images, but keep results with unknown dimensions.
+      if (width > 0 && width < ILLUST_MIN_WIDTH) return null;
+      return {
+        photo: {
+          url: r.url,
+          width,
+          height,
+          alt: title || `${city} illustration`,
+          photographer: r.creator?.trim() || undefined,
+          photographerUrl: r.creator_url || r.foreign_landing_url || undefined,
+          sourceUrl: r.foreign_landing_url || undefined,
+          provider: "openverse",
+        },
+        cityMatch: mentionsCity(r, city),
+      };
+    })
+    .filter((r): r is { photo: CityPhoto; cityMatch: boolean } => r !== null)
+    // Stable rank: results that actually mention the city first.
+    .sort((a, b) => Number(b.cityMatch) - Number(a.cityMatch))
+    .map((r) => r.photo)
+    .slice(0, PER_PAGE);
+}
+
+function openverseURL(q: string, category?: string): string {
+  const url = new URL("https://api.openverse.org/v1/images/");
+  url.searchParams.set("q", q);
+  url.searchParams.set("license_type", "all-cc");
+  url.searchParams.set("aspect_ratio", "wide,square");
+  url.searchParams.set("page_size", "20");
+  if (category) url.searchParams.set("category", category);
+  return url.toString();
+}
+
+export const openverseProvider: CityMediaProvider = {
+  name: "openverse",
+  async fetchPhotos(city) {
+    // One deadline across the whole cascade so a slow first query can't push
+    // the page past the 4s budget.
+    const signal = AbortSignal.timeout(FETCH_TIMEOUT_MS);
+    // Tier 1: genuine illustrations/artworks (engravings, drawn postcards) —
+    // high quality but often empty. Tier 2: "{city} postcard" without the
+    // category filter — mostly vintage illustrated/printed postcards.
+    const queries: Array<[string, string | undefined]> = [
+      [`${city} postcard`, "illustration,digitized_artwork"],
+      [`${city} postcard`, undefined],
+    ];
+    for (const [q, category] of queries) {
+      const json = await fetchJSON(openverseURL(q, category), {}, signal);
+      const photos = normalizeOpenverse(json, city);
+      if (photos.length > 0) return photos;
+    }
+    return [];
+  },
+};
+
+// ---------- Pixabay (optional, keyed, illustrations) ----------
+// https://pixabay.com/api/docs/ — only used when PIXABAY_API_KEY is set.
+
+type PixabayHit = {
+  largeImageURL?: string;
+  webformatURL?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  tags?: string;
+  user?: string;
+  pageURL?: string;
+};
+
+export function normalizePixabay(json: unknown, city: string): CityPhoto[] {
+  const hits = (json as { hits?: PixabayHit[] })?.hits;
+  if (!Array.isArray(hits)) return [];
+  return hits
+    .map((h): CityPhoto | null => {
+      const url = h?.largeImageURL ?? h?.webformatURL;
+      if (!url) return null;
+      const width = h.imageWidth ?? 0;
+      if (width > 0 && width < ILLUST_MIN_WIDTH) return null;
+      return {
+        url,
+        width,
+        height: h.imageHeight ?? 0,
+        alt: h.tags?.trim() || `${city} illustration`,
+        photographer: h.user || undefined,
+        photographerUrl: h.pageURL || undefined,
+        sourceUrl: h.pageURL || undefined,
+        provider: "pixabay",
+      };
+    })
+    .filter((p): p is CityPhoto => p !== null)
+    .slice(0, PER_PAGE);
+}
+
+export const pixabayProvider: CityMediaProvider = {
+  name: "pixabay",
+  async fetchPhotos(city) {
+    const key = process.env.PIXABAY_API_KEY;
+    if (!key) throw new Error("PIXABAY_API_KEY is not set");
+    const url = new URL("https://pixabay.com/api/");
+    url.searchParams.set("key", key);
+    url.searchParams.set("q", `${city} postcard`);
+    url.searchParams.set("image_type", "illustration");
+    url.searchParams.set("per_page", "20");
+    const json = await fetchJSON(url.toString());
+    return normalizePixabay(json, city);
+  },
+};
+
+/**
+ * Illustration lookup: Openverse first (keyless); when it finds nothing and a
+ * Pixabay key is configured, try Pixabay. Empty list → caller renders the SVG
+ * postcard fallback. Wrapped as a CityMediaProvider so the cache layer treats
+ * it exactly like the photo providers; the stored provider name reflects
+ * whichever upstream actually answered.
+ */
+export const illustrationProvider: CityMediaProvider = {
+  name: "openverse",
+  async fetchPhotos(city, country) {
+    let photos: CityPhoto[] = [];
+    let openverseError: unknown = null;
+    try {
+      photos = await openverseProvider.fetchPhotos(city, country);
+    } catch (err) {
+      openverseError = err;
+    }
+    if (photos.length === 0 && process.env.PIXABAY_API_KEY) {
+      try {
+        return await pixabayProvider.fetchPhotos(city, country);
+      } catch (err) {
+        console.error("[city-media:pixabay]", err);
+      }
+    }
+    // Surface the Openverse failure so the cache layer serves stale instead
+    // of caching an empty list that was really an outage.
+    if (photos.length === 0 && openverseError) throw openverseError;
+    return photos;
+  },
+};
+
 // ---------- Selection ----------
 
-const PROVIDERS: Record<CityMediaProviderName, CityMediaProvider> = {
+// Photo providers only — illustrations always resolve to illustrationProvider.
+const PROVIDERS = {
   pexels: pexelsProvider,
   unsplash: unsplashProvider,
   wikimedia: wikimediaProvider,
-};
+} satisfies Partial<Record<CityMediaProviderName, CityMediaProvider>>;
 
 /**
  * CITY_MEDIA_PROVIDER env wins when set; otherwise "pexels" if a key is
@@ -243,6 +425,6 @@ export function resolveProvider(
   env: Record<string, string | undefined> = process.env
 ): CityMediaProvider {
   const explicit = env.CITY_MEDIA_PROVIDER?.toLowerCase();
-  if (explicit && explicit in PROVIDERS) return PROVIDERS[explicit as CityMediaProviderName];
+  if (explicit && explicit in PROVIDERS) return PROVIDERS[explicit as keyof typeof PROVIDERS];
   return env.PEXELS_API_KEY ? PROVIDERS.pexels : PROVIDERS.wikimedia;
 }

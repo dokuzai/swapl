@@ -20,12 +20,20 @@ vi.mock("@/lib/db", () => ({
 
 import { prisma } from "@/lib/db";
 import {
+  normalizeOpenverse,
   normalizePexels,
+  normalizePixabay,
   normalizeUnsplash,
   normalizeWikimedia,
   resolveProvider,
 } from "@/lib/city-media/providers";
-import { getCityMedia, getCachedCityMedia, isFresh, CITY_MEDIA_TTL_MS } from "@/lib/city-media";
+import {
+  getCityMedia,
+  getCachedCityMedia,
+  getCityIllustration,
+  isFresh,
+  CITY_MEDIA_TTL_MS,
+} from "@/lib/city-media";
 import type { CityPhoto } from "@/lib/city-media/types";
 
 type Stub = ReturnType<typeof vi.fn>;
@@ -196,6 +204,134 @@ describe("normalizeWikimedia", () => {
   });
 });
 
+describe("normalizeOpenverse", () => {
+  const result = (over: Record<string, unknown> = {}) => ({
+    title: "Istanbul postcard",
+    url: "https://upload.wikimedia.org/istanbul.jpg",
+    width: 2000,
+    height: 1400,
+    creator: "Jane D",
+    creator_url: "https://www.flickr.com/people/jane",
+    foreign_landing_url: "https://www.flickr.com/photos/jane/1",
+    tags: [{ name: "istanbul" }],
+    ...over,
+  });
+
+  it("maps the Openverse search payload to the normalized shape", () => {
+    const out = normalizeOpenverse({ results: [result()] }, "Istanbul");
+    expect(out).toEqual([
+      {
+        url: "https://upload.wikimedia.org/istanbul.jpg",
+        width: 2000,
+        height: 1400,
+        alt: "Istanbul postcard",
+        photographer: "Jane D",
+        photographerUrl: "https://www.flickr.com/people/jane",
+        sourceUrl: "https://www.flickr.com/photos/jane/1",
+        provider: "openverse",
+      },
+    ]);
+  });
+
+  it("falls back to foreign_landing_url for the creator link and fills empty alts", () => {
+    const out = normalizeOpenverse(
+      { results: [result({ title: "", creator: " ", creator_url: null })] },
+      "Istanbul"
+    );
+    expect(out[0].alt).toBe("Istanbul illustration");
+    expect(out[0].photographer).toBeUndefined();
+    expect(out[0].photographerUrl).toBe("https://www.flickr.com/photos/jane/1");
+  });
+
+  it("drops tiny images but keeps results without dimensions", () => {
+    const out = normalizeOpenverse(
+      {
+        results: [
+          result({ title: "Tiny", width: 640 }),
+          result({ title: "Unknown size", width: null, height: null }),
+        ],
+      },
+      "Istanbul"
+    );
+    expect(out.map((p) => p.alt)).toEqual(["Unknown size"]);
+    expect(out[0].width).toBe(0);
+  });
+
+  it("filters maps, flags, logos and url-less results", () => {
+    const out = normalizeOpenverse(
+      {
+        results: [
+          result({ title: "Istanbul location map" }),
+          result({ title: "Istanbul Metro Logo" }),
+          result({ title: "Coat of arms of Istanbul" }),
+          result({ url: undefined }),
+          result({ title: "Galata tower drawing" }),
+        ],
+      },
+      "Istanbul"
+    );
+    expect(out.map((p) => p.alt)).toEqual(["Galata tower drawing"]);
+  });
+
+  it("ranks results that mention the city (title or tags) first", () => {
+    const out = normalizeOpenverse(
+      {
+        results: [
+          result({ title: "Random beer mug", tags: [] }),
+          result({ title: "Tagged only", tags: [{ name: "Istanbul skyline" }] }),
+          result({ title: "Old Istanbul lithograph", tags: [] }),
+        ],
+      },
+      "istanbul" // case-insensitive both ways
+    );
+    expect(out.map((p) => p.alt)).toEqual([
+      "Tagged only",
+      "Old Istanbul lithograph",
+      "Random beer mug",
+    ]);
+  });
+
+  it("returns [] for malformed payloads", () => {
+    expect(normalizeOpenverse(null, "X")).toEqual([]);
+    expect(normalizeOpenverse({ results: "nope" }, "X")).toEqual([]);
+  });
+});
+
+describe("normalizePixabay", () => {
+  it("maps hits, prefers largeImageURL and drops tiny illustrations", () => {
+    const out = normalizePixabay(
+      {
+        hits: [
+          {
+            largeImageURL: "https://pixabay.com/get/large.jpg",
+            webformatURL: "https://pixabay.com/get/web.jpg",
+            imageWidth: 1920,
+            imageHeight: 1080,
+            tags: "istanbul, postcard",
+            user: "artist1",
+            pageURL: "https://pixabay.com/illustrations/istanbul-1/",
+          },
+          { webformatURL: "https://pixabay.com/get/small.jpg", imageWidth: 640 },
+        ],
+      },
+      "Istanbul"
+    );
+    expect(out).toHaveLength(1);
+    expect(out[0]).toMatchObject({
+      url: "https://pixabay.com/get/large.jpg",
+      alt: "istanbul, postcard",
+      photographer: "artist1",
+      sourceUrl: "https://pixabay.com/illustrations/istanbul-1/",
+      provider: "pixabay",
+    });
+  });
+
+  it("returns [] for malformed payloads", () => {
+    expect(normalizePixabay(null, "X")).toEqual([]);
+    expect(normalizePixabay({ hits: "nope" }, "X")).toEqual([]);
+  });
+});
+
 // ---------- provider selection ----------
 
 describe("resolveProvider", () => {
@@ -273,7 +409,10 @@ describe("getCityMedia", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(db.cityMedia.upsert).toHaveBeenCalledTimes(1);
     const args = db.cityMedia.upsert.mock.calls[0][0];
-    expect(args.where).toEqual({ city_country: { city: "Istanbul", country: "Türkiye" } });
+    expect(args.where).toEqual({
+      city_country_kind: { city: "Istanbul", country: "Türkiye", kind: "photo" },
+    });
+    expect(args.create.kind).toBe("photo");
     expect(args.create.provider).toBe("pexels");
     expect(JSON.parse(args.create.photos)[0].url).toBe("https://images.pexels.com/fresh.jpg");
   });
@@ -315,7 +454,138 @@ describe("getCityMedia", () => {
   });
 });
 
+// ---------- kind="illustration" (Openverse-backed hero) ----------
+
+describe("getCityMedia kind=illustration / getCityIllustration", () => {
+  const openverseResponse = (results: unknown[]) =>
+    new Response(JSON.stringify({ result_count: results.length, results }), { status: 200 });
+
+  const openverseResult = {
+    title: "Istanbul postcard",
+    url: "https://upload.wikimedia.org/istanbul.jpg",
+    width: 2000,
+    height: 1400,
+    creator: "Jane D",
+    creator_url: "https://www.flickr.com/people/jane",
+    foreign_landing_url: "https://www.flickr.com/photos/jane/1",
+    tags: [{ name: "istanbul" }],
+  };
+
+  it("reads and writes the illustration row, keyed by kind", async () => {
+    const fetchSpy = vi.fn().mockResolvedValue(openverseResponse([openverseResult]));
+    vi.stubGlobal("fetch", fetchSpy);
+
+    const out = await getCityIllustration("Istanbul", "Türkiye");
+    expect(out?.provider).toBe("openverse");
+    expect(out?.url).toBe("https://upload.wikimedia.org/istanbul.jpg");
+
+    expect(db.cityMedia.findUnique).toHaveBeenCalledWith({
+      where: { city_country_kind: { city: "Istanbul", country: "Türkiye", kind: "illustration" } },
+    });
+    const args = db.cityMedia.upsert.mock.calls[0][0];
+    expect(args.where).toEqual({
+      city_country_kind: { city: "Istanbul", country: "Türkiye", kind: "illustration" },
+    });
+    expect(args.create.kind).toBe("illustration");
+    expect(args.create.provider).toBe("openverse");
+    // Only the keyless Openverse tier ran (first query already had results).
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy.mock.calls[0][0]).toContain("api.openverse.org/v1/images/");
+    expect(fetchSpy.mock.calls[0][0]).toContain("license_type=all-cc");
+    expect(fetchSpy.mock.calls[0][0]).toContain("category=illustration%2Cdigitized_artwork");
+  });
+
+  it("cascades to the category-less Openverse query when the strict one is empty", async () => {
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValueOnce(openverseResponse([]))
+      .mockResolvedValueOnce(openverseResponse([openverseResult]));
+    vi.stubGlobal("fetch", fetchSpy);
+
+    const out = await getCityIllustration("Istanbul", "Türkiye");
+    expect(out?.alt).toBe("Istanbul postcard");
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(fetchSpy.mock.calls[1][0]).not.toContain("category=");
+  });
+
+  it("serves a fresh illustration row without touching the photo cache or the network", async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    db.cityMedia.findUnique.mockResolvedValue({
+      photos: JSON.stringify([photo({ alt: "cached illustration", provider: "openverse" })]),
+      fetchedAt: new Date(),
+    });
+    const out = await getCityIllustration("Istanbul", "Türkiye");
+    expect(out?.alt).toBe("cached illustration");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("returns null when no provider yields anything (SVG postcard fallback)", async () => {
+    // mockImplementation: each call needs its own Response (bodies are single-use).
+    vi.stubGlobal("fetch", vi.fn().mockImplementation(async () => openverseResponse([])));
+    await expect(getCityIllustration("Nowhere", "Atlantis")).resolves.toBeNull();
+    // The empty-but-successful result is still cached.
+    expect(db.cityMedia.upsert).toHaveBeenCalledTimes(1);
+    expect(db.cityMedia.upsert.mock.calls[0][0].create.kind).toBe("illustration");
+  });
+
+  it("falls back to Pixabay when Openverse is empty and a key is set", async () => {
+    vi.stubEnv("PIXABAY_API_KEY", "pk");
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValueOnce(openverseResponse([]))
+      .mockResolvedValueOnce(openverseResponse([]))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            hits: [
+              {
+                largeImageURL: "https://pixabay.com/get/ist.jpg",
+                imageWidth: 1920,
+                imageHeight: 1080,
+                tags: "istanbul",
+                user: "artist1",
+                pageURL: "https://pixabay.com/illustrations/ist-1/",
+              },
+            ],
+          }),
+          { status: 200 }
+        )
+      );
+    vi.stubGlobal("fetch", fetchSpy);
+
+    const out = await getCityIllustration("Istanbul", "Türkiye");
+    expect(out?.provider).toBe("pixabay");
+    expect(fetchSpy.mock.calls[2][0]).toContain("pixabay.com/api");
+    // The row records the upstream that actually answered.
+    expect(db.cityMedia.upsert.mock.calls[0][0].create.provider).toBe("pixabay");
+  });
+
+  it("serves the stale illustration row when Openverse errors", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("nope", { status: 503 })));
+    db.cityMedia.findUnique.mockResolvedValue({
+      photos: JSON.stringify([photo({ alt: "stale illustration", provider: "openverse" })]),
+      fetchedAt: new Date(Date.now() - CITY_MEDIA_TTL_MS - 1000),
+    });
+    const out = await getCityIllustration("Istanbul", "Türkiye");
+    expect(out?.alt).toBe("stale illustration");
+    expect(db.cityMedia.upsert).not.toHaveBeenCalled();
+  });
+});
+
 describe("getCachedCityMedia", () => {
+  it("defaults to the photo kind and accepts an explicit kind", async () => {
+    db.cityMedia.findUnique.mockResolvedValue(null);
+    await getCachedCityMedia("Istanbul", "Türkiye");
+    expect(db.cityMedia.findUnique).toHaveBeenCalledWith({
+      where: { city_country_kind: { city: "Istanbul", country: "Türkiye", kind: "photo" } },
+    });
+    await getCachedCityMedia("Istanbul", "Türkiye", "illustration");
+    expect(db.cityMedia.findUnique).toHaveBeenLastCalledWith({
+      where: { city_country_kind: { city: "Istanbul", country: "Türkiye", kind: "illustration" } },
+    });
+  });
+
   it("serves even a stale row and never fetches", async () => {
     const fetchSpy = vi.fn();
     vi.stubGlobal("fetch", fetchSpy);

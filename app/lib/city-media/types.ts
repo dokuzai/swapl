@@ -2,8 +2,12 @@
 // can cross the server→client component boundary and be stored as JSON text
 // in CityMedia.photos.
 
-export const CITY_MEDIA_PROVIDERS = ["pexels", "unsplash", "wikimedia"] as const;
+export const CITY_MEDIA_PROVIDERS = ["pexels", "unsplash", "wikimedia", "openverse", "pixabay"] as const;
 export type CityMediaProviderName = (typeof CITY_MEDIA_PROVIDERS)[number];
+
+/** What the CityMedia row caches: real photos or CC-licensed illustrations. */
+export const CITY_MEDIA_KINDS = ["photo", "illustration"] as const;
+export type CityMediaKind = (typeof CITY_MEDIA_KINDS)[number];
 
 export type CityPhoto = {
   url: string;

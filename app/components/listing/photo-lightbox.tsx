@@ -19,6 +19,23 @@ export type LightboxPhoto = {
 
 /** Photographer / provider credit. Shared by the grid captions and the lightbox. */
 export function Attribution({ photo }: { photo: CityPhoto }) {
+  if (photo.provider === "openverse" || photo.provider === "pixabay") {
+    // CC-licensed illustrations: credit the creator and link the source page.
+    const providerLabel = photo.provider === "openverse" ? "Openverse" : "Pixabay";
+    return (
+      <span>
+        Illustration: {photo.photographer ? `${photo.photographer} / ` : ""}
+        <a
+          href={photo.sourceUrl ?? "https://openverse.org"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+        >
+          {providerLabel}
+        </a>
+      </span>
+    );
+  }
   if (photo.provider === "pexels" && photo.photographer) {
     // Pexels requires a visible photographer + Pexels credit.
     return (
@@ -267,6 +284,30 @@ export function ListingPhotoGrid({ photos }: { photos: string[] }) {
       ))}
       {node}
     </div>
+  );
+}
+
+/**
+ * Listing-detail hero: a fetched city illustration filling the hero frame.
+ * Rendered inside the (relative) hero card so badges layered after it stay on
+ * top. Click opens the same lightbox as the photo grids.
+ */
+export function HeroIllustration({ photo }: { photo: CityPhoto }) {
+  const { open, node } = useLightbox([{ url: photo.url, alt: photo.alt, attribution: photo }]);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => open(0)}
+        aria-label={`View illustration: ${photo.alt}`}
+        className="absolute inset-0 block w-full h-full p-0 border-0 bg-transparent cursor-zoom-in"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={photo.url} alt={photo.alt} className="w-full h-full object-cover" />
+      </button>
+      {node}
+    </>
   );
 }
 

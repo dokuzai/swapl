@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { DiscoverCity, DiscoverCitySkeleton } from "@/components/listing/discover-city";
-import { ListingPhotoGrid } from "@/components/listing/photo-lightbox";
+import { Attribution, HeroIllustration, ListingPhotoGrid } from "@/components/listing/photo-lightbox";
+import { getCityIllustration } from "@/lib/city-media";
 import { toDTO, formatDateRange, amenityChips } from "@/lib/listing-utils";
 import { CityIllust, SwapArrows, Pin } from "@/components/illustrations";
 import { propertyLabel } from "@/lib/types";
@@ -72,23 +73,37 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
 
   const chips = amenityChips(dto);
 
+  // Real CC-licensed illustration of the city (Openverse, cached 30 days in
+  // CityMedia kind="illustration"; a cache miss fetches within the provider's
+  // 4s timeout). None found → the linear SVG postcard, exactly as before.
+  const heroIllustration = await getCityIllustration(dto.city, dto.country);
+
   return (
     <div className="wrap py-10 lg:py-14">
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div
-            className="surface-card overflow-hidden mb-8 aspect-[16/10] relative"
+            className={`surface-card overflow-hidden ${heroIllustration ? "mb-2" : "mb-8"} aspect-[16/10] relative`}
             style={{ background: "var(--cream-2)" }}
           >
-            {/* The hero is always the city-postcard illustration, drawn in the
-                hand-drafted linear style. Real city photos live in the
-                Discover section below. */}
-            <CityIllust city={dto.city} palette={dto.palette} motif={dto.motif} postcard={dto.postcard} styleMode="linear" />
+            {heroIllustration ? (
+              <HeroIllustration photo={heroIllustration} />
+            ) : (
+              /* Fallback hero: the city-postcard illustration, drawn in the
+                 hand-drafted linear style. Real city photos live in the
+                 Discover section below. */
+              <CityIllust city={dto.city} palette={dto.palette} motif={dto.motif} postcard={dto.postcard} styleMode="linear" />
+            )}
             {matchScore !== null && (
               <span className="absolute top-4 left-4 match-badge text-sm py-1 px-3">{matchScore}% match</span>
             )}
             {dto.isFeatured && <FeaturedRibbon />}
           </div>
+          {heroIllustration && (
+            <p className="mb-8 text-[10px] font-mono truncate" style={{ color: "var(--navy-3)" }}>
+              <Attribution photo={heroIllustration} />
+            </p>
+          )}
 
           {dto.photos.length > 0 && <ListingPhotoGrid photos={dto.photos.slice(0, 4)} />}
 
