@@ -17,6 +17,7 @@ tags:
   - name: auth
   - name: me
   - name: listings
+  - name: favorites
   - name: proposals
   - name: devices
   - name: waitlist
@@ -353,6 +354,45 @@ components:
         ok: { type: boolean }
         id: { type: string }
 
+    FavoritesResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Listing' }
+
+    FavoriteIdsResponse:
+      type: object
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          items: { type: string }
+
+    FavoriteToggleResponse:
+      type: object
+      required: [ok, favorited]
+      properties:
+        ok: { type: boolean }
+        favorited: { type: boolean }
+
+    CityAutocompleteItem:
+      type: object
+      required: [city, country, listings]
+      properties:
+        city: { type: string }
+        country: { type: string }
+        listings: { type: integer, description: Count of active listings in this city. }
+
+    CityAutocompleteResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/CityAutocompleteItem' }
+
     ProposalSummary:
       type: object
       required: [id, status, meSide, dateFrom, dateTo, myCity, myNeighbourhood, theirCity, theirNeighbourhood, updatedAt]
@@ -675,6 +715,79 @@ paths:
         '401': { description: Unauthenticated }
         '403': { description: Not the owner }
         '404': { description: Not found }
+
+  /api/cities:
+    get:
+      tags: [listings]
+      summary: City autocomplete
+      description: Distinct cities of active listings with their listing counts. No auth.
+      parameters:
+        - { name: q, in: query, schema: { type: string }, description: 'Case-insensitive city-name prefix; omit for all cities.' }
+      responses:
+        '200':
+          description: OK (ordered by listing count desc, max 20)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CityAutocompleteResponse' }
+
+  /api/favorites:
+    get:
+      tags: [favorites]
+      summary: The user's favorited listings (wishlist)
+      description: Active listings only, newest favorite first.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FavoritesResponse' }
+        '401': { description: Unauthenticated }
+
+  /api/favorites/ids:
+    get:
+      tags: [favorites]
+      summary: Favorited listing ids
+      description: Cheap endpoint for syncing heart states on browse cards.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FavoriteIdsResponse' }
+        '401': { description: Unauthenticated }
+
+  /api/favorites/{listingId}:
+    put:
+      tags: [favorites]
+      summary: Favorite a listing
+      description: Idempotent — favoriting an already-favorited listing is a no-op success.
+      parameters:
+        - { name: listingId, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Favorited
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FavoriteToggleResponse' }
+        '401': { description: Unauthenticated }
+        '404': { description: Listing missing or inactive }
+    delete:
+      tags: [favorites]
+      summary: Unfavorite a listing
+      description: Idempotent — unfavoriting something that isn't favorited is a no-op success.
+      parameters:
+        - { name: listingId, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Unfavorited
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FavoriteToggleResponse' }
+        '401': { description: Unauthenticated }
 
   /api/ai/proposal-message:
     post:

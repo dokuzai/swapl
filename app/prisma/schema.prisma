@@ -59,6 +59,7 @@ model User {
   emailTokens     EmailToken[]
   authTokens      AuthToken[]
   devices         Device[]
+  favorites       Favorite[]
 }
 
 // One-shot tokens for email verification + password reset. We store only the
@@ -197,12 +198,27 @@ model Listing {
   reports              Report[]
   verificationPayment  ListingVerificationPayment?
   featuredPurchases    ListingFeaturedPurchase[]
+  favoritedBy          Favorite[]
 
   @@index([city])
   @@index([userId])
   @@index([isActive])
   @@index([isFeatured, featuredUntil])
   @@index([isVerified])
+}
+
+// ---------- FAVORITE ----------
+// A user's wishlist of listings ("hearts" in the mobile apps).
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@index([userId])
 }
 
 // ---------- SWAP PROPOSAL ----------
