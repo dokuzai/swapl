@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { CityIllust, SwapArrows } from "@/components/illustrations";
 import { paletteForCity } from "@/lib/cities";
+import { marketingUrl } from "@/lib/marketing/urls";
 import { formatDateRange } from "@/lib/listing-utils";
 import SwapActions from "./swap-actions";
 import { AffiliateLink } from "@/components/affiliate/affiliate-link";
@@ -195,12 +196,12 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
               </section>
 
               <p className="mt-8">
-                <Link
-                  href={`/guides/${theirListing.city.toLowerCase()}`}
+                <a
+                  href={marketingUrl(`/guides/${theirListing.city.toLowerCase()}`)}
                   className="pill-ghost"
                 >
                   Read the {theirListing.city} city guide →
-                </Link>
+                </a>
               </p>
             </>
           )}

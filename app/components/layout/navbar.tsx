@@ -6,12 +6,8 @@ import type { DictKey } from "@/lib/i18n/dict-en";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
 const NAV_LINKS: { href: string; key: DictKey }[] = [
-  { href: "/how-it-works", key: "nav.howItWorks" },
   { href: "/listings", key: "nav.homes" },
-  { href: "/blog", key: "nav.blog" },
-  { href: "/insurance", key: "nav.insurance" },
-  { href: "/pricing", key: "nav.pricing" },
-  { href: "/corporate", key: "nav.companies" },
+  { href: "/swaps", key: "nav.mySwaps" },
 ];
 
 export async function Navbar() {
@@ -38,19 +34,14 @@ export async function Navbar() {
         <div className="flex items-center gap-3">
           <LocaleSwitcher locale={locale} label={dict["locale.label"]} />
           {session ? (
-            <>
-              <Link href="/swaps" className="hidden sm:inline-flex nav-link">
-                {dict["nav.mySwaps"]}
-              </Link>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center rounded-full bg-navy text-cream w-9 h-9 font-medium uppercase text-sm"
-                style={{ background: "var(--navy)", color: "var(--cream)" }}
-                aria-label={dict["nav.dashboard"]}
-              >
-                {(session.name ?? session.email)[0].toUpperCase()}
-              </Link>
-            </>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center rounded-full bg-navy text-cream w-9 h-9 font-medium uppercase text-sm"
+              style={{ background: "var(--navy)", color: "var(--cream)" }}
+              aria-label={dict["nav.dashboard"]}
+            >
+              {(session.name ?? session.email)[0].toUpperCase()}
+            </Link>
           ) : (
             <>
               <Link href="/login" className="hidden sm:inline-flex nav-link">

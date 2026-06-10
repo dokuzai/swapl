@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getDictionary } from "@/lib/i18n/server";
+import { marketingUrl } from "@/lib/marketing/urls";
 
 export async function Footer() {
   const dict = await getDictionary();
@@ -16,11 +17,11 @@ export async function Footer() {
             {dict["footer.productHeading"]}
           </span>
           <div className="flex items-center gap-5 flex-wrap sm:justify-end">
-            <Link href="/how-it-works" className="hover:text-navy">{dict["footer.howItWorks"]}</Link>
-            <Link href="/insurance" className="hover:text-navy">{dict["footer.insurance"]}</Link>
             <Link href="/listings" className="hover:text-navy">{dict["footer.browseHomes"]}</Link>
-            <Link href="/blog" className="hover:text-navy">{dict["footer.blog"]}</Link>
             <Link href="/dashboard" className="hover:text-navy">{dict["footer.account"]}</Link>
+            <a href={marketingUrl("/how-it-works")} className="hover:text-navy">{dict["footer.howItWorks"]}</a>
+            <a href={marketingUrl("/blog")} className="hover:text-navy">{dict["footer.blog"]}</a>
+            <a href={marketingUrl("/pricing")} className="hover:text-navy">{dict["nav.pricing"]}</a>
           </div>
         </nav>
 
@@ -29,9 +30,8 @@ export async function Footer() {
             {dict["footer.legalHeading"]}
           </span>
           <div className="flex items-center gap-5 flex-wrap sm:justify-end">
-            <Link href="/privacy" className="hover:text-navy">{dict["footer.privacy"]}</Link>
-            <Link href="/terms" className="hover:text-navy">{dict["footer.terms"]}</Link>
-            <Link href="/contact" className="hover:text-navy">{dict["footer.contact"]}</Link>
+            <a href={marketingUrl("/privacy")} className="hover:text-navy">{dict["footer.privacy"]}</a>
+            <a href={marketingUrl("/terms")} className="hover:text-navy">{dict["footer.terms"]}</a>
           </div>
         </nav>
       </div>

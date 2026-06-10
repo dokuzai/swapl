@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { createPortal } from "react-dom";
+import { marketingUrl } from "@/lib/marketing/urls";
 
 // Renders when an action is blocked by a plan limit. Caller passes the
 // PlanLimitError payload returned by the 402 API response so we can show
@@ -34,7 +34,7 @@ export function UpgradeRequiredModal({
         <p className="text-sm mb-6" style={{ color: "var(--navy-2)" }}>{blurb}</p>
         <div className="flex items-center justify-end gap-2">
           <button onClick={onClose} className="pill-ghost">Not now</button>
-          <Link href="/pricing" className="pill-primary">See plans</Link>
+          <a href={marketingUrl("/pricing")} className="pill-primary">See plans</a>
         </div>
       </div>
     </div>,

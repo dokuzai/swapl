@@ -6,6 +6,7 @@ import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { getEffectivePlan } from "@/lib/billing/limits";
 import { ManageBillingButton } from "@/components/billing/manage-button";
+import { marketingUrl } from "@/lib/marketing/urls";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Billing · swapl" };
@@ -40,7 +41,7 @@ export default async function BillingPage() {
                 <h2 className="font-display text-2xl tracking-[-0.01em]">{plan.label}</h2>
               </div>
               {plan.id === "free" ? (
-                <Link href="/pricing" className="pill-primary">Upgrade</Link>
+                <a href={marketingUrl("/pricing")} className="pill-primary">Upgrade</a>
               ) : (
                 <ManageBillingButton />
               )}

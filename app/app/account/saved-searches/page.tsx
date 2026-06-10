@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { getSession } from "@/lib/auth/session";
 import { getEffectivePlan } from "@/lib/billing/limits";
+import { marketingUrl } from "@/lib/marketing/urls";
 import { prisma } from "@/lib/db";
 import { SavedSearchTable } from "./table";
 
@@ -27,7 +28,7 @@ export default async function SavedSearchesPage() {
               Saved searches are part of swapl Plus. Pin a city + dates + must-haves combo and we'll
               email when a fresh listing matches.
             </p>
-            <Link href="/pricing" className="pill-primary">See plans</Link>
+            <a href={marketingUrl("/pricing")} className="pill-primary">See plans</a>
           </div>
         </main>
         <Footer />

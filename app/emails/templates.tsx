@@ -7,6 +7,7 @@ import { Text } from "@react-email/components";
 import { EmailShell } from "./_shell";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://swapl.vercel.app";
+const MARKETING_URL = process.env.NEXT_PUBLIC_MARKETING_URL ?? "https://swapl.fun";
 
 type RenderedEmail = { subject: string; text: string; html: string; to: string };
 
@@ -115,7 +116,7 @@ export const templates = {
       heading: "Your swap is covered.",
       intro: `Policy ${policyNumber} is active for the duration of your stay plus 30 days. Property + liability + trip interruption — both directions, both homes.`,
       ctaLabel: "View coverage",
-      ctaHref: `${APP_URL}/insurance`,
+      ctaHref: `${MARKETING_URL}/insurance`,
       text: `Policy ${policyNumber} is active. Property + liability + trip interruption are covered both ways for the swap window plus 30 days.`,
     }),
 

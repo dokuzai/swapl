@@ -8,6 +8,7 @@ import "server-only";
 import type Stripe from "stripe";
 import { getStripe, BillingNotConfigured } from "./stripe";
 import { prisma } from "@/lib/db";
+import { marketingUrl } from "@/lib/marketing/urls";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
@@ -30,6 +31,11 @@ async function ensureStripeCustomer(userId: string): Promise<string> {
   return customer.id;
 }
 
+// Accepts app-relative paths or absolute URLs (e.g. the marketing site's
+// pricing page) for the Stripe return destinations.
+const absolute = (pathOrUrl: string) =>
+  pathOrUrl.startsWith("http") ? pathOrUrl : `${APP_URL}${pathOrUrl}`;
+
 const baseSession = (
   customerId: string,
   successPath: string,
@@ -39,8 +45,8 @@ const baseSession = (
   automatic_tax: { enabled: true },
   customer_update: { address: "auto", name: "auto" },
   billing_address_collection: "auto",
-  success_url: `${APP_URL}${successPath}?status=ok&session={CHECKOUT_SESSION_ID}`,
-  cancel_url: `${APP_URL}${cancelPath}?status=cancel`,
+  success_url: `${absolute(successPath)}?status=ok&session={CHECKOUT_SESSION_ID}`,
+  cancel_url: `${absolute(cancelPath)}?status=cancel`,
 });
 
 export async function startSubscriptionCheckout(opts: {
@@ -59,7 +65,7 @@ export async function startSubscriptionCheckout(opts: {
       metadata: { userId: opts.userId, kind: "membership" },
     },
     metadata: { userId: opts.userId, kind: "membership" },
-    ...baseSession(customerId, "/account/billing", "/pricing"),
+    ...baseSession(customerId, "/account/billing", marketingUrl("/pricing")),
   });
   if (!session.url) throw new Error("Stripe returned no Checkout URL");
   return session.url;
