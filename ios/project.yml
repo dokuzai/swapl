@@ -38,6 +38,10 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         SwaplApiBaseURL: "http://localhost:3000"
+        # Dev on a physical device talks plain http to the Mac's LAN IP;
+        # localhost is ATS-exempt by default, the LAN is not.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.swapl
@@ -45,3 +49,16 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         CODE_SIGN_STYLE: Automatic
+schemes:
+  Swapl:
+    build:
+      targets:
+        Swapl: all
+    run:
+      config: Debug
+      environmentVariables:
+        # Enable this (Edit Scheme → Run → Arguments) when running on a
+        # physical iPhone: the device cannot reach the Mac's localhost.
+        - variable: SWAPL_API_BASE_URL
+          value: "http://192.168.1.104:3000"
+          isEnabled: false
