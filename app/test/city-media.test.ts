@@ -235,7 +235,16 @@ describe("normalizeOpenverse", () => {
 
   it("falls back to foreign_landing_url for the creator link and fills empty alts", () => {
     const out = normalizeOpenverse(
-      { results: [result({ title: "", creator: " ", creator_url: null })] },
+      {
+        results: [
+          result({
+            title: "",
+            creator: " ",
+            creator_url: null,
+            tags: [{ name: "istanbul" }, { name: "postcard" }],
+          }),
+        ],
+      },
       "Istanbul"
     );
     expect(out[0].alt).toBe("Istanbul illustration");
@@ -247,13 +256,13 @@ describe("normalizeOpenverse", () => {
     const out = normalizeOpenverse(
       {
         results: [
-          result({ title: "Tiny", width: 640 }),
-          result({ title: "Unknown size", width: null, height: null }),
+          result({ title: "Tiny Istanbul postcard", width: 640 }),
+          result({ title: "Istanbul postcard, unknown size", width: null, height: null }),
         ],
       },
       "Istanbul"
     );
-    expect(out.map((p) => p.alt)).toEqual(["Unknown size"]);
+    expect(out.map((p) => p.alt)).toEqual(["Istanbul postcard, unknown size"]);
     expect(out[0].width).toBe(0);
   });
 
@@ -273,22 +282,21 @@ describe("normalizeOpenverse", () => {
     expect(out.map((p) => p.alt)).toEqual(["Galata tower drawing"]);
   });
 
-  it("ranks results that mention the city (title or tags) first", () => {
+  it("hard-requires a city mention AND an art signal (title or tags)", () => {
     const out = normalizeOpenverse(
       {
         results: [
           result({ title: "Random beer mug", tags: [] }),
-          result({ title: "Tagged only", tags: [{ name: "Istanbul skyline" }] }),
+          result({ title: "Tagged only", tags: [{ name: "Istanbul skyline" }, { name: "illustration" }] }),
           result({ title: "Old Istanbul lithograph", tags: [] }),
+          // Regression: a car-brochure scan that name-drops the city must not
+          // become the hero (this exact shape shipped a BMW ad for Tokyo).
+          result({ title: "BMW 1 Series brochure, Istanbul postcard", tags: [] }),
         ],
       },
       "istanbul" // case-insensitive both ways
     );
-    expect(out.map((p) => p.alt)).toEqual([
-      "Tagged only",
-      "Old Istanbul lithograph",
-      "Random beer mug",
-    ]);
+    expect(out.map((p) => p.alt)).toEqual(["Tagged only", "Old Istanbul lithograph"]);
   });
 
   it("returns [] for malformed payloads", () => {

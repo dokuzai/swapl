@@ -239,7 +239,11 @@ export const wikimediaProvider: CityMediaProvider = {
 // museum page) and credits `creator`.
 
 const ILLUST_SKIP =
-  /\b(map|flag|coat of arms|logo|icon|locator|seal|emblem|chart|diagram|graph|plan|symbol)\b/i;
+  /\b(map|flag|coat of arms|logo|icon|locator|seal|emblem|chart|diagram|graph|plan|symbol|advertisement|advert|ad|brochure|catalog|catalogue|dealer|showroom|magazine|cars?|bmw|mercedes|toyota|honda|nissan|audi|volkswagen|ford|porsche|ferrari)\b/i;
+// A hero candidate must read as ART of the city, not just any scan that
+// name-drops it (a BMW-brochure scan titled "BMW Tokyo" slipped through).
+const ILLUST_ART =
+  /\b(postcard|illustration|illustrated|engraving|etching|lithograph|woodcut|drawing|painting|print|poster|sketch|watercolou?r|gouache|gravure|vintage|artwork)\b/i;
 const ILLUST_MIN_WIDTH = 800;
 
 type OpenverseResult = {
@@ -260,6 +264,11 @@ function mentionsCity(r: OpenverseResult, city: string): boolean {
   return (r.tags ?? []).some((t) => (t?.name ?? "").toLowerCase().includes(needle));
 }
 
+/** Title+tags text for keyword checks. */
+function haystack(r: OpenverseResult): string {
+  return [r.title ?? "", ...(r.tags ?? []).map((t) => t?.name ?? "")].join(" ");
+}
+
 export function normalizeOpenverse(json: unknown, city: string): CityPhoto[] {
   const results = (json as { results?: OpenverseResult[] })?.results;
   if (!Array.isArray(results)) return [];
@@ -267,7 +276,12 @@ export function normalizeOpenverse(json: unknown, city: string): CityPhoto[] {
     .map((r): { photo: CityPhoto; cityMatch: boolean } | null => {
       if (!r?.url) return null;
       const title = (r.title ?? "").trim();
-      if (ILLUST_SKIP.test(title)) return null;
+      const hay = haystack(r);
+      if (ILLUST_SKIP.test(hay)) return null;
+      // Hard requirements, not just ranking: the result must mention the city
+      // AND carry an art/postcard signal in its title or tags.
+      if (!mentionsCity(r, city)) return null;
+      if (!ILLUST_ART.test(hay)) return null;
       const width = r.width ?? 0;
       const height = r.height ?? 0;
       // Drop tiny images, but keep results with unknown dimensions.

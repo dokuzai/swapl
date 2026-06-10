@@ -11,6 +11,7 @@
 
 import { prisma, parseJSON, stringifyJSON } from "@/lib/db";
 import { resolveProvider, illustrationProvider } from "./providers";
+import { judgeIllustrations } from "./judge";
 import { isCityPhoto, type CityPhoto, type CityMediaKind } from "./types";
 
 export type { CityPhoto, CityMediaKind } from "./types";
@@ -99,7 +100,10 @@ export async function getCityMedia(
 
   const provider = providerFor(kind);
   try {
-    const photos = await provider.fetchPhotos(city, country);
+    let photos = await provider.fetchPhotos(city, country);
+    // Illustrations get an optional AI relevance pass before they are cached,
+    // so one judged result set serves the whole 30-day TTL.
+    if (kind === "illustration") photos = await judgeIllustrations(city, country, photos);
     const data = {
       photos: stringifyJSON(photos),
       // The illustration provider can fall through to Pixabay — record the
