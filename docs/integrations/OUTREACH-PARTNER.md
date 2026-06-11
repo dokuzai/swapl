@@ -91,6 +91,8 @@ economics, what's covered (property damage vs liability), and API integration st
 | **Maya** | Form business: https://maya.net/business (account gratuito, approvazione 1–2 gg) | Nessun deposito; NDA per docs/prezzi API. Partire da qui. |
 | **eSIM Go** | Form su https://esimgo.com (no email pubblica verificata) · docs: https://docs.esim-go.com | Tier Standard ~$1.000 top-up; registrazione quasi self-serve. |
 | **Airalo** | Form: https://partners.airalo.com/ · API: https://www.airalo.com/partner-with-us/api-partners · supporto partner: partner.support@airalo.com | Chiedere esplicitamente quote wholesale e soglia MSP. Docs: https://developers.partners.airalo.com/ |
+| eSIM Access (low barrier) | alliance@esimaccess.com · https://esimaccess.com/ · docs: https://docs.esimaccess.com/ | Self-serve, nessun MOQ — utile per partire subito. |
+| MobiMatter / zendit (low barrier) | https://mobimatter.com/reseller-partner · https://zendit.io/esims/ | Self-serve, wallet $250 (MobiMatter); nessun outreach necessario. |
 
 **Variante messaggio (eSIM):** usare il template generale con
 `[CATEGORY] = travel eSIM`, e aggiungere:

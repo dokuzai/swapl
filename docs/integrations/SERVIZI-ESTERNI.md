@@ -105,8 +105,15 @@ netto via API e tiene il margine. Nessuno pubblica gli sconti wholesale: vanno q
 
 **Sequenza pragmatica:** aprire account business Maya (rischio zero) + candidarsi a eSIM Go
 Standard in parallelo per confrontare i prezzi reali; mandare il form Airalo Partners per una
-quote (brand più forte, ma MSP e onboarding sales-gated). Alternativa low-barrier da tenere
-d'occhio: eSIM Access (docs pubbliche, ingresso economico).
+quote (brand più forte, ma MSP e onboarding sales-gated).
+
+**Ingressi a barriera ancora più bassa** (reseller veri, MoR = Swapl, docs pubbliche):
+- **eSIM Access** — self-serve, nessun MOQ né deposito minimo pubblicato; docs:
+  https://docs.esimaccess.com/ · contatto deal: alliance@esimaccess.com
+- **MobiMatter** — marketplace multi-vendor, wallet minimo **$250**; docs:
+  https://docs.mobimatter.com/
+- **zendit** (IDT) — white-label API completamente self-serve, wallet prepagato:
+  https://zendit.io/esims/
 
 Contatti e messaggi: vedi [`OUTREACH-PARTNER.md`](./OUTREACH-PARTNER.md).
 
@@ -141,6 +148,13 @@ quasi tutto il markup → P3, da modellare prima di investirci.
   call se sul tier API il merchant of record può essere Swapl.
 - **HolidayTaxis** (HBX Group, *non* Booking) — modello trade/agent a commissione o net rate,
   docs pubbliche: https://developer.holidaytaxis.com. Terza opzione credibile.
+- **Mozio** — aggregatore con API/SDK/white-label, rev share ~5–10%; affiliate come entry
+  point e API enterprise negoziata. Contatto: partners@mozio.com · docs:
+  https://mozio.docs.apiary.io/
+- **Amadeus Self-Service Transfers API** — unica **API bookable self-serve** della categoria
+  (Transfer Search/Booking/Management, quota test gratuita, pay-as-you-go):
+  https://developers.amadeus.com/self-service/category/cars-and-transfers — utile come
+  baseline tecnica senza negoziazione commerciale.
 - ❌ **Jayride** — da evitare: sospesa dall'ASX, fornitori non pagati da mesi/anni → rischio
   di servizio inaccettabile per i nostri utenti.
 - ❌ **Booking.com Taxi (Demand API)** — solo Managed Affiliate Partner ad alto volume; nel
