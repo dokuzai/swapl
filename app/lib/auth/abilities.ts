@@ -8,7 +8,7 @@
 
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { getSession, requireSession } from "@/lib/auth/session";
+import { getSession, getSessionFromRequest, requireSession } from "@/lib/auth/session";
 import { getEffectivePlan, PlanLimitError, type PlanId } from "@/lib/billing/limits";
 
 export type CurrentUser = {
@@ -47,6 +47,20 @@ export async function requireAdmin(): Promise<CurrentUser> {
     throw new Error("FORBIDDEN");
   }
   return me;
+}
+
+// Bearer-or-cookie variant for JSON API routes that native clients call
+// (mobile apps have no session cookie — see lib/auth/session.ts).
+export async function requireAdminFromRequest(req: Request): Promise<CurrentUser> {
+  const session = await getSessionFromRequest(req);
+  if (!session) throw new Error("UNAUTHENTICATED");
+  const user = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { id: true, email: true, name: true, role: true },
+  });
+  if (!user) throw new Error("UNAUTHENTICATED");
+  if (user.role !== "swapl_admin") throw new Error("FORBIDDEN");
+  return { id: user.id, email: user.email, name: user.name, role: "swapl_admin" };
 }
 
 export async function requireMembership(min: Exclude<PlanId, "free">): Promise<void> {
