@@ -1,17 +1,12 @@
 package app.swapl.features.swaps
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SwapHoriz
@@ -29,13 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.swapl.core.model.Agreement
 import app.swapl.core.model.Listing
 import app.swapl.core.model.ProposalDetail
 import app.swapl.core.repository.ProposalRepository
@@ -47,7 +39,6 @@ import app.swapl.design.components.TagChip
 import app.swapl.design.illustrations.CityIllust
 import app.swapl.designtokens.SwaplCityPalettes
 import app.swapl.designtokens.SwaplColors
-import app.swapl.designtokens.SwaplRadius
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -164,53 +155,8 @@ private fun ProposalBlock(d: ProposalDetail) {
     }
 }
 
-@Composable
-private fun AgreedPanel(a: Agreement, otherName: String) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .background(SwaplColors.Navy, RoundedCornerShape(SwaplRadius.lg))
-            .padding(SwaplSpacing.s5),
-        verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
-    ) {
-        Text("Swap agreed — keys for keys", style = MaterialTheme.typography.displaySmall, color = SwaplColors.Cream)
-        Text(
-            "Stay between ${a.dateFrom.take(10)} → ${a.dateTo.take(10)} with $otherName.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = SwaplColors.Cream.copy(alpha = 0.85f),
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s4)) {
-            KeyCard("Your code (use at their place)", a.keyCode1, Modifier.weight(1f))
-            KeyCard("Their code (guest at your place)", a.keyCode2, Modifier.weight(1f))
-        }
-        if (a.insurance != null) {
-            HorizontalDivider(color = SwaplColors.Cream.copy(alpha = 0.2f))
-            Text("Insurance · €${a.insurance.coverageAmount / 1000}k cover", style = MaterialTheme.typography.labelMedium, color = SwaplColors.Cream.copy(alpha = 0.6f))
-            Text(a.insurance.policyNumber, style = MaterialTheme.typography.titleLarge, color = SwaplColors.Cream, fontWeight = FontWeight.Medium)
-            Text("Auto-issued · 24/7 line +44 800 000 swap", style = MaterialTheme.typography.bodySmall, color = SwaplColors.Cream.copy(alpha = 0.7f))
-        }
-    }
-}
-
-@Composable
-private fun KeyCard(title: String, code: String?, modifier: Modifier = Modifier) {
-    Column(
-        modifier
-            .background(SwaplColors.Navy2, RoundedCornerShape(SwaplRadius.md))
-            .padding(SwaplSpacing.s3),
-        verticalArrangement = Arrangement.spacedBy(4.dp())
-    ) {
-        Text(title, style = MaterialTheme.typography.labelSmall, color = SwaplColors.Cream.copy(alpha = 0.6f))
-        Text(
-            code ?: "----",
-            fontFamily = app.swapl.design.MonoFamily,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Medium,
-            letterSpacing = 4.sp,
-            color = SwaplColors.Cream,
-        )
-    }
-}
+// AgreedPanel (key codes + insurance) lives in AgreementPanel.kt — shared
+// with the Trips detail screen.
 
 @Composable
 private fun ActionRow(d: ProposalDetail, vm: SwapThreadViewModel, onCounter: () -> Unit) {
