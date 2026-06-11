@@ -12,6 +12,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { startAuthentication } from "@simplewebauthn/browser";
 import { useT } from "@/lib/i18n/client";
 import type { WebAuthProviders } from "@/lib/auth/web-providers";
 
@@ -164,6 +165,24 @@ export function AuthProviders({ providers }: { providers: WebAuthProviders }) {
     signIn("/api/auth/oauth/apple", { identityToken: res.authorization.id_token, fullName });
   }
 
+  // ---- Passkey (WebAuthn) — usernameless, discoverable credentials ----
+  async function passkeySignIn() {
+    setError(null);
+    let assertion;
+    try {
+      const optRes = await fetch("/api/auth/passkey/login/options", { method: "POST" });
+      if (!optRes.ok) throw new Error("options failed");
+      assertion = await startAuthentication({ optionsJSON: await optRes.json() });
+    } catch (err) {
+      // User dismissed the platform sheet → silent; anything else → message.
+      if (err instanceof Error && err.name === "NotAllowedError") return;
+      setError(t("auth.passkey.failed"));
+      return;
+    }
+    // No `platform` in the body → standard web cookie session.
+    signIn("/api/auth/passkey/login/verify", assertion);
+  }
+
   // ---- Telegram Login Widget (script renders an iframe button) ----
   const telegramRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -206,6 +225,18 @@ export function AuthProviders({ providers }: { providers: WebAuthProviders }) {
         )}
 
         {providers.telegram && <div ref={telegramRef} className="flex justify-center" />}
+
+        {providers.passkey && (
+          <button
+            type="button"
+            onClick={passkeySignIn}
+            disabled={pending}
+            className="w-full px-3 py-2.5 rounded-lg border text-sm font-medium disabled:opacity-60"
+            style={inputStyle}
+          >
+            🔑 {t("auth.passkey.signIn")}
+          </button>
+        )}
 
         <OtpSignIn phoneEnabled={providers.phone} onSession={() => { router.replace(next); router.refresh(); }} />
       </div>

@@ -28,6 +28,8 @@ export type WebAuthProviders = {
   emailOtp: true;
   /** SMS OTP — only when Twilio is fully configured. */
   phone: boolean;
+  /** Passkeys (WebAuthn) — no external credentials needed, always on. */
+  passkey: true;
 };
 
 export function webAuthProviders(): WebAuthProviders {
@@ -49,5 +51,6 @@ export function webAuthProviders(): WebAuthProviders {
       : null,
     emailOtp: true,
     phone: twilioConfig() !== null,
+    passkey: true,
   };
 }

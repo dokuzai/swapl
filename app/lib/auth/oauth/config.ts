@@ -53,5 +53,7 @@ export function providersStatus() {
     // Email OTP always works: the email adapter falls back to console in dev.
     emailOtp: true,
     phone: twilioConfig() !== null,
+    // WebAuthn needs no external credentials — always available.
+    passkey: true,
   };
 }

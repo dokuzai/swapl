@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "65H83C7GYT.app.swapl",
+        "paths": ["/listings/*", "/swaps/*"]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["65H83C7GYT.app.swapl"]
+  }
+}

@@ -5,6 +5,8 @@ import { Footer } from "@/components/layout/footer";
 import { getSession } from "@/lib/auth/session";
 import Link from "next/link";
 import { AISettings } from "@/components/account/ai-settings";
+import { PasskeysSection } from "@/components/account/passkeys";
+import { toPasskeySummary } from "@/lib/auth/passkeys";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Account · swapl" };
@@ -14,6 +16,15 @@ export default async function AccountPage() {
   if (!session) redirect("/login?next=/account");
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
   if (!user) redirect("/login");
+
+  // Registered WebAuthn passkeys, newest first (serialised — BigInt counter
+  // never crosses the server/client boundary).
+  const passkeys = (
+    await prisma.webAuthnCredential.findMany({
+      where: { userId: session.userId },
+      orderBy: { createdAt: "desc" },
+    })
+  ).map(toPasskeySummary);
 
   // Insurance policies across the user's swaps (either side of the agreement).
   const policies = await prisma.insurancePolicy.findMany({
@@ -79,6 +90,8 @@ export default async function AccountPage() {
               We use a one-time KYC check (passport / national ID) at proposal acceptance. Your data isn&rsquo;t shared with the other host.
             </p>
           </section>
+
+          <PasskeysSection passkeys={passkeys} />
 
           <AISettings />
 

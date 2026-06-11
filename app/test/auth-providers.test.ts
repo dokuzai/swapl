@@ -30,6 +30,7 @@ describe("GET /api/auth/providers", () => {
       telegram: { enabled: false },
       emailOtp: true,
       phone: false,
+      passkey: true,
     });
   });
 
@@ -50,6 +51,7 @@ describe("GET /api/auth/providers", () => {
       telegram: { enabled: true, botUsername: "swapl_bot" },
       emailOtp: true,
       phone: true,
+      passkey: true,
     });
   });
 

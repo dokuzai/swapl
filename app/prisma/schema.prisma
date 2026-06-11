@@ -73,6 +73,7 @@ model User {
   devices         Device[]
   favorites       Favorite[]
   oauthAccounts   OAuthAccount[]
+  webauthnCredentials WebAuthnCredential[]
 }
 
 // External identity linked to a local user. One row per (provider, subject).
@@ -88,6 +89,38 @@ model OAuthAccount {
 
   @@unique([provider, providerUserId])
   @@index([userId])
+}
+
+// WebAuthn passkeys. publicKey is the COSE key base64url-encoded; counter is
+// the authenticator's signature counter (BigInt — spec allows up to 2^32-1),
+// bumped on every successful assertion and used to reject cloned credentials.
+model WebAuthnCredential {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialId String    @unique                                 // base64url credential id from the authenticator
+  publicKey    String                                            // base64url COSE public key
+  counter      BigInt    @default(0)
+  transports   String?                                           // JSON array, e.g. ["internal","hybrid"]
+  deviceType   String?                                           // "singleDevice" | "multiDevice"
+  backedUp     Boolean   @default(false)
+  name         String?                                           // user-facing label, from the registering device
+  createdAt    DateTime  @default(now())
+  lastUsedAt   DateTime?
+
+  @@index([userId])
+}
+
+// Short-lived WebAuthn challenges (consume-and-delete, 5 min TTL). userId is
+// set for registration (the challenge belongs to the logged-in account) and
+// null for usernameless login (the credential resolves the user).
+model WebAuthnChallenge {
+  id        String   @id @default(cuid())
+  challenge String   @unique                                     // base64url challenge bytes
+  userId    String?
+  type      String                                               // "register" | "login"
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 // One-time login codes (email or SMS). Only the SHA-256 hash of the 6-digit

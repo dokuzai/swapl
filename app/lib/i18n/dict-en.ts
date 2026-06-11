@@ -140,6 +140,8 @@ export const en = {
   "auth.otp.back": "Use a different address",
   "auth.otp.sendFailed": "Could not send the code. Try again.",
   "auth.otp.cancel": "Cancel",
+  "auth.passkey.signIn": "Sign in with a passkey",
+  "auth.passkey.failed": "Passkey sign-in didn't work. Please try again.",
   "auth.forgot.title": "Reset by email.",
   "auth.forgot.lede":
     "Enter the email you signed up with — we'll send a one-time link valid for an hour.",

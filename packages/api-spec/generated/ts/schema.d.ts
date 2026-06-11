@@ -685,6 +685,269 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/passkey/register/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start adding a passkey to the signed-in account
+         * @description Authenticated — a passkey always attaches to an existing account. Returns WebAuthn creation options (discoverable credential required, existing credentials excluded); the challenge is stored server-side for 5 minutes.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WebAuthnRegistrationOptions"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/passkey/register/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Finish adding a passkey
+         * @description Authenticated. The challenge embedded in clientDataJSON must match an unconsumed register challenge issued to this user; challenges are single-use and deleted on first redemption attempt.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PasskeyRegisterVerifyRequest"];
+                };
+            };
+            responses: {
+                /** @description Credential stored */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            passkey: components["schemas"]["PasskeySummary"];
+                        };
+                    };
+                };
+                /** @description Malformed payload */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated / invalid or expired challenge / verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/passkey/login/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a usernameless passkey login
+         * @description Anonymous + rate limited. allowCredentials is empty — the platform offers its discoverable credentials and the assertion's credential id resolves the account at verify time.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WebAuthnAuthenticationOptions"];
+                    };
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/passkey/login/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Exchange a passkey assertion for a session
+         * @description Anonymous + rate limited. Single-use challenge, signature-counter regression rejected. Emits the standard session — bearer token when `platform` is present, web cookie otherwise.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PasskeyLoginVerifyRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LoginResponse"];
+                    };
+                };
+                /** @description Invalid challenge / unknown credential / verification failed */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/passkey/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove one of the caller's passkeys */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Removed */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me": {
         parameters: {
             query?: never;
@@ -2014,6 +2277,8 @@ export interface components {
             emailOtp: boolean;
             /** @description SMS OTP availability (Twilio configured). */
             phone: boolean;
+            /** @description Passkey (WebAuthn) sign-in — always true */
+            passkey: boolean;
         };
         /** @description Web (cookie) login response — same shape as POST /api/auth/login. */
         SessionResponse: {
@@ -2056,6 +2321,50 @@ export interface components {
             code: string;
             platform?: components["schemas"]["Platform"];
             appVersion?: string;
+        };
+        /** @description PublicKeyCredentialCreationOptionsJSON (WebAuthn level 3) — feed to startRegistration()/the platform passkey API verbatim. */
+        WebAuthnRegistrationOptions: {
+            [key: string]: unknown;
+        };
+        /** @description PublicKeyCredentialRequestOptionsJSON — usernameless (allowCredentials empty); feed to startAuthentication() verbatim. */
+        WebAuthnAuthenticationOptions: {
+            [key: string]: unknown;
+        };
+        PasskeyRegisterVerifyRequest: {
+            /** @description RegistrationResponseJSON from startRegistration() / ASAuthorization / CredentialManager. */
+            response: {
+                [key: string]: unknown;
+            };
+            /** @description User-facing label for the credential (e.g. the device model). */
+            name?: string;
+        };
+        /** @description AuthenticationResponseJSON fields spread at the top level, plus the usual optional platform/appVersion. */
+        PasskeyLoginVerifyRequest: {
+            /** @description Base64url credential id — resolves the account (usernameless). */
+            id: string;
+            rawId: string;
+            response: {
+                [key: string]: unknown;
+            };
+            /** @enum {string} */
+            type: "public-key";
+            clientExtensionResults?: {
+                [key: string]: unknown;
+            };
+            authenticatorAttachment?: string;
+            platform?: components["schemas"]["Platform"];
+            appVersion?: string;
+        };
+        PasskeySummary: {
+            id: string;
+            name: string | null;
+            /** @enum {string|null} */
+            deviceType: "singleDevice" | "multiDevice" | null;
+            backedUp: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            lastUsedAt: string | null;
         };
         MeResponse: {
             user: {

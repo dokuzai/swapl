@@ -47,6 +47,16 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: SECURITY_HEADERS,
       },
+      // Apple requires the AASA file (no extension) to be served as JSON for
+      // Universal Links + passkey autofill (webcredentials). The Android
+      // counterpart, /.well-known/assetlinks.json, currently lists ONLY the
+      // debug-keystore fingerprint.
+      // TODO: add the release-keystore SHA-256 fingerprint to
+      // public/.well-known/assetlinks.json before shipping a signed build.
+      {
+        source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
     ];
   },
 

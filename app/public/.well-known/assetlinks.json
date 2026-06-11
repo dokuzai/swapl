@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.swapl",
+      "sha256_cert_fingerprints": [
+        "4E:8E:EC:3D:E9:1F:C7:29:CF:35:39:37:2B:8C:87:EF:11:ED:F3:80:0F:9B:47:0B:5D:24:10:EC:CA:E6:D3:9B"
+      ]
+    }
+  }
+]

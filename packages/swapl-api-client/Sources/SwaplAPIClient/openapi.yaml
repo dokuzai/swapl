@@ -114,7 +114,7 @@ components:
     ProvidersResponse:
       type: object
       description: Which login methods are live on this deployment (env-gated). Clients hide buttons for disabled providers.
-      required: [password, google, apple, telegram, emailOtp, phone]
+      required: [password, google, apple, telegram, emailOtp, phone, passkey]
       properties:
         password: { type: boolean }
         google: { type: boolean }
@@ -127,6 +127,7 @@ components:
             botUsername: { type: string, description: Present when enabled — renders the Login Widget. }
         emailOtp: { type: boolean }
         phone: { type: boolean, description: SMS OTP availability (Twilio configured). }
+        passkey: { type: boolean, description: Passkey (WebAuthn) sign-in — always true, needs no external credentials. }
 
     SessionResponse:
       type: object
@@ -186,6 +187,55 @@ components:
         code: { type: string, pattern: '^[0-9]{6}$' }
         platform: { $ref: '#/components/schemas/Platform' }
         appVersion: { type: string }
+
+    WebAuthnRegistrationOptions:
+      type: object
+      description: PublicKeyCredentialCreationOptionsJSON (WebAuthn level 3) — feed to startRegistration()/the platform passkey API verbatim.
+      additionalProperties: true
+
+    WebAuthnAuthenticationOptions:
+      type: object
+      description: PublicKeyCredentialRequestOptionsJSON — usernameless (allowCredentials empty); feed to startAuthentication() verbatim.
+      additionalProperties: true
+
+    PasskeyRegisterVerifyRequest:
+      type: object
+      required: [response]
+      properties:
+        response:
+          type: object
+          description: RegistrationResponseJSON from startRegistration() / ASAuthorization / CredentialManager.
+          additionalProperties: true
+        name: { type: string, description: User-facing label for the credential (e.g. the device model). }
+
+    PasskeyLoginVerifyRequest:
+      type: object
+      description: AuthenticationResponseJSON fields spread at the top level, plus the usual optional platform/appVersion.
+      required: [id, rawId, response, type]
+      properties:
+        id: { type: string, description: Base64url credential id — resolves the account (usernameless). }
+        rawId: { type: string }
+        response:
+          type: object
+          additionalProperties: true
+        type: { type: string, enum: [public-key] }
+        clientExtensionResults:
+          type: object
+          additionalProperties: true
+        authenticatorAttachment: { type: string }
+        platform: { $ref: '#/components/schemas/Platform' }
+        appVersion: { type: string }
+
+    PasskeySummary:
+      type: object
+      required: [id, name, deviceType, backedUp, createdAt, lastUsedAt]
+      properties:
+        id: { type: string }
+        name: { type: string, nullable: true }
+        deviceType: { type: string, nullable: true, enum: [singleDevice, multiDevice, null] }
+        backedUp: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        lastUsedAt: { type: string, format: date-time, nullable: true }
 
     MeResponse:
       type: object
@@ -992,6 +1042,110 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
         '429': { description: Rate limited / code attempts exhausted }
+
+  /api/auth/passkey/register/options:
+    post:
+      tags: [auth]
+      summary: Start adding a passkey to the signed-in account
+      description: >-
+        Authenticated — a passkey always attaches to an existing account.
+        Returns WebAuthn creation options (discoverable credential required,
+        existing credentials excluded); the challenge is stored server-side
+        for 5 minutes.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WebAuthnRegistrationOptions' }
+        '401': { description: Unauthenticated }
+
+  /api/auth/passkey/register/verify:
+    post:
+      tags: [auth]
+      summary: Finish adding a passkey
+      description: >-
+        Authenticated. The challenge embedded in clientDataJSON must match an
+        unconsumed register challenge issued to this user; challenges are
+        single-use and deleted on first redemption attempt.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PasskeyRegisterVerifyRequest' }
+      responses:
+        '200':
+          description: Credential stored
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, passkey]
+                properties:
+                  ok: { type: boolean }
+                  passkey: { $ref: '#/components/schemas/PasskeySummary' }
+        '400': { description: Malformed payload }
+        '401': { description: Unauthenticated / invalid or expired challenge / verification failed }
+
+  /api/auth/passkey/login/options:
+    post:
+      tags: [auth]
+      summary: Start a usernameless passkey login
+      description: >-
+        Anonymous + rate limited. allowCredentials is empty — the platform
+        offers its discoverable credentials and the assertion's credential id
+        resolves the account at verify time.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WebAuthnAuthenticationOptions' }
+        '429': { description: Rate limited }
+
+  /api/auth/passkey/login/verify:
+    post:
+      tags: [auth]
+      summary: Exchange a passkey assertion for a session
+      description: >-
+        Anonymous + rate limited. Single-use challenge, signature-counter
+        regression rejected. Emits the standard session — bearer token when
+        `platform` is present, web cookie otherwise.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PasskeyLoginVerifyRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401':
+          description: Invalid challenge / unknown credential / verification failed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '429': { description: Rate limited }
+
+  /api/auth/passkey/{id}:
+    delete:
+      tags: [auth]
+      summary: Remove one of the caller's passkeys
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Removed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+        '404': { description: Not found (or not yours) }
 
   /api/me:
     get:

@@ -29,6 +29,7 @@ describe("webAuthProviders", () => {
       telegram: null,
       emailOtp: true,
       phone: false,
+      passkey: true,
     });
   });
 
@@ -49,6 +50,7 @@ describe("webAuthProviders", () => {
       telegram: { botUsername: "swapl_bot" },
       emailOtp: true,
       phone: true,
+      passkey: true,
     });
   });
 
