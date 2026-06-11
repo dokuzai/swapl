@@ -32,15 +32,20 @@ struct MetricsView: View {
     @State private var vm = MetricsViewModel()
 
     var body: some View {
-        content
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
-            .navigationTitle("Metrics")
-            .task { await vm.load() }
+        // ZStack so something always renders: with a bare `content`, the
+        // initial not-yet-loading state produced an EmptyView and .task
+        // never fired — the screen stayed blank forever.
+        ZStack {
+            SwaplSemanticLight.background.ignoresSafeArea()
+            content
+        }
+        .navigationTitle("Metrics")
+        .task { await vm.load() }
     }
 
     @ViewBuilder
     private var content: some View {
-        if vm.isLoading && vm.metrics == nil && vm.error == nil {
+        if vm.metrics == nil && vm.error == nil {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .frame(minHeight: 320)
