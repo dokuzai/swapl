@@ -6,11 +6,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { isAuthorizedCron } from "@/lib/auth/cron";
+import { createLogger } from "@/lib/log";
 import { parseFiltersFromSearchParams } from "@/lib/listing-filters";
 import { queryListings } from "@/lib/listing-query";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+const log = createLogger("cron:saved-searches");
 
 export async function GET(req: Request) {
   if (!isAuthorizedCron(req)) return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
@@ -43,7 +46,7 @@ export async function GET(req: Request) {
       to: s.user.email,
       subject: `${fresh.length} new homes match "${s.name}"`,
       text: `${fresh.length} new homes match your saved search "${s.name}":\n\n${lines.join("\n")}\n\nBrowse them: /listings?${s.query}`,
-    }).catch((err) => console.error("[saved-search:email]", err));
+    }).catch((err) => log.error("digest email failed", err, { savedSearchId: s.id }));
 
     await prisma.savedSearch.update({ where: { id: s.id }, data: { lastNotifiedAt: new Date() } });
     sent++;

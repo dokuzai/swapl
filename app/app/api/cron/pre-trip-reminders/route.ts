@@ -7,11 +7,14 @@ import { prisma } from "@/lib/db";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { isAuthorizedCron } from "@/lib/auth/cron";
+import { createLogger } from "@/lib/log";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const WINDOW_MS = 48 * 60 * 60 * 1000;
+
+const log = createLogger("cron:pre-trip-reminders");
 
 export async function GET(req: Request) {
   if (!isAuthorizedCron(req)) return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
@@ -42,11 +45,11 @@ export async function GET(req: Request) {
     for (const r of recipients) {
       if (r.email) {
         sendEmail(emailTemplates.preTripReminder(r.email, r.destinationCity, a.dateFrom)).catch(
-          (err) => console.error("[pre-trip:email]", err)
+          (err) => log.error("reminder email failed", err, { agreementId: a.id, userId: r.userId })
         );
       }
       sendPush(r.userId, pushTemplates.preTripReminder(a.proposalId, r.destinationCity)).catch(
-        (err) => console.error("[pre-trip:push]", err)
+        (err) => log.error("reminder push failed", err, { agreementId: a.id, userId: r.userId })
       );
     }
     await prisma.swapAgreement.update({
