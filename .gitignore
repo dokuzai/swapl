@@ -32,3 +32,6 @@ android/**/google-services.json
 android/**/.idea/
 *.iml
 packages/design-tokens-android/build
+android/**/keystore.properties
+android/**/*.jks
+android/**/*.keystore

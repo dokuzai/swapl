@@ -20,7 +20,9 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AddHome
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -39,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -80,6 +83,7 @@ fun AccountScreen(
 ) {
     LaunchedEffect(Unit) { overview.load() }
     val s = authVm.uiState.session
+    val uriHandler = LocalUriHandler.current
     var confirmSignOut by remember { mutableStateOf(false) }
 
     Column(
@@ -165,6 +169,9 @@ fun AccountScreen(
             MenuRow(Icons.Default.Person, "View profile") { s?.id?.let(onOpenPublicProfile) }
             MenuRow(Icons.Default.Favorite, "Interests", onClick = onOpenInterests)
             MenuRow(Icons.Default.Search, "Saved searches", onClick = onOpenSavedSearches)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+            MenuRow(Icons.Default.PrivacyTip, "Privacy policy") { uriHandler.openUri("https://swapl.fun/privacy") }
+            MenuRow(Icons.Default.Description, "Terms of service") { uriHandler.openUri("https://swapl.fun/terms") }
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
             MenuRow(Icons.AutoMirrored.Filled.Logout, "Log out", destructive = true) { confirmSignOut = true }
         }

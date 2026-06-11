@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -5,6 +7,14 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+}
+
+// Play signing: keystore.properties (gitignored, next to this module's root project)
+// with storeFile / storePassword / keyAlias / keyPassword. Absent locally —
+// debug builds keep working, release falls back to unsigned.
+val keystoreProps = Properties().apply {
+    val f = rootProject.file("keystore.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
 }
 
 android {
@@ -15,8 +25,9 @@ android {
         applicationId = "app.swapl"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        // Derived so CI can bump via -Pswapl.versionCode=N (defaults in gradle.properties).
+        versionCode = (project.findProperty("swapl.versionCode") as String?)?.toInt() ?: 1
+        versionName = (project.findProperty("swapl.versionName") as String?) ?: "0.1.0"
 
         // Read from local.properties: swapl.api.base.url=...
         val apiBaseUrl: String = (project.findProperty("swapl.api.base.url") as String?)
@@ -29,9 +40,28 @@ android {
         buildConfig = true
     }
 
+    signingConfigs {
+        create("release") {
+            if (keystoreProps.isNotEmpty()) {
+                storeFile = rootProject.file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+            if (keystoreProps.isNotEmpty()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

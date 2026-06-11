@@ -3,6 +3,7 @@ package app.swapl
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -80,7 +81,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        pendingDeepLink = intent?.data
+        pendingDeepLink = runCatching { intent?.data }.getOrNull()
         setContent {
             SwaplApp {
                 val sizeClass = calculateWindowSizeClass(this)
@@ -110,7 +111,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        pendingDeepLink = intent.data
+        pendingDeepLink = runCatching { intent.data }.getOrNull()
     }
 }
 
@@ -148,21 +149,26 @@ private fun HomeShell(
     val browseNav = rememberNavController()
     val swapsNav = rememberNavController()
 
-    // Route the incoming swapl:// or https://swapl.fun/... deep link.
+    // Route the incoming swapl:// or https://swapl.fun/... deep link. Malformed
+    // URIs (push payload typos, hostile intents) must never crash the shell.
     LaunchedEffect(deepLink) {
         val uri = deepLink ?: return@LaunchedEffect
-        val segs = uri.pathSegments
-        val head = uri.host?.takeIf { it != "swapl.fun" } ?: segs.firstOrNull() ?: return@LaunchedEffect
-        val id = if (uri.host == null || uri.host == "swapl.fun") segs.getOrNull(1) else segs.getOrNull(0)
-        when (head) {
-            "swaps" -> id?.let {
-                current = HomeDest.Swaps
-                swapsNav.navigate("thread/$it")
+        try {
+            val segs = uri.pathSegments
+            val head = uri.host?.takeIf { it != "swapl.fun" } ?: segs.firstOrNull()
+            val id = if (uri.host == null || uri.host == "swapl.fun") segs.getOrNull(1) else segs.getOrNull(0)
+            when (head) {
+                "swaps" -> id?.let {
+                    current = HomeDest.Swaps
+                    swapsNav.navigate("thread/$it")
+                }
+                "listings" -> id?.let {
+                    current = HomeDest.Browse
+                    browseNav.navigate("detail/$it")
+                }
             }
-            "listings" -> id?.let {
-                current = HomeDest.Browse
-                browseNav.navigate("detail/$it")
-            }
+        } catch (e: Exception) {
+            Log.w("swapl/deeplink", "could not route $uri", e)
         }
         onDeepLinkHandled()
     }
