@@ -19,9 +19,11 @@ export async function GET(_req: Request, { params }: RouteContext<"/api/profiles
       verified: true,
       interests: true,
       createdAt: true,
+      suspendedAt: true,
     },
   });
-  if (!user) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  // Moderation: suspended hosts are hidden — indistinguishable from missing.
+  if (!user || user.suspendedAt) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const listings = await prisma.listing.findMany({
     where: { userId: id, isActive: true },

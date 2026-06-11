@@ -6,7 +6,7 @@ import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { insuranceProvider } from "@/lib/insurance";
 import { toDTO } from "@/lib/listing-utils";
-import { forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
+import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -111,6 +111,16 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
   }
 
   const action = parsed.data.action;
+
+  // Moderation: a swap cannot advance (accept/counter) while either party is
+  // suspended — covers both a suspended caller and a suspended counterparty.
+  // Withdraw/decline stay allowed so the other side isn't left hanging.
+  if (
+    (action === "accept" || action === "counter") &&
+    (proposal.proposerListing.user.suspendedAt || proposal.targetListing.user.suspendedAt)
+  ) {
+    return accountSuspended();
+  }
 
   if (action === "withdraw") {
     if (!isProposer) return forbidden("Only proposer can withdraw.");

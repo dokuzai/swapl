@@ -31,7 +31,8 @@ export async function queryListings(
   viewerListing?: ListingDTO | null
 ): Promise<{ items: ListingWithScore[]; total: number; pageSize: number; page: number }> {
   // SQLite via Prisma — no JSON queries needed for our seed; build a where clause.
-  const where: Record<string, unknown> = { isActive: true };
+  // Moderation: listings owned by suspended users never surface in browse.
+  const where: Record<string, unknown> = { isActive: true, user: { suspendedAt: null } };
   if (filters.cities.length) where.city = { in: filters.cities };
   if (filters.propertyTypes.length) where.propertyType = { in: filters.propertyTypes };
   if (filters.minSqm > 30) where.sizeSqm = { gte: filters.minSqm };

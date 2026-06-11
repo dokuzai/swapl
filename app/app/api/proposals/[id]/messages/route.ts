@@ -9,6 +9,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { accountSuspended } from "@/lib/api/errors";
 
 const messageSchema = z.object({
   body: z.string().trim().min(1, "Message cannot be empty").max(4000),
@@ -81,8 +82,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
   const proposal = await prisma.swapProposal.findUnique({
     where: { id },
     include: {
-      proposerListing: { include: { user: { select: { id: true, email: true } } } },
-      targetListing: { include: { user: { select: { id: true, email: true } } } },
+      proposerListing: { include: { user: { select: { id: true, email: true, suspendedAt: true } } } },
+      targetListing: { include: { user: { select: { id: true, email: true, suspendedAt: true } } } },
     },
   });
   if (!proposal) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -90,6 +91,12 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
   const { isProposer, isTarget } = partyOf(proposal, session.userId);
   if (!isProposer && !isTarget) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Moderation: no messaging while either party is suspended (caller or
+  // counterparty) — read access via GET stays untouched.
+  if (proposal.proposerListing.user.suspendedAt || proposal.targetListing.user.suspendedAt) {
+    return accountSuspended();
   }
 
   const message = await prisma.swapMessage.create({

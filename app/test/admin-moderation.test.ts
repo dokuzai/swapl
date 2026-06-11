@@ -2,33 +2,83 @@
 //   POST /api/admin/users/[id]     — suspend | reactivate (+ token revocation)
 //   POST /api/admin/listings/[id]  — deactivate | reactivate
 //   POST /api/admin/reports/[id]   — resolve | dismiss with optional note
+// Plus suspension enforcement (DOK-121 follow-up): browse query, public
+// profile, and proposal accept/counter/message for suspended accounts.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   requireAdmin: vi.fn(),
+  getSessionFromRequest: vi.fn(),
   userFindUnique: vi.fn(),
   userUpdate: vi.fn(),
   authTokenUpdateMany: vi.fn(),
   listingFindUnique: vi.fn(),
+  listingFindMany: vi.fn(),
+  listingCount: vi.fn(),
   listingUpdate: vi.fn(),
   reportFindUnique: vi.fn(),
   reportUpdate: vi.fn(),
+  proposalFindUnique: vi.fn(),
+  proposalUpdate: vi.fn(),
+  messageCreate: vi.fn(),
 }));
 
 vi.mock("@/lib/auth/abilities", () => ({ requireAdmin: mocks.requireAdmin }));
+vi.mock("@/lib/auth/session", () => ({ getSessionFromRequest: mocks.getSessionFromRequest }));
 vi.mock("@/lib/db", () => ({
   prisma: {
     user: { findUnique: mocks.userFindUnique, update: mocks.userUpdate },
     authToken: { updateMany: mocks.authTokenUpdateMany },
-    listing: { findUnique: mocks.listingFindUnique, update: mocks.listingUpdate },
+    listing: {
+      findUnique: mocks.listingFindUnique,
+      findMany: mocks.listingFindMany,
+      count: mocks.listingCount,
+      update: mocks.listingUpdate,
+    },
     report: { findUnique: mocks.reportFindUnique, update: mocks.reportUpdate },
+    swapProposal: { findUnique: mocks.proposalFindUnique, update: mocks.proposalUpdate },
+    swapMessage: { create: mocks.messageCreate },
+  },
+  parseJSON: <T,>(s: string | null | undefined, fallback: T): T => {
+    try {
+      return s ? (JSON.parse(s) as T) : fallback;
+    } catch {
+      return fallback;
+    }
   },
 }));
+vi.mock("@/lib/email", () => ({
+  sendEmail: vi.fn(async () => {}),
+  emailTemplates: {
+    proposalAccepted: vi.fn(() => ({})),
+    proposalDeclined: vi.fn(() => ({})),
+    proposalCountered: vi.fn(() => ({})),
+    swapMessageReceived: vi.fn(() => ({})),
+  },
+}));
+vi.mock("@/lib/push", () => ({
+  sendPush: vi.fn(async () => {}),
+  pushTemplates: {
+    proposalAccepted: vi.fn(() => ({})),
+    proposalDeclined: vi.fn(() => ({})),
+    proposalCountered: vi.fn(() => ({})),
+    swapMessageReceived: vi.fn(() => ({})),
+  },
+}));
+vi.mock("@/lib/insurance", () => ({
+  insuranceProvider: () => ({ name: "mock", createPolicy: vi.fn() }),
+}));
+vi.mock("@/lib/rate-limit", () => ({ checkRateLimit: () => ({ ok: true }) }));
 
 import { POST as postUser } from "@/app/api/admin/users/[id]/route";
 import { POST as postListing } from "@/app/api/admin/listings/[id]/route";
 import { POST as postReport } from "@/app/api/admin/reports/[id]/route";
+import { GET as getProfile } from "@/app/api/profiles/[id]/route";
+import { POST as postProposalAction } from "@/app/api/proposals/[id]/route";
+import { POST as postMessage } from "@/app/api/proposals/[id]/messages/route";
+import { queryListings } from "@/lib/listing-query";
+import { parseFiltersFromSearchParams } from "@/lib/listing-filters";
 
 function req(path: string, body?: unknown) {
   return new Request(`http://test${path}`, {
@@ -222,5 +272,147 @@ describe("POST /api/admin/reports/[id]", () => {
     const res = await postReport(req("/api/admin/reports/r1", { action: "dismiss" }), ctx("r1"));
     expect(res.status).toBe(409);
     expect(mocks.reportUpdate).not.toHaveBeenCalled();
+  });
+});
+
+// --- Suspension enforcement (follow-up) -------------------------------------
+
+function proposalFixture(overrides: { proposerSuspendedAt?: Date | null; targetSuspendedAt?: Date | null } = {}) {
+  return {
+    id: "p1",
+    status: "PENDING",
+    proposerId: "u-proposer",
+    proposerListingId: "l-proposer",
+    targetListingId: "l-target",
+    dateFrom: new Date("2026-07-01"),
+    dateTo: new Date("2026-07-10"),
+    agreement: null,
+    proposerListing: {
+      id: "l-proposer",
+      userId: "u-proposer",
+      user: { id: "u-proposer", email: "ana@swapl.test", suspendedAt: overrides.proposerSuspendedAt ?? null },
+    },
+    targetListing: {
+      id: "l-target",
+      userId: "u-target",
+      user: { id: "u-target", email: "ben@swapl.test", suspendedAt: overrides.targetSuspendedAt ?? null },
+    },
+  };
+}
+
+describe("browse: queryListings excludes suspended owners", () => {
+  it("adds owner suspendedAt: null to the where clause", async () => {
+    mocks.listingFindMany.mockResolvedValue([]);
+    mocks.listingCount.mockResolvedValue(0);
+    const filters = parseFiltersFromSearchParams({ sort: "newest" });
+    await queryListings(filters, null);
+    expect(mocks.listingFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ isActive: true, user: { suspendedAt: null } }),
+      })
+    );
+  });
+});
+
+describe("GET /api/profiles/[id] with a suspended host", () => {
+  it("404s as if the profile did not exist", async () => {
+    mocks.userFindUnique.mockResolvedValue({
+      id: "u1",
+      name: "Ana",
+      avatar: null,
+      bio: null,
+      bioVibe: null,
+      verified: true,
+      interests: null,
+      createdAt: new Date("2026-01-01"),
+      suspendedAt: new Date("2026-06-01"),
+    });
+    const res = await getProfile(new Request("http://test/api/profiles/u1"), ctx("u1"));
+    expect(res.status).toBe(404);
+    expect(mocks.listingFindMany).not.toHaveBeenCalled();
+  });
+
+  it("still serves non-suspended hosts", async () => {
+    mocks.userFindUnique.mockResolvedValue({
+      id: "u1",
+      name: "Ana",
+      avatar: null,
+      bio: null,
+      bioVibe: null,
+      verified: true,
+      interests: '["surf"]',
+      createdAt: new Date("2026-01-01"),
+      suspendedAt: null,
+    });
+    mocks.listingFindMany.mockResolvedValue([]);
+    const res = await getProfile(new Request("http://test/api/profiles/u1"), ctx("u1"));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.user.interests).toEqual(["surf"]);
+  });
+});
+
+describe("POST /api/proposals/[id] while suspended", () => {
+  beforeEach(() => {
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "u-proposer", email: "ana@swapl.test", name: "Ana" });
+  });
+
+  it("blocks accept with 403 ACCOUNT_SUSPENDED when the counterparty is suspended", async () => {
+    mocks.proposalFindUnique.mockResolvedValue(proposalFixture({ targetSuspendedAt: new Date() }));
+    const res = await postProposalAction(req("/api/proposals/p1", { action: "accept" }), ctx("p1"));
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ error: "ACCOUNT_SUSPENDED" });
+    expect(mocks.proposalUpdate).not.toHaveBeenCalled();
+  });
+
+  it("blocks counter with 403 ACCOUNT_SUSPENDED when the caller is suspended", async () => {
+    mocks.proposalFindUnique.mockResolvedValue(proposalFixture({ proposerSuspendedAt: new Date() }));
+    const res = await postProposalAction(
+      req("/api/proposals/p1", {
+        action: "counter",
+        counterDateFrom: "2026-08-01",
+        counterDateTo: "2026-08-10",
+      }),
+      ctx("p1")
+    );
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ error: "ACCOUNT_SUSPENDED" });
+    expect(mocks.proposalUpdate).not.toHaveBeenCalled();
+  });
+
+  it("still allows withdraw so the other side is not left hanging", async () => {
+    mocks.proposalFindUnique.mockResolvedValue(proposalFixture({ proposerSuspendedAt: new Date() }));
+    mocks.proposalUpdate.mockResolvedValue({});
+    const res = await postProposalAction(req("/api/proposals/p1", { action: "withdraw" }), ctx("p1"));
+    expect(res.status).toBe(200);
+    expect(mocks.proposalUpdate).toHaveBeenCalledWith({ where: { id: "p1" }, data: { status: "WITHDRAWN" } });
+  });
+});
+
+describe("POST /api/proposals/[id]/messages while suspended", () => {
+  beforeEach(() => {
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "u-target", email: "ben@swapl.test", name: "Ben" });
+  });
+
+  it("blocks posting with 403 ACCOUNT_SUSPENDED when either party is suspended", async () => {
+    mocks.proposalFindUnique.mockResolvedValue(proposalFixture({ targetSuspendedAt: new Date() }));
+    const res = await postMessage(req("/api/proposals/p1/messages", { body: "hello" }), ctx("p1"));
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ error: "ACCOUNT_SUSPENDED" });
+    expect(mocks.messageCreate).not.toHaveBeenCalled();
+  });
+
+  it("still posts when nobody is suspended", async () => {
+    mocks.proposalFindUnique.mockResolvedValue(proposalFixture());
+    mocks.messageCreate.mockResolvedValue({
+      id: "m1",
+      proposalId: "p1",
+      authorId: "u-target",
+      body: "hello",
+      createdAt: new Date("2026-06-11T10:00:00Z"),
+    });
+    const res = await postMessage(req("/api/proposals/p1/messages", { body: "hello" }), ctx("p1"));
+    expect(res.status).toBe(201);
+    expect(mocks.messageCreate).toHaveBeenCalled();
   });
 });
