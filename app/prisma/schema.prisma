@@ -26,6 +26,11 @@ model User {
   emailVerifiedAt DateTime?
   createdAt    DateTime @default(now())
 
+  // Last time an authenticated request resolved this user's session.
+  // Updated throttled (≥5 min apart) from lib/auth/activity.ts; powers the
+  // online/DAU/WAU/MAU counters on /admin/metrics.
+  lastActiveAt DateTime?
+
   // AI provider preferences (override the env-wide default).
   // apiKey is stored verbatim for the demo; in prod, encrypt at rest.
   aiProvider String? // "kimi" | "openai" | "anthropic"

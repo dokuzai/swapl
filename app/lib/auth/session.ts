@@ -9,6 +9,7 @@
 import { cookies } from "next/headers";
 import { createHmac, randomBytes, createHash, timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/db";
+import { touchLastActive } from "@/lib/auth/activity";
 
 const COOKIE_NAME = "swapl_session";
 const SECRET = process.env.SESSION_SECRET ?? "dev-secret-please-change-this-to-32-random-bytes-minimum";
@@ -53,7 +54,10 @@ function decode(token: string | undefined): SessionPayload | null {
 
 export async function getSession(): Promise<SessionPayload | null> {
   const c = await cookies();
-  return decode(c.get(COOKIE_NAME)?.value);
+  const session = decode(c.get(COOKIE_NAME)?.value);
+  // Fire-and-forget activity tracking; throttled internally, never throws.
+  if (session) touchLastActive(session.userId);
+  return session;
 }
 
 export async function requireSession(): Promise<SessionPayload> {
@@ -130,6 +134,8 @@ async function getSessionFromBearer(headerValue: string | null): Promise<Session
       .update({ where: { tokenHash }, data: { lastSeenAt: new Date() } })
       .catch(() => {});
   }
+  // Fire-and-forget activity tracking; throttled internally, never throws.
+  touchLastActive(row.user.id);
   return { userId: row.user.id, email: row.user.email, name: row.user.name };
 }
 
