@@ -33,6 +33,12 @@ android {
         val apiBaseUrl: String = (project.findProperty("swapl.api.base.url") as String?)
             ?: "http://10.0.2.2:3000"
         buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
+
+        // Google Sign-In (Credential Manager). Web/server OAuth client id —
+        // empty (the default) hides the Google button entirely.
+        val googleServerClientId: String =
+            (project.findProperty("swapl.google.serverClientId") as String?) ?: ""
+        buildConfigField("String", "SWAPL_GOOGLE_SERVER_CLIENT_ID", "\"$googleServerClientId\"")
     }
 
     buildFeatures {
@@ -97,6 +103,11 @@ dependencies {
 
     // Secure storage
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    // Google Sign-In via Credential Manager
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     // Image loading
     implementation("io.coil-kt.coil3:coil-compose:3.0.0")
