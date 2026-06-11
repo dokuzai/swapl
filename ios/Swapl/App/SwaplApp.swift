@@ -21,10 +21,14 @@ struct SwaplApp: App {
     // resolve ("Fraunces-SemiBold" is the bundled font's PostScript name).
     private static func configureNavigationBarAppearance() {
         let foreground = UIColor(SwaplSemanticLight.foreground)
-        let titleFont = UIFont(name: "Fraunces-SemiBold", size: 17)
+        // Wrap the brand fonts in UIFontMetrics so nav titles scale with the
+        // user's Dynamic Type / accessibility text size settings.
+        let baseTitleFont = UIFont(name: "Fraunces-SemiBold", size: 17)
             ?? UIFont.systemFont(ofSize: 17, weight: .semibold)
-        let largeTitleFont = UIFont(name: "Fraunces-SemiBold", size: 32)
+        let baseLargeTitleFont = UIFont(name: "Fraunces-SemiBold", size: 32)
             ?? UIFont.systemFont(ofSize: 32, weight: .semibold)
+        let titleFont = UIFontMetrics(forTextStyle: .body).scaledFont(for: baseTitleFont)
+        let largeTitleFont = UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: baseLargeTitleFont)
 
         let appearance = UINavigationBarAppearance()
         appearance.configureWithDefaultBackground()
@@ -218,7 +222,7 @@ struct MainTabView: View {
                 case .wishlists:
                     WishlistsView()
                 case .trips:
-                    AirbnbPlaceholderView(title: "Trips", systemImage: "suitcase.rolling", message: "Accepted swaps will become trips.")
+                    TripsView()
                 case .messages:
                     SwapsInboxView()
                 case .profile:
@@ -231,7 +235,7 @@ struct MainTabView: View {
                     .tabItem { Label("Explore", systemImage: "magnifyingglass") }
                 WishlistsView()
                     .tabItem { Label("Wishlists", systemImage: "heart") }
-                AirbnbPlaceholderView(title: "Trips", systemImage: "suitcase.rolling", message: "Accepted swaps will become trips.")
+                TripsView()
                     .tabItem { Label("Trips", systemImage: "suitcase.rolling") }
                 SwapsInboxView()
                     .tabItem { Label("Messages", systemImage: "message") }
@@ -307,25 +311,5 @@ struct SidebarView: View {
             }
         }
         .navigationTitle("swapl")
-    }
-}
-
-struct AirbnbPlaceholderView: View {
-    let title: String
-    let systemImage: String
-    let message: String
-
-    var body: some View {
-        NavigationStack {
-            // Same brand header as the other root tabs (Fraunces title, hidden
-            // system bar) so the placeholder doesn't fall back to SF Pro.
-            VStack(spacing: 0) {
-                SwaplPageTitle(title)
-                SwaplEmptyState(systemImage: systemImage, title: title, description: message)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .background(SwaplSemanticLight.background)
-            .toolbar(.hidden, for: .navigationBar)
-        }
     }
 }

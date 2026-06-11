@@ -33,6 +33,7 @@
 		6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */; };
 		6FD9E408F7CFD3F2D3F0E862 /* Listing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC5F71B34111A6A25719F4 /* Listing.swift */; };
 		762691A8EE338BA81B65CA9B /* ListingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348C7476795E59B9F7C4360C /* ListingDetailView.swift */; };
+		79BABEED6AB2449E92D7351C /* TripsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274F2340F268F02547B135E7 /* TripsView.swift */; };
 		817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E72A38E93BF07A269B5A860 /* AccountView.swift */; };
 		8631C6131E59F65FAD09B6D4 /* PrimaryPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD681952D45568C94F736A2 /* PrimaryPill.swift */; };
 		8A08CC9325DE689FE2E1D202 /* ListingPhotoGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D0EB47C8D8295095D265D6 /* ListingPhotoGalleryView.swift */; };
@@ -80,6 +81,7 @@
 		1CD770B97A9384AAECAFF4F3 /* WishlistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistsView.swift; sourceTree = "<group>"; };
 		1D471415D3273EA410BB0599 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
 		1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftProposalTests.swift; sourceTree = "<group>"; };
+		274F2340F268F02547B135E7 /* TripsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripsView.swift; sourceTree = "<group>"; };
 		2CD57A2AA63115467E0C218C /* DeepLinkRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRoutingTests.swift; sourceTree = "<group>"; };
 		2F8086AB51A024B342543C18 /* CitiesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitiesRepository.swift; sourceTree = "<group>"; };
 		348C7476795E59B9F7C4360C /* ListingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingDetailView.swift; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 				9062091F7BC2CFA3011D3F11 /* Listings */,
 				9ED48DF98918CA096D774EBD /* Profile */,
 				E931644CBEED9106DB254E61 /* Swaps */,
+				D6E37CA016AB8ADCC34BEB5D /* Trips */,
 				F9399FCC26E09A3734484DC5 /* Wishlists */,
 			);
 			path = Features;
@@ -306,6 +309,14 @@
 				0F04FED71D1B8A3C1641EBD6 /* Resources */,
 			);
 			path = Swapl;
+			sourceTree = "<group>";
+		};
+		D6E37CA016AB8ADCC34BEB5D /* Trips */ = {
+			isa = PBXGroup;
+			children = (
+				274F2340F268F02547B135E7 /* TripsView.swift */,
+			);
+			path = Trips;
 			sourceTree = "<group>";
 		};
 		DC4B1C0567901A9F8715A839 /* Design */ = {
@@ -546,6 +557,7 @@
 				1E9087DE48A98F8391B49E4F /* SwaplPageTitle.swift in Sources */,
 				3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */,
 				09510D369FFD86683685D48E /* Theme.swift in Sources */,
+				79BABEED6AB2449E92D7351C /* TripsView.swift in Sources */,
 				A8F5EDDBDBC5050DDAC4A6AD /* WishlistsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

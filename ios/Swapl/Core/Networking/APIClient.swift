@@ -35,19 +35,46 @@ final class APIClient: @unchecked Sendable {
         self.baseURL = URL(string: raw) ?? URL(string: "http://localhost:3000")!
     }
 
-    enum APIError: Error, LocalizedError {
+    enum APIError: Error, LocalizedError, CustomDebugStringConvertible {
         case status(Int, String?)
         case decoding(Error)
         case transport(Error)
         case unauthenticated
 
+        // User-facing message. The raw status code and body are preserved in
+        // the associated values (see `debugDescription`) for logging/debug —
+        // they just never leak into the UI.
         var errorDescription: String? {
             switch self {
-            case .status(let code, let body): return "HTTP \(code): \(body ?? "")"
-            case .decoding(let e): return "Decoding: \(e.localizedDescription)"
-            case .transport(let e): return e.localizedDescription
+            case .status(let code, let body):
+                if let message = Self.serverMessage(from: body) { return message }
+                if (500..<600).contains(code) { return "Something went wrong on our side." }
+                return "Something went wrong. Try again."
+            case .decoding: return "Something went wrong. Try again."
+            case .transport: return "Connection problem. Try again."
             case .unauthenticated: return "Please sign in to continue."
             }
+        }
+
+        // Full technical detail, kept out of the UI.
+        var debugDescription: String {
+            switch self {
+            case .status(let code, let body): return "HTTP \(code): \(body ?? "<no body>")"
+            case .decoding(let e): return "Decoding error: \(e)"
+            case .transport(let e): return "Transport error: \(e)"
+            case .unauthenticated: return "Unauthenticated (401)"
+            }
+        }
+
+        // API error bodies are JSON like {"error":"You've sent 3 proposals…"}.
+        // When that field is present, it IS the user-facing copy.
+        private static func serverMessage(from body: String?) -> String? {
+            guard let body, let data = body.data(using: .utf8),
+                  let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let message = object["error"] as? String,
+                  !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            else { return nil }
+            return message
         }
     }
 
