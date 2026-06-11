@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		004110AF6E2282A8C4857526 /* GoogleSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F8D20A60DA002DAD6CA36A /* GoogleSignInCoordinator.swift */; };
 		09510D369FFD86683685D48E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE15DAF7CB60D8091AAB48 /* Theme.swift */; };
 		0FF9121641DAB4D4D85FDB4C /* Fraunces-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12CFB58AC5BAA13BBCFEAEC8 /* Fraunces-Variable.ttf */; };
 		10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */; };
@@ -104,6 +105,7 @@
 		7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplEmptyState.swift; sourceTree = "<group>"; };
 		81DB4250C505E12AA24FD3B8 /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGES.md; sourceTree = "<group>"; };
 		832C6832461A871B16ADCD7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		83F8D20A60DA002DAD6CA36A /* GoogleSignInCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInCoordinator.swift; sourceTree = "<group>"; };
 		862B8E3CA191D3BF9EC25FDC /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRouter.swift; sourceTree = "<group>"; };
 		880076B1A21E1999A8C9F405 /* FilterSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSheetView.swift; sourceTree = "<group>"; };
 		88FE15DAF7CB60D8091AAB48 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -241,6 +243,7 @@
 		594E17D3124F526B1BB9509D /* Auth */ = {
 			isa = PBXGroup;
 			children = (
+				83F8D20A60DA002DAD6CA36A /* GoogleSignInCoordinator.swift */,
 				98DF9FF9E682ED439398C38D /* LoginView.swift */,
 			);
 			path = Auth;
@@ -539,6 +542,7 @@
 				C37E5D582DD9EF9D58172533 /* FavoritesRepository.swift in Sources */,
 				9DF14AADB94ED9B3F7C76737 /* FavoritesStore.swift in Sources */,
 				C50E6EC4B47A130774948455 /* FilterSheetView.swift in Sources */,
+				004110AF6E2282A8C4857526 /* GoogleSignInCoordinator.swift in Sources */,
 				4B3AD0F138265FA3B1D96DEF /* InterestsEditorView.swift in Sources */,
 				FFB628B21B3C9A6DA0C2BD15 /* KeychainTokenStore.swift in Sources */,
 				6FD9E408F7CFD3F2D3F0E862 /* Listing.swift in Sources */,

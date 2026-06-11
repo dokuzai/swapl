@@ -25,6 +25,22 @@ struct RegisterResponse: Decodable, Sendable {
     let expiresAt: Date?
 }
 
+// GET /api/auth/providers — which sign-in methods are live on this deploy.
+// Unconfigured providers are hidden in the UI (env-gated, never broken).
+struct ProvidersStatus: Decodable, Sendable {
+    let password: Bool
+    let google: Bool
+    let apple: Bool
+    let telegram: Telegram
+    let emailOtp: Bool
+    let phone: Bool
+
+    struct Telegram: Decodable, Sendable {
+        let enabled: Bool
+        let botUsername: String?
+    }
+}
+
 struct MeResponse: Decodable, Sendable {
     let user: User
     let counts: Counts

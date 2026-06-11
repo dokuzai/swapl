@@ -42,6 +42,8 @@
 	<string>Swapl uses Siri and Shortcuts to let you create a listing or optimize your listing photos with your voice.</string>
 	<key>SwaplApiBaseURL</key>
 	<string>https://app.swapl.fun</string>
+	<key>SwaplGoogleOAuthClientID</key>
+	<string></string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

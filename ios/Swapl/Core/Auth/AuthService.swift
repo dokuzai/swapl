@@ -153,6 +153,98 @@ final class AuthService {
         }
     }
 
+    // MARK: - Multi-provider sign-in (Apple / Google / Telegram / OTP)
+
+    // Hydrated by LoginView on appear; nil until the first fetch succeeds.
+    // Buttons for disabled providers are hidden, mirroring the web client.
+    var providers: ProvidersStatus?
+
+    func loadProviders() async {
+        if let status: ProvidersStatus = try? await APIClient.shared.send("GET", "/api/auth/providers") {
+            providers = status
+        }
+    }
+
+    func signInWithApple(identityToken: String, fullName: String?) async {
+        struct Body: Encodable {
+            let identityToken: String
+            let fullName: String?
+            let platform: String
+            let appVersion: String
+        }
+        await tokenSignIn(
+            "/api/auth/oauth/apple",
+            body: Body(identityToken: identityToken, fullName: fullName, platform: "ios", appVersion: appVersion)
+        )
+    }
+
+    func signInWithGoogle(idToken: String) async {
+        struct Body: Encodable { let idToken: String; let platform: String; let appVersion: String }
+        await tokenSignIn(
+            "/api/auth/oauth/google",
+            body: Body(idToken: idToken, platform: "ios", appVersion: appVersion)
+        )
+    }
+
+    func signInWithTelegram(authData: [String: String]) async {
+        struct Body: Encodable { let authData: [String: String]; let platform: String; let appVersion: String }
+        await tokenSignIn(
+            "/api/auth/oauth/telegram",
+            body: Body(authData: authData, platform: "ios", appVersion: appVersion)
+        )
+    }
+
+    // Step 1 of the OTP flow — true when the code was dispatched (the server
+    // answers opaquely: it never reveals whether the destination exists).
+    func requestOtp(channel: String, destination: String) async -> Bool {
+        isAuthenticating = true
+        errorMessage = nil
+        defer { isAuthenticating = false }
+        struct Body: Encodable { let channel: String; let destination: String }
+        do {
+            _ = try await APIClient.shared.send(
+                "POST", "/api/auth/otp/request",
+                body: Body(channel: channel, destination: destination),
+                as: EmptyResponse.self
+            )
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    // Step 2 — exchanges the 6-digit code for the same bearer session as
+    // every other login.
+    func verifyOtp(destination: String, code: String) async {
+        struct Body: Encodable {
+            let destination: String
+            let code: String
+            let platform: String
+            let appVersion: String
+        }
+        await tokenSignIn(
+            "/api/auth/otp/verify",
+            body: Body(destination: destination, code: code, platform: "ios", appVersion: appVersion)
+        )
+    }
+
+    // Shared tail of every provider login: all endpoints return the exact
+    // POST /api/auth/token shape, so the session handling is identical.
+    private func tokenSignIn(_ path: String, body: Encodable) async {
+        isAuthenticating = true
+        errorMessage = nil
+        defer { isAuthenticating = false }
+        do {
+            let res: TokenResponse = try await APIClient.shared.send("POST", path, body: body)
+            keychain.write(res.token)
+            session = res.user
+            await refreshSession()   // pick up email-verified status + role
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func signOut() async {
         _ = try? await APIClient.shared.send("POST", "/api/auth/token/revoke", as: EmptyResponse.self)
         _ = try? await APIClient.shared.send("DELETE", "/api/devices", as: EmptyResponse.self)

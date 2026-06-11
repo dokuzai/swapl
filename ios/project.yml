@@ -70,6 +70,12 @@ targets:
         NSSiriUsageDescription: >-
           Swapl uses Siri and Shortcuts to let you create a listing or
           optimize your listing photos with your voice.
+        # Google sign-in (ASWebAuthenticationSession, no SDK): the iOS OAuth
+        # client id from Google Cloud Console. Empty → the Google button is
+        # hidden (env-gated like the backend; see GoogleSignInCoordinator).
+        # The redirect uses the reversed-client-id scheme, intercepted by
+        # ASWebAuthenticationSession — no CFBundleURLTypes entry needed.
+        SwaplGoogleOAuthClientID: ""
     # Universal links for https://app.swapl.fun/listings/:id and /swaps/:id.
     # The server side still needs /.well-known/apple-app-site-association on
     # app.swapl.fun before these resolve into the app.
@@ -86,6 +92,10 @@ targets:
         # com.apple.developer.siri here — that one is SiriKit-only.
         keychain-access-groups:
           - $(AppIdentifierPrefix)app.swapl
+        # Sign in with Apple (SignInWithAppleButton in LoginView →
+        # POST /api/auth/oauth/apple verifies the identity token via JWKS).
+        com.apple.developer.applesignin:
+          - Default
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.swapl
