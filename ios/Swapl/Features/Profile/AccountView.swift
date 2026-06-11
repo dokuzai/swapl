@@ -30,6 +30,10 @@ struct AccountView: View {
                             .buttonStyle(.plain)
                         NavigationLink { SavedSearchesView() } label: { portedMenuRow("Saved searches", "magnifyingglass") }
                             .buttonStyle(.plain)
+                        if auth.isAdmin {
+                            NavigationLink { MetricsView() } label: { portedMenuRow("Metrics", "chart.bar") }
+                                .buttonStyle(.plain)
+                        }
                         signOutRow
                     }
                     .padding(.horizontal, 22)

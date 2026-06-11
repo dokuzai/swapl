@@ -6,6 +6,8 @@ import Observation
 final class AuthService {
     var session: AuthUser?
     var isVerified = false
+    // From /api/me (e.g. "user", "swapl_admin"). Nil until the session is hydrated.
+    var role: String?
     var isBootstrapping = true
     var isAuthenticating = false
     var errorMessage: String?
@@ -64,7 +66,11 @@ final class AuthService {
     private func applyMe(_ me: MeResponse) {
         session = AuthUser(id: me.user.id, email: me.user.email, name: me.user.name, avatar: me.user.avatar)
         isVerified = me.user.verified
+        role = me.user.role
     }
+
+    // Gate for founder-only screens; the server enforces it too (403).
+    var isAdmin: Bool { role == "swapl_admin" }
 
     // Re-fetch /api/me to pick up a freshly-verified email (e.g. after the user
     // taps the verification link in their email and returns to the app).
@@ -153,5 +159,6 @@ final class AuthService {
         keychain.delete()
         session = nil
         isVerified = false
+        role = nil
     }
 }
