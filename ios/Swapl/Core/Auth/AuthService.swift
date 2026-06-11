@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Foundation
 import Observation
 
@@ -243,6 +244,155 @@ final class AuthService {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    // MARK: - Passkeys (WebAuthn)
+
+    private let passkeyCoordinator = PasskeyCoordinator()
+
+    private var passkeyRelyingParty: String {
+        // Prod relying party; dev servers return their own rpId in options,
+        // which always wins over this fallback.
+        APIClient.shared.baseURL.host ?? "app.swapl.fun"
+    }
+
+    // Usernameless sign-in: the device offers its discoverable credentials for
+    // the relying party; the assertion's credential id resolves the account
+    // server-side. Lands on the same bearer session as every other login.
+    func signInWithPasskey() async {
+        isAuthenticating = true
+        errorMessage = nil
+        defer { isAuthenticating = false }
+        do {
+            let options: PasskeyLoginOptions = try await APIClient.shared.send(
+                "POST", "/api/auth/passkey/login/options"
+            )
+            guard let challenge = Data(base64URLEncoded: options.challenge) else {
+                throw PasskeyError.invalidServerResponse
+            }
+            let provider = ASAuthorizationPlatformPublicKeyCredentialProvider(
+                relyingPartyIdentifier: options.rpId ?? passkeyRelyingParty
+            )
+            let request = provider.createCredentialAssertionRequest(challenge: challenge)
+            let authorization = try await passkeyCoordinator.perform(request)
+            guard let assertion = authorization.credential
+                    as? ASAuthorizationPlatformPublicKeyCredentialAssertion else {
+                throw PasskeyError.failed
+            }
+
+            // SimpleWebAuthn AuthenticationResponseJSON, assertion fields at the
+            // top level + platform/appVersion (same convention as other logins).
+            struct Body: Encodable {
+                struct Response: Encodable {
+                    let clientDataJSON: String
+                    let authenticatorData: String
+                    let signature: String
+                    let userHandle: String?
+                }
+                struct Empty: Encodable {}
+                let id: String
+                let rawId: String
+                let type: String
+                let authenticatorAttachment: String
+                let response: Response
+                let clientExtensionResults: Empty
+                let platform: String
+                let appVersion: String
+            }
+            let credentialId = assertion.credentialID.base64URLEncodedString
+            let body = Body(
+                id: credentialId,
+                rawId: credentialId,
+                type: "public-key",
+                authenticatorAttachment: "platform",
+                response: .init(
+                    clientDataJSON: assertion.rawClientDataJSON.base64URLEncodedString,
+                    authenticatorData: assertion.rawAuthenticatorData.base64URLEncodedString,
+                    signature: assertion.signature.base64URLEncodedString,
+                    userHandle: assertion.userID.isEmpty ? nil : assertion.userID.base64URLEncodedString
+                ),
+                clientExtensionResults: .init(),
+                platform: "ios",
+                appVersion: appVersion
+            )
+            let res: TokenResponse = try await APIClient.shared.send(
+                "POST", "/api/auth/passkey/login/verify", body: body
+            )
+            keychain.write(res.token)
+            session = res.user
+            await refreshSession()   // pick up email-verified status + role
+        } catch PasskeyError.canceled {
+            // User dismissed the system sheet — not an error.
+        } catch APIClient.APIError.status(401, _) {
+            errorMessage = "Passkey sign-in failed. Try again."
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    // Enroll a passkey for the signed-in account (there is no passkey sign-up:
+    // register/options is authenticated). Throws PasskeyError.canceled when the
+    // user dismisses the sheet so callers can ignore it silently.
+    func addPasskey() async throws {
+        let options: PasskeyRegistrationOptions = try await APIClient.shared.send(
+            "POST", "/api/auth/passkey/register/options"
+        )
+        guard let challenge = Data(base64URLEncoded: options.challenge),
+              let userID = Data(base64URLEncoded: options.user.id) else {
+            throw PasskeyError.invalidServerResponse
+        }
+        let provider = ASAuthorizationPlatformPublicKeyCredentialProvider(
+            relyingPartyIdentifier: options.rp.id ?? passkeyRelyingParty
+        )
+        let request = provider.createCredentialRegistrationRequest(
+            challenge: challenge,
+            name: options.user.name ?? session?.email ?? "Swapl",
+            userID: userID
+        )
+        let authorization = try await passkeyCoordinator.perform(request)
+        guard let registration = authorization.credential
+                as? ASAuthorizationPlatformPublicKeyCredentialRegistration,
+              let attestationObject = registration.rawAttestationObject else {
+            throw PasskeyError.failed
+        }
+
+        // SimpleWebAuthn RegistrationResponseJSON, nested under "response"
+        // (this endpoint's convention — see register/verify route).
+        struct Body: Encodable {
+            struct Credential: Encodable {
+                struct Attestation: Encodable {
+                    let clientDataJSON: String
+                    let attestationObject: String
+                }
+                struct Empty: Encodable {}
+                let id: String
+                let rawId: String
+                let type: String
+                let authenticatorAttachment: String
+                let response: Attestation
+                let clientExtensionResults: Empty
+            }
+            let response: Credential
+            let name: String?
+        }
+        let credentialId = registration.credentialID.base64URLEncodedString
+        let body = Body(
+            response: .init(
+                id: credentialId,
+                rawId: credentialId,
+                type: "public-key",
+                authenticatorAttachment: "platform",
+                response: .init(
+                    clientDataJSON: registration.rawClientDataJSON.base64URLEncodedString,
+                    attestationObject: attestationObject.base64URLEncodedString
+                ),
+                clientExtensionResults: .init()
+            ),
+            name: nil   // server picks a sensible default ("iCloud passkey", …)
+        )
+        _ = try await APIClient.shared.send(
+            "POST", "/api/auth/passkey/register/verify", body: body, as: EmptyResponse.self
+        )
     }
 
     func signOut() async {

@@ -34,6 +34,8 @@ struct ProvidersStatus: Decodable, Sendable {
     let telegram: Telegram
     let emailOtp: Bool
     let phone: Bool
+    // Optional so older deploys (pre-passkey) still decode; nil → hidden.
+    let passkey: Bool?
 
     struct Telegram: Decodable, Sendable {
         let enabled: Bool

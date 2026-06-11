@@ -20,6 +20,9 @@ struct AccountView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         profileCard
                         quickCards
+                        // Didit identity check — hides itself when the feature
+                        // is off server-side or the user is already verified.
+                        IdentityVerificationCard()
                         becomeHostCard
                         Color.clear.frame(height: 42)
                         if let userId = auth.session?.id {
@@ -29,6 +32,8 @@ struct AccountView: View {
                         NavigationLink { InterestsEditorView() } label: { portedMenuRow("Interests", "heart.text.square") }
                             .buttonStyle(.plain)
                         NavigationLink { SavedSearchesView() } label: { portedMenuRow("Saved searches", "magnifyingglass") }
+                            .buttonStyle(.plain)
+                        NavigationLink { PasskeysView() } label: { portedMenuRow("Passkeys", "person.badge.key") }
                             .buttonStyle(.plain)
                         if auth.isAdmin {
                             NavigationLink { MetricsView() } label: { portedMenuRow("Metrics", "chart.bar") }

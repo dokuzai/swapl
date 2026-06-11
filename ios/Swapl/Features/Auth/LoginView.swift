@@ -144,6 +144,13 @@ struct LoginView: View {
                 }
             }
 
+            if providers.passkey == true {
+                ProviderPill(title: "Sign in with a passkey", systemImage: "person.badge.key") {
+                    guard !auth.isAuthenticating else { return }
+                    Task { await auth.signInWithPasskey() }
+                }
+            }
+
             HStack(spacing: SwaplSpacing.s3) {
                 if providers.emailOtp {
                     ProviderPill(title: "Email code", systemImage: "envelope") {

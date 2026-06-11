@@ -84,6 +84,10 @@ targets:
       properties:
         com.apple.developer.associated-domains:
           - applinks:app.swapl.fun
+          # Passkeys (WebAuthn): binds app.swapl bundle credentials to the
+          # app.swapl.fun relying party. Requires the AASA file on the domain
+          # to list this app under "webcredentials".
+          - webcredentials:app.swapl.fun
         # APNs — PushService registers the device token with /api/devices.
         # Xcode rewrites this to "production" when exporting for App Store.
         aps-environment: development
