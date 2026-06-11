@@ -19,6 +19,7 @@ const mocks = vi.hoisted(() => ({
   userFindUnique: vi.fn(),
   credCreate: vi.fn(),
   credFindUnique: vi.fn(),
+  credFindMany: vi.fn(),
   credUpdate: vi.fn(),
   credDeleteMany: vi.fn(),
 }));
@@ -55,6 +56,7 @@ vi.mock("@/lib/db", () => ({
     webAuthnCredential: {
       create: mocks.credCreate,
       findUnique: mocks.credFindUnique,
+      findMany: mocks.credFindMany,
       update: mocks.credUpdate,
       deleteMany: mocks.credDeleteMany,
     },
@@ -90,6 +92,7 @@ import { POST as registerOptionsPOST } from "@/app/api/auth/passkey/register/opt
 import { POST as registerVerifyPOST } from "@/app/api/auth/passkey/register/verify/route";
 import { POST as loginOptionsPOST } from "@/app/api/auth/passkey/login/options/route";
 import { POST as loginVerifyPOST } from "@/app/api/auth/passkey/login/verify/route";
+import { GET as passkeyListGET } from "@/app/api/auth/passkey/route";
 
 function req(url: string, body?: unknown) {
   return new Request(`http://test${url}`, {
@@ -186,6 +189,7 @@ beforeEach(() => {
     ...data,
   }));
   mocks.credFindUnique.mockResolvedValue(storedCredential(BigInt(0)));
+  mocks.credFindMany.mockResolvedValue([]);
   mocks.credUpdate.mockResolvedValue({});
   mocks.credDeleteMany.mockResolvedValue({ count: 1 });
 });
@@ -396,6 +400,65 @@ describe("POST /api/auth/passkey/login/verify", () => {
   it("is rate limited", async () => {
     mocks.checkRateLimit.mockReturnValue({ ok: false, remaining: 0, resetAt: 0 });
     expect((await loginVerifyPOST(req("/api/auth/passkey/login/verify", assertionBody("x")))).status).toBe(429);
+  });
+});
+
+describe("GET /api/auth/passkey", () => {
+  const getReq = () => new Request("http://test/api/auth/passkey");
+
+  it("requires a session", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue(null);
+    expect((await passkeyListGET(getReq())).status).toBe(401);
+    expect(mocks.credFindMany).not.toHaveBeenCalled();
+  });
+
+  it("returns the caller's passkeys as JSON-safe summaries, newest first", async () => {
+    mocks.credFindMany.mockResolvedValue([
+      {
+        id: "wc2",
+        name: "iPhone",
+        deviceType: "multiDevice",
+        backedUp: true,
+        counter: BigInt(7), // BigInt must not leak into the JSON payload
+        createdAt: new Date("2026-06-12T00:00:00.000Z"),
+        lastUsedAt: new Date("2026-06-12T08:00:00.000Z"),
+      },
+      {
+        id: "wc1",
+        name: null,
+        deviceType: "singleDevice",
+        backedUp: false,
+        counter: BigInt(0),
+        createdAt: new Date("2026-01-01T00:00:00.000Z"),
+        lastUsedAt: null,
+      },
+    ]);
+    const res = await passkeyListGET(getReq());
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      passkeys: [
+        {
+          id: "wc2",
+          name: "iPhone",
+          deviceType: "multiDevice",
+          backedUp: true,
+          createdAt: "2026-06-12T00:00:00.000Z",
+          lastUsedAt: "2026-06-12T08:00:00.000Z",
+        },
+        {
+          id: "wc1",
+          name: null,
+          deviceType: "singleDevice",
+          backedUp: false,
+          createdAt: "2026-01-01T00:00:00.000Z",
+          lastUsedAt: null,
+        },
+      ],
+    });
+    expect(mocks.credFindMany).toHaveBeenCalledWith({
+      where: { userId: "u1" },
+      orderBy: { createdAt: "desc" },
+    });
   });
 });
 

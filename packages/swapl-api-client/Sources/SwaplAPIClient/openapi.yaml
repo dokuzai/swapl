@@ -1161,6 +1161,29 @@ paths:
               schema: { $ref: '#/components/schemas/Error' }
         '429': { description: Rate limited }
 
+  /api/auth/passkey:
+    get:
+      tags: [auth]
+      summary: List the caller's passkeys
+      description: >-
+        Authenticated. Same PasskeySummary shape as register/verify — pair
+        with DELETE /api/auth/passkey/{id} to manage credentials from native
+        clients.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [passkeys]
+                properties:
+                  passkeys:
+                    type: array
+                    items: { $ref: '#/components/schemas/PasskeySummary' }
+        '401': { description: Unauthenticated }
+
   /api/auth/passkey/{id}:
     delete:
       tags: [auth]
