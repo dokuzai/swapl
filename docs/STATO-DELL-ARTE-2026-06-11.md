@@ -111,3 +111,34 @@ Le issue Linear corrispondenti (esistenti e nuove) sono nel progetto
 Le attività chiudibili via codice vengono eseguite in sequenza da agenti dedicati con verifica
 build/test e revisione finale di un agente Product Manager; le attività ops (credenziali,
 domini, store account) restano in carico al founder.
+
+## Esiti dell'esecuzione (11 giugno 2026, sera)
+
+10 issue eseguite in sequenza da agenti dedicati, più 1 follow-up richiesto dal PM.
+Il PM ha verificato di persona commit, test e build, dichiarandosi soddisfatto dopo un round.
+Stato finale della suite: **22 file / 201 test passati**, typecheck pulito, drift check API verde,
+`compileDebugKotlin` e `assembleRelease` Android OK, build iOS + UI test build OK.
+
+| Issue | Esito | Commit |
+|---|---|---|
+| DOK-119 Stripe reconciliation (parte codice) | riconciliazione `payment_intent.succeeded` + `refund.created`, 16 test | `96147c2` |
+| DOK-121 Admin moderazione + enforcement | suspend/deactivate/report-resolution + esclusione da browse/profili/thread | `7eb9210`, `413281f` |
+| DOK-125 iOS store readiness | AppIcon placeholder, PrivacyInfo.xcprivacy, usage descriptions, entitlements | `c987140` |
+| DOK-126 iOS deep linking | DeepLinkRouter, onOpenURL, cold start, universal links predisposti | `1cb6fb8` |
+| DOK-127 Android Wishlists | parità iOS completa, toggle ottimistico, tab funzionante | `f028b03` |
+| DOK-128 Android Trips | TripsScreen/Detail con key codes e assicurazione | `0bd208a` |
+| DOK-129 Android push + Play readiness | notifiche con deep link, retry token, R8, versioning, signing config | `745bf6d` |
+| DOK-130 Contratto API | 6 gruppi di endpoint spec-ati, drift check in CI | `f340790` |
+| DOK-131 Web hardening | security headers, guardie env, helper errori API | `191b401` |
+| DOK-132 Observability | Sentry env-gated, logger strutturato, cron per-job | `2c7479d` |
+
+### Ops rimanenti in carico al founder
+
+1. **Stripe:** prodotti/prezzi live, env `STRIPE_*`, webhook registrato con `refund.created`
+2. **Database:** `prisma migrate deploy` sul Postgres di produzione (migration `featured_purchase_refunded` e `admin_moderation`)
+3. **Apple:** AASA su app.swapl.fun, team Developer con associated domains e signing, chiave APNs, artwork icona definitivo
+4. **Android/Play:** upload keystore + `keystore.properties`, `google-services.json` + plugin google-services, test push reale su device
+5. **Vercel env:** `SESSION_SECRET`, `CRON_SECRET`, `RESEND_API_KEY`/`RESEND_FROM` verificato, `TURNSTILE_SECRET_KEY`, `SENTRY_DSN` (DOK-116)
+
+Issue rimaste aperte deliberatamente: DOK-116 (solo ops), DOK-119 (solo ops),
+DOK-123 OAuth (Low, decisione di prodotto), DOK-133 i18n mobile (Low).
