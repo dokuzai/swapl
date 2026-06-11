@@ -36,6 +36,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Swapl uses your photo library so you can add photos of your home to your listing and profile.</string>
+	<key>NSSiriUsageDescription</key>
+	<string>Swapl uses Siri and Shortcuts to let you create a listing or optimize your listing photos with your voice.</string>
 	<key>SwaplApiBaseURL</key>
 	<string>https://app.swapl.fun</string>
 	<key>UILaunchScreen</key>

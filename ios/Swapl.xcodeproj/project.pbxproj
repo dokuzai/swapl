@@ -12,6 +12,7 @@
 		10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */; };
 		12A73281C203C687F50C0A01 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DF9FF9E682ED439398C38D /* LoginView.swift */; };
 		1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC7EF0654A2A456B14E52A5 /* AuthService.swift */; };
+		1EB702BD888B0CA98111570F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 894AED6F36AAF11BFF8CA2FB /* PrivacyInfo.xcprivacy */; };
 		23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967B9C41F5F9438E30143514 /* APIClient.swift */; };
 		274DA2C25CEC164CB11256CC /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FBD4B316B85673A7BD2D2E /* Auth.swift */; };
 		2E03DA0A20134F3722419077 /* Proposal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9105E39884B94E60E5BF0FCB /* Proposal.swift */; };
@@ -54,6 +55,7 @@
 		F8B86291642BA41527F4648B /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862B8E3CA191D3BF9EC25FDC /* DeepLinkRouter.swift */; };
 		F9616C2B39409158D02A511F /* SwaplApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C55A61B818770C1E2FFE8 /* SwaplApp.swift */; };
 		FBEF57AC2F8FBE1ACBAF6DAD /* AirbnbStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FAC49377D43C349AE9CEC3 /* AirbnbStyle.swift */; };
+		FE30B2545B06E5FE6755CDC9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 832C6832461A871B16ADCD7A /* Assets.xcassets */; };
 		FFB628B21B3C9A6DA0C2BD15 /* KeychainTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */; };
 /* End PBXBuildFile section */
 
@@ -96,9 +98,11 @@
 		781B69502AE21A819387C19F /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
 		7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplEmptyState.swift; sourceTree = "<group>"; };
 		81DB4250C505E12AA24FD3B8 /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGES.md; sourceTree = "<group>"; };
+		832C6832461A871B16ADCD7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		862B8E3CA191D3BF9EC25FDC /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRouter.swift; sourceTree = "<group>"; };
 		880076B1A21E1999A8C9F405 /* FilterSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSheetView.swift; sourceTree = "<group>"; };
 		88FE15DAF7CB60D8091AAB48 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		894AED6F36AAF11BFF8CA2FB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		9105E39884B94E60E5BF0FCB /* Proposal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proposal.swift; sourceTree = "<group>"; };
 		967B9C41F5F9438E30143514 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		988E469B97C24C69D3CF04E2 /* CityIllust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityIllust.swift; sourceTree = "<group>"; };
@@ -288,7 +292,9 @@
 		BD437EA44DBE112FC0D7B43D /* Swapl */ = {
 			isa = PBXGroup;
 			children = (
+				832C6832461A871B16ADCD7A /* Assets.xcassets */,
 				0FB5692D60E8AAFB8D3017D8 /* Info.plist */,
+				894AED6F36AAF11BFF8CA2FB /* PrivacyInfo.xcprivacy */,
 				69F50D0C2FA71A035FEFE2AF /* Swapl.entitlements */,
 				E3F0605B68321C873190B989 /* App */,
 				E7374CB43A82D1797063FE3B /* Core */,
@@ -471,11 +477,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE30B2545B06E5FE6755CDC9 /* Assets.xcassets in Resources */,
 				8A383874E740D799C701825A /* CHANGES.md in Resources */,
 				5BD0A88CF9AD53F7EE507582 /* Fraunces-Italic-Variable.ttf in Resources */,
 				0FF9121641DAB4D4D85FDB4C /* Fraunces-Variable.ttf in Resources */,
 				42E7606893193D6EE6499537 /* Inter-Variable.ttf in Resources */,
 				510830DC97DA55495B08EBC9 /* JetBrainsMono-Variable.ttf in Resources */,
+				1EB702BD888B0CA98111570F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
