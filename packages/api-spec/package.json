@@ -16,7 +16,8 @@
   "scripts": {
     "gen:ts": "openapi-typescript openapi.yaml -o generated/ts/schema.d.ts && cp generated/ts/schema.d.ts ../../app/lib/generated/api-schema.d.ts",
     "gen:swift-spec": "cp openapi.yaml ../swapl-api-client/Sources/SwaplAPIClient/openapi.yaml",
-    "generate": "pnpm run gen:ts && pnpm run gen:swift-spec"
+    "generate": "pnpm run gen:ts && pnpm run gen:swift-spec",
+    "check:drift": "node scripts/check-route-drift.mjs"
   },
   "devDependencies": {
     "openapi-typescript": "^7.4.0"

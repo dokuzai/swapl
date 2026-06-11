@@ -33,6 +33,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Every public route under app/app/api must be in the OpenAPI contract
+      # (or explicitly allowlisted in the script). Fails on drift.
+      - name: API contract drift check
+        run: pnpm --filter @swapl/api-spec check:drift
+
       - name: Typecheck (web)
         run: pnpm --filter app typecheck
 

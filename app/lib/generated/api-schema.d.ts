@@ -369,6 +369,138 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/profile/interests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Interest catalog + current selection
+         * @description Mobile-friendly catalog with category groupings, mirroring the web /account/interests page. Works without auth (selected is then empty).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InterestsResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Replace the profile's interests (and bio vibe)
+         * @description Unknown slugs are dropped silently; omitting bioVibe clears it.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["InterestsUpdateRequest"];
+                };
+            };
+            responses: {
+                /** @description Saved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/profiles/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Public host profile
+         * @description Name, bio, verification status, interests, and the host's active listings. No auth.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicProfileResponse"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/listings": {
         parameters: {
             query?: never;
@@ -787,6 +919,174 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/saved-searches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The user's saved searches
+         * @description Plus-plan feature; newest first.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SavedSearchesResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Plan does not include saved searches */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PlanLimitError"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Save a search
+         * @description Plus-plan feature; capped at 20 per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SavedSearchCreateRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SavedSearchCreateResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Plan does not include saved searches */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PlanLimitError"];
+                    };
+                };
+                /** @description Saved-search cap reached (20) */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/saved-searches/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a saved search (owner only) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/ai/proposal-message": {
         parameters: {
             query?: never;
@@ -983,6 +1283,190 @@ export interface paths {
                     content: {
                         "application/json": components["schemas"]["OkResponse"];
                     };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/proposals/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Swap thread messages
+         * @description Only the two parties of the proposal may read the thread.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SwapMessagesResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of this proposal */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Proposal not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Post a message in the swap thread
+         * @description Only the two parties may post. Notifies the other side via email + push. Rate-limited 30/min per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SwapMessageCreateRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SwapMessageCreateResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of this proposal */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Proposal not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Report a listing or user */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ReportCreateRequest"];
+                };
+            };
+            responses: {
+                /** @description Filed */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
             };
         };
@@ -1381,6 +1865,102 @@ export interface components {
         DeviceRegisterResponse: {
             ok: boolean;
             deviceId?: string;
+        };
+        PlanLimitError: {
+            /** @description Machine-readable reason (e.g. PLAN_LIMIT). */
+            error: string;
+            /** @description Plan id that unlocks the feature. */
+            upgradeTo?: string;
+            currentPlan?: string;
+        };
+        SavedSearch: {
+            id: string;
+            userId: string;
+            name: string;
+            /** @description Serialized URLSearchParams from /listings. */
+            query: string;
+            alertEnabled: boolean;
+            /** Format: date-time */
+            lastNotifiedAt?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        SavedSearchesResponse: {
+            items: components["schemas"]["SavedSearch"][];
+        };
+        SavedSearchCreateRequest: {
+            name: string;
+            /** @description Serialized URLSearchParams from /listings. */
+            query: string;
+            /** @default true */
+            alertEnabled: boolean;
+        };
+        SavedSearchCreateResponse: {
+            ok: boolean;
+            id: string;
+        };
+        InterestTag: {
+            slug: string;
+            label: string;
+            category: components["schemas"]["InterestCategory"];
+        };
+        /** @enum {string} */
+        InterestCategory: "food_drink" | "art_design" | "music" | "outdoor" | "wellness" | "history" | "nightlife" | "family" | "shopping" | "work";
+        InterestsResponse: {
+            catalog: components["schemas"]["InterestTag"][];
+            categories: {
+                id: components["schemas"]["InterestCategory"];
+                label: string;
+            }[];
+            /** @description Slugs currently on the profile; empty when unauthenticated. */
+            selected: string[];
+        };
+        InterestsUpdateRequest: {
+            /** @description Interest slugs; unknown slugs are silently dropped. */
+            interests: string[];
+            bioVibe?: string | null;
+        };
+        PublicProfile: {
+            id: string;
+            name?: string | null;
+            avatar?: string | null;
+            bio?: string | null;
+            bioVibe?: string | null;
+            verified: boolean;
+            /** Format: date-time */
+            memberSince: string;
+            interests: string[];
+        };
+        PublicProfileResponse: {
+            user: components["schemas"]["PublicProfile"];
+            /** @description The host's active listings, newest first. */
+            listings: components["schemas"]["Listing"][];
+        };
+        ReportCreateRequest: {
+            reason: string;
+            detail?: string;
+            listingId?: string;
+            targetUserId?: string;
+        };
+        SwapMessage: {
+            id: string;
+            proposalId: string;
+            authorId: string;
+            /** @description True when the requester authored the message. */
+            mine: boolean;
+            body: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        SwapMessagesResponse: {
+            /** @description Oldest first. */
+            messages: components["schemas"]["SwapMessage"][];
+        };
+        SwapMessageCreateRequest: {
+            body: string;
+        };
+        SwapMessageCreateResponse: {
+            message: components["schemas"]["SwapMessage"];
         };
         BetaSignupRequest: {
             /** Format: email */
