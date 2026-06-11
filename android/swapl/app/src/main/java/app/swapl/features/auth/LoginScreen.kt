@@ -32,8 +32,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetPublicKeyCredentialOption
+import androidx.credentials.PublicKeyCredential
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import app.swapl.BuildConfig
 import app.swapl.core.auth.AuthViewModel
 import app.swapl.design.components.KickerLabel
@@ -106,6 +109,41 @@ fun LoginScreen(vm: AuthViewModel) {
                 // User dismissed the sheet — not an error.
             } catch (_: GetCredentialException) {
                 localError = "Google sign-in failed. Try again."
+            }
+        }
+    }
+
+    fun startPasskeySignIn() {
+        if (vm.uiState.isAuthenticating) return
+        localError = null
+        vm.clearMessages()
+        scope.launch {
+            // Two failure domains: fetching options (network/backend) and the
+            // Credential Manager sheet (no passkey, user dismissal) — keep the
+            // messages distinct and never crash on an empty credential store.
+            val optionsJson = try {
+                vm.passkeyLoginOptionsJson()
+            } catch (_: Throwable) {
+                localError = "Passkey sign-in isn't available right now."
+                return@launch
+            }
+            try {
+                val request = GetCredentialRequest(
+                    listOf(GetPublicKeyCredentialOption(requestJson = optionsJson))
+                )
+                val credential = CredentialManager.create(context)
+                    .getCredential(context, request).credential
+                if (credential is PublicKeyCredential) {
+                    vm.signInWithPasskey(credential.authenticationResponseJson)
+                } else {
+                    localError = "Passkey sign-in failed. Try again."
+                }
+            } catch (_: GetCredentialCancellationException) {
+                // User dismissed the sheet — not an error.
+            } catch (_: NoCredentialException) {
+                localError = "No passkey on this device yet. Sign in another way, then add one from your profile."
+            } catch (_: GetCredentialException) {
+                localError = "Passkey sign-in failed. Try again."
             }
         }
     }
@@ -206,7 +244,7 @@ fun LoginScreen(vm: AuthViewModel) {
         if (mode != AuthMode.Waitlist && providers != null) {
             val googleAvailable =
                 providers.google && BuildConfig.SWAPL_GOOGLE_SERVER_CLIENT_ID.isNotEmpty()
-            if (googleAvailable || providers.emailOtp || providers.phone) {
+            if (googleAvailable || providers.passkey || providers.emailOtp || providers.phone) {
                 Spacer(Modifier.height(SwaplSpacing.s5))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     HorizontalDivider(Modifier.weight(1f))
@@ -219,6 +257,12 @@ fun LoginScreen(vm: AuthViewModel) {
                     HorizontalDivider(Modifier.weight(1f))
                 }
                 Spacer(Modifier.height(SwaplSpacing.s4))
+                if (providers.passkey) {
+                    ProviderPill(text = "Sign in with a passkey", enabled = !busy) {
+                        startPasskeySignIn()
+                    }
+                    Spacer(Modifier.height(SwaplSpacing.s3))
+                }
                 if (googleAvailable) {
                     ProviderPill(text = "Continue with Google", enabled = !busy) {
                         startGoogleSignIn()

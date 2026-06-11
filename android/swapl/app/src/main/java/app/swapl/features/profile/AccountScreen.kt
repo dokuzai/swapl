@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.AddHome
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.QueryStats
@@ -38,11 +39,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.credentials.CreatePublicKeyCredentialRequest
+import androidx.credentials.CreatePublicKeyCredentialResponse
+import androidx.credentials.CredentialManager
+import androidx.credentials.exceptions.CreateCredentialCancellationException
+import androidx.credentials.exceptions.CreateCredentialException
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -86,7 +94,45 @@ fun AccountScreen(
     LaunchedEffect(Unit) { overview.load() }
     val s = authVm.uiState.session
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var confirmSignOut by remember { mutableStateOf(false) }
+    var passkeyMessage by remember { mutableStateOf<String?>(null) }
+    var addingPasskey by remember { mutableStateOf(false) }
+
+    // "Passkeys" menu entry: options from the backend → Credential Manager
+    // sheet → verify. Graceful on every exit: dismissal is silent, anything
+    // else lands in a plain dialog (never a crash).
+    fun addPasskey() {
+        if (addingPasskey) return
+        addingPasskey = true
+        scope.launch {
+            try {
+                val optionsJson = authVm.passkeyRegistrationOptionsJson()
+                val result = CredentialManager.create(context).createCredential(
+                    context,
+                    CreatePublicKeyCredentialRequest(requestJson = optionsJson),
+                )
+                val responseJson =
+                    (result as? CreatePublicKeyCredentialResponse)?.registrationResponseJson
+                if (responseJson == null) {
+                    passkeyMessage = "Could not add a passkey on this device."
+                } else {
+                    val device = android.os.Build.MODEL?.takeIf { it.isNotBlank() }
+                    authVm.completePasskeyRegistration(responseJson, device)
+                    passkeyMessage = "Passkey added — next time you can sign in without a password."
+                }
+            } catch (_: CreateCredentialCancellationException) {
+                // User dismissed the sheet — not an error.
+            } catch (_: CreateCredentialException) {
+                passkeyMessage = "Could not add a passkey on this device."
+            } catch (_: Throwable) {
+                passkeyMessage = "Passkeys aren't available right now. Try again later."
+            } finally {
+                addingPasskey = false
+            }
+        }
+    }
 
     Column(
         Modifier
@@ -155,6 +201,9 @@ fun AccountScreen(
             }
         }
 
+        // Didit identity verification — env-gated, hidden once verified.
+        IdentityVerificationCard()
+
         overview.me?.subscription?.let { sub ->
             SurfaceCard {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -171,6 +220,7 @@ fun AccountScreen(
             MenuRow(Icons.Default.Person, "View profile") { s?.id?.let(onOpenPublicProfile) }
             MenuRow(Icons.Default.Favorite, "Interests", onClick = onOpenInterests)
             MenuRow(Icons.Default.Search, "Saved searches", onClick = onOpenSavedSearches)
+            MenuRow(Icons.Default.Key, if (addingPasskey) "Passkeys…" else "Passkeys") { addPasskey() }
             if (overview.me?.user?.role == "swapl_admin") {
                 MenuRow(Icons.Default.QueryStats, "Metrics", onClick = onOpenMetrics)
             }
@@ -180,6 +230,17 @@ fun AccountScreen(
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
             MenuRow(Icons.AutoMirrored.Filled.Logout, "Log out", destructive = true) { confirmSignOut = true }
         }
+    }
+
+    passkeyMessage?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { passkeyMessage = null },
+            title = { Text("Passkeys") },
+            text = { Text(msg) },
+            confirmButton = {
+                TextButton(onClick = { passkeyMessage = null }) { Text("OK") }
+            },
+        )
     }
 
     if (confirmSignOut) {

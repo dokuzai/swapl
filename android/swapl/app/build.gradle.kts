@@ -104,10 +104,13 @@ dependencies {
     // Secure storage
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    // Google Sign-In via Credential Manager
+    // Google Sign-In + passkeys via Credential Manager
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+    // Custom Tabs (Didit hosted identity verification)
+    implementation("androidx.browser:browser:1.8.0")
 
     // Image loading
     implementation("io.coil-kt.coil3:coil-compose:3.0.0")

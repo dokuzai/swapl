@@ -11,6 +11,7 @@ import app.swapl.core.model.AuthUser
 import app.swapl.core.model.MeResponse
 import app.swapl.core.model.TokenResponse
 import app.swapl.core.network.ApiClient
+import app.swapl.core.repository.PasskeyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
@@ -21,7 +22,11 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +34,7 @@ class AuthViewModel @Inject constructor(
     private val api: ApiClient,
     private val tokenStore: TokenStore,
     private val favorites: FavoritesStore,
+    private val passkeys: PasskeyRepository,
 ) : ViewModel() {
 
     var uiState by mutableStateOf(UiState())
@@ -132,6 +138,34 @@ class AuthViewModel @Inject constructor(
             setBody(OAuthTelegramBody(authData, "android", BuildConfig.VERSION_NAME))
         }.body()
     }
+
+    // Passkeys: the Credential Manager dance lives in the UI layer (it needs
+    // an Activity); the ViewModel only supplies options and finishes the flows.
+
+    /** Raw WebAuthn request options for GetPublicKeyCredentialOption(requestJson). */
+    suspend fun passkeyLoginOptionsJson(): String = passkeys.loginOptionsJson()
+
+    fun signInWithPasskey(authenticationResponseJson: String) = tokenSignIn("Passkey sign-in failed") {
+        // /login/verify wants the assertion fields at the top level with
+        // platform/appVersion alongside — same convention as every other login.
+        val assertion = Json.parseToJsonElement(authenticationResponseJson).jsonObject
+        val body = buildJsonObject {
+            assertion.forEach { (key, value) -> put(key, value) }
+            put("platform", JsonPrimitive("android"))
+            put("appVersion", JsonPrimitive(BuildConfig.VERSION_NAME))
+        }
+        api.client.post("${api.baseUrl}/api/auth/passkey/login/verify") {
+            contentType(ContentType.Application.Json)
+            setBody(body)
+        }.body()
+    }
+
+    /** Authenticated: raw options for CreatePublicKeyCredentialRequest(requestJson). */
+    suspend fun passkeyRegistrationOptionsJson(): String = passkeys.registrationOptionsJson()
+
+    /** Authenticated: persists the attestation produced by Credential Manager. */
+    suspend fun completePasskeyRegistration(registrationResponseJson: String, name: String?) =
+        passkeys.completeRegistration(registrationResponseJson, name)
 
     // Step 1 of the OTP flow. The server answers opaquely (anti-enumeration),
     // so success only means "if that destination exists, a code is on its way".
@@ -318,6 +352,7 @@ class AuthViewModel @Inject constructor(
         val telegram: TelegramStatus = TelegramStatus(),
         val emailOtp: Boolean = false,
         val phone: Boolean = false,
+        val passkey: Boolean = false,
     ) {
         @Serializable
         data class TelegramStatus(val enabled: Boolean = false, val botUsername: String? = null)
