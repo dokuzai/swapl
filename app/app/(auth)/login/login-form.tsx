@@ -4,8 +4,10 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
+import { AuthProviders } from "@/components/auth/auth-providers";
+import type { WebAuthProviders } from "@/lib/auth/web-providers";
 
-export default function LoginForm() {
+export default function LoginForm({ providers }: { providers: WebAuthProviders }) {
   const t = useT();
   const router = useRouter();
   const next = useSearchParams().get("next") ?? "/dashboard";
@@ -77,6 +79,8 @@ export default function LoginForm() {
           {pending ? t("auth.login.submitting") : t("auth.login.submit")}
         </button>
       </form>
+
+      <AuthProviders providers={providers} />
 
       <p className="mt-6 text-sm" style={{ color: "var(--navy-2)" }}>
         {t("auth.login.newHere")}{" "}
