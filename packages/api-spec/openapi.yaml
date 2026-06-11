@@ -23,6 +23,7 @@ tags:
   - name: proposals
   - name: reports
   - name: devices
+  - name: verification
   - name: waitlist
 
 components:
@@ -769,6 +770,35 @@ components:
         referrer: { type: string }
         turnstileToken: { type: string }
         attestation: { type: string }
+
+    VerificationSessionResponse:
+      type: object
+      required: [status]
+      description: >-
+        Result of starting (or resuming) an identity check. `url` is the
+        hosted Didit flow to redirect the user to; null when already approved.
+      properties:
+        status:
+          type: string
+          enum: [pending, approved]
+        url: { type: string, nullable: true }
+        reused:
+          type: boolean
+          description: True when an existing pending session was resumed.
+
+    VerificationStatusResponse:
+      type: object
+      required: [enabled, status, verified]
+      properties:
+        enabled:
+          type: boolean
+          description: Whether identity verification is configured server-side.
+        status:
+          type: string
+          enum: [none, pending, approved, declined, expired]
+        verified: { type: boolean }
+        verifiedAt: { type: string, format: date-time, nullable: true }
+        completedAt: { type: string, format: date-time, nullable: true }
 
 paths:
   /api/auth/token:
@@ -1627,6 +1657,42 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/OkResponse' }
+
+  /api/verification/session:
+    post:
+      tags: [verification]
+      summary: Start (or resume) an identity verification flow
+      description: >-
+        Creates a hosted Didit KYC session (reusing a still-pending one) and
+        returns the URL to redirect the user to. Env-gated — 503 until Didit
+        is configured server-side. Rate limited to 3 per hour per user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VerificationSessionResponse' }
+        '401': { description: Unauthenticated }
+        '429': { description: Rate limited }
+        '503': { description: Verification not configured }
+
+  /api/verification/status:
+    get:
+      tags: [verification]
+      summary: Current identity verification state
+      description: >-
+        Latest identity-check status for the signed-in user. When no webhook
+        secret is configured and the attempt is pending, the server polls
+        Didit directly before answering.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VerificationStatusResponse' }
+        '401': { description: Unauthenticated }
 
   /api/beta:
     post:

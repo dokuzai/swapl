@@ -28,6 +28,8 @@ export default async function AdminUsers({
       email: true,
       name: true,
       emailVerifiedAt: true,
+      verified: true,
+      verifiedAt: true,
       suspendedAt: true,
       lastActiveAt: true,
       role: true,
@@ -57,7 +59,7 @@ export default async function AdminUsers({
       </header>
 
       <AdminTable
-        headers={["", "Email", "Name", "Email verified", "Status", "Role", "Listings", "Created", "Actions"]}
+        headers={["", "Email", "Name", "Email verified", "ID verified", "Status", "Role", "Listings", "Created", "Actions"]}
         emptyLabel={onlineOnly ? "Nobody online right now." : "No users yet."}
         rows={users.map((u) => {
           const isOnline =
@@ -81,6 +83,13 @@ export default async function AdminUsers({
               <StatusPill key="v" label="verified" accent />
             ) : (
               <StatusPill key="v" label="unverified" />
+            ),
+            u.verified ? (
+              <span key="kv" title={u.verifiedAt ? `Verified ${fmtDate(u.verifiedAt)}` : "Verified"}>
+                <StatusPill label={u.verifiedAt ? fmtDate(u.verifiedAt) : "verified"} accent />
+              </span>
+            ) : (
+              <StatusPill key="kv" label="—" />
             ),
             u.suspendedAt ? (
               <StatusPill key="s" label="suspended" accent />

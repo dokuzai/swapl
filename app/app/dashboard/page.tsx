@@ -4,15 +4,31 @@ import { getSession } from "@/lib/auth/session";
 import { ListingCard } from "@/components/listing/listing-card";
 import { AISuggestions } from "@/components/listing/ai-suggestions";
 import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
+import {
+  IdentityVerificationCard,
+  type IdentityVerificationStatus,
+} from "@/components/account/identity-verification-card";
 import { toDTO, formatDateRange } from "@/lib/listing-utils";
 import { getDictionary } from "@/lib/i18n/server";
+import {
+  applyVerificationUpdate,
+  diditEnabled,
+  getSessionStatus,
+} from "@/lib/verification/didit";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Dashboard · swapl" };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ verification?: string }>;
+}) {
   const session = await getSession();
   if (!session) return null;
+
+  const { verification } = await searchParams;
+  const backFromVerification = verification === "done";
 
   const [user, listings, incoming, outgoing, agreements, dict] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.userId } }),
@@ -36,6 +52,30 @@ export default async function DashboardPage() {
     getDictionary(),
   ]);
 
+  // Identity verification (Didit) card: only when configured server-side and
+  // the user isn't verified yet. Coming back from the hosted flow
+  // (?verification=done) we re-poll once so the card shows the fresh outcome
+  // even before the webhook lands.
+  let idvStatus: IdentityVerificationStatus | null = null;
+  if (user && diditEnabled() && !user.verified) {
+    const latest = await prisma.identityVerification.findFirst({
+      where: { userId: session.userId },
+      orderBy: { createdAt: "desc" },
+    });
+    idvStatus = (latest?.status as IdentityVerificationStatus) ?? "none";
+    if (latest && latest.status === "pending" && backFromVerification) {
+      try {
+        const snapshot = await getSessionStatus(latest.sessionId);
+        const applied = await applyVerificationUpdate(latest.sessionId, snapshot.diditStatus, snapshot.raw);
+        if (applied) idvStatus = applied.status;
+      } catch (err) {
+        console.error("[dashboard] verification poll failed", err);
+      }
+    }
+  } else if (user?.verified && backFromVerification) {
+    idvStatus = "approved"; // webhook already landed: show the success state once
+  }
+
   return (
     <div className="wrap py-10 lg:py-14">
       {user && !user.emailVerifiedAt && <VerifyEmailBanner email={user.email} />}
@@ -51,6 +91,8 @@ export default async function DashboardPage() {
         <Stat label={dict["dashboard.statSentAwaiting"]} value={outgoing} href="/swaps" />
         <Stat label={dict["dashboard.statActiveSwaps"]} value={agreements} href="/swaps" accent />
       </section>
+
+      {idvStatus !== null && <IdentityVerificationCard status={idvStatus} />}
 
       <section className="mb-12">
         <AISuggestions />

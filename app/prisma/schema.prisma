@@ -24,6 +24,10 @@ model User {
   bio          String?
   passwordHash String?
   verified     Boolean  @default(false)
+  // When the identity (KYC) check was approved. Source of truth is the
+  // IdentityVerification rows; `verified` above is kept in sync (derived)
+  // so existing queries/DTOs keep working unchanged.
+  verifiedAt   DateTime?
   // Inbox-confirmed email. Distinct from `verified` (the listing-trust KYC
   // badge). Set when the user clicks the link in the verification email.
   emailVerifiedAt DateTime?
@@ -74,6 +78,25 @@ model User {
   favorites       Favorite[]
   oauthAccounts   OAuthAccount[]
   webauthnCredentials WebAuthnCredential[]
+  identityVerifications IdentityVerification[]
+}
+
+// One identity (KYC) verification attempt at an external provider (Didit).
+// A user may have several rows (declined/expired attempts followed by a
+// retry); the latest row is the current state. On approval the webhook (or
+// the polling fallback) stamps User.verified/verifiedAt.
+model IdentityVerification {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider    String    @default("didit")
+  sessionId   String    @unique                                  // provider session id (Didit session_id)
+  status      String    @default("pending")                      // "pending" | "approved" | "declined" | "expired"
+  decision    String?                                            // raw provider decision payload (JSON-encoded TEXT)
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([userId])
 }
 
 // External identity linked to a local user. One row per (provider, subject).

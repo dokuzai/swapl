@@ -39,6 +39,20 @@ export default async function AccountPage() {
 
   const shortDate = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
+  // Latest identity-check attempt — drives the pending/declined badge below
+  // (User.verified flips only on approval).
+  const latestIdv = await prisma.identityVerification.findFirst({
+    where: { userId: session.userId },
+    orderBy: { createdAt: "desc" },
+  });
+  const idvBadge = user.verified
+    ? { label: "Verified", bg: "var(--pink)", fg: "#fff" }
+    : latestIdv?.status === "pending"
+      ? { label: "Pending review", bg: "var(--cream-2)", fg: "var(--navy-3)" }
+      : latestIdv?.status === "declined"
+        ? { label: "Declined", bg: "#dc2626", fg: "#fff" }
+        : { label: "Unverified", bg: "var(--cream-2)", fg: "var(--navy-3)" };
+
   return (
     <>
       <Navbar />
@@ -75,15 +89,16 @@ export default async function AccountPage() {
             <div className="flex items-center gap-3 mb-3">
               <span
                 className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full"
-                style={{
-                  background: user.verified ? "var(--pink)" : "var(--cream-2)",
-                  color: user.verified ? "#fff" : "var(--navy-3)",
-                }}
+                style={{ background: idvBadge.bg, color: idvBadge.fg }}
               >
-                {user.verified ? "Verified" : "Unverified"}
+                {idvBadge.label}
               </span>
               <span className="text-sm" style={{ color: "var(--navy-2)" }}>
-                Required before your first swap acceptance.
+                {user.verified && user.verifiedAt
+                  ? `Verified on ${user.verifiedAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.`
+                  : latestIdv?.status === "pending"
+                    ? "We're reviewing your documents — this usually takes minutes."
+                    : "Required before your first swap acceptance."}
               </span>
             </div>
             <p className="text-sm" style={{ color: "var(--navy-2)" }}>

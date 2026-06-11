@@ -53,6 +53,7 @@ const PENDING_SPEC = [
   "/api/listings/verify",
   "/api/marketing/events",
   "/api/uploads/listing-photo",
+  "/api/webhooks/didit", // server-to-server (Didit), HMAC-authenticated, not a client API
 ];
 
 /** Recursively collect route.ts files and map them to URL paths. */

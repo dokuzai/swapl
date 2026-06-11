@@ -188,6 +188,23 @@ export const en = {
   "verifyBanner.sending": "Sending…",
   "verifyBanner.sent": "✓ Email resent",
 
+  // ---- Identity verification (Didit KYC) card ----
+  "verifyId.title": "Verify your identity",
+  "verifyId.body":
+    "A one-time ID check (passport / national ID) unlocks the verified badge and is required before your first swap. Takes about two minutes.",
+  "verifyId.cta": "Verify now",
+  "verifyId.resume": "Resume verification",
+  "verifyId.retry": "Try again",
+  "verifyId.starting": "Opening…",
+  "verifyId.pendingLabel": "Pending",
+  "verifyId.pendingBody": "We received your documents — the check usually completes within minutes.",
+  "verifyId.declinedLabel": "Declined",
+  "verifyId.declinedBody": "Your last check didn't go through. You can try again with a different document.",
+  "verifyId.expiredBody": "Your last verification session expired before it finished.",
+  "verifyId.approvedLabel": "Verified",
+  "verifyId.approvedBody": "You're verified — the badge now shows on your profile.",
+  "verifyId.error": "Couldn't start verification. Try again in a minute.",
+
   // ---- Pricing ----
   "pricing.kicker": "Pricing",
   "pricing.title": "Swapping homes is free.",

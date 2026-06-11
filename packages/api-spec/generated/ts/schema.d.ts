@@ -2158,6 +2158,112 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/verification/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start (or resume) an identity verification flow
+         * @description Creates a hosted Didit KYC session (reusing a still-pending one) and returns the URL to redirect the user to. Env-gated — 503 until Didit is configured server-side. Rate limited to 3 per hour per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VerificationSessionResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Verification not configured */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/verification/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Current identity verification state
+         * @description Latest identity-check status for the signed-in user. When no webhook secret is configured and the attempt is pending, the server polls Didit directly before answering.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VerificationStatusResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/beta": {
         parameters: {
             query?: never;
@@ -2698,6 +2804,25 @@ export interface components {
             referrer?: string;
             turnstileToken?: string;
             attestation?: string;
+        };
+        /** @description Result of starting (or resuming) an identity check. `url` is the hosted Didit flow to redirect the user to; null when already approved. */
+        VerificationSessionResponse: {
+            /** @enum {string} */
+            status: "pending" | "approved";
+            url?: string | null;
+            /** @description True when an existing pending session was resumed. */
+            reused?: boolean;
+        };
+        VerificationStatusResponse: {
+            /** @description Whether identity verification is configured server-side. */
+            enabled: boolean;
+            /** @enum {string} */
+            status: "none" | "pending" | "approved" | "declined" | "expired";
+            verified: boolean;
+            /** Format: date-time */
+            verifiedAt?: string | null;
+            /** Format: date-time */
+            completedAt?: string | null;
         };
     };
     responses: never;
