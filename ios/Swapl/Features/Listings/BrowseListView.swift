@@ -199,6 +199,7 @@ struct BrowseListView: View {
     private var exploreContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
+                SwaplPageTitle("Explore")
                 searchHeader
                 categoryStrip
                 if let first = vm.items.first {
@@ -274,7 +275,6 @@ struct BrowseListView: View {
             .background(SwaplSemanticLight.card, in: Capsule())
             .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
             .padding(.horizontal, 22)
-            .padding(.top, 18)
     }
 
     // Map mode: floating search bar over the full-bleed map — Liquid Glass on

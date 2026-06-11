@@ -16,8 +16,8 @@ struct AccountView: View {
         NavigationStack {
             ZStack(alignment: .bottom) {
                 ScrollView {
+                    SwaplPageTitle("Profile")
                     VStack(alignment: .leading, spacing: 24) {
-                        header
                         profileCard
                         quickCards
                         becomeHostCard
@@ -33,7 +33,7 @@ struct AccountView: View {
                         signOutRow
                     }
                     .padding(.horizontal, 22)
-                    .padding(.top, 22)
+                    .padding(.top, 24)
                     .padding(.bottom, 148)
                 }
                 .background(SwaplSemanticLight.background)
@@ -83,15 +83,6 @@ struct AccountView: View {
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
-    }
-
-    private var header: some View {
-        HStack(alignment: .center) {
-            Text("Profile")
-                .font(.swaplDisplay(SwaplDesignSystem.FontSize.display, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.text)
-            Spacer()
-        }
     }
 
     private var profileCard: some View {

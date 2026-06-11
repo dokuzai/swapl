@@ -47,14 +47,18 @@ struct ListingDetailView: View {
                     actionTitle: "Try Again",
                     action: { Task { await vm.load() } }
                 )
+                .frame(maxWidth: .infinity)
                 .padding(.top, 80)
             } else {
+                // Full-bleed placeholder so the push animation doesn't show a
+                // narrow strip of content over the system background.
                 ProgressView()
-                    .padding(40)
+                    .frame(maxWidth: .infinity, minHeight: 400)
                     .accessibilityLabel("Loading home")
             }
         }
-        .background(SwaplSemanticLight.background)
+        .frame(maxWidth: .infinity)
+        .background(SwaplSemanticLight.background.ignoresSafeArea())
         .navigationTitle(vm.detail?.listing.city ?? "Home")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

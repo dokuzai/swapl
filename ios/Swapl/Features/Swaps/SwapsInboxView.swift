@@ -173,11 +173,7 @@ struct SwapsInboxView: View {
     }
 
     private var messagesHeader: some View {
-        HStack(alignment: .center) {
-            Text("Messages")
-                .font(.swaplDisplay(SwaplDesignSystem.FontSize.display, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.text)
-            Spacer()
+        SwaplPageTitle("Messages") {
             Button {
                 withAnimation(.snappy) {
                     isSearching.toggle()
@@ -196,8 +192,6 @@ struct SwapsInboxView: View {
             }
             .accessibilityLabel(isSearching ? "Close search" : "Search messages")
         }
-        .padding(.horizontal, 22)
-        .padding(.top, 22)
     }
 }
 
@@ -344,8 +338,7 @@ struct ProposalDetailView: View {
         ScrollView {
             if vm.isLoading && vm.detail == nil {
                 ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding(40)
+                    .frame(maxWidth: .infinity, minHeight: 400)
                     .accessibilityLabel("Loading trip")
             } else if let error = vm.error {
                 SwaplEmptyState(
@@ -355,13 +348,14 @@ struct ProposalDetailView: View {
                     actionTitle: "Try Again",
                     action: { Task { await vm.load() } }
                 )
+                .frame(maxWidth: .infinity)
                 .padding(.top, 80)
             } else if let detail = vm.detail {
                 tripContent(detail)
             }
         }
         .frame(maxWidth: .infinity)
-        .background(SwaplSemanticLight.background)
+        .background(SwaplSemanticLight.background.ignoresSafeArea())
         .navigationTitle("Trip")
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }

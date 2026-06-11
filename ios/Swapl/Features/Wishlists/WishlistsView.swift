@@ -38,30 +38,11 @@ struct WishlistsView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if vm.isLoading && !vm.hasLoaded {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .accessibilityLabel("Loading saved homes")
-                } else if let error = vm.error {
-                    SwaplEmptyState(
-                        systemImage: "wifi.exclamationmark",
-                        title: "Wishlists unavailable",
-                        description: error,
-                        actionTitle: "Try Again",
-                        action: { Task { await vm.load() } }
-                    )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if visibleItems.isEmpty {
-                    SwaplEmptyState(
-                        systemImage: "heart",
-                        title: "No saved homes yet",
-                        description: "Tap the heart on any home to save it here."
-                    )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    grid
-                }
+            // Title lives outside the state switch so it is visible in the
+            // loading / error / empty states too, matching the other tabs.
+            VStack(spacing: 0) {
+                SwaplPageTitle("Wishlists")
+                stateContent
             }
             .background(SwaplSemanticLight.background)
             .toolbar(.hidden, for: .navigationBar)
@@ -76,6 +57,35 @@ struct WishlistsView: View {
         }
     }
 
+    @ViewBuilder
+    private var stateContent: some View {
+        Group {
+            if vm.isLoading && !vm.hasLoaded {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel("Loading saved homes")
+            } else if let error = vm.error {
+                SwaplEmptyState(
+                    systemImage: "wifi.exclamationmark",
+                    title: "Wishlists unavailable",
+                    description: error,
+                    actionTitle: "Try Again",
+                    action: { Task { await vm.load() } }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if visibleItems.isEmpty {
+                SwaplEmptyState(
+                    systemImage: "heart",
+                    title: "No saved homes yet",
+                    description: "Tap the heart on any home to save it here."
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                grid
+            }
+        }
+    }
+
     // Hide homes un-hearted since the last fetch so the tab tracks the shared
     // store without a refetch on every toggle.
     private var visibleItems: [Listing] {
@@ -84,12 +94,6 @@ struct WishlistsView: View {
 
     private var grid: some View {
         ScrollView {
-            Text("Wishlists")
-                .font(.swaplDisplay(SwaplDesignSystem.FontSize.display, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.text)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 22)
-                .padding(.top, 22)
             LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
                 ForEach(visibleItems) { listing in
                     NavigationLink(value: listing.id) {

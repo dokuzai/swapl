@@ -40,14 +40,18 @@ struct PublicProfileView: View {
                     actionTitle: "Try Again",
                     action: { Task { await vm.load() } }
                 )
+                .frame(maxWidth: .infinity)
                 .padding(.top, 80)
             } else {
+                // Fill the full width/height immediately so the view isn't a
+                // narrow strip on a white background during the push animation.
                 ProgressView()
-                    .padding(40)
+                    .frame(maxWidth: .infinity, minHeight: 400)
                     .accessibilityLabel("Loading profile")
             }
         }
-        .background(SwaplSemanticLight.background)
+        .frame(maxWidth: .infinity)
+        .background(SwaplSemanticLight.background.ignoresSafeArea())
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }

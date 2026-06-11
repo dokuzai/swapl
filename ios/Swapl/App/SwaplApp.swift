@@ -9,8 +9,31 @@ struct SwaplApp: App {
 
     init() {
         SwaplFonts.register()
+        Self.configureNavigationBarAppearance()
         // Register App Shortcuts for Siri
         SwaplAppShortcuts.updateAppShortcutParameters()
+    }
+
+    // Pushed/presented screens that keep the system navigation bar (listing
+    // detail, public profile, saved searches, …) get brand-coherent titles:
+    // Fraunces instead of SF Pro, design-system foreground. Must run after
+    // SwaplFonts.register() so the named instances of the variable font
+    // resolve ("Fraunces-SemiBold" is the bundled font's PostScript name).
+    private static func configureNavigationBarAppearance() {
+        let foreground = UIColor(SwaplSemanticLight.foreground)
+        let titleFont = UIFont(name: "Fraunces-SemiBold", size: 17)
+            ?? UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let largeTitleFont = UIFont(name: "Fraunces-SemiBold", size: 32)
+            ?? UIFont.systemFont(ofSize: 32, weight: .semibold)
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.titleTextAttributes = [.font: titleFont, .foregroundColor: foreground]
+        appearance.largeTitleTextAttributes = [.font: largeTitleFont, .foregroundColor: foreground]
+
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
 
     var body: some Scene {
@@ -294,10 +317,15 @@ struct AirbnbPlaceholderView: View {
 
     var body: some View {
         NavigationStack {
-            SwaplEmptyState(systemImage: systemImage, title: title, description: message)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .navigationTitle(title)
-                .background(SwaplSemanticLight.background)
+            // Same brand header as the other root tabs (Fraunces title, hidden
+            // system bar) so the placeholder doesn't fall back to SF Pro.
+            VStack(spacing: 0) {
+                SwaplPageTitle(title)
+                SwaplEmptyState(systemImage: systemImage, title: title, description: message)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .background(SwaplSemanticLight.background)
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }
