@@ -84,10 +84,12 @@ describe("getAdminMetrics", () => {
       return [];
     });
     mocks.userFindMany.mockResolvedValue([
-      { id: "u-1", name: "Asli", email: "asli@demo.swapl" },
-      { id: "u-2", name: null, email: "maartje@demo.swapl" },
-      { id: "u-3", name: "Haruki", email: "haruki@demo.swapl" },
-      { id: "u-4", name: "Ines", email: "ines@demo.swapl" },
+      // 5 min ago — inside the 15-min online window.
+      { id: "u-1", name: "Asli", email: "asli@demo.swapl", lastActiveAt: new Date(NOW.getTime() - 5 * 60 * 1000) },
+      { id: "u-2", name: null, email: "maartje@demo.swapl", lastActiveAt: null },
+      // 1 h ago — offline.
+      { id: "u-3", name: "Haruki", email: "haruki@demo.swapl", lastActiveAt: new Date(NOW.getTime() - 60 * 60 * 1000) },
+      { id: "u-4", name: "Ines", email: "ines@demo.swapl", lastActiveAt: null },
     ]);
 
     const m = await getAdminMetrics(NOW);
@@ -98,10 +100,38 @@ describe("getAdminMetrics", () => {
       name: "Asli",
       email: "asli@demo.swapl",
       listings: 4,
+      online: true,
+      lastActiveAt: new Date(NOW.getTime() - 5 * 60 * 1000).toISOString(),
     });
     expect(m.listingsPerUser.topUsers).toHaveLength(4);
     // Sorted descending by listing count.
     expect(m.listingsPerUser.topUsers.map((u) => u.listings)).toEqual([4, 2, 1, 1]);
+  });
+
+  it("marks topUsers online iff lastActiveAt is within the 15-min window", async () => {
+    mocks.listingGroupBy.mockImplementation(async (args: { by: string[] }) =>
+      args.by[0] === "userId"
+        ? [
+            { userId: "u-on", _count: { _all: 3 } },
+            { userId: "u-off", _count: { _all: 2 } },
+            { userId: "u-never", _count: { _all: 1 } },
+          ]
+        : []
+    );
+    // Exactly on the threshold counts as online (gte semantics, same as now.online).
+    const atThreshold = new Date(NOW.getTime() - ONLINE_WINDOW_MS);
+    const justOutside = new Date(NOW.getTime() - ONLINE_WINDOW_MS - 1);
+    mocks.userFindMany.mockResolvedValue([
+      { id: "u-on", name: "On", email: "on@demo.swapl", lastActiveAt: atThreshold },
+      { id: "u-off", name: "Off", email: "off@demo.swapl", lastActiveAt: justOutside },
+      { id: "u-never", name: "Never", email: "never@demo.swapl", lastActiveAt: null },
+    ]);
+
+    const m = await getAdminMetrics(NOW);
+    const byId = new Map(m.listingsPerUser.topUsers.map((u) => [u.id, u]));
+    expect(byId.get("u-on")).toMatchObject({ online: true, lastActiveAt: atThreshold.toISOString() });
+    expect(byId.get("u-off")).toMatchObject({ online: false, lastActiveAt: justOutside.toISOString() });
+    expect(byId.get("u-never")).toMatchObject({ online: false, lastActiveAt: null });
   });
 
   it("computes city shares against total active listings", async () => {

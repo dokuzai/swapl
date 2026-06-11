@@ -51,7 +51,16 @@ const METRICS = {
   listingsPerUser: {
     distribution: { zero: 5, one: 3, two: 1, threePlus: 1 },
     avgPerUserWithListing: 1.6,
-    topUsers: [{ id: "u1", name: "Ada", email: "ada@swapl.test", listings: 4 }],
+    topUsers: [
+      {
+        id: "u1",
+        name: "Ada",
+        email: "ada@swapl.test",
+        listings: 4,
+        online: true,
+        lastActiveAt: "2026-06-11T11:58:00.000Z",
+      },
+    ],
   },
   cities: { totalActiveListings: 8, top: [{ city: "Milan", listings: 4, share: 0.5 }] },
   engagement: {

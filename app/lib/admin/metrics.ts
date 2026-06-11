@@ -15,6 +15,8 @@ export type TopUser = {
   name: string | null;
   email: string;
   listings: number;
+  online: boolean;
+  lastActiveAt: string | null; // ISO
 };
 
 export type CityRow = {
@@ -127,16 +129,22 @@ export async function getAdminMetrics(now: Date = new Date()): Promise<AdminMetr
   const topUserRecords = topRows.length
     ? await prisma.user.findMany({
         where: { id: { in: topRows.map((r) => r.userId) } },
-        select: { id: true, name: true, email: true },
+        select: { id: true, name: true, email: true, lastActiveAt: true },
       })
     : [];
   const userById = new Map(topUserRecords.map((u) => [u.id, u]));
-  const topUsers: TopUser[] = topRows.map((r) => ({
-    id: r.userId,
-    name: userById.get(r.userId)?.name ?? null,
-    email: userById.get(r.userId)?.email ?? r.userId,
-    listings: r._count._all,
-  }));
+  const topUsers: TopUser[] = topRows.map((r) => {
+    const u = userById.get(r.userId);
+    const lastActiveAt = u?.lastActiveAt ?? null;
+    return {
+      id: r.userId,
+      name: u?.name ?? null,
+      email: u?.email ?? r.userId,
+      listings: r._count._all,
+      online: lastActiveAt !== null && lastActiveAt.getTime() >= online.getTime(),
+      lastActiveAt: lastActiveAt ? lastActiveAt.toISOString() : null,
+    };
+  });
 
   // ---- proposals ----
   const byStatus: Record<string, number> = {};
