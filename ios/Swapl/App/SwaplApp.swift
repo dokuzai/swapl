@@ -27,6 +27,15 @@ struct SwaplApp: App {
 struct RootView: View {
     @Environment(AuthService.self) private var auth
     @Environment(FavoritesStore.self) private var favorites
+    @Environment(PushService.self) private var push
+
+    // Centralized deep-link routing: whatever the source (push tap, custom
+    // scheme, universal link), the destination is presented as a sheet over
+    // the main tabs. `stashedDeepLink` holds links that arrive before the
+    // session is ready (cold start from a push, link tapped while logged out)
+    // and is flushed once authenticated.
+    @State private var activeDeepLink: DeepLinkDestination?
+    @State private var stashedDeepLink: DeepLinkDestination?
 
     var body: some View {
         Group {
@@ -52,7 +61,55 @@ struct RootView: View {
             } else {
                 await favorites.loadIdsIfNeeded()
             }
+            consumePushDeepLink()
+            flushStashedDeepLinkIfReady()
         }
+        // Custom scheme (swapl://) and universal links (https://app.swapl.fun).
+        .onOpenURL { handleDeepLink($0) }
+        // Push taps while the app is running; cold-start taps are picked up by
+        // the session task above via consumePushDeepLink().
+        .onChange(of: push.pendingDeepLink) { _, url in
+            guard url != nil else { return }
+            consumePushDeepLink()
+        }
+        // UI-test hook, same spirit as the SWAPL_API_BASE_URL override.
+        .onAppear {
+            if let raw = ProcessInfo.processInfo.environment["SWAPL_DEEPLINK_URL"],
+               let url = URL(string: raw) {
+                handleDeepLink(url)
+            }
+        }
+        .sheet(item: $activeDeepLink) { destination in
+            NavigationStack {
+                switch destination {
+                case .listing(let id):
+                    ListingDetailView(listingId: id)
+                case .proposal(let id):
+                    ProposalDetailView(proposalId: id)
+                }
+            }
+        }
+    }
+
+    private func handleDeepLink(_ url: URL) {
+        guard let destination = DeepLinkDestination.parse(url) else { return }
+        if auth.session != nil, !auth.isBootstrapping {
+            activeDeepLink = destination
+        } else {
+            stashedDeepLink = destination
+        }
+    }
+
+    private func consumePushDeepLink() {
+        guard let url = push.pendingDeepLink else { return }
+        push.pendingDeepLink = nil
+        handleDeepLink(url)
+    }
+
+    private func flushStashedDeepLinkIfReady() {
+        guard auth.session != nil, let destination = stashedDeepLink else { return }
+        stashedDeepLink = nil
+        activeDeepLink = destination
     }
 }
 

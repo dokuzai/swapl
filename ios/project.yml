@@ -49,6 +49,20 @@ targets:
         # The design system is light-only (SwaplSemanticLight tokens); without
         # this, dark-mode devices render system text white on cream.
         UIUserInterfaceStyle: Light
+        # Custom deep-link scheme — swapl://listing/:id, swapl://proposal/:id
+        # (push payloads also use the plural forms; see DeepLinkRouter.swift).
+        CFBundleURLTypes:
+          - CFBundleURLName: app.swapl
+            CFBundleURLSchemes:
+              - swapl
+    # Universal links for https://app.swapl.fun/listings/:id and /swaps/:id.
+    # The server side still needs /.well-known/apple-app-site-association on
+    # app.swapl.fun before these resolve into the app.
+    entitlements:
+      path: Swapl/Swapl.entitlements
+      properties:
+        com.apple.developer.associated-domains:
+          - applinks:app.swapl.fun
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.swapl

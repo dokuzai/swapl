@@ -43,6 +43,7 @@
 		9FB201F3E3C6723A6627AD92 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B69502AE21A819387C19F /* ReportSheet.swift */; };
 		A8F5EDDBDBC5050DDAC4A6AD /* WishlistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD770B97A9384AAECAFF4F3 /* WishlistsView.swift */; };
 		AC754A8C18363E68BFAC274A /* AIDraftRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */; };
+		B22399321C05438FA41249DB /* DeepLinkRoutingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD57A2AA63115467E0C218C /* DeepLinkRoutingTests.swift */; };
 		C37E5D582DD9EF9D58172533 /* FavoritesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D471415D3273EA410BB0599 /* FavoritesRepository.swift */; };
 		C50E6EC4B47A130774948455 /* FilterSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880076B1A21E1999A8C9F405 /* FilterSheetView.swift */; };
 		CE2E19FCF7D3A7155FABE8CA /* AIDraftProposalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */; };
@@ -50,6 +51,7 @@
 		DACBA4DA3BDA42660BC27C0B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8479450F71641A8B608B52 /* Profile.swift */; };
 		DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */; };
 		EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */; };
+		F8B86291642BA41527F4648B /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862B8E3CA191D3BF9EC25FDC /* DeepLinkRouter.swift */; };
 		F9616C2B39409158D02A511F /* SwaplApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C55A61B818770C1E2FFE8 /* SwaplApp.swift */; };
 		FBEF57AC2F8FBE1ACBAF6DAD /* AirbnbStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FAC49377D43C349AE9CEC3 /* AirbnbStyle.swift */; };
 		FFB628B21B3C9A6DA0C2BD15 /* KeychainTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */; };
@@ -75,6 +77,7 @@
 		1CD770B97A9384AAECAFF4F3 /* WishlistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistsView.swift; sourceTree = "<group>"; };
 		1D471415D3273EA410BB0599 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
 		1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftProposalTests.swift; sourceTree = "<group>"; };
+		2CD57A2AA63115467E0C218C /* DeepLinkRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRoutingTests.swift; sourceTree = "<group>"; };
 		2F8086AB51A024B342543C18 /* CitiesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitiesRepository.swift; sourceTree = "<group>"; };
 		348C7476795E59B9F7C4360C /* ListingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingDetailView.swift; sourceTree = "<group>"; };
 		3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapsInboxView.swift; sourceTree = "<group>"; };
@@ -85,6 +88,7 @@
 		64D0EB47C8D8295095D265D6 /* ListingPhotoGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingPhotoGalleryView.swift; sourceTree = "<group>"; };
 		66A0B174CF8A85F86C93F228 /* Fraunces-Italic-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fraunces-Italic-Variable.ttf"; sourceTree = "<group>"; };
 		6834A289CE48A812B8A38852 /* Inter-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Variable.ttf"; sourceTree = "<group>"; };
+		69F50D0C2FA71A035FEFE2AF /* Swapl.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Swapl.entitlements; sourceTree = "<group>"; };
 		6CEA095CED7B7CAD626BC318 /* JetBrainsMono-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Variable.ttf"; sourceTree = "<group>"; };
 		6E72A38E93BF07A269B5A860 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftRepository.swift; sourceTree = "<group>"; };
@@ -92,6 +96,7 @@
 		781B69502AE21A819387C19F /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
 		7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplEmptyState.swift; sourceTree = "<group>"; };
 		81DB4250C505E12AA24FD3B8 /* CHANGES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGES.md; sourceTree = "<group>"; };
+		862B8E3CA191D3BF9EC25FDC /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRouter.swift; sourceTree = "<group>"; };
 		880076B1A21E1999A8C9F405 /* FilterSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSheetView.swift; sourceTree = "<group>"; };
 		88FE15DAF7CB60D8091AAB48 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		9105E39884B94E60E5BF0FCB /* Proposal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proposal.swift; sourceTree = "<group>"; };
@@ -274,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */,
+				2CD57A2AA63115467E0C218C /* DeepLinkRoutingTests.swift */,
 				FE175D04D0E8B92BDB0623DF /* FeatureWalkthroughTests.swift */,
 			);
 			path = SwaplUITests;
@@ -283,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				0FB5692D60E8AAFB8D3017D8 /* Info.plist */,
+				69F50D0C2FA71A035FEFE2AF /* Swapl.entitlements */,
 				E3F0605B68321C873190B989 /* App */,
 				E7374CB43A82D1797063FE3B /* Core */,
 				DC4B1C0567901A9F8715A839 /* Design */,
@@ -308,6 +315,7 @@
 			isa = PBXGroup;
 			children = (
 				81DB4250C505E12AA24FD3B8 /* CHANGES.md */,
+				862B8E3CA191D3BF9EC25FDC /* DeepLinkRouter.swift */,
 				482C55A61B818770C1E2FFE8 /* SwaplApp.swift */,
 			);
 			path = App;
@@ -479,6 +487,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE2E19FCF7D3A7155FABE8CA /* AIDraftProposalTests.swift in Sources */,
+				B22399321C05438FA41249DB /* DeepLinkRoutingTests.swift in Sources */,
 				975F281EA211E4762D3F16AB /* FeatureWalkthroughTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -496,6 +505,7 @@
 				EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */,
 				670D86836AE68EA719BB626D /* CitiesRepository.swift in Sources */,
 				8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */,
+				F8B86291642BA41527F4648B /* DeepLinkRouter.swift in Sources */,
 				C37E5D582DD9EF9D58172533 /* FavoritesRepository.swift in Sources */,
 				9DF14AADB94ED9B3F7C76737 /* FavoritesStore.swift in Sources */,
 				C50E6EC4B47A130774948455 /* FilterSheetView.swift in Sources */,
@@ -544,6 +554,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Swapl/Swapl.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Swapl/Info.plist;
@@ -629,6 +640,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Swapl/Swapl.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Swapl/Info.plist;
