@@ -32,6 +32,10 @@ model User {
   aiModel    String?
   aiApiKey   String?
 
+  // Moderation: a suspended user cannot log in or send proposals.
+  // Set/cleared by admins from /admin/users.
+  suspendedAt  DateTime?
+
   // ---- Roles + Monetization v1 ----
   role                       String   @default("member") // "member" | "swapl_admin"
   proposalsThisMonthCount    Int      @default(0)
@@ -387,7 +391,15 @@ model Report {
   listing      Listing? @relation(fields: [listingId], references: [id])
   reason       String
   detail       String?
+  // Moderation lifecycle: open | resolved | dismissed. Closed from
+  // /admin/reports with an optional free-text resolution note.
+  status       String   @default("open")
+  resolution   String?
+  resolvedAt   DateTime?
+  resolvedById String?
   createdAt    DateTime @default(now())
+
+  @@index([status])
 }
 
 // =====================================================================

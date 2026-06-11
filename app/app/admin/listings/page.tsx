@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireAdminPage } from "@/lib/auth/abilities";
 import { AdminTable, StatusPill, fmtDate } from "@/components/admin/data-table";
+import ListingActions from "./listing-actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Listings · admin" };
@@ -26,7 +27,7 @@ export default async function AdminListings() {
       </header>
 
       <AdminTable
-        headers={["Title", "City", "Owner", "Active", "Verification", "Created"]}
+        headers={["Title", "City", "Owner", "Active", "Verification", "Created", "Actions"]}
         emptyLabel="No listings yet."
         rows={listings.map((l) => [
           <Link key="t" href={`/listings/${l.id}`} className="font-medium hover:underline">
@@ -43,6 +44,7 @@ export default async function AdminListings() {
           <span key="c" className="font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
             {fmtDate(l.createdAt)}
           </span>,
+          <ListingActions key="x" listingId={l.id} active={l.isActive} />,
         ])}
       />
     </>

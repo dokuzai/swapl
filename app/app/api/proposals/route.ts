@@ -76,6 +76,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   }
 
+  // Moderation: suspended users keep read access but cannot propose.
+  // (Web cookie sessions are stateless, so this must be checked per request.)
+  const caller = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { suspendedAt: true },
+  });
+  if (!caller) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+  if (caller.suspendedAt) {
+    return NextResponse.json(
+      { error: "ACCOUNT_SUSPENDED", message: "This account has been suspended. Contact support@swapl.com." },
+      { status: 403 }
+    );
+  }
+
   // Plan-aware monthly cap (R6): Free = 3/mo, Plus/Pro = unlimited.
   try {
     await ensureCanCreateProposal(session.userId);

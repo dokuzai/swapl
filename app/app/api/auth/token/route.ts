@@ -21,6 +21,12 @@ export async function POST(req: Request) {
   if (!user || !(await verifyPassword(password, user.passwordHash))) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
+  if (user.suspendedAt) {
+    return NextResponse.json(
+      { error: "ACCOUNT_SUSPENDED", message: "This account has been suspended. Contact support@swapl.com." },
+      { status: 403 }
+    );
+  }
   const issued = await issueAuthToken(user.id, platform, appVersion);
   return NextResponse.json({
     token: issued.token,

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { requireAdminPage } from "@/lib/auth/abilities";
 import { AdminTable, StatusPill, fmtDate } from "@/components/admin/data-table";
+import UserActions from "./user-actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Users · admin" };
@@ -16,6 +17,7 @@ export default async function AdminUsers() {
       email: true,
       name: true,
       emailVerifiedAt: true,
+      suspendedAt: true,
       role: true,
       createdAt: true,
       _count: { select: { listings: true } },
@@ -33,7 +35,7 @@ export default async function AdminUsers() {
       </header>
 
       <AdminTable
-        headers={["Email", "Name", "Email verified", "Role", "Listings", "Created"]}
+        headers={["Email", "Name", "Email verified", "Status", "Role", "Listings", "Created", "Actions"]}
         emptyLabel="No users yet."
         rows={users.map((u) => [
           <span key="e" className="font-medium">{u.email}</span>,
@@ -43,6 +45,11 @@ export default async function AdminUsers() {
           ) : (
             <StatusPill key="v" label="unverified" />
           ),
+          u.suspendedAt ? (
+            <StatusPill key="s" label="suspended" accent />
+          ) : (
+            <StatusPill key="s" label="active" />
+          ),
           <span key="r" className="font-mono text-[11px]" style={{ color: u.role === "swapl_admin" ? "var(--pink)" : "var(--navy-3)" }}>
             {u.role}
           </span>,
@@ -50,6 +57,7 @@ export default async function AdminUsers() {
           <span key="c" className="font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
             {fmtDate(u.createdAt)}
           </span>,
+          <UserActions key="x" userId={u.id} suspended={Boolean(u.suspendedAt)} />,
         ])}
       />
     </>
