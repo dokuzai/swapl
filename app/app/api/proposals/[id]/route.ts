@@ -6,6 +6,7 @@ import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { insuranceProvider } from "@/lib/insurance";
 import { toDTO } from "@/lib/listing-utils";
+import { forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -23,7 +24,7 @@ const actionSchema = z.discriminatedUnion("action", [
 // party, and (for participants only on ACCEPTED) the agreement + insurance.
 export async function GET(req: Request, { params }: RouteContext<"/api/proposals/[id]">) {
   const session = await getSessionFromRequest(req);
-  if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+  if (!session) return unauthenticated();
 
   const { id } = await params;
   const proposal = await prisma.swapProposal.findUnique({
@@ -34,12 +35,12 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
       agreement: { include: { insurancePolicy: true } },
     },
   });
-  if (!proposal) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!proposal) return notFound();
 
   const isProposer = proposal.proposerId === session.userId;
   const isTarget = proposal.targetListing.userId === session.userId;
   if (!isProposer && !isTarget) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return forbidden();
   }
 
   const other = isProposer ? proposal.targetListing.user : proposal.proposerListing.user;
@@ -86,12 +87,12 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
 
 export async function POST(req: Request, { params }: RouteContext<"/api/proposals/[id]">) {
   const session = await getSessionFromRequest(req);
-  if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+  if (!session) return unauthenticated();
 
   const { id } = await params;
   const body = await req.json().catch(() => null);
   const parsed = actionSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  if (!parsed.success) return invalidInput("Invalid action");
 
   const proposal = await prisma.swapProposal.findUnique({
     where: { id },
@@ -101,29 +102,29 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       agreement: true,
     },
   });
-  if (!proposal) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!proposal) return notFound();
 
   const isProposer = proposal.proposerId === session.userId;
   const isTarget = proposal.targetListing.userId === session.userId;
   if (!isProposer && !isTarget) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return forbidden();
   }
 
   const action = parsed.data.action;
 
   if (action === "withdraw") {
-    if (!isProposer) return NextResponse.json({ error: "Only proposer can withdraw." }, { status: 403 });
+    if (!isProposer) return forbidden("Only proposer can withdraw.");
     if (proposal.status !== "PENDING" && proposal.status !== "COUNTERED") {
-      return NextResponse.json({ error: "Cannot withdraw at this stage." }, { status: 400 });
+      return invalidInput("Cannot withdraw at this stage.");
     }
     await prisma.swapProposal.update({ where: { id }, data: { status: "WITHDRAWN" } });
     return NextResponse.json({ ok: true });
   }
 
   if (action === "decline") {
-    if (!isTarget) return NextResponse.json({ error: "Only target can decline." }, { status: 403 });
+    if (!isTarget) return forbidden("Only target can decline.");
     if (proposal.status !== "PENDING" && proposal.status !== "COUNTERED") {
-      return NextResponse.json({ error: "Cannot decline at this stage." }, { status: 400 });
+      return invalidInput("Cannot decline at this stage.");
     }
     await prisma.swapProposal.update({ where: { id }, data: { status: "DECLINED" } });
     if (proposal.proposerListing.user.email) {
@@ -135,11 +136,11 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
 
   if (action === "counter") {
     if (parsed.data.counterDateTo <= parsed.data.counterDateFrom) {
-      return NextResponse.json({ error: "End date must be after start." }, { status: 400 });
+      return invalidInput("End date must be after start.");
     }
     // Either side can counter as long as the proposal is still negotiable.
     if (proposal.status !== "PENDING" && proposal.status !== "COUNTERED") {
-      return NextResponse.json({ error: "Cannot counter at this stage." }, { status: 400 });
+      return invalidInput("Cannot counter at this stage.");
     }
     await prisma.swapProposal.update({
       where: { id },
@@ -163,7 +164,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
   // accept
   if (action === "accept") {
     if (proposal.status !== "PENDING" && proposal.status !== "COUNTERED") {
-      return NextResponse.json({ error: "Cannot accept at this stage." }, { status: 400 });
+      return invalidInput("Cannot accept at this stage.");
     }
 
     // Pre-issue the policy with the underwriter BEFORE the agreement tx so
@@ -259,5 +260,5 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     return NextResponse.json({ ok: true, agreementId: result.id });
   }
 
-  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+  return invalidInput("Unknown action");
 }

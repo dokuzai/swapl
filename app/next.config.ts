@@ -16,6 +16,17 @@ const MARKETING_PATHS = [
   "/terms",
 ];
 
+// Baseline security headers applied to every response (DOK-131).
+// frame-ancestors 'none' (CSP) supersedes X-Frame-Options: DENY in all
+// supported browsers, so we don't set both.
+const SECURITY_HEADERS = [
+  // 2 years, ready for the preload list once the apex is confirmed HTTPS-only.
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+];
+
 const nextConfig: NextConfig = {
   // Vercel sets outputFileTracingRoot to /vercel/path0 (the repo root, one
   // level above the app/) and Next requires turbopack.root to match it. We
@@ -28,6 +39,15 @@ const nextConfig: NextConfig = {
   // (which we use locally with 9 workers) sidesteps it. Force >=2 workers.
   experimental: {
     cpus: 4,
+  },
+
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: SECURITY_HEADERS,
+      },
+    ];
   },
 
   async redirects() {

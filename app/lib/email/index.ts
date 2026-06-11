@@ -22,11 +22,25 @@ export async function sendEmail(msg: EmailMessage | Promise<EmailMessage>): Prom
     );
     return;
   }
+  // In production a missing RESEND_FROM is a config bug: the swapl.test
+  // fallback would silently fail (or bounce) at Resend. Log an explicit
+  // error and skip the send instead of papering over it.
+  let from = process.env.RESEND_FROM;
+  if (!from) {
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        `[email] RESEND_FROM is not set in production — refusing to send "${m.subject}" to ${m.to} from the placeholder hello@swapl.test. Set RESEND_FROM to a verified sender (e.g. "swapl <hello@swapl.com>").`
+      );
+      return;
+    }
+    from = "swapl <hello@swapl.test>";
+  }
+
   // Lazy-import so projects without Resend installed don't break the bundle.
   const { Resend } = await import("resend");
   const resend = new Resend(key);
   await resend.emails.send({
-    from: process.env.RESEND_FROM ?? "swapl <hello@swapl.test>",
+    from,
     to: m.to,
     subject: m.subject,
     text: m.text,

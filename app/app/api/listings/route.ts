@@ -7,6 +7,7 @@ import { coordForCity, jitterCoord } from "@/lib/city-coords";
 import { ensureCanCreateListing, PlanLimitError } from "@/lib/billing/limits";
 import { parseFiltersFromSearchParams } from "@/lib/listing-filters";
 import { queryListings, getViewerListing } from "@/lib/listing-query";
+import { apiError, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 
 // Mobile / SPA-friendly listing search. Mirrors what the /listings RSC page
 // does today, returning pre-scored results so clients don't recompute.
@@ -34,7 +35,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
-  if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+  if (!session) return unauthenticated();
 
   // Look up the calling user once: gate publishing on a verified email, and
   // reuse their AI provider prefs for the city-art generation below.
@@ -42,22 +43,18 @@ export async function POST(req: Request) {
     where: { id: session.userId },
     select: { emailVerifiedAt: true, aiProvider: true, aiModel: true, aiApiKey: true },
   });
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+  if (!user) return notFound("User not found");
   if (!user.emailVerifiedAt) {
-    return NextResponse.json(
-      { error: "EMAIL_NOT_VERIFIED", message: "Verify your email before publishing a listing." },
-      { status: 403 }
-    );
+    return forbidden("EMAIL_NOT_VERIFIED", {
+      message: "Verify your email before publishing a listing.",
+    });
   }
 
   try {
     await ensureCanCreateListing(session.userId);
   } catch (err) {
     if (err instanceof PlanLimitError) {
-      return NextResponse.json(
-        { error: err.reason, upgradeTo: err.upgradeTo, currentPlan: err.currentPlan },
-        { status: 402 }
-      );
+      return apiError(402, err.reason, { upgradeTo: err.upgradeTo, currentPlan: err.currentPlan });
     }
     throw err;
   }
@@ -65,11 +62,11 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   const parsed = listingCreateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid input", issues: parsed.error.issues }, { status: 400 });
+    return invalidInput("Invalid input", { issues: parsed.error.issues });
   }
   const data = parsed.data;
   if (data.availableTo <= data.availableFrom) {
-    return NextResponse.json({ error: "End date must be after start." }, { status: 400 });
+    return invalidInput("End date must be after start.");
   }
 
   // AI city-art uses the caller's preferred provider/key (looked up above).

@@ -7,6 +7,7 @@ import { issueToken, normaliseEmail } from "@/lib/auth/tokens";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { apiError, invalidInput } from "@/lib/api/errors";
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -16,10 +17,7 @@ export async function POST(req: Request) {
   const ip = clientIpFromRequest(req);
   const rl = await checkRateLimitDurable(`register:${ip}`, 10, HOUR_MS);
   if (!rl.ok) {
-    return NextResponse.json(
-      { error: "Too many sign-ups from this network. Try again in an hour." },
-      { status: 429 }
-    );
+    return apiError(429, "Too many sign-ups from this network. Try again in an hour.");
   }
 
   const body = await req.json().catch(() => null);
@@ -28,18 +26,18 @@ export async function POST(req: Request) {
   // App Attest / Play Integrity instead (added alongside their attestation).
   const turnstileToken = (body as { turnstileToken?: unknown } | null)?.turnstileToken;
   if (!(await verifyTurnstile(typeof turnstileToken === "string" ? turnstileToken : null, ip))) {
-    return NextResponse.json({ error: "Captcha verification failed." }, { status: 400 });
+    return invalidInput("Captcha verification failed.");
   }
 
   const parsed = credentialsSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    return invalidInput();
   }
 
   const email = normaliseEmail(parsed.data.email);
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return NextResponse.json({ error: "Email already in use" }, { status: 409 });
+    return apiError(409, "Email already in use");
   }
 
   const passwordHash = await hashPassword(parsed.data.password);

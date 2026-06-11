@@ -6,13 +6,14 @@ import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { ensureCanCreateProposal, bumpProposalCounter, PlanLimitError } from "@/lib/billing/limits";
+import { apiError, accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 // Mobile inbox: returns proposals bucketed exactly like the /swaps page does.
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
-  if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+  if (!session) return unauthenticated();
 
   const proposals = await prisma.swapProposal.findMany({
     where: {
@@ -73,7 +74,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!session) {
-    return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+    return unauthenticated();
   }
 
   // Moderation: suspended users keep read access but cannot propose.
@@ -82,12 +83,9 @@ export async function POST(req: Request) {
     where: { id: session.userId },
     select: { suspendedAt: true },
   });
-  if (!caller) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+  if (!caller) return unauthenticated();
   if (caller.suspendedAt) {
-    return NextResponse.json(
-      { error: "ACCOUNT_SUSPENDED", message: "This account has been suspended. Contact support@swapl.com." },
-      { status: 403 }
-    );
+    return accountSuspended();
   }
 
   // Plan-aware monthly cap (R6): Free = 3/mo, Plus/Pro = unlimited.
@@ -95,10 +93,7 @@ export async function POST(req: Request) {
     await ensureCanCreateProposal(session.userId);
   } catch (err) {
     if (err instanceof PlanLimitError) {
-      return NextResponse.json(
-        { error: err.reason, upgradeTo: err.upgradeTo, currentPlan: err.currentPlan },
-        { status: 402 }
-      );
+      return apiError(402, err.reason, { upgradeTo: err.upgradeTo, currentPlan: err.currentPlan });
     }
     throw err;
   }
@@ -106,21 +101,18 @@ export async function POST(req: Request) {
   // Anti-burst safety net for every plan tier (kept from v0).
   const rl = checkRateLimit(`proposals:${session.userId}`, 10, DAY_MS);
   if (!rl.ok) {
-    return NextResponse.json(
-      { error: "You're sending proposals faster than we can deliver. Try again later." },
-      { status: 429 }
-    );
+    return apiError(429, "You're sending proposals faster than we can deliver. Try again later.");
   }
 
   const body = await req.json().catch(() => null);
   const parsed = swapProposalSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid input", issues: parsed.error.issues }, { status: 400 });
+    return invalidInput("Invalid input", { issues: parsed.error.issues });
   }
   const { proposerListingId, targetListingId, dateFrom, dateTo, message } = parsed.data;
 
   if (dateTo <= dateFrom) {
-    return NextResponse.json({ error: "End date must be after start." }, { status: 400 });
+    return invalidInput("End date must be after start.");
   }
 
   const [mine, target] = await Promise.all([
@@ -128,11 +120,11 @@ export async function POST(req: Request) {
     prisma.listing.findUnique({ where: { id: targetListingId }, include: { user: true } }),
   ]);
   if (!mine || mine.userId !== session.userId) {
-    return NextResponse.json({ error: "You can only propose with your own listing." }, { status: 403 });
+    return forbidden("You can only propose with your own listing.");
   }
-  if (!target) return NextResponse.json({ error: "Target listing not found" }, { status: 404 });
+  if (!target) return notFound("Target listing not found");
   if (target.userId === session.userId) {
-    return NextResponse.json({ error: "Cannot swap with yourself." }, { status: 400 });
+    return invalidInput("Cannot swap with yourself.");
   }
 
   const proposal = await prisma.swapProposal.create({

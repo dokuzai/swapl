@@ -11,6 +11,7 @@ import { coordForCity, jitterCoord } from "@/lib/city-coords";
 import { toDTO } from "@/lib/listing-utils";
 import { computeMatchScore } from "@/lib/match/score";
 import { getViewerListing } from "@/lib/listing-query";
+import { forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 
 export async function GET(req: Request, { params }: RouteContext<"/api/listings/[id]">) {
   const { id } = await params;
@@ -31,7 +32,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/listings/
     },
   });
   if (!listing || !listing.isActive) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return notFound();
   }
 
   const session = await getSessionFromRequest(req);
@@ -86,22 +87,22 @@ export async function GET(req: Request, { params }: RouteContext<"/api/listings/
 export async function PUT(req: Request, { params }: RouteContext<"/api/listings/[id]">) {
   const { id } = await params;
   const session = await getSessionFromRequest(req);
-  if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+  if (!session) return unauthenticated();
 
   const existing = await prisma.listing.findUnique({ where: { id } });
-  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!existing) return notFound();
   if (existing.userId !== session.userId) {
-    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+    return forbidden("FORBIDDEN");
   }
 
   const body = await req.json().catch(() => null);
   const parsed = listingCreateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid input", issues: parsed.error.issues }, { status: 400 });
+    return invalidInput("Invalid input", { issues: parsed.error.issues });
   }
   const data = parsed.data;
   if (data.availableTo <= data.availableFrom) {
-    return NextResponse.json({ error: "End date must be after start." }, { status: 400 });
+    return invalidInput("End date must be after start.");
   }
 
   const cityChanged = data.city.trim().toLowerCase() !== existing.city.trim().toLowerCase();

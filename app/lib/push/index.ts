@@ -51,9 +51,27 @@ export async function sendPush(userId: string, payload: PushPayload): Promise<vo
     return;
   }
 
+  // Misconfigured credentials must not take down the calling request —
+  // push is best-effort. Log loudly and skip delivery instead of throwing.
+  let credentials: { project_id?: string };
+  try {
+    credentials = JSON.parse(sa);
+  } catch (err) {
+    console.error(
+      "[push:fcm] FCM_SERVICE_ACCOUNT_JSON is set but is not valid JSON — skipping push delivery. Fix the env var (paste the raw service-account JSON).",
+      err
+    );
+    return;
+  }
+  if (!credentials.project_id) {
+    console.error(
+      "[push:fcm] FCM_SERVICE_ACCOUNT_JSON parsed but has no project_id — skipping push delivery."
+    );
+    return;
+  }
+
   // Lazy-import googleapis so projects without it don't break the bundle.
   const { google } = await import("googleapis");
-  const credentials = JSON.parse(sa);
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ["https://www.googleapis.com/auth/firebase.messaging"],
