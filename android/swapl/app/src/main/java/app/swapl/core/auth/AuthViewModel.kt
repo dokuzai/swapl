@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.swapl.BuildConfig
+import app.swapl.core.favorites.FavoritesStore
 import app.swapl.core.model.AuthUser
 import app.swapl.core.model.MeResponse
 import app.swapl.core.model.TokenResponse
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val api: ApiClient,
     private val tokenStore: TokenStore,
+    private val favorites: FavoritesStore,
 ) : ViewModel() {
 
     var uiState by mutableStateOf(UiState())
@@ -140,6 +142,8 @@ class AuthViewModel @Inject constructor(
                 api.client.post("${api.baseUrl}/api/auth/token/revoke")
             }
             tokenStore.delete()
+            // Drop cached hearts so the next account doesn't inherit them.
+            favorites.reset()
             uiState = UiState()
         }
     }

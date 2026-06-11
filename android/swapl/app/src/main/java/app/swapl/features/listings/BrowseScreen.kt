@@ -53,6 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.swapl.core.model.ListingWithScore
 import app.swapl.core.repository.SearchFilters
+import app.swapl.design.components.FavoriteHeartButton
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.MatchBadge
@@ -76,6 +77,7 @@ fun BrowseScreen(
     vm: BrowseViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+    val favoriteIds by vm.favoriteIds.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) { vm.load() }
 
     var showFilters by remember { mutableStateOf(false) }
@@ -144,7 +146,12 @@ fun BrowseScreen(
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     items(state.items, key = { it.listing.id }) { item ->
-                        ListingCard(item, onClick = { onOpen(item.listing.id) })
+                        ListingCard(
+                            item,
+                            isFavorite = item.listing.id in favoriteIds,
+                            onToggleFavorite = { vm.toggleFavorite(item.listing.id) },
+                            onClick = { onOpen(item.listing.id) },
+                        )
                     }
                 }
             }
@@ -299,14 +306,26 @@ private fun EmptyState() {
 }
 
 @Composable
-private fun ListingCard(item: ListingWithScore, onClick: () -> Unit) {
+private fun ListingCard(
+    item: ListingWithScore,
+    isFavorite: Boolean,
+    onToggleFavorite: () -> Unit,
+    onClick: () -> Unit,
+) {
     SurfaceCard(modifier = Modifier.clickable(onClick = onClick)) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-            ListingPhoto(
-                photoUrl = item.listing.photos.firstOrNull(),
-                palette = item.listing.palette,
-                height = 180.dp,
-            )
+            Box {
+                ListingPhoto(
+                    photoUrl = item.listing.photos.firstOrNull(),
+                    palette = item.listing.palette,
+                    height = 180.dp,
+                )
+                FavoriteHeartButton(
+                    isFavorite = isFavorite,
+                    onToggle = onToggleFavorite,
+                    modifier = Modifier.align(Alignment.TopEnd).padding(SwaplSpacing.s2),
+                )
+            }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(

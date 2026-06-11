@@ -50,7 +50,7 @@ import app.swapl.features.listings.BrowseScreen
 import app.swapl.features.listings.ListingCreateScreen
 import app.swapl.features.listings.ListingDetailScreen
 import app.swapl.features.placeholder.TripsScreen
-import app.swapl.features.placeholder.WishlistsScreen
+import app.swapl.features.wishlists.WishlistsScreen
 import app.swapl.features.profile.AccountScreen
 import app.swapl.features.profile.InterestsEditorScreen
 import app.swapl.features.profile.PublicProfileScreen
@@ -204,7 +204,23 @@ private fun HomeShell(
                     ListingCreateScreen(onDone = { browseNav.popBackStack() })
                 }
             }
-            HomeDest.Wishlists -> WishlistsScreen()
+            HomeDest.Wishlists -> {
+                val wishlistsNav = rememberNavController()
+                NavHost(navController = wishlistsNav, startDestination = "grid") {
+                    composable("grid") {
+                        WishlistsScreen(onOpen = { id -> wishlistsNav.navigate("detail/$id") })
+                    }
+                    composable("detail/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
+                        ListingDetailScreen(
+                            onOpenHost = { id -> wishlistsNav.navigate("profile/$id") },
+                            onEdit = {},
+                        )
+                    }
+                    composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+                        PublicProfileScreen(onOpenListing = { id -> wishlistsNav.navigate("detail/$id") })
+                    }
+                }
+            }
             HomeDest.Trips -> TripsScreen()
             HomeDest.Swaps -> NavHost(navController = swapsNav, startDestination = "inbox") {
                 composable("inbox") { SwapsInboxScreen(onOpen = { id -> swapsNav.navigate("thread/$id") }) }

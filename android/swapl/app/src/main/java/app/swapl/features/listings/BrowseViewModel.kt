@@ -2,6 +2,7 @@ package app.swapl.features.listings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.core.favorites.FavoritesStore
 import app.swapl.core.model.ListingWithScore
 import app.swapl.core.repository.ListingRepository
 import app.swapl.core.repository.SearchFilters
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BrowseViewModel @Inject constructor(
     private val repo: ListingRepository,
+    private val favorites: FavoritesStore,
 ) : ViewModel() {
 
     data class State(
@@ -30,10 +32,17 @@ class BrowseViewModel @Inject constructor(
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state.asStateFlow()
 
+    // Shared heart state (FavoritesStore singleton) so toggles sync with the
+    // Wishlists tab and listing detail.
+    val favoriteIds: StateFlow<Set<String>> = favorites.ids
+
     fun load() {
         if (_state.value.hasLoaded || _state.value.isLoading) return
+        favorites.loadIdsIfNeeded()
         fetch(showSpinner = true)
     }
+
+    fun toggleFavorite(listingId: String) = favorites.toggle(listingId)
 
     fun refresh() = fetch(showSpinner = false)
 

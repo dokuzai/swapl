@@ -49,9 +49,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.swapl.core.favorites.FavoritesStore
 import app.swapl.core.model.Listing
 import app.swapl.core.model.ListingDetailResponse
 import app.swapl.core.repository.ListingRepository
+import app.swapl.design.components.FavoriteHeartButton
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.MatchBadge
@@ -68,16 +71,24 @@ import javax.inject.Inject
 @HiltViewModel
 class ListingDetailViewModel @Inject constructor(
     private val repo: ListingRepository,
+    private val favorites: FavoritesStore,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val listingId: String = checkNotNull(savedState["listingId"])
     var detail by mutableStateOf<ListingDetailResponse?>(null); private set
     var error by mutableStateOf<String?>(null); private set
 
+    // Shared heart state (FavoritesStore singleton) so the detail heart stays
+    // in sync with browse cards and the Wishlists tab.
+    val favoriteIds = favorites.ids
+
     fun load() = viewModelScope.launch {
+        favorites.loadIdsIfNeeded()
         runCatching { detail = repo.detail(listingId) }
             .onFailure { error = it.message }
     }
+
+    fun toggleFavorite() = favorites.toggle(listingId)
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -89,6 +100,7 @@ fun ListingDetailScreen(
 ) {
     LaunchedEffect(Unit) { vm.load() }
     val d = vm.detail
+    val favoriteIds by vm.favoriteIds.collectAsStateWithLifecycle()
     var showPropose by remember { mutableStateOf(false) }
     var showReport by remember { mutableStateOf(false) }
 
@@ -102,7 +114,18 @@ fun ListingDetailScreen(
             .padding(SwaplSpacing.s4),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
-        ListingPhoto(photoUrl = d.listing.photos.firstOrNull(), palette = d.listing.palette, height = 240.dp)
+        Box {
+            ListingPhoto(photoUrl = d.listing.photos.firstOrNull(), palette = d.listing.palette, height = 240.dp)
+            if (!isOwner) {
+                FavoriteHeartButton(
+                    isFavorite = d.listing.id in favoriteIds,
+                    onToggle = { vm.toggleFavorite() },
+                    modifier = Modifier
+                        .align(androidx.compose.ui.Alignment.TopEnd)
+                        .padding(SwaplSpacing.s2),
+                )
+            }
+        }
         d.matchScore?.let { MatchBadge(it) }
         Text(d.listing.title, style = MaterialTheme.typography.displaySmall)
         Text(

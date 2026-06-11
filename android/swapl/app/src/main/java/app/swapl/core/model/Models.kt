@@ -279,6 +279,17 @@ data class SavedSearch(
 @Serializable
 data class SavedSearchesResponse(val items: List<SavedSearch>)
 
+// ---------- favorites (wishlists) ----------
+
+@Serializable
+data class FavoritesResponse(val items: List<Listing>)
+
+@Serializable
+data class FavoriteIdsResponse(val ids: List<String>)
+
+@Serializable
+data class FavoriteToggleResponse(val ok: Boolean, val favorited: Boolean)
+
 // ---------- me ----------
 
 @Serializable

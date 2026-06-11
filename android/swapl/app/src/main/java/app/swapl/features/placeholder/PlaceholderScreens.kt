@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Luggage
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,17 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.swapl.designtokens.SwaplSpacing
 
-// Same placeholder tabs iOS ships (Wishlists / Trips stubs) so the tab
-// structure matches across platforms until the features land.
-
-@Composable
-fun WishlistsScreen() {
-    PlaceholderBody(
-        icon = Icons.Default.FavoriteBorder,
-        title = "Wishlists",
-        body = "Saved homes will appear here. Tap the heart on any listing to keep it for later.",
-    )
-}
+// Same placeholder tab iOS ships (Trips stub) so the tab structure matches
+// across platforms until the feature lands.
 
 @Composable
 fun TripsScreen() {
