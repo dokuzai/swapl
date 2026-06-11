@@ -1,5 +1,6 @@
 package app.swapl.features.metrics
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,10 +10,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,9 +27,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -138,14 +149,43 @@ private fun MetricsContent(m: AdminMetrics) {
                     String.format(Locale.US, "%.2f", m.listingsPerUser.avgPerUserWithListing),
                 )
                 if (m.listingsPerUser.topUsers.isNotEmpty()) {
+                    var onlineOnly by remember { mutableStateOf(false) }
                     Spacer(Modifier.height(SwaplSpacing.s2))
                     KickerLabel("Top hosts")
                     Spacer(Modifier.height(SwaplSpacing.s1))
-                    m.listingsPerUser.topUsers.forEach { u ->
+                    FilterChip(
+                        selected = onlineOnly,
+                        onClick = { onlineOnly = !onlineOnly },
+                        label = { Text("Online only") },
+                    )
+                    Spacer(Modifier.height(SwaplSpacing.s1))
+                    val shownUsers = if (onlineOnly) {
+                        m.listingsPerUser.topUsers.filter { it.online }
+                    } else {
+                        m.listingsPerUser.topUsers
+                    }
+                    if (shownUsers.isEmpty()) {
+                        Text(
+                            "No hosts online right now.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = SwaplSpacing.s1),
+                        )
+                    }
+                    shownUsers.forEach { u ->
                         Row(
                             Modifier.fillMaxWidth().padding(vertical = SwaplSpacing.s1),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
+                            val statusLabel = if (u.online) "Online" else "Offline"
+                            Box(
+                                Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(if (u.online) Color(0xFF2E7D32) else Color(0xFFC62828))
+                                    .semantics { contentDescription = statusLabel },
+                            )
+                            Spacer(Modifier.width(SwaplSpacing.s2))
                             Column(Modifier.weight(1f)) {
                                 Text(
                                     u.name ?: u.email.substringBefore("@"),

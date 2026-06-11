@@ -362,6 +362,8 @@ data class MetricsTopUser(
     val name: String? = null,
     val email: String,
     val listings: Int,
+    val online: Boolean = false,
+    val lastActiveAt: String? = null,
 )
 
 @Serializable
