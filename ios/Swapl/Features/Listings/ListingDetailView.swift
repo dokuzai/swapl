@@ -57,6 +57,19 @@ struct ListingDetailView: View {
         .background(SwaplSemanticLight.background)
         .navigationTitle(vm.detail?.listing.city ?? "Home")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // Save-to-wishlist heart; hidden on your own listing.
+            ToolbarItem(placement: .topBarTrailing) {
+                if let detail = vm.detail, !isOwner(detail) {
+                    FavoriteHeartButton(
+                        listingId: detail.listing.id,
+                        size: 18,
+                        unfilledColor: AirbnbPalette.text,
+                        showsShadow: false
+                    )
+                }
+            }
+        }
         .safeAreaInset(edge: .bottom) {
             if let detail = vm.detail {
                 if isOwner(detail) {

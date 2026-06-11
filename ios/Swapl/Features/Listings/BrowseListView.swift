@@ -31,6 +31,11 @@ final class BrowseListViewModel {
         await load()
     }
 
+    func apply(_ newFilters: SearchFilters) async {
+        filters = newFilters
+        await load()
+    }
+
     var sortTitle: String {
         switch filters.sort {
         case "newest": "Newest"
@@ -46,6 +51,7 @@ struct BrowseListView: View {
     @State private var vm = BrowseListViewModel()
     @State private var viewMode: BrowseViewMode = .list
     @State private var selectedMapId: String?
+    @State private var isShowingFilters = false
 
     var body: some View {
         NavigationStack {
@@ -68,8 +74,14 @@ struct BrowseListView: View {
                         systemImage: "house",
                         title: "No homes found",
                         description: "Try a different city, date range, or sort order.",
-                        actionTitle: "Refresh",
-                        action: { Task { await vm.load() } }
+                        actionTitle: vm.filters.activeFilterCount > 0 ? "Adjust Filters" : "Refresh",
+                        action: {
+                            if vm.filters.activeFilterCount > 0 {
+                                isShowingFilters = true
+                            } else {
+                                Task { await vm.load() }
+                            }
+                        }
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -91,6 +103,12 @@ struct BrowseListView: View {
             }
             .task { await vm.load() }
             .refreshable { await vm.load() }
+            .sheet(isPresented: $isShowingFilters) {
+                FilterSheetView(initialFilters: vm.filters) { newFilters in
+                    Task { await vm.apply(newFilters) }
+                }
+                .presentationDetents([.large])
+            }
         }
     }
 
@@ -196,11 +214,37 @@ struct BrowseListView: View {
 
     private var searchBarContent: some View {
         HStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 20, weight: .semibold))
-            Text("Start your search")
-                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
-            Spacer()
+            // The label area opens the filter sheet; the trailing menu keeps sort.
+            Button {
+                isShowingFilters = true
+            } label: {
+                HStack(spacing: 12) {
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 20, weight: .semibold))
+                        if vm.filters.activeFilterCount > 0 {
+                            Text("\(vm.filters.activeFilterCount)")
+                                .font(.swaplMono(11, weight: .bold))
+                                .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                                .frame(minWidth: 17, minHeight: 17)
+                                .background(SwaplSemanticLight.primary, in: Circle())
+                                .offset(x: 11, y: -9)
+                        }
+                    }
+                    Text(searchBarTitle)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                }
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(
+                vm.filters.activeFilterCount > 0
+                    ? "Search and filters, \(vm.filters.activeFilterCount) active"
+                    : "Search and filters"
+            )
             Menu {
                 sortButton("Best match", value: "match")
                 sortButton("Newest", value: "newest")
@@ -217,6 +261,11 @@ struct BrowseListView: View {
         .foregroundStyle(AirbnbPalette.text)
         .padding(.horizontal, 22)
         .padding(.vertical, 18)
+    }
+
+    private var searchBarTitle: String {
+        if vm.filters.cities.isEmpty { return "Start your search" }
+        return vm.filters.cities.joined(separator: ", ")
     }
 
     // List mode: solid card search bar.
@@ -386,12 +435,11 @@ struct ListingCardView: View {
                     .frame(width: cardWidth, height: imageHeight)
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
 
-                Image(systemName: "heart")
-                    .font(.system(size: compact ? 18 : SwaplDesignSystem.FontSize.h3, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 1)
-                    .padding(compact ? 9 : 12)
-                    .accessibilityHidden(true)
+                FavoriteHeartButton(
+                    listingId: item.listing.id,
+                    size: compact ? 16 : SwaplDesignSystem.FontSize.h3
+                )
+                .padding(compact ? 0 : 2)
 
                 if !compact && (item.band == "featured" || item.matchScore != nil) {
                     Text(item.matchScore.map { "\($0)% match" } ?? "Guest favorite")

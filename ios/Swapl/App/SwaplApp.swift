@@ -5,6 +5,7 @@ import SwaplDesignTokens
 struct SwaplApp: App {
     @State private var auth = AuthService()
     @State private var pushService = PushService()
+    @State private var favorites = FavoritesStore()
 
     init() {
         SwaplFonts.register()
@@ -17,6 +18,7 @@ struct SwaplApp: App {
             RootView()
                 .environment(auth)
                 .environment(pushService)
+                .environment(favorites)
                 .tint(SwaplSemanticLight.primary)
         }
     }
@@ -24,6 +26,7 @@ struct SwaplApp: App {
 
 struct RootView: View {
     @Environment(AuthService.self) private var auth
+    @Environment(FavoritesStore.self) private var favorites
 
     var body: some View {
         Group {
@@ -41,6 +44,15 @@ struct RootView: View {
             }
         }
         .task { await auth.bootstrap() }
+        // Sync heart states with the signed-in user: load once per session,
+        // clear on sign-out so the next account doesn't inherit them.
+        .task(id: auth.session?.id) {
+            if auth.session == nil {
+                favorites.reset()
+            } else {
+                await favorites.loadIdsIfNeeded()
+            }
+        }
     }
 }
 
@@ -124,7 +136,7 @@ struct MainTabView: View {
                 case .explore:
                     BrowseListView()
                 case .wishlists:
-                    AirbnbPlaceholderView(title: "Wishlists", systemImage: "heart", message: "Saved homes will appear here.")
+                    WishlistsView()
                 case .trips:
                     AirbnbPlaceholderView(title: "Trips", systemImage: "suitcase.rolling", message: "Accepted swaps will become trips.")
                 case .messages:
@@ -137,7 +149,7 @@ struct MainTabView: View {
             TabView {
                 BrowseListView()
                     .tabItem { Label("Explore", systemImage: "magnifyingglass") }
-                AirbnbPlaceholderView(title: "Wishlists", systemImage: "heart", message: "Saved homes will appear here.")
+                WishlistsView()
                     .tabItem { Label("Wishlists", systemImage: "heart") }
                 AirbnbPlaceholderView(title: "Trips", systemImage: "suitcase.rolling", message: "Accepted swaps will become trips.")
                     .tabItem { Label("Trips", systemImage: "suitcase.rolling") }

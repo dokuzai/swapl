@@ -83,6 +83,21 @@ struct SearchFilters: Sendable {
     var sort: String = "match"
     var page: Int = 1
 
+    // How many filter groups differ from their defaults — drives the badge on
+    // the browse search bar. Sort/page are not "filters" for this purpose.
+    var activeFilterCount: Int {
+        var count = 0
+        if !cities.isEmpty { count += 1 }
+        if !propertyTypes.isEmpty { count += 1 }
+        if minSqm > 30 { count += 1 }
+        if minSleeps > 1 { count += 1 }
+        if petsRequired { count += 1 }
+        if wfhRequired { count += 1 }
+        if stepFreeRequired { count += 1 }
+        if dateFrom != nil || dateTo != nil { count += 1 }
+        return count
+    }
+
     func toQuery() -> [URLQueryItem] {
         var q: [URLQueryItem] = []
         if !cities.isEmpty { q.append(URLQueryItem(name: "city", value: cities.joined(separator: ","))) }

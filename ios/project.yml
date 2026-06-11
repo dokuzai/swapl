@@ -56,11 +56,30 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         CODE_SIGN_STYLE: Automatic
+  # UI verification harness — drives login + the filter/wishlist flows against
+  # a local dev server and saves screenshots (see SwaplUITests/).
+  SwaplUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: SwaplUITests
+    dependencies:
+      - target: Swapl
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.swapl.uitests
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
 schemes:
   Swapl:
     build:
       targets:
         Swapl: all
+        SwaplUITests: [test]
+    test:
+      targets:
+        - SwaplUITests
     run:
       config: Debug
       environmentVariables:
