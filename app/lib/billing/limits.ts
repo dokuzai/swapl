@@ -81,6 +81,15 @@ export class PlanLimitError extends Error {
 }
 
 export async function getEffectivePlan(userId: string): Promise<PlanLimits> {
+  // Admins bypass plan limits entirely: they always resolve to the Pro tier
+  // (all caps are the unlimited 0-sentinel, every feature gate enabled),
+  // regardless of subscription or organization state.
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (user?.role === "swapl_admin") return PLAN_LIMITS.pro;
+
   // Org membership wins.
   const orgMember: (OrganizationMemberModel & { org: { planStatus: string } }) | null =
     await prisma.organizationMember.findFirst({

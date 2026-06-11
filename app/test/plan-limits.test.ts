@@ -87,6 +87,18 @@ describe("getEffectivePlan", () => {
   it("defaults to free with no organization and no subscription", async () => {
     expect((await getEffectivePlan("u1")).id).toBe("free");
   });
+
+  it("returns pro for an admin regardless of subscription or organization", async () => {
+    db.user.findUnique.mockResolvedValue({ role: "swapl_admin" });
+    expect((await getEffectivePlan("u1")).id).toBe("pro");
+    expect(db.organizationMember.findFirst).not.toHaveBeenCalled();
+    expect(db.subscription.findUnique).not.toHaveBeenCalled();
+  });
+
+  it("does not elevate a regular member based on role", async () => {
+    db.user.findUnique.mockResolvedValue({ role: "member" });
+    expect((await getEffectivePlan("u1")).id).toBe("free");
+  });
 });
 
 describe("ensureCanCreateProposal", () => {
@@ -114,7 +126,21 @@ describe("ensureCanCreateProposal", () => {
   it("is unlimited for pro members and never reads the counter", async () => {
     db.subscription.findUnique.mockResolvedValue({ status: "active", planId: "pro" });
     await expect(ensureCanCreateProposal("u1")).resolves.toBeUndefined();
-    expect(db.user.findUnique).not.toHaveBeenCalled();
+    expect(db.user.findUnique).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.objectContaining({ proposalsThisMonthCount: true }),
+      }),
+    );
+  });
+
+  it("is unlimited for admins even when the counter is over the free cap", async () => {
+    db.user.findUnique.mockResolvedValue({ role: "swapl_admin" });
+    await expect(ensureCanCreateProposal("u1")).resolves.toBeUndefined();
+    expect(db.user.findUnique).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.objectContaining({ proposalsThisMonthCount: true }),
+      }),
+    );
   });
 });
 
@@ -131,6 +157,13 @@ describe("ensureCanCreateListing", () => {
 
   it("is unlimited for pro members and never counts listings", async () => {
     db.subscription.findUnique.mockResolvedValue({ status: "active", planId: "pro" });
+    await expect(ensureCanCreateListing("u1")).resolves.toBeUndefined();
+    expect(db.listing.count).not.toHaveBeenCalled();
+  });
+
+  it("is unlimited for admins and never counts listings", async () => {
+    db.user.findUnique.mockResolvedValue({ role: "swapl_admin" });
+    db.listing.count.mockResolvedValue(99);
     await expect(ensureCanCreateListing("u1")).resolves.toBeUndefined();
     expect(db.listing.count).not.toHaveBeenCalled();
   });
