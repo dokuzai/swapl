@@ -30,7 +30,7 @@ webhook Stripe (DOK-119).
 
 | Categoria | Partner raccomandato | Modello | Margine atteso | Accesso startup pre-launch | Priorità |
 |---|---|---|---|---|---|
-| Esperienze & tour | _TODO: in ricerca (GetYourGuide vs Viator vs Tiqets)_ | B | _TODO_ | _TODO_ | **P1** |
+| Esperienze & tour | **Viator Merchant API** (subito) + GetYourGuide Distribution API (a volumi) | B (Viator: Swapl = MoR, markup o commissione) | commissione/markup da contratto; GYG affiliate ~8% min | ✅ Viator: no setup fee, solo deposito · ❌ GYG: soglie traffico alte | **P1** |
 | Assicurazione viaggio | battleface (Partner API) | B (embedded, premio incassato da Swapl) | revenue share negoziata | ✅ buono (corteggiano partner piccoli) | **P1** |
 | Copertura danni swap | Truvi (ex SUPERHOG) — waiver, non assicurazione | B (waiver embedded) | waiver ~7% del protetto; Truvi trattiene ~20% | ✅ buono (già usato da Swaphouse/ThirdHome) | **P1** (sostituisce il mock `lib/insurance/mock.ts`) |
 | eSIM | Maya (pilota) + eSIM Go / Airalo (quote) | C | wholesale non pubblico, da quotare | ✅ facile (Maya $0 ingresso) | **P2** |
@@ -49,10 +49,37 @@ sezione **Discover** del dettaglio listing (DOK-124).
 
 ## Categorie e provider
 
-### 1. Esperienze & tour (GetYourGuide, Viator, Tiqets, Klook, Musement)
+### 1. Esperienze & tour (Viator subito; GetYourGuide a volumi; Tiqets in mezzo)
 
-_TODO: ricerca in corso — sarà completata in questo documento con: modello Distribution/Merchant
-API, possibilità merchant-of-record, range commissioni, requisiti di accesso, contatti._
+Il desiderio del founder ("comprare un tour GetYourGuide direttamente su Swapl") si scontra
+con le soglie di accesso di GetYourGuide; la stessa cosa si ottiene **subito** con Viator
+(catalogo Tripadvisor, in larga parte sovrapposto).
+
+- **Viator (Tripadvisor) Merchant API — prima scelta per la vendita nativa:**
+  - Il partner è **merchant of record**: il cliente prenota senza lasciare Swapl, il
+    pagamento è nostro, supporto post-booking nostro.
+  - Due modelli a scelta: **commission** (vendi al retail consigliato, prendi una %) o
+    **markup** (Viator fattura il netto + booking fee, il ricarico lo decidi tu).
+  - **Nessuna setup fee**; serve un deposito proporzionato alle vendite previste +
+    certificazione tecnica dell'integrazione.
+  - Candidatura: https://partnerresources.viator.com/travel-commerce/merchant/ · docs:
+    https://docs.viator.com/partner-api/merchant/technical/
+- **GetYourGuide — restare affiliate ora, Distribution API più avanti:**
+  - Livelli API con soglie: Basic API ≥100k visite/mese; **Booking API ≥1M visite + 300
+    booking/mese**; **Distribution API** (partner = merchant of record) solo via partner
+    manager. Pre-launch non raggiungibili.
+  - Percorso: tenere l'affiliate attuale (commissione min ~8%, già live in
+    `links.ts`), costruire volume con Viator, ricandidarsi a GYG con i numeri.
+  - Docs: https://code.getyourguide.com/partner-api-spec/ · programma:
+    https://partner.getyourguide.com/
+- **Tiqets — opzione ponte per musei/attrazioni:**
+  - Distributor API gratuita (content+availability subito); **Booking API concessa a
+    ~200 ordini/mese** dopo review delle performance. Modello: quota del gross margin.
+  - Contatto diretto: **distributors@tiqets.com** · signup:
+    https://www.tiqets.com/en/partner-program/sign-up-form/ · docs:
+    https://portals.tiqets.com/distributorapi/docs
+- Klook (focus APAC) e Musement (TUI): non prioritari per i corridoi attuali — rivalutare
+  a volumi.
 
 ### 2. Assicurazione viaggio + copertura danni swap
 

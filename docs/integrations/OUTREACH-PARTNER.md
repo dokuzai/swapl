@@ -52,8 +52,25 @@ campo messaggio; tenere traccia nello stato outreach in fondo.
 
 ## 1. Esperienze & tour
 
-_TODO: ricerca contatti in corso (GetYourGuide Partner/Distribution API, Viator Merchant API,
-Tiqets, Klook, Musement) — sarà completata con form/email esatti e variante messaggio._
+| Partner | Canale | Note |
+|---|---|---|
+| **Viator (Merchant API)** | Form: https://partnerresources.viator.com/travel-commerce/merchant/ · docs: https://docs.viator.com/partner-api/merchant/technical/ | Prima scelta per vendita nativa. Chiedere: % commission vs markup model, entità del deposito, tempi di certificazione. |
+| **Tiqets** | **distributors@tiqets.com** · signup: https://www.tiqets.com/en/partner-program/sign-up-form/ | Partire con Content+Availability API (gratuita); chiedere roadmap verso Booking API (~200 ordini/mese). |
+| **GetYourGuide** | https://partner.getyourguide.com/ (siamo già affiliati) · docs: https://code.getyourguide.com/partner-api-spec/ | Per ora niente outreach: soglie troppo alte (Booking API: 1M visite + 300 booking/mese). Ricontattare il partner manager quando Viator genera volumi, citando i numeri. |
+
+**Variante messaggio (Viator):** template generale con `[CATEGORY] = tours & experiences`, più:
+
+```text
+Our integration target is your Merchant API: customers book tours and activities for their
+swap destination without leaving Swapl, we act as merchant of record on Stripe, on the
+markup or commission model. Trips on Swapl always have a confirmed destination city and
+dates, so recommendations are high-intent by construction. We'd like to understand the
+deposit sizing for a pre-launch platform, the certification process, and expected timeline.
+```
+
+**Variante messaggio (Tiqets, a distributors@tiqets.com):** stesso template con
+`[CATEGORY] = museums & attractions`; chiedere di partire dalla Distributor API
+content+availability e i criteri per sbloccare la Booking API.
 
 ## 2. Assicurazione
 
