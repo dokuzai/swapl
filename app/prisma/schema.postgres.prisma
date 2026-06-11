@@ -327,6 +327,7 @@ model BetaSignup {
   content     String?
   landingPage String?
   referrer    String?
+  invitedAt   DateTime?
   createdAt   DateTime @default(now())
 }
 

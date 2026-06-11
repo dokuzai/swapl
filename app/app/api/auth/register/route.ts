@@ -47,6 +47,18 @@ export async function POST(req: Request) {
     data: { email, passwordHash, name: email.split("@")[0] },
   });
 
+  // If this email is on the beta waitlist, link the signup row to the new
+  // account so the funnel (waitlist → invited → registered) stays measurable.
+  // Best-effort — registration must not fail on a marketing-table hiccup.
+  try {
+    await prisma.betaSignup.updateMany({
+      where: { email, userId: null },
+      data: { userId: user.id },
+    });
+  } catch (err) {
+    console.error("[register:link-beta-signup]", err);
+  }
+
   // Issue + send the verification email. The token is one-shot, hashed in
   // the DB. Send is best-effort — registration succeeds even if Resend
   // fails (the user can request a resend from /account).

@@ -27,6 +27,9 @@ export default async function AdminOverview() {
     proposalsByStatus,
     recentSignups,
     recentListings,
+    waitlistInvited,
+    waitlistRegistered,
+    waitlistPublished,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { emailVerifiedAt: { not: null } } }),
@@ -47,9 +50,20 @@ export default async function AdminOverview() {
       take: 10,
       include: { user: { select: { email: true } } },
     }),
+    prisma.betaSignup.count({ where: { invitedAt: { not: null } } }),
+    prisma.betaSignup.count({ where: { userId: { not: null } } }),
+    prisma.user.count({ where: { betaSignup: { isNot: null }, listings: { some: {} } } }),
   ]);
 
   const proposalCount = new Map(proposalsByStatus.map((p) => [p.status, p._count._all]));
+
+  const pct = (n: number, of: number) => (of === 0 ? "—" : `${Math.round((n / of) * 100)}%`);
+  const funnel = [
+    { label: "Waitlist", value: beta, share: pct(beta, beta) },
+    { label: "Invited", value: waitlistInvited, share: pct(waitlistInvited, beta) },
+    { label: "Registered", value: waitlistRegistered, share: pct(waitlistRegistered, beta) },
+    { label: "Published a listing", value: waitlistPublished, share: pct(waitlistPublished, beta) },
+  ];
 
   const cards = [
     { label: "Beta signups", value: beta, accent: true },
@@ -84,6 +98,23 @@ export default async function AdminOverview() {
           </div>
         ))}
       </div>
+
+      <section className="mt-10">
+        <p className="kicker mb-3">Waitlist funnel</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {funnel.map((f) => (
+            <div key={f.label} className="surface-card p-4">
+              <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1" style={{ color: "var(--navy-3)" }}>
+                {f.label}
+              </div>
+              <div className="font-display text-2xl">{f.value}</div>
+              <div className="font-mono text-[11px] mt-1" style={{ color: "var(--pink)" }}>
+                {f.share}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-10">
         <p className="kicker mb-3">Proposals by status</p>

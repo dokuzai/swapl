@@ -48,6 +48,18 @@ export const templates = {
       text: "You're on the swapl list. We're collecting listings ahead of the September 2026 launch. List your home now and you'll surface first when swaps go live.",
     }),
 
+  betaInvite: (email: string) =>
+    build({
+      to: email,
+      subject: "Your swapl invite is ready",
+      preview: "The marketplace is open — come claim your spot.",
+      heading: "You're in.",
+      intro: "The marketplace is open — publish your home and start matching with homes around the world.",
+      ctaLabel: "Create your account",
+      ctaHref: `${APP_URL}/register?utm_source=waitlist&utm_campaign=beta_invite`,
+      text: `Your swapl invite is ready. The marketplace is open — publish your home and start matching.\n\nCreate your account: ${APP_URL}/register?utm_source=waitlist&utm_campaign=beta_invite`,
+    }),
+
   proposalReceived: (toEmail: string, proposerName: string, targetCity: string) =>
     build({
       to: toEmail,
