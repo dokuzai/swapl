@@ -30,6 +30,7 @@ final class MetricsViewModel {
 
 struct MetricsView: View {
     @State private var vm = MetricsViewModel()
+    @State private var onlineOnly = false
 
     var body: some View {
         // ZStack so something always renders: with a bare `content`, the
@@ -131,14 +132,34 @@ struct MetricsView: View {
                 }
 
                 if !lpu.topUsers.isEmpty {
+                    let visibleUsers = onlineOnly ? lpu.topUsers.filter(\.online) : lpu.topUsers
                     SurfaceCard {
                         VStack(alignment: .leading, spacing: 0) {
-                            Text("Top hosts")
-                                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
-                                .foregroundStyle(AirbnbPalette.text)
-                                .padding(.bottom, 10)
-                            ForEach(lpu.topUsers) { user in
+                            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                                Text("Top hosts")
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                                    .foregroundStyle(AirbnbPalette.text)
+                                Spacer()
+                                Toggle("Online only", isOn: $onlineOnly)
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
+                                    .foregroundStyle(SwaplSemanticLight.mutedForeground)
+                                    .toggleStyle(.switch)
+                                    .controlSize(.mini)
+                                    .fixedSize()
+                            }
+                            .padding(.bottom, 10)
+                            if visibleUsers.isEmpty {
+                                Text("No hosts online right now.")
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                                    .foregroundStyle(SwaplSemanticLight.mutedForeground)
+                                    .padding(.vertical, 8)
+                            }
+                            ForEach(visibleUsers) { user in
                                 HStack(alignment: .firstTextBaseline, spacing: 12) {
+                                    Circle()
+                                        .fill(user.online ? Color.green : Color.red)
+                                        .frame(width: 8, height: 8)
+                                        .accessibilityLabel(user.online ? "Online" : "Offline")
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(user.name ?? user.email)
                                             .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
@@ -157,7 +178,7 @@ struct MetricsView: View {
                                         .foregroundStyle(AirbnbPalette.text)
                                 }
                                 .padding(.vertical, 8)
-                                if user.id != lpu.topUsers.last?.id {
+                                if user.id != visibleUsers.last?.id {
                                     rowDivider
                                 }
                             }

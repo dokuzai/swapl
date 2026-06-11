@@ -50,6 +50,8 @@ struct AdminMetrics: Decodable, Sendable {
             let name: String?
             let email: String
             let listings: Int
+            let online: Bool
+            let lastActiveAt: String?
         }
     }
 
