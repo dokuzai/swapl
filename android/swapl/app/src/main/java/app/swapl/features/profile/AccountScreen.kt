@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
+import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -75,6 +76,7 @@ class AccountOverviewViewModel @Inject constructor(
 fun AccountScreen(
     onOpenInterests: () -> Unit = {},
     onOpenSavedSearches: () -> Unit = {},
+    onOpenMetrics: () -> Unit = {},
     onOpenPublicProfile: (String) -> Unit = {},
     onBecomeHost: () -> Unit = {},
     onEditHome: (String) -> Unit = {},
@@ -169,6 +171,9 @@ fun AccountScreen(
             MenuRow(Icons.Default.Person, "View profile") { s?.id?.let(onOpenPublicProfile) }
             MenuRow(Icons.Default.Favorite, "Interests", onClick = onOpenInterests)
             MenuRow(Icons.Default.Search, "Saved searches", onClick = onOpenSavedSearches)
+            if (overview.me?.user?.role == "swapl_admin") {
+                MenuRow(Icons.Default.QueryStats, "Metrics", onClick = onOpenMetrics)
+            }
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
             MenuRow(Icons.Default.PrivacyTip, "Privacy policy") { uriHandler.openUri("https://swapl.fun/privacy") }
             MenuRow(Icons.Default.Description, "Terms of service") { uriHandler.openUri("https://swapl.fun/terms") }

@@ -328,3 +328,82 @@ data class MeResponse(
     val counts: MeCounts,
     val subscription: MeSubscription? = null,
 )
+
+// ---------- admin metrics ----------
+
+@Serializable
+data class MetricsNow(
+    val online: Int,
+    val dau: Int,
+    val wau: Int,
+    val mau: Int,
+)
+
+@Serializable
+data class MetricsUsers(
+    val total: Int,
+    val emailVerified: Int,
+    val withActiveListing: Int,
+    val new7d: Int,
+    val new30d: Int,
+)
+
+@Serializable
+data class MetricsListingDistribution(
+    val zero: Int,
+    val one: Int,
+    val two: Int,
+    val threePlus: Int,
+)
+
+@Serializable
+data class MetricsTopUser(
+    val id: String,
+    val name: String? = null,
+    val email: String,
+    val listings: Int,
+)
+
+@Serializable
+data class MetricsListingsPerUser(
+    val distribution: MetricsListingDistribution,
+    val avgPerUserWithListing: Double,
+    val topUsers: List<MetricsTopUser>,
+)
+
+@Serializable
+data class MetricsCity(
+    val city: String,
+    val listings: Int,
+    val share: Double,
+)
+
+@Serializable
+data class MetricsCities(
+    val totalActiveListings: Int,
+    val top: List<MetricsCity>,
+)
+
+@Serializable
+data class MetricsEngagement(
+    val proposalsByStatus: Map<String, Int>,
+    val proposalsTotal: Int,
+    val proposalAcceptRate: Double,
+    val agreementsActive: Int,
+    val agreementsCompleted: Int,
+    val messagesTotal: Int,
+    val messages7d: Int,
+    val favoritesTotal: Int,
+    val favorites7d: Int,
+    val savedSearches: Int,
+)
+
+@Serializable
+data class AdminMetrics(
+    val now: MetricsNow,
+    val users: MetricsUsers,
+    val listingsPerUser: MetricsListingsPerUser,
+    val cities: MetricsCities,
+    val engagement: MetricsEngagement,
+    val generatedAt: String,
+)

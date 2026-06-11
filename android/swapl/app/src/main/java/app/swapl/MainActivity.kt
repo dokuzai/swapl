@@ -50,6 +50,7 @@ import app.swapl.features.auth.LoginScreen
 import app.swapl.features.listings.BrowseScreen
 import app.swapl.features.listings.ListingCreateScreen
 import app.swapl.features.listings.ListingDetailScreen
+import app.swapl.features.metrics.MetricsScreen
 import app.swapl.features.trips.TripDetailScreen
 import app.swapl.features.trips.TripsScreen
 import app.swapl.features.wishlists.WishlistsScreen
@@ -258,6 +259,7 @@ private fun HomeShell(
                         AccountScreen(
                             onOpenInterests = { accountNav.navigate("interests") },
                             onOpenSavedSearches = { accountNav.navigate("savedSearches") },
+                            onOpenMetrics = { accountNav.navigate("metrics") },
                             onOpenPublicProfile = { id -> accountNav.navigate("profile/$id") },
                             onBecomeHost = { accountNav.navigate("new") },
                             onEditHome = { id -> accountNav.navigate("edit/$id") },
@@ -267,6 +269,7 @@ private fun HomeShell(
                         InterestsEditorScreen(onDone = { accountNav.popBackStack() })
                     }
                     composable("savedSearches") { SavedSearchesScreen() }
+                    composable("metrics") { MetricsScreen() }
                     composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
                         PublicProfileScreen()
                     }
