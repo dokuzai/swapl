@@ -12,6 +12,8 @@
 // carries no userId and the posted assertion's credential id resolves the
 // account.
 
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { prisma } from "@/lib/db";
 
 export const CHALLENGE_TTL_MS = 5 * 60 * 1000;
@@ -19,9 +21,52 @@ export const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 export type RelyingParty = {
   rpID: string;
   rpName: string;
-  /** Origin the browser will report in clientDataJSON. */
-  expectedOrigin: string;
+  /**
+   * Origins a client may report in clientDataJSON: the web origin from
+   * NEXT_PUBLIC_APP_URL plus one "android:apk-key-hash:<base64url(sha256)>"
+   * origin per signing cert published in .well-known/assetlinks.json (Android
+   * Credential Manager reports the app's signing-key hash, not an https
+   * origin). simplewebauthn accepts string | string[] for expectedOrigin.
+   */
+  expectedOrigin: string[];
 };
+
+let cachedAndroidOrigins: string[] | null = null;
+
+/**
+ * "android:apk-key-hash:…" origins derived from the sha256_cert_fingerprints
+ * in public/.well-known/assetlinks.json — the fingerprint IS the sha256 of
+ * the signing cert, so the apk-key-hash is just its bytes re-encoded as
+ * base64url. Missing/malformed file degrades to [] (web-only origins).
+ */
+export function androidAppOrigins(): string[] {
+  if (cachedAndroidOrigins) return cachedAndroidOrigins;
+  const origins = new Set<string>();
+  try {
+    const raw = readFileSync(
+      path.join(process.cwd(), "public", ".well-known", "assetlinks.json"),
+      "utf8"
+    );
+    const statements: unknown = JSON.parse(raw);
+    if (Array.isArray(statements)) {
+      for (const statement of statements) {
+        const fingerprints = (statement as { target?: { sha256_cert_fingerprints?: unknown } })
+          ?.target?.sha256_cert_fingerprints;
+        if (!Array.isArray(fingerprints)) continue;
+        for (const fp of fingerprints) {
+          if (typeof fp !== "string") continue;
+          const hex = fp.replace(/:/g, "");
+          if (!/^[0-9A-Fa-f]{64}$/.test(hex)) continue;
+          origins.add(`android:apk-key-hash:${Buffer.from(hex, "hex").toString("base64url")}`);
+        }
+      }
+    }
+  } catch {
+    // No assetlinks.json (or unreadable) — Android origins simply absent.
+  }
+  cachedAndroidOrigins = [...origins];
+  return cachedAndroidOrigins;
+}
 
 /** RP identity from NEXT_PUBLIC_APP_URL; localhost fallback for dev. */
 export function relyingParty(): RelyingParty {
@@ -30,7 +75,7 @@ export function relyingParty(): RelyingParty {
   return {
     rpID: url.hostname, // "app.swapl.fun" in prod, "localhost" in dev
     rpName: "swapl",
-    expectedOrigin: url.origin,
+    expectedOrigin: [url.origin, ...androidAppOrigins()],
   };
 }
 

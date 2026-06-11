@@ -5,7 +5,7 @@
 // so single-use and expiry semantics are tested end to end.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CHALLENGE_TTL_MS } from "@/lib/auth/passkeys";
+import { CHALLENGE_TTL_MS, relyingParty } from "@/lib/auth/passkeys";
 
 const mocks = vi.hoisted(() => ({
   generateRegistrationOptions: vi.fn(),
@@ -99,19 +99,27 @@ function req(url: string, body?: unknown) {
   });
 }
 
+// apk-key-hash origin for the debug cert fingerprint published in
+// public/.well-known/assetlinks.json (4E:8E:…:D3:9B), computed independently
+// of the lib: the fingerprint bytes re-encoded as base64url.
+const DEBUG_APK_KEY_HASH_ORIGIN = `android:apk-key-hash:${Buffer.from(
+  "4E8EEC3DE91FC729CF3539372B8C87EF11EDF3800F9B470B5D2410ECCAE6D39B",
+  "hex"
+).toString("base64url")}`;
+
 /** Base64url clientDataJSON embedding a challenge, like a real authenticator. */
-function clientData(challenge: string): string {
+function clientData(challenge: string, origin = "http://localhost:3000"): string {
   return Buffer.from(
-    JSON.stringify({ type: "webauthn.get", challenge, origin: "http://localhost:3000" })
+    JSON.stringify({ type: "webauthn.get", challenge, origin })
   ).toString("base64url");
 }
 
-function assertionBody(challenge: string, extra: Record<string, unknown> = {}) {
+function assertionBody(challenge: string, extra: Record<string, unknown> = {}, origin?: string) {
   return {
     id: "cred-b64u",
     rawId: "cred-b64u",
     type: "public-key",
-    response: { clientDataJSON: clientData(challenge), authenticatorData: "x", signature: "y" },
+    response: { clientDataJSON: clientData(challenge, origin), authenticatorData: "x", signature: "y" },
     clientExtensionResults: {},
     ...extra,
   };
@@ -303,7 +311,7 @@ describe("POST /api/auth/passkey/login/verify", () => {
     expect(mocks.verifyAuthenticationResponse).toHaveBeenCalledWith(
       expect.objectContaining({
         expectedChallenge: "login-chal-1",
-        expectedOrigin: "http://localhost:3000",
+        expectedOrigin: ["http://localhost:3000", DEBUG_APK_KEY_HASH_ORIGIN],
         expectedRPID: "localhost",
         credential: expect.objectContaining({ id: "cred-b64u", counter: 0 }),
       })
@@ -388,5 +396,63 @@ describe("POST /api/auth/passkey/login/verify", () => {
   it("is rate limited", async () => {
     mocks.checkRateLimit.mockReturnValue({ ok: false, remaining: 0, resetAt: 0 });
     expect((await loginVerifyPOST(req("/api/auth/passkey/login/verify", assertionBody("x")))).status).toBe(429);
+  });
+});
+
+describe("expectedOrigin (web + Android apk-key-hash)", () => {
+  it("derives the apk-key-hash origin from assetlinks.json next to the web origin", () => {
+    expect(relyingParty().expectedOrigin).toEqual([
+      "http://localhost:3000",
+      DEBUG_APK_KEY_HASH_ORIGIN,
+    ]);
+  });
+
+  /**
+   * Replicate simplewebauthn's origin check (string | string[]) inside the
+   * mock so the test exercises the actual array the route hands over; the
+   * crypto itself stays mocked.
+   */
+  function enforceOriginInMock() {
+    mocks.verifyAuthenticationResponse.mockImplementation(
+      async (opts: {
+        response: { response: { clientDataJSON: string } };
+        expectedOrigin: string | string[];
+      }) => {
+        const { origin } = JSON.parse(
+          Buffer.from(opts.response.response.clientDataJSON, "base64url").toString("utf8")
+        );
+        const allowed = Array.isArray(opts.expectedOrigin)
+          ? opts.expectedOrigin
+          : [opts.expectedOrigin];
+        if (!allowed.includes(origin)) {
+          throw new Error(`Unexpected authentication response origin "${origin}"`);
+        }
+        return { verified: true, authenticationInfo: { newCounter: 5 } };
+      }
+    );
+  }
+
+  it("accepts an assertion reporting the Android apk-key-hash origin", async () => {
+    enforceOriginInMock();
+    await loginOptionsPOST(req("/api/auth/passkey/login/options"));
+    const res = await loginVerifyPOST(
+      req(
+        "/api/auth/passkey/login/verify",
+        assertionBody("login-chal-1", { platform: "android" }, DEBUG_APK_KEY_HASH_ORIGIN)
+      )
+    );
+    expect(res.status).toBe(200);
+    expect((await res.json()).token).toBe("raw-bearer");
+  });
+
+  it("rejects an assertion from an unknown origin", async () => {
+    enforceOriginInMock();
+    await loginOptionsPOST(req("/api/auth/passkey/login/options"));
+    const res = await loginVerifyPOST(
+      req("/api/auth/passkey/login/verify", assertionBody("login-chal-1", {}, "https://evil.example"))
+    );
+    expect(res.status).toBe(401);
+    expect(mocks.setSession).not.toHaveBeenCalled();
+    expect(mocks.credUpdate).not.toHaveBeenCalled();
   });
 });
