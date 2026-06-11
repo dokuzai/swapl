@@ -31,13 +31,15 @@ webhook Stripe (DOK-119).
 | Categoria | Partner raccomandato | Modello | Margine atteso | Accesso startup pre-launch | Priorità |
 |---|---|---|---|---|---|
 | Esperienze & tour | _TODO: in ricerca (GetYourGuide vs Viator vs Tiqets)_ | B | _TODO_ | _TODO_ | **P1** |
-| Assicurazione viaggio/swap | _TODO: in ricerca (battleface / Cover Genius)_ | B (embedded) | _TODO_ | _TODO_ | **P1** (sostituisce il mock `lib/insurance/mock.ts`) |
+| Assicurazione viaggio | battleface (Partner API) | B (embedded, premio incassato da Swapl) | revenue share negoziata | ✅ buono (corteggiano partner piccoli) | **P1** |
+| Copertura danni swap | Truvi (ex SUPERHOG) — waiver, non assicurazione | B (waiver embedded) | waiver ~7% del protetto; Truvi trattiene ~20% | ✅ buono (già usato da Swaphouse/ThirdHome) | **P1** (sostituisce il mock `lib/insurance/mock.ts`) |
 | eSIM | Maya (pilota) + eSIM Go / Airalo (quote) | C | wholesale non pubblico, da quotare | ✅ facile (Maya $0 ingresso) | **P2** |
 | Voli | Duffel | B/C (markup esplicito) | markup libero; fee ~$3 + 1%/ordine | ✅ self-serve | **P3** (margini sottili su tratte EU) |
-| Transfer aeroportuali | _TODO: in ricerca_ | B | _TODO_ | _TODO_ | P3 |
-| Noleggio auto | _TODO: in ricerca_ | A→B | _TODO_ | _TODO_ | P3 |
-| Deposito bagagli | _TODO: in ricerca_ | B | _TODO_ | _TODO_ | P3 |
-| Key exchange / pulizie | _TODO: in ricerca (KeyNest)_ | B | _TODO_ | _TODO_ | P2 (core per lo swap) |
+| Transfer aeroportuali | Transferz (o Welcome Pickups) | B/C (net rate + markup) | markup libero (net rates) | ✅ buono (portal "in minutes"; API da negoziare) | P3 |
+| Noleggio auto | Discover Cars (B4B) | A→B | 70% del profitto DC (affiliate); API book+pay nuova | media (widget/white-label → API) | P3 |
+| Deposito bagagli | Stasher (B2B) — fallback affiliate 10% | A→B (deal negoziato) | affiliate 10%; deal maggiori ~50/50 rev share | media (affiliate subito, B2B da negoziare) | P3 |
+| Key exchange | KeyNest (API v3) | B (host paga; billing piattaforma da negoziare) | €7,14/ritiro PAYG EU; margine da negoziare | ✅ buono (API usata dai PMS) | P2 (core per lo swap) |
+| Pulizie | Turno (orchestrazione) o contratti locali | parziale (Turno incassa il cleaner) | n/d | media (API gated) | P3 |
 
 Priorità guidate dal funnel Swapl: lo swap è gratuito, la monetizzazione avviene **dopo
 l'accettazione dell'agreement** (pagina `/swaps/[id]`, sezione "Make it seamless") e nella
@@ -52,12 +54,43 @@ sezione **Discover** del dettaglio listing (DOK-124).
 _TODO: ricerca in corso — sarà completata in questo documento con: modello Distribution/Merchant
 API, possibilità merchant-of-record, range commissioni, requisiti di accesso, contatti._
 
-### 2. Assicurazione viaggio / copertura swap (battleface, Cover Genius, Wakam)
+### 2. Assicurazione viaggio + copertura danni swap
 
-_TODO: ricerca in corso. Nota interna: oggi l'assicurazione è un mock
-(`app/lib/insurance/mock.ts`, provider `swapl-cover`, premio €1.4/m²/notte cap €120, quota
-piattaforma 20%, copertura €1.500). Il partner reale deve supportare il modello embedded:
-polizza emessa via API all'accettazione dell'agreement, pagamento riscosso da Swapl._
+Contesto interno: oggi l'assicurazione è un mock (`app/lib/insurance/mock.ts`, provider
+`swapl-cover`, premio €1.4/m²/notte cap €120, quota piattaforma 20%, copertura €1.500).
+Il bisogno è doppio: **(a)** travel insurance venduta al checkout, **(b)** copertura
+danni/responsabilità sulla casa per ogni swap accettato.
+
+**(a) Travel insurance → battleface (prima scelta)**
+- Partner API embedded/white-label: quote → order → payment via API — **il cliente paga nel
+  checkout di Swapl**. Docs: https://developers.battleface.com/
+- Struttura EU regolata: battleface Underwriting/Insurance Services SRL (Belgio, FSMA,
+  passporting EEA) — è battleface il distributore regolamentato, Swapl resta esente.
+- Revenue share negoziata (non pubblica). Corteggiano attivamente partner piccoli.
+- Alternative: **Qover** (Bruxelles, orchestratore regolato, anche linee property — partner
+  medio/grandi), **Companjon** (Dublino, enterprise-leaning), **Cover Genius/XCover**
+  (enterprise: Booking, Ryanair — long shot pre-launch, vale solo un form).
+
+**(b) Copertura swap → Truvi (ex SUPERHOG) — il fit migliore trovato**
+- È l'unico player che **già copre piattaforme di home-exchange**: Swaphouse ("Home Swap
+  Damage Protection with Truvi") e ThirdHome. Screening ospiti + damage waiver fino a $5M,
+  white-label via API.
+- Punto chiave: è strutturato come **waiver/garanzia, non assicurazione** → evita del tutto
+  la questione IDD per Swapl (stesso pattern di HomeExchange e Kindred, che usano garanzie
+  di piattaforma, non polizze).
+- Economics pubblici (da verificare): waiver base ~7% dell'importo protetto, Truvi trattiene
+  ~20% di commissione.
+- Lungo termine: prodotto assicurativo su misura su carta **Wakam** (carrier white-label B2B2C)
+  via broker/MGA specializzato, quando i volumi lo giustificano.
+
+**Nota regolatoria (IDD, UE)** — rilevante per il design del checkout:
+- Vendere assicurazioni nel checkout con remunerazione = "distribuzione assicurativa" (IDD);
+  l'esenzione **art. 1(3)** per intermediari accessori copre polizze ancillari al viaggio
+  prenotato con premio ≤ €200/persona per servizi ≤ 3 mesi → la travel insurance per-trip
+  rientra plausibilmente, **se** il distributore regolato dietro (battleface/Qover) adempie
+  agli obblighi art. 1(4) (IPID, demands-and-needs).
+- Una polizza standalone danni-casa rientra male nell'esenzione → ulteriore motivo per la via
+  waiver (Truvi) pre-launch. Confermare con un legale nei mercati di lancio (NL/TR/PT/MX).
 
 ### 3. eSIM (Airalo, eSIM Go, Maya) — modello reseller wholesale
 
@@ -95,22 +128,73 @@ Contatti e messaggi: vedi [`OUTREACH-PARTNER.md`](./OUTREACH-PARTNER.md).
 **Attenzione unit economics:** su voli intra-EU economici, $3 + 1% + fee carta ~2,9% mangiano
 quasi tutto il markup → P3, da modellare prima di investirci.
 
-### 5. Transfer aeroportuali
+### 5. Transfer aeroportuali (Transferz, Welcome Pickups; HolidayTaxis terza scelta)
 
-_TODO: ricerca in corso (Welcome Pickups, Jayride, HolidayTaxis/Booking Taxi)._
+- **Transferz** (https://www.transferz.com, Amsterdam) — miglior fit strutturale per il nostro
+  modello: piattaforma B2B-only, API unica + white-label + portale no-code, 151 paesi.
+  **Net rates espliciti: "partners set retail prices and keep the margin"** (modelli misti:
+  net rate, commissione, transaction fee). Docs pubbliche: https://developers.transferz.com/.
+  Tier portal a bassa barriera; tier API soggetto a review commerciale.
+- **Welcome Pickups** (https://partner.welcomepickups.com) — esplicitamente aperto ai partner
+  piccoli: widget, white-label gratuito, Travel API. "You set your own commission", nessuna
+  fee/esclusiva/volume minimo dichiarati. Docs API fornite dopo candidatura. Da chiarire in
+  call se sul tier API il merchant of record può essere Swapl.
+- **HolidayTaxis** (HBX Group, *non* Booking) — modello trade/agent a commissione o net rate,
+  docs pubbliche: https://developer.holidaytaxis.com. Terza opzione credibile.
+- ❌ **Jayride** — da evitare: sospesa dall'ASX, fornitori non pagati da mesi/anni → rischio
+  di servizio inaccettabile per i nostri utenti.
+- ❌ **Booking.com Taxi (Demand API)** — solo Managed Affiliate Partner ad alto volume; nel
+  2025 Booking ha chiuso migliaia di piccoli affiliati. Non realistico pre-launch.
 
-### 6. Noleggio auto
+### 6. Noleggio auto (Discover Cars B4B; enterprise-only il resto)
 
-_TODO: ricerca in corso (Discover Cars, Rentalcars Connect)._
+- **Discover Cars** — unica via realistica per un partner piccolo:
+  - Affiliate (fallback, già modello A): **70% del profitto DC** sul noleggio + 30% sul Full
+    Coverage, cookie 365gg. https://www.discovercars.com/affiliate
+  - **Programma B4B** (widget, white-label, API): da fine 2025 in rollout una API che porta
+    **booking e pagamento nell'ambiente del partner** — da confermare se il partner può essere
+    merchant of record. Landing: https://pages.discovercars.com/b4b · docs (su richiesta):
+    https://api-partner.discovercars.com/help
+  - Percorso suggerito: partire widget/white-label → graduare all'API book+pay.
+- ❌ **Rentalcars Connect / Booking Cars, CarTrawler, Expedia Rapid** — enterprise-only
+  (compagnie aeree, grandi OTA): non accessibili pre-launch.
 
-### 7. Deposito bagagli
+### 7. Deposito bagagli (Stasher; Bounce/Radical solo affiliate)
 
-_TODO: ricerca in corso (Radical Storage, Bounce, Stasher)._
+Mercato in consolidamento (Bounce ha acquisito Nannybag a fine 2025). Nessuno pubblica una
+API bookable self-serve: il modello "pagamento su Swapl" va negoziato.
+
+- **Stasher** — fit migliore: ha già dato integrazioni in-checkout/white-label a
+  Hotels.com, Expedia, Booking, Marriott (rev share ~50/50 sui deal maggiori, da fonti
+  secondarie). Percorso: partire dall'affiliate self-serve (10%/booking,
+  https://partners.stasher.com/) e negoziare il tier B2B → partnerships@stasher.com
+- **Bounce** — solo affiliate (10%), nessuna API pubblica. **Radical Storage** — affiliate
+  8% diretto / 15% via Travelpayouts; "API" di livello affiliate, non bookable.
 
 ### 8. Key exchange & pulizie (core dell'esperienza swap)
 
-_TODO: ricerca in corso (KeyNest, Keycafe; marketplace pulizie EU). Nota: l'add-on `keynest`
-esiste già nel seed `AddOn` come flat-fee._
+Nota: l'add-on `keynest` esiste già nel seed `AddOn` come flat-fee — questa è la categoria
+più vicina al prodotto (consegna chiavi tra swapper).
+
+**Key exchange → KeyNest (prima scelta)**
+- Rete più grande d'Europa (5.000+ punti, shop/café); partner ufficiale Airbnb e Booking.
+- **API v3 reale** già usata in produzione dai PMS (Guesty, Hostaway, Lodgify…): codice di
+  ritiro a 6 cifre generato per prenotazione. Docs (Postman, datate — accesso concesso dal
+  team): https://documenter.getpostman.com/view/5456795/TVmMhdvb
+- Prezzi EU verificati: **€7,14 per ritiro** PAYG (o €29,94/chiave/mese illimitato). Il
+  modello tipico è "l'host paga KeyNest": il billing di piattaforma (Swapl incassa nel
+  checkout e gira a KeyNest, con markup) va negoziato — il precedente PMS rende plausibile
+  la conversazione.
+- Alternativa: **Keycafe** — API pubblica migliore (docs.keycafe.com) e white-label, ma
+  modello hardware (SmartBox ~$2.399 + $99/mese/location): economics sbagliate per noi.
+
+**Pulizie — nessuna API bookable in EU (constatazione, non TODO)**
+- Nessun marketplace di pulizie EU offre un'API B2B dove un terzo incassa il pagamento.
+- Opzione (a): partnership **Turno** (apidocs.turnoverbnb.com, accesso su richiesta) — Swapl
+  orchestra le date dello swap come "projects", ma il pagamento del cleaner resta su Turno.
+- Opzione (b) consigliata per il lancio: **contratti diretti con imprese di pulizie locali**
+  nelle città dei corridoi prioritari, dietro il checkout Swapl (è già il modello flat-fee
+  dell'add-on `cleaning` esistente).
 
 ---
 

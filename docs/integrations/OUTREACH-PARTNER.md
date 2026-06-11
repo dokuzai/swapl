@@ -57,7 +57,32 @@ Tiqets, Klook, Musement) — sarà completata con form/email esatti e variante m
 
 ## 2. Assicurazione
 
-_TODO: ricerca contatti in corso (battleface B2B, Cover Genius/XCover, Wakam)._
+| Partner | Canale | Note |
+|---|---|---|
+| **battleface** (travel insurance) | Form onboarding: https://partner.battleface.com/partner-onboarding-form/ · call: https://www.battleface.com/en-us/partners/schedule-a-call/ · email: partner@battleface.com (da riverificare) · docs: https://developers.battleface.com/ | Prima scelta. Chiedere: revenue share, mercati EEA coperti (NL/IT/PT/TR), adempimenti IDD art. 1(4) a loro carico. |
+| **Truvi** (copertura danni swap, ex SUPERHOG) | https://truvi.com/ (form) · FAQ piattaforme: https://truvi.com/faqs/platform/ | Citare i precedenti **Swaphouse** e **ThirdHome** (home exchange). Chiedere: waiver white-label via API, copertura liability oltre ai danni, economics (~7% del protetto, loro ~20%). |
+| Qover (alternativa) | https://www.qover.com/api (demo form) · docs: https://docs.qover.com/ | Orchestratore regolato BE; partner medio/grandi. |
+| Cover Genius (long shot) | https://covergenius.com/about-us/ (form) | Enterprise (Booking, Ryanair); solo form, zero effort extra. |
+
+**Variante messaggio (battleface):** template generale con `[CATEGORY] = travel insurance`, più:
+
+```text
+Today we auto-issue a basic stay-coverage at swap acceptance through an internal placeholder;
+we want to replace it with a regulated embedded product: quote and policy issuance via your
+Partner API at our checkout, premium collected by us. Volumes scale with accepted swaps
+(every swap = two travelling parties). Please outline the revenue-share model, EEA market
+coverage (Netherlands, Italy, Portugal, Turkey), and how IDD art. 1(4) duties are handled
+on your side.
+```
+
+**Variante messaggio (Truvi):**
+
+```text
+We're building what Swaphouse and ThirdHome built with you: damage protection embedded in a
+home-swap flow. Every accepted swap on Swapl should trigger guest screening + a damage
+waiver, white-label via API, fee collected in our checkout. Could you share platform
+economics, what's covered (property damage vs liability), and API integration steps?
+```
 
 ## 3. eSIM
 
@@ -92,19 +117,57 @@ per-order pricing? We'd start on the free tier (<50 orders/month).
 
 ## 5. Transfer aeroportuali
 
-_TODO: ricerca contatti in corso (Welcome Pickups, Jayride, HolidayTaxis)._
+| Partner | Canale | Note |
+|---|---|---|
+| **Transferz** | Form: https://www.transferz.com/partner-signup · https://www.transferz.com/become-a-partner/ · docs: https://developers.transferz.com/ | Chiedere modello net-rate + conferma merchant of record. Sede Amsterdam (comodo per call EU). |
+| **Welcome Pickups** | Form API: https://partner.welcomepickups.com/travel-api/ · signup agency: https://go.partner.welcomepickups.com/en/travel-agencies/signup/ · supporto: partners_support@welcomepickups.com | Commissione la definisce il partner; chiedere se sul tier API il MoR può essere Swapl. |
+| **HolidayTaxis** (HBX Group) | info@holidaytaxis.com · +44 1273 828 200 · docs: https://developer.holidaytaxis.com | Terza scelta; chiedere net rates per agenti. |
+
+**Variante messaggio (transfer):** template generale con `[CATEGORY] = airport transfers`, più:
+
+```text
+Typical use case: a confirmed home swap generates two known airport-to-home legs (both
+directions, exact dates). We want to sell pre-booked transfers in our checkout at retail
+prices we set on top of your net rates. Please outline your net-rate model, whether we can
+act as merchant of record, and API access requirements for an early-stage platform.
+```
+
+⚠️ Non contattare **Jayride** (società sospesa dall'ASX, fornitori non pagati — vedi
+`SERVIZI-ESTERNI.md` §5).
 
 ## 6. Noleggio auto
 
-_TODO: ricerca contatti in corso (Discover Cars, Rentalcars Connect)._
+| Partner | Canale | Note |
+|---|---|---|
+| **Discover Cars (B4B)** | Form: https://pages.discovercars.com/b4b · richieste: https://help.discovercars.com/hc/en-us/requests/new · affiliate: https://www.discovercars.com/affiliate | Chiedere della nuova API book+pay (rollout fine 2025) e se il partner può incassare. Partire da widget/white-label. |
+
+**Variante messaggio (noleggio):** template generale con `[CATEGORY] = car rental`; chiedere
+esplicitamente: requisiti per la B4B API "booking and pay endpoints in the partner
+environment", commissioni rispetto al programma affiliate (70% profit share), volumi minimi.
 
 ## 7. Deposito bagagli
 
-_TODO: ricerca contatti in corso (Radical Storage, Bounce, Stasher)._
+| Partner | Canale | Note |
+|---|---|---|
+| **Stasher** | partnerships@stasher.com · affiliate self-serve: https://partners.stasher.com/ | Unico con storico di integrazioni in-checkout concesse ai partner (Hotels.com, Expedia…). Partire affiliate, negoziare B2B. |
+| Bounce (fallback affiliate) | partners@usebounce.com · affiliate@usebounce.com · https://bounce.com/ls/affiliates | Solo affiliate 10%; ha acquisito Nannybag. |
 
 ## 8. Key exchange & pulizie
 
-_TODO: ricerca contatti in corso (KeyNest, Keycafe)._
+| Partner | Canale | Note |
+|---|---|---|
+| **KeyNest** | support@keynest.com (routing al team partner) · https://keynest.com/partners | Chiedere accesso API v3 (precedente PMS: Guesty/Hostaway) e billing di piattaforma con markup. Prezzi EU: €7,14/ritiro PAYG. |
+| Turno (pulizie, orchestrazione) | https://turno.com/integrations/ · docs: https://apidocs.turnoverbnb.com/ | API gated su richiesta; il pagamento cleaner resta su Turno. |
+| Pulizie locali (lancio) | imprese locali nelle città corridoio | Contratto diretto dietro checkout Swapl — è già il modello dell'add-on `cleaning`. |
+
+**Variante messaggio (KeyNest):** template generale con `[CATEGORY] = key exchange`, più:
+
+```text
+Our product is literally key-for-key home swapping: every accepted swap requires two key
+handovers in two cities. We'd like API access (v3) to auto-create drop-off/collection codes
+per swap, plus a platform billing arrangement where the fee is collected in our checkout.
+Your PMS integrations (Guesty, Hostaway) are the model we have in mind.
+```
 
 ---
 
