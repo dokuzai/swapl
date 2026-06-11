@@ -523,6 +523,7 @@ model ListingFeaturedPurchase {
   startsAt              DateTime
   endsAt                DateTime
   stripePaymentIntentId String   @unique
+  refunded              Boolean  @default(false)
   createdAt             DateTime @default(now())
   listing               Listing  @relation(fields: [listingId], references: [id])
 

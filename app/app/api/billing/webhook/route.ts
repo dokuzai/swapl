@@ -14,6 +14,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe, STRIPE_WEBHOOK_SECRET, BillingNotConfigured } from "@/lib/billing/stripe";
+import { reconcilePaymentIntent, reconcileRefund } from "@/lib/billing/reconcile";
 import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
@@ -71,12 +72,15 @@ export async function POST(req: Request) {
         break;
 
       case "payment_intent.succeeded":
-        await handlePaymentIntent(event.data.object as Stripe.PaymentIntent);
+        await reconcilePaymentIntent(event.data.object as Stripe.PaymentIntent);
+        break;
+
+      case "refund.created":
+        await reconcileRefund(event.data.object as Stripe.Refund);
         break;
 
       // Future:
-      //   refund.created → mark OrderAddOn.status = "refunded"
-      //   payout.paid    → ledger entry
+      //   payout.paid → ledger entry
       default:
         // Unhandled events are still recorded above for replay debugging.
         break;
@@ -190,15 +194,4 @@ async function handleInvoice(invoice: Stripe.Invoice) {
       pdfUrl: invoice.invoice_pdf ?? null,
     },
   });
-}
-
-async function handlePaymentIntent(intent: Stripe.PaymentIntent) {
-  // One-time purchases (verify listing, feature placement, concierge add-on,
-  // insurance upgrade) all flow through here. Feature-specific reconciliation
-  // lives in their own routes; this stub just records the event so the
-  // webhook stays robust to ordering races.
-  const kind = intent.metadata?.kind;
-  if (!kind) return;
-  // Future per-kind handlers will be filled in by Features 3–5 commits.
-  console.log("[stripe:webhook] one-time PI", kind, intent.id);
 }
