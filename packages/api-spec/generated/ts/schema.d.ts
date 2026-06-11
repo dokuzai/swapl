@@ -326,6 +326,365 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Available login providers (env-gated) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProvidersResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/oauth/google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sign in with a Google ID token
+         * @description Verifies the JWT against Google's JWKS (iss accounts.google.com, aud in GOOGLE_OAUTH_CLIENT_IDS, email_verified required), links or creates the user by verified email, and emits the standard session.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["OAuthGoogleRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LoginResponse"];
+                    };
+                };
+                /** @description Invalid token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Provider not configured */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/oauth/apple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sign in with Apple
+         * @description Verifies the identity token against Apple's JWKS. Returning users are resolved by Apple `sub` (the email is only present on first authorization). 422 APPLE_EMAIL_MISSING when a brand-new identity arrives without an email.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["OAuthAppleRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LoginResponse"];
+                    };
+                };
+                /** @description Invalid token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description New identity without an email (re-authorize from Apple ID settings) */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Provider not configured */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/oauth/telegram": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sign in with Telegram
+         * @description Verifies the Login Widget payload (HMAC-SHA256 keyed with SHA256(bot_token), max 10 minutes old). Accounts are keyed on the Telegram id; no email is collected.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["OAuthTelegramRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LoginResponse"];
+                    };
+                };
+                /** @description Invalid payload */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Provider not configured */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/otp/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send a one-time login code (email or SMS)
+         * @description Always 200 with an opaque body (anti-enumeration). Codes are 6 digits, valid 10 minutes, max 5 attempts. Rate limited 5/15min per destination and per IP.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["OtpRequestRequest"];
+                };
+            };
+            responses: {
+                /** @description Always OK (anti-enumeration) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description SMS not configured */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/otp/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Exchange a one-time code for a session
+         * @description Find-or-create by proven destination (email → User.email with emailVerifiedAt set; phone → User.phone). Emits the standard session.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["OtpVerifyRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LoginResponse"];
+                    };
+                };
+                /** @description Invalid or expired code */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Rate limited / code attempts exhausted */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me": {
         parameters: {
             query?: never;
@@ -1642,6 +2001,62 @@ export interface components {
         };
         /** @enum {string} */
         Platform: "ios" | "android" | "web-pwa";
+        /** @description Which login methods are live on this deployment (env-gated). Clients hide buttons for disabled providers. */
+        ProvidersResponse: {
+            password: boolean;
+            google: boolean;
+            apple: boolean;
+            telegram: {
+                enabled: boolean;
+                /** @description Present when enabled — renders the Login Widget. */
+                botUsername?: string;
+            };
+            emailOtp: boolean;
+            /** @description SMS OTP availability (Twilio configured). */
+            phone: boolean;
+        };
+        /** @description Web (cookie) login response — same shape as POST /api/auth/login. */
+        SessionResponse: {
+            ok: boolean;
+            userId: string;
+            emailVerified: boolean;
+        };
+        /** @description TokenResponse when `platform` was sent (native bearer), SessionResponse otherwise (web cookie). */
+        LoginResponse: components["schemas"]["TokenResponse"] | components["schemas"]["SessionResponse"];
+        OAuthGoogleRequest: {
+            /** @description Google ID token (JWT) from GIS / GoogleSignIn. */
+            idToken: string;
+            platform?: components["schemas"]["Platform"];
+            appVersion?: string;
+        };
+        OAuthAppleRequest: {
+            /** @description Apple identity token (JWT) from Sign in with Apple. */
+            identityToken: string;
+            /** @description Apple sends the name only on first authorization; used solely at account creation. */
+            fullName?: string;
+            platform?: components["schemas"]["Platform"];
+            appVersion?: string;
+        };
+        OAuthTelegramRequest: {
+            /** @description Raw payload from the Telegram Login Widget (id, auth_date, hash, first_name, username, photo_url, ...). */
+            authData: {
+                [key: string]: unknown;
+            };
+            platform?: components["schemas"]["Platform"];
+            appVersion?: string;
+        };
+        OtpRequestRequest: {
+            /** @enum {string} */
+            channel: "email" | "sms";
+            /** @description Email address */
+            destination: string;
+        };
+        OtpVerifyRequest: {
+            destination: string;
+            code: string;
+            platform?: components["schemas"]["Platform"];
+            appVersion?: string;
+        };
         MeResponse: {
             user: {
                 id: string;

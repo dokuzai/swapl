@@ -109,6 +109,61 @@ export const deviceRegisterSchema = z.object({
   appVersion: z.string().max(40).optional(),
 });
 
+// ---- Multi-provider auth (OAuth + OTP) ----
+// `platform` optional on every login-style endpoint: present → bearer token
+// (native), absent → cookie session (web). Mirrors register's behaviour.
+
+const optionalPlatform = z.enum(["ios", "android", "web-pwa"]).optional();
+
+export const oauthGoogleSchema = z.object({
+  idToken: z.string().min(20).max(8192),
+  platform: optionalPlatform,
+  appVersion: z.string().max(40).optional(),
+});
+
+export const oauthAppleSchema = z.object({
+  identityToken: z.string().min(20).max(8192),
+  // Apple sends the name ONLY on first authorization, client-side; used solely
+  // at account creation.
+  fullName: z.string().max(200).optional(),
+  platform: optionalPlatform,
+  appVersion: z.string().max(40).optional(),
+});
+
+export const oauthTelegramSchema = z.object({
+  // Raw payload from the Telegram Login Widget (id, auth_date, hash, ...).
+  authData: z.record(z.string(), z.union([z.string(), z.number()])),
+  platform: optionalPlatform,
+  appVersion: z.string().max(40).optional(),
+});
+
+const E164 = /^\+[1-9]\d{6,14}$/;
+
+export const otpRequestSchema = z
+  .object({
+    channel: z.enum(["email", "sms"]),
+    destination: z.string().min(3).max(254),
+  })
+  .superRefine((val, ctx) => {
+    if (val.channel === "email" && !z.string().email().safeParse(val.destination).success) {
+      ctx.addIssue({ code: "custom", path: ["destination"], message: "Invalid email address" });
+    }
+    if (val.channel === "sms" && !E164.test(val.destination.replace(/[\s\-()]/g, ""))) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["destination"],
+        message: "Phone must be E.164, e.g. +393331234567",
+      });
+    }
+  });
+
+export const otpVerifySchema = z.object({
+  destination: z.string().min(3).max(254),
+  code: z.string().regex(/^\d{6}$/),
+  platform: optionalPlatform,
+  appVersion: z.string().max(40).optional(),
+});
+
 export const reportSchema = z.object({
   reason: z.string().min(2).max(80),
   detail: z.string().max(2000).optional(),

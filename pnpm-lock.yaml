@@ -109,6 +109,9 @@ importers:
       iron-session:
         specifier: ^8.0.4
         version: 8.0.4
+      jose:
+        specifier: ^6.2.3
+        version: 6.2.3
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4

@@ -111,6 +111,82 @@ components:
       type: string
       enum: [ios, android, web-pwa]
 
+    ProvidersResponse:
+      type: object
+      description: Which login methods are live on this deployment (env-gated). Clients hide buttons for disabled providers.
+      required: [password, google, apple, telegram, emailOtp, phone]
+      properties:
+        password: { type: boolean }
+        google: { type: boolean }
+        apple: { type: boolean }
+        telegram:
+          type: object
+          required: [enabled]
+          properties:
+            enabled: { type: boolean }
+            botUsername: { type: string, description: Present when enabled — renders the Login Widget. }
+        emailOtp: { type: boolean }
+        phone: { type: boolean, description: SMS OTP availability (Twilio configured). }
+
+    SessionResponse:
+      type: object
+      description: Web (cookie) login response — same shape as POST /api/auth/login.
+      required: [ok, userId, emailVerified]
+      properties:
+        ok: { type: boolean }
+        userId: { type: string }
+        emailVerified: { type: boolean }
+
+    LoginResponse:
+      description: TokenResponse when `platform` was sent (native bearer), SessionResponse otherwise (web cookie).
+      oneOf:
+        - $ref: '#/components/schemas/TokenResponse'
+        - $ref: '#/components/schemas/SessionResponse'
+
+    OAuthGoogleRequest:
+      type: object
+      required: [idToken]
+      properties:
+        idToken: { type: string, description: Google ID token (JWT) from GIS / GoogleSignIn. }
+        platform: { $ref: '#/components/schemas/Platform' }
+        appVersion: { type: string }
+
+    OAuthAppleRequest:
+      type: object
+      required: [identityToken]
+      properties:
+        identityToken: { type: string, description: Apple identity token (JWT) from Sign in with Apple. }
+        fullName: { type: string, description: Apple sends the name only on first authorization; used solely at account creation. }
+        platform: { $ref: '#/components/schemas/Platform' }
+        appVersion: { type: string }
+
+    OAuthTelegramRequest:
+      type: object
+      required: [authData]
+      properties:
+        authData:
+          type: object
+          description: Raw payload from the Telegram Login Widget (id, auth_date, hash, first_name, username, photo_url, ...).
+          additionalProperties: true
+        platform: { $ref: '#/components/schemas/Platform' }
+        appVersion: { type: string }
+
+    OtpRequestRequest:
+      type: object
+      required: [channel, destination]
+      properties:
+        channel: { type: string, enum: [email, sms] }
+        destination: { type: string, description: Email address, or phone in E.164 for sms. }
+
+    OtpVerifyRequest:
+      type: object
+      required: [destination, code]
+      properties:
+        destination: { type: string }
+        code: { type: string, pattern: '^[0-9]{6}$' }
+        platform: { $ref: '#/components/schemas/Platform' }
+        appVersion: { type: string }
+
     MeResponse:
       type: object
       required: [user, counts]
@@ -771,6 +847,151 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/OkResponse' }
+
+  /api/auth/providers:
+    get:
+      tags: [auth]
+      summary: Available login providers (env-gated)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProvidersResponse' }
+
+  /api/auth/oauth/google:
+    post:
+      tags: [auth]
+      summary: Sign in with a Google ID token
+      description: >-
+        Verifies the JWT against Google's JWKS (iss accounts.google.com, aud in
+        GOOGLE_OAUTH_CLIENT_IDS, email_verified required), links or creates the
+        user by verified email, and emits the standard session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OAuthGoogleRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401':
+          description: Invalid token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '429': { description: Rate limited }
+        '503': { description: Provider not configured }
+
+  /api/auth/oauth/apple:
+    post:
+      tags: [auth]
+      summary: Sign in with Apple
+      description: >-
+        Verifies the identity token against Apple's JWKS. Returning users are
+        resolved by Apple `sub` (the email is only present on first
+        authorization). 422 APPLE_EMAIL_MISSING when a brand-new identity
+        arrives without an email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OAuthAppleRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401':
+          description: Invalid token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '422':
+          description: New identity without an email (re-authorize from Apple ID settings)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '429': { description: Rate limited }
+        '503': { description: Provider not configured }
+
+  /api/auth/oauth/telegram:
+    post:
+      tags: [auth]
+      summary: Sign in with Telegram
+      description: >-
+        Verifies the Login Widget payload (HMAC-SHA256 keyed with
+        SHA256(bot_token), max 10 minutes old). Accounts are keyed on the
+        Telegram id; no email is collected.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OAuthTelegramRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401':
+          description: Invalid payload
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '429': { description: Rate limited }
+        '503': { description: Provider not configured }
+
+  /api/auth/otp/request:
+    post:
+      tags: [auth]
+      summary: Send a one-time login code (email or SMS)
+      description: >-
+        Always 200 with an opaque body (anti-enumeration). Codes are 6 digits,
+        valid 10 minutes, max 5 attempts. Rate limited 5/15min per destination
+        and per IP.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OtpRequestRequest' }
+      responses:
+        '200':
+          description: Always OK (anti-enumeration)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '429': { description: Rate limited }
+        '503': { description: SMS not configured }
+
+  /api/auth/otp/verify:
+    post:
+      tags: [auth]
+      summary: Exchange a one-time code for a session
+      description: >-
+        Find-or-create by proven destination (email → User.email with
+        emailVerifiedAt set; phone → User.phone). Emits the standard session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/OtpVerifyRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '401':
+          description: Invalid or expired code
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '429': { description: Rate limited / code attempts exhausted }
 
   /api/me:
     get:

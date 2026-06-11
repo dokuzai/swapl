@@ -232,6 +232,30 @@ export const templates = {
     });
   },
 
+  loginCode: (toEmail: string, code: string) => {
+    return build({
+      to: toEmail,
+      subject: `${code} is your swapl login code`,
+      preview: "Your one-time login code — valid for 10 minutes.",
+      heading: "Your login code.",
+      intro: "Enter this code to sign in. It works for 10 minutes and only once. If you didn't request it, ignore this email — nobody can sign in without it.",
+      body: (
+        <Text
+          style={{
+            fontSize: "32px",
+            fontWeight: 700,
+            letterSpacing: "8px",
+            textAlign: "center" as const,
+            margin: "16px 0",
+          }}
+        >
+          {code}
+        </Text>
+      ),
+      text: `Your swapl login code is: ${code}\n\nIt works for 10 minutes and only once. If you didn't request it, ignore this email.`,
+    });
+  },
+
   resetPassword: (toEmail: string, token: string) => {
     const link = `${APP_URL}/reset-password?token=${token}`;
     return build({

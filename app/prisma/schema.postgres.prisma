@@ -16,6 +16,9 @@ datasource db {
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
+  // E.164 phone number, set when the user signs in via SMS OTP. Unique so a
+  // phone maps to exactly one account (find-or-create key for phone login).
+  phone        String?  @unique
   name         String?
   avatar       String?
   bio          String?
@@ -69,6 +72,39 @@ model User {
   authTokens      AuthToken[]
   devices         Device[]
   favorites       Favorite[]
+  oauthAccounts   OAuthAccount[]
+}
+
+// External identity linked to a local user. One row per (provider, subject).
+// Same-email sign-ins link to the existing account instead of duplicating it
+// (only when the provider asserts the email as verified).
+model OAuthAccount {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider       String                                         // "google" | "apple" | "telegram"
+  providerUserId String                                         // Google sub | Apple sub | Telegram numeric id
+  createdAt      DateTime @default(now())
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+}
+
+// One-time login codes (email or SMS). Only the SHA-256 hash of the 6-digit
+// code is stored; codes expire after 10 minutes and allow max 5 attempts.
+// Rows are keyed by destination (no userId — the user may not exist yet;
+// verify does find-or-create).
+model LoginOtp {
+  id          String    @id @default(cuid())
+  destination String                                            // normalised email or E.164 phone
+  channel     String                                            // "email" | "sms"
+  codeHash    String                                            // sha256 hex of the 6-digit code
+  expiresAt   DateTime
+  attempts    Int       @default(0)
+  consumedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([destination])
 }
 
 // One-shot tokens for email verification + password reset. We store only the
