@@ -329,11 +329,18 @@ struct ProposalSheetView: View {
     let onCreated: (String) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(AuthService.self) private var auth
     @State private var dateFrom: Date
     @State private var dateTo: Date
     @State private var message = ""
     @State private var error: String?
     @State private var isSubmitting = false
+
+    // "Draft with AI" state.
+    @State private var isDrafting = false
+    @State private var draftCaption: String?   // "Drafted on-device" / "Drafted with AI"
+    @State private var draftError: String?
+    @State private var undoText: String?       // one-step undo of a replaced message
 
     init(detail: ListingDetailResponse, proposerListingId: String, onCreated: @escaping (String) -> Void) {
         self.detail = detail
@@ -357,6 +364,8 @@ struct ProposalSheetView: View {
                 Section("Message") {
                     TextEditor(text: $message)
                         .frame(minHeight: 120)
+
+                    draftWithAIRow
                 }
 
                 if let error {
@@ -379,6 +388,89 @@ struct ProposalSheetView: View {
                     .disabled(isSubmitting || dateTo <= dateFrom)
                 }
             }
+        }
+    }
+
+    // MARK: - Draft with AI
+
+    private var draftWithAIRow: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 12) {
+                Button {
+                    Task { await draftWithAI() }
+                } label: {
+                    HStack(spacing: 8) {
+                        if isDrafting {
+                            ProgressView()
+                                .controlSize(.small)
+                                .tint(SwaplSemanticLight.primary)
+                        } else {
+                            Image(systemName: "sparkles")
+                        }
+                        Text(isDrafting ? "Drafting…" : "Draft with AI")
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    }
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .padding(.horizontal, 16)
+                    .frame(minHeight: 44)
+                    .background(SwaplSemanticLight.accent, in: Capsule())
+                }
+                .buttonStyle(.borderless)
+                .disabled(isDrafting)
+                .accessibilityLabel(isDrafting ? "Drafting message with AI" : "Draft message with AI")
+
+                if undoText != nil {
+                    Button("Undo") {
+                        if let previous = undoText {
+                            message = previous
+                            undoText = nil
+                            draftCaption = nil
+                        }
+                    }
+                    .buttonStyle(.borderless)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .frame(minHeight: 44)
+                    .accessibilityLabel("Undo AI draft, restore your previous message")
+                }
+            }
+
+            if let draftCaption {
+                Text(draftCaption)
+                    .font(.swaplMono(SwaplDesignSystem.FontSize.tiny))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            if let draftError {
+                Text(draftError)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(SwaplSemanticLight.destructive)
+            }
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func draftWithAI() async {
+        isDrafting = true
+        draftError = nil
+        defer { isDrafting = false }
+        do {
+            let draft = try await ProposalDraftEngine.draft(
+                proposerListingId: proposerListingId,
+                targetListing: detail.listing,
+                viewerName: auth.session?.name,
+                viewerUserId: auth.session?.id,
+                dateFrom: SwaplDateText.apiString(from: dateFrom),
+                dateTo: SwaplDateText.apiString(from: dateTo)
+            )
+            // Keep one-step undo when replacing text the user already typed.
+            let existing = message.trimmingCharacters(in: .whitespacesAndNewlines)
+            undoText = existing.isEmpty ? nil : message
+            message = draft.message
+            draftCaption = draft.onDevice ? "Drafted on-device" : "Drafted with AI"
+        } catch APIClient.APIError.status(429, _) {
+            draftError = "Too many drafts — try again in a few minutes."
+        } catch {
+            draftError = "Couldn't draft a message right now. You can still write your own."
         }
     }
 

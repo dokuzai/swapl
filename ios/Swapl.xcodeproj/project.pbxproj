@@ -19,6 +19,7 @@
 		36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E87AFF2208189D059454DA /* PublicProfileView.swift */; };
 		3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */; };
 		3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E0749085C3E362B239A25 /* ProposalRepository.swift */; };
+		3C468E83F14C65170AB87EE2 /* ProposalDraftEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC9312485BA546DE9DDA312 /* ProposalDraftEngine.swift */; };
 		42E7606893193D6EE6499537 /* Inter-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6834A289CE48A812B8A38852 /* Inter-Variable.ttf */; };
 		4B3AD0F138265FA3B1D96DEF /* InterestsEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */; };
 		510830DC97DA55495B08EBC9 /* JetBrainsMono-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CEA095CED7B7CAD626BC318 /* JetBrainsMono-Variable.ttf */; };
@@ -41,8 +42,10 @@
 		9DF14AADB94ED9B3F7C76737 /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3FA2100529AD4F37F95FDA /* FavoritesStore.swift */; };
 		9FB201F3E3C6723A6627AD92 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781B69502AE21A819387C19F /* ReportSheet.swift */; };
 		A8F5EDDBDBC5050DDAC4A6AD /* WishlistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD770B97A9384AAECAFF4F3 /* WishlistsView.swift */; };
+		AC754A8C18363E68BFAC274A /* AIDraftRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */; };
 		C37E5D582DD9EF9D58172533 /* FavoritesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D471415D3273EA410BB0599 /* FavoritesRepository.swift */; };
 		C50E6EC4B47A130774948455 /* FilterSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880076B1A21E1999A8C9F405 /* FilterSheetView.swift */; };
+		CE2E19FCF7D3A7155FABE8CA /* AIDraftProposalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */; };
 		DA8C3FCC1426E8B95A52BD96 /* SwaplDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = A8D80844D3E9A3B2227C620A /* SwaplDesignTokens */; };
 		DACBA4DA3BDA42660BC27C0B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8479450F71641A8B608B52 /* Profile.swift */; };
 		DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */; };
@@ -71,17 +74,20 @@
 		166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsEditorView.swift; sourceTree = "<group>"; };
 		1CD770B97A9384AAECAFF4F3 /* WishlistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistsView.swift; sourceTree = "<group>"; };
 		1D471415D3273EA410BB0599 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
+		1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftProposalTests.swift; sourceTree = "<group>"; };
 		2F8086AB51A024B342543C18 /* CitiesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitiesRepository.swift; sourceTree = "<group>"; };
 		348C7476795E59B9F7C4360C /* ListingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingDetailView.swift; sourceTree = "<group>"; };
 		3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapsInboxView.swift; sourceTree = "<group>"; };
 		3EC7EF0654A2A456B14E52A5 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		482C55A61B818770C1E2FFE8 /* SwaplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplApp.swift; sourceTree = "<group>"; };
+		4BC9312485BA546DE9DDA312 /* ProposalDraftEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProposalDraftEngine.swift; sourceTree = "<group>"; };
 		4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingView.swift; sourceTree = "<group>"; };
 		64D0EB47C8D8295095D265D6 /* ListingPhotoGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingPhotoGalleryView.swift; sourceTree = "<group>"; };
 		66A0B174CF8A85F86C93F228 /* Fraunces-Italic-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fraunces-Italic-Variable.ttf"; sourceTree = "<group>"; };
 		6834A289CE48A812B8A38852 /* Inter-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Variable.ttf"; sourceTree = "<group>"; };
 		6CEA095CED7B7CAD626BC318 /* JetBrainsMono-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Variable.ttf"; sourceTree = "<group>"; };
 		6E72A38E93BF07A269B5A860 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftRepository.swift; sourceTree = "<group>"; };
 		76DD8536C922B611CF6505BC /* SwaplUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SwaplUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		781B69502AE21A819387C19F /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
 		7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplEmptyState.swift; sourceTree = "<group>"; };
@@ -190,6 +196,7 @@
 		5655254325D25B334967473A /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */,
 				2F8086AB51A024B342543C18 /* CitiesRepository.swift */,
 				1D471415D3273EA410BB0599 /* FavoritesRepository.swift */,
 				B0C16E51E119668C1E262BDB /* ListingRepository.swift */,
@@ -266,6 +273,7 @@
 		B1DE064E80E30963D21B529F /* SwaplUITests */ = {
 			isa = PBXGroup;
 			children = (
+				1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */,
 				FE175D04D0E8B92BDB0623DF /* FeatureWalkthroughTests.swift */,
 			);
 			path = SwaplUITests;
@@ -308,6 +316,7 @@
 		E7374CB43A82D1797063FE3B /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				E93C94088C4A8AB8B567B50E /* AI */,
 				47D59144756EF65FE9EA96A6 /* Auth */,
 				11D28382AF7D461233739BD1 /* Favorites */,
 				8C4D4EBDAE0EFE3873306222 /* Models */,
@@ -324,6 +333,14 @@
 				3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */,
 			);
 			path = Swaps;
+			sourceTree = "<group>";
+		};
+		E93C94088C4A8AB8B567B50E /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				4BC9312485BA546DE9DDA312 /* ProposalDraftEngine.swift */,
+			);
+			path = AI;
 			sourceTree = "<group>";
 		};
 		EE65BF6EFF1CEB06F97B072F /* Illustrations */ = {
@@ -461,6 +478,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE2E19FCF7D3A7155FABE8CA /* AIDraftProposalTests.swift in Sources */,
 				975F281EA211E4762D3F16AB /* FeatureWalkthroughTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -469,6 +487,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC754A8C18363E68BFAC274A /* AIDraftRepository.swift in Sources */,
 				23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */,
 				817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */,
 				FBEF57AC2F8FBE1ACBAF6DAD /* AirbnbStyle.swift in Sources */,
@@ -491,6 +510,7 @@
 				DACBA4DA3BDA42660BC27C0B /* Profile.swift in Sources */,
 				56E1320794D62E4631157BE8 /* ProfileRepository.swift in Sources */,
 				2E03DA0A20134F3722419077 /* Proposal.swift in Sources */,
+				3C468E83F14C65170AB87EE2 /* ProposalDraftEngine.swift in Sources */,
 				3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */,
 				36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */,
 				6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */,
