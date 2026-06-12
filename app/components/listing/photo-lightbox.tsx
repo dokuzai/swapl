@@ -257,33 +257,121 @@ function useLightbox(photos: LightboxPhoto[]) {
   return { open: setOpenIndex, node };
 }
 
-/** The listing's own photo grid on the detail page. Click any photo to zoom. */
-export function ListingPhotoGrid({ photos }: { photos: string[] }) {
+/**
+ * Listing photo mosaic (DOK-150) — Airbnb-style information layout in the
+ * Swapl skin. Desktop (sm+): one large photo left + up to four tiles right,
+ * rounded corners on the whole block, "Show all photos" pill bottom-right.
+ * Mobile: swipeable snap carousel with a "i / n" counter. Every photo opens
+ * the shared lightbox at its index. With 1–2 photos the grid degrades to a
+ * single wide frame / two halves.
+ *
+ * `overlay` lets the page layer server-rendered badges (match score,
+ * featured ribbon) on top of both the desktop and mobile frames.
+ */
+export function ListingPhotoMosaic({ photos, overlay }: { photos: string[]; overlay?: React.ReactNode }) {
   const items: LightboxPhoto[] = photos.map((url, i) => ({ url, alt: `Listing photo ${i + 1}` }));
   const { open, node } = useLightbox(items);
+  const [slide, setSlide] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const n = photos.length;
+  if (n === 0) return null;
+
+  // Tile placement in the sm+ mosaic, on a 4-col × 2-row canvas:
+  //   n >= 5 → big 2×2 + four 1×1
+  //   n == 4 → big 2×2 + two 1×1 on top, one 2×1 below
+  //   n == 3 → big 2×2 + two 2×1 stacked
+  //   n == 2 → two 2×2 halves
+  //   n == 1 → single full-width frame
+  const tileClass = (i: number): string => {
+    if (i === 0) return n === 1 ? "col-span-4 row-span-2" : "col-span-2 row-span-2";
+    if (n === 2) return "col-span-2 row-span-2";
+    if (n === 3) return "col-span-2 row-span-1";
+    if (n === 4) return i === 3 ? "col-span-2 row-span-1" : "col-span-1 row-span-1";
+    return "col-span-1 row-span-1";
+  };
+
+  const shown = photos.slice(0, 5);
+
+  function onTrackScroll() {
+    const el = trackRef.current;
+    if (!el || el.clientWidth === 0) return;
+    setSlide(Math.min(n - 1, Math.max(0, Math.round(el.scrollLeft / el.clientWidth))));
+  }
 
   return (
-    <div className="grid grid-cols-2 gap-3 mb-8">
-      {photos.map((url, i) => (
-        <button
-          key={url}
-          type="button"
-          onClick={() => open(i)}
-          aria-label={`View photo ${i + 1} of ${photos.length}`}
-          className="block p-0 border-0 bg-transparent cursor-zoom-in"
+    <>
+      {/* Desktop mosaic */}
+      <div
+        className="hidden sm:grid relative grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden border aspect-[2/1]"
+        style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}
+      >
+        {shown.map((url, i) => (
+          <button
+            key={`${url}-${i}`}
+            type="button"
+            onClick={() => open(i)}
+            aria-label={`View photo ${i + 1} of ${n}`}
+            className={`${tileClass(i)} block p-0 border-0 bg-transparent cursor-zoom-in focus-visible:outline-2 focus-visible:-outline-offset-2`}
+            style={{ outlineColor: "var(--pink)" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url} alt="" className="w-full h-full object-cover" loading={i === 0 ? "eager" : "lazy"} />
+          </button>
+        ))}
+        {n > 1 && (
+          <button
+            type="button"
+            onClick={() => open(0)}
+            className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-mono text-[11px] uppercase tracking-[.06em] cursor-pointer"
+            style={{ background: "rgba(255,252,245,.94)", borderColor: "var(--navy-3)", color: "var(--navy)" }}
+          >
+            <span aria-hidden>▦</span> Show all photos ({n})
+          </button>
+        )}
+        {overlay}
+      </div>
+
+      {/* Mobile carousel */}
+      <div
+        className="sm:hidden relative rounded-2xl overflow-hidden border"
+        style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}
+      >
+        <div
+          ref={trackRef}
+          onScroll={onTrackScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth"
+          style={{ scrollbarWidth: "none" }}
+          aria-roledescription="carousel"
+          aria-label={`Listing photos, ${n} total`}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={url}
-            alt=""
-            className="aspect-[4/3] w-full object-cover rounded-xl border"
-            style={{ borderColor: "var(--line)" }}
-            loading="lazy"
-          />
-        </button>
-      ))}
+          {photos.map((url, i) => (
+            <button
+              key={`${url}-m-${i}`}
+              type="button"
+              onClick={() => open(i)}
+              aria-label={`View photo ${i + 1} of ${n}`}
+              className="w-full flex-shrink-0 snap-center block p-0 border-0 bg-transparent cursor-zoom-in"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt="" className="aspect-[4/3] w-full object-cover" loading={i === 0 ? "eager" : "lazy"} />
+            </button>
+          ))}
+        </div>
+        {n > 1 && (
+          <span
+            className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full font-mono text-[11px]"
+            style={{ background: "rgba(10,10,9,.55)", color: "#fff" }}
+            aria-live="polite"
+          >
+            {slide + 1} / {n}
+          </span>
+        )}
+        {overlay}
+      </div>
+
       {node}
-    </div>
+    </>
   );
 }
 

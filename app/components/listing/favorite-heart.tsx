@@ -24,8 +24,12 @@ function loadFavoriteIds(): Promise<Set<string> | null> {
   return idsPromise;
 }
 
-export function FavoriteHeart({ listingId, className }: { listingId: string; className?: string }) {
-  const t = useT();
+/**
+ * Shared favorites state for a listing: syncs from the per-page-load ids
+ * fetch and exposes the optimistic toggle. Used by the browse-card heart
+ * overlay below and by the detail page's inline Save action (DOK-150).
+ */
+export function useFavorite(listingId: string): { fav: boolean; toggle: () => Promise<void> } {
   const router = useRouter();
   const [fav, setFav] = useState(false);
   const [anon, setAnon] = useState(false);
@@ -63,6 +67,13 @@ export function FavoriteHeart({ listingId, className }: { listingId: string; cla
       setFav(!next); // roll back
     }
   }
+
+  return { fav, toggle };
+}
+
+export function FavoriteHeart({ listingId, className }: { listingId: string; className?: string }) {
+  const t = useT();
+  const { fav, toggle } = useFavorite(listingId);
 
   return (
     <button
