@@ -25,6 +25,9 @@ vi.mock("@/app/api/cron/agreements-complete/route", () => ({
 vi.mock("@/app/api/cron/pre-trip-reminders/route", () => ({
   GET: vi.fn(async () => Response.json({ ok: true, due: 0, sent: 0 })),
 }));
+vi.mock("@/app/api/cron/review-reminders/route", () => ({
+  GET: vi.fn(async () => Response.json({ ok: true, due: 0, reminded: 0 })),
+}));
 
 import { GET } from "@/app/api/cron/daily/route";
 import { GET as preTripReminders } from "@/app/api/cron/pre-trip-reminders/route";
@@ -59,6 +62,7 @@ describe("GET /api/cron/daily", () => {
     // The job after the throwing one still ran and reported its outcome.
     expect(vi.mocked(preTripReminders)).toHaveBeenCalledOnce();
     expect(body.results["pre-trip-reminders"]).toEqual({ ok: true, due: 0, sent: 0 });
+    expect(body.results["review-reminders"]).toEqual({ ok: true, due: 0, reminded: 0 });
   });
 
   it("captures the thrown error for error tracking", async () => {
@@ -77,6 +81,7 @@ describe("GET /api/cron/daily", () => {
     expect(byJob.get("saved-searches")).toMatchObject({ level: "error" });
     expect(byJob.get("agreements-complete")).toMatchObject({ level: "error", status: 500 });
     expect(byJob.get("pre-trip-reminders")).toMatchObject({ level: "info" });
+    expect(byJob.get("review-reminders")).toMatchObject({ level: "info" });
     for (const l of lines) expect(typeof l.durationMs).toBe("number");
   });
 });

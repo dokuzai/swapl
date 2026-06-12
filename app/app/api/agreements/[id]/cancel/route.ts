@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { sendEmail } from "@/lib/email";
+import { sendPush, pushTemplates } from "@/lib/push";
 import { insuranceProvider } from "@/lib/insurance";
 
 export async function POST(_req: Request, { params }: RouteContext<"/api/agreements/[id]/cancel">) {
@@ -63,6 +64,9 @@ export async function POST(_req: Request, { params }: RouteContext<"/api/agreeme
       subject: "Your swap was cancelled — insurance refunded",
       text: `The swap between ${agreement.listing1.city} and ${agreement.listing2.city} for ${agreement.dateFrom.toDateString()} → ${agreement.dateTo.toDateString()} has been cancelled. Your insurance policy has been cancelled and any premium share refunded. Browse new matches at /listings.`,
     }).catch((err) => console.error("[cancel:email]", err));
+    sendPush(u.id, pushTemplates.swapCancelled(agreement.proposalId)).catch((err) =>
+      console.error("[cancel:push]", err)
+    );
   }
 
   return NextResponse.json({ ok: true });

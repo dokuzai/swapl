@@ -9,6 +9,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { checkRateLimitDurable } from "@/lib/rate-limit";
+import { sendEmail, emailTemplates } from "@/lib/email";
+import { sendPush, pushTemplates } from "@/lib/push";
 import { forbidden, invalidInput, notFound, unauthenticated, unprocessable, apiError } from "@/lib/api/errors";
 
 const schema = z.object({
@@ -37,8 +39,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/agreemen
     select: {
       id: true,
       status: true,
-      listing1: { select: { userId: true } },
-      listing2: { select: { userId: true } },
+      listing1: { select: { userId: true, user: { select: { email: true } } } },
+      listing2: { select: { userId: true, user: { select: { email: true } } } },
     },
   });
   if (!agreement) return notFound();
@@ -62,6 +64,22 @@ export async function POST(req: Request, { params }: RouteContext<"/api/agreemen
         text: parsed.data.text,
       },
     });
+
+    // Notify the subject — best effort, never blocks the response.
+    const authorName = session.name ?? "Your swap partner";
+    const subjectEmail =
+      subjectId === agreement.listing1.userId
+        ? agreement.listing1.user.email
+        : agreement.listing2.user.email;
+    if (subjectEmail) {
+      sendEmail(emailTemplates.reviewReceived(subjectEmail, authorName, review.rating)).catch(
+        (err) => console.error("[review:email]", err)
+      );
+    }
+    sendPush(subjectId, pushTemplates.reviewReceived(authorName, review.rating)).catch((err) =>
+      console.error("[review:push]", err)
+    );
+
     return NextResponse.json(
       {
         review: {

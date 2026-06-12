@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/abilities";
 import { sendEmail } from "@/lib/email";
+import { sendPush, pushTemplates } from "@/lib/push";
 
 const schema = z.object({ action: z.enum(["approve", "reject"]) });
 
@@ -40,6 +41,9 @@ export async function POST(req: Request, { params }: RouteContext<"/api/admin/ve
         text: `Your listing ${listing.title} is now verified. The badge is live across browse, detail and your profile.`,
       }).catch((err) => console.error("[verify:approve:email]", err));
     }
+    sendPush(listing.userId, pushTemplates.verificationApproved(listing.id, listing.title)).catch(
+      (err) => console.error("[verify:approve:push]", err)
+    );
     return NextResponse.json({ ok: true });
   }
 
@@ -65,5 +69,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/admin/ve
       text: `We weren't able to approve verification for ${listing.title}. The €39 fee has been refunded. You can re-submit anytime from your listing's edit page.`,
     }).catch((err) => console.error("[verify:reject:email]", err));
   }
+  sendPush(listing.userId, pushTemplates.verificationRejected(listing.id)).catch((err) =>
+    console.error("[verify:reject:push]", err)
+  );
   return NextResponse.json({ ok: true });
 }

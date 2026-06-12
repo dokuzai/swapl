@@ -13,9 +13,34 @@
 import { NextResponse } from "next/server";
 import { applyVerificationUpdate, diditConfig, verifyWebhookSignature } from "@/lib/verification/didit";
 import { apiError, invalidInput } from "@/lib/api/errors";
+import { prisma } from "@/lib/db";
+import { sendEmail, emailTemplates } from "@/lib/email";
+import { sendPush, pushTemplates } from "@/lib/push";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+// Best-effort outcome notification — fired only on the first transition into
+// a terminal approved/declined state (applyVerificationUpdate is idempotent,
+// so webhook retries never double-send).
+async function notifyVerificationOutcome(userId: string, approved: boolean): Promise<void> {
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
+    if (user?.email) {
+      sendEmail(
+        approved
+          ? emailTemplates.identityVerified(user.email)
+          : emailTemplates.identityVerificationFailed(user.email)
+      ).catch((err) => console.error("[didit:webhook:email]", err));
+    }
+  } catch (err) {
+    console.error("[didit:webhook:email]", err);
+  }
+  sendPush(
+    userId,
+    approved ? pushTemplates.identityVerified() : pushTemplates.identityVerificationFailed()
+  ).catch((err) => console.error("[didit:webhook:push]", err));
+}
 
 export async function POST(req: Request) {
   const { webhookSecret } = diditConfig();
@@ -46,6 +71,9 @@ export async function POST(req: Request) {
     // Unknown session: acknowledge (200) so Didit doesn't retry forever —
     // it's simply not one of ours (e.g. another environment's workflow).
     if (!applied) return NextResponse.json({ ok: true, unknown: true });
+    if (applied.changed && (applied.status === "approved" || applied.status === "declined")) {
+      await notifyVerificationOutcome(applied.userId, applied.status === "approved");
+    }
     return NextResponse.json({ ok: true, status: applied.status, changed: applied.changed });
   } catch (err) {
     console.error("[didit:webhook] handler failed", err);

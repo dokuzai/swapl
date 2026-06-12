@@ -444,6 +444,10 @@ model SwapAgreement {
   // to both parties, so the sweep never double-sends.
   preTripReminderSentAt DateTime?
 
+  // Set by the review-reminder cron once the "don't forget to review" nudge
+  // has been sent, so the sweep never double-sends.
+  reviewReminderSentAt DateTime?
+
   insurancePolicy InsurancePolicy?
   orderAddOns     OrderAddOn[]
   reviews         SwapReview[]

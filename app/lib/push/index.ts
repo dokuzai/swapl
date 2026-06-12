@@ -35,7 +35,13 @@ export type PushKind =
   | "verificationApproved"
   | "verificationRejected"
   | "featuredActivated"
-  | "addOnPurchased";
+  | "addOnPurchased"
+  | "reviewReceived"
+  | "swapCancelled"
+  | "swapCompleted"
+  | "reviewReminder"
+  | "identityVerified"
+  | "identityVerificationFailed";
 
 export async function sendPush(userId: string, payload: PushPayload): Promise<void> {
   const devices = await prisma.device.findMany({ where: { userId } });
@@ -203,6 +209,48 @@ export const pushTemplates = {
       title: "Add-on confirmed",
       body: `${addOnName} is booked for your swap.`,
       data: { kind: "addOnPurchased", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  reviewReceived(fromName: string, rating: number): PushPayload {
+    return {
+      title: `You received a new review from ${fromName}`,
+      body: `${fromName} rated your swap ${rating}/5. Tap to read it on your profile.`,
+      data: { kind: "reviewReceived", deepLink: "swapl://profile" },
+    };
+  },
+  swapCancelled(proposalId: string): PushPayload {
+    return {
+      title: "Your swap was cancelled",
+      body: "Insurance is cancelled and any premium refunded. Tap for details.",
+      data: { kind: "swapCancelled", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  swapCompleted(proposalId: string): PushPayload {
+    return {
+      title: "Your swap is complete — how was your stay?",
+      body: "Leave a review for your swap partner.",
+      data: { kind: "swapCompleted", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  reviewReminder(proposalId: string): PushPayload {
+    return {
+      title: "Don't forget to review your swap",
+      body: "Your review is still open — it takes two minutes.",
+      data: { kind: "reviewReminder", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  identityVerified(): PushPayload {
+    return {
+      title: "You're verified ✓",
+      body: "The verified badge is live on your profile.",
+      data: { kind: "identityVerified", deepLink: "swapl://profile" },
+    };
+  },
+  identityVerificationFailed(): PushPayload {
+    return {
+      title: "Verification couldn't be completed",
+      body: "Start a new check anytime from your account.",
+      data: { kind: "identityVerificationFailed", deepLink: "swapl://profile" },
     };
   },
 };

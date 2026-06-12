@@ -36,8 +36,28 @@ vi.mock("@/lib/rate-limit", () => ({
   clientIpFromRequest: vi.fn(() => "1.2.3.4"),
 }));
 vi.mock("@/lib/listing-utils", () => ({ toDTO: vi.fn((l: { id: string }) => ({ id: l.id })) }));
-vi.mock("@/lib/email", () => ({ sendEmail: vi.fn(), emailTemplates: {} }));
-vi.mock("@/lib/push", () => ({ sendPush: vi.fn(), pushTemplates: {} }));
+const notif = vi.hoisted(() => ({
+  sendEmail: vi.fn(async (_msg: unknown) => {}),
+  sendPush: vi.fn(async (_userId: string, _payload: unknown) => {}),
+  reviewReceivedEmail: vi.fn((to: string, fromName: string, rating: number) => ({
+    to,
+    subject: `You received a new review from ${fromName}`,
+    text: `rated ${rating}/5`,
+  })),
+  reviewReceivedPush: vi.fn((fromName: string, rating: number) => ({
+    title: `You received a new review from ${fromName}`,
+    body: `${fromName} rated your swap ${rating}/5.`,
+    data: { kind: "reviewReceived", deepLink: "swapl://profile" },
+  })),
+}));
+vi.mock("@/lib/email", () => ({
+  sendEmail: notif.sendEmail,
+  emailTemplates: { reviewReceived: notif.reviewReceivedEmail },
+}));
+vi.mock("@/lib/push", () => ({
+  sendPush: notif.sendPush,
+  pushTemplates: { reviewReceived: notif.reviewReceivedPush },
+}));
 vi.mock("@/lib/insurance", () => ({ insuranceProvider: vi.fn() }));
 
 import { POST as postReview } from "@/app/api/agreements/[id]/review/route";
@@ -48,8 +68,8 @@ const VALID_TEXT = "A lovely stay, the flat was spotless and central.";
 const completedAgreement = {
   id: "ag-1",
   status: "COMPLETED",
-  listing1: { userId: "u-1" },
-  listing2: { userId: "u-2" },
+  listing1: { userId: "u-1", user: { email: "ana@swapl.test" } },
+  listing2: { userId: "u-2", user: { email: "ben@swapl.test" } },
 };
 
 function post(body: unknown, id = "ag-1") {
@@ -145,6 +165,33 @@ describe("POST /api/agreements/{id}/review", () => {
     const res = await post({ rating: 5, text: VALID_TEXT });
     expect(res.status).toBe(201);
     expect(mocks.reviewCreate.mock.calls[0][0].data.subjectId).toBe("u-1");
+  });
+
+  it("notifies the subject (email + push) after creation", async () => {
+    const res = await post({ rating: 4, text: VALID_TEXT });
+    expect(res.status).toBe(201);
+    // Subject is u-2 (listing2's owner) — email goes to their address.
+    expect(notif.reviewReceivedEmail).toHaveBeenCalledWith("ben@swapl.test", "Ana", 4);
+    expect(notif.sendEmail).toHaveBeenCalledTimes(1);
+    expect(notif.sendPush).toHaveBeenCalledTimes(1);
+    expect(notif.sendPush.mock.calls[0][0]).toBe("u-2");
+    expect(notif.reviewReceivedPush).toHaveBeenCalledWith("Ana", 4);
+  });
+
+  it("a failing notification never fails the request (best effort)", async () => {
+    notif.sendEmail.mockRejectedValue(new Error("smtp down"));
+    notif.sendPush.mockRejectedValue(new Error("fcm down"));
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const res = await post({ rating: 5, text: VALID_TEXT });
+    expect(res.status).toBe(201);
+    errSpy.mockRestore();
+  });
+
+  it("does not notify when the review was rejected", async () => {
+    mocks.checkRateLimitDurable.mockResolvedValue({ ok: false, remaining: 0, resetAt: 1 });
+    await post({ rating: 5, text: VALID_TEXT });
+    expect(notif.sendEmail).not.toHaveBeenCalled();
+    expect(notif.sendPush).not.toHaveBeenCalled();
   });
 });
 

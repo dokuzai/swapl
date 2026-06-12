@@ -192,6 +192,66 @@ export const templates = {
       text: `Your swap starts ${dateFrom.toDateString()}. Key codes + 24/7 support live in your thread: ${APP_URL}/swaps`,
     }),
 
+  reviewReceived: (toEmail: string, fromName: string, rating: number) =>
+    build({
+      to: toEmail,
+      subject: `You received a new review from ${fromName}`,
+      preview: `${fromName} rated their swap ${rating}/5.`,
+      heading: `${fromName} reviewed your swap.`,
+      intro: `${fromName} left you a ${rating}/5 review. It's live on your public profile — open it to read the full text.`,
+      ctaLabel: "View your profile",
+      ctaHref: `${APP_URL}/account`,
+      text: `${fromName} left you a ${rating}/5 review on swapl. Read it on your profile: ${APP_URL}/account`,
+    }),
+
+  swapCompleted: (toEmail: string, otherCity: string) =>
+    build({
+      to: toEmail,
+      subject: "Your swap is complete — how was your stay?",
+      preview: "Leave a review for your swap partner.",
+      heading: "Welcome home.",
+      intro: `Your swap with ${otherCity} is complete. Reviews build trust for the whole community — tell the next swapper how your stay went.`,
+      ctaLabel: "Leave a review",
+      ctaHref: `${APP_URL}/swaps`,
+      text: `Your swap with ${otherCity} is complete. Leave a review from your swap thread: ${APP_URL}/swaps`,
+    }),
+
+  reviewReminder: (toEmail: string, otherCity: string) =>
+    build({
+      to: toEmail,
+      subject: "Don't forget to review your swap",
+      preview: "Your swap partner is waiting to hear from you.",
+      heading: "How was your stay?",
+      intro: `Your swap with ${otherCity} wrapped up a week ago and your review is still open. It takes two minutes and helps the next swapper decide.`,
+      ctaLabel: "Leave a review",
+      ctaHref: `${APP_URL}/swaps`,
+      text: `Your swap with ${otherCity} completed a week ago — don't forget to leave a review: ${APP_URL}/swaps`,
+    }),
+
+  identityVerified: (toEmail: string) =>
+    build({
+      to: toEmail,
+      subject: "You're verified ✓",
+      preview: "Your identity check is complete.",
+      heading: "You're verified.",
+      intro: "Your identity verification is complete. The verified badge now shows on your profile and your proposals carry extra trust across the marketplace.",
+      ctaLabel: "View your profile",
+      ctaHref: `${APP_URL}/account`,
+      text: `Your identity verification is complete — the verified badge is live on your profile: ${APP_URL}/account`,
+    }),
+
+  identityVerificationFailed: (toEmail: string) =>
+    build({
+      to: toEmail,
+      subject: "Verification couldn't be completed",
+      preview: "Your identity check didn't go through.",
+      heading: "We couldn't verify you this time.",
+      intro: "Your identity verification couldn't be completed. You can start a new check anytime from your account — it usually takes under two minutes.",
+      ctaLabel: "Try again",
+      ctaHref: `${APP_URL}/account`,
+      text: `Your identity verification couldn't be completed. Start a new check from your account: ${APP_URL}/account`,
+    }),
+
   corporateInvite: (toEmail: string, companyName: string, inviteLink: string) =>
     build({
       to: toEmail,

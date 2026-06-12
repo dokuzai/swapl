@@ -10,6 +10,7 @@ import { GET as featuredExpire } from "../featured-expire/route";
 import { GET as savedSearches } from "../saved-searches/route";
 import { GET as agreementsComplete } from "../agreements-complete/route";
 import { GET as preTripReminders } from "../pre-trip-reminders/route";
+import { GET as reviewReminders } from "../review-reminders/route";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -19,6 +20,7 @@ const JOBS: Array<[string, (req: Request) => Promise<Response>]> = [
   ["saved-searches", savedSearches],
   ["agreements-complete", agreementsComplete],
   ["pre-trip-reminders", preTripReminders],
+  ["review-reminders", reviewReminders],
 ];
 
 const log = createLogger("cron:daily");
