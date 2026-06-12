@@ -296,23 +296,39 @@ private fun BioBlock(u: PublicProfileUser) {
     }
 }
 
+// Sections always render (parity with web + iOS, commit 00b57ee): hiding them
+// when empty read as missing features, so empty states show muted copy instead.
 @Composable
 private fun VisitedBlock(p: PublicProfile) {
     val visited = p.visited.orEmpty()
-    if (visited.isEmpty()) return
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
         KickerLabel("Where I've been")
-        CityStampStrip(visited)
+        if (visited.isEmpty()) {
+            Text(
+                "No completed swaps yet — passport stamps appear here after each stay.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            CityStampStrip(visited)
+        }
     }
 }
 
 @Composable
 private fun ReviewsBlock(p: PublicProfile) {
     val reviews = p.reviews.orEmpty()
-    if (reviews.isEmpty()) return
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-        KickerLabel("Reviews (${statsOf(p).reviewsCount})")
-        reviews.forEach { ReviewCard(it) }
+        KickerLabel(if (reviews.isEmpty()) "Reviews" else "Reviews (${statsOf(p).reviewsCount})")
+        if (reviews.isEmpty()) {
+            Text(
+                "No reviews yet — hosts review each other after a completed swap.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            reviews.forEach { ReviewCard(it) }
+        }
     }
 }
 
