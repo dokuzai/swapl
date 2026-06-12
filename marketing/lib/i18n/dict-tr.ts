@@ -284,4 +284,17 @@ export const tr: Partial<Record<DictKey, string>> = {
   // ---- Locale switcher ----
   "locale.label": "Dil",
   "locale.changeTo": "Şuna geç:",
+
+  // ---- App showcase ----
+  "appShowcase.kicker": "Uygulama",
+  "appShowcase.title": "Bir sonraki takasın,",
+  "appShowcase.titleEm": "cebinde",
+  "appShowcase.lede":
+    "Doğrulanmış evlere göz atın, seyahatlerinizi planlayın ve takas ortaklarınızla Swapl iOS uygulamasından mesajlaşın. Aşağıdaki her ekran gerçek — doğrudan uygulamadan alındı.",
+  "appShowcase.cta": "Yakında App Store'da",
+  "appShowcase.shot.browse": "Evlere göz at",
+  "appShowcase.shot.detail": "İlan detayı",
+  "appShowcase.shot.trips": "Seyahatler",
+  "appShowcase.shot.messages": "Mesajlar",
+  "appShowcase.shot.wishlists": "İstek listeleri",
 };

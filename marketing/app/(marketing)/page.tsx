@@ -1,5 +1,6 @@
 import { Hero } from "@/components/marketing/hero";
 import { HowItWorks } from "@/components/marketing/how-it-works";
+import { AppShowcase } from "@/components/marketing/app-showcase";
 import { LivePairs } from "@/components/marketing/live-pairs";
 import { FilterDemo } from "@/components/marketing/filter-demo";
 import { InsuranceSection } from "@/components/marketing/insurance";
@@ -22,6 +23,7 @@ export default function MarketingHome() {
       <HowItWorks />
       <LivePairs />
       <CityLaunchPlan />
+      <AppShowcase />
       <FilterDemo />
       <InsuranceSection />
       <Faq />

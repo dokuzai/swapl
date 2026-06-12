@@ -284,4 +284,17 @@ export const nl: Partial<Record<DictKey, string>> = {
   // ---- Locale switcher ----
   "locale.label": "Taal",
   "locale.changeTo": "Wissel naar",
+
+  // ---- App showcase ----
+  "appShowcase.kicker": "De app",
+  "appShowcase.title": "Je volgende ruil,",
+  "appShowcase.titleEm": "in je broekzak",
+  "appShowcase.lede":
+    "Bekijk geverifieerde huizen, plan reizen en chat met ruilpartners vanuit de Swapl iOS-app. Elk scherm hieronder is echt — rechtstreeks uit de app.",
+  "appShowcase.cta": "Binnenkort in de App Store",
+  "appShowcase.shot.browse": "Huizen ontdekken",
+  "appShowcase.shot.detail": "Woningdetail",
+  "appShowcase.shot.trips": "Reizen",
+  "appShowcase.shot.messages": "Berichten",
+  "appShowcase.shot.wishlists": "Verlanglijstjes",
 };

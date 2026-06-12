@@ -363,6 +363,17 @@ export const en = {
   "terms.s6.title": "Changes",
   "terms.s6.body":
     "We'll email you at least 30 days before any material change to these terms. Continued use after the change date means acceptance; you can always delete your account if you'd rather not continue.",
+  "appShowcase.kicker": "The app",
+  "appShowcase.title": "Your next swap,",
+  "appShowcase.titleEm": "in your pocket",
+  "appShowcase.lede":
+    "Browse verified homes, plan trips and message swap partners from the Swapl iOS app. Every screen below is the real thing — captured straight from the app.",
+  "appShowcase.cta": "Coming to the App Store",
+  "appShowcase.shot.browse": "Browse homes",
+  "appShowcase.shot.detail": "Listing detail",
+  "appShowcase.shot.trips": "Trips",
+  "appShowcase.shot.messages": "Messages",
+  "appShowcase.shot.wishlists": "Wishlists",
 } as const;
 
 export type DictKey = keyof typeof en;

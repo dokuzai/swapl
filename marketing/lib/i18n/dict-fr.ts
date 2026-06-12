@@ -269,4 +269,17 @@ export const fr: Partial<Record<DictKey, string>> = {
 
   "locale.label": "Langue",
   "locale.changeTo": "Changer en",
+
+  // ---- App showcase ----
+  "appShowcase.kicker": "L'app",
+  "appShowcase.title": "Votre prochain échange,",
+  "appShowcase.titleEm": "dans la poche",
+  "appShowcase.lede":
+    "Parcourez des maisons vérifiées, planifiez vos voyages et écrivez à vos partenaires d'échange depuis l'app iOS Swapl. Chaque écran ci-dessous est réel — capturé directement dans l'app.",
+  "appShowcase.cta": "Bientôt sur l'App Store",
+  "appShowcase.shot.browse": "Parcourir les maisons",
+  "appShowcase.shot.detail": "Fiche du logement",
+  "appShowcase.shot.trips": "Voyages",
+  "appShowcase.shot.messages": "Messages",
+  "appShowcase.shot.wishlists": "Favoris",
 };

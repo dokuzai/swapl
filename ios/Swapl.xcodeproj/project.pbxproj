@@ -13,6 +13,7 @@
 		10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */; };
 		12A73281C203C687F50C0A01 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DF9FF9E682ED439398C38D /* LoginView.swift */; };
 		1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC7EF0654A2A456B14E52A5 /* AuthService.swift */; };
+		1E8045FACF592530295ACBD6 /* MarketingScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E01813089345C06F7B5499 /* MarketingScreenshotTests.swift */; };
 		1E9087DE48A98F8391B49E4F /* SwaplPageTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC51BEDDB64724941D1CAE27 /* SwaplPageTitle.swift */; };
 		1EB702BD888B0CA98111570F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 894AED6F36AAF11BFF8CA2FB /* PrivacyInfo.xcprivacy */; };
 		23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967B9C41F5F9438E30143514 /* APIClient.swift */; };
@@ -137,6 +138,7 @@
 		B2ECF15F803E263DBFEB14FC /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = "../packages/design-tokens/build/swift"; sourceTree = SOURCE_ROOT; };
 		B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
 		B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplFonts.swift; sourceTree = "<group>"; };
+		B8E01813089345C06F7B5499 /* MarketingScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketingScreenshotTests.swift; sourceTree = "<group>"; };
 		BC51BEDDB64724941D1CAE27 /* SwaplPageTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplPageTitle.swift; sourceTree = "<group>"; };
 		BC848E7485CD6912E46E61BE /* SurfaceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurfaceCard.swift; sourceTree = "<group>"; };
 		CAEEE99CFDC981E6B91926F5 /* PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushService.swift; sourceTree = "<group>"; };
@@ -332,6 +334,7 @@
 				1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */,
 				2CD57A2AA63115467E0C218C /* DeepLinkRoutingTests.swift */,
 				FE175D04D0E8B92BDB0623DF /* FeatureWalkthroughTests.swift */,
+				B8E01813089345C06F7B5499 /* MarketingScreenshotTests.swift */,
 			);
 			path = SwaplUITests;
 			sourceTree = "<group>";
@@ -554,6 +557,7 @@
 				CE2E19FCF7D3A7155FABE8CA /* AIDraftProposalTests.swift in Sources */,
 				B22399321C05438FA41249DB /* DeepLinkRoutingTests.swift in Sources */,
 				975F281EA211E4762D3F16AB /* FeatureWalkthroughTests.swift in Sources */,
+				1E8045FACF592530295ACBD6 /* MarketingScreenshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
