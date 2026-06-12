@@ -200,7 +200,7 @@ struct MessageRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            ProposalAvatar(proposal: proposal)
+            ProposalCoverImage(proposal: proposal)
                 .frame(width: 72, height: 72)
                 .accessibilityHidden(true)
 
@@ -243,6 +243,32 @@ struct MessageRow: View {
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("EEE")
         return formatter.string(from: date)
+    }
+}
+
+// Cover photo of the other home when the API provides one, with the
+// letter-tile ProposalAvatar as the fallback (no photo, bad URL, load error).
+struct ProposalCoverImage: View {
+    let proposal: ProposalSummary
+
+    var body: some View {
+        Group {
+            if let urlString = proposal.theirCoverPhotoUrl, let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        ProposalAvatar(proposal: proposal)
+                    }
+                }
+            } else {
+                ProposalAvatar(proposal: proposal)
+            }
+        }
+        .frame(width: 72, height: 72)
+        .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
     }
 }
 

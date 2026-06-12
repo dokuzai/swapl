@@ -9,8 +9,10 @@ struct ProposalSummary: Identifiable, Codable, Hashable, Sendable {
     let message: String?
     let myCity: String
     let myNeighbourhood: String
+    let myCoverPhotoUrl: String?
     let theirCity: String
     let theirNeighbourhood: String
+    let theirCoverPhotoUrl: String?
     let otherName: String?
     let updatedAt: String
 }

@@ -143,7 +143,7 @@ struct TripCard: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            ProposalAvatar(proposal: trip)
+            ProposalCoverImage(proposal: trip)
                 .frame(width: 72, height: 72)
                 .accessibilityHidden(true)
 
