@@ -58,6 +58,16 @@ class ProfileRepository @Inject constructor(private val api: ApiClient) {
             setBody(InterestsBody(slugs, bioVibe))
         }
 
+    // POST /api/auth/change-password (DOK-149). currentPassword is null when a
+    // social/OTP-only account sets its first password; the server keeps THIS
+    // device's token valid and revokes every other one.
+    suspend fun changePassword(currentPassword: String?, newPassword: String) {
+        api.client.post("${api.baseUrl}/api/auth/change-password") {
+            contentType(ContentType.Application.Json)
+            setBody(ChangePasswordBody(currentPassword, newPassword))
+        }
+    }
+
     suspend fun savedSearches(): List<SavedSearch> =
         api.client.get("${api.baseUrl}/api/saved-searches").body<SavedSearchesResponse>().items
 
@@ -85,6 +95,12 @@ class ProfileRepository @Inject constructor(private val api: ApiClient) {
         val showHomeCity: Boolean? = null,
         val emailNotifications: Boolean? = null,
         val pushNotifications: Boolean? = null,
+    )
+
+    @Serializable
+    private data class ChangePasswordBody(
+        val currentPassword: String? = null,
+        val newPassword: String,
     )
 
     @Serializable

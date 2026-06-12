@@ -13,12 +13,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -36,6 +39,7 @@ import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -184,6 +188,107 @@ fun PersonalInfoScreen(vm: PersonalInfoViewModel = hiltViewModel()) {
             )
         }
     }
+}
+
+// ---------------------------------------------------------------------------
+// Change password (DOK-149). Dialog with the three fields posted to
+// /api/auth/change-password — this device's token survives, every other one
+// is revoked server-side. Social/OTP accounts leave "current" empty to set
+// their first password.
+// ---------------------------------------------------------------------------
+
+@HiltViewModel
+class ChangePasswordViewModel @Inject constructor(
+    private val repo: ProfileRepository,
+) : ViewModel() {
+    var currentPassword by mutableStateOf("")
+    var newPassword by mutableStateOf("")
+    var confirmPassword by mutableStateOf("")
+    var isSubmitting by mutableStateOf(false); private set
+    var error by mutableStateOf<String?>(null); private set
+
+    fun submit(onSuccess: () -> Unit) {
+        if (isSubmitting) return
+        error = when {
+            newPassword.length < 6 -> "Use at least 6 characters."
+            newPassword != confirmPassword -> "Passwords don't match."
+            else -> null
+        }
+        if (error != null) return
+        isSubmitting = true
+        viewModelScope.launch {
+            runCatching { repo.changePassword(currentPassword.ifEmpty { null }, newPassword) }
+                .onSuccess {
+                    isSubmitting = false
+                    onSuccess()
+                }
+                .onFailure {
+                    isSubmitting = false
+                    error = friendlyError(it)
+                }
+        }
+    }
+
+    private fun friendlyError(t: Throwable): String =
+        when ((t as? ResponseException)?.response?.status?.value) {
+            400 -> "Use at least 6 characters."
+            403 -> "Current password is incorrect."
+            429 -> "Too many attempts — try again in an hour."
+            else -> "Couldn't change the password. Try again."
+        }
+}
+
+@Composable
+fun ChangePasswordDialog(
+    onDismiss: () -> Unit,
+    onSuccess: () -> Unit,
+    vm: ChangePasswordViewModel = hiltViewModel(),
+) {
+    AlertDialog(
+        onDismissRequest = { if (!vm.isSubmitting) onDismiss() },
+        title = { Text("Change password") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
+                OutlinedTextField(
+                    vm.currentPassword, { vm.currentPassword = it },
+                    label = { Text("Current password") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    supportingText = { Text("Leave empty if you signed up with Google, Telegram or an email code.") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(
+                    vm.newPassword, { vm.newPassword = it },
+                    label = { Text("New password") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    supportingText = { Text("At least 6 characters. Other devices get signed out.") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(
+                    vm.confirmPassword, { vm.confirmPassword = it },
+                    label = { Text("Confirm new password") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                vm.error?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { vm.submit(onSuccess) },
+                enabled = !vm.isSubmitting && vm.newPassword.isNotEmpty() && vm.confirmPassword.isNotEmpty(),
+            ) {
+                Text(if (vm.isSubmitting) "Saving…" else "Change password")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss, enabled = !vm.isSubmitting) { Text("Cancel") }
+        },
+    )
 }
 
 // ---------------------------------------------------------------------------

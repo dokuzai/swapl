@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
@@ -35,6 +36,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -105,6 +108,8 @@ fun AccountScreen(
     var confirmSignOut by remember { mutableStateOf(false) }
     var passkeyMessage by remember { mutableStateOf<String?>(null) }
     var addingPasskey by remember { mutableStateOf(false) }
+    var showChangePassword by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // "Passkeys" menu entry: options from the backend → Credential Manager
     // sheet → verify. Graceful on every exit: dismissal is silent, anything
@@ -140,6 +145,9 @@ fun AccountScreen(
         }
     }
 
+    // Box overlay so the change-password snackbar can float over the
+    // scrolling settings column (the screen has no Scaffold of its own).
+    Box(Modifier.fillMaxSize()) {
     Column(
         Modifier
             .fillMaxSize()
@@ -227,8 +235,8 @@ fun AccountScreen(
         Column {
             KickerLabel("Settings")
             MenuRow(Icons.Default.AccountCircle, "Personal information", onClick = onOpenPersonalInfo)
-            // Login & security: passkeys are the only authed credential
-            // management the API exposes (no authed change-password route).
+            // Login & security (DOK-149): in-place password change + passkeys.
+            MenuRow(Icons.Default.Lock, "Change password") { showChangePassword = true }
             MenuRow(Icons.Default.Key, if (addingPasskey) "Login & security — Passkeys…" else "Login & security — Passkeys") { addPasskey() }
             MenuRow(Icons.Default.PrivacyTip, "Privacy", onClick = onOpenPrivacy)
             MenuRow(Icons.Default.Notifications, "Notifications", onClick = onOpenNotifications)
@@ -262,6 +270,22 @@ fun AccountScreen(
                 .fillMaxWidth()
                 .padding(vertical = SwaplSpacing.s4),
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+    }
+
+    SnackbarHost(
+        hostState = snackbarHostState,
+        modifier = Modifier.align(Alignment.BottomCenter),
+    )
+    }
+
+    if (showChangePassword) {
+        ChangePasswordDialog(
+            onDismiss = { showChangePassword = false },
+            onSuccess = {
+                showChangePassword = false
+                scope.launch { snackbarHostState.showSnackbar("Password changed. Other devices were signed out.") }
+            },
         )
     }
 
