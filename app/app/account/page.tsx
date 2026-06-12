@@ -5,6 +5,8 @@ import { Footer } from "@/components/layout/footer";
 import { getSession } from "@/lib/auth/session";
 import Link from "next/link";
 import { AISettings } from "@/components/account/ai-settings";
+import { TravelProfileSection } from "@/components/account/travel-profile";
+import { I18nProviderShell } from "@/components/i18n/provider-shell";
 import { PasskeysSection } from "@/components/account/passkeys";
 import { toPasskeySummary } from "@/lib/auth/passkeys";
 
@@ -109,6 +111,10 @@ export default async function AccountPage() {
           <PasskeysSection passkeys={passkeys} />
 
           <AISettings />
+
+          <I18nProviderShell>
+            <TravelProfileSection />
+          </I18nProviderShell>
 
           <section className="surface-card p-6 mb-6">
             <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Your interests</h2>

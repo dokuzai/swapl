@@ -12,6 +12,7 @@ import { getCachedCityMediaMap, cityMediaKey } from "@/lib/city-media";
 import { getDictionary, t as tt } from "@/lib/i18n/server";
 import { getDiscoverExperiences, getDiscoverServices } from "@/lib/discover";
 import { BrowseChips, ExperiencesGrid, ServicesGrid, type BrowseTab } from "@/components/listing/browse-discover";
+import { InspireButton } from "@/components/ui/inspire-button";
 
 export const metadata = {
   title: "Browse homes · swapl",
@@ -69,7 +70,10 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
           <p className="mt-3 max-w-2xl text-[16px]" style={{ color: "var(--navy-2)" }}>
             {dict[`browse.${tab}.lede`]}
           </p>
-          <div className="mt-6">{chips}</div>
+          <div className="mt-6 flex items-center gap-3 flex-wrap">
+          {chips}
+          <InspireButton label={dict["inspire.cta"]} />
+        </div>
         </header>
         {tab === "experiences" ? (
           <ExperiencesGrid items={experiences} dict={dict} />
@@ -113,7 +117,10 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
             <span>{dict["listings.listFirst.body"]}</span>
           </div>
         )}
-        <div className="mt-6">{chips}</div>
+        <div className="mt-6 flex items-center gap-3 flex-wrap">
+          {chips}
+          <InspireButton label={dict["inspire.cta"]} />
+        </div>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[320px_1fr]">

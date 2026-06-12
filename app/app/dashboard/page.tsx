@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { ListingCard } from "@/components/listing/listing-card";
+import { InspireButton } from "@/components/ui/inspire-button";
 import { AISuggestions } from "@/components/listing/ai-suggestions";
 import { VerifyEmailBanner } from "@/components/account/verify-email-banner";
 import {
@@ -79,11 +80,14 @@ export default async function DashboardPage({
   return (
     <div className="wrap py-10 lg:py-14">
       {user && !user.emailVerifiedAt && <VerifyEmailBanner email={user.email} />}
-      <header className="mb-10">
-        <p className="kicker mb-3">{dict["dashboard.greeting"]} {user?.name ?? user?.email.split("@")[0]} 👋</p>
-        <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">
-          {dict["dashboard.title"]}
-        </h1>
+      <header className="mb-10 flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <p className="kicker mb-3">{dict["dashboard.greeting"]} {user?.name ?? user?.email.split("@")[0]} 👋</p>
+          <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">
+            {dict["dashboard.title"]}
+          </h1>
+        </div>
+        <InspireButton label={dict["inspire.cta"]} />
       </header>
 
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
