@@ -2,17 +2,17 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
-import { CityIllust, SwapArrows } from "@/components/illustrations";
-import { paletteForCity } from "@/lib/cities";
 import { marketingUrl } from "@/lib/marketing/urls";
 import { formatDateRange } from "@/lib/listing-utils";
 import SwapActions from "./swap-actions";
 import { LeaveReview } from "./leave-review";
+import { SwapContextPanel } from "./swap-context-panel";
 import { AffiliateLink } from "@/components/affiliate/affiliate-link";
 import { ConciergeSection, type AddOn as ConciergeAddOn } from "@/components/concierge/concierge-section";
 import { PersonalisedSuggestions } from "@/components/affiliate/personalised-suggestions";
 import { getEffectivePlan } from "@/lib/billing/limits";
-import { RetryCoverButton } from "@/components/insurance/retry-cover-button";
+import { getConversations } from "../conversations";
+import { ConversationList } from "../conversation-list";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +41,10 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
   const otherName = isProposer ? proposal.targetListing.user.name : proposal.proposer.name;
   const canRespondAsTarget = isTarget && (proposal.status === "PENDING" || proposal.status === "COUNTERED");
   const canCounter = proposal.status === "PENDING" || proposal.status === "COUNTERED";
+
+  // Left column of the three-pane layout (DOK-150): same conversation list
+  // as /swaps, with this thread highlighted.
+  const conversations = await getConversations(session.userId);
 
   // Review eligibility (DOK-147): agreement COMPLETED and the caller has not
   // reviewed it yet — same gate as GET /api/proposals/{id}.
@@ -82,17 +86,79 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
     cityGuideIncluded = plan.id !== "free";
   }
 
+  const actions = (
+    <SwapActions
+      proposalId={proposal.id}
+      status={proposal.status}
+      isProposer={isProposer}
+      canRespondAsTarget={canRespondAsTarget}
+      canCounter={canCounter}
+      currentDateFrom={proposal.dateFrom.toISOString().slice(0, 10)}
+      currentDateTo={proposal.dateTo.toISOString().slice(0, 10)}
+    />
+  );
+
+  const contextPanel = (
+    <SwapContextPanel
+      status={proposal.status}
+      dateFrom={proposal.dateFrom.toISOString()}
+      dateTo={proposal.dateTo.toISOString()}
+      otherName={otherName}
+      myListing={{
+        id: myListing.id,
+        city: myListing.city,
+        neighbourhood: myListing.neighbourhood,
+        sizeSqm: myListing.sizeSqm,
+        sleeps: myListing.sleeps,
+      }}
+      theirListing={{
+        id: theirListing.id,
+        city: theirListing.city,
+        neighbourhood: theirListing.neighbourhood,
+        sizeSqm: theirListing.sizeSqm,
+        sleeps: theirListing.sleeps,
+      }}
+      agreement={
+        proposal.agreement
+          ? {
+              id: proposal.agreement.id,
+              yourGuestCode: isProposer ? proposal.agreement.keyCode2 : proposal.agreement.keyCode1,
+              yourCode: isProposer ? proposal.agreement.keyCode1 : proposal.agreement.keyCode2,
+              insurancePolicy: proposal.agreement.insurancePolicy
+                ? {
+                    status: proposal.agreement.insurancePolicy.status,
+                    coverageAmount: proposal.agreement.insurancePolicy.coverageAmount,
+                    policyNumber: proposal.agreement.insurancePolicy.policyNumber,
+                    documentsUrl: proposal.agreement.insurancePolicy.documentsUrl,
+                  }
+                : null,
+            }
+          : null
+      }
+      actions={actions}
+    />
+  );
+
   return (
-    <div className="wrap py-10 lg:py-14">
-      <Link href="/swaps" className="font-mono text-xs uppercase tracking-[.08em] mb-6 inline-block" style={{ color: "var(--navy-3)" }}>
+    <div className="wrap py-6 lg:py-10">
+      <Link
+        href="/swaps"
+        className="font-mono text-xs uppercase tracking-[.08em] mb-6 inline-block lg:hidden"
+        style={{ color: "var(--navy-3)" }}
+      >
         ← All swaps
       </Link>
 
-      <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-        <div>
-          <header className="mb-8">
+      {/* Three-pane layout (DOK-150): conversations | thread | swap context. */}
+      <div className="lg:grid lg:gap-8 lg:grid-cols-[320px_minmax(0,1fr)_340px] lg:items-start">
+        <aside className="hidden lg:block lg:sticky lg:top-24" aria-label="All conversations">
+          <ConversationList conversations={conversations} activeId={proposal.id} />
+        </aside>
+
+        <div className="min-w-0">
+          <header className="mb-6">
             <p className="kicker mb-3">Proposal · {proposal.status.toLowerCase()}</p>
-            <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">
+            <h1 className="font-display text-3xl lg:text-4xl tracking-[-0.02em] leading-[1.05] font-medium">
               {myListing.neighbourhood} · {myListing.city}{" "}
               <span style={{ color: "var(--pink)" }}>⇄</span>{" "}
               {theirListing.neighbourhood} · {theirListing.city}
@@ -102,10 +168,17 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
             </p>
           </header>
 
-          <div className="grid grid-cols-2 gap-4 mb-10">
-            <ListingThumb listing={myListing} label="Your home" />
-            <ListingThumb listing={theirListing} label="Their home" />
-          </div>
+          {/* Mobile: swap context collapses above the thread. */}
+          <details className="lg:hidden surface-card mb-6 overflow-hidden">
+            <summary
+              className="cursor-pointer list-none p-4 font-mono text-[11px] uppercase tracking-[.08em] flex items-center justify-between"
+              style={{ color: "var(--navy-2)" }}
+            >
+              Swap details
+              <span aria-hidden style={{ color: "var(--navy-3)" }}>+</span>
+            </summary>
+            <div className="p-4 pt-0">{contextPanel}</div>
+          </details>
 
           <section className="surface-card p-6 mb-6">
             <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Original proposal</h2>
@@ -133,46 +206,20 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
 
           {proposal.status === "ACCEPTED" && proposal.agreement && (
             <section className="surface-card p-6 mb-6" style={{ background: "var(--navy)", color: "var(--cream)" }}>
-              <h2 className="font-display text-xl mb-3" style={{ color: "var(--cream)" }}>
+              <h2 className="font-display text-xl mb-2" style={{ color: "var(--cream)" }}>
                 Swap agreed — keys for keys
               </h2>
-              <div className="grid grid-cols-2 gap-5 mb-5">
-                <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[.08em] mb-1" style={{ color: "color-mix(in oklab, var(--cream) 60%, transparent)" }}>
-                    Your guest's code (theirs to use at your place)
-                  </div>
-                  <div className="font-mono text-2xl tracking-widest">{isProposer ? proposal.agreement.keyCode2 : proposal.agreement.keyCode1}</div>
-                </div>
-                <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[.08em] mb-1" style={{ color: "color-mix(in oklab, var(--cream) 60%, transparent)" }}>
-                    Your code (yours to use at their place)
-                  </div>
-                  <div className="font-mono text-2xl tracking-widest">{isProposer ? proposal.agreement.keyCode1 : proposal.agreement.keyCode2}</div>
-                </div>
-              </div>
-              {proposal.agreement.insurancePolicy && (
-                <p className="text-sm" style={{ color: "color-mix(in oklab, var(--cream) 75%, transparent)" }}>
-                  Policy <span className="font-mono">{proposal.agreement.insurancePolicy.policyNumber}</span> · €
-                  {proposal.agreement.insurancePolicy.coverageAmount.toLocaleString()} cover · 24/7 line:{" "}
-                  <span className="font-mono">+44 800 000 swap</span>
-                </p>
-              )}
+              <p className="text-sm" style={{ color: "color-mix(in oklab, var(--cream) 75%, transparent)" }}>
+                Key codes and your insurance certificate live in the swap panel
+                <span className="lg:hidden"> above</span>
+                <span className="hidden lg:inline"> on the right</span>.
+              </p>
             </section>
           )}
 
           {canReview && proposal.agreement && (
             <LeaveReview agreementId={proposal.agreement.id} otherName={otherName ?? "your swap partner"} />
           )}
-
-          <SwapActions
-            proposalId={proposal.id}
-            status={proposal.status}
-            isProposer={isProposer}
-            canRespondAsTarget={canRespondAsTarget}
-            canCounter={canCounter}
-            currentDateFrom={proposal.dateFrom.toISOString().slice(0, 10)}
-            currentDateTo={proposal.dateTo.toISOString().slice(0, 10)}
-          />
 
           {proposal.status === "ACCEPTED" && proposal.agreement && (
             <>
@@ -225,100 +272,10 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
           )}
         </div>
 
-        <aside className="space-y-5">
-          <div className="surface-card p-6">
-            <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-2" style={{ color: "var(--navy-3)" }}>
-              Insurance
-            </div>
-            <InsuranceAside
-              policy={proposal.agreement?.insurancePolicy ?? null}
-              agreementId={proposal.agreement?.id ?? null}
-            />
-          </div>
+        <aside className="hidden lg:block lg:sticky lg:top-24" aria-label="Swap details">
+          {contextPanel}
         </aside>
       </div>
     </div>
-  );
-}
-
-function InsuranceAside({
-  policy,
-  agreementId,
-}: {
-  policy: { status: string; coverageAmount: number; policyNumber: string; documentsUrl: string | null } | null;
-  agreementId: string | null;
-}) {
-  if (!policy) {
-    return (
-      <>
-        <div className="font-display text-lg mb-2">Auto-issued on acceptance</div>
-        <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-          When this swap is accepted, both homes are insured automatically. No checkbox, no upsell.
-        </p>
-      </>
-    );
-  }
-
-  if (policy.status === "pending" && agreementId) {
-    return (
-      <>
-        <div className="font-display text-lg mb-2">Finalising your cover…</div>
-        <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>
-          Your swap is confirmed. We&rsquo;re issuing the policy with our underwriter — this usually takes a moment.
-        </p>
-        <RetryCoverButton agreementId={agreementId} />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <div className="font-display text-lg mb-2">
-        €{policy.coverageAmount.toLocaleString()} cover · {policy.status}
-      </div>
-      <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-        Auto-issued on acceptance. Property damage, third-party liability and trip interruption — both directions.
-      </p>
-      <p className="mt-2 font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
-        Policy {policy.policyNumber}
-      </p>
-      {policy.documentsUrl && (
-        <a
-          href={policy.documentsUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="pill-ghost mt-3 inline-block"
-        >
-          View certificate of cover →
-        </a>
-      )}
-    </>
-  );
-}
-
-function ListingThumb({
-  listing,
-  label,
-}: {
-  listing: { id: string; city: string; neighbourhood: string; sizeSqm: number; sleeps: number; title: string };
-  label: string;
-}) {
-  return (
-    <Link href={`/listings/${listing.id}`} className="surface-card overflow-hidden block">
-      <div className="aspect-[4/3]">
-        <CityIllust city={listing.city} palette={paletteForCity(listing.city)} />
-      </div>
-      <div className="p-4">
-        <div className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-          {label}
-        </div>
-        <div className="font-display text-base mt-1">
-          {listing.neighbourhood} · {listing.city}
-        </div>
-        <div className="text-xs mt-0.5" style={{ color: "var(--navy-3)" }}>
-          {listing.sizeSqm}m² · sleeps {listing.sleeps}
-        </div>
-      </div>
-    </Link>
   );
 }
