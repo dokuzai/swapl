@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { prisma } from "@/lib/db";
+import { prisma, parseJSON } from "@/lib/db";
 import { DiscoverCity, DiscoverCitySkeleton } from "@/components/listing/discover-city";
 import { Attribution, HeroIllustration, ListingPhotoGrid } from "@/components/listing/photo-lightbox";
 import { getCityIllustration } from "@/lib/city-media";
@@ -20,12 +20,23 @@ export async function generateMetadata(props: PageProps<"/listings/[id]">) {
   const { id } = await props.params;
   const l = await prisma.listing.findUnique({ where: { id } });
   if (!l) return { title: "Listing not found · swapl" };
+  const cover = parseJSON<string[]>(l.photos, [])[0];
   return {
     title: `${l.neighbourhood} · ${l.city} — ${l.title} · swapl`,
     description: l.description.slice(0, 160),
     openGraph: {
       title: `${l.title} · ${l.city}`,
       description: l.description.slice(0, 160),
+      url: `/listings/${l.id}`,
+      // Cover photo so shared links (iMessage/WhatsApp/Slack) preview the
+      // home; the site-wide opengraph-image stays the fallback.
+      ...(cover ? { images: [{ url: cover, alt: `${l.title} in ${l.city}` }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: `${l.title} · ${l.city}`,
+      description: l.description.slice(0, 160),
+      ...(cover ? { images: [cover] } : {}),
     },
   };
 }
