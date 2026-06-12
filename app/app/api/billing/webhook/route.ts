@@ -14,7 +14,12 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe, STRIPE_WEBHOOK_SECRET, BillingNotConfigured } from "@/lib/billing/stripe";
-import { reconcilePaymentIntent, reconcileRefund } from "@/lib/billing/reconcile";
+import {
+  reconcilePaymentIntent,
+  reconcilePaymentIntentFailed,
+  reconcileRefund,
+  reconcileSetupIntent,
+} from "@/lib/billing/reconcile";
 import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
@@ -73,6 +78,14 @@ export async function POST(req: Request) {
 
       case "payment_intent.succeeded":
         await reconcilePaymentIntent(event.data.object as Stripe.PaymentIntent);
+        break;
+
+      case "payment_intent.payment_failed":
+        await reconcilePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+        break;
+
+      case "setup_intent.succeeded":
+        await reconcileSetupIntent(event.data.object as Stripe.SetupIntent);
         break;
 
       case "refund.created":

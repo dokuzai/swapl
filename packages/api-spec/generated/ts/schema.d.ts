@@ -2123,12 +2123,14 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
-                        /** @description Optional free-text wish */
+                        /** @description Optional free-text wish (may be a voice transcription) — parsed into structured filters; explicit fields win */
                         prompt?: string;
                         /** @description yyyy-MM-dd */
                         dateFrom?: string;
                         /** @description yyyy-MM-dd */
                         dateTo?: string;
+                        /** @description Explicit destination city — wins over anything extracted from the prompt */
+                        city?: string;
                     };
                 };
             };
@@ -2217,6 +2219,8 @@ export interface paths {
                             ok: boolean;
                             proposalId: string;
                             packageId: string;
+                            /** @description none | saved — "saved" means the card will be charged off-session only if the host accepts */
+                            paymentStatus?: string;
                         };
                     };
                 };
@@ -2236,6 +2240,176 @@ export interface paths {
                 };
                 /** @description Account suspended */
                 403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package already confirmed/dismissed */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/assistant/inspire/{id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Toggle package items on/off (editable draft)
+         * @description Accepts a single { itemId, selected } or { items: [...] }. Only DRAFT packages are editable; confirm/checkout/charge read the selections current at their time. Unknown item ids are rejected.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        itemId: string;
+                        selected: boolean;
+                    } | {
+                        items: {
+                            itemId: string;
+                            selected: boolean;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Selections updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            items: {
+                                experiences?: components["schemas"]["InspireItemFlags"][];
+                                services?: components["schemas"]["InspireItemFlags"][];
+                                addOns?: components["schemas"]["InspireItemFlags"][];
+                            };
+                            payable: {
+                                totalCents: number;
+                                currency: string;
+                            };
+                        };
+                    };
+                };
+                /** @description Unknown itemId or invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package already confirmed/dismissed */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/assistant/inspire/{id}/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Save a card for pay-on-accept (no charge)
+         * @description Pay-on-accept, env-gated on Stripe. Payable items are ONLY the selected concierge add-ons with priceCents > 0 — affiliate items stay external links. When payable items exist and Stripe is configured, returns a SetupIntent clientSecret (usage off_session) so the card is saved; NOTHING is charged until the host accepts the proposal. Without Stripe or with zero payable items, returns paymentRequired=false and the flow continues without a payment step.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Checkout state */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            paymentRequired: boolean;
+                            /** @description SetupIntent client secret — present only when paymentRequired */
+                            clientSecret?: string;
+                            /** @description Copy for the client: you'll only be charged if the host accepts */
+                            note?: string;
+                            summary: {
+                                payableItems: {
+                                    id: string;
+                                    slug: string;
+                                    name: string;
+                                    priceCents: number;
+                                }[];
+                                totalCents: number;
+                                currency: string;
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -3126,6 +3300,34 @@ export interface components {
             /** @description 0..100, match engine + wishlist/profile boosts */
             matchScore: number;
         };
+        /** @description Every package item is individually toggleable via PATCH /api/assistant/inspire/{id}/items. */
+        InspireItemFlags: {
+            /** @description Stable item id within the package (exp-N, svc-{slug}, addon-{slug}) */
+            id: string;
+            /** @description true by default; confirm/charge read the current selection */
+            selected: boolean;
+        };
+        /** @description What was understood from the spoken/free-text prompt ("Understood: Lisbon, Sep 5-15, pet-friendly"). Explicit filters always win over the extraction. */
+        InspireInterpreted: {
+            /** @description yyyy-MM-dd */
+            dateFrom?: string;
+            /** @description yyyy-MM-dd */
+            dateTo?: string;
+            /** @description Canonical city name from the active listings */
+            city?: string;
+            constraints?: string[];
+            /** @description ai | heuristic — how the prompt was parsed */
+            source: string;
+        };
+        InspireAddOnItem: components["schemas"]["InspireItemFlags"] & {
+            slug: string;
+            name: string;
+            description: string;
+            priceCents: number;
+            currency: string;
+            provider: string;
+            category: string;
+        };
         InspirePackage: {
             packageId: string;
             myListingId: string;
@@ -3139,22 +3341,25 @@ export interface components {
                 from: string;
                 /** @description yyyy-MM-dd */
                 to: string;
-                /** @description user | availability */
+                /** @description user | interpreted | availability */
                 source: string;
             };
             proposalMessage: string;
             /** @description ai | fallback */
             proposalMessageSource?: string;
-            /** @description GetYourGuide cards for the destination city (env-gated, max 3) */
-            experiences: components["schemas"]["DiscoverExperience"][];
-            /** @description Configured affiliate partners (flights, esim, insurance), click-through via /api/affiliate/{partnerSlug} */
-            services: {
+            interpreted?: components["schemas"]["InspireInterpreted"] | null;
+            /** @description GetYourGuide cards for the destination city (env-gated, max 3). External links — never charged by swapl. */
+            experiences: (components["schemas"]["DiscoverExperience"] & components["schemas"]["InspireItemFlags"])[];
+            /** @description Configured affiliate partners (flights, esim, insurance), click-through via /api/affiliate/{partnerSlug}. External links — never charged by swapl. */
+            services: (components["schemas"]["InspireItemFlags"] & {
                 slug: string;
                 name: string;
                 /** @description flights | esim | insurance */
                 category: string;
                 url: string;
-            }[];
+            })[];
+            /** @description Concierge add-ons with real prices — the only payable items (pay-on-accept). */
+            addOns: components["schemas"]["InspireAddOnItem"][];
             /** @description ai | fallback — how the destination was picked */
             source?: string;
         };

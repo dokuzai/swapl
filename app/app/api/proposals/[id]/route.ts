@@ -5,6 +5,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { insuranceProvider } from "@/lib/insurance";
+import { chargeInspirePackageOnAccept, cancelInspirePackagePayment } from "@/lib/billing/inspire";
 import { toDTO } from "@/lib/listing-utils";
 import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 
@@ -143,6 +144,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       return invalidInput("Cannot withdraw at this stage.");
     }
     await prisma.swapProposal.update({ where: { id }, data: { status: "WITHDRAWN" } });
+    // Pay-on-accept: a withdrawn proposal can never be charged.
+    await cancelInspirePackagePayment(id).catch((err) => console.error("[inspire:cancel-payment]", err));
     return NextResponse.json({ ok: true });
   }
 
@@ -152,6 +155,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       return invalidInput("Cannot decline at this stage.");
     }
     await prisma.swapProposal.update({ where: { id }, data: { status: "DECLINED" } });
+    // Pay-on-accept: a declined proposal can never be charged.
+    await cancelInspirePackagePayment(id).catch((err) => console.error("[inspire:cancel-payment]", err));
     if (proposal.proposerListing.user.email) {
       sendEmail(emailTemplates.proposalDeclined(proposal.proposerListing.user.email)).catch(console.error);
     }
@@ -273,6 +278,12 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       });
       return agreement;
     });
+
+    // Pay-on-accept (DOK-148): NOW — and only now — charge the confirmed
+    // inspiration package linked to this proposal (selected concierge add-ons
+    // only, off-session PaymentIntent on the card saved at checkout). A
+    // failure never reverts the acceptance.
+    await chargeInspirePackageOnAccept(id).catch((err) => console.error("[inspire:pay-on-accept]", err));
 
     // Notify both sides
     [proposal.proposerListing.user.email, proposal.targetListing.user.email].forEach((e) => {

@@ -24,6 +24,7 @@ const TOP_COUNT = 3;
 const MAX_EXPERIENCES = 3;
 const WISHLIST_BOOST = 15;
 const TRAIT_CITY_BOOST = 10;
+const CONSTRAINT_BOOST = 8;
 const SERVICE_CATEGORIES = ["flights", "esim", "insurance"] as const;
 const INSPIRE_CAMPAIGN = "inspire_package";
 
@@ -37,8 +38,180 @@ export type InspireOptions = {
   prompt?: string;
   dateFrom?: string; // yyyy-MM-dd
   dateTo?: string;
+  city?: string;
   flexible?: boolean;
 };
+
+// ---------- spoken-filter extraction (DOK-148) ----------
+
+export type TripFilters = {
+  dateFrom?: string; // yyyy-MM-dd
+  dateTo?: string;
+  /** Canonical city name — always one of the active-listing cities. */
+  city?: string;
+  constraints?: TripConstraint[];
+};
+
+export type TripConstraint = "pet-friendly" | "wfh" | "step-free";
+
+export type InterpretedFilters = TripFilters & { source: "ai" | "heuristic" };
+
+const MONTHS: Record<string, number> = {
+  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+  jul: 6, aug: 7, sep: 8, sept: 8, oct: 9, nov: 10, dec: 11,
+};
+
+const CONSTRAINT_PATTERNS: Array<[TripConstraint, RegExp]> = [
+  ["pet-friendly", /\b(pet[\s-]?friendly|pets?|dog|cat)\b/i],
+  ["wfh", /\b(wfh|work(ing)? from home|remote[\s-]work|home office|desk)\b/i],
+  ["step-free", /\b(step[\s-]?free|wheelchair|accessib\w*|no stairs)\b/i],
+];
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+function ymd(year: number, month: number, day: number): string {
+  return new Date(Date.UTC(year, month, day)).toISOString().slice(0, 10);
+}
+
+/** Resolve a month/day pair without an explicit year to the next occurrence. */
+function resolveYear(month: number, day: number, now: Date): number {
+  const year = now.getUTCFullYear();
+  return new Date(Date.UTC(year, month, day)) < now ? year + 1 : year;
+}
+
+const MONTH_RE = "(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)";
+const SEP_RE = "(?:\\s*(?:to|until|till|through|–|—|->|-)\\s*)";
+
+function monthIndex(name: string): number {
+  return MONTHS[name.slice(0, 4) === "sept" ? "sept" : name.slice(0, 3)];
+}
+
+/** Deterministic date-range parsing: ISO ranges, "Sep 5–15", "5–15 September", "Sep 5 – Oct 2". */
+function parseDateRange(prompt: string, now: Date): { dateFrom: string; dateTo: string } | null {
+  // 1) "2026-09-05 to 2026-09-15"
+  const iso = prompt.match(/(\d{4}-\d{2}-\d{2})\s*(?:to|until|till|through|–|—|->|-)\s*(\d{4}-\d{2}-\d{2})/i);
+  if (iso && iso[2] > iso[1]) return { dateFrom: iso[1], dateTo: iso[2] };
+
+  // 2) "Sep 5 – 15", "September 5 to October 2", optional trailing year
+  const m1 = prompt.match(
+    new RegExp(`\\b${MONTH_RE}\\s+(\\d{1,2})(?:st|nd|rd|th)?${SEP_RE}(?:${MONTH_RE}\\s+)?(\\d{1,2})(?:st|nd|rd|th)?(?:[,\\s]+(\\d{4}))?`, "i")
+  );
+  if (m1) {
+    const fromMonth = monthIndex(m1[1].toLowerCase());
+    const toMonth = m1[3] ? monthIndex(m1[3].toLowerCase()) : fromMonth;
+    const fromDay = Number(m1[2]);
+    const toDay = Number(m1[4]);
+    const year = m1[5] ? Number(m1[5]) : resolveYear(fromMonth, fromDay, now);
+    const toYear = toMonth < fromMonth ? year + 1 : year;
+    const dateFrom = ymd(year, fromMonth, fromDay);
+    const dateTo = ymd(toYear, toMonth, toDay);
+    if (dateTo > dateFrom) return { dateFrom, dateTo };
+  }
+
+  // 3) "5–15 September", "5 to 15 Sep 2026"
+  const m2 = prompt.match(
+    new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?${SEP_RE}(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?${MONTH_RE}(?:[,\\s]+(\\d{4}))?`, "i")
+  );
+  if (m2) {
+    const month = monthIndex(m2[3].toLowerCase());
+    const fromDay = Number(m2[1]);
+    const toDay = Number(m2[2]);
+    const year = m2[4] ? Number(m2[4]) : resolveYear(month, fromDay, now);
+    const dateFrom = ymd(year, month, fromDay);
+    const dateTo = ymd(year, month, toDay);
+    if (dateTo > dateFrom) return { dateFrom, dateTo };
+  }
+
+  return null;
+}
+
+function heuristicFilters(prompt: string, knownCities: string[], now: Date): TripFilters {
+  const out: TripFilters = {};
+
+  // City: longest known city first so "New York" beats "York".
+  const sorted = [...knownCities].sort((a, b) => b.length - a.length);
+  for (const city of sorted) {
+    const escaped = city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (new RegExp(`\\b${escaped}\\b`, "i").test(prompt)) {
+      out.city = city;
+      break;
+    }
+  }
+
+  const range = parseDateRange(prompt, now);
+  if (range) {
+    out.dateFrom = range.dateFrom;
+    out.dateTo = range.dateTo;
+  }
+
+  const constraints = CONSTRAINT_PATTERNS.filter(([, re]) => re.test(prompt)).map(([c]) => c);
+  if (constraints.length) out.constraints = constraints;
+
+  return out;
+}
+
+const EXTRACT_SYSTEM_PROMPT = `You extract structured swap-trip filters from a member's (possibly voice-transcribed) wish.
+Reply ONLY with strict JSON: {"dateFrom":"yyyy-MM-dd"|null,"dateTo":"yyyy-MM-dd"|null,"city":"<one of the provided cities>"|null,"constraints":["pet-friendly"|"wfh"|"step-free", ...]}.
+Rules: city MUST be copied verbatim from the provided list (null if none mentioned); resolve relative dates against "today"; never invent dates that were not implied.`;
+
+/**
+ * Extracts { dateFrom, dateTo, city, constraints } from a free-text (or
+ * voice-transcribed) wish. Uses the configured AI when available, otherwise
+ * deterministic regex/heuristics (dates + cities known from active listings).
+ * Anything not understood is simply omitted — explicit filters always win
+ * over the extraction at the call site.
+ */
+export async function extractTripFilters(
+  prompt: string,
+  opts: { knownCities: string[]; aiConfig?: ReturnType<typeof resolveAIConfig>; now?: Date }
+): Promise<InterpretedFilters | null> {
+  const now = opts.now ?? new Date();
+  const heuristic = heuristicFilters(prompt, opts.knownCities, now);
+
+  if (opts.aiConfig) {
+    try {
+      const text = await chat({
+        config: opts.aiConfig,
+        responseJson: true,
+        maxTokens: 200,
+        temperature: 0,
+        messages: [
+          { role: "system", content: EXTRACT_SYSTEM_PROMPT },
+          {
+            role: "user",
+            content: JSON.stringify({ today: now.toISOString().slice(0, 10), cities: opts.knownCities, wish: prompt }),
+          },
+        ],
+      });
+      const parsed = JSON.parse(extractJson(text)) as Record<string, unknown>;
+      const out: TripFilters = {};
+      if (typeof parsed.city === "string") {
+        const hit = opts.knownCities.find((c) => c.toLowerCase() === (parsed.city as string).toLowerCase());
+        if (hit) out.city = hit;
+      }
+      if (
+        typeof parsed.dateFrom === "string" && ISO_DATE.test(parsed.dateFrom) &&
+        typeof parsed.dateTo === "string" && ISO_DATE.test(parsed.dateTo) &&
+        parsed.dateTo > parsed.dateFrom
+      ) {
+        out.dateFrom = parsed.dateFrom;
+        out.dateTo = parsed.dateTo;
+      }
+      if (Array.isArray(parsed.constraints)) {
+        const valid = parsed.constraints.filter(
+          (c): c is TripConstraint => c === "pet-friendly" || c === "wfh" || c === "step-free"
+        );
+        if (valid.length) out.constraints = [...new Set(valid)];
+      }
+      if (Object.keys(out).length > 0) return { ...out, source: "ai" };
+    } catch (err) {
+      console.error("[ai:inspire:extract]", err);
+      // fall through to the heuristic result
+    }
+  }
+
+  return Object.keys(heuristic).length > 0 ? { ...heuristic, source: "heuristic" } : null;
+}
 
 export type InspireCandidate = {
   listingId: string;
@@ -57,19 +230,63 @@ export type InspireService = {
   url: string;
 };
 
+/** Every package item is individually toggleable (PATCH …/items). */
+export type InspireItemFlags = { id: string; selected: boolean };
+
+export type InspireExperienceItem = DiscoverExperience & InspireItemFlags;
+export type InspireServiceItem = InspireService & InspireItemFlags;
+
+/**
+ * A swapl concierge add-on offered inside the package. The ONLY payable items:
+ * external affiliate experiences/services stay links and are never charged by
+ * us. Charged off-session only after the host accepts the proposal.
+ */
+export type InspireAddOnItem = InspireItemFlags & {
+  slug: string;
+  name: string;
+  description: string;
+  priceCents: number;
+  currency: string;
+  provider: string;
+  category: string;
+};
+
 export type InspirePackage = {
   packageId: string;
   myListingId: string;
   destination: InspireCandidate & { why: string };
   alternatives: InspireCandidate[];
-  dates: { from: string; to: string; source: "user" | "availability" };
+  dates: { from: string; to: string; source: "user" | "interpreted" | "availability" };
   proposalMessage: string;
   proposalMessageSource: "ai" | "fallback";
-  experiences: DiscoverExperience[];
-  services: InspireService[];
+  experiences: InspireExperienceItem[];
+  services: InspireServiceItem[];
+  addOns: InspireAddOnItem[];
+  /** What was understood from the spoken/free-text prompt, if anything. */
+  interpreted: InterpretedFilters | null;
   /** Whether the destination pick + "why" came from the AI or the fallback. */
   source: "ai" | "fallback";
 };
+
+export type InspirePayload = Omit<InspirePackage, "packageId">;
+
+/** The payable subset of a package: selected concierge add-ons with a real price. */
+export function selectedPayableAddOns(payload: Pick<InspirePayload, "addOns">): InspireAddOnItem[] {
+  return (payload.addOns ?? []).filter((a) => a.selected && a.priceCents > 0);
+}
+
+export function payableSummary(payload: Pick<InspirePayload, "addOns">): {
+  payableItems: InspireAddOnItem[];
+  totalCents: number;
+  currency: string;
+} {
+  const payableItems = selectedPayableAddOns(payload);
+  return {
+    payableItems,
+    totalCents: payableItems.reduce((sum, a) => sum + a.priceCents, 0),
+    currency: payableItems[0]?.currency ?? "EUR",
+  };
+}
 
 type ListingRow = {
   id: string;
@@ -196,17 +413,47 @@ export async function composePackage(userId: string, opts: InspireOptions = {}):
   }
   const myListing = mine as ListingRow;
 
-  // Date range: the user's explicit dates win; otherwise the availability of
-  // their own listing (a swap needs both homes free anyway).
-  const userDates = opts.dateFrom && opts.dateTo ? { from: new Date(opts.dateFrom), to: new Date(opts.dateTo) } : null;
+  const userOverride = { provider: user.aiProvider, model: user.aiModel, apiKey: user.aiApiKey };
+  const config = resolveAIConfig({ userOverride });
+
+  // Spoken/free-text filter extraction (DOK-148): the prompt — possibly a
+  // voice transcription — is parsed into structured filters. Explicit filters
+  // always win; whatever was understood is surfaced as `interpreted` so the
+  // clients can show "Understood: Lisbon, Sep 5–15, pet-friendly".
+  let interpreted: InterpretedFilters | null = null;
+  if (opts.prompt?.trim()) {
+    const cityRows = (await prisma.listing.findMany({
+      where: { isActive: true },
+      select: { city: true },
+      distinct: ["city"],
+    })) as Array<{ city: string }>;
+    interpreted = await extractTripFilters(opts.prompt, {
+      knownCities: cityRows.map((r) => r.city),
+      aiConfig: config,
+    });
+  }
+
+  const effDateFrom = opts.dateFrom ?? interpreted?.dateFrom;
+  const effDateTo = opts.dateTo ?? interpreted?.dateTo;
+  const effCity = opts.city ?? interpreted?.city;
+  const constraints = interpreted?.constraints ?? [];
+
+  // Date range: explicit dates win, then dates understood from the prompt,
+  // otherwise the availability of the user's own listing (a swap needs both
+  // homes free anyway).
+  const userDates = effDateFrom && effDateTo ? { from: new Date(effDateFrom), to: new Date(effDateTo) } : null;
   const range = userDates ?? { from: myListing.availableFrom, to: myListing.availableTo };
   const dates = {
     from: range.from.toISOString().slice(0, 10),
     to: range.to.toISOString().slice(0, 10),
-    source: (userDates ? "user" : "availability") as "user" | "availability",
+    source: (userDates ? (opts.dateFrom && opts.dateTo ? "user" : "interpreted") : "availability") as
+      | "user"
+      | "interpreted"
+      | "availability",
   };
 
   // Real, active, date-compatible candidates only — never the user's own.
+  // A requested/understood city narrows the pool to that destination.
   const [candidates, favorites, profile] = await Promise.all([
     prisma.listing.findMany({
       where: {
@@ -214,6 +461,7 @@ export async function composePackage(userId: string, opts: InspireOptions = {}):
         NOT: { userId },
         availableFrom: { lte: range.to },
         availableTo: { gte: range.from },
+        ...(effCity ? { city: effCity } : {}),
       },
       take: CANDIDATE_POOL,
       select: LISTING_SELECT,
@@ -232,6 +480,10 @@ export async function composePackage(userId: string, opts: InspireOptions = {}):
       let score = computeMatchScore(toScoreable(myListing), toScoreable(l));
       if (wishlisted) score += WISHLIST_BOOST;
       if (traitCity) score += TRAIT_CITY_BOOST;
+      // Understood constraints gently re-rank towards homes that satisfy them.
+      if (constraints.includes("pet-friendly") && l.petsAllowed) score += CONSTRAINT_BOOST;
+      if (constraints.includes("wfh") && l.wfhSetup) score += CONSTRAINT_BOOST;
+      if (constraints.includes("step-free") && l.stepFreeAccess) score += CONSTRAINT_BOOST;
       score = Math.min(100, score);
       return { listing: l, score, wishlisted, traitCity };
     })
@@ -243,8 +495,6 @@ export async function composePackage(userId: string, opts: InspireOptions = {}):
   }
 
   // Destination pick + "why": AI when configured, top score otherwise.
-  const userOverride = { provider: user.aiProvider, model: user.aiModel, apiKey: user.aiApiKey };
-  const config = resolveAIConfig({ userOverride });
   let pick = scored[0];
   let why = fallbackWhy(pick, profile);
   let source: "ai" | "fallback" = "fallback";
@@ -328,15 +578,42 @@ export async function composePackage(userId: string, opts: InspireOptions = {}):
     { userOverride }
   );
 
-  // Affiliate enrichment — env-gated, no invented prices/availability.
+  // Affiliate enrichment — env-gated, no invented prices/availability. Every
+  // item gets a stable id + selected:true so the draft is editable via
+  // PATCH …/items before confirming.
   const destination = { city: pick.listing.city, country: pick.listing.country };
-  const experiences = (await getDiscoverExperiences(destination.city).catch((err) => {
+  const experiences: InspireExperienceItem[] = (await getDiscoverExperiences(destination.city).catch((err) => {
     console.error("[inspire:experiences]", err);
     return [] as DiscoverExperience[];
-  })).slice(0, MAX_EXPERIENCES);
-  const services = serviceLinks(destination);
+  }))
+    .slice(0, MAX_EXPERIENCES)
+    .map((e, i) => ({ ...e, id: `exp-${i + 1}`, selected: true }));
+  const services: InspireServiceItem[] = serviceLinks(destination).map((s) => ({
+    ...s,
+    id: `svc-${s.slug}`,
+    selected: true,
+  }));
 
-  const payload: Omit<InspirePackage, "packageId"> = {
+  // Concierge add-ons with real prices — the ONLY payable items of a package
+  // (charged off-session only after the host accepts). Affiliate items above
+  // are never charged by us.
+  const addOnRows = (await prisma.addOn.findMany({
+    where: { isActive: true, type: "flat_fee", priceCents: { gt: 0 } },
+    orderBy: { priceCents: "desc" },
+  })) as Array<{ slug: string; name: string; description: string; priceCents: number; currency: string; provider: string; category: string }>;
+  const addOns: InspireAddOnItem[] = addOnRows.map((a) => ({
+    id: `addon-${a.slug}`,
+    selected: true,
+    slug: a.slug,
+    name: a.name,
+    description: a.description,
+    priceCents: a.priceCents,
+    currency: a.currency,
+    provider: a.provider,
+    category: a.category,
+  }));
+
+  const payload: InspirePayload = {
     myListingId: myListing.id,
     destination: { ...toCandidate(pick.listing, pick.score), why },
     alternatives: scored.filter((s) => s.listing.id !== pick.listing.id).map((s) => toCandidate(s.listing, s.score)),
@@ -345,6 +622,8 @@ export async function composePackage(userId: string, opts: InspireOptions = {}):
     proposalMessageSource: draft.source,
     experiences,
     services,
+    addOns,
+    interpreted,
     source,
   };
 

@@ -15,6 +15,7 @@ const schema = z.object({
   prompt: z.string().max(500).optional(),
   dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  city: z.string().max(100).optional(),
 });
 
 export async function POST(req: Request) {
@@ -26,13 +27,15 @@ export async function POST(req: Request) {
 
   const parsed = schema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) return invalidInput("Invalid input", { issues: parsed.error.issues });
-  const { prompt, dateFrom, dateTo } = parsed.data;
+  const { prompt, dateFrom, dateTo, city } = parsed.data;
   if (dateFrom && dateTo && dateTo <= dateFrom) {
     return invalidInput("End date must be after start.");
   }
 
   try {
-    const pkg = await composePackage(session.userId, { prompt, dateFrom, dateTo });
+    // The free-text prompt (possibly voice-transcribed) is parsed into
+    // structured filters inside composePackage; explicit filters win.
+    const pkg = await composePackage(session.userId, { prompt, dateFrom, dateTo, city });
     return NextResponse.json(pkg);
   } catch (err) {
     if (err instanceof InspireError) return unprocessable(err.code, { message: err.message });

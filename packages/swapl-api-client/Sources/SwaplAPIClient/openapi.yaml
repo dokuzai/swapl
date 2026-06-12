@@ -146,9 +146,50 @@ components:
         photo: { type: string, nullable: true }
         matchScore: { type: integer, description: '0..100, match engine + wishlist/profile boosts' }
 
+    InspireItemFlags:
+      type: object
+      description: Every package item is individually toggleable via PATCH /api/assistant/inspire/{id}/items.
+      required: [id, selected]
+      properties:
+        id: { type: string, description: 'Stable item id within the package (exp-N, svc-{slug}, addon-{slug})' }
+        selected: { type: boolean, description: 'true by default; confirm/charge read the current selection' }
+
+    InspireInterpreted:
+      type: object
+      description: >-
+        What was understood from the spoken/free-text prompt ("Understood:
+        Lisbon, Sep 5-15, pet-friendly"). Explicit filters always win over the
+        extraction.
+      required: [source]
+      properties:
+        dateFrom: { type: string, description: 'yyyy-MM-dd' }
+        dateTo: { type: string, description: 'yyyy-MM-dd' }
+        city: { type: string, description: 'Canonical city name from the active listings' }
+        constraints:
+          type: array
+          items: { type: string, description: 'pet-friendly | wfh | step-free' }
+        source: { type: string, description: 'ai | heuristic — how the prompt was parsed' }
+
+    InspireAddOnItem:
+      allOf:
+        - { $ref: '#/components/schemas/InspireItemFlags' }
+        - type: object
+          description: >-
+            A swapl concierge add-on offered inside the package — the ONLY
+            payable items. Charged off-session only after the host accepts.
+          required: [slug, name, description, priceCents, currency, provider, category]
+          properties:
+            slug: { type: string }
+            name: { type: string }
+            description: { type: string }
+            priceCents: { type: integer }
+            currency: { type: string }
+            provider: { type: string }
+            category: { type: string }
+
     InspirePackage:
       type: object
-      required: [packageId, myListingId, destination, alternatives, dates, proposalMessage, experiences, services]
+      required: [packageId, myListingId, destination, alternatives, dates, proposalMessage, experiences, services, addOns]
       properties:
         packageId: { type: string }
         myListingId: { type: string }
@@ -168,24 +209,37 @@ components:
           properties:
             from: { type: string, description: 'yyyy-MM-dd' }
             to: { type: string, description: 'yyyy-MM-dd' }
-            source: { type: string, description: 'user | availability' }
+            source: { type: string, description: 'user | interpreted | availability' }
         proposalMessage: { type: string }
         proposalMessageSource: { type: string, description: 'ai | fallback' }
+        interpreted:
+          oneOf:
+            - { $ref: '#/components/schemas/InspireInterpreted' }
+          nullable: true
         experiences:
           type: array
-          description: 'GetYourGuide cards for the destination city (env-gated, max 3)'
-          items: { $ref: '#/components/schemas/DiscoverExperience' }
+          description: 'GetYourGuide cards for the destination city (env-gated, max 3). External links — never charged by swapl.'
+          items:
+            allOf:
+              - { $ref: '#/components/schemas/DiscoverExperience' }
+              - { $ref: '#/components/schemas/InspireItemFlags' }
         services:
           type: array
-          description: 'Configured affiliate partners (flights, esim, insurance), click-through via /api/affiliate/{partnerSlug}'
+          description: 'Configured affiliate partners (flights, esim, insurance), click-through via /api/affiliate/{partnerSlug}. External links — never charged by swapl.'
           items:
-            type: object
-            required: [slug, name, category, url]
-            properties:
-              slug: { type: string }
-              name: { type: string }
-              category: { type: string, description: 'flights | esim | insurance' }
-              url: { type: string }
+            allOf:
+              - { $ref: '#/components/schemas/InspireItemFlags' }
+              - type: object
+                required: [slug, name, category, url]
+                properties:
+                  slug: { type: string }
+                  name: { type: string }
+                  category: { type: string, description: 'flights | esim | insurance' }
+                  url: { type: string }
+        addOns:
+          type: array
+          description: 'Concierge add-ons with real prices — the only payable items (pay-on-accept).'
+          items: { $ref: '#/components/schemas/InspireAddOnItem' }
         source: { type: string, description: 'ai | fallback — how the destination was picked' }
 
     Platform:
@@ -1960,9 +2014,10 @@ paths:
             schema:
               type: object
               properties:
-                prompt: { type: string, maxLength: 500, description: 'Optional free-text wish' }
+                prompt: { type: string, maxLength: 500, description: 'Optional free-text wish (may be a voice transcription) — parsed into structured filters; explicit fields win' }
                 dateFrom: { type: string, description: 'yyyy-MM-dd' }
                 dateTo: { type: string, description: 'yyyy-MM-dd' }
+                city: { type: string, maxLength: 100, description: 'Explicit destination city — wins over anything extracted from the prompt' }
       responses:
         '200':
           description: Package composed
@@ -2007,9 +2062,125 @@ paths:
                   ok: { type: boolean }
                   proposalId: { type: string }
                   packageId: { type: string }
+                  paymentStatus: { type: string, description: 'none | saved — "saved" means the card will be charged off-session only if the host accepts' }
         '401': { description: Unauthenticated }
         '402': { description: Plan limit reached (same upsell as POST /api/proposals) }
         '403': { description: Account suspended }
+        '404': { description: Package not found (or not yours) }
+        '422': { description: Package already confirmed/dismissed }
+
+  /api/assistant/inspire/{id}/items:
+    patch:
+      tags: [assistant]
+      summary: Toggle package items on/off (editable draft)
+      description: >-
+        Accepts a single { itemId, selected } or { items: [...] }. Only DRAFT
+        packages are editable; confirm/checkout/charge read the selections
+        current at their time. Unknown item ids are rejected.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required: [itemId, selected]
+                  properties:
+                    itemId: { type: string }
+                    selected: { type: boolean }
+                - type: object
+                  required: [items]
+                  properties:
+                    items:
+                      type: array
+                      minItems: 1
+                      maxItems: 50
+                      items:
+                        type: object
+                        required: [itemId, selected]
+                        properties:
+                          itemId: { type: string }
+                          selected: { type: boolean }
+      responses:
+        '200':
+          description: Selections updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, items, payable]
+                properties:
+                  ok: { type: boolean }
+                  items:
+                    type: object
+                    properties:
+                      experiences:
+                        type: array
+                        items: { $ref: '#/components/schemas/InspireItemFlags' }
+                      services:
+                        type: array
+                        items: { $ref: '#/components/schemas/InspireItemFlags' }
+                      addOns:
+                        type: array
+                        items: { $ref: '#/components/schemas/InspireItemFlags' }
+                  payable:
+                    type: object
+                    required: [totalCents, currency]
+                    properties:
+                      totalCents: { type: integer }
+                      currency: { type: string }
+        '400': { description: Unknown itemId or invalid input }
+        '401': { description: Unauthenticated }
+        '404': { description: Package not found (or not yours) }
+        '422': { description: Package already confirmed/dismissed }
+
+  /api/assistant/inspire/{id}/checkout:
+    post:
+      tags: [assistant]
+      summary: Save a card for pay-on-accept (no charge)
+      description: >-
+        Pay-on-accept, env-gated on Stripe. Payable items are ONLY the selected
+        concierge add-ons with priceCents > 0 — affiliate items stay external
+        links. When payable items exist and Stripe is configured, returns a
+        SetupIntent clientSecret (usage off_session) so the card is saved;
+        NOTHING is charged until the host accepts the proposal. Without Stripe
+        or with zero payable items, returns paymentRequired=false and the flow
+        continues without a payment step.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Checkout state
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [paymentRequired, summary]
+                properties:
+                  paymentRequired: { type: boolean }
+                  clientSecret: { type: string, description: 'SetupIntent client secret — present only when paymentRequired' }
+                  note: { type: string, description: "Copy for the client: you'll only be charged if the host accepts" }
+                  summary:
+                    type: object
+                    required: [payableItems, totalCents, currency]
+                    properties:
+                      payableItems:
+                        type: array
+                        items:
+                          type: object
+                          required: [id, slug, name, priceCents]
+                          properties:
+                            id: { type: string }
+                            slug: { type: string }
+                            name: { type: string }
+                            priceCents: { type: integer }
+                      totalCents: { type: integer }
+                      currency: { type: string }
+        '401': { description: Unauthenticated }
         '404': { description: Package not found (or not yours) }
         '422': { description: Package already confirmed/dismissed }
 

@@ -12,7 +12,7 @@ import { marketingUrl } from "@/lib/marketing/urls";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-async function ensureStripeCustomer(userId: string): Promise<string> {
+export async function ensureStripeCustomer(userId: string): Promise<string> {
   const existing = await prisma.stripeCustomer.findUnique({ where: { userId } });
   if (existing) return existing.stripeId;
 

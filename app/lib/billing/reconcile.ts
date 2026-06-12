@@ -11,8 +11,9 @@
 //     into Stripe from here.
 
 import type Stripe from "stripe";
-import { prisma } from "@/lib/db";
+import { prisma, parseJSON } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
+import { selectedPayableAddOns, type InspirePayload } from "@/lib/ai/inspire";
 
 export async function reconcilePaymentIntent(intent: Stripe.PaymentIntent): Promise<void> {
   const kind = intent.metadata?.kind;
@@ -27,10 +28,42 @@ export async function reconcilePaymentIntent(intent: Stripe.PaymentIntent): Prom
       return reconcileFeatureListing(intent, 30);
     case "addon":
       return reconcileAddOn(intent);
+    case "inspire_package":
+      return reconcileInspirePackage(intent);
     default:
       // insurance_upgrade etc. reconcile in their own feature routes.
       console.log("[stripe:webhook] one-time PI without reconciler", kind, intent.id);
   }
+}
+
+// payment_intent.payment_failed — the off-session pay-on-accept charge for an
+// inspiration package failed asynchronously. Mirror the failure on the
+// package; the swap itself is NOT touched (acceptance stands, payment is
+// recovered out-of-band).
+export async function reconcilePaymentIntentFailed(intent: Stripe.PaymentIntent): Promise<void> {
+  if (intent.metadata?.kind !== "inspire_package") return;
+  const { packageId } = intent.metadata;
+  if (!packageId) return;
+  console.error("[stripe:webhook] inspire_package charge FAILED", packageId, intent.id);
+  await prisma.inspirationPackage.updateMany({
+    where: { id: packageId, paymentStatus: { not: "charged" } },
+    data: { paymentStatus: "failed" },
+  });
+}
+
+// setup_intent.succeeded — the member saved a card at the inspire checkout.
+// Stamp the payment method on the package: paymentStatus "saved" means "may
+// be charged off-session when the host accepts" (and nothing before that).
+export async function reconcileSetupIntent(si: Stripe.SetupIntent): Promise<void> {
+  if (si.metadata?.kind !== "inspire_package") return;
+  const { packageId } = si.metadata;
+  if (!packageId) return;
+  const pm = typeof si.payment_method === "string" ? si.payment_method : si.payment_method?.id;
+  if (!pm) return;
+  await prisma.inspirationPackage.updateMany({
+    where: { id: packageId, paymentStatus: "none" },
+    data: { paymentMethodId: pm, paymentStatus: "saved" },
+  });
 }
 
 // refund.created — flip the matching domain row(s) to refunded. A refund only
@@ -198,5 +231,64 @@ async function reconcileAddOn(intent: Stripe.PaymentIntent): Promise<void> {
       amountCents: intent.amount_received || intent.amount,
       stripePaymentIntentId: intent.id,
     },
+  });
+}
+
+// Pay-on-accept charge for a "Get Inspired" package (DOK-148): one PI covers
+// all selected concierge add-ons of the package. Create the paid OrderAddOn
+// rows (one per add-on, mirroring reconcileAddOn) and mark the package
+// charged. Affiliate items are never part of this PI.
+async function reconcileInspirePackage(intent: Stripe.PaymentIntent): Promise<void> {
+  const { packageId } = intent.metadata;
+  if (!packageId) {
+    console.warn("[stripe:webhook] inspire_package PI without packageId", intent.id);
+    return;
+  }
+
+  // Replay guard: the PI is reconciled once — any order row carrying its id
+  // means we already created the full set.
+  const existing = await prisma.orderAddOn.findFirst({
+    where: { stripePaymentIntentId: intent.id },
+  });
+  if (existing) return;
+
+  const pkg = await prisma.inspirationPackage.findUnique({ where: { id: packageId } });
+  if (!pkg || !pkg.proposalId) {
+    console.warn("[stripe:webhook] inspire_package PI for unknown/unconfirmed package", packageId, intent.id);
+    return;
+  }
+
+  const payload = parseJSON<Pick<InspirePayload, "addOns"> | null>(pkg.payload, null);
+  const items = payload ? selectedPayableAddOns(payload) : [];
+
+  // The agreement exists because the PI is only created on accept.
+  const agreement = await prisma.swapAgreement.findUnique({ where: { proposalId: pkg.proposalId } });
+  if (!agreement) {
+    console.warn("[stripe:webhook] inspire_package PI without agreement", packageId, intent.id);
+    return;
+  }
+
+  for (const item of items) {
+    const addOn = await prisma.addOn.findUnique({ where: { slug: item.slug } });
+    if (!addOn) {
+      console.warn("[stripe:webhook] inspire_package PI references unknown add-on", item.slug, intent.id);
+      continue;
+    }
+    await prisma.orderAddOn.create({
+      data: {
+        userId: pkg.userId,
+        agreementId: agreement.id,
+        addOnId: addOn.id,
+        status: "paid",
+        amountCents: item.priceCents,
+        stripePaymentIntentId: intent.id,
+        notes: `inspire_package:${pkg.id}`,
+      },
+    });
+  }
+
+  await prisma.inspirationPackage.updateMany({
+    where: { id: pkg.id },
+    data: { paymentStatus: "charged" },
   });
 }

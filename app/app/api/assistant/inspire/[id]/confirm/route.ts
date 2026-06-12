@@ -13,7 +13,8 @@ import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { POST as createProposal } from "@/app/api/proposals/route";
 import { invalidInput, notFound, unauthenticated, unprocessable } from "@/lib/api/errors";
-import type { InspirePackage } from "@/lib/ai/inspire";
+import { recoverSavedPaymentMethod } from "@/lib/billing/inspire";
+import type { InspirePayload } from "@/lib/ai/inspire";
 
 const schema = z.object({
   listingId: z.string().min(1).optional(),
@@ -36,7 +37,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/assistan
   const parsed = schema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) return invalidInput("Invalid input", { issues: parsed.error.issues });
 
-  let payload: Omit<InspirePackage, "packageId">;
+  let payload: InspirePayload;
   try {
     payload = JSON.parse(pkg.payload);
   } catch {
@@ -76,10 +77,17 @@ export async function POST(req: Request, { params }: RouteContext<"/api/assistan
   if (!res.ok) return res;
 
   const { id: proposalId } = (await res.json()) as { id: string };
-  await prisma.inspirationPackage.update({
+
+  // Pay-on-accept (DOK-148): if the user completed the SetupIntent checkout
+  // but the setup_intent.succeeded webhook hasn't landed yet, recover the
+  // saved card server-side. The confirm NEVER blocks on payment — with no
+  // saved card the proposal still goes out and nothing will be charged.
+  const recovered = await recoverSavedPaymentMethod(pkg).catch(() => ({}) as Record<string, never>);
+
+  const updated = await prisma.inspirationPackage.update({
     where: { id: pkg.id },
-    data: { status: "confirmed", proposalId },
+    data: { status: "confirmed", proposalId, ...recovered },
   });
 
-  return NextResponse.json({ ok: true, proposalId, packageId: pkg.id });
+  return NextResponse.json({ ok: true, proposalId, packageId: pkg.id, paymentStatus: updated.paymentStatus });
 }

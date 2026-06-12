@@ -116,16 +116,22 @@ model TravelProfile {
 // returned; on confirm the proposal is created through the same code path as
 // POST /api/proposals and proposalId is stamped here.
 model InspirationPackage {
-  id         String   @id @default(cuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status     String   @default("draft")                           // "draft" | "confirmed" | "dismissed"
-  payload    String                                               // JSON-encoded package (destination, alternatives, dates, affiliates)
-  proposalId String?                                              // set when the user confirms
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status          String   @default("draft")                      // "draft" | "confirmed" | "dismissed"
+  payload         String                                          // JSON-encoded package (destination, alternatives, dates, affiliates, editable items)
+  proposalId      String?                                         // set when the user confirms
+  // Pay-on-accept (DOK-148): a SetupIntent saves the card at checkout; the
+  // off-session PaymentIntent is created ONLY when the host accepts.
+  setupIntentId   String?                                         // Stripe SetupIntent id (created at /checkout)
+  paymentMethodId String?                                         // saved card, via setup_intent.succeeded webhook or recovered at confirm
+  paymentStatus   String   @default("none")                       // "none" | "saved" | "charged" | "failed" | "canceled"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([userId])
+  @@index([proposalId])
 }
 
 // One identity (KYC) verification attempt at an external provider (Didit).

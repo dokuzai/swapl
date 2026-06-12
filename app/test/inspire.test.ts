@@ -22,14 +22,19 @@ const mocks = vi.hoisted(() => ({
   packageCreate: vi.fn(),
   packageFindUnique: vi.fn(),
   packageUpdate: vi.fn(),
+  addOnFindMany: vi.fn(),
+  stripeCustomerFindUnique: vi.fn(),
   proposalCreate: vi.fn(),
   orgMemberFindFirst: vi.fn(),
   subscriptionFindUnique: vi.fn(),
   getDiscoverExperiences: vi.fn(),
   sendEmail: vi.fn(),
   sendPush: vi.fn(),
+  setupIntentCreate: vi.fn(),
+  setupIntentRetrieve: vi.fn(),
 }));
 
+vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/session", () => ({ getSessionFromRequest: mocks.getSessionFromRequest }));
 vi.mock("@/lib/db", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/db")>()),
@@ -39,10 +44,20 @@ vi.mock("@/lib/db", async (importOriginal) => ({
     favorite: { findMany: mocks.favoriteFindMany },
     travelProfile: { findUnique: mocks.profileFindUnique },
     inspirationPackage: { create: mocks.packageCreate, findUnique: mocks.packageFindUnique, update: mocks.packageUpdate },
+    addOn: { findMany: mocks.addOnFindMany },
+    stripeCustomer: { findUnique: mocks.stripeCustomerFindUnique },
     swapProposal: { create: mocks.proposalCreate },
     organizationMember: { findFirst: mocks.orgMemberFindFirst },
     subscription: { findUnique: mocks.subscriptionFindUnique },
   },
+}));
+vi.mock("@/lib/billing/stripe", () => ({
+  getStripe: () => ({
+    setupIntents: { create: mocks.setupIntentCreate, retrieve: mocks.setupIntentRetrieve },
+  }),
+  isStripeConfigured: () => Boolean(process.env.STRIPE_SECRET_KEY),
+  STRIPE_WEBHOOK_SECRET: "",
+  BillingNotConfigured: class BillingNotConfigured extends Error {},
 }));
 vi.mock("@/lib/discover", () => ({ getDiscoverExperiences: mocks.getDiscoverExperiences }));
 vi.mock("@/lib/email", () => ({
@@ -54,10 +69,12 @@ vi.mock("@/lib/push", () => ({
   pushTemplates: { proposalReceived: vi.fn(() => ({})) },
 }));
 
-import { composePackage, InspireError } from "@/lib/ai/inspire";
+import { composePackage, extractTripFilters, InspireError } from "@/lib/ai/inspire";
 import { POST as inspire } from "@/app/api/assistant/inspire/route";
 import { POST as confirm } from "@/app/api/assistant/inspire/[id]/confirm/route";
 import { POST as dismiss } from "@/app/api/assistant/inspire/[id]/dismiss/route";
+import { PATCH as patchItems } from "@/app/api/assistant/inspire/[id]/items/route";
+import { POST as checkout } from "@/app/api/assistant/inspire/[id]/checkout/route";
 
 const AI_ENVS = ["AI_API_KEY", "AI_PROVIDER", "KIMI_API_KEY", "MOONSHOT_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"];
 const AFF_ENVS = ["AFF_SKYSCANNER_ID", "AFF_AIRALO_ID", "AFF_GETYOURGUIDE_ID", "AFF_BATTLEFACE_ID"];
@@ -91,7 +108,9 @@ const MY = listing("l-mine", "u-1", { city: "Milan", neighbourhood: "Isola" });
 
 beforeEach(() => {
   vi.clearAllMocks();
-  for (const k of [...AI_ENVS, ...AFF_ENVS]) vi.stubEnv(k, "");
+  for (const k of [...AI_ENVS, ...AFF_ENVS, "STRIPE_SECRET_KEY"]) vi.stubEnv(k, "");
+  mocks.addOnFindMany.mockResolvedValue([]);
+  mocks.stripeCustomerFindUnique.mockResolvedValue({ stripeId: "cus_1" });
   mocks.getSessionFromRequest.mockResolvedValue(session);
   mocks.userFindUnique.mockResolvedValue({ name: "Ana", aiProvider: null, aiModel: null, aiApiKey: null, suspendedAt: null });
   mocks.userUpdate.mockResolvedValue({});
@@ -302,6 +321,35 @@ describe("POST /api/assistant/inspire/{id}/confirm", () => {
     });
   });
 
+  it("works with NO payment at all (no Stripe, no setupIntent): proposal still goes out", async () => {
+    const res = await confirm(confirmReq(), ctx);
+    expect(res.status).toBe(200);
+    expect(mocks.setupIntentRetrieve).not.toHaveBeenCalled();
+    expect(mocks.proposalCreate).toHaveBeenCalledTimes(1);
+  });
+
+  it("recovers the saved card server-side when the setup_intent webhook hasn't landed yet", async () => {
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test");
+    mocks.packageFindUnique.mockResolvedValue({
+      id: "pkg-1",
+      userId: "u-1",
+      status: "draft",
+      payload: JSON.stringify(PAYLOAD),
+      setupIntentId: "seti_1",
+      paymentStatus: "none",
+    });
+    mocks.setupIntentRetrieve.mockResolvedValue({ status: "succeeded", payment_method: "pm_1" });
+    mocks.packageUpdate.mockResolvedValue({ paymentStatus: "saved" });
+
+    const res = await confirm(confirmReq(), ctx);
+    expect(res.status).toBe(200);
+    expect((await res.json()).paymentStatus).toBe("saved");
+    expect(mocks.packageUpdate).toHaveBeenCalledWith({
+      where: { id: "pkg-1" },
+      data: { status: "confirmed", proposalId: "prop-1", paymentMethodId: "pm_1", paymentStatus: "saved" },
+    });
+  });
+
   it("honours edits: alternative listing, new dates, custom message", async () => {
     const res = await confirm(confirmReq({ listingId: "l-b", dateFrom: "2026-07-12", dateTo: "2026-07-19", message: "Custom note" }), ctx);
     expect(res.status).toBe(200);
@@ -339,6 +387,259 @@ describe("POST /api/assistant/inspire/{id}/confirm", () => {
 
     mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-1", status: "confirmed", payload: JSON.stringify(PAYLOAD) });
     expect((await confirm(confirmReq(), ctx)).status).toBe(422);
+  });
+});
+
+// ---------- DOK-148: spoken filters, editable items, pay-on-accept ----------
+
+describe("extractTripFilters (deterministic, no AI key)", () => {
+  const NOW = new Date("2026-06-12T00:00:00Z");
+  const CITIES = ["Porto", "Lisbon", "New York"];
+
+  it("parses city, month-name date range and constraints from a spoken wish", async () => {
+    const f = await extractTripFilters("Take me to Lisbon Sep 5 – 15, somewhere pet-friendly", {
+      knownCities: CITIES,
+      now: NOW,
+    });
+    expect(f).toEqual({
+      city: "Lisbon",
+      dateFrom: "2026-09-05",
+      dateTo: "2026-09-15",
+      constraints: ["pet-friendly"],
+      source: "heuristic",
+    });
+  });
+
+  it("parses ISO ranges, '5 to 15 September' form and multi-word cities", async () => {
+    const iso = await extractTripFilters("New York 2026-09-05 to 2026-09-15 please", { knownCities: CITIES, now: NOW });
+    expect(iso).toMatchObject({ city: "New York", dateFrom: "2026-09-05", dateTo: "2026-09-15" });
+
+    const dayFirst = await extractTripFilters("from 5 to 15 September 2026 in porto, need wfh desk", {
+      knownCities: CITIES,
+      now: NOW,
+    });
+    expect(dayFirst).toEqual({
+      city: "Porto",
+      dateFrom: "2026-09-05",
+      dateTo: "2026-09-15",
+      constraints: ["wfh"],
+      source: "heuristic",
+    });
+  });
+
+  it("rolls a month/day without a year forward to the next occurrence", async () => {
+    const f = await extractTripFilters("Porto Feb 3 to 10", { knownCities: CITIES, now: new Date("2026-11-01T00:00:00Z") });
+    expect(f).toMatchObject({ dateFrom: "2027-02-03", dateTo: "2027-02-10" });
+  });
+
+  it("returns null when nothing is understood", async () => {
+    expect(await extractTripFilters("surprise me!", { knownCities: CITIES, now: NOW })).toBeNull();
+  });
+});
+
+describe("composePackage — spoken filters + editable items", () => {
+  it("applies extracted filters to the candidate query and surfaces them as `interpreted`", async () => {
+    mocks.listingFindMany.mockImplementation((args: { distinct?: unknown }) =>
+      Promise.resolve(
+        args?.distinct ? [{ city: "Lisbon" }, { city: "Porto" }] : [listing("l-a", "u-2", { city: "Porto" })]
+      )
+    );
+    const pkg = await composePackage("u-1", { prompt: "Porto 2026-09-05 to 2026-09-15 with the dog" });
+    expect(pkg.interpreted).toEqual({
+      city: "Porto",
+      dateFrom: "2026-09-05",
+      dateTo: "2026-09-15",
+      constraints: ["pet-friendly"],
+      source: "heuristic",
+    });
+    expect(pkg.dates).toEqual({ from: "2026-09-05", to: "2026-09-15", source: "interpreted" });
+
+    const candidatesCall = mocks.listingFindMany.mock.calls.find((c) => !c[0].distinct)!;
+    expect(candidatesCall[0].where.city).toBe("Porto");
+    expect(candidatesCall[0].where.availableFrom).toEqual({ lte: new Date("2026-09-15") });
+  });
+
+  it("explicit filters always win over the extraction", async () => {
+    mocks.listingFindMany.mockImplementation((args: { distinct?: unknown }) =>
+      Promise.resolve(args?.distinct ? [{ city: "Lisbon" }, { city: "Porto" }] : [listing("l-a", "u-2")])
+    );
+    const pkg = await composePackage("u-1", {
+      prompt: "Porto 2026-09-05 to 2026-09-15",
+      dateFrom: "2026-07-10",
+      dateTo: "2026-07-20",
+      city: "Lisbon",
+    });
+    expect(pkg.dates).toEqual({ from: "2026-07-10", to: "2026-07-20", source: "user" });
+    const candidatesCall = mocks.listingFindMany.mock.calls.find((c) => !c[0].distinct)!;
+    expect(candidatesCall[0].where.city).toBe("Lisbon");
+  });
+
+  it("gives every item a stable id + selected:true, and offers only priced flat-fee add-ons", async () => {
+    vi.stubEnv("AFF_SKYSCANNER_ID", "sky-1");
+    mocks.getDiscoverExperiences.mockResolvedValue([
+      { city: "Lisbon", country: "Portugal", title: "Tour", partner: "getyourguide", url: "/api/affiliate/getyourguide?city=Lisbon", photo: null },
+    ]);
+    mocks.addOnFindMany.mockResolvedValue(ADDON_ROWS);
+
+    const pkg = await composePackage("u-1", {});
+    expect(pkg.interpreted).toBeNull();
+    expect(pkg.experiences[0]).toMatchObject({ id: "exp-1", selected: true, title: "Tour" });
+    expect(pkg.services[0]).toMatchObject({ id: "svc-skyscanner", selected: true });
+    expect(pkg.addOns.map((a) => a.id)).toEqual(["addon-cleaning-mid", "addon-city-guide"]);
+    expect(pkg.addOns.every((a) => a.selected)).toBe(true);
+    expect(mocks.addOnFindMany.mock.calls[0][0].where).toEqual({ isActive: true, type: "flat_fee", priceCents: { gt: 0 } });
+    // The persisted draft carries the editable items.
+    const saved = JSON.parse(mocks.packageCreate.mock.calls[0][0].data.payload);
+    expect(saved.addOns).toHaveLength(2);
+  });
+});
+
+const ADDON_ROWS = [
+  { slug: "cleaning-mid", name: "Pre-stay cleaning", description: "d", priceCents: 6900, currency: "EUR", provider: "swapl", category: "cleaning" },
+  { slug: "city-guide", name: "Local city guide", description: "d", priceCents: 900, currency: "EUR", provider: "swapl", category: "guide" },
+];
+
+const ITEMS_PAYLOAD = {
+  ...PAYLOAD,
+  experiences: [
+    { city: "Lisbon", country: "Portugal", title: "Tour", partner: "getyourguide", url: "/x", photo: null, id: "exp-1", selected: true },
+  ],
+  services: [{ slug: "skyscanner", name: "Skyscanner", category: "flights", url: "/y", id: "svc-skyscanner", selected: true }],
+  addOns: [
+    { id: "addon-cleaning-mid", selected: true, slug: "cleaning-mid", name: "Pre-stay cleaning", description: "d", priceCents: 6900, currency: "EUR", provider: "swapl", category: "cleaning" },
+    { id: "addon-city-guide", selected: true, slug: "city-guide", name: "Local city guide", description: "d", priceCents: 900, currency: "EUR", provider: "swapl", category: "guide" },
+  ],
+  interpreted: null,
+};
+
+function itemsReq(body: unknown) {
+  return new Request("https://swapl.test/api/assistant/inspire/pkg-1/items", {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+describe("PATCH /api/assistant/inspire/{id}/items", () => {
+  beforeEach(() => {
+    mocks.packageFindUnique.mockResolvedValue({
+      id: "pkg-1",
+      userId: "u-1",
+      status: "draft",
+      payload: JSON.stringify(ITEMS_PAYLOAD),
+    });
+    mocks.packageUpdate.mockResolvedValue({});
+  });
+
+  it("toggles items, persists the payload, and recomputes the payable total", async () => {
+    const res = await patchItems(itemsReq({ items: [{ itemId: "addon-cleaning-mid", selected: false }, { itemId: "exp-1", selected: false }] }), ctx);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.items.addOns).toEqual([
+      { id: "addon-cleaning-mid", selected: false },
+      { id: "addon-city-guide", selected: true },
+    ]);
+    expect(body.items.experiences).toEqual([{ id: "exp-1", selected: false }]);
+    // Only the remaining selected concierge add-on is payable.
+    expect(body.payable).toEqual({ totalCents: 900, currency: "EUR" });
+
+    const saved = JSON.parse(mocks.packageUpdate.mock.calls[0][0].data.payload);
+    expect(saved.addOns.find((a: { id: string }) => a.id === "addon-cleaning-mid").selected).toBe(false);
+  });
+
+  it("accepts the single-toggle shape too", async () => {
+    const res = await patchItems(itemsReq({ itemId: "svc-skyscanner", selected: false }), ctx);
+    expect(res.status).toBe(200);
+    expect((await res.json()).items.services).toEqual([{ id: "svc-skyscanner", selected: false }]);
+  });
+
+  it("rejects unknown item ids without writing", async () => {
+    const res = await patchItems(itemsReq({ itemId: "addon-nope", selected: false }), ctx);
+    expect(res.status).toBe(400);
+    expect(mocks.packageUpdate).not.toHaveBeenCalled();
+  });
+
+  it("404s on someone else's package, 422s when not draft", async () => {
+    mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-9", status: "draft", payload: "{}" });
+    expect((await patchItems(itemsReq({ itemId: "exp-1", selected: false }), ctx)).status).toBe(404);
+
+    mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-1", status: "confirmed", payload: JSON.stringify(ITEMS_PAYLOAD) });
+    expect((await patchItems(itemsReq({ itemId: "exp-1", selected: false }), ctx)).status).toBe(422);
+  });
+});
+
+describe("POST /api/assistant/inspire/{id}/checkout", () => {
+  const checkoutReq = () =>
+    new Request("https://swapl.test/api/assistant/inspire/pkg-1/checkout", { method: "POST" });
+
+  beforeEach(() => {
+    mocks.packageFindUnique.mockResolvedValue({
+      id: "pkg-1",
+      userId: "u-1",
+      status: "draft",
+      payload: JSON.stringify(ITEMS_PAYLOAD),
+      setupIntentId: null,
+      paymentStatus: "none",
+    });
+    mocks.packageUpdate.mockResolvedValue({});
+  });
+
+  it("degrades without Stripe: paymentRequired false, no SetupIntent, flow continues", async () => {
+    const res = await checkout(checkoutReq(), ctx);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.paymentRequired).toBe(false);
+    expect(body.summary.totalCents).toBe(7800);
+    expect(mocks.setupIntentCreate).not.toHaveBeenCalled();
+    expect(mocks.packageUpdate).not.toHaveBeenCalled();
+  });
+
+  it("returns paymentRequired false when nothing payable is selected, even with Stripe", async () => {
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test");
+    const payload = {
+      ...ITEMS_PAYLOAD,
+      addOns: ITEMS_PAYLOAD.addOns.map((a) => ({ ...a, selected: false })),
+    };
+    mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-1", status: "draft", payload: JSON.stringify(payload) });
+    const res = await checkout(checkoutReq(), ctx);
+    expect((await res.json()).paymentRequired).toBe(false);
+    expect(mocks.setupIntentCreate).not.toHaveBeenCalled();
+  });
+
+  it("with Stripe + payable items: creates an off_session SetupIntent (NO charge) and saves its id", async () => {
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test");
+    mocks.setupIntentCreate.mockResolvedValue({ id: "seti_1", client_secret: "seti_1_secret" });
+
+    const res = await checkout(checkoutReq(), ctx);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toMatchObject({ paymentRequired: true, clientSecret: "seti_1_secret" });
+    expect(body.note).toMatch(/only be charged if the host accepts/i);
+    expect(body.summary).toEqual({
+      payableItems: [
+        { id: "addon-cleaning-mid", slug: "cleaning-mid", name: "Pre-stay cleaning", priceCents: 6900 },
+        { id: "addon-city-guide", slug: "city-guide", name: "Local city guide", priceCents: 900 },
+      ],
+      totalCents: 7800,
+      currency: "EUR",
+    });
+    expect(mocks.setupIntentCreate).toHaveBeenCalledWith({
+      customer: "cus_1",
+      usage: "off_session",
+      metadata: { kind: "inspire_package", packageId: "pkg-1", userId: "u-1" },
+    });
+    expect(mocks.packageUpdate).toHaveBeenCalledWith({
+      where: { id: "pkg-1" },
+      data: { setupIntentId: "seti_1", paymentStatus: "none" },
+    });
+  });
+
+  it("404s on someone else's package, 422s when not draft", async () => {
+    mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-9", status: "draft", payload: "{}" });
+    expect((await checkout(checkoutReq(), ctx)).status).toBe(404);
+
+    mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-1", status: "confirmed", payload: "{}" });
+    expect((await checkout(checkoutReq(), ctx)).status).toBe(422);
   });
 });
 
