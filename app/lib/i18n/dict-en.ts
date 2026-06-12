@@ -282,6 +282,21 @@ export const en = {
   "listings.empty.title": "No homes match those filters.",
   "listings.empty.body": "Loosen a filter or two — most homes are flexible on dates within their window.",
   "listings.empty.reset": "Reset filters",
+  // ---- Browse chips: Experiences & Services (DOK-145) ----
+  "browse.chips.ariaLabel": "Browse categories",
+  "browse.chips.homes": "Homes",
+  "browse.chips.experiences": "Experiences",
+  "browse.chips.services": "Services",
+  "browse.bookOn": "Book on {partner}",
+  "browse.disclosure": "swapl may earn a commission on bookings made through these partner links.",
+  "browse.experiences.title": "Experiences in our most-swapped cities",
+  "browse.experiences.lede":
+    "Tours, museums and food walks via our partners — booked on their site, never marked up by swapl.",
+  "browse.services.title": "Travel services for your swap",
+  "browse.services.lede":
+    "Trusted partners for flights, eSIMs and insurance, plus swapl concierge extras at their real catalogue price.",
+  "browse.services.conciergeHeading": "swapl concierge add-ons",
+  "browse.services.conciergeNote": "Purchasable from your swap page once a swap is agreed.",
   "listings.previous": "← Previous",
   "listings.next": "Next →",
   "listings.pageOf": "Page {n} of {total}",

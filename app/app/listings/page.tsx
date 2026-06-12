@@ -10,6 +10,8 @@ import ViewToggle from "./view-toggle";
 import { ListingsMap } from "@/components/map/listings-map";
 import { getCachedCityMediaMap, cityMediaKey } from "@/lib/city-media";
 import { getDictionary, t as tt } from "@/lib/i18n/server";
+import { getDiscoverExperiences, getDiscoverServices } from "@/lib/discover";
+import { BrowseChips, ExperiencesGrid, ServicesGrid, type BrowseTab } from "@/components/listing/browse-discover";
 
 export const metadata = {
   title: "Browse homes · swapl",
@@ -26,9 +28,60 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
 
   const view: "grid" | "map" = (Array.isArray(sp?.view) ? sp?.view[0] : sp?.view) === "map" ? "map" : "grid";
 
+  const dict = await getDictionary();
+
+  // Airbnb-style browse chips (DOK-145). Content comes from the same lib the
+  // /api/discover/* routes serve — env-gated, so without AFF_* ids both lists
+  // are empty, no chips render and the page is exactly the old Homes browse.
+  const [experiences, services] = await Promise.all([
+    getDiscoverExperiences(filters.cities[0]),
+    getDiscoverServices(),
+  ]);
+  // Services needs at least one configured affiliate partner — concierge
+  // add-ons alone (DB rows, not env-gated) don't earn the chip, so unsetting
+  // every AFF_* id hides both tabs entirely.
+  const hasServicePartners = services.some((s) => s.category !== "concierge");
+  const rawTab = Array.isArray(sp?.tab) ? sp.tab[0] : sp?.tab;
+  const tab: BrowseTab =
+    rawTab === "experiences" && experiences.length > 0
+      ? "experiences"
+      : rawTab === "services" && hasServicePartners
+        ? "services"
+        : "homes";
+
+  const chips = (
+    <BrowseChips
+      active={tab}
+      showExperiences={experiences.length > 0}
+      showServices={hasServicePartners}
+      baseQuery={filtersToQuery({ ...filters, page: 1 })}
+      dict={dict}
+    />
+  );
+
+  if (tab !== "homes") {
+    return (
+      <div className="wrap py-10 lg:py-14">
+        <header className="mb-8">
+          <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] font-medium">
+            {dict[`browse.${tab}.title`]}
+          </h1>
+          <p className="mt-3 max-w-2xl text-[16px]" style={{ color: "var(--navy-2)" }}>
+            {dict[`browse.${tab}.lede`]}
+          </p>
+          <div className="mt-6">{chips}</div>
+        </header>
+        {tab === "experiences" ? (
+          <ExperiencesGrid items={experiences} dict={dict} />
+        ) : (
+          <ServicesGrid items={services} dict={dict} />
+        )}
+      </div>
+    );
+  }
+
   const { items, total, pageSize, page } = await queryListings(filters, viewerListing);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const dict = await getDictionary();
 
   // Cached-only city photos for cards (single query, no upstream fetch —
   // the cache is populated by listing detail page views).
@@ -60,6 +113,7 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
             <span>{dict["listings.listFirst.body"]}</span>
           </div>
         )}
+        <div className="mt-6">{chips}</div>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[320px_1fr]">

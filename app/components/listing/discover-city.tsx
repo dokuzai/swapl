@@ -36,12 +36,14 @@ function BookCard({
   body: string;
 }) {
   return (
-    <a href={href} target="_blank" rel="noopener sponsored" className="surface-card p-5 block hover:no-underline group">
+    // min-w-0 + break-words: inside the listing grid the card must never
+    // force the column wider than a small viewport (long city names).
+    <a href={href} target="_blank" rel="noopener sponsored" className="surface-card p-5 block min-w-0 hover:no-underline group">
       <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--pink)" }}>
         {kicker}
       </div>
-      <div className="font-display text-lg tracking-[-0.01em] font-medium mb-1 group-hover:underline">{title}</div>
-      <p className="text-sm" style={{ color: "var(--navy-2)" }}>
+      <div className="font-display text-lg tracking-[-0.01em] font-medium mb-1 break-words group-hover:underline">{title}</div>
+      <p className="text-sm break-words" style={{ color: "var(--navy-2)" }}>
         {body}
       </p>
     </a>
@@ -52,7 +54,10 @@ export async function DiscoverCity({ city, country }: { city: string; country: s
   const photos = (await getCityMedia(city, country)).slice(0, 6);
 
   return (
-    <section className="mb-8 pt-6 divider-dashed">
+    // min-w-0: the section sits in the 1.4fr column of the detail grid —
+    // without it a wide child (photo grid) can overflow the viewport on
+    // mobile instead of shrinking the column.
+    <section className="mb-8 pt-6 divider-dashed min-w-0">
       <h2 className="font-display text-xl tracking-[-0.01em] font-medium mb-4">Discover {city}</h2>
 
       {photos.length > 0 && (

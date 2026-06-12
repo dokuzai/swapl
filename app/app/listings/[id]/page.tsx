@@ -92,7 +92,10 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
   return (
     <div className="wrap py-10 lg:py-14">
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-        <div>
+        {/* min-w-0: grid items default to min-width auto, so a wide child
+            (photo grids, Discover cards) would overflow small viewports
+            instead of shrinking the column. */}
+        <div className="min-w-0">
           <div
             className={`surface-card overflow-hidden ${heroIllustration ? "mb-2" : "mb-8"} aspect-[16/10] relative`}
             style={{ background: "var(--cream-2)" }}
