@@ -81,6 +81,9 @@ targets:
           Swapl uses speech recognition to turn your spoken trip wish into
           text, on your device whenever possible. Your audio is never sent
           to Swapl's servers.
+        # TestFlight/App Store: only standard HTTPS is used, so the export
+        # compliance question is answered once here instead of per-upload.
+        ITSAppUsesNonExemptEncryption: false
         # Google sign-in (ASWebAuthenticationSession, no SDK): the iOS OAuth
         # client id from Google Cloud Console. Empty → the Google button is
         # hidden (env-gated like the backend; see GoogleSignInCoordinator).
