@@ -17,6 +17,12 @@
 //          REAL proposal through the same code path as POST /api/proposals
 //          and we redirect to the swap thread. Without Stripe or with zero
 //          payable items the confirm is direct, as before.
+//
+// Return mode (?package={id}&step=pay, opened by the iOS/Android apps): the
+// server page preloads the draft package, we POST …/checkout immediately and
+// jump straight to the payment step. Saving the card ends on "Card saved —
+// you can go back to the app": the APP sends the proposal itself when the
+// user returns, so this mode never POSTs …/confirm.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -122,10 +128,25 @@ function formatMoney(cents: number, currency: string, locale: string): string {
   }
 }
 
-export function InspireClient() {
+export function InspireClient({
+  initialPackage = null,
+  resumePayment = false,
+  resumeInvalid = false,
+}: {
+  /** Draft package preloaded server-side from ?package={id} (it belongs to the session user). */
+  initialPackage?: InspirePackage | null;
+  /** True for ?step=pay — jump straight to the payment step, return-to-app copy. */
+  resumePayment?: boolean;
+  /** ?package={id} pointed at a missing / foreign / non-draft package. */
+  resumeInvalid?: boolean;
+}) {
   const t = useT();
   const locale = useLocale();
   const router = useRouter();
+
+  // Return mode: the mobile app opened this page just to save a card.
+  const returnMode = resumePayment && initialPackage !== null;
+  const [returnState, setReturnState] = useState<"loading" | "pay" | "saved" | "noPayment" | "error">("loading");
 
   // Step 1 state
   const [prompt, setPrompt] = useState("");
@@ -144,17 +165,50 @@ export function InspireClient() {
     return () => recognitionRef.current?.stop();
   }, []);
 
-  // Step 2 state
-  const [pkg, setPkg] = useState<InspirePackage | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [editFrom, setEditFrom] = useState("");
-  const [editTo, setEditTo] = useState("");
-  const [message, setMessage] = useState("");
+  // Step 2 state (prefilled when the server page preloaded a draft package)
+  const [pkg, setPkg] = useState<InspirePackage | null>(initialPackage);
+  const [selectedId, setSelectedId] = useState<string | null>(initialPackage?.destination.listingId ?? null);
+  const [editFrom, setEditFrom] = useState(initialPackage?.dates.from ?? "");
+  const [editTo, setEditTo] = useState(initialPackage?.dates.to ?? "");
+  const [message, setMessage] = useState(initialPackage?.proposalMessage ?? "");
   const [confirming, setConfirming] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   // Payment step ({ paymentRequired: true } from POST …/checkout)
   const [payment, setPayment] = useState<{ clientSecret: string; summary: CheckoutSummary } | null>(null);
+
+  // Return mode bootstrap: POST …/checkout straight away and land on the
+  // payment step (or on "nothing to pay" when Stripe is absent / total is 0 —
+  // the app's confirm never blocks on payment either way).
+  async function startReturnCheckout(packageId: string) {
+    setReturnState("loading");
+    setError(null);
+    try {
+      const res = await fetch(`/api/assistant/inspire/${packageId}/checkout`, { method: "POST" });
+      if (!res.ok) throw new Error(await readError(res, t("inspire.error.generic")));
+      const data = (await res.json()) as {
+        paymentRequired: boolean;
+        clientSecret?: string;
+        summary: CheckoutSummary;
+      };
+      if (data.paymentRequired && data.clientSecret && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+        setPayment({ clientSecret: data.clientSecret, summary: data.summary });
+        setReturnState("pay");
+      } else {
+        setReturnState("noPayment");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("inspire.error.generic"));
+      setReturnState("error");
+    }
+  }
+  const returnCheckoutStarted = useRef(false);
+  useEffect(() => {
+    if (!returnMode || returnCheckoutStarted.current) return;
+    returnCheckoutStarted.current = true; // strict-mode double-mount guard
+    void startReturnCheckout(initialPackage!.packageId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [returnMode]);
 
   // Recompose client-side: the hero shows whichever of the package's real
   // listings is selected; "why" only ever describes the assistant's pick.
@@ -384,7 +438,59 @@ export function InspireClient() {
         </p>
       </header>
 
-      {payment && pkg ? (
+      {resumeInvalid ? (
+        /* ---- ?package={id} pointed at a missing / non-draft package ---- */
+        <div className="surface-card p-6 lg:p-8 space-y-4" role="alert">
+          <p className="text-[15px]">{t("inspire.resume.invalid")}</p>
+          <Link href="/inspire" className="pill-primary inline-flex items-center gap-2">
+            <Sparkles />
+            {t("inspire.startOver")}
+          </Link>
+        </div>
+      ) : returnMode ? (
+        /* ---- ?step=pay from the app: payment step only, then back to app ---- */
+        <div className="space-y-4">
+          {returnState === "loading" && (
+            <div className="surface-card p-6 lg:p-8">
+              <p className="text-[15px]" role="status" style={mutedStyle}>
+                {t("inspire.resume.loading")}
+              </p>
+            </div>
+          )}
+          {returnState === "pay" && payment && (
+            <PaymentStep
+              clientSecret={payment.clientSecret}
+              summary={payment.summary}
+              submitLabel={t("inspire.checkout.submitCardOnly")}
+              onConfirmed={() => setReturnState("saved")}
+            />
+          )}
+          {(returnState === "saved" || returnState === "noPayment") && (
+            <div className="surface-card p-6 lg:p-8 space-y-2" role="status">
+              <p className="text-[17px] font-medium">
+                {returnState === "saved" ? t("inspire.return.cardSaved") : t("inspire.return.noPayment")}
+              </p>
+              <p className="text-sm" style={mutedStyle}>
+                {t("inspire.checkout.note")}
+              </p>
+            </div>
+          )}
+          {returnState === "error" && (
+            <div className="surface-card p-6 lg:p-8 space-y-4">
+              <p className="text-sm" role="alert" style={{ color: "#dc2626" }}>
+                {error ?? t("inspire.error.generic")}
+              </p>
+              <button
+                type="button"
+                onClick={() => void startReturnCheckout(initialPackage!.packageId)}
+                className="pill-primary"
+              >
+                {t("inspire.return.retry")}
+              </button>
+            </div>
+          )}
+        </div>
+      ) : payment && pkg ? (
         <div className="space-y-4">
           <PaymentStep
             clientSecret={payment.clientSecret}

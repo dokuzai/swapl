@@ -33,7 +33,15 @@ export function formatMoney(cents: number, currency: string, locale: string): st
   }
 }
 
-function PaymentForm({ onConfirmed, onBack }: { onConfirmed: () => void; onBack: () => void }) {
+function PaymentForm({
+  onConfirmed,
+  onBack,
+  submitLabel,
+}: {
+  onConfirmed: () => void;
+  onBack?: () => void;
+  submitLabel?: string;
+}) {
   const t = useT();
   const stripe = useStripe();
   const elements = useElements();
@@ -47,7 +55,9 @@ function PaymentForm({ onConfirmed, onBack }: { onConfirmed: () => void; onBack:
     setError(null);
     const { error: err } = await stripe.confirmSetup({
       elements,
-      confirmParams: { return_url: `${window.location.origin}/inspire` },
+      // Current URL, not a bare /inspire: in return mode (?package&step=pay)
+      // a redirect-based payment method must land back on the payment step.
+      confirmParams: { return_url: window.location.href },
       redirect: "if_required",
     });
     if (err) {
@@ -73,11 +83,13 @@ function PaymentForm({ onConfirmed, onBack }: { onConfirmed: () => void; onBack:
           disabled={!stripe || !elements || submitting}
           className="pill-primary inline-flex items-center gap-2"
         >
-          {submitting ? t("inspire.checkout.processing") : t("inspire.checkout.submit")}
+          {submitting ? t("inspire.checkout.processing") : (submitLabel ?? t("inspire.checkout.submit"))}
         </button>
-        <button type="button" onClick={onBack} disabled={submitting} className="pill-ghost">
-          {t("inspire.checkout.back")}
-        </button>
+        {onBack && (
+          <button type="button" onClick={onBack} disabled={submitting} className="pill-ghost">
+            {t("inspire.checkout.back")}
+          </button>
+        )}
       </div>
     </form>
   );
@@ -88,12 +100,17 @@ export default function PaymentStep({
   summary,
   onConfirmed,
   onBack,
+  submitLabel,
 }: {
   clientSecret: string;
   summary: CheckoutSummary;
-  /** Called after the SetupIntent succeeds — the parent then POSTs /confirm. */
+  /** Called after the SetupIntent succeeds — the parent then POSTs /confirm
+   *  (web flow) or shows "go back to the app" (?step=pay return mode). */
   onConfirmed: () => void;
-  onBack: () => void;
+  /** Omit to hide the back button (return mode has nowhere to go back to). */
+  onBack?: () => void;
+  /** Overrides "Save card & send proposal" (return mode only saves the card). */
+  submitLabel?: string;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -147,7 +164,7 @@ export default function PaymentStep({
       {/* ---- Stripe Payment Element (SetupIntent — saves the card only) ---- */}
       <section className="surface-card p-6">
         <Elements stripe={stripe} options={{ clientSecret }}>
-          <PaymentForm onConfirmed={onConfirmed} onBack={onBack} />
+          <PaymentForm onConfirmed={onConfirmed} onBack={onBack} submitLabel={submitLabel} />
         </Elements>
       </section>
     </div>

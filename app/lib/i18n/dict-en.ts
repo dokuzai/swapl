@@ -355,6 +355,14 @@ export const en = {
   "inspire.checkout.submit": "Save card & send proposal",
   "inspire.checkout.processing": "Saving your card…",
   "inspire.checkout.back": "Back to package",
+  // ---- ?package={id}&step=pay deep link from the mobile apps (DOK-148) ----
+  "inspire.checkout.submitCardOnly": "Save card",
+  "inspire.resume.loading": "Preparing your payment step…",
+  "inspire.resume.invalid":
+    "This package isn't available anymore — it may already be confirmed or dismissed. You can start a fresh one below.",
+  "inspire.return.cardSaved": "Card saved — you can go back to the app.",
+  "inspire.return.noPayment": "Nothing to pay now — you can go back to the app.",
+  "inspire.return.retry": "Try again",
 
   // ---- Travel profile (account, DOK-146) ----
   "account.travelProfile.title": "Your travel profile",

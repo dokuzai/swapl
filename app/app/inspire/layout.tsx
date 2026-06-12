@@ -1,14 +1,13 @@
-import { redirect } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { getSession } from "@/lib/auth/session";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
 
 export const dynamic = "force-dynamic";
 
+// NOTE: the auth gate lives in page.tsx, not here — layouts can't read
+// searchParams, and the login redirect must preserve ?package & ?step
+// (the deep link the mobile apps open to save a card, DOK-148).
 export default async function InspireLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
-  if (!session) redirect("/login?next=/inspire");
   return (
     <I18nProviderShell>
       <Navbar />
