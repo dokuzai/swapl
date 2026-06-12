@@ -64,12 +64,22 @@ export function AISuggestions() {
         {items.map((it) => (
           <Link key={it.listing.id} href={`/listings/${it.listing.id}`} className="surface-card overflow-hidden block">
             <div className="aspect-[16/10] relative" style={{ background: "var(--cream-2)" }}>
-              <CityIllust
-                city={it.listing.city}
-                palette={it.listing.palette}
-                motif={it.listing.motif}
-                postcard={it.listing.postcard}
-              />
+              {it.listing.photos[0] ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={it.listing.photos[0]}
+                  alt={`${it.listing.title} in ${it.listing.city}`}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <CityIllust
+                  city={it.listing.city}
+                  palette={it.listing.palette}
+                  motif={it.listing.motif}
+                  postcard={it.listing.postcard}
+                />
+              )}
               <span className="absolute top-3 left-3 match-badge">{it.matchScore}% match</span>
             </div>
             <div className="p-5">
