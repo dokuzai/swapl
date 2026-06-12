@@ -59,6 +59,17 @@ model User {
   interests                  String   @default("[]")
   bioVibe                    String?  // optional one-line "vibe" shown on /profile
 
+  // Rich profile (DOK-147). All optional/additive for client back-compat.
+  work        String?                 // occupation, free text
+  languages   String?                 // JSON array of language codes/names
+  homeCity    String?                 // shown on the public profile when settings.showHomeCity
+  homeCountry String?
+
+  // User settings, JSON-encoded TEXT (lib/settings.ts owns shape + defaults):
+  // { searchEngineIndexing, showHomeCity, emailNotifications, pushNotifications }
+  // null means "all defaults" — rows are only written on first change.
+  settings    String?
+
   listings        Listing[]
   proposalsSent   SwapProposal[]  @relation("ProposalsSent")
   betaSignup      BetaSignup?
@@ -81,6 +92,8 @@ model User {
   identityVerifications IdentityVerification[]
   travelProfile   TravelProfile?
   inspirationPackages InspirationPackage[]
+  reviewsAuthored SwapReview[] @relation("ReviewsAuthored")
+  reviewsReceived SwapReview[] @relation("ReviewsReceived")
 }
 
 // ---------- AI ASSISTANT (DOK-146) ----------
@@ -427,8 +440,29 @@ model SwapAgreement {
 
   insurancePolicy InsurancePolicy?
   orderAddOns     OrderAddOn[]
+  reviews         SwapReview[]
 
   createdAt   DateTime     @default(now())
+}
+
+// ---------- SWAP REVIEW (DOK-147) ----------
+// One review per party per COMPLETED agreement. author reviews subject (the
+// other party of the swap). Aggregates power the public-profile stats.
+
+model SwapReview {
+  id          String        @id @default(cuid())
+  agreementId String
+  agreement   SwapAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User          @relation("ReviewsAuthored", fields: [authorId], references: [id], onDelete: Cascade)
+  subjectId   String
+  subject     User          @relation("ReviewsReceived", fields: [subjectId], references: [id], onDelete: Cascade)
+  rating      Int           // 1..5, validated at the API layer (SQLite has no CHECK via Prisma)
+  text        String
+  createdAt   DateTime      @default(now())
+
+  @@unique([agreementId, authorId])
+  @@index([subjectId])
 }
 
 model InsurancePolicy {

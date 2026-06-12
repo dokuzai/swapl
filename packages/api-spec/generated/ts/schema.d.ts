@@ -1039,6 +1039,154 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update the caller's rich profile fields
+         * @description Partial update of work, languages, homeCity, homeCountry. Only the keys present in the body are touched; nullable fields can be cleared with null.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ProfileUpdateRequest"];
+                };
+            };
+            responses: {
+                /** @description Updated profile fields */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProfileUpdateResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/profile/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The caller's privacy + notification settings
+         * @description Defaults apply when the user never changed anything.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UserSettingsResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update settings (partial merge)
+         * @description Omitted keys keep their value. searchEngineIndexing=false removes the user's listings from the sitemap and adds noindex on listing pages; showHomeCity=false hides homeCity/homeCountry on the public profile.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UserSettingsUpdateRequest"];
+                };
+            };
+            responses: {
+                /** @description The settings after the merge */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UserSettingsResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/profile/interests": {
         parameters: {
             query?: never;
@@ -2438,6 +2586,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/agreements/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Review the other party of a completed swap
+         * @description Only the two parties of the agreement, only once the agreement is COMPLETED, and at most one review per author per agreement. The subject is always the other party. Rate-limited 10/hour per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SwapReviewCreateRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SwapReviewCreateResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of this agreement */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Agreement not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Already reviewed */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Agreement not COMPLETED yet */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/reports": {
         parameters: {
             query?: never;
@@ -3032,7 +3276,12 @@ export interface components {
                 interests?: string[];
                 /** Format: date-time */
                 createdAt?: string;
+                work?: string | null;
+                languages?: string[];
+                homeCity?: string | null;
+                homeCountry?: string | null;
             };
+            settings?: components["schemas"]["UserSettings"];
             counts: {
                 listings: number;
                 incomingProposals: number;
@@ -3310,11 +3559,94 @@ export interface components {
             /** Format: date-time */
             memberSince: string;
             interests: string[];
+            work?: string | null;
+            /** @description Language codes/names the host speaks. */
+            languages?: string[];
+            /** @description Null when the host disabled showHomeCity in their settings. */
+            homeCity?: string | null;
+            homeCountry?: string | null;
+        };
+        ProfileStats: {
+            swapsCompleted: number;
+            reviewsCount: number;
+            /** @description Average rating rounded to one decimal; null with no reviews. */
+            avgRating: number | null;
+            /** Format: date-time */
+            memberSince: string;
+        };
+        VisitedCity: {
+            city: string;
+            country: string;
+            year: number;
+        };
+        ProfileReview: {
+            id: string;
+            author: {
+                id: string;
+                name?: string | null;
+                avatar?: string | null;
+            };
+            rating: number;
+            text: string;
+            /** Format: date-time */
+            createdAt: string;
         };
         PublicProfileResponse: {
             user: components["schemas"]["PublicProfile"];
+            stats: components["schemas"]["ProfileStats"];
+            /** @description Cities visited via COMPLETED swaps (the other listing's city), deduped per city/country/year, newest first. */
+            visited: components["schemas"]["VisitedCity"][];
+            /** @description Latest 10 reviews received. */
+            reviews: components["schemas"]["ProfileReview"][];
             /** @description The host's active listings, newest first. */
             listings: components["schemas"]["Listing"][];
+        };
+        /** @description Partial update — only the keys present are touched. */
+        ProfileUpdateRequest: {
+            work?: string | null;
+            languages?: string[];
+            homeCity?: string | null;
+            homeCountry?: string | null;
+        };
+        ProfileUpdateResponse: {
+            profile: {
+                work: string | null;
+                languages: string[];
+                homeCity: string | null;
+                homeCountry: string | null;
+            };
+        };
+        UserSettings: {
+            /** @description False excludes the user's listings from the sitemap and adds noindex on their listing pages. */
+            searchEngineIndexing: boolean;
+            /** @description False omits homeCity/homeCountry from the public profile. */
+            showHomeCity: boolean;
+            emailNotifications: boolean;
+            pushNotifications: boolean;
+        };
+        UserSettingsResponse: {
+            settings: components["schemas"]["UserSettings"];
+        };
+        /** @description Partial merge — omitted keys keep their current value. */
+        UserSettingsUpdateRequest: {
+            searchEngineIndexing?: boolean;
+            showHomeCity?: boolean;
+            emailNotifications?: boolean;
+            pushNotifications?: boolean;
+        };
+        SwapReviewCreateRequest: {
+            rating: number;
+            text: string;
+        };
+        SwapReviewCreateResponse: {
+            review: {
+                id: string;
+                agreementId: string;
+                rating: number;
+                text: string;
+                /** Format: date-time */
+                createdAt: string;
+            };
         };
         ReportCreateRequest: {
             reason: string;

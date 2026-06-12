@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma, parseJSON } from "@/lib/db";
+import { parseSettings } from "@/lib/settings";
 import { DiscoverCity, DiscoverCitySkeleton } from "@/components/listing/discover-city";
 import { Attribution, HeroIllustration, ListingPhotoGrid } from "@/components/listing/photo-lightbox";
 import { getCityIllustration } from "@/lib/city-media";
@@ -18,10 +19,17 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata(props: PageProps<"/listings/[id]">) {
   const { id } = await props.params;
-  const l = await prisma.listing.findUnique({ where: { id } });
+  const l = await prisma.listing.findUnique({
+    where: { id },
+    include: { user: { select: { settings: true } } },
+  });
   if (!l) return { title: "Listing not found · swapl" };
   const cover = parseJSON<string[]>(l.photos, [])[0];
+  // Owner opted out of search-engine indexing → noindex (the listing is also
+  // excluded from the sitemap, see app/sitemap.ts).
+  const indexable = parseSettings(l.user.settings).searchEngineIndexing;
   return {
+    ...(indexable ? {} : { robots: { index: false, follow: false } }),
     title: `${l.neighbourhood} · ${l.city} — ${l.title} · swapl`,
     description: l.description.slice(0, 160),
     openGraph: {

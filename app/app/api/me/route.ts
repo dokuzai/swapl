@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { parseJSON } from "@/lib/db";
+import { parseSettings } from "@/lib/settings";
 
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
@@ -41,7 +42,12 @@ export async function GET(req: Request) {
       role: user.role,
       interests: parseJSON<string[]>(user.interests, []),
       createdAt: user.createdAt.toISOString(),
+      work: user.work,
+      languages: parseJSON<string[]>(user.languages, []),
+      homeCity: user.homeCity,
+      homeCountry: user.homeCountry,
     },
+    settings: parseSettings(user.settings),
     counts: {
       listings: listingsCount,
       incomingProposals: incoming,

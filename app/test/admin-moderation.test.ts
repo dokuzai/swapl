@@ -39,6 +39,14 @@ vi.mock("@/lib/db", () => ({
     report: { findUnique: mocks.reportFindUnique, update: mocks.reportUpdate },
     swapProposal: { findUnique: mocks.proposalFindUnique, update: mocks.proposalUpdate },
     swapMessage: { create: mocks.messageCreate },
+    // Public profile (DOK-147) stats/reviews — empty defaults keep the
+    // moderation assertions focused on suspension behaviour.
+    swapAgreement: { findMany: vi.fn(async () => []) },
+    swapReview: {
+      aggregate: vi.fn(async () => ({ _count: 0, _avg: { rating: null } })),
+      findMany: vi.fn(async () => []),
+      findUnique: vi.fn(async () => null),
+    },
   },
   parseJSON: <T,>(s: string | null | undefined, fallback: T): T => {
     try {

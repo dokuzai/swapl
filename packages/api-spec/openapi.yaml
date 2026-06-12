@@ -338,6 +338,13 @@ components:
               type: array
               items: { type: string }
             createdAt: { type: string, format: date-time }
+            work: { type: string, nullable: true }
+            languages:
+              type: array
+              items: { type: string }
+            homeCity: { type: string, nullable: true }
+            homeCountry: { type: string, nullable: true }
+        settings: { $ref: '#/components/schemas/UserSettings' }
         counts:
           type: object
           required: [listings, incomingProposals, outgoingProposals, activeSwaps]
@@ -786,16 +793,149 @@ components:
         interests:
           type: array
           items: { type: string }
+        work: { type: string, nullable: true }
+        languages:
+          type: array
+          items: { type: string }
+          description: Language codes/names the host speaks.
+        homeCity:
+          type: string
+          nullable: true
+          description: Null when the host disabled showHomeCity in their settings.
+        homeCountry: { type: string, nullable: true }
+
+    ProfileStats:
+      type: object
+      required: [swapsCompleted, reviewsCount, avgRating, memberSince]
+      properties:
+        swapsCompleted: { type: integer }
+        reviewsCount: { type: integer }
+        avgRating:
+          type: number
+          nullable: true
+          description: Average rating rounded to one decimal; null with no reviews.
+        memberSince: { type: string, format: date-time }
+
+    VisitedCity:
+      type: object
+      required: [city, country, year]
+      properties:
+        city: { type: string }
+        country: { type: string }
+        year: { type: integer }
+
+    ProfileReview:
+      type: object
+      required: [id, author, rating, text, createdAt]
+      properties:
+        id: { type: string }
+        author:
+          type: object
+          required: [id]
+          properties:
+            id: { type: string }
+            name: { type: string, nullable: true }
+            avatar: { type: string, nullable: true }
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        text: { type: string }
+        createdAt: { type: string, format: date-time }
 
     PublicProfileResponse:
       type: object
-      required: [user, listings]
+      required: [user, stats, visited, reviews, listings]
       properties:
         user: { $ref: '#/components/schemas/PublicProfile' }
+        stats: { $ref: '#/components/schemas/ProfileStats' }
+        visited:
+          type: array
+          items: { $ref: '#/components/schemas/VisitedCity' }
+          description: >-
+            Cities visited via COMPLETED swaps (the other listing's city),
+            deduped per city/country/year, newest first.
+        reviews:
+          type: array
+          items: { $ref: '#/components/schemas/ProfileReview' }
+          description: Latest 10 reviews received.
         listings:
           type: array
           items: { $ref: '#/components/schemas/Listing' }
           description: The host's active listings, newest first.
+
+    ProfileUpdateRequest:
+      type: object
+      description: Partial update — only the keys present are touched.
+      properties:
+        work: { type: string, nullable: true, maxLength: 120 }
+        languages:
+          type: array
+          maxItems: 10
+          items: { type: string, maxLength: 40 }
+        homeCity: { type: string, nullable: true, maxLength: 80 }
+        homeCountry: { type: string, nullable: true, maxLength: 80 }
+
+    ProfileUpdateResponse:
+      type: object
+      required: [profile]
+      properties:
+        profile:
+          type: object
+          required: [work, languages, homeCity, homeCountry]
+          properties:
+            work: { type: string, nullable: true }
+            languages:
+              type: array
+              items: { type: string }
+            homeCity: { type: string, nullable: true }
+            homeCountry: { type: string, nullable: true }
+
+    UserSettings:
+      type: object
+      required: [searchEngineIndexing, showHomeCity, emailNotifications, pushNotifications]
+      properties:
+        searchEngineIndexing:
+          type: boolean
+          description: False excludes the user's listings from the sitemap and adds noindex on their listing pages.
+        showHomeCity:
+          type: boolean
+          description: False omits homeCity/homeCountry from the public profile.
+        emailNotifications: { type: boolean }
+        pushNotifications: { type: boolean }
+
+    UserSettingsResponse:
+      type: object
+      required: [settings]
+      properties:
+        settings: { $ref: '#/components/schemas/UserSettings' }
+
+    UserSettingsUpdateRequest:
+      type: object
+      description: Partial merge — omitted keys keep their current value.
+      properties:
+        searchEngineIndexing: { type: boolean }
+        showHomeCity: { type: boolean }
+        emailNotifications: { type: boolean }
+        pushNotifications: { type: boolean }
+
+    SwapReviewCreateRequest:
+      type: object
+      required: [rating, text]
+      properties:
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        text: { type: string, minLength: 20, maxLength: 1000 }
+
+    SwapReviewCreateResponse:
+      type: object
+      required: [review]
+      properties:
+        review:
+          type: object
+          required: [id, agreementId, rating, text, createdAt]
+          properties:
+            id: { type: string }
+            agreementId: { type: string }
+            rating: { type: integer }
+            text: { type: string }
+            createdAt: { type: string, format: date-time }
 
     ReportCreateRequest:
       type: object
@@ -1377,6 +1517,71 @@ paths:
               schema: { $ref: '#/components/schemas/MeResponse' }
         '401': { description: Unauthenticated }
 
+  /api/profile:
+    patch:
+      tags: [profile]
+      summary: Update the caller's rich profile fields
+      description: >-
+        Partial update of work, languages, homeCity, homeCountry. Only the keys
+        present in the body are touched; nullable fields can be cleared with null.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProfileUpdateRequest' }
+      responses:
+        '200':
+          description: Updated profile fields
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProfileUpdateResponse' }
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { description: Unauthenticated }
+
+  /api/profile/settings:
+    get:
+      tags: [profile]
+      summary: The caller's privacy + notification settings
+      description: Defaults apply when the user never changed anything.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserSettingsResponse' }
+        '401': { description: Unauthenticated }
+    patch:
+      tags: [profile]
+      summary: Update settings (partial merge)
+      description: >-
+        Omitted keys keep their value. searchEngineIndexing=false removes the
+        user's listings from the sitemap and adds noindex on listing pages;
+        showHomeCity=false hides homeCity/homeCountry on the public profile.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserSettingsUpdateRequest' }
+      responses:
+        '200':
+          description: The settings after the merge
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserSettingsResponse' }
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { description: Unauthenticated }
+
   /api/profile/interests:
     get:
       tags: [profile]
@@ -1924,6 +2129,40 @@ paths:
         '401': { description: Unauthenticated }
         '403': { description: Not a party of this proposal }
         '404': { description: Proposal not found }
+        '429': { description: Rate limited }
+
+  /api/agreements/{id}/review:
+    post:
+      tags: [proposals]
+      summary: Review the other party of a completed swap
+      description: >-
+        Only the two parties of the agreement, only once the agreement is
+        COMPLETED, and at most one review per author per agreement. The subject
+        is always the other party. Rate-limited 10/hour per user.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SwapReviewCreateRequest' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SwapReviewCreateResponse' }
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of this agreement }
+        '404': { description: Agreement not found }
+        '409': { description: Already reviewed }
+        '422': { description: Agreement not COMPLETED yet }
         '429': { description: Rate limited }
 
   /api/reports:

@@ -44,6 +44,20 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
   }
 
   const other = isProposer ? proposal.targetListing.user : proposal.proposerListing.user;
+
+  // Review eligibility (DOK-147): the caller can review once the agreement is
+  // COMPLETED and they have not reviewed it yet (one review per author).
+  let canReview = false;
+  if (proposal.agreement && proposal.agreement.status === "COMPLETED") {
+    const existing = await prisma.swapReview.findUnique({
+      where: {
+        agreementId_authorId: { agreementId: proposal.agreement.id, authorId: session.userId },
+      },
+      select: { id: true },
+    });
+    canReview = !existing;
+  }
+
   const agreement = proposal.agreement
     ? {
         id: proposal.agreement.id,
@@ -53,6 +67,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
         keyCode1: proposal.agreement.keyCode1,
         keyCode2: proposal.agreement.keyCode2,
         status: proposal.agreement.status,
+        canReview,
         insurance: proposal.agreement.insurancePolicy
           ? {
               policyNumber: proposal.agreement.insurancePolicy.policyNumber,
