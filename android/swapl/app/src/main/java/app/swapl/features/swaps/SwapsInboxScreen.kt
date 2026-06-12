@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -44,9 +45,12 @@ import app.swapl.core.model.InboxResponse
 import app.swapl.core.model.ProposalSummary
 import app.swapl.core.repository.ProposalRepository
 import app.swapl.design.components.KickerLabel
+import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
+import app.swapl.designtokens.SwaplRadius
 import app.swapl.designtokens.SwaplSpacing
+import androidx.compose.ui.unit.dp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -205,6 +209,17 @@ fun SwapsInboxScreen(
 private fun ProposalRow(p: ProposalSummary, onClick: () -> Unit) {
     SurfaceCard(modifier = Modifier.clickable(onClick = onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            // Cover photo of the other home; layout unchanged without one.
+            if (!p.theirCoverPhotoUrl.isNullOrBlank()) {
+                ListingPhoto(
+                    photoUrl = p.theirCoverPhotoUrl,
+                    palette = p.theirCity,
+                    height = 64.dp,
+                    cornerRadius = SwaplRadius.md,
+                    modifier = Modifier.width(64.dp),
+                )
+                Spacer(Modifier.width(SwaplSpacing.s3))
+            }
             Column(Modifier.weight(1f)) {
                 Text("${p.myCity} ⇄ ${p.theirCity}", style = MaterialTheme.typography.titleLarge)
                 Text(

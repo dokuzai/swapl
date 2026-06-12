@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,9 +33,12 @@ import androidx.lifecycle.viewModelScope
 import app.swapl.core.model.ProposalSummary
 import app.swapl.core.repository.TripsRepository
 import app.swapl.design.components.KickerLabel
+import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
+import app.swapl.designtokens.SwaplRadius
 import app.swapl.designtokens.SwaplSpacing
+import androidx.compose.ui.unit.dp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -138,6 +142,17 @@ fun TripsScreen(
 private fun TripRow(t: ProposalSummary, onClick: () -> Unit) {
     SurfaceCard(modifier = Modifier.clickable(onClick = onClick)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            // Cover photo of the home you're visiting; layout unchanged without one.
+            if (!t.theirCoverPhotoUrl.isNullOrBlank()) {
+                ListingPhoto(
+                    photoUrl = t.theirCoverPhotoUrl,
+                    palette = t.theirCity,
+                    height = 64.dp,
+                    cornerRadius = SwaplRadius.md,
+                    modifier = Modifier.width(64.dp),
+                )
+                Spacer(Modifier.width(SwaplSpacing.s3))
+            }
             Column(Modifier.weight(1f)) {
                 Text("Trip to ${t.theirCity}", style = MaterialTheme.typography.titleLarge)
                 Text(

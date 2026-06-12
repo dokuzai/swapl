@@ -160,8 +160,10 @@ data class ProposalSummary(
     val message: String? = null,
     val myCity: String,
     val myNeighbourhood: String,
+    val myCoverPhotoUrl: String? = null,
     val theirCity: String,
     val theirNeighbourhood: String,
+    val theirCoverPhotoUrl: String? = null,
     val otherName: String? = null,
     val updatedAt: String,
 )
