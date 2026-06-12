@@ -3603,6 +3603,8 @@ export interface components {
         };
         /** @description Partial update — only the keys present are touched. */
         ProfileUpdateRequest: {
+            name?: string;
+            bio?: string | null;
             work?: string | null;
             languages?: string[];
             homeCity?: string | null;

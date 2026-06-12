@@ -1,0 +1,203 @@
+"use client";
+
+// "Personal information" editor on /account (DOK-147): name, bio, work,
+// languages (multi-input chips), home city + country. Saves via
+// PATCH /api/profile (partial — only the touched fields travel).
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useT } from "@/lib/i18n/client";
+
+export type PersonalInfo = {
+  name: string;
+  bio: string;
+  work: string;
+  languages: string[];
+  homeCity: string;
+  homeCountry: string;
+};
+
+const inputCls = "w-full rounded-lg border px-3 py-2 text-sm bg-transparent";
+const inputStyle = { borderColor: "var(--line)", background: "var(--card-bg)" } as const;
+
+export function PersonalInfoEditor({ initial }: { initial: PersonalInfo }) {
+  const t = useT();
+  const router = useRouter();
+  const [form, setForm] = useState<PersonalInfo>(initial);
+  const [langDraft, setLangDraft] = useState("");
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  function set<K extends keyof PersonalInfo>(key: K, value: PersonalInfo[K]) {
+    setForm((f) => ({ ...f, [key]: value }));
+    setStatus("idle");
+  }
+
+  function addLanguage() {
+    const lang = langDraft.trim();
+    if (!lang || form.languages.length >= 10) return;
+    if (form.languages.some((l) => l.toLowerCase() === lang.toLowerCase())) {
+      setLangDraft("");
+      return;
+    }
+    set("languages", [...form.languages, lang]);
+    setLangDraft("");
+  }
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("saving");
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...(form.name.trim() ? { name: form.name.trim() } : {}),
+          bio: form.bio.trim() || null,
+          work: form.work.trim() || null,
+          languages: form.languages,
+          homeCity: form.homeCity.trim() || null,
+          homeCountry: form.homeCountry.trim() || null,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("saved");
+      router.refresh();
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <form onSubmit={save} className="space-y-4">
+      <div className="grid sm:grid-cols-2 gap-4">
+        <label className="block">
+          <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+            {t("account.personal.name")}
+          </span>
+          <input
+            className={inputCls}
+            style={inputStyle}
+            value={form.name}
+            maxLength={80}
+            onChange={(e) => set("name", e.target.value)}
+          />
+        </label>
+        <label className="block">
+          <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+            {t("account.personal.work")}
+          </span>
+          <input
+            className={inputCls}
+            style={inputStyle}
+            value={form.work}
+            maxLength={120}
+            placeholder={t("account.personal.workPlaceholder")}
+            onChange={(e) => set("work", e.target.value)}
+          />
+        </label>
+      </div>
+
+      <label className="block">
+        <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+          {t("account.personal.bio")}
+        </span>
+        <textarea
+          className={inputCls}
+          style={inputStyle}
+          rows={3}
+          maxLength={1000}
+          value={form.bio}
+          onChange={(e) => set("bio", e.target.value)}
+        />
+      </label>
+
+      <div>
+        <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+          {t("account.personal.languages")}
+        </span>
+        {form.languages.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-2">
+            {form.languages.map((lang) => (
+              <span key={lang} className="tag-chip inline-flex items-center gap-1.5" style={{ background: "var(--pink-light)", color: "var(--navy)" }}>
+                {lang}
+                <button
+                  type="button"
+                  aria-label={t("account.personal.remove", { item: lang })}
+                  onClick={() => set("languages", form.languages.filter((l) => l !== lang))}
+                  className="leading-none"
+                  style={{ color: "var(--navy-2)" }}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+        <div className="flex gap-2">
+          <input
+            className={inputCls}
+            style={inputStyle}
+            value={langDraft}
+            maxLength={40}
+            placeholder={t("account.personal.languagePlaceholder")}
+            onChange={(e) => setLangDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addLanguage();
+              }
+            }}
+          />
+          <button
+            type="button"
+            onClick={addLanguage}
+            disabled={!langDraft.trim() || form.languages.length >= 10}
+            className="px-3 py-1.5 rounded-lg border text-sm font-medium disabled:opacity-60 shrink-0"
+            style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
+          >
+            {t("account.personal.add")}
+          </button>
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-4">
+        <label className="block">
+          <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+            {t("account.personal.homeCity")}
+          </span>
+          <input
+            className={inputCls}
+            style={inputStyle}
+            value={form.homeCity}
+            maxLength={80}
+            onChange={(e) => set("homeCity", e.target.value)}
+          />
+        </label>
+        <label className="block">
+          <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+            {t("account.personal.homeCountry")}
+          </span>
+          <input
+            className={inputCls}
+            style={inputStyle}
+            value={form.homeCountry}
+            maxLength={80}
+            onChange={(e) => set("homeCountry", e.target.value)}
+          />
+        </label>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <button type="submit" disabled={status === "saving"} className="pill-ghost disabled:opacity-60">
+          {status === "saving" ? t("account.personal.saving") : t("account.personal.save")}
+        </button>
+        {status === "saved" && (
+          <span className="text-sm" style={{ color: "var(--navy-2)" }}>{t("account.personal.saved")}</span>
+        )}
+        {status === "error" && (
+          <span className="text-sm" style={{ color: "#dc2626" }}>{t("account.personal.error")}</span>
+        )}
+      </div>
+    </form>
+  );
+}

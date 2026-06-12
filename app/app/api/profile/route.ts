@@ -10,6 +10,10 @@ import { invalidInput, unauthenticated } from "@/lib/api/errors";
 
 const schema = z
   .object({
+    // Additive (DOK-147 web settings): display name + bio, both optional so
+    // older clients that never send them are unaffected.
+    name: z.string().trim().min(1).max(80),
+    bio: z.string().trim().max(1000).nullable(),
     work: z.string().trim().max(120).nullable(),
     languages: z.array(z.string().trim().min(1).max(40)).max(10),
     homeCity: z.string().trim().max(80).nullable(),
@@ -24,10 +28,12 @@ export async function PATCH(req: Request) {
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return invalidInput("Invalid input", { issues: parsed.error.issues });
 
-  const { work, languages, homeCity, homeCountry } = parsed.data;
+  const { name, bio, work, languages, homeCity, homeCountry } = parsed.data;
   const user = await prisma.user.update({
     where: { id: session.userId },
     data: {
+      ...(name !== undefined ? { name } : {}),
+      ...(bio !== undefined ? { bio: bio || null } : {}),
       ...(work !== undefined ? { work: work || null } : {}),
       ...(languages !== undefined ? { languages: stringifyJSON(languages) } : {}),
       ...(homeCity !== undefined ? { homeCity: homeCity || null } : {}),

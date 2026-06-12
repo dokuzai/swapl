@@ -865,6 +865,8 @@ components:
       type: object
       description: Partial update — only the keys present are touched.
       properties:
+        name: { type: string, minLength: 1, maxLength: 80 }
+        bio: { type: string, nullable: true, maxLength: 1000 }
         work: { type: string, nullable: true, maxLength: 120 }
         languages:
           type: array

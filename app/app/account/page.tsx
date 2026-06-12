@@ -1,5 +1,10 @@
+// /account (DOK-147) — Airbnb-style structured settings: Personal information,
+// Login & security, Privacy, Notifications, Get help. On mobile a chevron
+// list at the top jumps to each section; on desktop the sections read inline.
+
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { parseJSON } from "@/lib/db";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { getSession } from "@/lib/auth/session";
@@ -8,16 +13,35 @@ import { AISettings } from "@/components/account/ai-settings";
 import { TravelProfileSection } from "@/components/account/travel-profile";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
 import { PasskeysSection } from "@/components/account/passkeys";
+import { PersonalInfoEditor } from "@/components/account/personal-info";
+import { PrivacyToggles, NotificationToggles } from "@/components/account/settings-toggles";
 import { toPasskeySummary } from "@/lib/auth/passkeys";
+import { parseSettings } from "@/lib/settings";
+import { marketingUrl } from "@/lib/marketing/urls";
+import { getI18n, t as tt } from "@/lib/i18n/server";
+import type { DictKey } from "@/lib/i18n/dict-en";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Account · swapl" };
+
+const SECTIONS: { id: string; titleKey: DictKey }[] = [
+  { id: "personal-info", titleKey: "account.personal.title" },
+  { id: "login-security", titleKey: "account.security.title" },
+  { id: "privacy", titleKey: "account.privacy.title" },
+  { id: "notifications", titleKey: "account.notifications.title" },
+  { id: "get-help", titleKey: "account.help.title" },
+];
 
 export default async function AccountPage() {
   const session = await getSession();
   if (!session) redirect("/login?next=/account");
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
   if (!user) redirect("/login");
+
+  const { locale, dict } = await getI18n();
+  const t = (key: DictKey, vars?: Record<string, string | number>) => tt(dict, key, vars);
+
+  const settings = parseSettings(user.settings);
 
   // Registered WebAuthn passkeys, newest first (serialised — BigInt counter
   // never crosses the server/client boundary).
@@ -39,7 +63,7 @@ export default async function AccountPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  const shortDate = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const shortDate = (d: Date) => d.toLocaleDateString(locale, { month: "short", day: "numeric" });
 
   // Latest identity-check attempt — drives the pending/declined badge below
   // (User.verified flips only on approval).
@@ -59,142 +83,205 @@ export default async function AccountPage() {
     <>
       <Navbar />
       <main className="flex-1">
-        <div className="wrap py-10 lg:py-14 max-w-3xl">
-          <header className="mb-10">
-            <p className="kicker mb-3">Account</p>
-            <h1 className="font-display text-4xl tracking-[-0.02em] font-medium">Settings</h1>
-          </header>
+        <I18nProviderShell>
+          <div className="wrap py-10 lg:py-14 max-w-3xl">
+            <header className="mb-8">
+              <p className="kicker mb-3">{t("account.kicker")}</p>
+              <h1 className="font-display text-4xl tracking-[-0.02em] font-medium">{t("account.title")}</h1>
+            </header>
 
-          <section className="surface-card p-6 mb-6 space-y-3">
-            <div className="grid grid-cols-[140px_1fr] gap-3 text-sm">
-              <span className="font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
-                Email
-              </span>
-              <span>{user.email}</span>
-            </div>
-            <div className="grid grid-cols-[140px_1fr] gap-3 text-sm">
-              <span className="font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
-                Name
-              </span>
-              <span>{user.name ?? "—"}</span>
-            </div>
-            <div className="grid grid-cols-[140px_1fr] gap-3 text-sm">
-              <span className="font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
-                Joined
-              </span>
-              <span>{user.createdAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
-            </div>
-          </section>
-
-          <section className="surface-card p-6 mb-6">
-            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Identity verification</h2>
-            <div className="flex items-center gap-3 mb-3">
-              <span
-                className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full"
-                style={{ background: idvBadge.bg, color: idvBadge.fg }}
-              >
-                {idvBadge.label}
-              </span>
-              <span className="text-sm" style={{ color: "var(--navy-2)" }}>
-                {user.verified && user.verifiedAt
-                  ? `Verified on ${user.verifiedAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.`
-                  : latestIdv?.status === "pending"
-                    ? "We're reviewing your documents — this usually takes minutes."
-                    : "Required before your first swap acceptance."}
-              </span>
-            </div>
-            <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-              We use a one-time KYC check (passport / national ID) at proposal acceptance. Your data isn&rsquo;t shared with the other host.
-            </p>
-          </section>
-
-          <PasskeysSection passkeys={passkeys} />
-
-          <AISettings />
-
-          <I18nProviderShell>
-            <TravelProfileSection />
-          </I18nProviderShell>
-
-          <section className="surface-card p-6 mb-6">
-            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Your interests</h2>
-            <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
-              Pick the things you actually love about a place — coffee, jazz, surfing, vintage, you
-              name it. They show on your public profile and steer the AI recommendations during
-              your swap toward partners that match what you like.
-            </p>
-            <Link href="/account/interests" className="pill-ghost">Edit interests</Link>
-          </section>
-
-          <section className="surface-card p-6 mb-6">
-            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Saved searches</h2>
-            <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
-              Pin a filter combination from /listings and we'll email you a daily digest of new
-              homes that match. Plus and Pro members can keep up to 20 saved searches.
-            </p>
-            <Link href="/account/saved-searches" className="pill-ghost">Manage saved searches</Link>
-          </section>
-
-          {policies.length > 0 && (
-            <section className="surface-card p-6 mb-6">
-              <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Your coverage</h2>
-              <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
-                Every accepted swap is insured automatically. Your active and past policies live here.
-              </p>
-              <ul className="space-y-3">
-                {policies.map((p) => (
-                  <li
-                    key={p.id}
-                    className="flex flex-wrap items-center justify-between gap-3 border-t pt-3"
-                    style={{ borderColor: "var(--cream-2)" }}
-                  >
-                    <div>
-                      <div className="text-sm font-medium">
-                        {p.agreement.listing1.city} ↔ {p.agreement.listing2.city}
-                      </div>
-                      <div className="font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
-                        {p.policyNumber} · €{p.coverageAmount.toLocaleString()} ·{" "}
-                        {shortDate(p.agreement.dateFrom)}–{shortDate(p.agreement.dateTo)}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full"
-                        style={{
-                          background: p.status === "active" ? "var(--pink)" : "var(--cream-2)",
-                          color: p.status === "active" ? "#fff" : "var(--navy-3)",
-                        }}
-                      >
-                        {p.status}
-                      </span>
-                      {p.documentsUrl && (
-                        <a href={p.documentsUrl} target="_blank" rel="noreferrer" className="pill-ghost">
-                          Certificate →
-                        </a>
-                      )}
-                    </div>
+            {/* Mobile: section list with chevrons. Desktop reads inline below. */}
+            <nav aria-label={t("account.nav.title")} className="md:hidden surface-card surface-card--static mb-10 overflow-hidden">
+              <ul>
+                {SECTIONS.map((s) => (
+                  <li key={s.id} className="border-t first:border-t-0" style={{ borderColor: "var(--line)" }}>
+                    <a href={`#${s.id}`} className="flex items-center justify-between px-5 py-4 text-sm font-medium">
+                      {t(s.titleKey)}
+                      <span aria-hidden style={{ color: "var(--navy-3)" }}>›</span>
+                    </a>
                   </li>
                 ))}
               </ul>
+            </nav>
+
+            {/* ============ Personal information ============ */}
+            <section id="personal-info" className="mb-12 scroll-mt-24">
+              <h2 className="font-display text-2xl tracking-[-0.01em] mb-1">{t("account.personal.title")}</h2>
+              <p className="text-sm mb-5" style={{ color: "var(--navy-2)" }}>{t("account.personal.body")}</p>
+
+              <div className="surface-card surface-card--static p-6 mb-6">
+                <PersonalInfoEditor
+                  initial={{
+                    name: user.name ?? "",
+                    bio: user.bio ?? "",
+                    work: user.work ?? "",
+                    languages: parseJSON<string[]>(user.languages, []),
+                    homeCity: user.homeCity ?? "",
+                    homeCountry: user.homeCountry ?? "",
+                  }}
+                />
+              </div>
+
+              <div className="surface-card surface-card--static p-6 mb-6">
+                <h3 className="font-display text-xl tracking-[-0.01em] mb-3">{t("account.interests.title")}</h3>
+                <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>{t("account.interests.body")}</p>
+                <Link href="/account/interests" className="pill-ghost">{t("account.interests.cta")}</Link>
+              </div>
+
+              <div className="surface-card surface-card--static p-6">
+                <h3 className="font-display text-xl tracking-[-0.01em] mb-3">{t("account.savedSearches.title")}</h3>
+                <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>{t("account.savedSearches.body")}</p>
+                <Link href="/account/saved-searches" className="pill-ghost">{t("account.savedSearches.cta")}</Link>
+              </div>
             </section>
-          )}
 
-          <section className="surface-card p-6 mb-6">
-            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Notifications</h2>
-            <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-              Email is on by default for new proposals, replies, and accepted swaps. We&rsquo;ll never email you about marketing.
-            </p>
-          </section>
+            {/* ============ Login & security ============ */}
+            <section id="login-security" className="mb-12 scroll-mt-24">
+              <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">{t("account.security.title")}</h2>
 
-          <section className="surface-card p-6">
-            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Sign out</h2>
-            <form action="/api/auth/logout" method="post">
-              <button type="submit" className="pill-ghost">Sign out of swapl</button>
-            </form>
-          </section>
-        </div>
+              <div className="surface-card surface-card--static p-6 mb-6 space-y-3">
+                <div className="grid grid-cols-[140px_1fr] gap-3 text-sm">
+                  <span className="font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
+                    {t("account.email")}
+                  </span>
+                  <span>{user.email}</span>
+                </div>
+                <div className="grid grid-cols-[140px_1fr] gap-3 text-sm">
+                  <span className="font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
+                    {t("account.joined")}
+                  </span>
+                  <span>{user.createdAt.toLocaleDateString(locale, { month: "long", day: "numeric", year: "numeric" })}</span>
+                </div>
+                <div className="pt-3 divider-dashed">
+                  <p className="text-sm font-medium mb-1">{t("account.security.passwordTitle")}</p>
+                  <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>{t("account.security.passwordBody")}</p>
+                  <Link href="/forgot-password" className="pill-ghost">{t("account.security.resetCta")}</Link>
+                </div>
+              </div>
+
+              <PasskeysSection passkeys={passkeys} />
+
+              <div className="surface-card surface-card--static p-6 mb-6">
+                <h3 className="font-display text-xl tracking-[-0.01em] mb-3">{t("account.identityTitle")}</h3>
+                <div className="flex items-center gap-3 mb-3">
+                  <span
+                    className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full"
+                    style={{ background: idvBadge.bg, color: idvBadge.fg }}
+                  >
+                    {idvBadge.label}
+                  </span>
+                  <span className="text-sm" style={{ color: "var(--navy-2)" }}>
+                    {user.verified && user.verifiedAt
+                      ? `Verified on ${user.verifiedAt.toLocaleDateString(locale, { month: "long", day: "numeric", year: "numeric" })}.`
+                      : latestIdv?.status === "pending"
+                        ? "We're reviewing your documents — this usually takes minutes."
+                        : t("account.identityRequired")}
+                  </span>
+                </div>
+                <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("account.identityBlurb")}</p>
+              </div>
+
+              <div className="surface-card surface-card--static p-6">
+                <h3 className="font-display text-xl tracking-[-0.01em] mb-3">{t("account.signOut.title")}</h3>
+                <form action="/api/auth/logout" method="post">
+                  <button type="submit" className="pill-ghost">{t("account.signOut.cta")}</button>
+                </form>
+              </div>
+            </section>
+
+            {/* ============ Privacy ============ */}
+            <section id="privacy" className="mb-12 scroll-mt-24">
+              <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">{t("account.privacy.title")}</h2>
+              <div className="surface-card surface-card--static px-6 py-2 mb-6">
+                <PrivacyToggles initial={settings} />
+              </div>
+              <TravelProfileSection />
+              <AISettings />
+            </section>
+
+            {/* ============ Notifications ============ */}
+            <section id="notifications" className="mb-12 scroll-mt-24">
+              <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">{t("account.notifications.title")}</h2>
+              <div className="surface-card surface-card--static px-6 py-2">
+                <NotificationToggles initial={settings} />
+              </div>
+            </section>
+
+            {/* ============ Coverage (only when policies exist) ============ */}
+            {policies.length > 0 && (
+              <section className="mb-12">
+                <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">Your coverage</h2>
+                <div className="surface-card surface-card--static p-6">
+                  <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
+                    Every accepted swap is insured automatically. Your active and past policies live here.
+                  </p>
+                  <ul className="space-y-3">
+                    {policies.map((p) => (
+                      <li
+                        key={p.id}
+                        className="flex flex-wrap items-center justify-between gap-3 border-t pt-3"
+                        style={{ borderColor: "var(--cream-2)" }}
+                      >
+                        <div>
+                          <div className="text-sm font-medium">
+                            {p.agreement.listing1.city} ↔ {p.agreement.listing2.city}
+                          </div>
+                          <div className="font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
+                            {p.policyNumber} · €{p.coverageAmount.toLocaleString()} ·{" "}
+                            {shortDate(p.agreement.dateFrom)}–{shortDate(p.agreement.dateTo)}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full"
+                            style={{
+                              background: p.status === "active" ? "var(--pink)" : "var(--cream-2)",
+                              color: p.status === "active" ? "#fff" : "var(--navy-3)",
+                            }}
+                          >
+                            {p.status}
+                          </span>
+                          {p.documentsUrl && (
+                            <a href={p.documentsUrl} target="_blank" rel="noreferrer" className="pill-ghost">
+                              Certificate →
+                            </a>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            )}
+
+            {/* ============ Get help ============ */}
+            <section id="get-help" className="scroll-mt-24">
+              <h2 className="font-display text-2xl tracking-[-0.01em] mb-1">{t("account.help.title")}</h2>
+              <p className="text-sm mb-5" style={{ color: "var(--navy-2)" }}>{t("account.help.body")}</p>
+              <div className="surface-card surface-card--static overflow-hidden">
+                <HelpRow href={marketingUrl("/how-it-works")} label={t("account.help.helpCentre")} external />
+                <HelpRow href={marketingUrl("/contact")} label={t("account.help.contact")} external />
+                <HelpRow href="mailto:hello@swapl.fun?subject=Report%20a%20problem" label={t("account.help.report")} />
+              </div>
+            </section>
+          </div>
+        </I18nProviderShell>
       </main>
       <Footer />
     </>
+  );
+}
+
+function HelpRow({ href, label, external }: { href: string; label: string; external?: boolean }) {
+  return (
+    <a
+      href={href}
+      {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+      className="flex items-center justify-between px-5 py-4 text-sm font-medium border-t first:border-t-0"
+      style={{ borderColor: "var(--line)" }}
+    >
+      {label}
+      <span aria-hidden style={{ color: "var(--navy-3)" }}>›</span>
+    </a>
   );
 }

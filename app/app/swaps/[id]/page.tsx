@@ -7,6 +7,7 @@ import { paletteForCity } from "@/lib/cities";
 import { marketingUrl } from "@/lib/marketing/urls";
 import { formatDateRange } from "@/lib/listing-utils";
 import SwapActions from "./swap-actions";
+import { LeaveReview } from "./leave-review";
 import { AffiliateLink } from "@/components/affiliate/affiliate-link";
 import { ConciergeSection, type AddOn as ConciergeAddOn } from "@/components/concierge/concierge-section";
 import { PersonalisedSuggestions } from "@/components/affiliate/personalised-suggestions";
@@ -40,6 +41,19 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
   const otherName = isProposer ? proposal.targetListing.user.name : proposal.proposer.name;
   const canRespondAsTarget = isTarget && (proposal.status === "PENDING" || proposal.status === "COUNTERED");
   const canCounter = proposal.status === "PENDING" || proposal.status === "COUNTERED";
+
+  // Review eligibility (DOK-147): agreement COMPLETED and the caller has not
+  // reviewed it yet — same gate as GET /api/proposals/{id}.
+  let canReview = false;
+  if (proposal.agreement && proposal.agreement.status === "COMPLETED") {
+    const existing = await prisma.swapReview.findUnique({
+      where: {
+        agreementId_authorId: { agreementId: proposal.agreement.id, authorId: session.userId },
+      },
+      select: { id: true },
+    });
+    canReview = !existing;
+  }
 
   // Concierge sidebar uses a small DB read; only do it when there's an active
   // agreement so the pre-acceptance thread stays cheap.
@@ -144,6 +158,10 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
                 </p>
               )}
             </section>
+          )}
+
+          {canReview && proposal.agreement && (
+            <LeaveReview agreementId={proposal.agreement.id} otherName={otherName ?? "your swap partner"} />
           )}
 
           <SwapActions
