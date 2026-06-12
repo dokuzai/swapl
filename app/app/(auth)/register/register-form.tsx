@@ -29,7 +29,7 @@ export default function RegisterForm({ providers }: { providers: WebAuthProvider
         body: JSON.stringify(payload),
       });
       if (res.ok) {
-        router.replace("/dashboard");
+        router.replace("/listings");
         router.refresh();
       } else {
         const j = await res.json().catch(() => ({}));

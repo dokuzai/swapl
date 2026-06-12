@@ -332,6 +332,29 @@ export const en = {
   "inspire.sourceAI": "AI · personalised",
   "inspire.sourceFallback": "Match-score pick",
   "inspire.error.generic": "Something went wrong — try again.",
+  // ---- Inspire v2: voice + editable items + pay-on-accept (DOK-148) ----
+  "inspire.mic.start": "Dictate your wish",
+  "inspire.mic.stop": "Stop listening",
+  "inspire.mic.listening": "Listening — speak freely, tap the mic again to stop.",
+  "inspire.understood": "Understood:",
+  "inspire.constraint.petFriendly": "pet-friendly",
+  "inspire.constraint.wfh": "remote-work ready",
+  "inspire.constraint.stepFree": "step-free",
+  "inspire.items.toggle": "Include {name}",
+  "inspire.addOnsHeading": "swapl concierge add-ons",
+  "inspire.addOnsNote":
+    "Real catalogue prices. Untick anything you don't want — you'll only be charged if the host accepts your swap.",
+  "inspire.payable.total": "Payable if the host accepts",
+  "inspire.payable.none": "Nothing payable — confirming just sends the proposal.",
+  "inspire.checkout.kicker": "Almost there",
+  "inspire.checkout.title": "Payment & reservation",
+  "inspire.checkout.summaryTitle": "Your selection",
+  "inspire.checkout.note": "You'll only be charged if the host accepts your swap.",
+  "inspire.checkout.affiliateExcluded":
+    "Partner experiences and services are booked on the partners' sites — never charged by swapl and not part of this total.",
+  "inspire.checkout.submit": "Save card & send proposal",
+  "inspire.checkout.processing": "Saving your card…",
+  "inspire.checkout.back": "Back to package",
 
   // ---- Travel profile (account, DOK-146) ----
   "account.travelProfile.title": "Your travel profile",

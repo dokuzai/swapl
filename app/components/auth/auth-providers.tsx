@@ -75,7 +75,7 @@ const inputStyle = { borderColor: "var(--line)", background: "var(--card-bg)" } 
 export function AuthProviders({ providers }: { providers: WebAuthProviders }) {
   const t = useT();
   const router = useRouter();
-  const next = useSearchParams().get("next") ?? "/dashboard";
+  const next = useSearchParams().get("next") ?? "/listings";
 
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();

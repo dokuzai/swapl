@@ -10,7 +10,7 @@ import type { WebAuthProviders } from "@/lib/auth/web-providers";
 export default function LoginForm({ providers }: { providers: WebAuthProviders }) {
   const t = useT();
   const router = useRouter();
-  const next = useSearchParams().get("next") ?? "/dashboard";
+  const next = useSearchParams().get("next") ?? "/listings";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
