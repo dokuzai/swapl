@@ -18,7 +18,8 @@ import { apiError, forbidden, invalidInput, unauthenticated } from "@/lib/api/er
 const HOUR_MS = 60 * 60 * 1000;
 
 const schema = z.object({
-  currentPassword: z.string().max(128).optional(),
+  // nullish: kotlinx-serialization clients send explicit nulls for omitted fields.
+  currentPassword: z.string().max(128).nullish(),
   newPassword: z.string().min(6).max(128),
 });
 

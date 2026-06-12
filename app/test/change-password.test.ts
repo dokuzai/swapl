@@ -135,7 +135,8 @@ describe("POST /api/auth/change-password", () => {
       email: "ana@swapl.test",
       passwordHash: null,
     });
-    const res = await post({ newPassword: "first-password" });
+    // kotlinx-serialization clients send the omitted field as an explicit null.
+    const res = await post({ currentPassword: null, newPassword: "first-password" });
     expect(res.status).toBe(200);
     expect(mocks.userUpdate).toHaveBeenCalled();
     expect(mocks.authTokenUpdateMany).toHaveBeenCalled();
