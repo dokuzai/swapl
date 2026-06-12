@@ -2028,6 +2028,43 @@ paths:
         '422': { description: 'NO_ACTIVE_LISTING or NO_CANDIDATES' }
         '429': { description: Rate limited }
 
+  /api/assistant/inspire/{id}:
+    get:
+      tags: [assistant]
+      summary: Fetch one package with its current payment status (owner only)
+      description: >-
+        Returns the package payload plus status/paymentStatus. Clients poll
+        this after returning from the payment sheet (Safari View Controller /
+        Custom Tab): paymentStatus flips to "saved" via the
+        setup_intent.succeeded webhook, so the app can show "card saved"
+        before calling /confirm. Works for any status (draft/confirmed/dismissed).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Package state
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, status, paymentStatus, payable, package]
+                properties:
+                  id: { type: string }
+                  status: { type: string, description: 'draft | confirmed | dismissed' }
+                  paymentStatus: { type: string, description: 'none | saved | charged | failed | canceled' }
+                  proposalId: { type: string, nullable: true, description: 'Set once confirmed' }
+                  payable:
+                    type: object
+                    required: [totalCents, currency]
+                    properties:
+                      totalCents: { type: integer }
+                      currency: { type: string }
+                  package: { $ref: '#/components/schemas/InspirePackage' }
+        '401': { description: Unauthenticated }
+        '404': { description: Package not found (or not yours) }
+        '422': { description: Stored payload is corrupt }
+
   /api/assistant/inspire/{id}/confirm:
     post:
       tags: [assistant]

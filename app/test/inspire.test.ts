@@ -75,6 +75,7 @@ import { POST as confirm } from "@/app/api/assistant/inspire/[id]/confirm/route"
 import { POST as dismiss } from "@/app/api/assistant/inspire/[id]/dismiss/route";
 import { PATCH as patchItems } from "@/app/api/assistant/inspire/[id]/items/route";
 import { POST as checkout } from "@/app/api/assistant/inspire/[id]/checkout/route";
+import { GET as getPackage } from "@/app/api/assistant/inspire/[id]/route";
 
 const AI_ENVS = ["AI_API_KEY", "AI_PROVIDER", "KIMI_API_KEY", "MOONSHOT_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"];
 const AFF_ENVS = ["AFF_SKYSCANNER_ID", "AFF_AIRALO_ID", "AFF_GETYOURGUIDE_ID", "AFF_BATTLEFACE_ID"];
@@ -640,6 +641,61 @@ describe("POST /api/assistant/inspire/{id}/checkout", () => {
 
     mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-1", status: "confirmed", payload: "{}" });
     expect((await checkout(checkoutReq(), ctx)).status).toBe(422);
+  });
+});
+
+describe("GET /api/assistant/inspire/{id}", () => {
+  const getReq = () => new Request("https://swapl.test/api/assistant/inspire/pkg-1");
+
+  it("returns the package with its current paymentStatus (poll target after the payment sheet)", async () => {
+    mocks.packageFindUnique.mockResolvedValue({
+      id: "pkg-1",
+      userId: "u-1",
+      status: "draft",
+      proposalId: null,
+      paymentStatus: "saved", // stamped by the setup_intent.succeeded webhook
+      payload: JSON.stringify(ITEMS_PAYLOAD),
+    });
+    const res = await getPackage(getReq(), ctx);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toMatchObject({ id: "pkg-1", status: "draft", paymentStatus: "saved", proposalId: null });
+    // Payable total reflects the CURRENT selections (same rule as checkout).
+    expect(body.payable).toEqual({ totalCents: 7800, currency: "EUR" });
+    // The payload is returned in the exact InspirePackage shape (packageId re-stamped).
+    expect(body.package.packageId).toBe("pkg-1");
+    expect(body.package.addOns).toHaveLength(ITEMS_PAYLOAD.addOns.length);
+  });
+
+  it("is read-only and works for non-draft packages too", async () => {
+    mocks.packageFindUnique.mockResolvedValue({
+      id: "pkg-1",
+      userId: "u-1",
+      status: "confirmed",
+      proposalId: "prop-1",
+      paymentStatus: "charged",
+      payload: JSON.stringify(ITEMS_PAYLOAD),
+    });
+    const res = await getPackage(getReq(), ctx);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ status: "confirmed", proposalId: "prop-1", paymentStatus: "charged" });
+    expect(mocks.packageUpdate).not.toHaveBeenCalled();
+  });
+
+  it("401s unauthenticated, 404s on someone else's or a missing package", async () => {
+    mocks.getSessionFromRequest.mockResolvedValueOnce(null);
+    expect((await getPackage(getReq(), ctx)).status).toBe(401);
+
+    mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-9", status: "draft", paymentStatus: "none", payload: "{}" });
+    expect((await getPackage(getReq(), ctx)).status).toBe(404);
+
+    mocks.packageFindUnique.mockResolvedValue(null);
+    expect((await getPackage(getReq(), ctx)).status).toBe(404);
+  });
+
+  it("422s on a corrupt stored payload", async () => {
+    mocks.packageFindUnique.mockResolvedValue({ id: "pkg-1", userId: "u-1", status: "draft", paymentStatus: "none", payload: "not-json" });
+    expect((await getPackage(getReq(), ctx)).status).toBe(422);
   });
 });
 

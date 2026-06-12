@@ -2173,6 +2173,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/assistant/inspire/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch one package with its current payment status (owner only)
+         * @description Returns the package payload plus status/paymentStatus. Clients poll this after returning from the payment sheet (Safari View Controller / Custom Tab): paymentStatus flips to "saved" via the setup_intent.succeeded webhook, so the app can show "card saved" before calling /confirm. Works for any status (draft/confirmed/dismissed).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Package state */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id: string;
+                            /** @description draft | confirmed | dismissed */
+                            status: string;
+                            /** @description none | saved | charged | failed | canceled */
+                            paymentStatus: string;
+                            /** @description Set once confirmed */
+                            proposalId?: string | null;
+                            payable: {
+                                totalCents: number;
+                                currency: string;
+                            };
+                            package: components["schemas"]["InspirePackage"];
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Stored payload is corrupt */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/assistant/inspire/{id}/confirm": {
         parameters: {
             query?: never;
