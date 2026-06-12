@@ -18,7 +18,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.RoomService
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.CircularProgressIndicator
@@ -61,12 +64,24 @@ import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
 import app.swapl.designtokens.SwaplSpacing
+import app.swapl.features.discover.ExperiencesTab
+import app.swapl.features.discover.ServicesTab
+import androidx.compose.ui.graphics.vector.ImageVector
 
 private val SORT_OPTIONS = listOf(
     "match" to "Best match",
     "newest" to "Newest",
     "size_desc" to "Largest",
 )
+
+// Airbnb-style section chips under the search field (DOK-145). Homes is the
+// classic browse list; Experiences/Services are the env-gated affiliate
+// catalogue tabs.
+private enum class BrowseTab(val label: String, val icon: ImageVector) {
+    Homes("Homes", Icons.Default.Home),
+    Experiences("Experiences", Icons.Default.AutoAwesome),
+    Services("Services", Icons.Default.RoomService),
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,6 +97,7 @@ fun BrowseScreen(
 
     var showFilters by remember { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
+    var tab by rememberSaveable { mutableStateOf(BrowseTab.Homes) }
 
     Column(Modifier.fillMaxSize()) {
         Row(
@@ -129,29 +145,56 @@ fun BrowseScreen(
         }
         Spacer(Modifier.height(SwaplSpacing.s2))
 
-        PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
-            onRefresh = { vm.refresh() },
-            modifier = Modifier.fillMaxSize(),
+        // Section chips (Airbnb-style pills with icons). Homes keeps the
+        // existing browse list untouched; the other two swap in the
+        // affiliate catalogue tabs.
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = SwaplSpacing.s4),
+            horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
         ) {
-            when {
-                state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-                state.error != null -> ErrorState(onRetry = { vm.refresh() })
-                state.items.isEmpty() && state.hasLoaded -> EmptyState()
-                else -> LazyColumn(
-                    contentPadding = PaddingValues(horizontal = SwaplSpacing.s4, vertical = SwaplSpacing.s2),
-                    verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    items(state.items, key = { it.listing.id }) { item ->
-                        ListingCard(
-                            item,
-                            isFavorite = item.listing.id in favoriteIds,
-                            onToggleFavorite = { vm.toggleFavorite(item.listing.id) },
-                            onClick = { onOpen(item.listing.id) },
-                        )
+            BrowseTab.entries.forEach { t ->
+                FilterChip(
+                    selected = tab == t,
+                    onClick = { tab = t },
+                    label = { Text(t.label) },
+                    leadingIcon = {
+                        Icon(t.icon, contentDescription = null, modifier = Modifier.height(18.dp))
+                    },
+                    shape = CircleShape,
+                )
+            }
+        }
+        Spacer(Modifier.height(SwaplSpacing.s2))
+
+        when (tab) {
+            BrowseTab.Experiences -> ExperiencesTab()
+            BrowseTab.Services -> ServicesTab()
+            BrowseTab.Homes -> PullToRefreshBox(
+                isRefreshing = state.isRefreshing,
+                onRefresh = { vm.refresh() },
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                when {
+                    state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    state.error != null -> ErrorState(onRetry = { vm.refresh() })
+                    state.items.isEmpty() && state.hasLoaded -> EmptyState()
+                    else -> LazyColumn(
+                        contentPadding = PaddingValues(horizontal = SwaplSpacing.s4, vertical = SwaplSpacing.s2),
+                        verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        items(state.items, key = { it.listing.id }) { item ->
+                            ListingCard(
+                                item,
+                                isFavorite = item.listing.id in favoriteIds,
+                                onToggleFavorite = { vm.toggleFavorite(item.listing.id) },
+                                onClick = { onOpen(item.listing.id) },
+                            )
+                        }
                     }
                 }
             }
