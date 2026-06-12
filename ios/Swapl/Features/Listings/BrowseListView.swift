@@ -83,6 +83,12 @@ struct BrowseListView: View {
     @State private var selectedMapId: String?
     @State private var isShowingFilters = false
     @State private var category: BrowseCategory = .homes
+    // "Get Inspired" (DOK-146): sheet + confirmed-proposal handoff. The thread
+    // opens AFTER the sheet closes, through the existing deep-link route
+    // (swapl://proposal/:id → ProposalDetailView in RootView).
+    @State private var isShowingInspire = false
+    @State private var confirmedProposalId: String?
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         NavigationStack {
@@ -109,6 +115,16 @@ struct BrowseListView: View {
                     Task { await vm.apply(newFilters) }
                 }
                 .presentationDetents([.large])
+            }
+            .sheet(isPresented: $isShowingInspire, onDismiss: {
+                guard let id = confirmedProposalId else { return }
+                confirmedProposalId = nil
+                if let url = URL(string: "swapl://proposal/\(id)") { openURL(url) }
+            }) {
+                InspireView { proposalId in
+                    confirmedProposalId = proposalId
+                    isShowingInspire = false
+                }
             }
         }
     }
@@ -257,7 +273,7 @@ struct BrowseListView: View {
     private var exploreContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
-                SwaplPageTitle("Explore")
+                SwaplPageTitle("Explore") { inspireButton }
                 searchHeader
                 categoryStrip
                 if let first = vm.items.first {
@@ -269,6 +285,25 @@ struct BrowseListView: View {
             .padding(.bottom, 110)
         }
         .background(SwaplSemanticLight.background)
+    }
+
+    // Brand pill in the Explore header (Homes chip) — opens "Get Inspired".
+    private var inspireButton: some View {
+        Button {
+            isShowingInspire = true
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 14, weight: .semibold))
+                Text("Get Inspired")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+            }
+            .foregroundStyle(SwaplSemanticLight.primaryForeground)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(SwaplSemanticLight.primary, in: Capsule())
+        }
+        .accessibilityLabel("Get Inspired, compose a swap package")
     }
 
     private var searchBarContent: some View {

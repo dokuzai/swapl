@@ -33,6 +33,8 @@ struct AccountView: View {
                             .buttonStyle(.plain)
                         NavigationLink { SavedSearchesView() } label: { portedMenuRow("Saved searches", "magnifyingglass") }
                             .buttonStyle(.plain)
+                        NavigationLink { TravelProfileView() } label: { portedMenuRow("Your travel profile", "sparkles") }
+                            .buttonStyle(.plain)
                         NavigationLink { PasskeysView() } label: { portedMenuRow("Passkeys", "person.badge.key") }
                             .buttonStyle(.plain)
                         if auth.isAdmin {
