@@ -13,6 +13,21 @@ export const en = {
   "nav.listMyHome": "List your home",
   "nav.mySwaps": "My swaps",
   "nav.dashboard": "Dashboard",
+
+  // ---- Signed-in header: category tabs, search pill, avatar menu ----
+  "header.tabs.new": "New",
+  "header.search.where": "Where",
+  "header.search.dates": "Dates",
+  "header.search.who": "Who",
+  "header.search.label": "Search homes",
+  "menu.open": "Open menu",
+  "menu.wishlists": "Wishlists",
+  "menu.trips": "Trips",
+  "menu.messages": "Messages",
+  "menu.profile": "Profile",
+  "menu.help": "Help",
+  "menu.waitingOnYou": "{count} waiting on you",
+
   "footer.tagline": "© 2026 swapl · keys for keys, no money",
   "footer.howItWorks": "How it works",
   "footer.insurance": "Insurance",
