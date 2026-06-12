@@ -1,5 +1,4 @@
 {
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm exec next build",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ':(top)marketing' ':(top)pnpm-lock.yaml'"
+  "buildCommand": "pnpm exec next build"
 }
