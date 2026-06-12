@@ -36,10 +36,14 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Swapl uses the microphone so you can dictate the trip you're dreaming of instead of typing it.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Swapl uses your photo library so you can add photos of your home to your listing and profile.</string>
 	<key>NSSiriUsageDescription</key>
 	<string>Swapl uses Siri and Shortcuts to let you create a listing or optimize your listing photos with your voice.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Swapl uses speech recognition to turn your spoken trip wish into text, on your device whenever possible. Your audio is never sent to Swapl's servers.</string>
 	<key>SwaplApiBaseURL</key>
 	<string>https://app.swapl.fun</string>
 	<key>SwaplGoogleOAuthClientID</key>

@@ -11,6 +11,10 @@ import SwaplDesignTokens
 @Observable
 final class InspireViewModel {
     var prompt = ""
+    // Voice input (DOK-148): live transcript composes onto whatever was
+    // already typed when the mic was tapped.
+    let recorder = SpeechRecorder()
+    private var promptBase = ""
     var useDates = false
     var dateFrom = Date()
     var dateTo = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
@@ -19,7 +23,22 @@ final class InspireViewModel {
     var package: InspirePackage?
     var isShowingPackage = false
 
+    func toggleMic() async {
+        if recorder.isRecording {
+            recorder.stop()
+        } else {
+            promptBase = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+            await recorder.start()
+        }
+    }
+
+    func applyTranscript(_ transcript: String) {
+        guard recorder.isRecording, !transcript.isEmpty else { return }
+        prompt = promptBase.isEmpty ? transcript : promptBase + " " + transcript
+    }
+
     func compose() async {
+        recorder.stop()
         isComposing = true
         error = nil
         defer { isComposing = false }
@@ -84,6 +103,7 @@ struct InspireView: View {
             }
         }
         .interactiveDismissDisabled(vm.isComposing)
+        .onDisappear { vm.recorder.stop() }
     }
 
     private var header: some View {
@@ -107,20 +127,61 @@ struct InspireView: View {
             Text("Your wish")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
-            TextField(
-                "Somewhere warm with great food, walkable, good for working remotely…",
-                text: $vm.prompt,
-                axis: .vertical
-            )
-            .font(.swaplBody(SwaplDesignSystem.FontSize.body))
-            .lineLimit(3...6)
+            HStack(alignment: .bottom, spacing: 10) {
+                TextField(
+                    "Somewhere warm with great food, walkable, good for working remotely…",
+                    text: $vm.prompt,
+                    axis: .vertical
+                )
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body))
+                .lineLimit(3...6)
+                micButton
+            }
             .padding(14)
             .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
-                    .stroke(AirbnbPalette.hairline)
+                    .stroke(vm.recorder.isRecording ? SwaplSemanticLight.primary : AirbnbPalette.hairline)
             )
+            if vm.recorder.isRecording {
+                Text("Listening — speak freely, tap the mic again to stop.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            } else if vm.recorder.state == .denied {
+                Text("Microphone or speech recognition is turned off for Swapl — enable both in Settings to dictate your wish.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            } else if vm.recorder.state == .unavailable {
+                Text("Voice input isn't available right now — type your wish instead.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
         }
+        .onChange(of: vm.recorder.transcript) { _, transcript in
+            vm.applyTranscript(transcript)
+        }
+    }
+
+    // Mic toggle (DOK-148) — pulses while recording. Transcription happens
+    // via Apple's Speech framework, on-device when supported; no audio ever
+    // reaches Swapl's servers.
+    private var micButton: some View {
+        Button {
+            Task { await vm.toggleMic() }
+        } label: {
+            Image(systemName: "mic.fill")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(vm.recorder.isRecording ? Color.white : SwaplSemanticLight.primary)
+                .frame(width: 34, height: 34)
+                .background(
+                    vm.recorder.isRecording ? AnyShapeStyle(SwaplSemanticLight.primary) : AnyShapeStyle(AirbnbPalette.accent),
+                    in: Circle()
+                )
+                .symbolEffect(.pulse, options: .repeating, isActive: vm.recorder.isRecording)
+        }
+        .buttonStyle(.plain)
+        .disabled(vm.isComposing)
+        .accessibilityLabel(vm.recorder.isRecording ? "Stop listening" : "Dictate your wish")
     }
 
     private var datesSection: some View {
@@ -205,12 +266,26 @@ final class PackageViewModel {
     var isDismissing = false
     var error: String?
 
+    // Editable items (DOK-148) — mutable copies of the package's items; each
+    // toggle is optimistic, then PATCHed, and reverted if the server refuses.
+    var experiences: [InspireExperienceItem]
+    var services: [InspireServiceItem]
+    var addOns: [InspireAddOnItem]
+
+    // Pay-on-accept checkout (DOK-148): set when POST …/checkout answers
+    // { paymentRequired: true } — drives the "Payment & reservation" sheet.
+    var checkout: AssistantRepository.CheckoutResponse?
+    var isShowingPayment = false
+
     init(package: InspirePackage) {
         self.package = package
         self.selectedId = package.destination.listingId
         self.dateFrom = SwaplDateText.parse(package.dates.from) ?? Date()
         self.dateTo = SwaplDateText.parse(package.dates.to) ?? Date()
         self.message = package.proposalMessage
+        self.experiences = package.experiences
+        self.services = package.services
+        self.addOns = package.addOns
     }
 
     var selected: InspireCandidate {
@@ -223,6 +298,95 @@ final class PackageViewModel {
         package.allCandidates.filter { $0.listingId != selectedId }
     }
 
+    /// What the assistant understood from the (possibly spoken) prompt —
+    /// same composition as the web "Understood: …" box.
+    var understood: String? {
+        guard let f = package.interpreted else { return nil }
+        var parts: [String] = []
+        if let city = f.city { parts.append(city) }
+        if let from = f.dateFrom, let to = f.dateTo {
+            parts.append("\(from) → \(to)")
+        } else if let from = f.dateFrom {
+            parts.append("From \(from)")
+        }
+        for c in f.constraints ?? [] {
+            switch c {
+            case "pet-friendly": parts.append("pet-friendly")
+            case "wfh": parts.append("remote-work ready")
+            case "step-free": parts.append("step-free")
+            default: break
+            }
+        }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    // Payable = selected concierge add-ons only. Affiliate experiences and
+    // services stay partner links — never charged by us, never in the total.
+    var payableAddOns: [InspireAddOnItem] { addOns.filter { $0.selected && $0.priceCents > 0 } }
+    var payableTotalCents: Int { payableAddOns.reduce(0) { $0 + $1.priceCents } }
+    var payableCurrency: String { payableAddOns.first?.currency ?? "EUR" }
+
+    static func money(_ cents: Int, currency: String) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = currency
+        return formatter.string(from: NSNumber(value: Double(cents) / 100))
+            ?? String(format: "%.2f %@", Double(cents) / 100, currency)
+    }
+
+    enum ItemList { case experiences, services, addOns }
+
+    /// Optimistic toggle: flip locally, PATCH, revert on failure.
+    func toggleItem(_ list: ItemList, id: String, selected: Bool) async {
+        setSelected(list, id: id, selected: selected)
+        do {
+            _ = try await AssistantRepository.shared.updateItems(
+                packageId: package.packageId,
+                toggles: [.init(itemId: id, selected: selected)]
+            )
+        } catch {
+            setSelected(list, id: id, selected: !selected)
+            self.error = error.localizedDescription
+        }
+    }
+
+    private func setSelected(_ list: ItemList, id: String, selected: Bool) {
+        switch list {
+        case .experiences:
+            if let i = experiences.firstIndex(where: { $0.id == id }) { experiences[i].selected = selected }
+        case .services:
+            if let i = services.firstIndex(where: { $0.id == id }) { services[i].selected = selected }
+        case .addOns:
+            if let i = addOns.firstIndex(where: { $0.id == id }) { addOns[i].selected = selected }
+        }
+    }
+
+    /// Confirm, phase 1 — ask the checkout route whether a payment step is
+    /// needed. Env-gated degrade: no Stripe server-side or zero payable items
+    /// → { paymentRequired: false } and the proposal is sent right away.
+    /// Returns the proposal id when the confirm completed without a payment
+    /// step, nil when the payment sheet was opened (or on error).
+    func startConfirm() async -> String? {
+        isConfirming = true
+        error = nil
+        do {
+            let res = try await AssistantRepository.shared.checkout(packageId: package.packageId)
+            if res.paymentRequired {
+                checkout = res
+                isShowingPayment = true
+                isConfirming = false
+                return nil
+            }
+        } catch {
+            // Checkout is best-effort: confirm never blocks on payment, so a
+            // failed checkout call degrades to the plain confirm.
+        }
+        return await confirm()
+    }
+
+    /// Confirm, phase 2 — create the REAL proposal (same path as
+    /// POST /api/proposals). If a card was saved on the web payment page, the
+    /// server recovers it; with no card nothing will ever be charged.
     func confirm() async -> String? {
         isConfirming = true
         error = nil
@@ -240,6 +404,20 @@ final class PackageViewModel {
             self.error = error.localizedDescription
             return nil
         }
+    }
+
+    /// The dedicated web payment page (Stripe Payment Element) for this
+    /// package — opened in an in-app Safari sheet; no native Stripe SDK.
+    var webPaymentURL: URL? {
+        var components = URLComponents(
+            url: APIClient.shared.baseURL.appendingPathComponent("/inspire"),
+            resolvingAgainstBaseURL: false
+        )
+        components?.queryItems = [
+            URLQueryItem(name: "package", value: package.packageId),
+            URLQueryItem(name: "step", value: "pay"),
+        ]
+        return components?.url
     }
 
     func dismissPackage() async -> Bool {
@@ -270,17 +448,22 @@ struct PackageView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
                 hero
+                understoodBox
                 datesEditor
                 messageEditor
                 if !vm.alternatives.isEmpty {
                     alternativesSection
                 }
-                if !vm.package.experiences.isEmpty {
+                if !vm.experiences.isEmpty {
                     experiencesSection
                 }
-                if !vm.package.services.isEmpty {
+                if !vm.services.isEmpty {
                     servicesSection
                 }
+                if !vm.addOns.isEmpty {
+                    addOnsSection
+                }
+                payableSummary
                 if let error = vm.error {
                     Text(error)
                         .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
@@ -297,6 +480,49 @@ struct PackageView: View {
         .sheet(item: $safariItem) { item in
             SafariView(url: item.url)
                 .ignoresSafeArea()
+        }
+        .sheet(isPresented: $vm.isShowingPayment) {
+            if let checkout = vm.checkout {
+                PaymentStepView(
+                    checkout: checkout,
+                    paymentURL: vm.webPaymentURL,
+                    onDone: { startedPayment in
+                        vm.isShowingPayment = false
+                        // The web page saved the card (or the user skipped) —
+                        // confirm never blocks on payment either way.
+                        _ = startedPayment
+                        Task {
+                            if let proposalId = await vm.confirm() {
+                                onFinished(proposalId)
+                            }
+                        }
+                    },
+                    onBack: { vm.isShowingPayment = false }
+                )
+            }
+        }
+    }
+
+    // "Understood: …" — the structured filters parsed from the (possibly
+    // spoken) prompt, copy-aligned with the web client.
+    @ViewBuilder
+    private var understoodBox: some View {
+        if let understood = vm.understood {
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "waveform")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .padding(.top, 2)
+                Text("Understood: ").font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                + Text(understood)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.text)
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AirbnbPalette.accent, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            .padding(.horizontal, 22)
         }
     }
 
@@ -432,49 +658,76 @@ struct PackageView: View {
 
     // MARK: affiliate enrichment
 
+    // Card chrome shared by every package item row.
+    private func itemCard<Content: View>(selected: Bool, @ViewBuilder content: () -> Content) -> some View {
+        HStack(spacing: 12, content: content)
+            .padding(14)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            )
+            .opacity(selected ? 1 : 0.55)
+    }
+
+    // Add/remove toggle for a package item — optimistic; the PATCH happens
+    // in the view model and reverts on failure.
+    private func itemToggle(_ list: PackageViewModel.ItemList, id: String, selected: Bool, name: String) -> some View {
+        Button {
+            Task { await vm.toggleItem(list, id: id, selected: !selected) }
+        } label: {
+            Image(systemName: selected ? "checkmark.circle.fill" : "plus.circle")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(selected ? SwaplSemanticLight.primary : AirbnbPalette.secondaryText)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(selected ? "Remove \(name) from the package" : "Include \(name) in the package")
+    }
+
     private var experiencesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionTitle("While you're there")
                 .padding(.horizontal, 22)
             VStack(spacing: 10) {
-                ForEach(vm.package.experiences) { item in
-                    Button {
-                        if let url = DiscoverRepository.resolveURL(item.url) {
-                            safariItem = SafariItem(url: url)
-                        }
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "balloon")
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundStyle(SwaplSemanticLight.primary)
-                                .frame(width: 38, height: 38)
-                                .background(AirbnbPalette.accent, in: Circle())
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(item.title)
-                                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                                    .foregroundStyle(AirbnbPalette.text)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
-                                Text("Book on \(item.partnerDisplayName)")
-                                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                ForEach(vm.experiences) { item in
+                    itemCard(selected: item.selected) {
+                        Button {
+                            if let url = DiscoverRepository.resolveURL(item.url) {
+                                safariItem = SafariItem(url: url)
+                            }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "balloon")
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundStyle(SwaplSemanticLight.primary)
+                                    .frame(width: 38, height: 38)
+                                    .background(AirbnbPalette.accent, in: Circle())
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(item.title)
+                                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                                        .foregroundStyle(AirbnbPalette.text)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.leading)
+                                    Text("Book on \(item.partnerDisplayName)")
+                                        .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                                        .foregroundStyle(AirbnbPalette.secondaryText)
+                                }
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.system(size: 13, weight: .bold))
                                     .foregroundStyle(AirbnbPalette.secondaryText)
                             }
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .font(.system(size: 13, weight: .bold))
-                                .foregroundStyle(AirbnbPalette.secondaryText)
                         }
-                        .padding(14)
-                        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
-                                .stroke(AirbnbPalette.hairline)
-                        )
+                        .buttonStyle(.plain)
+                        itemToggle(.experiences, id: item.id, selected: item.selected, name: item.title)
                     }
-                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 22)
+            Text("Booked on our partners' sites at their prices — swapl may earn a commission, never a markup.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .padding(.horizontal, 22)
         }
     }
 
@@ -483,38 +736,101 @@ struct PackageView: View {
             sectionTitle("Travel essentials")
                 .padding(.horizontal, 22)
             VStack(spacing: 10) {
-                ForEach(vm.package.services) { service in
-                    Button {
-                        if let url = DiscoverRepository.resolveURL(service.url) {
-                            safariItem = SafariItem(url: url)
+                ForEach(vm.services) { service in
+                    itemCard(selected: service.selected) {
+                        Button {
+                            if let url = DiscoverRepository.resolveURL(service.url) {
+                                safariItem = SafariItem(url: url)
+                            }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: service.symbolName)
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundStyle(SwaplSemanticLight.primary)
+                                    .frame(width: 38, height: 38)
+                                    .background(AirbnbPalette.accent, in: Circle())
+                                Text(service.name)
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                                    .foregroundStyle(AirbnbPalette.text)
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundStyle(AirbnbPalette.secondaryText)
+                            }
                         }
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: service.symbolName)
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundStyle(SwaplSemanticLight.primary)
-                                .frame(width: 38, height: 38)
-                                .background(AirbnbPalette.accent, in: Circle())
-                            Text(service.name)
-                                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                                .foregroundStyle(AirbnbPalette.text)
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .font(.system(size: 13, weight: .bold))
-                                .foregroundStyle(AirbnbPalette.secondaryText)
-                        }
-                        .padding(14)
-                        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
-                                .stroke(AirbnbPalette.hairline)
-                        )
+                        .buttonStyle(.plain)
+                        itemToggle(.services, id: service.id, selected: service.selected, name: service.name)
                     }
-                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 22)
         }
+    }
+
+    // swapl concierge add-ons — the ONLY payable items in the package.
+    private var addOnsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionTitle("swapl concierge add-ons")
+                .padding(.horizontal, 22)
+            VStack(spacing: 10) {
+                ForEach(vm.addOns) { addOn in
+                    itemCard(selected: addOn.selected) {
+                        Image(systemName: "bell")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(SwaplSemanticLight.primary)
+                            .frame(width: 38, height: 38)
+                            .background(AirbnbPalette.accent, in: Circle())
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(addOn.name)
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                                .foregroundStyle(AirbnbPalette.text)
+                                .lineLimit(2)
+                            Text(addOn.description)
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                                .foregroundStyle(AirbnbPalette.secondaryText)
+                                .lineLimit(2)
+                        }
+                        Spacer()
+                        Text(PackageViewModel.money(addOn.priceCents, currency: addOn.currency))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                            .foregroundStyle(AirbnbPalette.text)
+                        itemToggle(.addOns, id: addOn.id, selected: addOn.selected, name: addOn.name)
+                    }
+                }
+            }
+            .padding(.horizontal, 22)
+            Text("Real catalogue prices. Untick anything you don't want — you'll only be charged if the host accepts your swap.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .padding(.horizontal, 22)
+        }
+    }
+
+    // Running total of the payable items — recomputed locally on every
+    // optimistic toggle, copy-aligned with the web client.
+    private var payableSummary: some View {
+        HStack(alignment: .firstTextBaseline) {
+            if vm.payableTotalCents > 0 {
+                Text("Payable if the host accepts")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Spacer()
+                Text(PackageViewModel.money(vm.payableTotalCents, currency: vm.payableCurrency))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(AirbnbPalette.text)
+            } else {
+                Text("Nothing payable — confirming just sends the proposal.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+        }
+        .padding(14)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                .stroke(AirbnbPalette.hairline)
+        )
+        .padding(.horizontal, 22)
     }
 
     // MARK: actions
@@ -525,7 +841,10 @@ struct PackageView: View {
                 title: "Confirm & send proposal",
                 action: {
                     Task {
-                        if let proposalId = await vm.confirm() {
+                        // Phase 1 asks /checkout whether a payment step is
+                        // needed; nil here means either the payment sheet
+                        // opened (confirm continues from there) or an error.
+                        if let proposalId = await vm.startConfirm() {
                             onFinished(proposalId)
                         }
                     }
@@ -533,6 +852,12 @@ struct PackageView: View {
                 isLoading: vm.isConfirming,
                 isDisabled: vm.isDismissing
             )
+            if vm.payableTotalCents > 0 {
+                Text("You'll only be charged if the host accepts your swap.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
             Button {
                 Task {
                     if await vm.dismissPackage() {

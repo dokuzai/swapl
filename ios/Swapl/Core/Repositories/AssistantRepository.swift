@@ -56,6 +56,8 @@ final class AssistantRepository: @unchecked Sendable {
         let ok: Bool
         let proposalId: String
         let packageId: String
+        /// Pay-on-accept (DOK-148): "none" | "card_saved" | … — informational.
+        let paymentStatus: String?
     }
 
     /// Turns the draft into a REAL proposal (same path as POST /api/proposals,
@@ -76,6 +78,73 @@ final class AssistantRepository: @unchecked Sendable {
     func dismiss(packageId: String) async throws {
         let _: EmptyResponse = try await APIClient.shared.send(
             "POST", "/api/assistant/inspire/\(packageId)/dismiss"
+        )
+    }
+
+    // MARK: - Editable items (DOK-148)
+
+    struct ItemToggle: Encodable, Sendable {
+        let itemId: String
+        let selected: Bool
+    }
+
+    private struct ItemsRequest: Encodable, Sendable {
+        let items: [ItemToggle]
+    }
+
+    struct PayableTotal: Decodable, Sendable {
+        let totalCents: Int
+        let currency: String
+    }
+
+    struct ItemsResponse: Decodable, Sendable {
+        let ok: Bool
+        /// Server truth for the payable subset after the toggle — the client
+        /// applies it on top of its optimistic update.
+        let payable: PayableTotal
+    }
+
+    /// Toggles experiences/services/add-ons of a DRAFT package on/off.
+    /// Confirm, checkout and the eventual charge all read what's selected
+    /// at their time, so this is the single edit point.
+    func updateItems(packageId: String, toggles: [ItemToggle]) async throws -> ItemsResponse {
+        try await APIClient.shared.send(
+            "PATCH", "/api/assistant/inspire/\(packageId)/items",
+            body: ItemsRequest(items: toggles)
+        )
+    }
+
+    // MARK: - Pay-on-accept checkout (DOK-148)
+
+    struct CheckoutLine: Decodable, Sendable, Identifiable {
+        let id: String
+        let slug: String
+        let name: String
+        let priceCents: Int
+    }
+
+    struct CheckoutSummary: Decodable, Sendable {
+        let payableItems: [CheckoutLine]
+        let totalCents: Int
+        let currency: String
+    }
+
+    struct CheckoutResponse: Decodable, Sendable {
+        /// false → no payable items or Stripe not configured server-side; the
+        /// confirm proceeds without any payment step (env-gated degrade).
+        let paymentRequired: Bool
+        /// SetupIntent client secret — card saved off-session, NOTHING is
+        /// charged until the host accepts the proposal.
+        let clientSecret: String?
+        let summary: CheckoutSummary
+        let note: String?
+    }
+
+    /// Starts the pay-on-accept flow: a SetupIntent saves the card, the
+    /// off-session PaymentIntent is created ONLY when the host accepts.
+    func checkout(packageId: String) async throws -> CheckoutResponse {
+        try await APIClient.shared.send(
+            "POST", "/api/assistant/inspire/\(packageId)/checkout"
         )
     }
 }
@@ -114,19 +183,46 @@ struct InspireCandidate: Decodable, Sendable, Identifiable {
 struct InspireDates: Decodable, Sendable {
     let from: String   // yyyy-MM-dd
     let to: String
-    /// "user" (explicit dates) or "availability" (from the user's listing).
+    /// "user" (explicit dates), "interpreted" (parsed from the prompt) or
+    /// "availability" (from the user's listing).
     let source: String
 }
 
-struct InspireService: Decodable, Sendable, Identifiable {
+// Every package item is individually toggleable via PATCH …/items (DOK-148):
+// the server payload stores { id, selected } alongside the item fields.
+
+struct InspireExperienceItem: Decodable, Sendable, Identifiable {
+    let id: String
+    var selected: Bool
+    let city: String
+    let country: String
+    let title: String
+    /// Partner slug, e.g. "getyourguide".
+    let partner: String
+    /// Click-through via /api/affiliate/{partner} — resolve via DiscoverRepository.resolveURL.
+    let url: String
+    let photo: DiscoverCityPhoto?
+
+    var partnerDisplayName: String {
+        switch partner {
+        case "getyourguide": return "GetYourGuide"
+        case "skyscanner": return "Skyscanner"
+        case "airalo": return "Airalo"
+        case "battleface": return "battleface"
+        default: return partner.capitalized
+        }
+    }
+}
+
+struct InspireServiceItem: Decodable, Sendable, Identifiable {
+    let id: String
+    var selected: Bool
     let slug: String
     let name: String
     /// flights | esim | insurance
     let category: String
     /// Relative /api/affiliate/{slug}?… — resolve via DiscoverRepository.resolveURL.
     let url: String
-
-    var id: String { slug }
 
     var symbolName: String {
         switch category {
@@ -138,6 +234,33 @@ struct InspireService: Decodable, Sendable, Identifiable {
     }
 }
 
+/// A swapl concierge add-on offered inside the package — the ONLY payable
+/// items (affiliate experiences/services stay external links, never charged
+/// by us). Charged off-session only after the host accepts the proposal.
+struct InspireAddOnItem: Decodable, Sendable, Identifiable {
+    let id: String
+    var selected: Bool
+    let slug: String
+    let name: String
+    let description: String
+    let priceCents: Int
+    let currency: String
+    let provider: String
+    let category: String
+}
+
+/// What the assistant understood from the (possibly spoken) free-text prompt
+/// — rendered as the "Understood: …" box, mirroring the web copy.
+struct InspireInterpreted: Decodable, Sendable {
+    let dateFrom: String?
+    let dateTo: String?
+    let city: String?
+    /// "pet-friendly" | "wfh" | "step-free"
+    let constraints: [String]?
+    /// "ai" | "heuristic"
+    let source: String
+}
+
 struct InspirePackage: Decodable, Sendable {
     let packageId: String
     let myListingId: String
@@ -147,8 +270,10 @@ struct InspirePackage: Decodable, Sendable {
     let proposalMessage: String
     /// "ai" | "fallback" — whether the draft came from the LLM or the template.
     let proposalMessageSource: String
-    let experiences: [DiscoverExperience]
-    let services: [InspireService]
+    let experiences: [InspireExperienceItem]
+    let services: [InspireServiceItem]
+    let addOns: [InspireAddOnItem]
+    let interpreted: InspireInterpreted?
     let source: String
 
     /// Destination first, then the real alternatives — the hero pick can be

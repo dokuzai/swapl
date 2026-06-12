@@ -70,6 +70,17 @@ targets:
         NSSiriUsageDescription: >-
           Swapl uses Siri and Shortcuts to let you create a listing or
           optimize your listing photos with your voice.
+        # Get Inspired voice input (DOK-148): the mic button on the wish field
+        # records audio and Apple's Speech framework transcribes it live —
+        # on-device whenever the language model supports it. Audio is never
+        # uploaded to Swapl's servers.
+        NSMicrophoneUsageDescription: >-
+          Swapl uses the microphone so you can dictate the trip you're
+          dreaming of instead of typing it.
+        NSSpeechRecognitionUsageDescription: >-
+          Swapl uses speech recognition to turn your spoken trip wish into
+          text, on your device whenever possible. Your audio is never sent
+          to Swapl's servers.
         # Google sign-in (ASWebAuthenticationSession, no SDK): the iOS OAuth
         # client id from Google Cloud Console. Empty → the Google button is
         # hidden (env-gated like the backend; see GoogleSignInCoordinator).
