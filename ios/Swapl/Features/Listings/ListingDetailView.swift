@@ -62,6 +62,13 @@ struct ListingDetailView: View {
         .navigationTitle(vm.detail?.listing.city ?? "Home")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            // System share sheet. The link is a universal link, so recipients
+            // with the app installed land straight on this listing.
+            ToolbarItem(placement: .topBarTrailing) {
+                if let detail = vm.detail {
+                    shareLink(detail)
+                }
+            }
             // Save-to-wishlist heart; hidden on your own listing.
             ToolbarItem(placement: .topBarTrailing) {
                 if let detail = vm.detail, !isOwner(detail) {
@@ -104,6 +111,30 @@ struct ListingDetailView: View {
             Text("You can follow the conversation from Messages.")
         }
         .task { await vm.load() }
+    }
+
+    // Web origin for shareable listing links. Kept as a constant rather than
+    // derived from the API base URL, which points at localhost in development;
+    // app.swapl.fun is also the universal-link domain (see DeepLinkRouter).
+    private static let shareOrigin = "https://app.swapl.fun"
+
+    private func shareLink(_ detail: ListingDetailResponse) -> some View {
+        let listing = detail.listing
+        let url = URL(string: "\(Self.shareOrigin)/listings/\(listing.id)")!
+        let summary = "\(listing.neighbourhood) · \(listing.city) on Swapl"
+        // Text-only preview: the cover photo would need a fetch before the
+        // share sheet opens, so we stay robust and skip it.
+        return ShareLink(
+            item: url,
+            subject: Text(summary),
+            message: Text(summary),
+            preview: SharePreview(summary)
+        ) {
+            Image(systemName: "square.and.arrow.up")
+                .font(.system(size: 18))
+                .foregroundStyle(AirbnbPalette.text)
+        }
+        .accessibilityLabel("Share listing")
     }
 
     private var proposalSentBinding: Binding<Bool> {
