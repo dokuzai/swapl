@@ -59,7 +59,7 @@ struct DiscoverService: Decodable, Sendable, Identifiable {
     var isConcierge: Bool { category == "concierge" }
 
     var formattedPrice: String? {
-        guard let priceCents, let currency else { return nil }
+        guard let priceCents, priceCents > 0, let currency else { return nil }
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = currency
