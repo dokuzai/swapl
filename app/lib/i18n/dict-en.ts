@@ -421,8 +421,20 @@ export const en = {
   "account.security.title": "Login & security",
   "account.security.passwordTitle": "Password",
   "account.security.passwordBody":
-    "Password changes aren't available here yet. If you signed up with a password, reset it from the sign-in page — or skip passwords entirely with a passkey below.",
+    "Use a strong password you don't reuse elsewhere. Changing it signs out your other devices.",
+  "account.security.setPasswordBody":
+    "You signed up without a password (social login or email code). Set one here to also sign in with email + password.",
   "account.security.resetCta": "Reset via email",
+  "account.security.currentPassword": "Current password",
+  "account.security.newPassword": "New password",
+  "account.security.confirmPassword": "Confirm new password",
+  "account.security.changeCta": "Change password",
+  "account.security.setCta": "Set password",
+  "account.security.changing": "Saving…",
+  "account.security.changed": "Password changed. Other devices were signed out.",
+  "account.security.mismatch": "Passwords don't match.",
+  "account.security.tooShort": "Use at least 6 characters.",
+  "account.security.changeError": "Couldn't change the password — try again.",
   "account.privacy.title": "Privacy",
   "account.privacy.indexing": "Search engine indexing",
   "account.privacy.indexingBody":

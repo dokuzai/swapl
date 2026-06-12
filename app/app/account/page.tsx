@@ -14,6 +14,7 @@ import { TravelProfileSection } from "@/components/account/travel-profile";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
 import { PasskeysSection } from "@/components/account/passkeys";
 import { PersonalInfoEditor } from "@/components/account/personal-info";
+import { ChangePasswordForm } from "@/components/account/change-password";
 import { PrivacyToggles, NotificationToggles } from "@/components/account/settings-toggles";
 import { toPasskeySummary } from "@/lib/auth/passkeys";
 import { parseSettings } from "@/lib/settings";
@@ -153,9 +154,8 @@ export default async function AccountPage() {
                   <span>{user.createdAt.toLocaleDateString(locale, { month: "long", day: "numeric", year: "numeric" })}</span>
                 </div>
                 <div className="pt-3 divider-dashed">
-                  <p className="text-sm font-medium mb-1">{t("account.security.passwordTitle")}</p>
-                  <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>{t("account.security.passwordBody")}</p>
-                  <Link href="/forgot-password" className="pill-ghost">{t("account.security.resetCta")}</Link>
+                  <p className="text-sm font-medium mb-2">{t("account.security.passwordTitle")}</p>
+                  <ChangePasswordForm hasPassword={Boolean(user.passwordHash)} />
                 </div>
               </div>
 
