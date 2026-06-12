@@ -14,6 +14,7 @@ import { getViewerListing } from "@/lib/listing-query";
 import { computeMatchScore } from "@/lib/match/score";
 import ProposeSwapButton from "./propose-swap-button";
 import { VerifiedBadge, FeaturedRibbon } from "@/components/listing/badges";
+import { RecentlyViewedTracker } from "@/components/listing/recently-viewed-tracker";
 
 export const dynamic = "force-dynamic";
 
@@ -99,6 +100,20 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
 
   return (
     <div className="wrap py-10 lg:py-14">
+      {/* Feeds the "Recently viewed" shelf on /listings (DOK-150). The
+          owner's own listing isn't tracked. */}
+      {!isOwner && (
+        <RecentlyViewedTracker
+          entry={{
+            id: dto.id,
+            title: dto.title,
+            city: dto.city,
+            country: dto.country,
+            neighbourhood: dto.neighbourhood,
+            photo: dto.photos[0] ?? heroIllustration?.url ?? null,
+          }}
+        />
+      )}
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         {/* min-w-0: grid items default to min-width auto, so a wide child
             (photo grids, Discover cards) would overflow small viewports

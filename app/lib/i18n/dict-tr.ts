@@ -603,4 +603,17 @@ export const tr: Partial<Record<DictKey, string>> = {
   "terms.s6.title": "Değişiklikler",
   "terms.s6.body":
     "Bu koşullarda önemli bir değişiklik yapmadan en az 30 gün önce sana e-posta göndeririz. Değişiklik tarihinden sonra kullanmaya devam etmek kabul anlamına gelir; devam etmek istemezsen hesabını her zaman silebilirsin.",
+  // Browse shelves (DOK-150)
+  "shelves.picked.kicker": "Senin için seçildi",
+  "shelves.picked.title": "Bayılacağın evler",
+  "shelves.recent.kicker": "Kaldığın yerden devam et",
+  "shelves.recent.title": "Son görüntülenenler",
+  "shelves.cities.kicker": "Swapçıların olduğu yerler",
+  "shelves.cities.title": "En iyi şehirleri keşfet",
+  "shelves.cities.count": "{n} ev",
+  "shelves.scrollLeft": "Geriye kaydır",
+  "shelves.scrollRight": "İleriye kaydır",
+  "shelves.match": "%{n} eşleşme",
+  "fav.save": "Favorilere kaydet",
+  "fav.remove": "Favorilerden çıkar",
 };

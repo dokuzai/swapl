@@ -600,6 +600,19 @@ export const en = {
   "terms.s6.title": "Changes",
   "terms.s6.body":
     "We'll email you at least 30 days before any material change to these terms. Continued use after the change date means acceptance; you can always delete your account if you'd rather not continue.",
+  // Browse shelves (DOK-150)
+  "shelves.picked.kicker": "Picked for you",
+  "shelves.picked.title": "Homes you'd love",
+  "shelves.recent.kicker": "Pick up where you left off",
+  "shelves.recent.title": "Recently viewed",
+  "shelves.cities.kicker": "Where swappers are",
+  "shelves.cities.title": "Explore top cities",
+  "shelves.cities.count": "{n} homes",
+  "shelves.scrollLeft": "Scroll back",
+  "shelves.scrollRight": "Scroll forward",
+  "shelves.match": "{n}% match",
+  "fav.save": "Save to favourites",
+  "fav.remove": "Remove from favourites",
 } as const;
 
 export type DictKey = keyof typeof en;

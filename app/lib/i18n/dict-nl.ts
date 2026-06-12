@@ -603,4 +603,17 @@ export const nl: Partial<Record<DictKey, string>> = {
   "terms.s6.title": "Wijzigingen",
   "terms.s6.body":
     "We mailen je minstens 30 dagen vóór elke wezenlijke wijziging van deze voorwaarden. Doorgaan met gebruiken na de wijzigingsdatum geldt als acceptatie; je kunt je account altijd verwijderen als je liever stopt.",
+  // Browse shelves (DOK-150)
+  "shelves.picked.kicker": "Voor jou gekozen",
+  "shelves.picked.title": "Huizen die je geweldig vindt",
+  "shelves.recent.kicker": "Ga verder waar je was",
+  "shelves.recent.title": "Onlangs bekeken",
+  "shelves.cities.kicker": "Waar de swappers zijn",
+  "shelves.cities.title": "Verken de topsteden",
+  "shelves.cities.count": "{n} huizen",
+  "shelves.scrollLeft": "Terug scrollen",
+  "shelves.scrollRight": "Vooruit scrollen",
+  "shelves.match": "{n}% overeenkomst",
+  "fav.save": "Bewaar in favorieten",
+  "fav.remove": "Verwijder uit favorieten",
 };

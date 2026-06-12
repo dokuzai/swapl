@@ -12,7 +12,31 @@ import { getCachedCityMediaMap, cityMediaKey } from "@/lib/city-media";
 import { getDictionary, t as tt } from "@/lib/i18n/server";
 import { getDiscoverExperiences, getDiscoverServices } from "@/lib/discover";
 import { BrowseChips, ExperiencesGrid, ServicesGrid, type BrowseTab } from "@/components/listing/browse-discover";
+import { BrowseShelves, type ShelfCity } from "@/components/listing/browse-shelves";
 import { InspireButton } from "@/components/ui/inspire-button";
+import { prisma } from "@/lib/db";
+
+/** Top cities by active-listing count, with cached-only photos — feeds the
+ *  "Explore top cities" shelf (DOK-150). Same groupBy as /api/cities, capped at 8. */
+async function getTopCities(): Promise<ShelfCity[]> {
+  const groups = await prisma.listing.groupBy({
+    by: ["city", "country"],
+    where: { isActive: true },
+    _count: { _all: true },
+    orderBy: { _count: { city: "desc" } },
+    take: 8,
+  });
+  const photos = await getCachedCityMediaMap(groups.map((g) => ({ city: g.city, country: g.country })));
+  return groups.map((g) => {
+    const photo = photos.get(cityMediaKey(g.city, g.country))?.[0] ?? null;
+    return {
+      city: g.city,
+      country: g.country,
+      count: g._count._all,
+      photo: photo ? { url: photo.url, alt: photo.alt } : null,
+    };
+  });
+}
 
 export const metadata = {
   title: "Browse homes · swapl",
@@ -84,7 +108,10 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
     );
   }
 
-  const { items, total, pageSize, page } = await queryListings(filters, viewerListing);
+  const [{ items, total, pageSize, page }, topCities] = await Promise.all([
+    queryListings(filters, viewerListing),
+    getTopCities(),
+  ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   // Cached-only city photos for cards (single query, no upstream fetch —
@@ -122,6 +149,10 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
           <InspireButton label={dict["inspire.cta"]} />
         </div>
       </header>
+
+      {/* Airbnb-style discovery shelves (DOK-150) — horizontal scroll-snap
+          rows above the results grid. Each shelf hides itself when empty. */}
+      <BrowseShelves loggedIn={Boolean(session)} cities={topCities} />
 
       <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
         <Suspense>

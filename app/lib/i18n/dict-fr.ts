@@ -588,4 +588,17 @@ export const fr: Partial<Record<DictKey, string>> = {
   "terms.s6.title": "Modifications",
   "terms.s6.body":
     "On vous écrira au moins 30 jours avant toute modification substantielle de ces conditions. Continuer à utiliser le service après la date de modification vaut acceptation ; vous pouvez toujours supprimer votre compte si vous préférez arrêter.",
+  // Browse shelves (DOK-150)
+  "shelves.picked.kicker": "Choisies pour vous",
+  "shelves.picked.title": "Des maisons que vous allez adorer",
+  "shelves.recent.kicker": "Reprenez où vous en étiez",
+  "shelves.recent.title": "Vues récemment",
+  "shelves.cities.kicker": "Là où sont les swappeurs",
+  "shelves.cities.title": "Explorez les villes phares",
+  "shelves.cities.count": "{n} maisons",
+  "shelves.scrollLeft": "Faire défiler en arrière",
+  "shelves.scrollRight": "Faire défiler en avant",
+  "shelves.match": "{n}% de compatibilité",
+  "fav.save": "Enregistrer dans les favoris",
+  "fav.remove": "Retirer des favoris",
 };

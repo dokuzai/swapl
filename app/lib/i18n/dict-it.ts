@@ -604,4 +604,17 @@ export const it: Partial<Record<DictKey, string>> = {
   "terms.s6.title": "Modifiche",
   "terms.s6.body":
     "Ti scriveremo almeno 30 giorni prima di qualsiasi modifica sostanziale a questi termini. Continuare a usare il servizio dopo la data della modifica vale come accettazione; puoi sempre eliminare il tuo account se preferisci smettere.",
+  // Browse shelves (DOK-150)
+  "shelves.picked.kicker": "Scelte per te",
+  "shelves.picked.title": "Case che ti piaceranno",
+  "shelves.recent.kicker": "Riprendi da dove eri",
+  "shelves.recent.title": "Viste di recente",
+  "shelves.cities.kicker": "Dove sono gli swapper",
+  "shelves.cities.title": "Esplora le città top",
+  "shelves.cities.count": "{n} case",
+  "shelves.scrollLeft": "Scorri indietro",
+  "shelves.scrollRight": "Scorri avanti",
+  "shelves.match": "{n}% di affinità",
+  "fav.save": "Salva nei preferiti",
+  "fav.remove": "Rimuovi dai preferiti",
 };
