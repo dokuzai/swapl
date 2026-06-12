@@ -329,4 +329,16 @@ export const templates = {
       text: `We received a request to reset your swapl password. Open this link within the next hour:\n\n${link}\n\nIf you didn't ask for this, no action is needed.`,
     });
   },
+
+  passwordChanged: (toEmail: string) =>
+    build({
+      to: toEmail,
+      subject: "Your swapl password was changed",
+      preview: "Your account password was just updated.",
+      heading: "Your password was changed.",
+      intro: "Your swapl password was just updated and other signed-in devices were logged out. If this was you, no action is needed. If it wasn't, reset your password immediately and contact support@swapl.com.",
+      ctaLabel: "Reset your password",
+      ctaHref: `${APP_URL}/forgot-password`,
+      text: `Your swapl password was just changed and other signed-in devices were logged out.\n\nIf this was you, no action is needed. If it wasn't, reset your password immediately: ${APP_URL}/forgot-password — and contact support@swapl.com.`,
+    }),
 };
