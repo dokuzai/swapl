@@ -32,7 +32,9 @@ data class DiscoverService(
 
     val formattedPrice: String?
         get() {
-            val cents = priceCents ?: return null
+            // Affiliate add-ons seed priceCents 0 — suppress, never show an invented €0,00
+            // (the web does the same with `priceCents > 0`).
+            val cents = priceCents?.takeIf { it > 0 } ?: return null
             val code = currency ?: return null
             return runCatching {
                 NumberFormat.getCurrencyInstance().apply {
