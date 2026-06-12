@@ -57,6 +57,9 @@ import app.swapl.features.trips.TripsScreen
 import app.swapl.features.wishlists.WishlistsScreen
 import app.swapl.features.profile.AccountScreen
 import app.swapl.features.profile.InterestsEditorScreen
+import app.swapl.features.profile.NotificationSettingsScreen
+import app.swapl.features.profile.PersonalInfoScreen
+import app.swapl.features.profile.PrivacySettingsScreen
 import app.swapl.features.profile.PublicProfileScreen
 import app.swapl.features.profile.SavedSearchesScreen
 import app.swapl.features.swaps.SwapThreadScreen
@@ -276,10 +279,16 @@ private fun HomeShell(
                             onOpenSavedSearches = { accountNav.navigate("savedSearches") },
                             onOpenMetrics = { accountNav.navigate("metrics") },
                             onOpenPublicProfile = { id -> accountNav.navigate("profile/$id") },
+                            onOpenPersonalInfo = { accountNav.navigate("personalInfo") },
+                            onOpenPrivacy = { accountNav.navigate("privacy") },
+                            onOpenNotifications = { accountNav.navigate("notifications") },
                             onBecomeHost = { accountNav.navigate("new") },
                             onEditHome = { id -> accountNav.navigate("edit/$id") },
                         )
                     }
+                    composable("personalInfo") { PersonalInfoScreen() }
+                    composable("privacy") { PrivacySettingsScreen() }
+                    composable("notifications") { NotificationSettingsScreen() }
                     composable("interests") {
                         InterestsEditorScreen(onDone = { accountNav.popBackStack() })
                     }

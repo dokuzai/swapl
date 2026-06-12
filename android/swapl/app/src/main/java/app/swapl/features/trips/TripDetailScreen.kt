@@ -22,13 +22,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.remember
 import app.swapl.core.model.ProposalDetail
+import app.swapl.core.repository.ProposalRepository
 import app.swapl.core.repository.TripsRepository
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
 import app.swapl.designtokens.SwaplSpacing
 import app.swapl.features.swaps.AgreedPanel
+import app.swapl.features.swaps.LeaveReviewCard
+import app.swapl.features.swaps.LeaveReviewDialog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,6 +40,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TripDetailViewModel @Inject constructor(
     private val repo: TripsRepository,
+    private val proposals: ProposalRepository,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val proposalId: String = checkNotNull(savedState["proposalId"])
@@ -44,11 +49,29 @@ class TripDetailViewModel @Inject constructor(
         private set
     var error by mutableStateOf<String?>(null)
         private set
+    var isSubmittingReview by mutableStateOf(false)
+        private set
+    var reviewError by mutableStateOf<String?>(null)
+        private set
 
     fun load() = viewModelScope.launch {
         error = null
         runCatching { detail = repo.detail(proposalId) }
             .onFailure { error = it.message }
+    }
+
+    // POST /api/agreements/{id}/review, then refresh so canReview clears.
+    fun submitReview(rating: Int, text: String, onDone: () -> Unit) = viewModelScope.launch {
+        val agreementId = detail?.agreement?.id ?: return@launch
+        isSubmittingReview = true
+        reviewError = null
+        runCatching { proposals.submitReview(agreementId, rating, text) }
+            .onSuccess {
+                detail = runCatching { repo.detail(proposalId) }.getOrNull() ?: detail
+                onDone()
+            }
+            .onFailure { reviewError = it.message }
+        isSubmittingReview = false
     }
 }
 
@@ -79,17 +102,18 @@ fun TripDetailScreen(
         d == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
-        else -> TripDetailBody(d, onOpenProfile)
+        else -> TripDetailBody(d, vm, onOpenProfile)
     }
 }
 
 @Composable
-private fun TripDetailBody(d: ProposalDetail, onOpenProfile: (String) -> Unit) {
+private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenProfile: (String) -> Unit) {
     val meIsProposer = d.proposal.meSide == "proposer"
     val mine = if (meIsProposer) d.proposerListing else d.targetListing
     val theirs = if (meIsProposer) d.targetListing else d.proposerListing
     val a = d.agreement
     val hostName = d.other.name ?: "your host"
+    var showReview by remember { mutableStateOf(false) }
 
     Column(
         Modifier
@@ -131,8 +155,26 @@ private fun TripDetailBody(d: ProposalDetail, onOpenProfile: (String) -> Unit) {
             AgreedPanel(a, hostName)
         }
 
+        // After a COMPLETED swap the server flags canReview until the caller
+        // has left their (single) review — DOK-147.
+        if (a?.status == "COMPLETED" && a.canReview == true) {
+            LeaveReviewCard(otherName = d.other.name, onClick = { showReview = true })
+        }
+
         TextButton(onClick = { onOpenProfile(d.other.id) }) {
             Text("View ${d.other.name ?: "host"}'s profile")
         }
+    }
+
+    if (showReview) {
+        LeaveReviewDialog(
+            otherName = d.other.name,
+            isSubmitting = vm.isSubmittingReview,
+            error = vm.reviewError,
+            onDismiss = { showReview = false },
+            onSubmit = { rating, text ->
+                vm.submitReview(rating, text) { showReview = false }
+            },
+        )
     }
 }

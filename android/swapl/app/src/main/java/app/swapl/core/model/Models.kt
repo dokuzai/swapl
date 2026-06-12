@@ -220,6 +220,9 @@ data class Agreement(
     val keyCode1: String? = null,
     val keyCode2: String? = null,
     val status: String,
+    // True when the agreement is COMPLETED and the caller hasn't reviewed it
+    // yet (DOK-147). Default null: older deploys omit the key.
+    val canReview: Boolean? = null,
     val insurance: Insurance? = null,
 )
 
@@ -244,12 +247,55 @@ data class PublicProfileUser(
     val verified: Boolean,
     val memberSince: String,
     val interests: List<String>,
+    // Rich profile fields (DOK-147) — additive & optional so the app keeps
+    // decoding responses from older deploys.
+    val work: String? = null,
+    val languages: List<String>? = null,
+    // Privacy-gated server-side: null when the host hides their home city.
+    val homeCity: String? = null,
+    val homeCountry: String? = null,
+)
+
+@Serializable
+data class ProfileStats(
+    val swapsCompleted: Int,
+    val reviewsCount: Int,
+    val avgRating: Double? = null,
+    val memberSince: String,
+)
+
+// One entry per city+year visited via a COMPLETED swap — real data only.
+@Serializable
+data class VisitedCity(
+    val city: String,
+    val country: String,
+    val year: Int,
+)
+
+@Serializable
+data class ProfileReviewAuthor(
+    val id: String,
+    val name: String? = null,
+    val avatar: String? = null,
+)
+
+@Serializable
+data class ProfileReview(
+    val id: String,
+    val author: ProfileReviewAuthor,
+    val rating: Int,
+    val text: String,
+    val createdAt: String,
 )
 
 @Serializable
 data class PublicProfile(
     val user: PublicProfileUser,
     val listings: List<Listing>,
+    // DOK-147 additions — optional so older API deploys still decode.
+    val stats: ProfileStats? = null,
+    val visited: List<VisitedCity>? = null,
+    val reviews: List<ProfileReview>? = null,
 )
 
 // ---------- interests catalog ----------
@@ -306,6 +352,21 @@ data class MeUser(
     val role: String,
     val interests: List<String>,
     val createdAt: String,
+    // Rich profile fields (DOK-147) — additive & optional.
+    val work: String? = null,
+    val languages: List<String>? = null,
+    val homeCity: String? = null,
+    val homeCountry: String? = null,
+)
+
+// GET/PATCH /api/profile/settings — privacy + notification toggles. The
+// server merges partial PATCHes and always answers the full canonical shape.
+@Serializable
+data class UserSettings(
+    val searchEngineIndexing: Boolean,
+    val showHomeCity: Boolean,
+    val emailNotifications: Boolean,
+    val pushNotifications: Boolean,
 )
 
 @Serializable
@@ -329,6 +390,9 @@ data class MeResponse(
     val user: MeUser,
     val counts: MeCounts,
     val subscription: MeSubscription? = null,
+    // DOK-147 — caller's privacy/notification toggles; optional so the app
+    // still decodes /api/me from older deploys.
+    val settings: UserSettings? = null,
 )
 
 // ---------- admin metrics ----------

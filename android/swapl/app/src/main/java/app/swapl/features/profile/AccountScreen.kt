@@ -16,12 +16,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddHome
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.QueryStats
@@ -86,6 +89,9 @@ fun AccountScreen(
     onOpenSavedSearches: () -> Unit = {},
     onOpenMetrics: () -> Unit = {},
     onOpenPublicProfile: (String) -> Unit = {},
+    onOpenPersonalInfo: () -> Unit = {},
+    onOpenPrivacy: () -> Unit = {},
+    onOpenNotifications: () -> Unit = {},
     onBecomeHost: () -> Unit = {},
     onEditHome: (String) -> Unit = {},
     authVm: AuthViewModel = hiltViewModel(),
@@ -204,10 +210,6 @@ fun AccountScreen(
         // Didit identity verification — env-gated, hidden once verified.
         IdentityVerificationCard()
 
-        // The transparent AI travel profile (DOK-146): visible verbatim,
-        // refreshable, deletable — built only from in-app signals.
-        TravelProfileCard()
-
         overview.me?.subscription?.let { sub ->
             SurfaceCard {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -220,20 +222,47 @@ fun AccountScreen(
             }
         }
 
+        // Airbnb-style structured settings (DOK-147), mirroring the iOS
+        // AccountView and web /account sections.
         Column {
+            KickerLabel("Settings")
+            MenuRow(Icons.Default.AccountCircle, "Personal information", onClick = onOpenPersonalInfo)
+            // Login & security: passkeys are the only authed credential
+            // management the API exposes (no authed change-password route).
+            MenuRow(Icons.Default.Key, if (addingPasskey) "Login & security — Passkeys…" else "Login & security — Passkeys") { addPasskey() }
+            MenuRow(Icons.Default.PrivacyTip, "Privacy", onClick = onOpenPrivacy)
+            MenuRow(Icons.Default.Notifications, "Notifications", onClick = onOpenNotifications)
+        }
+
+        Column {
+            KickerLabel("Profile")
             MenuRow(Icons.Default.Person, "View profile") { s?.id?.let(onOpenPublicProfile) }
             MenuRow(Icons.Default.Favorite, "Interests", onClick = onOpenInterests)
             MenuRow(Icons.Default.Search, "Saved searches", onClick = onOpenSavedSearches)
-            MenuRow(Icons.Default.Key, if (addingPasskey) "Passkeys…" else "Passkeys") { addPasskey() }
             if (overview.me?.user?.role == "swapl_admin") {
                 MenuRow(Icons.Default.QueryStats, "Metrics", onClick = onOpenMetrics)
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+        }
+
+        Column {
+            KickerLabel("Support")
+            MenuRow(Icons.AutoMirrored.Filled.HelpOutline, "Get help") { uriHandler.openUri("https://swapl.fun/contact") }
             MenuRow(Icons.Default.PrivacyTip, "Privacy policy") { uriHandler.openUri("https://swapl.fun/privacy") }
             MenuRow(Icons.Default.Description, "Terms of service") { uriHandler.openUri("https://swapl.fun/terms") }
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
             MenuRow(Icons.AutoMirrored.Filled.Logout, "Log out", destructive = true) { confirmSignOut = true }
         }
+
+        // Real version footer from BuildConfig — no hardcoded numbers.
+        Text(
+            "Version ${app.swapl.BuildConfig.VERSION_NAME} (${app.swapl.BuildConfig.VERSION_CODE})",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = SwaplSpacing.s4),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
     }
 
     passkeyMessage?.let { msg ->

@@ -57,6 +57,15 @@ class ProposalRepository @Inject constructor(private val api: ApiClient) {
             setBody(AiDraftBody(proposerListingId, targetListingId, dateFrom, dateTo))
         }.body()
 
+    // POST /api/agreements/{id}/review — one review per author per COMPLETED
+    // agreement (DOK-147). Server validates rating 1-5 and text 20-1000 chars.
+    suspend fun submitReview(agreementId: String, rating: Int, text: String) {
+        api.client.post("${api.baseUrl}/api/agreements/$agreementId/review") {
+            contentType(ContentType.Application.Json)
+            setBody(ReviewBody(rating, text))
+        }
+    }
+
     private suspend fun postAction(id: String, body: ActionBody): ActionResponse =
         api.client.post("${api.baseUrl}/api/proposals/$id") {
             contentType(ContentType.Application.Json)
@@ -88,6 +97,9 @@ class ProposalRepository @Inject constructor(private val api: ApiClient) {
         val dateFrom: String? = null,
         val dateTo: String? = null,
     )
+
+    @Serializable
+    private data class ReviewBody(val rating: Int, val text: String)
 
     @Serializable
     private data class ActionBody(

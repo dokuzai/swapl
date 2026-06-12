@@ -52,10 +52,26 @@ class SwapThreadViewModel @Inject constructor(
     var detail by mutableStateOf<ProposalDetail?>(null); private set
     var isActing by mutableStateOf(false); private set
     var error by mutableStateOf<String?>(null); private set
+    var isSubmittingReview by mutableStateOf(false); private set
+    var reviewError by mutableStateOf<String?>(null); private set
 
     fun load() = viewModelScope.launch {
         runCatching { detail = repo.detail(proposalId) }
             .onFailure { error = it.message }
+    }
+
+    // POST /api/agreements/{id}/review, then refresh so canReview clears.
+    fun submitReview(rating: Int, text: String, onDone: () -> Unit) = viewModelScope.launch {
+        val agreementId = detail?.agreement?.id ?: return@launch
+        isSubmittingReview = true
+        reviewError = null
+        runCatching { repo.submitReview(agreementId, rating, text) }
+            .onSuccess {
+                detail = runCatching { repo.detail(proposalId) }.getOrNull() ?: detail
+                onDone()
+            }
+            .onFailure { reviewError = it.message }
+        isSubmittingReview = false
     }
 
     fun accept() = act { repo.accept(proposalId) }
@@ -81,6 +97,7 @@ fun SwapThreadScreen(
     LaunchedEffect(Unit) { vm.load() }
     val d = vm.detail
     var showCounter by remember { mutableStateOf(false) }
+    var showReview by remember { mutableStateOf(false) }
 
     Column(
         Modifier
@@ -106,12 +123,30 @@ fun SwapThreadScreen(
                 AgreedPanel(d.agreement, d.other.name ?: "your host")
             }
 
+            // After a COMPLETED swap the server flags canReview until the
+            // caller has left their (single) review — DOK-147.
+            if (d.agreement?.status == "COMPLETED" && d.agreement.canReview == true) {
+                LeaveReviewCard(otherName = d.other.name, onClick = { showReview = true })
+            }
+
             TextButton(onClick = { onOpenProfile(d.other.id) }) {
                 Text("View ${d.other.name ?: "host"}'s profile")
             }
 
             ActionRow(d, vm, onCounter = { showCounter = true })
         }
+    }
+
+    if (showReview && d != null) {
+        LeaveReviewDialog(
+            otherName = d.other.name,
+            isSubmitting = vm.isSubmittingReview,
+            error = vm.reviewError,
+            onDismiss = { showReview = false },
+            onSubmit = { rating, text ->
+                vm.submitReview(rating, text) { showReview = false }
+            },
+        )
     }
 
     if (showCounter) {
