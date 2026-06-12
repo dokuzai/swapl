@@ -79,6 +79,40 @@ model User {
   oauthAccounts   OAuthAccount[]
   webauthnCredentials WebAuthnCredential[]
   identityVerifications IdentityVerification[]
+  travelProfile   TravelProfile?
+  inspirationPackages InspirationPackage[]
+}
+
+// ---------- AI ASSISTANT (DOK-146) ----------
+
+// AI-synthesised travel preference profile, built ONLY from in-app signals
+// (interests, bio, favorites, saved searches, the user's own swap messages).
+// Privacy-first: the user can read it (GET /api/assistant/profile) and delete
+// it at any time (DELETE). Re-built on demand, never scraped from outside.
+model TravelProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  summary     String                                              // human-readable synthesis shown to the user
+  traits      String   @default("{}")                             // JSON: { themes[], cities[], vibe, constraints[] }
+  sourcesUsed String   @default("[]")                             // JSON array, e.g. ["interests","favorites","saved_searches","swap_messages"]
+  updatedAt   DateTime @updatedAt
+}
+
+// One "Get Inspired" package draft. payload is the full JSON the composer
+// returned; on confirm the proposal is created through the same code path as
+// POST /api/proposals and proposalId is stamped here.
+model InspirationPackage {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status     String   @default("draft")                           // "draft" | "confirmed" | "dismissed"
+  payload    String                                               // JSON-encoded package (destination, alternatives, dates, affiliates)
+  proposalId String?                                              // set when the user confirms
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // One identity (KYC) verification attempt at an external provider (Didit).

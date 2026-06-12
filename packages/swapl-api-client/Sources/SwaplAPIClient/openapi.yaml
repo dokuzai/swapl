@@ -26,6 +26,7 @@ tags:
   - name: verification
   - name: waitlist
   - name: discover
+  - name: assistant
 
 components:
   securitySchemes:
@@ -108,6 +109,84 @@ components:
       properties:
         ok: { type: boolean }
         alreadyVerified: { type: boolean }
+
+    TravelProfile:
+      type: object
+      required: [summary, traits, sourcesUsed, updatedAt]
+      properties:
+        summary: { type: string, description: 'Human-readable synthesis, shown verbatim to the user' }
+        traits:
+          type: object
+          required: [themes, cities, constraints]
+          properties:
+            themes:
+              type: array
+              items: { type: string }
+            cities:
+              type: array
+              items: { type: string }
+            vibe: { type: string, nullable: true }
+            constraints:
+              type: array
+              items: { type: string }
+        sourcesUsed:
+          type: array
+          description: 'In-app signals that fed the synthesis, e.g. interests, favorites, saved_searches, swap_messages'
+          items: { type: string }
+        updatedAt: { type: string, format: date-time }
+
+    InspireCandidate:
+      type: object
+      required: [listingId, city, country, title, matchScore]
+      properties:
+        listingId: { type: string }
+        city: { type: string }
+        country: { type: string }
+        title: { type: string }
+        photo: { type: string, nullable: true }
+        matchScore: { type: integer, description: '0..100, match engine + wishlist/profile boosts' }
+
+    InspirePackage:
+      type: object
+      required: [packageId, myListingId, destination, alternatives, dates, proposalMessage, experiences, services]
+      properties:
+        packageId: { type: string }
+        myListingId: { type: string }
+        destination:
+          allOf:
+            - { $ref: '#/components/schemas/InspireCandidate' }
+            - type: object
+              required: [why]
+              properties:
+                why: { type: string, description: 'Why this fits you — 2 sentences' }
+        alternatives:
+          type: array
+          items: { $ref: '#/components/schemas/InspireCandidate' }
+        dates:
+          type: object
+          required: [from, to, source]
+          properties:
+            from: { type: string, description: 'yyyy-MM-dd' }
+            to: { type: string, description: 'yyyy-MM-dd' }
+            source: { type: string, description: 'user | availability' }
+        proposalMessage: { type: string }
+        proposalMessageSource: { type: string, description: 'ai | fallback' }
+        experiences:
+          type: array
+          description: 'GetYourGuide cards for the destination city (env-gated, max 3)'
+          items: { $ref: '#/components/schemas/DiscoverExperience' }
+        services:
+          type: array
+          description: 'Configured affiliate partners (flights, esim, insurance), click-through via /api/affiliate/{partnerSlug}'
+          items:
+            type: object
+            required: [slug, name, category, url]
+            properties:
+              slug: { type: string }
+              name: { type: string }
+              category: { type: string, description: 'flights | esim | insurance' }
+              url: { type: string }
+        source: { type: string, description: 'ai | fallback — how the destination was picked' }
 
     Platform:
       type: string
@@ -1612,6 +1691,137 @@ paths:
                   source: { type: string, description: 'ai | fallback' }
         '401': { description: Unauthenticated }
         '429': { description: Rate limited }
+
+  /api/assistant/profile:
+    get:
+      tags: [assistant]
+      summary: The caller's AI travel profile
+      description: >-
+        Synthesised ONLY from in-app signals (interests, bio, favorites, saved
+        searches, the user's own swap messages). Built on first read when
+        absent. Deterministic aggregation when no AI provider is configured.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TravelProfile' }
+        '401': { description: Unauthenticated }
+    delete:
+      tags: [assistant]
+      summary: Delete the AI travel profile (transparency)
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+
+  /api/assistant/profile/refresh:
+    post:
+      tags: [assistant]
+      summary: Rebuild the AI travel profile from the latest in-app signals
+      description: Rate-limited 5/hour per user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Rebuilt
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TravelProfile' }
+        '401': { description: Unauthenticated }
+        '429': { description: Rate limited }
+
+  /api/assistant/inspire:
+    post:
+      tags: [assistant]
+      summary: Compose a "Get Inspired" swap package
+      description: >-
+        Picks the best real, active, date-compatible swap candidates for the
+        caller (match engine + wishlist/profile boosts), drafts a proposal
+        message, and enriches the package with env-gated affiliate experiences
+        and services (no invented prices or availability). Saves a draft
+        InspirationPackage. Rate-limited 10/hour per user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt: { type: string, maxLength: 500, description: 'Optional free-text wish' }
+                dateFrom: { type: string, description: 'yyyy-MM-dd' }
+                dateTo: { type: string, description: 'yyyy-MM-dd' }
+      responses:
+        '200':
+          description: Package composed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InspirePackage' }
+        '401': { description: Unauthenticated }
+        '422': { description: 'NO_ACTIVE_LISTING or NO_CANDIDATES' }
+        '429': { description: Rate limited }
+
+  /api/assistant/inspire/{id}/confirm:
+    post:
+      tags: [assistant]
+      summary: Confirm a package — creates a REAL swap proposal
+      description: >-
+        Goes through the same code path as POST /api/proposals, so suspension,
+        plan limits (402 upsell) and notifications all apply. Body may edit the
+        pick (must be a listing from the package), the dates and the message.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listingId: { type: string, description: 'Destination or one of the alternatives' }
+                dateFrom: { type: string, description: 'yyyy-MM-dd' }
+                dateTo: { type: string, description: 'yyyy-MM-dd' }
+                message: { type: string, maxLength: 2000 }
+      responses:
+        '200':
+          description: Proposal created, package confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, proposalId, packageId]
+                properties:
+                  ok: { type: boolean }
+                  proposalId: { type: string }
+                  packageId: { type: string }
+        '401': { description: Unauthenticated }
+        '402': { description: Plan limit reached (same upsell as POST /api/proposals) }
+        '403': { description: Account suspended }
+        '404': { description: Package not found (or not yours) }
+        '422': { description: Package already confirmed/dismissed }
+
+  /api/assistant/inspire/{id}/dismiss:
+    post:
+      tags: [assistant]
+      summary: Dismiss a draft package
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Dismissed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+        '404': { description: Package not found (or not yours) }
+        '422': { description: Package already confirmed/dismissed }
 
   /api/proposals:
     get:

@@ -1826,6 +1826,354 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/assistant/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The caller's AI travel profile
+         * @description Synthesised ONLY from in-app signals (interests, bio, favorites, saved searches, the user's own swap messages). Built on first read when absent. Deterministic aggregation when no AI provider is configured.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TravelProfile"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /** Delete the AI travel profile (transparency) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/assistant/profile/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rebuild the AI travel profile from the latest in-app signals
+         * @description Rate-limited 5/hour per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Rebuilt */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TravelProfile"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/assistant/inspire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compose a "Get Inspired" swap package
+         * @description Picks the best real, active, date-compatible swap candidates for the caller (match engine + wishlist/profile boosts), drafts a proposal message, and enriches the package with env-gated affiliate experiences and services (no invented prices or availability). Saves a draft InspirationPackage. Rate-limited 10/hour per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description Optional free-text wish */
+                        prompt?: string;
+                        /** @description yyyy-MM-dd */
+                        dateFrom?: string;
+                        /** @description yyyy-MM-dd */
+                        dateTo?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Package composed */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InspirePackage"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description NO_ACTIVE_LISTING or NO_CANDIDATES */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/assistant/inspire/{id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm a package — creates a REAL swap proposal
+         * @description Goes through the same code path as POST /api/proposals, so suspension, plan limits (402 upsell) and notifications all apply. Body may edit the pick (must be a listing from the package), the dates and the message.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description Destination or one of the alternatives */
+                        listingId?: string;
+                        /** @description yyyy-MM-dd */
+                        dateFrom?: string;
+                        /** @description yyyy-MM-dd */
+                        dateTo?: string;
+                        message?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Proposal created, package confirmed */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            proposalId: string;
+                            packageId: string;
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Plan limit reached (same upsell as POST /api/proposals) */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Account suspended */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package already confirmed/dismissed */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/assistant/inspire/{id}/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dismiss a draft package */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Dismissed */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Package already confirmed/dismissed */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/proposals": {
         parameters: {
             query?: never;
@@ -2510,6 +2858,61 @@ export interface components {
         OkResponse: {
             ok: boolean;
             alreadyVerified?: boolean;
+        };
+        TravelProfile: {
+            /** @description Human-readable synthesis, shown verbatim to the user */
+            summary: string;
+            traits: {
+                themes: string[];
+                cities: string[];
+                vibe?: string | null;
+                constraints: string[];
+            };
+            /** @description In-app signals that fed the synthesis, e.g. interests, favorites, saved_searches, swap_messages */
+            sourcesUsed: string[];
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        InspireCandidate: {
+            listingId: string;
+            city: string;
+            country: string;
+            title: string;
+            photo?: string | null;
+            /** @description 0..100, match engine + wishlist/profile boosts */
+            matchScore: number;
+        };
+        InspirePackage: {
+            packageId: string;
+            myListingId: string;
+            destination: components["schemas"]["InspireCandidate"] & {
+                /** @description Why this fits you — 2 sentences */
+                why: string;
+            };
+            alternatives: components["schemas"]["InspireCandidate"][];
+            dates: {
+                /** @description yyyy-MM-dd */
+                from: string;
+                /** @description yyyy-MM-dd */
+                to: string;
+                /** @description user | availability */
+                source: string;
+            };
+            proposalMessage: string;
+            /** @description ai | fallback */
+            proposalMessageSource?: string;
+            /** @description GetYourGuide cards for the destination city (env-gated, max 3) */
+            experiences: components["schemas"]["DiscoverExperience"][];
+            /** @description Configured affiliate partners (flights, esim, insurance), click-through via /api/affiliate/{partnerSlug} */
+            services: {
+                slug: string;
+                name: string;
+                /** @description flights | esim | insurance */
+                category: string;
+                url: string;
+            }[];
+            /** @description ai | fallback — how the destination was picked */
+            source?: string;
         };
         /** @enum {string} */
         Platform: "ios" | "android" | "web-pwa";
