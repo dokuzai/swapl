@@ -27,7 +27,7 @@ export function AdminTable({
             {headers.map((h) => (
               <th
                 key={h}
-                className="px-4 py-3 text-left font-mono text-[10px] uppercase tracking-[.1em] font-normal whitespace-nowrap"
+                className="px-3 py-3 text-left font-mono text-[10px] uppercase tracking-[.1em] font-normal whitespace-nowrap"
                 style={{ color: "var(--navy-3)" }}
               >
                 {h}
@@ -42,7 +42,7 @@ export function AdminTable({
               style={{ borderBottom: "1px solid color-mix(in oklab, var(--navy) 6%, transparent)" }}
             >
               {cells.map((c, j) => (
-                <td key={j} className="px-4 py-3 align-top whitespace-nowrap">
+                <td key={j} className="px-3 py-3 align-top whitespace-nowrap">
                   {c}
                 </td>
               ))}

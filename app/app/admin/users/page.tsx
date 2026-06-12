@@ -77,8 +77,12 @@ export default async function AdminUsers({
               className="inline-block h-2.5 w-2.5 rounded-full"
               style={{ background: isOnline ? "#22c55e" : "#ef4444" }}
             />,
-            <span key="e" className="font-medium">{u.email}</span>,
-            <span key="n" style={{ color: "var(--navy-3)" }}>{u.name ?? "—"}</span>,
+            <span key="e" className="font-medium block max-w-[220px] truncate" title={u.email}>
+              {u.email}
+            </span>,
+            <span key="n" className="block max-w-[140px] truncate" style={{ color: "var(--navy-3)" }} title={u.name ?? undefined}>
+              {u.name ?? "—"}
+            </span>,
             u.emailVerifiedAt ? (
               <StatusPill key="v" label="verified" accent />
             ) : (
