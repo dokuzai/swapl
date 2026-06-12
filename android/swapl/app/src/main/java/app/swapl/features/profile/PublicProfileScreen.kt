@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -28,10 +29,9 @@ import app.swapl.core.model.Listing
 import app.swapl.core.model.PublicProfile
 import app.swapl.core.repository.ProfileRepository
 import app.swapl.design.components.KickerLabel
+import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
-import app.swapl.design.illustrations.CityIllust
-import app.swapl.designtokens.SwaplCityPalettes
 import app.swapl.designtokens.SwaplColors
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -102,7 +102,7 @@ fun PublicProfileScreen(
 private fun ListingThumbnail(l: Listing, onClick: () -> Unit) {
     SurfaceCard(modifier = Modifier.clickable(onClick = onClick)) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-            CityIllust(palette = SwaplCityPalettes.forName(l.palette))
+            ListingPhoto(photoUrl = l.photos.firstOrNull(), palette = l.palette, height = 140.dp)
             Text("${l.neighbourhood} · ${l.city}", style = MaterialTheme.typography.titleLarge)
             Text("${l.sizeSqm} m² · sleeps ${l.sleeps}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }

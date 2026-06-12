@@ -61,8 +61,6 @@ import app.swapl.design.components.MatchBadge
 import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
-import app.swapl.design.illustrations.CityIllust
-import app.swapl.designtokens.SwaplCityPalettes
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
