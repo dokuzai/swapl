@@ -35,3 +35,9 @@ packages/design-tokens-android/build
 android/**/keystore.properties
 android/**/*.jks
 android/**/*.keystore
+
+# IDE/local state (any path)
+**/xcuserdata/
+**/.swiftpm/
+app/prisma/dev.db
+app/prisma/dev.db-journal
