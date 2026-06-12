@@ -11,6 +11,7 @@ struct AccountView: View {
     @State private var isCreatingListing = false
     @State private var myListing: Listing?
     @State private var editingListing: Listing?
+    @State private var helpItem: SafariItem?
 
     var body: some View {
         NavigationStack {
@@ -24,24 +25,52 @@ struct AccountView: View {
                         // is off server-side or the user is already verified.
                         IdentityVerificationCard()
                         becomeHostCard
-                        Color.clear.frame(height: 42)
-                        if let userId = auth.session?.id {
-                            NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow("View profile", "person") }
-                                .buttonStyle(.plain)
-                        }
+                        Color.clear.frame(height: 20)
+
+                        // Airbnb-style settings jump list (DOK-147), mirroring
+                        // the web /account sections.
+                        sectionHeader("Personal information")
+                        NavigationLink { PersonalInfoView() } label: { portedMenuRow("Personal information", "person.text.rectangle") }
+                            .buttonStyle(.plain)
                         NavigationLink { InterestsEditorView() } label: { portedMenuRow("Interests", "heart.text.square") }
                             .buttonStyle(.plain)
                         NavigationLink { SavedSearchesView() } label: { portedMenuRow("Saved searches", "magnifyingglass") }
                             .buttonStyle(.plain)
-                        NavigationLink { TravelProfileView() } label: { portedMenuRow("Your travel profile", "sparkles") }
-                            .buttonStyle(.plain)
+                        if let userId = auth.session?.id {
+                            NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow("View public profile", "person") }
+                                .buttonStyle(.plain)
+                        }
+
+                        sectionHeader("Login & security")
                         NavigationLink { PasskeysView() } label: { portedMenuRow("Passkeys", "person.badge.key") }
                             .buttonStyle(.plain)
+
+                        sectionHeader("Privacy")
+                        NavigationLink { PrivacySettingsView() } label: { portedMenuRow("Privacy", "hand.raised") }
+                            .buttonStyle(.plain)
+                        NavigationLink { TravelProfileView() } label: { portedMenuRow("Your travel profile", "sparkles") }
+                            .buttonStyle(.plain)
+
+                        sectionHeader("Notifications")
+                        NavigationLink { NotificationSettingsView() } label: { portedMenuRow("Notifications", "bell") }
+                            .buttonStyle(.plain)
+
+                        sectionHeader("Get help")
+                        Button {
+                            helpItem = SafariItem(url: URL(string: "https://swapl.fun/contact")!)
+                        } label: {
+                            portedMenuRow("Contact Swapl support", "questionmark.circle")
+                        }
+                        .buttonStyle(.plain)
+
                         if auth.isAdmin {
+                            sectionHeader("Admin")
                             NavigationLink { MetricsView() } label: { portedMenuRow("Metrics", "chart.bar") }
                                 .buttonStyle(.plain)
                         }
+
                         signOutRow
+                        versionFooter
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, 24)
@@ -74,6 +103,10 @@ struct AccountView: View {
                 }
             }
             .task { await loadMyListing() }
+            .sheet(item: $helpItem) { item in
+                SafariView(url: item.url)
+                    .ignoresSafeArea()
+            }
             .confirmationDialog("Sign out of Swapl?", isPresented: $isConfirmingSignOut, titleVisibility: .visible) {
                 Button("Sign out", role: .destructive) {
                     Task { await auth.signOut() }
@@ -81,6 +114,24 @@ struct AccountView: View {
                 Button("Cancel", role: .cancel) {}
             }
         }
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+            .foregroundStyle(AirbnbPalette.text)
+            .padding(.top, 10)
+    }
+
+    // Real version string from the bundle — "Version 1.0 (1)".
+    private var versionFooter: some View {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+        return Text("Version \(version) (\(build))")
+            .font(.swaplMono(SwaplDesignSystem.FontSize.tiny))
+            .foregroundStyle(AirbnbPalette.secondaryText)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.top, 6)
     }
 
     private func portedMenuRow(_ title: String, _ icon: String) -> some View {

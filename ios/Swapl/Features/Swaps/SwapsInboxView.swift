@@ -353,6 +353,7 @@ final class ProposalDetailViewModel {
 struct ProposalDetailView: View {
     @State private var vm: ProposalDetailViewModel
     @State private var showCounter = false
+    @State private var showReview = false
     @State private var isConfirmingDecline = false
     @State private var isConfirmingWithdraw = false
 
@@ -386,6 +387,15 @@ struct ProposalDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
         .sheet(isPresented: $showCounter) { counterSheet }
+        .sheet(isPresented: $showReview) {
+            if let detail = vm.detail, let agreement = detail.agreement {
+                LeaveReviewSheet(
+                    agreementId: agreement.id,
+                    otherName: detail.other.name,
+                    onSubmitted: { Task { await vm.load() } }
+                )
+            }
+        }
         .confirmationDialog("Decline this proposal?", isPresented: $isConfirmingDecline, titleVisibility: .visible) {
             Button("Decline", role: .destructive) { Task { await vm.act(.decline) } }
             Button("Cancel", role: .cancel) {}
@@ -508,6 +518,8 @@ struct ProposalDetailView: View {
 
             itineraryRows(detail)
 
+            reviewSection(detail)
+
             NavigationLink { PublicProfileView(userId: detail.other.id) } label: {
                 Text("View \(detail.other.name ?? "host")'s profile")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
@@ -521,6 +533,34 @@ struct ProposalDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.bottom, 34)
+    }
+
+    // After a COMPLETED swap, the server flags canReview until the caller has
+    // left their (single) review — mirrors the web thread's LeaveReview card.
+    @ViewBuilder
+    private func reviewSection(_ detail: ProposalDetail) -> some View {
+        if let agreement = detail.agreement,
+           agreement.status == "COMPLETED",
+           agreement.canReview == true {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("How was your swap?")
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Text("Share how the stay with \(detail.other.name ?? "your swap partner") went — it helps the next guest.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                PrimaryPill(title: "Leave a review", action: { showReview = true })
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(22)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            )
+            .padding(.horizontal, 22)
+        }
     }
 
     // Mirrors the web proposal thread: the recipient of a PENDING/COUNTERED

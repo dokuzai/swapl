@@ -47,6 +47,9 @@ struct MeResponse: Decodable, Sendable {
     let user: User
     let counts: Counts
     let subscription: Subscription?
+    // DOK-147 — caller's privacy/notification toggles; optional so the app
+    // still decodes /api/me from older deploys.
+    let settings: UserSettings?
 
     struct User: Decodable, Sendable {
         let id: String
@@ -59,6 +62,11 @@ struct MeResponse: Decodable, Sendable {
         let role: String
         let interests: [String]
         let createdAt: String
+        // Rich profile fields (DOK-147) — additive & optional.
+        let work: String?
+        let languages: [String]?
+        let homeCity: String?
+        let homeCountry: String?
     }
     struct Counts: Decodable, Sendable {
         let listings: Int

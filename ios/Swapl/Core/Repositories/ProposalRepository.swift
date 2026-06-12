@@ -50,6 +50,21 @@ final class ProposalRepository: @unchecked Sendable {
     func act(proposalId: String, _ action: Action) async throws -> ActionResponse {
         try await APIClient.shared.send("POST", "/api/proposals/\(proposalId)", body: action)
     }
+
+    // POST /api/agreements/{id}/review — one review per author per COMPLETED
+    // agreement (DOK-147). Server validates rating 1-5 and text 20-1000 chars.
+    struct ReviewBody: Encodable {
+        let rating: Int
+        let text: String
+    }
+
+    func submitReview(agreementId: String, rating: Int, text: String) async throws {
+        _ = try await APIClient.shared.send(
+            "POST", "/api/agreements/\(agreementId)/review",
+            body: ReviewBody(rating: rating, text: text),
+            as: EmptyResponse.self
+        )
+    }
 }
 
 struct ProposalDraft: Encodable, Sendable {

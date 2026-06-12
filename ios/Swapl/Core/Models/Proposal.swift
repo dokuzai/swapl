@@ -60,6 +60,9 @@ struct ProposalDetail: Decodable, Sendable {
         let keyCode1: String?
         let keyCode2: String?
         let status: String
+        // True when the agreement is COMPLETED and the caller hasn't reviewed
+        // it yet (DOK-147). Optional: older deploys omit it.
+        let canReview: Bool?
         let insurance: Insurance?
 
         struct Insurance: Codable, Sendable {
