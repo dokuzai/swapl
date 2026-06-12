@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { requireAdminPage } from "@/lib/auth/abilities";
-import { getAdminMetrics } from "@/lib/admin/metrics";
+import { getAdminMetrics, getDailyTrends } from "@/lib/admin/metrics";
 import { AdminTable } from "@/components/admin/data-table";
+import { BarSeries, Sparkline } from "@/components/admin/charts";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Metrics · admin" };
@@ -12,7 +13,19 @@ function pct(ratio: number): string {
   return `${Math.round(ratio * 100)}%`;
 }
 
-function Card({ label, value, sub, accent }: { label: string; value: string | number; sub?: string; accent?: boolean }) {
+function Card({
+  label,
+  value,
+  sub,
+  accent,
+  spark,
+}: {
+  label: string;
+  value: string | number;
+  sub?: string;
+  accent?: boolean;
+  spark?: React.ReactNode;
+}) {
   return (
     <div className="surface-card p-5" style={accent ? { background: "var(--pink-light)" } : undefined}>
       <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
@@ -26,13 +39,14 @@ function Card({ label, value, sub, accent }: { label: string; value: string | nu
           {sub}
         </div>
       ) : null}
+      {spark ? <div className="mt-2">{spark}</div> : null}
     </div>
   );
 }
 
 export default async function AdminMetrics() {
   await requireAdminPage();
-  const m = await getAdminMetrics();
+  const [m, trends] = await Promise.all([getAdminMetrics(), getDailyTrends()]);
 
   const nowCards = [
     { label: "Online now (15 min)", value: m.now.online, accent: true },
@@ -45,8 +59,8 @@ export default async function AdminMetrics() {
     { label: "Total users", value: m.users.total, accent: true },
     { label: "Email verified", value: m.users.emailVerified, sub: pct(m.users.total ? m.users.emailVerified / m.users.total : 0) },
     { label: "With ≥1 active listing", value: m.users.withActiveListing, sub: pct(m.users.total ? m.users.withActiveListing / m.users.total : 0) },
-    { label: "New (7 days)", value: m.users.new7d },
-    { label: "New (30 days)", value: m.users.new30d },
+    { label: "New (7 days)", value: m.users.new7d, spark: <Sparkline data={trends.users.slice(-7)} /> },
+    { label: "New (30 days)", value: m.users.new30d, spark: <Sparkline data={[...trends.users]} /> },
   ];
 
   const d = m.listingsPerUser.distribution;
@@ -90,6 +104,31 @@ export default async function AdminMetrics() {
         <p className="kicker mb-3">Now</p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {nowCards.map((c) => <Card key={c.label} {...c} />)}
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <p className="kicker mb-3">Trends (30 days)</p>
+        <div className="grid gap-4 lg:grid-cols-3">
+          {(
+            [
+              { label: "New users / day", data: trends.users },
+              { label: "New listings / day", data: trends.listings },
+              { label: "Proposals / day", data: trends.proposals },
+            ] as const
+          ).map((t) => (
+            <div key={t.label} className="surface-card p-5">
+              <div className="flex items-baseline justify-between mb-3">
+                <span className="font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
+                  {t.label}
+                </span>
+                <span className="font-display text-xl" style={{ color: "var(--navy)" }}>
+                  {t.data.reduce((a, d) => a + d.count, 0)}
+                </span>
+              </div>
+              <BarSeries data={[...t.data]} label={t.label} />
+            </div>
+          ))}
         </div>
       </section>
 

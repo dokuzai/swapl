@@ -187,3 +187,54 @@ export async function getAdminMetrics(now: Date = new Date()): Promise<AdminMetr
     },
   };
 }
+
+// ---- Daily trends (DOK-151) -------------------------------------------------
+// Charts on /admin/metrics. We deliberately avoid SQL date functions (no
+// $queryRaw) so this stays dialect-agnostic: fetch the createdAt timestamps
+// for the window and bucket them per UTC day in JS. Volumes are tiny at this
+// stage, so pulling the rows is fine.
+
+export const TREND_DAYS = 30;
+
+export type DailyBucket = { day: string; count: number }; // day = "YYYY-MM-DD" (UTC)
+
+export type DailyTrends = {
+  days: number;
+  users: DailyBucket[];
+  listings: DailyBucket[];
+  proposals: DailyBucket[];
+};
+
+/** Buckets dates into per-UTC-day counts for the trailing `days` window ending at `now`. */
+export function bucketByDay(dates: Date[], days: number, now: Date): DailyBucket[] {
+  const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const buckets: DailyBucket[] = [];
+  const indexByDay = new Map<string, number>();
+  for (let i = days - 1; i >= 0; i--) {
+    const day = new Date(todayUtc - i * DAY).toISOString().slice(0, 10);
+    indexByDay.set(day, buckets.length);
+    buckets.push({ day, count: 0 });
+  }
+  for (const d of dates) {
+    const idx = indexByDay.get(d.toISOString().slice(0, 10));
+    if (idx !== undefined) buckets[idx].count += 1;
+  }
+  return buckets;
+}
+
+export async function getDailyTrends(now: Date = new Date()): Promise<DailyTrends> {
+  const since = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - (TREND_DAYS - 1) * DAY
+  );
+  const [users, listings, proposals] = await Promise.all([
+    prisma.user.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
+    prisma.listing.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
+    prisma.swapProposal.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
+  ]);
+  return {
+    days: TREND_DAYS,
+    users: bucketByDay(users.map((r) => r.createdAt), TREND_DAYS, now),
+    listings: bucketByDay(listings.map((r) => r.createdAt), TREND_DAYS, now),
+    proposals: bucketByDay(proposals.map((r) => r.createdAt), TREND_DAYS, now),
+  };
+}
