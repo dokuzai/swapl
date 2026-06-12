@@ -106,7 +106,11 @@ struct PublicProfileView: View {
                     } label: {
                         SurfaceCard {
                             VStack(alignment: .leading, spacing: SwaplSpacing.s2) {
-                                CityIllust(palette: SwaplCityPalettes.forName(l.palette))
+                                // Photo-first cover: the listing's own photos win;
+                                // the city illustration is only the no-photo fallback
+                                // inside ListingPhotoView (same priority as web).
+                                ListingPhotoView(listing: l, cornerRadius: SwaplDesignSystem.CornerRadius.medium)
+                                    .aspectRatio(200.0 / 140.0, contentMode: .fit)
                                 Text("\(l.neighbourhood) · \(l.city)")
                                     .font(.swaplDisplay(18))
                                 Text("\(l.sizeSqm) m² · sleeps \(l.sleeps)")
