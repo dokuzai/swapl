@@ -204,6 +204,10 @@ fun AccountScreen(
         // Didit identity verification — env-gated, hidden once verified.
         IdentityVerificationCard()
 
+        // The transparent AI travel profile (DOK-146): visible verbatim,
+        // refreshable, deletable — built only from in-app signals.
+        TravelProfileCard()
+
         overview.me?.subscription?.let { sub ->
             SurfaceCard {
                 Row(verticalAlignment = Alignment.CenterVertically) {

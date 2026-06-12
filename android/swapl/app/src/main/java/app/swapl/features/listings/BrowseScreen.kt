@@ -89,6 +89,7 @@ fun BrowseScreen(
     onOpen: (String) -> Unit = {},
     onNew: () -> Unit = {},
     onEditOwn: (String) -> Unit = {},
+    onInspire: () -> Unit = {},
     vm: BrowseViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -168,6 +169,13 @@ fun BrowseScreen(
         }
         Spacer(Modifier.height(SwaplSpacing.s2))
 
+        // "Get Inspired" (DOK-146): the AI assistant entry point. Homes only —
+        // the package proposes real, active home swaps, not affiliate items.
+        if (tab == BrowseTab.Homes) {
+            GetInspiredBanner(onClick = onInspire)
+            Spacer(Modifier.height(SwaplSpacing.s2))
+        }
+
         when (tab) {
             BrowseTab.Experiences -> ExperiencesTab()
             BrowseTab.Services -> ServicesTab()
@@ -207,6 +215,31 @@ fun BrowseScreen(
             onDismiss = { showFilters = false },
             onApply = { showFilters = false; vm.applyFilters(it) },
         )
+    }
+}
+
+// Slim tappable strip above the Homes list — opens the Get Inspired flow.
+@Composable
+private fun GetInspiredBanner(onClick: () -> Unit) {
+    SurfaceCard(
+        modifier = Modifier
+            .padding(horizontal = SwaplSpacing.s4)
+            .clickable(onClick = onClick),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
+        ) {
+            Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Column(Modifier.weight(1f)) {
+                Text("Get Inspired", style = MaterialTheme.typography.titleLarge)
+                Text(
+                    "Describe your dream trip — we'll compose a swap for you.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }
 

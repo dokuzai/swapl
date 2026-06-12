@@ -47,6 +47,7 @@ import androidx.navigation.navArgument
 import app.swapl.core.auth.AuthViewModel
 import app.swapl.design.SwaplApp
 import app.swapl.features.auth.LoginScreen
+import app.swapl.features.inspire.InspireScreen
 import app.swapl.features.listings.BrowseScreen
 import app.swapl.features.listings.ListingCreateScreen
 import app.swapl.features.listings.ListingDetailScreen
@@ -194,6 +195,20 @@ private fun HomeShell(
                         onOpen = { id -> browseNav.navigate("detail/$id") },
                         onNew = { browseNav.navigate("new") },
                         onEditOwn = { id -> browseNav.navigate("edit/$id") },
+                        onInspire = { browseNav.navigate("inspire") },
+                    )
+                }
+                composable("inspire") {
+                    // Get Inspired (DOK-146). Confirm creates a REAL proposal —
+                    // jump to the existing Swaps thread; dismiss just pops.
+                    InspireScreen(
+                        onFinished = { proposalId ->
+                            browseNav.popBackStack()
+                            if (proposalId != null) {
+                                current = HomeDest.Swaps
+                                swapsNav.navigate("thread/$proposalId")
+                            }
+                        },
                     )
                 }
                 composable("detail/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
