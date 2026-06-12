@@ -229,9 +229,13 @@ struct PublicProfileView: View {
 
     @ViewBuilder
     private func visitedBlock(_ visited: [PublicProfile.VisitedCity]) -> some View {
-        if !visited.isEmpty {
-            VStack(alignment: .leading, spacing: SwaplSpacing.s2) {
-                KickerLabel(text: "Where I've been")
+        VStack(alignment: .leading, spacing: SwaplSpacing.s2) {
+            KickerLabel(text: "Where I've been")
+            if visited.isEmpty {
+                Text("No completed swaps yet — passport stamps appear here after each stay.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(SwaplSemanticLight.mutedForeground)
+            } else {
                 CityStampStrip(visited: visited)
             }
         }
@@ -242,9 +246,13 @@ struct PublicProfileView: View {
     @ViewBuilder
     private func reviewsBlock(_ p: PublicProfile) -> some View {
         let reviews = p.reviews ?? []
-        if !reviews.isEmpty {
-            VStack(alignment: .leading, spacing: SwaplSpacing.s3) {
-                KickerLabel(text: "Reviews (\(stats(p).reviewsCount))")
+        VStack(alignment: .leading, spacing: SwaplSpacing.s3) {
+            KickerLabel(text: reviews.isEmpty ? "Reviews" : "Reviews (\(stats(p).reviewsCount))")
+            if reviews.isEmpty {
+                Text("No reviews yet — hosts review each other after a completed swap.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(SwaplSemanticLight.mutedForeground)
+            } else {
                 ForEach(reviews) { review in
                     reviewCard(review)
                 }

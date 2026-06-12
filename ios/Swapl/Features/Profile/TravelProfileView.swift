@@ -62,8 +62,12 @@ struct TravelProfileView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        Group {
-            if vm.isLoading && !vm.hasLoaded {
+        // ZStack so something always renders: a bare conditional Group hits
+        // EmptyView in the initial state and .task never fires (same blank-
+        // screen bug MetricsView had — see commit 4fadaf9).
+        ZStack {
+            SwaplSemanticLight.background.ignoresSafeArea()
+            if vm.profile == nil && vm.error == nil {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .accessibilityLabel("Loading your travel profile")
@@ -80,7 +84,6 @@ struct TravelProfileView: View {
                 content(profile)
             }
         }
-        .background(SwaplSemanticLight.background)
         .navigationTitle("Your travel profile")
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
