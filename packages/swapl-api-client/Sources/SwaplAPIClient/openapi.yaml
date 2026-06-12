@@ -25,6 +25,7 @@ tags:
   - name: devices
   - name: verification
   - name: waitlist
+  - name: discover
 
 components:
   securitySchemes:
@@ -801,6 +802,88 @@ components:
         verified: { type: boolean }
         verifiedAt: { type: string, format: date-time, nullable: true }
         completedAt: { type: string, format: date-time, nullable: true }
+
+    DiscoverService:
+      type: object
+      required: [slug, name, category, tagline, url, iconHint, priceCents, currency]
+      description: >-
+        One travel-service entry: either a configured affiliate partner
+        (url set, no price) or an active concierge add-on (url null, real
+        catalogue price). Prices are never invented for affiliate items.
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        category:
+          type: string
+          description: 'flights | esim | experiences | insurance | concierge | ...'
+        tagline: { type: string }
+        url:
+          type: string
+          nullable: true
+          description: >-
+            Click-through link via /api/affiliate/{partner} (relative,
+            UTM-tagged, click-logged). Null for concierge add-ons, which go
+            through the concierge checkout instead.
+        iconHint:
+          type: string
+          description: Client-side icon selector hint (plane, sim, ticket, shield, ...).
+        priceCents:
+          type: integer
+          nullable: true
+          description: Real concierge add-on price; null for affiliate partners.
+        currency: { type: string, nullable: true }
+
+    DiscoverServicesResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/DiscoverService' }
+
+    DiscoverPhoto:
+      type: object
+      required: [url, width, height, alt, provider]
+      description: Cached CityMedia photo (lib/city-media CityPhoto shape).
+      properties:
+        url: { type: string }
+        width: { type: integer }
+        height: { type: integer }
+        alt: { type: string }
+        photographer: { type: string }
+        photographerUrl: { type: string }
+        sourceUrl: { type: string, description: Page to credit/link back to. }
+        provider:
+          type: string
+          enum: [pexels, unsplash, wikimedia, openverse, pixabay]
+
+    DiscoverExperience:
+      type: object
+      required: [city, country, title, partner, url, photo]
+      properties:
+        city: { type: string }
+        country: { type: string, description: Empty when the city has no active listing. }
+        title: { type: string }
+        partner: { type: string, enum: [getyourguide] }
+        url:
+          type: string
+          description: >-
+            Click-through link via /api/affiliate/getyourguide with the city
+            query (relative, UTM-tagged, click-logged). No price — clients
+            render a "Book on GetYourGuide" CTA.
+        photo:
+          oneOf:
+            - { $ref: '#/components/schemas/DiscoverPhoto' }
+            - { type: 'null' }
+          description: Null → the client renders its own city illustration.
+
+    DiscoverExperiencesResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/DiscoverExperience' }
 
 paths:
   /api/auth/token:
@@ -1734,4 +1817,39 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/OkResponse' }
+        '429': { description: Rate limited }
+
+  /api/discover/services:
+    get:
+      tags: [discover]
+      summary: Travel-services catalogue
+      description: >-
+        Configured affiliate partners (env-gated — a partner without its
+        AFF_* id is excluded) plus active concierge add-ons with their real
+        prices. Public; mildly rate limited per IP.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DiscoverServicesResponse' }
+        '429': { description: Rate limited }
+
+  /api/discover/experiences:
+    get:
+      tags: [discover]
+      summary: Experience cards by city (GetYourGuide affiliate)
+      description: >-
+        Themed experience cards for one city, or — when `city` is omitted —
+        one card per top city by active listings. Empty list when the
+        GetYourGuide affiliate id is not configured. Photos come from the
+        CityMedia cache; never any prices. Public; mildly rate limited per IP.
+      parameters:
+        - { name: city, in: query, schema: { type: string }, description: 'City name (case-insensitive); omit for the top-cities feed.' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DiscoverExperiencesResponse' }
         '429': { description: Rate limited }

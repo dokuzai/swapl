@@ -2359,6 +2359,101 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/discover/services": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Travel-services catalogue
+         * @description Configured affiliate partners (env-gated — a partner without its AFF_* id is excluded) plus active concierge add-ons with their real prices. Public; mildly rate limited per IP.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DiscoverServicesResponse"];
+                    };
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/discover/experiences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Experience cards by city (GetYourGuide affiliate)
+         * @description Themed experience cards for one city, or — when `city` is omitted — one card per top city by active listings. Empty list when the GetYourGuide affiliate id is not configured. Photos come from the CityMedia cache; never any prices. Public; mildly rate limited per IP.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description City name (case-insensitive); omit for the top-cities feed. */
+                    city?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DiscoverExperiencesResponse"];
+                    };
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2875,6 +2970,52 @@ export interface components {
             verifiedAt?: string | null;
             /** Format: date-time */
             completedAt?: string | null;
+        };
+        /** @description One travel-service entry: either a configured affiliate partner (url set, no price) or an active concierge add-on (url null, real catalogue price). Prices are never invented for affiliate items. */
+        DiscoverService: {
+            slug: string;
+            name: string;
+            /** @description flights | esim | experiences | insurance | concierge | ... */
+            category: string;
+            tagline: string;
+            /** @description Click-through link via /api/affiliate/{partner} (relative, UTM-tagged, click-logged). Null for concierge add-ons, which go through the concierge checkout instead. */
+            url: string | null;
+            /** @description Client-side icon selector hint (plane, sim, ticket, shield, ...). */
+            iconHint: string;
+            /** @description Real concierge add-on price; null for affiliate partners. */
+            priceCents: number | null;
+            currency: string | null;
+        };
+        DiscoverServicesResponse: {
+            items: components["schemas"]["DiscoverService"][];
+        };
+        /** @description Cached CityMedia photo (lib/city-media CityPhoto shape). */
+        DiscoverPhoto: {
+            url: string;
+            width: number;
+            height: number;
+            alt: string;
+            photographer?: string;
+            photographerUrl?: string;
+            /** @description Page to credit/link back to. */
+            sourceUrl?: string;
+            /** @enum {string} */
+            provider: "pexels" | "unsplash" | "wikimedia" | "openverse" | "pixabay";
+        };
+        DiscoverExperience: {
+            city: string;
+            /** @description Empty when the city has no active listing. */
+            country: string;
+            title: string;
+            /** @enum {string} */
+            partner: "getyourguide";
+            /** @description Click-through link via /api/affiliate/getyourguide with the city query (relative, UTM-tagged, click-logged). No price — clients render a "Book on GetYourGuide" CTA. */
+            url: string;
+            /** @description Null → the client renders its own city illustration. */
+            photo: components["schemas"]["DiscoverPhoto"] | null;
+        };
+        DiscoverExperiencesResponse: {
+            items: components["schemas"]["DiscoverExperience"][];
         };
     };
     responses: never;
