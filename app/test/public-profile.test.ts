@@ -1,6 +1,7 @@
 // GET /api/profiles/{id} — rich fields, stats from real aggregates, visited
 // cities derived from COMPLETED agreements (the OTHER listing's city), latest
-// reviews, and the showHomeCity privacy gate.
+// reviews (published only — DOK-149), the showHomeCity privacy gate, and the
+// per-IP durable rate limit.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -10,6 +11,12 @@ const mocks = vi.hoisted(() => ({
   agreementFindMany: vi.fn(),
   reviewAggregate: vi.fn(),
   reviewFindMany: vi.fn(),
+  checkRateLimitDurable: vi.fn(),
+}));
+
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimitDurable: mocks.checkRateLimitDurable,
+  clientIpFromRequest: (req: Request) => req.headers.get("x-forwarded-for") ?? "unknown",
 }));
 
 vi.mock("@/lib/db", () => ({
@@ -61,6 +68,7 @@ beforeEach(() => {
   mocks.agreementFindMany.mockResolvedValue([]);
   mocks.reviewAggregate.mockResolvedValue({ _count: 0, _avg: { rating: null } });
   mocks.reviewFindMany.mockResolvedValue([]);
+  mocks.checkRateLimitDurable.mockResolvedValue({ ok: true, remaining: 59, resetAt: Date.now() + 60_000 });
 });
 
 describe("GET /api/profiles/{id}", () => {
@@ -169,5 +177,33 @@ describe("GET /api/profiles/{id}", () => {
       where: { subjectId: "u-1" },
       take: 10,
     });
+  });
+
+  it("counts and returns ONLY published reviews (hidden are moderated away)", async () => {
+    await get();
+    expect(mocks.reviewAggregate.mock.calls[0][0].where).toEqual({
+      subjectId: "u-1",
+      status: "published",
+    });
+    expect(mocks.reviewFindMany.mock.calls[0][0].where).toEqual({
+      subjectId: "u-1",
+      status: "published",
+    });
+  });
+
+  it("429s when the per-IP durable rate limit trips, before touching the DB", async () => {
+    mocks.checkRateLimitDurable.mockResolvedValue({ ok: false, remaining: 0, resetAt: Date.now() + 60_000 });
+    const res = await get();
+    expect(res.status).toBe(429);
+    expect((await res.json()).error).toBe("RATE_LIMITED");
+    expect(mocks.userFindUnique).not.toHaveBeenCalled();
+  });
+
+  it("keys the rate limit on the client IP", async () => {
+    const req = new Request("https://swapl.test/api/profiles/u-1", {
+      headers: { "x-forwarded-for": "203.0.113.9" },
+    });
+    await GET(req, { params: Promise.resolve({ id: "u-1" }) });
+    expect(mocks.checkRateLimitDurable).toHaveBeenCalledWith("profiles:203.0.113.9", 60, 60_000);
   });
 });

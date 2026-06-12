@@ -22,39 +22,14 @@ const INTERNAL_PREFIXES = [
   "/api/cron/", // Vercel cron, secret-gated
   "/api/billing/webhook", // Stripe webhook, signature-gated
   "/api/uploadthing", // uploadthing SDK callback transport
+  "/api/webhooks/", // server-to-server webhooks (Didit), HMAC-authenticated — never called by clients
+  "/api/auth/verify-email/", // email-link redirect consumer (GET → 302), not a JSON API
 ];
 
 // Existing routes not yet covered by the spec. Shrink this list — never grow
 // it: new routes must land together with their OpenAPI entry. Remove an entry
 // once the route gets spec'd (a stale entry fails the check).
-const PENDING_SPEC = [
-  "/api/affiliate/{partnerSlug}",
-  "/api/agreements/{id}/cancel",
-  "/api/ai/affiliate-suggestions",
-  "/api/ai/city-illustration",
-  "/api/ai/listing-content",
-  "/api/ai/settings",
-  "/api/ai/suggestions",
-  "/api/auth/login", // web cookie session
-  "/api/auth/logout", // web cookie session
-  "/api/auth/verify-email/{token}", // email-link redirect, not a JSON API
-  "/api/billing/cancel",
-  "/api/billing/checkout/subscription",
-  "/api/billing/portal",
-  "/api/concierge/checkout",
-  "/api/corporate/checkout",
-  "/api/corporate/leads",
-  "/api/i18n/locale",
-  "/api/insurance",
-  "/api/insurance/documents/{policyNumber}",
-  "/api/insurance/quote",
-  "/api/insurance/retry",
-  "/api/listings/featured",
-  "/api/listings/verify",
-  "/api/marketing/events",
-  "/api/uploads/listing-photo",
-  "/api/webhooks/didit", // server-to-server (Didit), HMAC-authenticated, not a client API
-];
+const PENDING_SPEC = [];
 
 /** Recursively collect route.ts files and map them to URL paths. */
 function collectRoutes(dir) {

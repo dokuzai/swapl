@@ -77,7 +77,11 @@ vi.mock("@/lib/push", () => ({
 vi.mock("@/lib/insurance", () => ({
   insuranceProvider: () => ({ name: "mock", createPolicy: vi.fn() }),
 }));
-vi.mock("@/lib/rate-limit", () => ({ checkRateLimit: () => ({ ok: true }) }));
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: () => ({ ok: true }),
+  checkRateLimitDurable: async () => ({ ok: true }),
+  clientIpFromRequest: () => "test-ip",
+}));
 
 import { POST as postUser } from "@/app/api/admin/users/[id]/route";
 import { POST as postListing } from "@/app/api/admin/listings/[id]/route";

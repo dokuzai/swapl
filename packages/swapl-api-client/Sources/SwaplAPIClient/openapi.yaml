@@ -27,6 +27,16 @@ tags:
   - name: waitlist
   - name: discover
   - name: assistant
+  - name: ai
+  - name: agreements
+  - name: billing
+  - name: insurance
+  - name: concierge
+  - name: corporate
+  - name: affiliate
+  - name: marketing
+  - name: uploads
+  - name: i18n
 
 components:
   securitySchemes:
@@ -1160,6 +1170,44 @@ components:
           type: array
           items: { $ref: '#/components/schemas/DiscoverExperience' }
 
+    InsurancePolicyView:
+      type: object
+      description: One swap-insurance policy as rendered to a swap party (lib/insurance/access.ts policyView).
+      required: [id, agreementId, provider, policyNumber, status, active, coverageAmount, premiumCents, premiumEur, platformShareCents, expiresAt, createdAt]
+      properties:
+        id: { type: string }
+        agreementId: { type: string }
+        provider: { type: string }
+        policyNumber: { type: string }
+        status: { type: string, description: 'pending | active | cancelled' }
+        active: { type: boolean }
+        coverageAmount: { type: integer, description: Coverage ceiling in EUR. }
+        premiumCents: { type: integer }
+        premiumEur: { type: number }
+        platformShareCents: { type: integer }
+        documentsUrl: { type: string, nullable: true }
+        expiresAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+        swap:
+          type: object
+          required: [dateFrom, dateTo, homes]
+          properties:
+            dateFrom: { type: string, format: date-time }
+            dateTo: { type: string, format: date-time }
+            homes:
+              type: array
+              items: { type: string }
+              description: 'The two homes as "City, Country" strings.'
+
+    AffiliateSuggestion:
+      type: object
+      required: [partner, title, reason]
+      properties:
+        partner: { type: string, enum: [skyscanner, airalo, getyourguide, battleface] }
+        title: { type: string }
+        reason: { type: string }
+        searchQuery: { type: string, description: Appended to the affiliate redirector as `q=`. }
+
 paths:
   /api/auth/token:
     post:
@@ -1679,7 +1727,10 @@ paths:
     get:
       tags: [profile]
       summary: Public host profile
-      description: Name, bio, verification status, interests, and the host's active listings. No auth.
+      description: >-
+        Name, bio, verification status, interests, and the host's active
+        listings. Only published (non-moderated) reviews are returned and
+        counted. No auth; rate limited 60/min per IP.
       parameters:
         - { name: id, in: path, required: true, schema: { type: string } }
       responses:
@@ -1693,6 +1744,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
+        '429': { description: Rate limited }
 
   /api/listings:
     get:
@@ -2512,3 +2564,733 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/DiscoverExperiencesResponse' }
         '429': { description: Rate limited }
+
+  /api/auth/login:
+    post:
+      tags: [auth]
+      summary: Web cookie login
+      description: >-
+        Email + password login for the web client — sets the signed
+        `swapl_session` cookie. Native clients use POST /api/auth/token
+        instead. Rate limited 30/5min per IP.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, minLength: 6, maxLength: 128 }
+      responses:
+        '200':
+          description: Session cookie set
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, userId, emailVerified]
+                properties:
+                  ok: { type: boolean }
+                  userId: { type: string }
+                  emailVerified: { type: boolean }
+        '400': { description: Invalid input }
+        '401': { description: Invalid email or password }
+        '403': { description: Account suspended }
+        '429': { description: Rate limited }
+
+  /api/auth/logout:
+    post:
+      tags: [auth]
+      summary: Web cookie logout
+      description: >-
+        Clears the `swapl_session` cookie and redirects to the public home.
+        Posted by plain HTML forms, so the response is a 303 redirect rather
+        than JSON.
+      security: [{ cookieAuth: [] }]
+      responses:
+        '303': { description: Cookie cleared; redirect to `/`. }
+
+  /api/ai/suggestions:
+    get:
+      tags: [ai]
+      summary: Personalised swap suggestions
+      description: >-
+        Up to 3 listings picked by the AI from a candidate pool, each with a
+        match score and a one-line reason; deterministic fallback when no AI
+        is configured. Rate limited 20/min per user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required: [listing, matchScore, reason, source]
+                      properties:
+                        listing: { $ref: '#/components/schemas/Listing' }
+                        matchScore: { type: number }
+                        reason: { type: string }
+                        source: { type: string, description: 'ai | fallback' }
+        '401': { description: Unauthenticated }
+        '429': { description: Rate limited }
+
+  /api/ai/listing-content:
+    post:
+      tags: [ai]
+      summary: Draft listing title + description
+      description: >-
+        AI-written listing copy from structured facts; template fallback when
+        no AI is configured. Rate limited 20/10min per user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [city, neighbourhood, propertyType, sizeSqm, sleeps, bedrooms, bathrooms]
+              properties:
+                city: { type: string }
+                neighbourhood: { type: string }
+                country: { type: string }
+                propertyType: { type: string }
+                sizeSqm: { type: integer, minimum: 20, maximum: 800 }
+                sleeps: { type: integer, minimum: 1, maximum: 20 }
+                bedrooms: { type: integer, minimum: 0, maximum: 15 }
+                bathrooms: { type: integer, minimum: 0, maximum: 10 }
+                floor: { type: integer, nullable: true }
+                hasElevator: { type: boolean }
+                stepFreeAccess: { type: boolean }
+                petsAllowed: { type: boolean }
+                petTypes: { type: array, items: { type: string } }
+                wfhSetup: { type: boolean }
+                wfhDesks: { type: integer, minimum: 0, maximum: 10 }
+                amenities: { type: array, items: { type: string }, maxItems: 20 }
+                availableFrom: { type: string }
+                availableTo: { type: string }
+                hostNotes: { type: string, maxLength: 2000 }
+      responses:
+        '200':
+          description: Drafted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [title, description, source]
+                properties:
+                  title: { type: string }
+                  description: { type: string }
+                  source: { type: string, description: 'ai | fallback' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '429': { description: Rate limited }
+
+  /api/ai/city-illustration:
+    post:
+      tags: [ai]
+      summary: City postcard palette + motif
+      description: >-
+        AI-decided (and cached) palette, motif set and postcard for a known
+        catalog city; 422 for cities outside the catalog. Rate limited
+        30/min per user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [city]
+              properties:
+                city: { type: string, maxLength: 80 }
+                country: { type: string, maxLength: 80 }
+      responses:
+        '200':
+          description: Art decision (from cache, preset, AI or fallback)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [city, palette, motif, postcard, source]
+                properties:
+                  city: { type: string }
+                  country: { type: string, nullable: true }
+                  palette: { type: object, additionalProperties: true }
+                  motif: { type: array, items: { type: string } }
+                  postcard: { type: object, additionalProperties: true }
+                  source: { type: string, description: 'ai | fallback | preset | cache' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '422': { description: City not in the illustration catalog }
+        '429': { description: Rate limited }
+
+  /api/ai/affiliate-suggestions:
+    post:
+      tags: [ai]
+      summary: Activity suggestions for a confirmed swap
+      description: >-
+        Up to 4 partner-bookable activity cards for the destination city of
+        one of the caller's swap agreements, matched to their interests.
+        Rate limited 10/10min per user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [agreementId]
+              properties:
+                agreementId: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, source]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/AffiliateSuggestion' }
+                  source: { type: string, description: 'ai | fallback' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the agreement }
+        '404': { description: Agreement not found }
+        '429': { description: Rate limited }
+
+  /api/ai/settings:
+    get:
+      tags: [ai]
+      summary: Read my AI provider override
+      description: Provider/model override and whether a personal API key is stored (the key itself is never echoed).
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [provider, model, hasKey]
+                properties:
+                  provider: { type: string, description: Empty string when unset. }
+                  model: { type: string }
+                  hasKey: { type: boolean }
+        '401': { description: Unauthenticated }
+    post:
+      tags: [ai]
+      summary: Update my AI provider override
+      description: Partial update; empty-string provider/model clears the field, an omitted apiKey keeps the stored one.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                provider: { type: string, description: One of the supported providers, or empty string to clear. }
+                model: { type: string, maxLength: 120 }
+                apiKey: { type: string, maxLength: 400 }
+      responses:
+        '200':
+          description: Saved
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+    delete:
+      tags: [ai]
+      summary: Clear my AI provider override
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Cleared
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+
+  /api/agreements/{id}/cancel:
+    post:
+      tags: [agreements]
+      summary: Cancel a swap before it starts
+      description: >-
+        Marks an ACTIVE agreement INTERRUPTED, cancels the insurance policy
+        at the underwriter and notifies both parties. Only before dateFrom —
+        mid-stay interruptions go through the claim flow instead.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Cancelled
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the agreement }
+        '404': { description: Not found }
+        '409': { description: Already closed, or the cancellation window has passed }
+
+  /api/billing/checkout/subscription:
+    post:
+      tags: [billing]
+      summary: Start a subscription checkout
+      description: Stripe Checkout session for a plus/pro plan (14-day trial). Returns the hosted checkout URL.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [plan, cycle]
+              properties:
+                plan: { type: string, enum: [plus, pro] }
+                cycle: { type: string, enum: [monthly, yearly] }
+      responses:
+        '200':
+          description: Checkout created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties:
+                  url: { type: string }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '503': { description: Billing not configured for this plan/cycle }
+
+  /api/billing/portal:
+    post:
+      tags: [billing]
+      summary: Open the Stripe billing portal
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Portal session created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties:
+                  url: { type: string }
+        '401': { description: Unauthenticated }
+        '503': { description: Billing not configured }
+
+  /api/billing/cancel:
+    post:
+      tags: [billing]
+      summary: Cancel my subscription at period end
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Set to cancel at period end
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+        '404': { description: No active subscription }
+        '503': { description: Billing not configured }
+
+  /api/insurance:
+    get:
+      tags: [insurance]
+      summary: My insurance policies
+      description: >-
+        With `agreementId`, the single policy of that swap (`{ policy }`);
+        without it, every policy across the caller's swaps (`{ policies }`).
+        Visibility is limited to the two swap parties.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: agreementId, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required: [policy]
+                    properties:
+                      policy: { $ref: '#/components/schemas/InsurancePolicyView' }
+                  - type: object
+                    required: [policies]
+                    properties:
+                      policies:
+                        type: array
+                        items: { $ref: '#/components/schemas/InsurancePolicyView' }
+        '401': { description: Unauthenticated }
+        '404': { description: No policy for that agreement }
+
+  /api/insurance/quote:
+    get:
+      tags: [insurance]
+      summary: Non-binding premium preview for a proposal
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: proposalId, in: query, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Quote
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [provider, nights, coverageAmount, premiumCents, premiumEur, platformShareCents]
+                properties:
+                  provider: { type: string }
+                  nights: { type: integer }
+                  coverageAmount: { type: integer }
+                  premiumCents: { type: integer }
+                  premiumEur: { type: number }
+                  platformShareCents: { type: integer }
+        '400': { description: proposalId is required }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the proposal }
+        '404': { description: Proposal not found }
+
+  /api/insurance/retry:
+    post:
+      tags: [insurance]
+      summary: Re-issue a pending policy
+      description: Heals a policy stuck in "pending" because the underwriter call failed at swap acceptance. Either party may trigger it.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [agreementId]
+              properties:
+                agreementId: { type: string }
+      responses:
+        '200':
+          description: Policy issued
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, policy]
+                properties:
+                  ok: { type: boolean }
+                  policy: { $ref: '#/components/schemas/InsurancePolicyView' }
+        '400': { description: agreementId is required }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the agreement }
+        '404': { description: Agreement or policy not found }
+        '409': { description: Policy is not pending }
+        '502': { description: Underwriter unavailable }
+
+  /api/insurance/documents/{policyNumber}:
+    get:
+      tags: [insurance]
+      summary: Certificate of Cover
+      description: Plain-text certificate for one policy. Only the two swap parties can read it.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: policyNumber, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Certificate
+          content:
+            text/plain:
+              schema: { type: string }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the policy's swap }
+        '404': { description: Not found }
+
+  /api/concierge/checkout:
+    post:
+      tags: [concierge]
+      summary: Buy a concierge add-on for a swap
+      description: >-
+        Stripe Checkout when configured (`{ url, mode: "checkout" }`),
+        otherwise records the order immediately
+        (`{ ok, mode: "pre_launch", orderId }`). Affiliate add-ons are
+        rejected — they go through the affiliate redirector.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [agreementId, slug]
+              properties:
+                agreementId: { type: string }
+                slug: { type: string }
+      responses:
+        '200':
+          description: Checkout URL or recorded pre-launch order
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [mode]
+                properties:
+                  mode: { type: string, enum: [checkout, pre_launch] }
+                  url: { type: string }
+                  ok: { type: boolean }
+                  orderId: { type: string }
+        '400': { description: Invalid input, or affiliate add-on }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the agreement }
+        '404': { description: Agreement or add-on not found }
+
+  /api/corporate/checkout:
+    post:
+      tags: [corporate]
+      summary: Self-serve corporate seats checkout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [companyName, email, seatCount]
+              properties:
+                companyName: { type: string, minLength: 2 }
+                email: { type: string, format: email }
+                seatCount: { type: integer, minimum: 5, maximum: 2000 }
+      responses:
+        '200':
+          description: Checkout created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties:
+                  url: { type: string }
+        '400': { description: Invalid input }
+        '503': { description: Corporate checkout not configured — use the lead form }
+
+  /api/corporate/leads:
+    post:
+      tags: [corporate]
+      summary: Submit a corporate lead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [companyName, contactName, email]
+              properties:
+                companyName: { type: string, minLength: 2 }
+                contactName: { type: string, minLength: 2 }
+                email: { type: string, format: email }
+                phone: { type: string }
+                employeeCount: { type: integer, minimum: 1 }
+                useCase: { type: string, maxLength: 2000 }
+      responses:
+        '200':
+          description: Lead recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, id]
+                properties:
+                  ok: { type: boolean }
+                  id: { type: string }
+        '400': { description: Invalid input }
+
+  /api/listings/featured:
+    post:
+      tags: [listings]
+      summary: Buy a Featured Placement for my listing
+      description: >-
+        14 or 30 days. Stripe Checkout when configured
+        (`{ url, mode: "checkout" }`), otherwise activates immediately
+        (`{ ok, mode: "pre_launch", endsAt }`).
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listingId, durationDays]
+              properties:
+                listingId: { type: string }
+                durationDays: { type: integer, enum: [14, 30] }
+      responses:
+        '200':
+          description: Checkout URL or immediate activation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [mode]
+                properties:
+                  mode: { type: string, enum: [checkout, pre_launch] }
+                  url: { type: string }
+                  ok: { type: boolean }
+                  endsAt: { type: string, format: date-time }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '404': { description: Listing not found or not mine }
+
+  /api/listings/verify:
+    post:
+      tags: [listings]
+      summary: Submit my listing for paid verification
+      description: >-
+        Stripe Checkout when configured (`{ url, mode: "checkout" }`),
+        otherwise records the pending submission directly
+        (`{ ok, mode: "pre_launch" }`) for the admin queue.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listingId, videoUrl]
+              properties:
+                listingId: { type: string }
+                videoUrl: { type: string, format: uri }
+      responses:
+        '200':
+          description: Checkout URL or recorded submission
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [mode]
+                properties:
+                  mode: { type: string, enum: [checkout, pre_launch] }
+                  url: { type: string }
+                  ok: { type: boolean }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '404': { description: Listing not found or not mine }
+        '409': { description: Already submitted or verified }
+
+  /api/uploads/listing-photo:
+    post:
+      tags: [uploads]
+      summary: Upload one listing photo (native clients)
+      description: Single multipart image (max 8 MB) stored via UploadThing; the returned URL goes into listing.photos.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        '200':
+          description: Stored
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties:
+                  url: { type: string }
+        '400': { description: Missing file }
+        '401': { description: Unauthenticated }
+        '413': { description: Image too large (max 8MB) }
+        '415': { description: Not an image }
+        '502': { description: Upload failed }
+        '503': { description: Uploads not configured }
+
+  /api/affiliate/{partnerSlug}:
+    get:
+      tags: [affiliate]
+      summary: Affiliate click-through redirector
+      description: >-
+        Logs the click server-side, then 302-redirects to the partner
+        (skyscanner | airalo | getyourguide | battleface). The target URL is
+        never echoed to the client.
+      parameters:
+        - { name: partnerSlug, in: path, required: true, schema: { type: string, enum: [skyscanner, airalo, getyourguide, battleface] } }
+        - { name: city, in: query, schema: { type: string } }
+        - { name: country, in: query, schema: { type: string } }
+        - { name: agreement, in: query, schema: { type: string } }
+        - { name: utm_campaign, in: query, schema: { type: string } }
+        - { name: q, in: query, schema: { type: string } }
+      responses:
+        '302': { description: Redirect to the partner site }
+        '404': { description: Unknown partner }
+
+  /api/marketing/events:
+    post:
+      tags: [marketing]
+      summary: Record a marketing event
+      description: Anonymous first-party attribution event (page, UTM fields, optional metadata). Public.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [eventName]
+              properties:
+                eventName: { type: string, maxLength: 80 }
+                path: { type: string, maxLength: 500 }
+                source: { type: string, maxLength: 80 }
+                medium: { type: string, maxLength: 80 }
+                campaign: { type: string, maxLength: 120 }
+                term: { type: string, maxLength: 120 }
+                content: { type: string, maxLength: 120 }
+                referrer: { type: string, maxLength: 500 }
+                metadata: { type: object, additionalProperties: true }
+      responses:
+        '200':
+          description: Recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '400': { description: Invalid input }
+
+  /api/i18n/locale:
+    post:
+      tags: [i18n]
+      summary: Set the UI locale cookie (web)
+      description: One-year sticky locale cookie; server components read it before falling back to Accept-Language.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [locale]
+              properties:
+                locale: { type: string, enum: [en, it, fr, de, es, pt, nl, tr] }
+      responses:
+        '200':
+          description: Cookie set
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, locale]
+                properties:
+                  ok: { type: boolean }
+                  locale: { type: string }
+        '400': { description: Unsupported locale }

@@ -54,7 +54,8 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
       orderBy: { dateTo: "desc" },
     }),
     prisma.swapReview.findMany({
-      where: { subjectId: id },
+      // Hidden (moderated) reviews never reach the public page (DOK-149).
+      where: { subjectId: id, status: "published" },
       include: { author: { select: { id: true, name: true, avatar: true } } },
       orderBy: { createdAt: "desc" },
       take: 10,

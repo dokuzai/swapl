@@ -2,14 +2,28 @@
 // profile fields (work, languages, home city — privacy-gated), swap stats,
 // visited cities (from COMPLETED agreements) and the latest reviews, plus the
 // host's active listings. Mirrors /profile/[id] page.
+//
+// Reviews & stats count ONLY status="published" — hidden (moderated) reviews
+// disappear from the public surface entirely (DOK-149).
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { parseJSON } from "@/lib/db";
 import { parseSettings } from "@/lib/settings";
 import { toDTO } from "@/lib/listing-utils";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 
-export async function GET(_req: Request, { params }: RouteContext<"/api/profiles/[id]">) {
+const MIN_MS = 60 * 1000;
+const LIMIT_PER_MIN = 60;
+
+export async function GET(req: Request, { params }: RouteContext<"/api/profiles/[id]">) {
+  // Public + enumerable by id → per-IP durable limit, same budget as discover.
+  const ip = clientIpFromRequest(req);
+  const rl = await checkRateLimitDurable(`profiles:${ip}`, LIMIT_PER_MIN, MIN_MS);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "RATE_LIMITED" }, { status: 429 });
+  }
+
   const { id } = await params;
   const user = await prisma.user.findUnique({
     where: { id },
@@ -56,12 +70,12 @@ export async function GET(_req: Request, { params }: RouteContext<"/api/profiles
       orderBy: { dateTo: "desc" },
     }),
     prisma.swapReview.aggregate({
-      where: { subjectId: id },
+      where: { subjectId: id, status: "published" },
       _count: true,
       _avg: { rating: true },
     }),
     prisma.swapReview.findMany({
-      where: { subjectId: id },
+      where: { subjectId: id, status: "published" },
       include: { author: { select: { id: true, name: true, avatar: true } } },
       orderBy: { createdAt: "desc" },
       take: 10,

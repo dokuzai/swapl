@@ -471,6 +471,12 @@ model SwapReview {
   text        String
   createdAt   DateTime      @default(now())
 
+  // Moderation (DOK-149): hidden reviews are excluded from the public profile
+  // and its aggregates; admins can restore them at any time.
+  status        String    @default("published") // "published" | "hidden"
+  moderatedAt   DateTime?
+  moderatedById String?
+
   @@unique([agreementId, authorId])
   @@index([subjectId])
 }
