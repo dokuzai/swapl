@@ -184,6 +184,107 @@ struct NotificationSettingsView: View {
     }
 }
 
+// Account → Login & security → Change password (DOK-149). Three secure
+// fields posted to /api/auth/change-password; the bearer token used for the
+// request survives the server-side revocation of every other device.
+struct ChangePasswordSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var currentPassword = ""
+    @State private var newPassword = ""
+    @State private var confirmPassword = ""
+    @State private var isSubmitting = false
+    @State private var error: String?
+    @State private var didSucceed = false
+
+    private var validationError: String? {
+        if newPassword.count < 6 { return "Use at least 6 characters." }
+        if newPassword != confirmPassword { return "Passwords don't match." }
+        return nil
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    SecureField("Current password", text: $currentPassword)
+                        .textContentType(.password)
+                } footer: {
+                    Text("Leave empty if you signed up with Google, Telegram or an email code and never set a password.")
+                }
+                Section {
+                    SecureField("New password", text: $newPassword)
+                        .textContentType(.newPassword)
+                    SecureField("Confirm new password", text: $confirmPassword)
+                        .textContentType(.newPassword)
+                } footer: {
+                    Text("At least 6 characters. Changing your password signs out your other devices.")
+                }
+
+                if let error {
+                    Section {
+                        Text(error)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
+                            .foregroundStyle(SwaplSemanticLight.destructive)
+                    }
+                }
+
+                Section {
+                    Button {
+                        Task { await submit() }
+                    } label: {
+                        if isSubmitting {
+                            ProgressView().frame(maxWidth: .infinity)
+                        } else {
+                            Text("Change password")
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .disabled(isSubmitting || newPassword.isEmpty || confirmPassword.isEmpty)
+                }
+            }
+            .navigationTitle("Change password")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+            .alert("Password changed", isPresented: $didSucceed) {
+                Button("OK") { dismiss() }
+            } message: {
+                Text("Your other devices were signed out.")
+            }
+        }
+    }
+
+    private func submit() async {
+        error = nil
+        if let validationError {
+            error = validationError
+            return
+        }
+        isSubmitting = true
+        defer { isSubmitting = false }
+
+        struct ChangePasswordRequest: Encodable {
+            let currentPassword: String?
+            let newPassword: String
+        }
+        do {
+            let trimmedCurrent = currentPassword.isEmpty ? nil : currentPassword
+            let _: EmptyResponse = try await APIClient.shared.send(
+                "POST", "/api/auth/change-password",
+                body: ChangePasswordRequest(currentPassword: trimmedCurrent, newPassword: newPassword)
+            )
+            didSucceed = true
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+}
+
 // Card-style toggle row shared by the Privacy and Notifications screens.
 struct SettingToggleRow: View {
     let title: String

@@ -12,6 +12,7 @@ struct AccountView: View {
     @State private var myListing: Listing?
     @State private var editingListing: Listing?
     @State private var helpItem: SafariItem?
+    @State private var isChangingPassword = false
 
     var body: some View {
         NavigationStack {
@@ -42,6 +43,12 @@ struct AccountView: View {
                         }
 
                         sectionHeader("Login & security")
+                        Button {
+                            isChangingPassword = true
+                        } label: {
+                            portedMenuRow("Change password", "lock.rotation")
+                        }
+                        .buttonStyle(.plain)
                         NavigationLink { PasskeysView() } label: { portedMenuRow("Passkeys", "person.badge.key") }
                             .buttonStyle(.plain)
 
@@ -103,6 +110,9 @@ struct AccountView: View {
                 }
             }
             .task { await loadMyListing() }
+            .sheet(isPresented: $isChangingPassword) {
+                ChangePasswordSheet()
+            }
             .sheet(item: $helpItem) { item in
                 SafariView(url: item.url)
                     .ignoresSafeArea()
