@@ -535,8 +535,10 @@ components:
         message: { type: string, nullable: true }
         myCity: { type: string }
         myNeighbourhood: { type: string }
+        myCoverPhotoUrl: { type: string, nullable: true, description: First photo of your listing }
         theirCity: { type: string }
         theirNeighbourhood: { type: string }
+        theirCoverPhotoUrl: { type: string, nullable: true, description: First photo of the other listing }
         otherName: { type: string, nullable: true }
         updatedAt: { type: string, format: date-time }
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, parseJSON } from "@/lib/db";
 import { swapProposalSchema } from "@/lib/validators";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
@@ -23,8 +23,8 @@ export async function GET(req: Request) {
       ],
     },
     include: {
-      proposerListing: { select: { id: true, city: true, neighbourhood: true, paletteHint: true } },
-      targetListing: { select: { id: true, city: true, neighbourhood: true, userId: true, paletteHint: true } },
+      proposerListing: { select: { id: true, city: true, neighbourhood: true, paletteHint: true, photos: true } },
+      targetListing: { select: { id: true, city: true, neighbourhood: true, userId: true, paletteHint: true, photos: true } },
       proposer: { select: { id: true, name: true } },
     },
     orderBy: { updatedAt: "desc" },
@@ -42,9 +42,15 @@ export async function GET(req: Request) {
   });
   const nameById = new Map(others.map((u) => [u.id, u.name]));
 
+  // First photo of a listing, or null — `photos` is a JSON-encoded string[].
+  const coverPhotoUrl = (listing: { photos: string }) =>
+    parseJSON<string[]>(listing.photos, [])[0] ?? null;
+
   const items = proposals.map((p) => {
     const meIsProposer = p.proposerId === session.userId;
     const otherUserId = meIsProposer ? p.targetListing.userId : p.proposerId;
+    const myListing = meIsProposer ? p.proposerListing : p.targetListing;
+    const theirListing = meIsProposer ? p.targetListing : p.proposerListing;
     return {
       id: p.id,
       status: p.status,
@@ -52,10 +58,12 @@ export async function GET(req: Request) {
       dateFrom: p.dateFrom.toISOString(),
       dateTo: p.dateTo.toISOString(),
       message: p.message,
-      myCity: meIsProposer ? p.proposerListing.city : p.targetListing.city,
-      myNeighbourhood: meIsProposer ? p.proposerListing.neighbourhood : p.targetListing.neighbourhood,
-      theirCity: meIsProposer ? p.targetListing.city : p.proposerListing.city,
-      theirNeighbourhood: meIsProposer ? p.targetListing.neighbourhood : p.proposerListing.neighbourhood,
+      myCity: myListing.city,
+      myNeighbourhood: myListing.neighbourhood,
+      myCoverPhotoUrl: coverPhotoUrl(myListing),
+      theirCity: theirListing.city,
+      theirNeighbourhood: theirListing.neighbourhood,
+      theirCoverPhotoUrl: coverPhotoUrl(theirListing),
       otherName: nameById.get(otherUserId) ?? null,
       updatedAt: p.updatedAt.toISOString(),
     };

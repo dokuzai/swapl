@@ -2703,8 +2703,12 @@ export interface components {
             message?: string | null;
             myCity: string;
             myNeighbourhood: string;
+            /** @description First photo of your listing */
+            myCoverPhotoUrl?: string | null;
             theirCity: string;
             theirNeighbourhood: string;
+            /** @description First photo of the other listing */
+            theirCoverPhotoUrl?: string | null;
             otherName?: string | null;
             /** Format: date-time */
             updatedAt: string;
