@@ -182,15 +182,19 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
             </section>
           )}
 
-          {/* ---- Where I've been: postcard stamps ---- */}
-          {visited.length > 0 && (
-            <section className="mb-10">
-              <h2 className="font-display text-2xl tracking-[-0.01em] mb-1">
-                {t("profile.whereIveBeen")}
-              </h2>
-              <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
-                {t("profile.whereIveBeenLede")}
-              </p>
+          {/* ---- Where I've been: postcard stamps (empty state when none) ---- */}
+          <section className="mb-10">
+            <h2 className="font-display text-2xl tracking-[-0.01em] mb-1">
+              {t("profile.whereIveBeen")}
+            </h2>
+            <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
+              {t("profile.whereIveBeenLede")}
+            </p>
+            {visited.length === 0 ? (
+              <div className="surface-card surface-card--static p-8 text-center text-sm" style={{ color: "var(--navy-2)" }}>
+                {t("profile.noStamps")}
+              </div>
+            ) : (
               <div className="flex gap-4 overflow-x-auto pb-3 -mx-1 px-1">
                 {visited.map((v, i) => (
                   <CityStamp
@@ -202,8 +206,8 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
                   />
                 ))}
               </div>
-            </section>
-          )}
+            )}
+          </section>
 
           {/* ---- Interests ---- */}
           {interests.length > 0 && (
