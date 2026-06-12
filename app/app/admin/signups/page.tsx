@@ -1,16 +1,34 @@
 import { prisma } from "@/lib/db";
 import { requireAdminPage } from "@/lib/auth/abilities";
-import { AdminTable, fmtDate } from "@/components/admin/data-table";
+import { AdminTable, fmtDate, type ColumnFilter } from "@/components/admin/data-table";
 import { InviteBatchButton } from "@/components/admin/invite-batch-button";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Signups · admin" };
 
-export default async function AdminSignups() {
+export default async function AdminSignups({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; utm?: string }>;
+}) {
   await requireAdminPage();
+
+  const { q, utm } = await searchParams;
 
   const [signups, invited, registered, remaining] = await Promise.all([
     prisma.betaSignup.findMany({
+      where: {
+        ...(q ? { email: { contains: q } } : {}),
+        ...(utm
+          ? {
+              OR: [
+                { source: { contains: utm } },
+                { medium: { contains: utm } },
+                { campaign: { contains: utm } },
+              ],
+            }
+          : {}),
+      },
       orderBy: { createdAt: "desc" },
       take: 500,
     }),
@@ -46,7 +64,19 @@ export default async function AdminSignups() {
 
       <AdminTable
         headers={["Email", "Source / medium / campaign", "Landing page", "Linked user", "Invited", "Created"]}
-        emptyLabel="No signups yet."
+        emptyLabel="No signups match."
+        filterAction="/admin/signups"
+        filterValues={{ q: q ?? "", utm: utm ?? "" }}
+        filters={
+          [
+            { type: "text", name: "q", placeholder: "email…" },
+            { type: "text", name: "utm", placeholder: "source / medium / campaign…" },
+            null,
+            null,
+            null,
+            null,
+          ] satisfies ColumnFilter[]
+        }
         rows={signups.map((s) => [
           <span key="e" className="font-medium">{s.email}</span>,
           <span key="s" style={{ color: "var(--navy-3)" }}>

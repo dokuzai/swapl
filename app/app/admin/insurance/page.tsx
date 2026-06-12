@@ -1,12 +1,21 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireAdminPage } from "@/lib/auth/abilities";
+import { insuranceProvider } from "@/lib/insurance";
+import { mockInsuranceProvider } from "@/lib/insurance/mock";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Insurance · admin" };
 
 export default async function AdminInsurance() {
   await requireAdminPage();
+
+  // Active underwriter (DOK-151). Compare against the mock instance — unknown
+  // INSURANCE_PROVIDER values silently fall back to mock, and the badge must
+  // reflect what actually underwrites, not what the env says.
+  const providerEnv = process.env.INSURANCE_PROVIDER ?? "mock";
+  const activeProvider = insuranceProvider();
+  const isMock = activeProvider === mockInsuranceProvider;
 
   const [policies, totals] = await Promise.all([
     prisma.insurancePolicy.findMany({
@@ -42,6 +51,33 @@ export default async function AdminInsurance() {
         </p>
       </header>
 
+      <div className="surface-card p-5 mb-10 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
+            Provider
+          </span>
+          <span
+            className="font-mono text-[11px] uppercase tracking-[.08em] px-3 py-1 rounded-full"
+            style={
+              isMock
+                ? { background: "var(--tag-bg)", color: "var(--navy-2)" }
+                : { background: "var(--pink)", color: "#fff" }
+            }
+          >
+            {providerEnv} · {activeProvider.name}
+          </span>
+        </div>
+        {isMock ? (
+          <p className="text-xs" style={{ color: "var(--navy-3)" }}>
+            test underwriter — switch INSURANCE_PROVIDER to go live
+          </p>
+        ) : (
+          <p className="text-xs" style={{ color: "var(--navy-3)" }}>
+            live underwriter — policies are binding
+          </p>
+        )}
+      </div>
+
       <div className="grid sm:grid-cols-3 gap-4 mb-10">
         <Stat label="Total policies" value={String(totals._count._all)} />
         <Stat label="Total premium" value={`€${((totals._sum.premiumCents ?? 0) / 100).toFixed(2)}`} />
@@ -73,6 +109,7 @@ export default async function AdminInsurance() {
                   </Link>
                 </span>
                 <span className="text-xs" style={{ color: "var(--navy-3)" }}>
+                  <span className="font-mono">{p.provider}</span> ·{" "}
                   {p.agreement.listing1.city} ⇄ {p.agreement.listing2.city} · expires{" "}
                   {p.expiresAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>

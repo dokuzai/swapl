@@ -1,16 +1,39 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireAdminPage } from "@/lib/auth/abilities";
-import { AdminTable, StatusPill, fmtDate } from "@/components/admin/data-table";
+import { AdminTable, StatusPill, fmtDate, type ColumnFilter } from "@/components/admin/data-table";
 import ListingActions from "./listing-actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Listings · admin" };
 
-export default async function AdminListings() {
+const VERIFICATION_STATUSES = ["none", "pending", "approved", "rejected"] as const;
+
+export default async function AdminListings({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; active?: string; verification?: string }>;
+}) {
   await requireAdminPage();
 
+  const { q, active, verification } = await searchParams;
+
   const listings = await prisma.listing.findMany({
+    where: {
+      ...(q
+        ? {
+            OR: [
+              { title: { contains: q } },
+              { city: { contains: q } },
+              { user: { email: { contains: q } } },
+            ],
+          }
+        : {}),
+      ...(active === "active" ? { isActive: true } : active === "inactive" ? { isActive: false } : {}),
+      ...(verification && (VERIFICATION_STATUSES as readonly string[]).includes(verification)
+        ? { verificationStatus: verification }
+        : {}),
+    },
     orderBy: { createdAt: "desc" },
     take: 500,
     include: { user: { select: { email: true } } },
@@ -28,7 +51,31 @@ export default async function AdminListings() {
 
       <AdminTable
         headers={["Title", "City", "Owner", "Active", "Verification", "Created", "Actions"]}
-        emptyLabel="No listings yet."
+        emptyLabel="No listings match."
+        filterAction="/admin/listings"
+        filterValues={{ q: q ?? "", active: active ?? "", verification: verification ?? "" }}
+        filters={
+          [
+            { type: "text", name: "q", placeholder: "title, city or owner…" },
+            null,
+            null,
+            {
+              type: "select",
+              name: "active",
+              options: [
+                { value: "active", label: "active" },
+                { value: "inactive", label: "inactive" },
+              ],
+            },
+            {
+              type: "select",
+              name: "verification",
+              options: VERIFICATION_STATUSES.map((s) => ({ value: s, label: s })),
+            },
+            null,
+            null,
+          ] satisfies ColumnFilter[]
+        }
         rows={listings.map((l) => [
           <Link key="t" href={`/listings/${l.id}`} className="font-medium hover:underline">
             {l.title}
