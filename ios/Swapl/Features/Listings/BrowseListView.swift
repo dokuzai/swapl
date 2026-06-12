@@ -1,6 +1,7 @@
 import SwiftUI
 import Observation
 import MapKit
+import UIKit
 import SwaplDesignTokens
 
 @MainActor
@@ -47,52 +48,52 @@ final class BrowseListViewModel {
 
 enum BrowseViewMode { case list, map }
 
+// Explore content chips, Airbnb-style: Homes keeps the listing search/filters,
+// the other two swap in the affiliate Discover surfaces (DOK-145).
+enum BrowseCategory: String, CaseIterable, Identifiable {
+    case homes, experiences, services
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .homes: "Homes"
+        case .experiences: "Experiences"
+        case .services: "Services"
+        }
+    }
+
+    // Preferred symbols with runtime fallback: "balloon" and "concierge.bell"
+    // exist on modern SF Symbols releases but not everywhere we deploy.
+    var icon: String {
+        switch self {
+        case .homes:
+            return "house"
+        case .experiences:
+            return UIImage(systemName: "balloon") != nil ? "balloon" : "sparkles"
+        case .services:
+            return UIImage(systemName: "concierge.bell") != nil ? "concierge.bell" : "bell.fill"
+        }
+    }
+}
+
 struct BrowseListView: View {
     @State private var vm = BrowseListViewModel()
     @State private var viewMode: BrowseViewMode = .list
     @State private var selectedMapId: String?
     @State private var isShowingFilters = false
+    @State private var category: BrowseCategory = .homes
 
     var body: some View {
         NavigationStack {
             Group {
-                if vm.isLoading && !vm.hasLoaded {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .accessibilityLabel("Loading homes")
-                } else if let error = vm.error {
-                    SwaplEmptyState(
-                        systemImage: "wifi.exclamationmark",
-                        title: "Homes unavailable",
-                        description: error,
-                        actionTitle: "Try Again",
-                        action: { Task { await vm.load() } }
-                    )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if vm.items.isEmpty {
-                    SwaplEmptyState(
-                        systemImage: "house",
-                        title: "No homes found",
-                        description: "Try a different city, date range, or sort order.",
-                        actionTitle: vm.filters.activeFilterCount > 0 ? "Adjust Filters" : "Refresh",
-                        action: {
-                            if vm.filters.activeFilterCount > 0 {
-                                isShowingFilters = true
-                            } else {
-                                Task { await vm.load() }
-                            }
-                        }
-                    )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    ZStack(alignment: .bottom) {
-                        if viewMode == .map {
-                            mapContent
-                        } else {
-                            exploreContent
-                        }
-                        floatingControls
-                    }
+                switch category {
+                case .homes:
+                    homesRoot
+                case .experiences:
+                    discoverScaffold { ExperiencesView() }
+                case .services:
+                    discoverScaffold { ServicesView() }
                 }
             }
             .background(SwaplSemanticLight.background)
@@ -110,6 +111,63 @@ struct BrowseListView: View {
                 .presentationDetents([.large])
             }
         }
+    }
+
+    // Experiences/Services: page title + chips (no listing search), then the
+    // selected Discover surface.
+    private func discoverScaffold<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 28) {
+                SwaplPageTitle("Explore")
+                categoryStrip
+                content()
+            }
+            .padding(.bottom, 110)
+        }
+        .background(SwaplSemanticLight.background)
+    }
+
+    // The Homes chip: the pre-existing Explore view, unchanged.
+    @ViewBuilder
+    private var homesRoot: some View {
+            if vm.isLoading && !vm.hasLoaded {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel("Loading homes")
+            } else if let error = vm.error {
+                SwaplEmptyState(
+                    systemImage: "wifi.exclamationmark",
+                    title: "Homes unavailable",
+                    description: error,
+                    actionTitle: "Try Again",
+                    action: { Task { await vm.load() } }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if vm.items.isEmpty {
+                SwaplEmptyState(
+                    systemImage: "house",
+                    title: "No homes found",
+                    description: "Try a different city, date range, or sort order.",
+                    actionTitle: vm.filters.activeFilterCount > 0 ? "Adjust Filters" : "Refresh",
+                    action: {
+                        if vm.filters.activeFilterCount > 0 {
+                            isShowingFilters = true
+                        } else {
+                            Task { await vm.load() }
+                        }
+                    }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ZStack(alignment: .bottom) {
+                    if viewMode == .map {
+                        mapContent
+                    } else {
+                        exploreContent
+                    }
+                    floatingControls
+                }
+            }
     }
 
     private var mapContent: some View {
@@ -307,28 +365,39 @@ struct BrowseListView: View {
         .allowsHitTesting(false)
     }
 
+    // Pill chips under the search bar (Airbnb-style): selection swaps the
+    // content below between Homes, Experiences and Services.
     private var categoryStrip: some View {
-        HStack(spacing: 34) {
-            category(icon: "house.fill", title: "Homes", selected: true)
-            category(icon: "sparkles", title: "Experiences", selected: false)
-            category(icon: "bell.fill", title: "Services", selected: false)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(BrowseCategory.allCases) { item in
+                    categoryChip(item)
+                }
+            }
+            .padding(.horizontal, 22)
         }
-        .frame(maxWidth: .infinity)
         .padding(.top, 2)
     }
 
-    private func category(icon: String, title: String, selected: Bool) -> some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.system(size: 26, weight: .regular))
-            Text(title)
-                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
-            Rectangle()
-                .fill(selected ? AirbnbPalette.text : .clear)
-                .frame(width: 42, height: 3)
-                .clipShape(Capsule())
+    private func categoryChip(_ item: BrowseCategory) -> some View {
+        let selected = category == item
+        return Button {
+            withAnimation(.snappy) { category = item }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: item.icon)
+                    .font(.system(size: 15, weight: .semibold))
+                Text(item.title)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+            }
+            .foregroundStyle(selected ? SwaplSemanticLight.primaryForeground : AirbnbPalette.text)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 11)
+            .background(selected ? SwaplSemanticLight.primary : AirbnbPalette.softBackground, in: Capsule())
         }
-        .foregroundStyle(selected ? AirbnbPalette.text : AirbnbPalette.secondaryText)
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(item.title)\(selected ? ", selected" : "")")
+        .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
 
     private func continueCard(_ item: ListingWithScore) -> some View {
