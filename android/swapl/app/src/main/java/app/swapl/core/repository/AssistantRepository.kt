@@ -6,6 +6,7 @@ import app.swapl.core.network.ApiClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -68,6 +69,29 @@ class AssistantRepository @Inject constructor(private val api: ApiClient) {
         api.client.post("${api.baseUrl}/api/assistant/inspire/$packageId/dismiss")
     }
 
+    // MARK: editable items (DOK-148)
+
+    /** Toggles experiences/services/add-ons of a DRAFT package on/off.
+     *  Confirm, checkout and the eventual charge all read what's selected
+     *  at their time, so this is the single edit point. */
+    suspend fun updateItems(packageId: String, toggles: List<ItemToggle>): ItemsResponse =
+        api.client.patch("${api.baseUrl}/api/assistant/inspire/$packageId/items") {
+            contentType(ContentType.Application.Json)
+            setBody(ItemsBody(toggles))
+        }.body()
+
+    // MARK: pay-on-accept checkout (DOK-148)
+
+    /** Starts the pay-on-accept flow: a SetupIntent saves the card, the
+     *  off-session PaymentIntent is created ONLY when the host accepts. */
+    suspend fun checkout(packageId: String): CheckoutResponse =
+        api.client.post("${api.baseUrl}/api/assistant/inspire/$packageId/checkout").body()
+
+    /** The dedicated web payment page (Stripe Payment Element) for this
+     *  package — the same page iOS opens; we use a Custom Tab. */
+    fun webPaymentUrl(packageId: String): String =
+        "${api.baseUrl.trimEnd('/')}/inspire?package=$packageId&step=pay"
+
     /** Resolves a possibly-relative affiliate href against the API origin so
      *  the click-through still hits the logging redirector. */
     fun resolveUrl(raw: String): String =
@@ -75,7 +99,57 @@ class AssistantRepository @Inject constructor(private val api: ApiClient) {
         else api.baseUrl.trimEnd('/') + (if (raw.startsWith("/")) raw else "/$raw")
 
     @Serializable
-    data class ConfirmResponse(val ok: Boolean, val proposalId: String, val packageId: String)
+    data class ConfirmResponse(
+        val ok: Boolean,
+        val proposalId: String,
+        val packageId: String,
+        /** Pay-on-accept (DOK-148): "none" | "card_saved" | … — informational. */
+        val paymentStatus: String? = null,
+    )
+
+    @Serializable
+    data class ItemToggle(val itemId: String, val selected: Boolean)
+
+    @Serializable
+    private data class ItemsBody(val items: List<ItemToggle>)
+
+    @Serializable
+    data class PayableTotal(val totalCents: Int, val currency: String)
+
+    @Serializable
+    data class ItemsResponse(
+        val ok: Boolean,
+        /** Server truth for the payable subset after the toggle — applied on
+         *  top of the client's optimistic update. */
+        val payable: PayableTotal,
+    )
+
+    @Serializable
+    data class CheckoutLine(
+        val id: String,
+        val slug: String,
+        val name: String,
+        val priceCents: Int,
+    )
+
+    @Serializable
+    data class CheckoutSummary(
+        val payableItems: List<CheckoutLine> = emptyList(),
+        val totalCents: Int = 0,
+        val currency: String = "EUR",
+    )
+
+    @Serializable
+    data class CheckoutResponse(
+        /** false → no payable items or Stripe not configured server-side; the
+         *  confirm proceeds without any payment step (env-gated degrade). */
+        val paymentRequired: Boolean,
+        /** SetupIntent client secret — card saved off-session, NOTHING is
+         *  charged until the host accepts the proposal. */
+        val clientSecret: String? = null,
+        val summary: CheckoutSummary = CheckoutSummary(),
+        val note: String? = null,
+    )
 
     @Serializable
     private data class InspireBody(

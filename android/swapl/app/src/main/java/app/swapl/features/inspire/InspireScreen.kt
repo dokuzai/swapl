@@ -1,6 +1,15 @@
 package app.swapl.features.inspire
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,45 +27,59 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Flight
+import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.SimCard
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import app.swapl.core.model.DiscoverExperience
+import app.swapl.core.model.InspireAddOnItem
 import app.swapl.core.model.InspireCandidate
+import app.swapl.core.model.InspireExperienceItem
 import app.swapl.core.model.InspirePackage
-import app.swapl.core.model.InspireService
+import app.swapl.core.model.InspireServiceItem
 import app.swapl.core.repository.AssistantRepository
 import app.swapl.design.components.DateField
 import app.swapl.design.components.KickerLabel
@@ -77,14 +100,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
 import java.time.LocalDate
+import java.util.Currency
 import javax.inject.Inject
 
-// "Get Inspired" (DOK-146): free-text wish + optional dates → the assistant
-// composes a swap package from REAL, active, date-compatible listings.
-// Confirming creates an actual proposal through the same code path as
-// POST /api/proposals (plan limits and suspension apply), then hands the
-// proposal id back to the presenter, which routes to the existing thread.
+// "Get Inspired" (DOK-146, extended by DOK-148): free-text wish (typed or
+// dictated) + optional dates → the assistant composes a swap package from
+// REAL, active, date-compatible listings. Every package item is individually
+// toggleable (PATCH …/items); the ONLY payable items are the swapl concierge
+// add-ons — affiliate experiences/services stay partner links, never charged
+// by us. Confirming creates an actual proposal through the same code path as
+// POST /api/proposals; when there are payable items and Stripe is configured
+// server-side, a SetupIntent saves the card first (Custom Tab on the same web
+// payment page iOS uses) — NOTHING is charged until the host accepts.
 
 data class InspireUiState(
     val isComposing: Boolean = false,
@@ -95,6 +124,17 @@ data class InspireUiState(
     val dateFrom: String = "",
     val dateTo: String = "",
     val message: String = "",
+    // Editable items (DOK-148) — mutable copies of the package's items; each
+    // toggle is optimistic, then PATCHed, and reverted if the server refuses.
+    val experiences: List<InspireExperienceItem> = emptyList(),
+    val services: List<InspireServiceItem> = emptyList(),
+    val addOns: List<InspireAddOnItem> = emptyList(),
+    // Pay-on-accept checkout (DOK-148): set when POST …/checkout answers
+    // { paymentRequired: true } — drives the "Payment & reservation" step.
+    val checkout: AssistantRepository.CheckoutResponse? = null,
+    // True while the Custom Tab with the web payment page is (presumably)
+    // in front — the next ON_RESUME continues the confirm.
+    val awaitingPaymentReturn: Boolean = false,
     val isConfirming: Boolean = false,
     val isDismissing: Boolean = false,
     val packageError: String? = null,
@@ -109,6 +149,35 @@ data class InspireUiState(
      *  using data the compose call already returned (no extra request). */
     val alternatives: List<InspireCandidate>
         get() = pkg?.allCandidates?.filter { it.listingId != selectedId } ?: emptyList()
+
+    // Payable = selected concierge add-ons only. Affiliate experiences and
+    // services stay partner links — never charged by us, never in the total.
+    val payableAddOns: List<InspireAddOnItem>
+        get() = addOns.filter { it.selected && it.priceCents > 0 }
+    val payableTotalCents: Int get() = payableAddOns.sumOf { it.priceCents }
+    val payableCurrency: String get() = payableAddOns.firstOrNull()?.currency ?: "EUR"
+
+    /** What the assistant understood from the (possibly spoken) prompt —
+     *  same composition as the web/iOS "Understood: …" box. */
+    val understood: String?
+        get() {
+            val f = pkg?.interpreted ?: return null
+            val parts = mutableListOf<String>()
+            f.city?.let { parts.add(it) }
+            if (f.dateFrom != null && f.dateTo != null) {
+                parts.add("${f.dateFrom} → ${f.dateTo}")
+            } else if (f.dateFrom != null) {
+                parts.add("From ${f.dateFrom}")
+            }
+            for (c in f.constraints.orEmpty()) {
+                when (c) {
+                    "pet-friendly" -> parts.add("pet-friendly")
+                    "wfh" -> parts.add("remote-work ready")
+                    "step-free" -> parts.add("step-free")
+                }
+            }
+            return if (parts.isEmpty()) null else parts.joinToString(" · ")
+        }
 }
 
 @HiltViewModel
@@ -136,6 +205,9 @@ class InspireViewModel @Inject constructor(
                         dateFrom = pkg.dates.from,
                         dateTo = pkg.dates.to,
                         message = pkg.proposalMessage,
+                        experiences = pkg.experiences,
+                        services = pkg.services,
+                        addOns = pkg.addOns,
                     )
                 }
             } catch (t: Throwable) {
@@ -149,25 +221,94 @@ class InspireViewModel @Inject constructor(
     fun setDateTo(value: String) = _state.update { it.copy(dateTo = value) }
     fun setMessage(value: String) = _state.update { it.copy(message = value) }
 
-    fun confirm() {
+    /** Optimistic toggle: flip locally, PATCH …/items, revert on failure. */
+    fun toggleItem(itemId: String, selected: Boolean) {
+        val pkg = _state.value.pkg ?: return
+        setItemSelected(itemId, selected)
+        viewModelScope.launch {
+            try {
+                repo.updateItems(pkg.packageId, listOf(AssistantRepository.ItemToggle(itemId, selected)))
+            } catch (t: Throwable) {
+                setItemSelected(itemId, !selected)
+                _state.update { it.copy(packageError = friendlyError(t)) }
+            }
+        }
+    }
+
+    private fun setItemSelected(itemId: String, selected: Boolean) = _state.update { s ->
+        s.copy(
+            packageError = null,
+            experiences = s.experiences.map { if (it.id == itemId) it.copy(selected = selected) else it },
+            services = s.services.map { if (it.id == itemId) it.copy(selected = selected) else it },
+            addOns = s.addOns.map { if (it.id == itemId) it.copy(selected = selected) else it },
+        )
+    }
+
+    /** Confirm, phase 1 — ask the checkout route whether a payment step is
+     *  needed. Env-gated degrade: no Stripe server-side or zero payable items
+     *  → { paymentRequired: false } and the proposal is sent right away. */
+    fun startConfirm() {
         val pkg = _state.value.pkg ?: return
         if (_state.value.isConfirming || _state.value.isDismissing) return
         viewModelScope.launch {
             _state.update { it.copy(isConfirming = true, packageError = null) }
-            try {
-                val res = repo.confirm(
-                    packageId = pkg.packageId,
-                    listingId = _state.value.selectedId,
-                    dateFrom = _state.value.dateFrom,
-                    dateTo = _state.value.dateTo,
-                    message = _state.value.message.trim(),
-                )
-                _state.update { it.copy(isConfirming = false, confirmedProposalId = res.proposalId) }
-            } catch (t: Throwable) {
-                _state.update { it.copy(isConfirming = false, packageError = friendlyError(t)) }
+            // Checkout is best-effort: confirm never blocks on payment, so a
+            // failed checkout call degrades to the plain confirm.
+            val checkout = runCatching { repo.checkout(pkg.packageId) }.getOrNull()
+            if (checkout?.paymentRequired == true) {
+                _state.update { it.copy(isConfirming = false, checkout = checkout) }
+            } else {
+                confirmNow()
             }
         }
     }
+
+    /** Confirm, phase 2 — create the REAL proposal (same path as
+     *  POST /api/proposals). If a card was saved on the web payment page, the
+     *  server recovers it; with no card nothing will ever be charged. */
+    fun confirm() {
+        if (_state.value.isConfirming || _state.value.isDismissing) return
+        viewModelScope.launch {
+            _state.update { it.copy(isConfirming = true, packageError = null) }
+            confirmNow()
+        }
+    }
+
+    private suspend fun confirmNow() {
+        val pkg = _state.value.pkg ?: return
+        try {
+            val res = repo.confirm(
+                packageId = pkg.packageId,
+                listingId = _state.value.selectedId,
+                dateFrom = _state.value.dateFrom,
+                dateTo = _state.value.dateTo,
+                message = _state.value.message.trim(),
+            )
+            _state.update { it.copy(isConfirming = false, confirmedProposalId = res.proposalId) }
+        } catch (t: Throwable) {
+            _state.update { it.copy(isConfirming = false, packageError = friendlyError(t)) }
+        }
+    }
+
+    /** The Custom Tab with the web payment page is being opened. */
+    fun markAwaitingPaymentReturn() = _state.update { it.copy(awaitingPaymentReturn = true) }
+
+    /** Back from the Custom Tab (ON_RESUME): a short grace beat for the
+     *  SetupIntent webhook, then confirm — the server recovers the saved
+     *  payment method directly if the webhook hasn't landed yet, and with no
+     *  card saved the proposal still goes out (nothing can ever be charged). */
+    fun onReturnedFromPayment() {
+        if (!_state.value.awaitingPaymentReturn) return
+        if (_state.value.isConfirming || _state.value.isDismissing) return
+        viewModelScope.launch {
+            _state.update { it.copy(awaitingPaymentReturn = false, isConfirming = true, packageError = null) }
+            delay(800)
+            confirmNow()
+        }
+    }
+
+    /** "Back to package" from the payment step. */
+    fun cancelPayment() = _state.update { it.copy(checkout = null, awaitingPaymentReturn = false) }
 
     fun dismissPackage() {
         val pkg = _state.value.pkg ?: return
@@ -184,6 +325,7 @@ class InspireViewModel @Inject constructor(
     }
 
     fun resolveUrl(raw: String): String = repo.resolveUrl(raw)
+    fun webPaymentUrl(): String? = _state.value.pkg?.let { repo.webPaymentUrl(it.packageId) }
 
     // The backend's coded refusals, in plain words (same tone as iOS).
     private fun friendlyError(t: Throwable): String =
@@ -195,6 +337,13 @@ class InspireViewModel @Inject constructor(
             else -> t.message ?: "Something went wrong. Please try again."
         }
 }
+
+/** Formats integer cents in the add-on's own currency. */
+internal fun inspireMoney(cents: Int, currency: String): String = runCatching {
+    NumberFormat.getCurrencyInstance().apply {
+        this.currency = Currency.getInstance(currency)
+    }.format(cents / 100.0)
+}.getOrElse { "${"%.2f".format(cents / 100.0)} $currency" }
 
 /** onFinished: the created proposal id on confirm, null on dismiss — the
  *  presenter pops this screen and (when non-null) opens the swap thread. */
@@ -212,10 +361,10 @@ fun InspireScreen(
         if (state.dismissed) onFinished(null)
     }
 
-    if (state.pkg == null) {
-        InspirePromptContent(state, onCompose = vm::compose)
-    } else {
-        PackageContent(state, vm)
+    when {
+        state.pkg == null -> InspirePromptContent(state, onCompose = vm::compose)
+        state.checkout != null -> PaymentStepContent(state, vm)
+        else -> PackageContent(state, vm)
     }
 }
 
@@ -230,6 +379,74 @@ private fun InspirePromptContent(
     var useDates by rememberSaveable { mutableStateOf(false) }
     var dateFrom by rememberSaveable { mutableStateOf(LocalDate.now().toString()) }
     var dateTo by rememberSaveable { mutableStateOf(LocalDate.now().plusDays(7).toString()) }
+
+    // Voice input (DOK-148): the device's SpeechRecognizer transcribes into
+    // the prompt field — live partials compose onto whatever was already
+    // typed when the mic was tapped. No audio ever reaches Swapl's servers.
+    val context = LocalContext.current
+    val speechAvailable = remember { SpeechRecognizer.isRecognitionAvailable(context) }
+    var isRecording by remember { mutableStateOf(false) }
+    var voiceDenied by remember { mutableStateOf(false) }
+    var promptBase by remember { mutableStateOf("") }
+    val recognizer = remember {
+        if (speechAvailable) SpeechRecognizer.createSpeechRecognizer(context) else null
+    }
+    DisposableEffect(recognizer) {
+        onDispose { recognizer?.destroy() }
+    }
+
+    fun applyTranscript(bundle: Bundle?) {
+        val text = bundle?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+            ?.firstOrNull()?.trim().orEmpty()
+        if (text.isNotEmpty()) prompt = if (promptBase.isEmpty()) text else "$promptBase $text"
+    }
+
+    fun startListening() {
+        val rec = recognizer ?: return
+        promptBase = prompt.trim()
+        rec.setRecognitionListener(object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {}
+            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onEndOfSpeech() {}
+            override fun onPartialResults(partialResults: Bundle?) = applyTranscript(partialResults)
+            override fun onResults(results: Bundle?) {
+                applyTranscript(results)
+                isRecording = false
+            }
+
+            override fun onError(error: Int) {
+                isRecording = false
+                if (error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) voiceDenied = true
+            }
+
+            override fun onEvent(eventType: Int, params: Bundle?) {}
+        })
+        rec.startListening(
+            Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            },
+        )
+        isRecording = true
+    }
+
+    val micPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) startListening() else voiceDenied = true
+    }
+
+    fun toggleMic() {
+        if (isRecording) {
+            recognizer?.stopListening()
+            isRecording = false
+            return
+        }
+        voiceDenied = false
+        val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) ==
+            PackageManager.PERMISSION_GRANTED
+        if (granted) startListening() else micPermission.launch(Manifest.permission.RECORD_AUDIO)
+    }
 
     Column(
         Modifier
@@ -256,7 +473,40 @@ private fun InspirePromptContent(
             minLines = 3,
             maxLines = 6,
             modifier = Modifier.fillMaxWidth(),
+            trailingIcon = if (speechAvailable) {
+                {
+                    IconButton(
+                        onClick = { toggleMic() },
+                        enabled = !state.isComposing,
+                    ) {
+                        Icon(
+                            Icons.Default.Mic,
+                            contentDescription = if (isRecording) "Stop listening" else "Dictate your wish",
+                            tint = if (isRecording) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        )
+                    }
+                }
+            } else {
+                null
+            },
         )
+        if (isRecording) {
+            Text(
+                "Listening — speak freely, tap the mic again to stop.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        } else if (voiceDenied) {
+            Text(
+                "Microphone access is turned off for Swapl — enable it in Settings to dictate your wish.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.weight(1f)) {
@@ -286,6 +536,10 @@ private fun InspirePromptContent(
             PrimaryPill(
                 text = "Dream up my swap",
                 onClick = {
+                    if (isRecording) {
+                        recognizer?.stopListening()
+                        isRecording = false
+                    }
                     onCompose(
                         prompt,
                         if (useDates) dateFrom else null,
@@ -347,6 +601,25 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s5),
     ) {
         Text("Your swap package", style = MaterialTheme.typography.displaySmall)
+
+        // "Understood: …" — the structured filters parsed from the (possibly
+        // spoken) prompt, copy-aligned with web and iOS.
+        state.understood?.let { understood ->
+            SurfaceCard {
+                Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+                    Icon(
+                        Icons.Default.GraphicEq,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Text(
+                        "Understood: $understood",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+        }
 
         // Hero: photo (Coil with the city-illustration fallback), match badge, why.
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
@@ -445,20 +718,79 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
             }
         }
 
-        // Affiliate enrichment — links only, no invented prices/availability.
-        if (pkg.experiences.isNotEmpty()) {
+        // Affiliate enrichment — links only, individually toggleable (the
+        // PATCH happens in the view model and reverts on failure). Never
+        // charged by us, never in the payable total.
+        if (state.experiences.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 KickerLabel("While you're there")
-                pkg.experiences.forEach { item ->
-                    ExperienceRow(item) { openAffiliate(item.url) }
+                state.experiences.forEach { item ->
+                    ExperienceRow(
+                        item = item,
+                        onOpen = { openAffiliate(item.url) },
+                        onToggle = { vm.toggleItem(item.id, !item.selected) },
+                    )
+                }
+                Text(
+                    "Booked on our partners' sites at their prices — swapl may earn a commission, never a markup.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        if (state.services.isNotEmpty()) {
+            Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+                KickerLabel("Travel essentials")
+                state.services.forEach { service ->
+                    ServiceRow(
+                        service = service,
+                        onOpen = { openAffiliate(service.url) },
+                        onToggle = { vm.toggleItem(service.id, !service.selected) },
+                    )
                 }
             }
         }
-        if (pkg.services.isNotEmpty()) {
+
+        // swapl concierge add-ons — the ONLY payable items in the package.
+        if (state.addOns.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("Travel essentials")
-                pkg.services.forEach { service ->
-                    ServiceRow(service) { openAffiliate(service.url) }
+                KickerLabel("swapl concierge add-ons")
+                state.addOns.forEach { addOn ->
+                    AddOnRow(
+                        addOn = addOn,
+                        onToggle = { vm.toggleItem(addOn.id, !addOn.selected) },
+                    )
+                }
+                Text(
+                    "Real catalogue prices. Untick anything you don't want — you'll only be charged if the host accepts your swap.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        // Running total of the payable items — recomputed locally on every
+        // optimistic toggle, copy-aligned with web and iOS.
+        SurfaceCard {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (state.payableTotalCents > 0) {
+                    Text(
+                        "Payable if the host accepts",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        inspireMoney(state.payableTotalCents, state.payableCurrency),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                } else {
+                    Text(
+                        "Nothing payable — confirming just sends the proposal.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }
@@ -467,15 +799,24 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
             Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
         }
 
-        // Confirm → a REAL proposal via the same code path as POST /api/proposals.
+        // Confirm → checkout first (payment step only when needed), then a
+        // REAL proposal via the same code path as POST /api/proposals.
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
             if (state.isConfirming) {
                 CircularProgressIndicator(modifier = Modifier.padding(SwaplSpacing.s2))
             } else {
                 PrimaryPill(
                     text = "Confirm & send proposal",
-                    onClick = vm::confirm,
+                    onClick = vm::startConfirm,
                     enabled = !state.isDismissing,
+                )
+            }
+            if (state.payableTotalCents > 0) {
+                Text(
+                    "You'll only be charged if the host accepts your swap.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = SwaplSpacing.s2),
                 )
             }
             TextButton(onClick = vm::dismissPackage, enabled = !state.isConfirming && !state.isDismissing) {
@@ -488,54 +829,234 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
     }
 }
 
+// MARK: - Phase 3: payment & reservation (DOK-148)
+
+// Shown ONLY when POST …/checkout answered { paymentRequired: true }. No
+// native Stripe SDK: "Save card" opens the same web payment page iOS uses
+// ({origin}/inspire?package={id}&step=pay, Stripe Payment Element) in a
+// Custom Tab. The SetupIntent there only SAVES the card — the off-session
+// charge is created when (and only when) the host accepts the proposal.
+// Returning to the app (ON_RESUME) continues the confirm either way: the
+// server recovers the saved payment method, and with no card saved the
+// proposal still goes out.
 @Composable
-private fun ExperienceRow(item: DiscoverExperience, onClick: () -> Unit) {
-    SurfaceCard(modifier = Modifier.clickable(onClick = onClick)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-            Icon(
-                Icons.Default.AutoAwesome,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-            Column(Modifier.weight(1f)) {
-                Text(item.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, maxLines = 2)
+private fun PaymentStepContent(state: InspireUiState, vm: InspireViewModel) {
+    val checkout = state.checkout ?: return
+    val context = LocalContext.current
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        vm.onReturnedFromPayment()
+    }
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(SwaplSpacing.s5),
+        verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
+            KickerLabel("Almost there")
+            Text("Payment & reservation", style = MaterialTheme.typography.displaySmall)
+        }
+
+        SurfaceCard {
+            Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+                KickerLabel("Your selection")
+                checkout.summary.payableItems.forEach { line ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            line.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Text(
+                            inspireMoney(line.priceCents, checkout.summary.currency),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+                }
+                HorizontalDivider()
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "Payable if the host accepts",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        inspireMoney(checkout.summary.totalCents, checkout.summary.currency),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+        }
+
+        SurfaceCard {
+            Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+                Icon(
+                    Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp),
+                )
                 Text(
-                    "Book on ${item.partnerDisplayName}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    checkout.note ?: "You'll only be charged if the host accepts your swap.",
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            Icon(
-                Icons.AutoMirrored.Filled.OpenInNew,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(16.dp),
-            )
+        }
+
+        Text(
+            "Partner experiences and services are booked on the partners' sites — never charged by swapl and not part of this total.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        state.packageError?.let {
+            Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+        }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+            if (state.isConfirming) {
+                CircularProgressIndicator(modifier = Modifier.padding(SwaplSpacing.s2))
+            } else {
+                PrimaryPill(
+                    text = "Save card & send proposal",
+                    onClick = {
+                        // Same web payment page iOS opens — Stripe Payment
+                        // Element saves the card; coming back resumes confirm.
+                        val url = vm.webPaymentUrl() ?: return@PrimaryPill
+                        vm.markAwaitingPaymentReturn()
+                        CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(url))
+                    },
+                )
+                // The card is optional by design: the proposal can go out with
+                // nothing saved — then nothing can ever be charged.
+                TextButton(onClick = vm::confirm) {
+                    Text("Send without saving a card", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                TextButton(onClick = vm::cancelPayment) {
+                    Text("Back to package", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - item rows
+
+/** Add/remove toggle for a package item — optimistic; the PATCH happens in
+ *  the view model and reverts on failure. */
+@Composable
+private fun ItemToggleButton(selected: Boolean, name: String, onToggle: () -> Unit) {
+    IconButton(onClick = onToggle) {
+        Icon(
+            if (selected) Icons.Default.CheckCircle else Icons.Default.AddCircleOutline,
+            contentDescription = if (selected) "Remove $name from the package" else "Include $name in the package",
+            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun ExperienceRow(item: InspireExperienceItem, onOpen: () -> Unit, onToggle: () -> Unit) {
+    SurfaceCard(modifier = Modifier.alpha(if (item.selected) 1f else 0.55f)) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClick = onOpen),
+            ) {
+                Icon(
+                    Icons.Default.AutoAwesome,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                Column(Modifier.weight(1f)) {
+                    Text(item.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, maxLines = 2)
+                    Text(
+                        "Book on ${item.partnerDisplayName}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Icon(
+                    Icons.AutoMirrored.Filled.OpenInNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(16.dp),
+                )
+            }
+            ItemToggleButton(item.selected, item.title, onToggle)
         }
     }
 }
 
 @Composable
-private fun ServiceRow(service: InspireService, onClick: () -> Unit) {
-    SurfaceCard(modifier = Modifier.clickable(onClick = onClick)) {
+private fun ServiceRow(service: InspireServiceItem, onOpen: () -> Unit, onToggle: () -> Unit) {
+    SurfaceCard(modifier = Modifier.alpha(if (service.selected) 1f else 0.55f)) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClick = onOpen),
+            ) {
+                Icon(
+                    serviceIcon(service.category),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    service.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f),
+                )
+                Icon(
+                    Icons.AutoMirrored.Filled.OpenInNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(16.dp),
+                )
+            }
+            ItemToggleButton(service.selected, service.name, onToggle)
+        }
+    }
+}
+
+@Composable
+private fun AddOnRow(addOn: InspireAddOnItem, onToggle: () -> Unit) {
+    SurfaceCard(modifier = Modifier.alpha(if (addOn.selected) 1f else 0.55f)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
             Icon(
-                serviceIcon(service.category),
+                Icons.Default.Notifications,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
             )
+            Column(Modifier.weight(1f)) {
+                Text(addOn.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, maxLines = 2)
+                if (addOn.description.isNotEmpty()) {
+                    Text(
+                        addOn.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                    )
+                }
+            }
             Text(
-                service.name,
+                inspireMoney(addOn.priceCents, addOn.currency),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f),
             )
-            Icon(
-                Icons.AutoMirrored.Filled.OpenInNew,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(16.dp),
-            )
+            ItemToggleButton(addOn.selected, addOn.name, onToggle)
         }
     }
 }
