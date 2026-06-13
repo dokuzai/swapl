@@ -102,28 +102,35 @@ export function ConciergeSection({
               </div>
               <div className="font-display text-lg tracking-[-0.01em]">{a.name}</div>
               <p className="text-sm mt-1 flex-1" style={{ color: "var(--navy-2)" }}>{a.description}</p>
-              <div className="mt-3 flex items-center justify-between gap-2">
-                <span className="font-display text-lg">€{(a.priceCents / 100).toFixed(2)}</span>
-                {own ? (
-                  <span className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-1 rounded-full"
-                    style={{ background: "var(--pink)", color: "#fff" }}>
-                    Booked
-                  </span>
-                ) : includedForUser ? (
-                  <span className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-1 rounded-full"
+              {includedForUser ? (
+                // Bundled with the member's plan — no charge, so the price is
+                // hidden (showing €9 next to "Included" misled). Full-width row
+                // badge, never the squeezed circle a justify-between caused.
+                <div className="mt-3">
+                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full whitespace-nowrap"
                     style={{ background: "var(--pink-light)", color: "var(--pink)" }}>
-                    Included with your plan
+                    ✓ Included with your plan
                   </span>
-                ) : (
-                  <button
-                    onClick={() => buy(a.slug)}
-                    className="pill-primary text-sm"
-                    disabled={pendingSlug !== null}
-                  >
-                    {pendingSlug === a.slug ? "Processing…" : "Add"}
-                  </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <span className="font-display text-lg">€{(a.priceCents / 100).toFixed(2)}</span>
+                  {own ? (
+                    <span className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full whitespace-nowrap"
+                      style={{ background: "var(--pink)", color: "#fff" }}>
+                      Booked
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => buy(a.slug)}
+                      className="pill-primary text-sm"
+                      disabled={pendingSlug !== null}
+                    >
+                      {pendingSlug === a.slug ? "Processing…" : "Add"}
+                    </button>
+                  )}
+                </div>
+              )}
             </article>
           );
         })}
