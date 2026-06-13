@@ -107,7 +107,7 @@ export function ConciergeSection({
                 // hidden (showing €9 next to "Included" misled). Full-width row
                 // badge, never the squeezed circle a justify-between caused.
                 <div className="mt-3">
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full whitespace-nowrap"
+                  <span className="block w-full text-center font-mono text-[10px] uppercase tracking-[.08em] leading-snug px-2.5 py-1.5 rounded-lg"
                     style={{ background: "var(--pink-light)", color: "var(--pink)" }}>
                     ✓ Included with your plan
                   </span>
