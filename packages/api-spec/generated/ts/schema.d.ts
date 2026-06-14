@@ -1598,6 +1598,128 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/listings/{id}/home-guide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read a listing's home guide ("Guida di casa")
+         * @description The owner always reads (and may write) their own guide. A non-owner reads it only when an ACTIVE swap agreement ties their listing to this one AND the reveal gate is open (48h before the stay, or once both guides are complete). Before the gate the body is { locked: true, unlocksAt } with NO guide content — reveal gating is strictly server-side.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK (guide present, or locked flag for a gated counterparty) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HomeGuideResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not the owner and no active swap ties the caller to this listing */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Listing not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        /**
+         * Upsert your listing's home guide (owner only, partial)
+         * @description Partial upsert — only the provided fields are written; an explicit null clears a field.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["HomeGuideUpdate"];
+                };
+            };
+            responses: {
+                /** @description Saved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            guide: components["schemas"]["HomeGuide"];
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not the owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Listing not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/cities": {
         parameters: {
             query?: never;
@@ -4006,6 +4128,242 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/agreements/{id}/trip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Trip cockpit payload for one party
+         * @description The derived trip phase, a countdown, the caller's own key code + insurance, and — gated strictly server-side — the other home's exact address and home guide. Before the reveal gate (48h before the stay, or once both guides are complete) the other address is null and otherGuide is { locked, unlocksAt }; completeness percentages are always exposed (no content leak).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TripCockpitResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of the agreement */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/agreements/{id}/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record arrival (check-in)
+         * @description A party records arrival. Idempotent per party — a second check-in returns the existing event. The check-in moves the derived phase to IN_PROGRESS and notifies the other party (email + push, best effort). Photos must already be uploaded via /api/uploads/listing-photo. Rate-limited 10 / 5 min per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CheckEventRequest"];
+                };
+            };
+            responses: {
+                /** @description Event recorded (or the existing one, when duplicate) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CheckEventResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of the agreement */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Swap is no longer active */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/agreements/{id}/check-out": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record departure (check-out)
+         * @description A party records departure. Idempotent per party; notifies the other party (email + push, best effort). Photos must already be uploaded via /api/uploads/listing-photo. Rate-limited 10 / 5 min per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CheckEventRequest"];
+                };
+            };
+            responses: {
+                /** @description Event recorded (or the existing one, when duplicate) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CheckEventResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of the agreement */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Swap is no longer active */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/billing/checkout/subscription": {
         parameters: {
             query?: never;
@@ -5091,6 +5449,119 @@ export interface components {
         Error: {
             error: string;
             message?: string;
+        };
+        /** @description A listing's home guide. All fields optional; completeness is derived over a core subset. */
+        HomeGuide: {
+            accessInstructions?: string | null;
+            keyPickup?: string | null;
+            wifiName?: string | null;
+            wifiPassword?: string | null;
+            heatingCooling?: string | null;
+            kitchen?: string | null;
+            bins?: string | null;
+            petsPlants?: string | null;
+            houseRules?: string | null;
+            neighbourhood?: string | null;
+            emergencyContact?: string | null;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** @description 0..100 over the core field set */
+            completeness?: number;
+            complete?: boolean;
+        };
+        /** @description Partial upsert. Provide only the fields to change; null clears a field. */
+        HomeGuideUpdate: {
+            accessInstructions?: string | null;
+            keyPickup?: string | null;
+            wifiName?: string | null;
+            wifiPassword?: string | null;
+            heatingCooling?: string | null;
+            kitchen?: string | null;
+            bins?: string | null;
+            petsPlants?: string | null;
+            houseRules?: string | null;
+            neighbourhood?: string | null;
+            emergencyContact?: string | null;
+        };
+        HomeGuideResponse: {
+            isOwner: boolean;
+            /** @description true when a gated counterparty may not yet read the guide */
+            locked: boolean;
+            /**
+             * Format: date-time
+             * @description present when locked — when the reveal gate opens
+             */
+            unlocksAt?: string;
+            guide?: components["schemas"]["HomeGuide"] | null;
+        };
+        /** @description Optional note + already-uploaded photo URLs. */
+        CheckEventRequest: {
+            note?: string;
+            photos?: string[];
+        };
+        CheckEvent: {
+            id: string;
+            userId?: string;
+            /** @enum {string} */
+            type: "checkin" | "checkout";
+            note?: string | null;
+            photos: string[];
+            /** Format: date-time */
+            createdAt: string;
+            mine?: boolean;
+        };
+        CheckEventResponse: {
+            ok: boolean;
+            /** @description true when the party had already checked in/out */
+            duplicate?: boolean;
+            event: components["schemas"]["CheckEvent"];
+        };
+        TripCockpitResponse: {
+            agreementId: string;
+            proposalId?: string;
+            /** @enum {string} */
+            phase: "AGREED" | "PREPARING" | "READY" | "IN_PROGRESS" | "COMPLETED" | "INTERRUPTED";
+            /** @enum {string} */
+            role?: "host1" | "host2";
+            dates: {
+                /** Format: date-time */
+                from?: string;
+                /** Format: date-time */
+                to?: string;
+            };
+            countdown?: {
+                days?: number;
+                hours?: number;
+            };
+            keyCodes?: {
+                mine?: string | null;
+            };
+            insurance?: {
+                policyNumber?: string;
+                coverageAmount?: number;
+                status?: string;
+                /** Format: date-time */
+                expiresAt?: string;
+            } | null;
+            addressUnlocked: boolean;
+            /** @description only present once the reveal gate is open */
+            otherAddress?: string | null;
+            otherCity?: string;
+            /** @description the other home guide once unlocked, else { locked, unlocksAt } */
+            otherGuide?: components["schemas"]["HomeGuide"] | {
+                locked?: boolean;
+                /** Format: date-time */
+                unlocksAt?: string;
+            } | null;
+            myGuideCompleteness?: number;
+            otherGuideCompleteness?: number;
+            checklist: {
+                guideFilled?: boolean;
+                detailsRead?: boolean;
+                checkedIn?: boolean;
+                checkedOut?: boolean;
+            };
+            checkEvents: components["schemas"]["CheckEvent"][];
         };
         AuthUser: {
             id: string;

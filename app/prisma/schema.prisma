@@ -94,6 +94,7 @@ model User {
   inspirationPackages InspirationPackage[]
   reviewsAuthored SwapReview[] @relation("ReviewsAuthored")
   reviewsReceived SwapReview[] @relation("ReviewsReceived")
+  checkEvents     SwapCheckEvent[]
 }
 
 // ---------- AI ASSISTANT (DOK-146) ----------
@@ -353,6 +354,7 @@ model Listing {
   verificationPayment  ListingVerificationPayment?
   featuredPurchases    ListingFeaturedPurchase[]
   favoritedBy          Favorite[]
+  homeGuide            ListingHomeGuide?
 
   @@index([city])
   @@index([userId])
@@ -448,11 +450,62 @@ model SwapAgreement {
   // has been sent, so the sweep never double-sends.
   reviewReminderSentAt DateTime?
 
+  // Set by the daily cron once the T-7d "complete your home guide" nudge has
+  // been sent to a party whose guide is still incomplete, so it never repeats.
+  guideReminderSentAt DateTime?
+
+  // Set the first time the day-of check-in nudge fires for an agreement with
+  // no check-in yet, so the best-effort reminder is sent at most once.
+  checkInNudgeSentAt DateTime?
+
   insurancePolicy InsurancePolicy?
   orderAddOns     OrderAddOn[]
   reviews         SwapReview[]
+  checkEvents     SwapCheckEvent[]
 
   createdAt   DateTime     @default(now())
+}
+
+// ---------- HOME GUIDE (DOK-152) ----------
+// One "Guida di casa" per listing — the owner fills it in; the other party of
+// an active swap can read it only once the reveal gate opens (48h before the
+// stay, or once both guides are complete). All fields optional; completeness is
+// derived by counting valued "core" fields at the API layer.
+
+model ListingHomeGuide {
+  id                 String   @id @default(cuid())
+  listingId          String   @unique
+  listing            Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  accessInstructions String?
+  keyPickup          String?
+  wifiName           String?
+  wifiPassword       String?
+  heatingCooling     String?
+  kitchen            String?
+  bins               String?
+  petsPlants         String?
+  houseRules         String?
+  neighbourhood      String?
+  emergencyContact   String?
+  updatedAt          DateTime @updatedAt
+}
+
+// ---------- CHECK-IN / CHECK-OUT (DOK-152) ----------
+// One event per party per type. photos is a JSON-encoded array of upload URLs
+// (SQLite has no array type). The check-in event derives the IN_PROGRESS phase.
+
+model SwapCheckEvent {
+  id          String        @id @default(cuid())
+  agreementId String
+  agreement   SwapAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String                                   // "checkin" | "checkout"
+  note        String?
+  photos      String        @default("[]")             // JSON array of upload URLs
+  createdAt   DateTime      @default(now())
+
+  @@index([agreementId])
 }
 
 // ---------- SWAP REVIEW (DOK-147) ----------

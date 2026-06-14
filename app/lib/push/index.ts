@@ -40,6 +40,10 @@ export type PushKind =
   | "swapCancelled"
   | "swapCompleted"
   | "reviewReminder"
+  | "checkedIn"
+  | "checkedOut"
+  | "homeGuideReminder"
+  | "checkInNudge"
   | "identityVerified"
   | "identityVerificationFailed";
 
@@ -237,6 +241,34 @@ export const pushTemplates = {
       title: "Don't forget to review your swap",
       body: "Your review is still open — it takes two minutes.",
       data: { kind: "reviewReminder", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  checkedIn(proposalId: string, name: string): PushPayload {
+    return {
+      title: `${name} has checked in`,
+      body: "Your swap is now in progress. Tap to see the details.",
+      data: { kind: "checkedIn", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  checkedOut(proposalId: string, name: string): PushPayload {
+    return {
+      title: `${name} has checked out`,
+      body: "Tap to wrap up your swap.",
+      data: { kind: "checkedOut", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  homeGuideReminder(proposalId: string, city: string): PushPayload {
+    return {
+      title: "Complete your home guide",
+      body: `Your guest arrives in ${city} soon — fill in the essentials.`,
+      data: { kind: "homeGuideReminder", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  checkInNudge(proposalId: string, city: string): PushPayload {
+    return {
+      title: `Arrived in ${city}?`,
+      body: "Check in from your trip cockpit to let your host know.",
+      data: { kind: "checkInNudge", proposalId, deepLink: deepLinkProposal(proposalId) },
     };
   },
   identityVerified(): PushPayload {

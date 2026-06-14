@@ -228,6 +228,54 @@ export const templates = {
       text: `Your swap with ${otherCity} completed a week ago — don't forget to leave a review: ${APP_URL}/swaps`,
     }),
 
+  checkedIn: (toEmail: string, name: string) =>
+    build({
+      to: toEmail,
+      subject: `${name} has checked in`,
+      preview: "Your swap is now in progress.",
+      heading: `${name} has checked in.`,
+      intro: `${name} has arrived and checked in. Your swap is now in progress — open your trip cockpit to see the details and any check-in photos.`,
+      ctaLabel: "Open swap",
+      ctaHref: `${APP_URL}/swaps`,
+      text: `${name} has checked in. Your swap is now in progress: ${APP_URL}/swaps`,
+    }),
+
+  checkedOut: (toEmail: string, name: string) =>
+    build({
+      to: toEmail,
+      subject: `${name} has checked out`,
+      preview: "The stay is wrapping up.",
+      heading: `${name} has checked out.`,
+      intro: `${name} has checked out. Once both sides have wrapped up, you'll be invited to leave a review.`,
+      ctaLabel: "Open swap",
+      ctaHref: `${APP_URL}/swaps`,
+      text: `${name} has checked out: ${APP_URL}/swaps`,
+    }),
+
+  homeGuideReminder: (toEmail: string, guestCity: string) =>
+    build({
+      to: toEmail,
+      subject: "Complete your home guide",
+      preview: "Your guest arrives soon — fill in the essentials.",
+      heading: "Complete your home guide.",
+      intro: `Your guest arrives in ${guestCity} soon. Add your Wi-Fi, key pickup, and the house essentials so their arrival is smooth — it unlocks for them 48 hours before the stay.`,
+      ctaLabel: "Complete your guide",
+      ctaHref: `${APP_URL}/swaps`,
+      text: `Your guest arrives in ${guestCity} soon — complete your home guide: ${APP_URL}/swaps`,
+    }),
+
+  checkInNudge: (toEmail: string, destinationCity: string) =>
+    build({
+      to: toEmail,
+      subject: `Arrived in ${destinationCity}?`,
+      preview: "Check in to let your host know.",
+      heading: `Arrived in ${destinationCity}?`,
+      intro: "Your swap starts today. Check in from your trip cockpit to let your host know you've arrived — you can add a photo or a quick note.",
+      ctaLabel: "Check in",
+      ctaHref: `${APP_URL}/swaps`,
+      text: `Your swap in ${destinationCity} starts today — check in from your trip cockpit: ${APP_URL}/swaps`,
+    }),
+
   identityVerified: (toEmail: string) =>
     build({
       to: toEmail,

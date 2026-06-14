@@ -8,6 +8,7 @@ import { insuranceProvider } from "@/lib/insurance";
 import { chargeInspirePackageOnAccept, cancelInspirePackagePayment } from "@/lib/billing/inspire";
 import { toDTO } from "@/lib/listing-utils";
 import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
+import { getTripPhase, guideUnlocked, homeGuideComplete } from "@/lib/trip/phase";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -31,9 +32,9 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
   const proposal = await prisma.swapProposal.findUnique({
     where: { id },
     include: {
-      proposerListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true } } } },
-      targetListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true } } } },
-      agreement: { include: { insurancePolicy: true } },
+      proposerListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true } }, homeGuide: true } },
+      targetListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true } }, homeGuide: true } },
+      agreement: { include: { insurancePolicy: true, checkEvents: true } },
     },
   });
   if (!proposal) return notFound();
@@ -59,6 +60,19 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
     canReview = !existing;
   }
 
+  // Derived trip phase + reveal gate, so native clients get the cockpit's
+  // headline state without a second round-trip (full payload lives at /trip).
+  let phase: string | null = null;
+  let addressUnlocked = false;
+  if (proposal.agreement) {
+    const now = new Date();
+    phase = getTripPhase(proposal.agreement, proposal.agreement.checkEvents, now);
+    const bothGuidesComplete =
+      homeGuideComplete(proposal.proposerListing.homeGuide) &&
+      homeGuideComplete(proposal.targetListing.homeGuide);
+    addressUnlocked = guideUnlocked(proposal.agreement, now, bothGuidesComplete);
+  }
+
   const agreement = proposal.agreement
     ? {
         id: proposal.agreement.id,
@@ -68,6 +82,8 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
         keyCode1: proposal.agreement.keyCode1,
         keyCode2: proposal.agreement.keyCode2,
         status: proposal.agreement.status,
+        phase,
+        addressUnlocked,
         canReview,
         insurance: proposal.agreement.insurancePolicy
           ? {
