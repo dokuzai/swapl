@@ -58,6 +58,13 @@ struct DisputeOpenSheet: View {
                 }
                 .padding(22)
             }
+            // In landscape the software keyboard is tall enough to cover the
+            // "Send report" pill while the description field is focused. Keep
+            // the scroll content padded above the keyboard inset and let an
+            // interactive swipe dismiss it, so the submit button is always
+            // reachable above the keyboard.
+            .safeAreaPadding(.bottom, 16)
+            .scrollDismissesKeyboard(.interactively)
             .background(SwaplSemanticLight.background.ignoresSafeArea())
             .navigationTitle("Report a problem")
             .navigationBarTitleDisplayMode(.inline)
