@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.swapl.core.model.Agreement
+import app.swapl.core.model.SupportContacts
 import app.swapl.design.MonoFamily
 import app.swapl.designtokens.SwaplColors
 import app.swapl.designtokens.SwaplRadius
@@ -23,8 +24,15 @@ import app.swapl.designtokens.SwaplSpacing
 
 // Shared between the swap thread and the Trips detail so the agreed state
 // (key codes + insurance) renders identically wherever an agreement shows up.
+// supportPhone comes from GET /api/config/support-contacts (the 24/7 line);
+// callers that don't have it loaded yet get the launch default so the panel
+// never renders a blank number.
 @Composable
-fun AgreedPanel(a: Agreement, otherName: String) {
+fun AgreedPanel(
+    a: Agreement,
+    otherName: String,
+    supportPhone: String = SupportContacts.FALLBACK.phone,
+) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -46,7 +54,7 @@ fun AgreedPanel(a: Agreement, otherName: String) {
             HorizontalDivider(color = SwaplColors.Cream.copy(alpha = 0.2f))
             Text("Insurance · €${a.insurance.coverageAmount / 1000}k cover", style = MaterialTheme.typography.labelMedium, color = SwaplColors.Cream.copy(alpha = 0.6f))
             Text(a.insurance.policyNumber, style = MaterialTheme.typography.titleLarge, color = SwaplColors.Cream, fontWeight = FontWeight.Medium)
-            Text("Auto-issued · 24/7 line +44 800 000 swap", style = MaterialTheme.typography.bodySmall, color = SwaplColors.Cream.copy(alpha = 0.7f))
+            Text("Auto-issued · 24/7 line $supportPhone", style = MaterialTheme.typography.bodySmall, color = SwaplColors.Cream.copy(alpha = 0.7f))
         }
     }
 }

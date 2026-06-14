@@ -62,6 +62,7 @@ import app.swapl.core.model.Dispute
 import app.swapl.core.model.DisputeCategory
 import app.swapl.core.model.DisputeMessage
 import app.swapl.core.model.DisputeStatus
+import app.swapl.core.model.SupportContacts
 import app.swapl.core.repository.ListingRepository
 import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
@@ -95,6 +96,9 @@ interface DisputeFlowState {
     val isLoading: Boolean
     val isSubmitting: Boolean
     val baseUrl: String
+    // Server-configured support contacts (24/7 line + help URL); starts at the
+    // launch defaults and is overlaid once the config endpoint resolves.
+    val supportContacts: SupportContacts
 
     // The newest non-terminal case is the live card; if every case is
     // resolved/closed we fall back to the newest so members can still read
@@ -133,7 +137,7 @@ fun DisputeSection(
                     myUserId = myUserId,
                     isSubmitting = state.isSubmitting,
                     listingRepo = listingRepo,
-                    onCallLine = { open24x7(context, state.baseUrl) },
+                    onCallLine = { open24x7(context, state.supportContacts.helpUrl) },
                     onReply = { body, photos -> state.reply(dispute.id, body, photos) },
                 )
                 // A resolved/closed history still lets you raise a fresh issue.
@@ -150,7 +154,7 @@ fun DisputeSection(
             otherName = otherName,
             isSubmitting = state.isSubmitting,
             listingRepo = listingRepo,
-            onCallLine = { open24x7(context, state.baseUrl) },
+            onCallLine = { open24x7(context, state.supportContacts.helpUrl) },
             onDismiss = { showOpenSheet = false },
             onSubmit = { category, description, photos ->
                 state.open(category, description, photos) { showOpenSheet = false }
@@ -171,8 +175,8 @@ private fun ReportProblemButton(text: String, onClick: () -> Unit) {
 // The 24/7 line. We have no in-app phone number, so foregrounding it means
 // routing to the always-on help page (same target the cockpit used before),
 // surfaced more prominently from urgent cases.
-private fun open24x7(context: Context, baseUrl: String) {
-    val url = "$baseUrl/help/contact".toUri()
+private fun open24x7(context: Context, helpUrl: String) {
+    val url = helpUrl.toUri()
     CustomTabsIntent.Builder().build().launchUrl(context, url)
 }
 

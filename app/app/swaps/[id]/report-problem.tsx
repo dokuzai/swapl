@@ -15,8 +15,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useT } from "@/lib/i18n/client";
-
-const SUPPORT_PHONE = "+44 800 000 swap";
+import { useSupportContacts } from "@/lib/support-contacts";
 
 const CATEGORIES = ["access", "damage", "cleanliness", "safety", "no_show", "other"] as const;
 type Category = (typeof CATEGORIES)[number];
@@ -75,6 +74,7 @@ async function uploadPhotos(files: FileList | null): Promise<string[]> {
 
 export function ReportProblem({ agreementId, myUserId }: { agreementId: string; myUserId: string }) {
   const t = useT();
+  const support = useSupportContacts();
   const [disputes, setDisputes] = useState<Dispute[] | null>(null);
   const [opening, setOpening] = useState(false);
 
@@ -96,7 +96,7 @@ export function ReportProblem({ agreementId, myUserId }: { agreementId: string; 
   return (
     <div className="space-y-4">
       {disputes?.map((d) => (
-        <CaseCard key={d.id} dispute={d} myUserId={myUserId} onChanged={load} />
+        <CaseCard key={d.id} dispute={d} myUserId={myUserId} onChanged={load} phone={support.phone} />
       ))}
 
       <div className="surface-card p-5">
@@ -107,14 +107,14 @@ export function ReportProblem({ agreementId, myUserId }: { agreementId: string; 
           {t("trip.report.title")}
         </div>
         <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>
-          {t("trip.report.body", { phone: SUPPORT_PHONE })}
+          {t("trip.report.body", { phone: support.phone })}
         </p>
         <div className="flex flex-wrap gap-2">
           <button type="button" className="pill-primary" onClick={() => setOpening(true)}>
             {t("dispute.report.cta")}
           </button>
           <a
-            href="https://swapl.fun/help"
+            href={support.helpUrl}
             target="_blank"
             rel="noreferrer"
             className="pill-ghost inline-block"
@@ -127,6 +127,7 @@ export function ReportProblem({ agreementId, myUserId }: { agreementId: string; 
       {opening && (
         <OpenCaseModal
           agreementId={agreementId}
+          phone={support.phone}
           onClose={() => setOpening(false)}
           onOpened={() => {
             setOpening(false);
@@ -140,10 +141,12 @@ export function ReportProblem({ agreementId, myUserId }: { agreementId: string; 
 
 function OpenCaseModal({
   agreementId,
+  phone,
   onClose,
   onOpened,
 }: {
   agreementId: string;
+  phone: string;
   onClose: () => void;
   onOpened: () => void;
 }) {
@@ -257,7 +260,7 @@ function OpenCaseModal({
             className="text-sm rounded-lg px-3 py-2 mb-4"
             style={{ background: "var(--pink-light)", color: "var(--pink)" }}
           >
-            {t("dispute.open.urgentNote", { phone: SUPPORT_PHONE })}
+            {t("dispute.open.urgentNote", { phone })}
           </p>
         )}
 
@@ -353,10 +356,12 @@ function CaseCard({
   dispute,
   myUserId,
   onChanged,
+  phone,
 }: {
   dispute: Dispute;
   myUserId: string;
   onChanged: () => void;
+  phone: string;
 }) {
   const t = useT();
   const terminal = TERMINAL.has(dispute.status);
@@ -390,7 +395,7 @@ function CaseCard({
           className="text-sm rounded-lg px-3 py-2 mb-3"
           style={{ background: "var(--pink-light)", color: "var(--pink)" }}
         >
-          {t("dispute.case.urgentBanner", { phone: SUPPORT_PHONE })}
+          {t("dispute.case.urgentBanner", { phone })}
         </p>
       )}
 

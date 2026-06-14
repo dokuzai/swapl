@@ -22,6 +22,9 @@ final class DisputeFlowViewModel {
     var isLoading = false
     var error: String?
     var isSubmitting = false
+    // Server-configured support contacts; starts at the launch defaults and is
+    // overlaid once /api/config/support-contacts resolves.
+    var supportContacts: SupportContacts = .fallback
 
     init(agreementId: String) {
         self.agreementId = agreementId
@@ -46,6 +49,13 @@ final class DisputeFlowViewModel {
             disputes = try await DisputeRepository.shared.list(agreementId: agreementId)
         } catch {
             self.error = error.localizedDescription
+        }
+    }
+
+    // Best-effort: a failure leaves the launch defaults in place.
+    func loadSupportContacts() async {
+        if let contacts = try? await SupportContactsRepository.shared.fetch() {
+            supportContacts = contacts
         }
     }
 
@@ -127,7 +137,10 @@ struct DisputeFlowView: View {
                 reportEntry(title: "Report a problem")
             }
         }
-        .task { await vm.load() }
+        .task {
+            await vm.load()
+            await vm.loadSupportContacts()
+        }
         .sheet(isPresented: $showOpenForm) {
             DisputeOpenSheet(
                 otherName: otherName,
@@ -163,10 +176,12 @@ struct DisputeFlowView: View {
     }
 
     // The 24/7 line. We have no in-app phone number, so foregrounding it means
-    // routing to the always-on help page (same target the cockpit used before),
-    // surfaced more prominently from urgent cases.
+    // routing to the always-on help page — now the server-configured help URL
+    // (GET /api/config/support-contacts) rather than a hardcoded path.
     private func open24_7() {
-        helpItem = SafariItem(url: APIClient.shared.baseURL.appendingPathComponent("/help/contact"))
+        let url = URL(string: vm.supportContacts.helpUrl)
+            ?? APIClient.shared.baseURL.appendingPathComponent("/help/contact")
+        helpItem = SafariItem(url: url)
     }
 }
 

@@ -28,11 +28,13 @@ import app.swapl.core.model.Dispute
 import app.swapl.core.model.DisputeCategory
 import app.swapl.core.model.MeResponse
 import app.swapl.core.model.ProposalDetail
+import app.swapl.core.model.SupportContacts
 import app.swapl.core.model.TripCockpit
 import app.swapl.core.network.ApiClient
 import app.swapl.core.repository.DisputeRepository
 import app.swapl.core.repository.ListingRepository
 import app.swapl.core.repository.ProposalRepository
+import app.swapl.core.repository.SupportContactsRepository
 import app.swapl.core.repository.TripsRepository
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -53,6 +55,7 @@ class TripDetailViewModel @Inject constructor(
     private val proposals: ProposalRepository,
     val listings: ListingRepository,
     private val disputeRepo: DisputeRepository,
+    private val supportRepo: SupportContactsRepository,
     val api: ApiClient,
     savedState: SavedStateHandle,
 ) : ViewModel(), DisputeFlowState {
@@ -83,6 +86,8 @@ class TripDetailViewModel @Inject constructor(
     override var isSubmitting by mutableStateOf(false)
         private set
     override val baseUrl: String get() = api.baseUrl
+    override var supportContacts by mutableStateOf(SupportContacts.FALLBACK)
+        private set
     var myUserId by mutableStateOf<String?>(null)
         private set
 
@@ -92,6 +97,8 @@ class TripDetailViewModel @Inject constructor(
             .onFailure { error = it.message }
         loadCockpit()
         loadDisputes()
+        // Best-effort: a failure leaves the launch defaults in place.
+        runCatching { supportContacts = supportRepo.fetch() }
         if (myUserId == null) {
             runCatching { api.client.get("${api.baseUrl}/api/me").body<MeResponse>().user.id }
                 .onSuccess { myUserId = it }
@@ -257,7 +264,7 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
         }
 
         if (a != null) {
-            AgreedPanel(a, hostName)
+            AgreedPanel(a, hostName, supportPhone = vm.supportContacts.phone)
         }
 
         // The cockpit: only renders once the /trip payload has loaded.

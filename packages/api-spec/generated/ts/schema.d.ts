@@ -1720,6 +1720,45 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/config/support-contacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Support contact configuration
+         * @description The 24/7 phone line and help-centre URL surfaced from the "Report a problem" flow across web, iOS and Android. Sourced from env (SUPPORT_PHONE, HELP_URL_24_7) with launch defaults. Public, no auth.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SupportContactsResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/cities": {
         parameters: {
             query?: never;
@@ -6248,6 +6287,15 @@ export interface components {
         };
         CityAutocompleteResponse: {
             items: components["schemas"]["CityAutocompleteItem"][];
+        };
+        SupportContactsResponse: {
+            /** @description 24/7 support phone line, e.g. "+44 800 000 swap". */
+            phone: string;
+            /**
+             * Format: uri
+             * @description Help-centre URL opened from the "Report a problem" flow.
+             */
+            helpUrl: string;
         };
         ProposalSummary: {
             id: string;

@@ -37,6 +37,7 @@ tags:
   - name: marketing
   - name: uploads
   - name: i18n
+  - name: config
 
 components:
   securitySchemes:
@@ -898,6 +899,13 @@ components:
         items:
           type: array
           items: { $ref: '#/components/schemas/CityAutocompleteItem' }
+
+    SupportContactsResponse:
+      type: object
+      required: [phone, helpUrl]
+      properties:
+        phone: { type: string, description: '24/7 support phone line, e.g. "+44 800 000 swap".' }
+        helpUrl: { type: string, format: uri, description: 'Help-centre URL opened from the "Report a problem" flow.' }
 
     ProposalSummary:
       type: object
@@ -2143,6 +2151,21 @@ paths:
         '401': { description: Unauthenticated }
         '403': { description: Not the owner }
         '404': { description: Listing not found }
+
+  /api/config/support-contacts:
+    get:
+      tags: [config]
+      summary: Support contact configuration
+      description: >-
+        The 24/7 phone line and help-centre URL surfaced from the "Report a
+        problem" flow across web, iOS and Android. Sourced from env
+        (SUPPORT_PHONE, HELP_URL_24_7) with launch defaults. Public, no auth.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SupportContactsResponse' }
 
   /api/cities:
     get:

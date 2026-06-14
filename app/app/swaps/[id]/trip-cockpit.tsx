@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
 import { HomeGuideEditor } from "./home-guide-editor";
 import { ReportProblem } from "./report-problem";
+import { useSupportContacts } from "@/lib/support-contacts";
 
 type TripPhase = "AGREED" | "PREPARING" | "READY" | "IN_PROGRESS" | "COMPLETED" | "INTERRUPTED";
 
@@ -75,8 +76,6 @@ const GUIDE_SECTION_FIELDS = [
   "emergencyContact",
 ] as const;
 
-const SUPPORT_PHONE = "+44 800 000 swap";
-
 export function TripCockpit({
   agreementId,
   myListingId,
@@ -91,6 +90,7 @@ export function TripCockpit({
   myCode: string | null;
 }) {
   const t = useT();
+  const support = useSupportContacts();
   const [trip, setTrip] = useState<TripPayload | null>(null);
   const [error, setError] = useState(false);
 
@@ -143,7 +143,7 @@ export function TripCockpit({
           <p className="text-sm mt-4" style={{ color: "color-mix(in oklab, var(--cream) 75%, transparent)" }}>
             Policy <span className="font-mono">{trip.insurance.policyNumber}</span> · €
             {trip.insurance.coverageAmount.toLocaleString()} cover · 24/7 line:{" "}
-            <span className="font-mono">{SUPPORT_PHONE}</span>
+            <span className="font-mono">{support.phone}</span>
           </p>
         )}
       </div>
