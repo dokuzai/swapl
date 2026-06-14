@@ -176,7 +176,7 @@ export function ReportProblem({ agreementId, myUserId }: { agreementId: string; 
             rel="noreferrer"
             className="pill-ghost inline-block"
           >
-            {t("trip.report.cta")} →
+            {t("trip.report.helpCentre")} →
           </a>
         </div>
       </div>
@@ -392,7 +392,11 @@ function OpenCaseModal({
           </p>
         ) : (
           <button type="button" className="pill-primary w-full" disabled={!canSubmit} onClick={submit}>
-            {state === "submitting" ? t("dispute.open.submitting") : t("dispute.open.submit")}
+            {uploading
+              ? t("dispute.open.uploadingPhotos")
+              : state === "submitting"
+                ? t("dispute.open.submitting")
+                : t("dispute.open.submit")}
           </button>
         )}
       </div>
@@ -464,10 +468,17 @@ function PhotoStrip({ photos, onRemove }: { photos: string[]; onRemove?: (src: s
               type="button"
               aria-label={t("dispute.photo.remove")}
               onClick={() => onRemove(src)}
-              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-xs leading-none"
-              style={{ background: "var(--navy)", color: "var(--cream)", border: "1.5px solid var(--cream)" }}
+              // 44×44 tap target (a11y) anchored to the top-right corner; the
+              // visible × badge sits centered in that corner via the inner span.
+              className="absolute -top-3 -right-3 h-11 w-11 flex items-start justify-end"
             >
-              ×
+              <span
+                aria-hidden
+                className="h-5 w-5 rounded-full flex items-center justify-center text-xs leading-none"
+                style={{ background: "var(--navy)", color: "var(--cream)", border: "1.5px solid var(--cream)" }}
+              >
+                ×
+              </span>
             </button>
           )}
         </div>
@@ -711,7 +722,12 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
       <PhotoStrip photos={photos} onRemove={removePhoto} />
       <div className="flex items-center justify-between gap-2 mt-2">
         <label className="text-xs cursor-pointer" style={{ color: "var(--navy-3)" }}>
-          📎 {uploading ? t("dispute.open.uploading") : t("dispute.case.photoCount", { n: photos.length })}
+          📎{" "}
+          {uploading
+            ? t("dispute.open.uploading")
+            : photos.length === 0
+              ? t("dispute.case.addPhotos")
+              : t("dispute.case.photoCount", { n: photos.length })}
           <input
             type="file"
             accept="image/*"
