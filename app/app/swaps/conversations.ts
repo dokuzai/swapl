@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/db";
 
 // Serializable conversation summary shared by the inbox list pane on
-// /swaps and /swaps/[id] (three-pane layout, DOK-150).
+// /swaps and /swaps/[id] (three-pane layout, DOK-150) and the mobile chat
+// list (GET /api/conversations, DOK-154).
 export type Conversation = {
   id: string;
   status: string;
@@ -17,6 +18,10 @@ export type Conversation = {
   otherName: string | null;
   /** Most recent message line for the list preview. */
   lastLine: string | null;
+  /** ISO timestamp of the last chat message, or null if none yet. */
+  lastMessageAt: string | null;
+  /** Inbound messages the viewer hasn't read yet. */
+  unreadCount: number;
 };
 
 export async function getConversations(userId: string): Promise<Conversation[]> {
@@ -30,12 +35,41 @@ export async function getConversations(userId: string): Promise<Conversation[]> 
         select: { city: true, neighbourhood: true, userId: true, user: { select: { name: true } } },
       },
       proposer: { select: { id: true, name: true } },
+      messages: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { body: true, photos: true, createdAt: true },
+      },
     },
     orderBy: { updatedAt: "desc" },
   });
 
+  // Unread counts in one grouped query: inbound (other-party) messages with no
+  // readAt, across all the viewer's threads.
+  const ids = proposals.map((p) => p.id);
+  const unreadByProposal = new Map<string, number>();
+  if (ids.length) {
+    const grouped = await prisma.swapMessage.groupBy({
+      by: ["proposalId"],
+      where: { proposalId: { in: ids }, authorId: { not: userId }, readAt: null },
+      _count: { _all: true },
+    });
+    for (const g of grouped) unreadByProposal.set(g.proposalId, g._count._all);
+  }
+
+  const previewLine = (
+    msg: { body: string; photos: string } | undefined,
+    fallback: string | null
+  ): string | null => {
+    if (!msg) return fallback;
+    if (msg.body && msg.body.trim().length) return msg.body;
+    // Photo-only message: show a placeholder instead of an empty preview.
+    return "📷 Photo";
+  };
+
   return proposals.map((p) => {
     const meIsProposer = p.proposerId === userId;
+    const lastMsg = p.messages[0];
     return {
       id: p.id,
       status: p.status,
@@ -48,7 +82,9 @@ export async function getConversations(userId: string): Promise<Conversation[]> 
       theirCity: meIsProposer ? p.targetListing.city : p.proposerListing.city,
       theirNeighbourhood: meIsProposer ? p.targetListing.neighbourhood : p.proposerListing.neighbourhood,
       otherName: meIsProposer ? p.targetListing.user.name : p.proposer.name,
-      lastLine: p.counterMessage ?? p.message,
+      lastLine: previewLine(lastMsg, p.counterMessage ?? p.message),
+      lastMessageAt: lastMsg ? lastMsg.createdAt.toISOString() : null,
+      unreadCount: unreadByProposal.get(p.id) ?? 0,
     };
   });
 }

@@ -1247,35 +1247,93 @@ components:
 
     SwapMessage:
       type: object
-      required: [id, proposalId, authorId, mine, body, createdAt]
+      required: [id, proposalId, authorId, mine, body, photos, readAt, createdAt]
       properties:
         id: { type: string }
         proposalId: { type: string }
         authorId: { type: string }
         mine: { type: boolean, description: True when the requester authored the message. }
         body: { type: string }
+        photos:
+          type: array
+          items: { type: string, format: uri }
+          description: Image attachment URLs (uploaded via /api/uploads/listing-photo).
+        readAt:
+          type: [string, 'null']
+          format: date-time
+          description: When the recipient (non-author) read this message, or null.
         createdAt: { type: string, format: date-time }
 
     SwapMessagesResponse:
       type: object
-      required: [messages]
+      required: [messages, nextCursor, hasMore]
       properties:
         messages:
           type: array
           items: { $ref: '#/components/schemas/SwapMessage' }
-          description: Oldest first.
+          description: Oldest first within the returned page.
+        nextCursor:
+          type: [string, 'null']
+          description: Message id to pass as ?cursor= to fetch the next (older) page, or null.
+        hasMore: { type: boolean, description: True when more (older) messages exist beyond this page. }
 
     SwapMessageCreateRequest:
       type: object
-      required: [body]
+      description: Provide body, photos, or both — at least one is required.
       properties:
-        body: { type: string, minLength: 1, maxLength: 4000 }
+        body: { type: string, maxLength: 4000 }
+        photos:
+          type: array
+          maxItems: 10
+          items: { type: string, format: uri }
+          description: Image attachment URLs already uploaded via /api/uploads/listing-photo.
 
     SwapMessageCreateResponse:
       type: object
       required: [message]
       properties:
         message: { $ref: '#/components/schemas/SwapMessage' }
+
+    SwapMessagesReadResponse:
+      type: object
+      required: [ok, marked]
+      properties:
+        ok: { type: boolean }
+        marked: { type: integer, description: Number of messages newly marked as read. }
+
+    Conversation:
+      type: object
+      required:
+        [id, status, dateFrom, dateTo, updatedAt, role, myCity, myNeighbourhood,
+         theirCity, theirNeighbourhood, otherName, lastLine, lastMessageAt, unreadCount]
+      properties:
+        id: { type: string }
+        status: { type: string, description: Swap status (PENDING, COUNTERED, ACCEPTED, DECLINED, WITHDRAWN). }
+        dateFrom: { type: string, format: date-time }
+        dateTo: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        role:
+          type: string
+          enum: [hosting, traveling]
+          description: hosting = they proposed to my home; traveling = I proposed to theirs.
+        myCity: { type: string }
+        myNeighbourhood: { type: string }
+        theirCity: { type: string }
+        theirNeighbourhood: { type: string }
+        otherName: { type: [string, 'null'] }
+        lastLine: { type: [string, 'null'], description: Last message preview line. }
+        lastMessageAt: { type: [string, 'null'], format: date-time }
+        unreadCount: { type: integer, description: Inbound messages the viewer hasn't read. }
+
+    ConversationsResponse:
+      type: object
+      required: [conversations, totalUnread]
+      properties:
+        conversations:
+          type: array
+          items: { $ref: '#/components/schemas/Conversation' }
+          description: Most recently active thread first.
+        totalUnread: { type: integer, description: Sum of unread counts across all threads. }
 
     BetaSignupRequest:
       type: object
@@ -2685,9 +2743,28 @@ paths:
     get:
       tags: [proposals]
       summary: Swap thread messages
-      description: Only the two parties of the proposal may read the thread.
+      description: >-
+        Continuous chat history for the two parties of the proposal — spans
+        negotiation through the post-accept agreement. Only the two parties may
+        read. Cursor-paginated (newest pages first; messages oldest-first within
+        a page). By default this also marks the caller's inbound unread messages
+        as read; pass markRead=false to suppress.
       parameters:
         - { name: id, in: path, required: true, schema: { type: string } }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 100, default: 50 }
+        - name: cursor
+          in: query
+          required: false
+          description: Message id from a previous nextCursor; returns older messages.
+          schema: { type: string }
+        - name: markRead
+          in: query
+          required: false
+          description: Set to false to read without clearing the unread badge.
+          schema: { type: boolean, default: true }
       security: [{ bearerAuth: [] }, { cookieAuth: [] }]
       responses:
         '200':
@@ -2702,8 +2779,11 @@ paths:
       tags: [proposals]
       summary: Post a message in the swap thread
       description: >-
-        Only the two parties may post. Notifies the other side via email +
-        push. Rate-limited 30/min per user.
+        Only the two parties may post. Body and/or image attachments (photos,
+        URLs already uploaded via /api/uploads/listing-photo) — at least one
+        required. Notifies the other side via push (every message) and email
+        (throttled to at most once per ~15 min per recipient). Rate-limited
+        30/min per user.
       parameters:
         - { name: id, in: path, required: true, schema: { type: string } }
       security: [{ bearerAuth: [] }, { cookieAuth: [] }]
@@ -2727,6 +2807,43 @@ paths:
         '403': { description: Not a party of this proposal }
         '404': { description: Proposal not found }
         '429': { description: Rate limited }
+
+  /api/proposals/{id}/messages/read:
+    post:
+      tags: [proposals]
+      summary: Mark a swap thread as read
+      description: >-
+        Marks every inbound (other-party) unread message in the thread as read
+        for the caller. Body-less; idempotent. Only the two parties may call.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SwapMessagesReadResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of this proposal }
+        '404': { description: Proposal not found }
+
+  /api/conversations:
+    get:
+      tags: [proposals]
+      summary: Chat list — the viewer's swap threads
+      description: >-
+        Lists the viewer's swap conversations sorted by most recent activity,
+        each with counterpart, last message preview + time, unread count, and
+        swap status. Powers the mobile chat list.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConversationsResponse' }
+        '401': { description: Unauthenticated }
 
   /api/agreements/{id}/review:
     post:

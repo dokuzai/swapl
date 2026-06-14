@@ -421,7 +421,23 @@ model SwapMessage {
   proposal   SwapProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   authorId   String
   body       String
+  photos     String       @default("[]")                  // JSON array of upload URLs
+  readAt     DateTime?                                     // set when the *recipient* (non-author) has read it
   createdAt  DateTime     @default(now())
+
+  @@index([proposalId, createdAt])
+}
+
+// Per (proposal, recipient) throttle for new-message email notifications:
+// push fires every message, but email is sent at most once per window so an
+// active back-and-forth doesn't flood the inbox. lastEmailedAt is the last
+// time we actually sent a notification email to this recipient for this thread.
+model SwapMessageEmailThrottle {
+  proposalId  String
+  recipientId String
+  lastEmailedAt DateTime @default(now())
+
+  @@id([proposalId, recipientId])
 }
 
 // ---------- SWAP AGREEMENT ----------

@@ -2959,11 +2959,17 @@ export interface paths {
         };
         /**
          * Swap thread messages
-         * @description Only the two parties of the proposal may read the thread.
+         * @description Continuous chat history for the two parties of the proposal — spans negotiation through the post-accept agreement. Only the two parties may read. Cursor-paginated (newest pages first; messages oldest-first within a page). By default this also marks the caller's inbound unread messages as read; pass markRead=false to suppress.
          */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    limit?: number;
+                    /** @description Message id from a previous nextCursor; returns older messages. */
+                    cursor?: string;
+                    /** @description Set to false to read without clearing the unread badge. */
+                    markRead?: boolean;
+                };
                 header?: never;
                 path: {
                     id: string;
@@ -3007,7 +3013,7 @@ export interface paths {
         put?: never;
         /**
          * Post a message in the swap thread
-         * @description Only the two parties may post. Notifies the other side via email + push. Rate-limited 30/min per user.
+         * @description Only the two parties may post. Body and/or image attachments (photos, URLs already uploaded via /api/uploads/listing-photo) — at least one required. Notifies the other side via push (every message) and email (throttled to at most once per ~15 min per recipient). Rate-limited 30/min per user.
          */
         post: {
             parameters: {
@@ -3072,6 +3078,114 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/proposals/{id}/messages/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark a swap thread as read
+         * @description Marks every inbound (other-party) unread message in the thread as read for the caller. Body-less; idempotent. Only the two parties may call.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SwapMessagesReadResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of this proposal */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Proposal not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Chat list — the viewer's swap threads
+         * @description Lists the viewer's swap conversations sorted by most recent activity, each with counterpart, last message preview + time, unread count, and swap status. Powers the mobile chat list.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConversationsResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -6519,18 +6633,70 @@ export interface components {
             /** @description True when the requester authored the message. */
             mine: boolean;
             body: string;
+            /** @description Image attachment URLs (uploaded via /api/uploads/listing-photo). */
+            photos: string[];
+            /**
+             * Format: date-time
+             * @description When the recipient (non-author) read this message, or null.
+             */
+            readAt: string | null;
             /** Format: date-time */
             createdAt: string;
         };
         SwapMessagesResponse: {
-            /** @description Oldest first. */
+            /** @description Oldest first within the returned page. */
             messages: components["schemas"]["SwapMessage"][];
+            /** @description Message id to pass as ?cursor= to fetch the next (older) page, or null. */
+            nextCursor: string | null;
+            /** @description True when more (older) messages exist beyond this page. */
+            hasMore: boolean;
         };
+        /** @description Provide body, photos, or both — at least one is required. */
         SwapMessageCreateRequest: {
-            body: string;
+            body?: string;
+            /** @description Image attachment URLs already uploaded via /api/uploads/listing-photo. */
+            photos?: string[];
         };
         SwapMessageCreateResponse: {
             message: components["schemas"]["SwapMessage"];
+        };
+        SwapMessagesReadResponse: {
+            ok: boolean;
+            /** @description Number of messages newly marked as read. */
+            marked: number;
+        };
+        Conversation: {
+            id: string;
+            /** @description Swap status (PENDING */
+            status: string;
+            /** Format: date-time */
+            dateFrom: string;
+            /** Format: date-time */
+            dateTo: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * @description hosting = they proposed to my home; traveling = I proposed to theirs.
+             * @enum {string}
+             */
+            role: "hosting" | "traveling";
+            myCity: string;
+            myNeighbourhood: string;
+            theirCity: string;
+            theirNeighbourhood: string;
+            otherName: string | null;
+            /** @description Last message preview line. */
+            lastLine: string | null;
+            /** Format: date-time */
+            lastMessageAt: string | null;
+            /** @description Inbound messages the viewer hasn't read. */
+            unreadCount: number;
+        };
+        ConversationsResponse: {
+            /** @description Most recently active thread first. */
+            conversations: components["schemas"]["Conversation"][];
+            /** @description Sum of unread counts across all threads. */
+            totalUnread: number;
         };
         BetaSignupRequest: {
             /** Format: email */

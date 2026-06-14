@@ -39,6 +39,10 @@ vi.mock("@/lib/db", () => ({
     report: { findUnique: mocks.reportFindUnique, update: mocks.reportUpdate },
     swapProposal: { findUnique: mocks.proposalFindUnique, update: mocks.proposalUpdate },
     swapMessage: { create: mocks.messageCreate },
+    swapMessageEmailThrottle: {
+      findUnique: vi.fn(async () => null),
+      upsert: vi.fn(async () => ({})),
+    },
     // Public profile (DOK-147) stats/reviews — empty defaults keep the
     // moderation assertions focused on suspension behaviour.
     swapAgreement: { findMany: vi.fn(async () => []) },
@@ -55,6 +59,7 @@ vi.mock("@/lib/db", () => ({
       return fallback;
     }
   },
+  stringifyJSON: (v: unknown): string => JSON.stringify(v ?? null),
 }));
 vi.mock("@/lib/email", () => ({
   sendEmail: vi.fn(async () => {}),
