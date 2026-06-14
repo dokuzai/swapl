@@ -516,7 +516,19 @@ struct ProposalDetailView: View {
                 infoCard(title: detail.other.name.map { "Message from \($0)" } ?? "Message", body: message)
             }
 
-            itineraryRows(detail)
+            // Once a swap is accepted there's an agreement — swap the static
+            // itinerary for the full trip cockpit (phases, key codes, guide,
+            // check-in/out). Reveal gating of the address/guide is server-side.
+            if let agreement = detail.agreement {
+                TripCockpitView(
+                    agreementId: agreement.id,
+                    otherName: detail.other.name,
+                    otherListingId: tripListing.id,
+                    myListingId: homeListing.id
+                )
+            } else {
+                itineraryRows(detail)
+            }
 
             reviewSection(detail)
 
