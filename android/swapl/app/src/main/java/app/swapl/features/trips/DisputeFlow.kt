@@ -1,6 +1,7 @@
 package app.swapl.features.trips
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.ReportProblem
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -123,6 +125,11 @@ fun DisputeSection(
 ) {
     val context = LocalContext.current
     var showOpenSheet by remember { mutableStateOf(false) }
+    // Set when both the Custom Tab and the plain-browser fallback fail to launch
+    // the help URL; drives the last-resort dialog that offers a direct dial.
+    var phoneFallback by remember { mutableStateOf<String?>(null) }
+
+    val onCallLine = { open24x7(context, state.supportContacts) { phone -> phoneFallback = phone } }
 
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
         val dispute = state.activeDispute
@@ -137,7 +144,7 @@ fun DisputeSection(
                     myUserId = myUserId,
                     isSubmitting = state.isSubmitting,
                     listingRepo = listingRepo,
-                    onCallLine = { open24x7(context, state.supportContacts.helpUrl) },
+                    onCallLine = onCallLine,
                     onReply = { body, photos -> state.reply(dispute.id, body, photos) },
                 )
                 // A resolved/closed history still lets you raise a fresh issue.
@@ -154,14 +161,52 @@ fun DisputeSection(
             otherName = otherName,
             isSubmitting = state.isSubmitting,
             listingRepo = listingRepo,
-            onCallLine = { open24x7(context, state.supportContacts.helpUrl) },
+            onCallLine = onCallLine,
             onDismiss = { showOpenSheet = false },
             onSubmit = { category, description, photos ->
                 state.open(category, description, photos) { showOpenSheet = false }
             },
         )
     }
+
+    phoneFallback?.let { phone ->
+        PhoneFallbackDialog(
+            phone = phone,
+            onCall = {
+                runCatching {
+                    context.startActivity(Intent(Intent.ACTION_DIAL, "tel:${phone.dialableDigits()}".toUri()))
+                }
+                phoneFallback = null
+            },
+            onDismiss = { phoneFallback = null },
+        )
+    }
 }
+
+@Composable
+private fun PhoneFallbackDialog(phone: String, onCall: () -> Unit, onDismiss: () -> Unit) {
+    val canDial = phone.dialableDigits().any { it.isDigit() }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Reach our 24/7 line") },
+        text = { Text("If anyone is unsafe or locked out, call $phone.") },
+        confirmButton = {
+            if (canDial) {
+                TextButton(onClick = onCall) { Text("Call $phone") }
+            } else {
+                TextButton(onClick = onDismiss) { Text("OK") }
+            }
+        },
+        dismissButton = if (canDial) {
+            { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        } else null,
+    )
+}
+
+// Keeps only digits and a leading-plus's digits so the string is safe inside a
+// tel: URI. Returns "" when there's nothing dialable (e.g. the launch default
+// "+44 800 000 swap").
+private fun String.dialableDigits(): String = filter { it.isDigit() || it == '+' }
 
 @Composable
 private fun ReportProblemButton(text: String, onClick: () -> Unit) {
@@ -175,9 +220,27 @@ private fun ReportProblemButton(text: String, onClick: () -> Unit) {
 // The 24/7 line. We have no in-app phone number, so foregrounding it means
 // routing to the always-on help page (same target the cockpit used before),
 // surfaced more prominently from urgent cases.
-private fun open24x7(context: Context, helpUrl: String) {
-    val url = helpUrl.toUri()
-    CustomTabsIntent.Builder().build().launchUrl(context, url)
+//
+// Robust fallback chain (DOK-153): launching a Custom Tab throws if no browser
+// supports them (or the device has no browser at all), which would otherwise
+// leave an urgent member stuck. So we try the Custom Tab, fall back to a plain
+// ACTION_VIEW, and if even that has no handler we surface a dialog with the
+// phone number to dial directly.
+private fun open24x7(context: Context, contacts: SupportContacts, onNoBrowser: (phone: String) -> Unit) {
+    val url = contacts.helpUrl.toUri()
+    try {
+        CustomTabsIntent.Builder().build().launchUrl(context, url)
+        return
+    } catch (_: Throwable) {
+        // No Custom Tabs provider — fall through to a plain browser intent.
+    }
+    try {
+        context.startActivity(Intent(Intent.ACTION_VIEW, url))
+        return
+    } catch (_: Throwable) {
+        // No activity can open a web URL — last resort is the phone dialog.
+    }
+    onNoBrowser(contacts.phone)
 }
 
 // MARK: - Urgent 24/7 banner ----------------------------------------------

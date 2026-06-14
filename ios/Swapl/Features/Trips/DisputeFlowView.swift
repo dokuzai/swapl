@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import PhotosUI
 import SwaplDesignTokens
 
@@ -102,6 +103,7 @@ struct DisputeFlowView: View {
 
     @State private var showOpenForm = false
     @State private var helpItem: SafariItem?
+    @State private var phoneFallback: PhoneFallbackAlert?
 
     init(agreementId: String, otherName: String?, myUserId: String?) {
         _vm = State(initialValue: DisputeFlowViewModel(agreementId: agreementId))
@@ -156,6 +158,18 @@ struct DisputeFlowView: View {
         .sheet(item: $helpItem) { item in
             SafariView(url: item.url)
         }
+        .alert("Reach our 24/7 line", isPresented: phoneAlertBinding, presenting: phoneFallback) { fallback in
+            if let callURL = fallback.callURL {
+                Button("Call \(fallback.phone)") { UIApplication.shared.open(callURL) }
+            }
+            Button("OK", role: .cancel) {}
+        } message: { fallback in
+            Text("If anyone is unsafe or locked out, call \(fallback.phone).")
+        }
+    }
+
+    private var phoneAlertBinding: Binding<Bool> {
+        Binding(get: { phoneFallback != nil }, set: { if !$0 { phoneFallback = nil } })
     }
 
     private func reportEntry(title: String) -> some View {
@@ -178,10 +192,42 @@ struct DisputeFlowView: View {
     // The 24/7 line. We have no in-app phone number, so foregrounding it means
     // routing to the always-on help page — now the server-configured help URL
     // (GET /api/config/support-contacts) rather than a hardcoded path.
+    //
+    // The help URL is server-configured, so it can arrive empty or malformed.
+    // SafariView with a bad URL renders a blank, dead sheet — the worst outcome
+    // in an urgent moment. So we validate it: a real http(s) URL opens Safari as
+    // before; anything else falls back to an alert offering a direct tel: call,
+    // so an unsafe/locked-out member always has a way through.
     private func open24_7() {
-        let url = URL(string: vm.supportContacts.helpUrl)
-            ?? APIClient.shared.baseURL.appendingPathComponent("/help/contact")
-        helpItem = SafariItem(url: url)
+        if let url = validHelpURL(vm.supportContacts.helpUrl) {
+            helpItem = SafariItem(url: url)
+        } else {
+            phoneFallback = PhoneFallbackAlert(phone: vm.supportContacts.phone)
+        }
+    }
+
+    private func validHelpURL(_ raw: String) -> URL? {
+        guard let url = URL(string: raw.trimmingCharacters(in: .whitespacesAndNewlines)),
+              let scheme = url.scheme?.lowercased(),
+              scheme == "http" || scheme == "https",
+              url.host?.isEmpty == false
+        else { return nil }
+        return url
+    }
+}
+
+// Drives the tel: fallback alert when there's no usable help URL. Identifiable
+// so it can back a SwiftUI alert; callURL is nil when the phone string has no
+// dialable digits (e.g. the launch default "+44 800 000 swap"), in which case
+// the alert just shows the number to dial by hand.
+struct PhoneFallbackAlert: Identifiable {
+    let id = UUID()
+    let phone: String
+
+    var callURL: URL? {
+        let digits = phone.filter { $0.isNumber || $0 == "+" }
+        guard digits.contains(where: { $0.isNumber }) else { return nil }
+        return URL(string: "tel://\(digits)")
     }
 }
 

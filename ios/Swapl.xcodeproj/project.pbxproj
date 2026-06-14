@@ -74,6 +74,7 @@
 		D74BBBC6F3B32322A6817C7D /* Dispute.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26F930FB50115D11BD5133F /* Dispute.swift */; };
 		DA8C3FCC1426E8B95A52BD96 /* SwaplDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = A8D80844D3E9A3B2227C620A /* SwaplDesignTokens */; };
 		DACBA4DA3BDA42660BC27C0B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8479450F71641A8B608B52 /* Profile.swift */; };
+		DB917B61A5F6ED29B7343D60 /* SupportContactsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4304221FC5395A99BFD852C1 /* SupportContactsRepository.swift */; };
 		DC585C9A7870551BBEDC96F6 /* AccountSettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B575D4DF74C9A08E326C3 /* AccountSettingsViews.swift */; };
 		DC7257C5B79D0BCF1DB17753 /* LeaveReviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06335EFCBD6A3915C648EB60 /* LeaveReviewSheet.swift */; };
 		DC939F3220AD8395C001D00D /* TripCockpitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827286DDE5C491F6477A36FC /* TripCockpitView.swift */; };
@@ -126,6 +127,7 @@
 		3EC7EF0654A2A456B14E52A5 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		3F9F3B622AF0F19A1CE66060 /* CheckEventSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckEventSheet.swift; sourceTree = "<group>"; };
 		42F9DBBD16DDFF73DF7EEB49 /* PasskeyCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasskeyCoordinator.swift; sourceTree = "<group>"; };
+		4304221FC5395A99BFD852C1 /* SupportContactsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportContactsRepository.swift; sourceTree = "<group>"; };
 		482C55A61B818770C1E2FFE8 /* SwaplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplApp.swift; sourceTree = "<group>"; };
 		4BC9312485BA546DE9DDA312 /* ProposalDraftEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProposalDraftEngine.swift; sourceTree = "<group>"; };
 		4BD0A0CB13B5D117AC603E41 /* CityStamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityStamp.swift; sourceTree = "<group>"; };
@@ -296,6 +298,7 @@
 				FA8574BE693D92BD6FA207B6 /* MetricsRepository.swift */,
 				F03C53186E434F889C543582 /* ProfileRepository.swift */,
 				F39E0749085C3E362B239A25 /* ProposalRepository.swift */,
+				4304221FC5395A99BFD852C1 /* SupportContactsRepository.swift */,
 				6DE55822504185C1726F7590 /* TripRepository.swift */,
 				D37E004482EF51FE52B2E81A /* VerificationRepository.swift */,
 			);
@@ -688,6 +691,7 @@
 				6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */,
 				E2FB54694BF2D5D9EE68F9C9 /* ServicesView.swift in Sources */,
 				38FFAA04AD5C5FD4661D8B53 /* SpeechRecorder.swift in Sources */,
+				DB917B61A5F6ED29B7343D60 /* SupportContactsRepository.swift in Sources */,
 				65EFA92459406FAB1651014D /* SurfaceCard.swift in Sources */,
 				F9616C2B39409158D02A511F /* SwaplApp.swift in Sources */,
 				10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */,
