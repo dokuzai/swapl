@@ -656,7 +656,7 @@ export const de: Partial<Record<DictKey, string>> = {
   "trip.error": "Reise konnte nicht geladen werden — aktualisiere zum Wiederholen.",
 
   // ---- Problem melden / Streitfall (DOK-153) ----
-  "dispute.report.cta": "Problem melden",
+  "dispute.report.cta": "Jetzt Hilfe erhalten",
   "dispute.open.title": "Problem melden",
   "dispute.open.lede": "Sag uns, was nicht stimmt — wir helfen sofort. Füge bei Bedarf Fotos hinzu.",
   "dispute.open.categoryLabel": "Worum geht es?",

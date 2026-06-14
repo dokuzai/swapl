@@ -671,7 +671,7 @@ export const tr: Partial<Record<DictKey, string>> = {
   "trip.error": "Yolculuğun yüklenemedi — yenileyip tekrar dene.",
 
   // ---- Sorun bildir / anlaşmazlık (DOK-153) ----
-  "dispute.report.cta": "Sorun bildir",
+  "dispute.report.cta": "Hemen yardım al",
   "dispute.open.title": "Sorun bildir",
   "dispute.open.lede": "Neyin yanlış olduğunu söyle, hemen devreye girelim. Yardımcı olacaksa fotoğraf ekle.",
   "dispute.open.categoryLabel": "Sorun nedir?",

@@ -671,7 +671,7 @@ export const nl: Partial<Record<DictKey, string>> = {
   "trip.error": "Kon je reis niet laden — ververs om opnieuw te proberen.",
 
   // ---- Probleem melden / geschil (DOK-153) ----
-  "dispute.report.cta": "Probleem melden",
+  "dispute.report.cta": "Nu hulp krijgen",
   "dispute.open.title": "Probleem melden",
   "dispute.open.lede": "Vertel ons wat er mis is en we springen erop in. Voeg foto's toe als dat helpt.",
   "dispute.open.categoryLabel": "Wat is het probleem?",

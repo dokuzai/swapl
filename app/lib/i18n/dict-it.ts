@@ -672,7 +672,7 @@ export const it: Partial<Record<DictKey, string>> = {
   "trip.error": "Impossibile caricare il viaggio — aggiorna per riprovare.",
 
   // ---- Segnala un problema / contestazione (DOK-153) ----
-  "dispute.report.cta": "Segnala un problema",
+  "dispute.report.cta": "Ricevi aiuto ora",
   "dispute.open.title": "Segnala un problema",
   "dispute.open.lede": "Dicci cosa non va e interveniamo subito. Aggiungi foto se servono.",
   "dispute.open.categoryLabel": "Qual è il problema?",

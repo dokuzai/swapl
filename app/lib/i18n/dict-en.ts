@@ -668,7 +668,7 @@ export const en = {
   "trip.error": "Couldn't load your trip — refresh to retry.",
 
   // ---- Report a problem / dispute flow (DOK-153) ----
-  "dispute.report.cta": "Report a problem",
+  "dispute.report.cta": "Get help now",
   "dispute.open.title": "Report a problem",
   "dispute.open.lede": "Tell us what's wrong and we'll jump in. Add photos if they help.",
   "dispute.open.categoryLabel": "What's the issue?",
