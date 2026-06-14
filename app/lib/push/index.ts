@@ -44,6 +44,9 @@ export type PushKind =
   | "checkedOut"
   | "homeGuideReminder"
   | "checkInNudge"
+  | "disputeOpened"
+  | "disputeStatusChanged"
+  | "disputeMessage"
   | "identityVerified"
   | "identityVerificationFailed";
 
@@ -283,6 +286,30 @@ export const pushTemplates = {
       title: "Verification couldn't be completed",
       body: "Start a new check anytime from your account.",
       data: { kind: "identityVerificationFailed", deepLink: "swapl://profile" },
+    };
+  },
+  // ---- Dispute / resolution center (DOK-153) ----
+  disputeOpened(proposalId: string, category: string, urgent: boolean): PushPayload {
+    return {
+      title: urgent ? "Urgent issue on your swap" : "A problem was reported",
+      body: urgent
+        ? `A ${category} issue was reported. If anyone is unsafe, call the 24/7 line. Tap to respond.`
+        : `Your swap partner reported a ${category} issue. Tap to respond.`,
+      data: { kind: "disputeOpened", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  disputeStatusChanged(proposalId: string, status: string): PushPayload {
+    return {
+      title: `Dispute ${status.replace(/_/g, " ")}`,
+      body: "There's an update on your reported problem. Tap to view.",
+      data: { kind: "disputeStatusChanged", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  disputeMessage(proposalId: string, fromName: string): PushPayload {
+    return {
+      title: `${fromName} replied on your dispute`,
+      body: "New reply in the resolution center. Tap to read.",
+      data: { kind: "disputeMessage", proposalId, deepLink: deepLinkProposal(proposalId) },
     };
   },
 };

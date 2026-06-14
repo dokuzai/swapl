@@ -276,6 +276,66 @@ export const templates = {
       text: `Your swap in ${destinationCity} starts today — check in from your trip cockpit: ${APP_URL}/swaps`,
     }),
 
+  // ---- Dispute / resolution center (DOK-153) ----
+  // Sent to the OTHER party when a dispute is opened against their swap.
+  // urgent (safety|access) swaps the copy toward the 24/7 line.
+  disputeOpened: (toEmail: string, proposalId: string, category: string, urgent: boolean) =>
+    build({
+      to: toEmail,
+      subject: urgent
+        ? "Urgent: a problem was reported on your swap"
+        : "A problem was reported on your swap",
+      preview: "Open the resolution center to respond.",
+      heading: urgent ? "Urgent issue on your swap" : "A problem was reported",
+      intro: urgent
+        ? `Your swap partner reported a ${category} issue. If anyone is unsafe or locked out right now, call our 24/7 line — otherwise open the resolution center to respond.`
+        : `Your swap partner reported a ${category} issue. Open the resolution center to see the details and respond.`,
+      ctaLabel: "Open resolution center",
+      ctaHref: `${APP_URL}/swaps/${proposalId}`,
+      text: `A ${category} problem was reported on your swap${urgent ? " (urgent — call our 24/7 line if anyone is unsafe or locked out)" : ""}. Respond: ${APP_URL}/swaps/${proposalId}`,
+    }),
+
+  // Sent to the admin/support inbox when any new dispute is opened.
+  disputeOpenedAdmin: (toEmail: string, disputeId: string, category: string, urgent: boolean) =>
+    build({
+      to: toEmail,
+      subject: `${urgent ? "[URGENT] " : ""}New dispute opened — ${category}`,
+      preview: "A member opened a dispute. Triage in admin.",
+      heading: `New ${category} dispute`,
+      intro: `A member opened a ${category} dispute${urgent ? " flagged urgent (safety/access) — triage now and point them to the 24/7 line if needed." : "."} Review and assign it from the admin queue.`,
+      ctaLabel: "Open admin queue",
+      ctaHref: `${APP_URL}/admin/disputes`,
+      text: `New ${category} dispute (${disputeId})${urgent ? " — URGENT" : ""}. Triage: ${APP_URL}/admin/disputes`,
+    }),
+
+  // Sent to a dispute party when its status changes (investigating, resolved…).
+  disputeStatusChanged: (toEmail: string, proposalId: string, status: string, resolution: string | null) =>
+    build({
+      to: toEmail,
+      subject: `Your dispute is now ${status.replace(/_/g, " ")}`,
+      preview: "There's an update on your reported problem.",
+      heading: `Dispute ${status.replace(/_/g, " ")}`,
+      intro: resolution
+        ? `Your dispute is now "${status.replace(/_/g, " ")}". Resolution: ${resolution}`
+        : `Your dispute status changed to "${status.replace(/_/g, " ")}". Open the resolution center for the latest.`,
+      ctaLabel: "Open resolution center",
+      ctaHref: `${APP_URL}/swaps/${proposalId}`,
+      text: `Your dispute is now ${status.replace(/_/g, " ")}${resolution ? `. Resolution: ${resolution}` : ""}: ${APP_URL}/swaps/${proposalId}`,
+    }),
+
+  // Sent to a dispute party (or other side) when a new message lands.
+  disputeMessage: (toEmail: string, proposalId: string, fromName: string) =>
+    build({
+      to: toEmail,
+      subject: `${fromName} replied on your dispute`,
+      preview: "New reply in the resolution center.",
+      heading: `${fromName} replied`,
+      intro: `${fromName} added a message to your open dispute. Open the resolution center to read it and respond.`,
+      ctaLabel: "Open resolution center",
+      ctaHref: `${APP_URL}/swaps/${proposalId}`,
+      text: `${fromName} replied on your dispute: ${APP_URL}/swaps/${proposalId}`,
+    }),
+
   identityVerified: (toEmail: string) =>
     build({
       to: toEmail,

@@ -4364,6 +4364,219 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/agreements/{id}/dispute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Dispute status + timeline for the parties
+         * @description Returns the disputes on this agreement (newest first), each with its full message timeline. Only the two parties of the agreement may read it.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Disputes + timeline */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DisputeListResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of the agreement */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Open a dispute (resolution center)
+         * @description A party of the agreement opens a dispute. category safety|access is flagged urgent so clients foreground the 24/7 line. Notifies the other party + the admin inbox (email + push, best effort). Photos must already be uploaded via /api/uploads/listing-photo. Rate-limited 5 / 10 min per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["DisputeCreateRequest"];
+                };
+            };
+            responses: {
+                /** @description Dispute opened */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DisputeCreateResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of the agreement */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/disputes/{id}/message": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reply on a dispute
+         * @description Add a message to an open dispute. Either party of the underlying agreement OR a swapl_admin may post. A party reply nudges status to investigating; an admin reply nudges it to awaiting_response. resolved|closed disputes reject new messages (409). Notifies the other participants (email + push, best effort). Photos must already be uploaded via /api/uploads/listing-photo. Rate-limited 30 / 5 min per user.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["DisputeMessageRequest"];
+                };
+            };
+            responses: {
+                /** @description Message added */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DisputeMessageResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of the dispute */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Dispute is closed */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/billing/checkout/subscription": {
         parameters: {
             query?: never;
@@ -5515,6 +5728,61 @@ export interface components {
             /** @description true when the party had already checked in/out */
             duplicate?: boolean;
             event: components["schemas"]["CheckEvent"];
+        };
+        /** @description Open a dispute on a swap. category safety|access is treated as urgent and clients should foreground the 24/7 line. Photos must already be uploaded via /api/uploads/listing-photo. */
+        DisputeCreateRequest: {
+            /** @enum {string} */
+            category: "access" | "damage" | "cleanliness" | "safety" | "no_show" | "other";
+            description: string;
+            photos?: string[];
+        };
+        DisputeMessage: {
+            id: string;
+            authorId: string;
+            authorName?: string | null;
+            body: string;
+            photos: string[];
+            /** Format: date-time */
+            createdAt: string;
+        };
+        Dispute: {
+            id: string;
+            /** @enum {string} */
+            category: "access" | "damage" | "cleanliness" | "safety" | "no_show" | "other";
+            /** @description true for safety|access — foreground the 24/7 line */
+            urgent: boolean;
+            /** @enum {string} */
+            status: "open" | "investigating" | "awaiting_response" | "resolved" | "closed";
+            description: string;
+            photos: string[];
+            resolution?: string | null;
+            openedBy?: {
+                id?: string;
+                name?: string | null;
+            };
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            messages?: components["schemas"]["DisputeMessage"][];
+        };
+        DisputeCreateResponse: {
+            ok: boolean;
+            dispute: components["schemas"]["Dispute"];
+        };
+        DisputeListResponse: {
+            disputes: components["schemas"]["Dispute"][];
+        };
+        /** @description Add a message to an open dispute. A party reply nudges status to investigating; an admin reply nudges it to awaiting_response. Photos must already be uploaded via /api/uploads/listing-photo. */
+        DisputeMessageRequest: {
+            body: string;
+            photos?: string[];
+        };
+        DisputeMessageResponse: {
+            ok: boolean;
+            /** @enum {string} */
+            status: "open" | "investigating" | "awaiting_response" | "resolved" | "closed";
+            message: components["schemas"]["DisputeMessage"];
         };
         TripCockpitResponse: {
             agreementId: string;

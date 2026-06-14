@@ -135,6 +135,99 @@ components:
         duplicate: { type: boolean, description: 'true when the party had already checked in/out' }
         event: { $ref: '#/components/schemas/CheckEvent' }
 
+    DisputeCreateRequest:
+      type: object
+      required: [category, description]
+      description: >-
+        Open a dispute on a swap. category safety|access is treated as urgent
+        and clients should foreground the 24/7 line. Photos must already be
+        uploaded via /api/uploads/listing-photo.
+      properties:
+        category:
+          type: string
+          enum: [access, damage, cleanliness, safety, no_show, other]
+        description: { type: string, minLength: 1, maxLength: 4000 }
+        photos:
+          type: array
+          items: { type: string, format: uri }
+          maxItems: 12
+
+    DisputeMessage:
+      type: object
+      required: [id, authorId, body, photos, createdAt]
+      properties:
+        id: { type: string }
+        authorId: { type: string }
+        authorName: { type: string, nullable: true }
+        body: { type: string }
+        photos: { type: array, items: { type: string, format: uri } }
+        createdAt: { type: string, format: date-time }
+
+    Dispute:
+      type: object
+      required: [id, category, urgent, status, description, photos, createdAt]
+      properties:
+        id: { type: string }
+        category:
+          type: string
+          enum: [access, damage, cleanliness, safety, no_show, other]
+        urgent: { type: boolean, description: 'true for safety|access — foreground the 24/7 line' }
+        status:
+          type: string
+          enum: [open, investigating, awaiting_response, resolved, closed]
+        description: { type: string }
+        photos: { type: array, items: { type: string, format: uri } }
+        resolution: { type: string, nullable: true }
+        openedBy:
+          type: object
+          properties:
+            id: { type: string }
+            name: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        messages:
+          type: array
+          items: { $ref: '#/components/schemas/DisputeMessage' }
+
+    DisputeCreateResponse:
+      type: object
+      required: [ok, dispute]
+      properties:
+        ok: { type: boolean }
+        dispute: { $ref: '#/components/schemas/Dispute' }
+
+    DisputeListResponse:
+      type: object
+      required: [disputes]
+      properties:
+        disputes:
+          type: array
+          items: { $ref: '#/components/schemas/Dispute' }
+
+    DisputeMessageRequest:
+      type: object
+      required: [body]
+      description: >-
+        Add a message to an open dispute. A party reply nudges status to
+        investigating; an admin reply nudges it to awaiting_response. Photos
+        must already be uploaded via /api/uploads/listing-photo.
+      properties:
+        body: { type: string, minLength: 1, maxLength: 4000 }
+        photos:
+          type: array
+          items: { type: string, format: uri }
+          maxItems: 12
+
+    DisputeMessageResponse:
+      type: object
+      required: [ok, status, message]
+      properties:
+        ok: { type: boolean }
+        status:
+          type: string
+          enum: [open, investigating, awaiting_response, resolved, closed]
+        message: { $ref: '#/components/schemas/DisputeMessage' }
+
     TripCockpitResponse:
       type: object
       required: [agreementId, phase, dates, addressUnlocked, checklist, checkEvents]
@@ -3147,6 +3240,87 @@ paths:
         '403': { description: Not a party of the agreement }
         '404': { description: Not found }
         '409': { description: Swap is no longer active }
+        '429': { description: Rate limited }
+
+  /api/agreements/{id}/dispute:
+    post:
+      tags: [agreements]
+      summary: Open a dispute (resolution center)
+      description: >-
+        A party of the agreement opens a dispute. category safety|access is
+        flagged urgent so clients foreground the 24/7 line. Notifies the other
+        party + the admin inbox (email + push, best effort). Photos must already
+        be uploaded via /api/uploads/listing-photo. Rate-limited 5 / 10 min per
+        user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DisputeCreateRequest' }
+      responses:
+        '200':
+          description: Dispute opened
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DisputeCreateResponse' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the agreement }
+        '404': { description: Not found }
+        '429': { description: Rate limited }
+    get:
+      tags: [agreements]
+      summary: Dispute status + timeline for the parties
+      description: >-
+        Returns the disputes on this agreement (newest first), each with its
+        full message timeline. Only the two parties of the agreement may read it.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Disputes + timeline
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DisputeListResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the agreement }
+        '404': { description: Not found }
+
+  /api/disputes/{id}/message:
+    post:
+      tags: [agreements]
+      summary: Reply on a dispute
+      description: >-
+        Add a message to an open dispute. Either party of the underlying
+        agreement OR a swapl_admin may post. A party reply nudges status to
+        investigating; an admin reply nudges it to awaiting_response.
+        resolved|closed disputes reject new messages (409). Notifies the other
+        participants (email + push, best effort). Photos must already be
+        uploaded via /api/uploads/listing-photo. Rate-limited 30 / 5 min per
+        user.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DisputeMessageRequest' }
+      responses:
+        '200':
+          description: Message added
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DisputeMessageResponse' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the dispute }
+        '404': { description: Not found }
+        '409': { description: Dispute is closed }
         '429': { description: Rate limited }
 
   /api/billing/checkout/subscription:
