@@ -5,7 +5,7 @@ import SwaplDesignTokens
 // an agreement. Phase timeline + countdown + insurance badge; "Before you go"
 // checklist; key codes + insurance; "Where you're staying" with the other
 // home's address + guide gated by addressUnlocked; Check in / Check out with
-// baseline photos; event log; "Report a problem".
+// baseline photos; event log; "Report a problem" → native dispute flow (DOK-153).
 
 @MainActor
 @Observable
@@ -50,6 +50,7 @@ final class TripCockpitViewModel {
 }
 
 struct TripCockpitView: View {
+    @Environment(AuthService.self) private var auth
     @State private var vm: TripCockpitViewModel
     let otherName: String?
     let otherListingId: String   // the home I'm staying in (other party's)
@@ -57,7 +58,6 @@ struct TripCockpitView: View {
 
     @State private var checkSheet: CheckEventKind?
     @State private var showGuideEditor = false
-    @State private var reportItem: SafariItem?
 
     init(agreementId: String, otherName: String?, otherListingId: String, myListingId: String) {
         _vm = State(initialValue: TripCockpitViewModel(agreementId: agreementId))
@@ -99,9 +99,6 @@ struct TripCockpitView: View {
         .sheet(isPresented: $showGuideEditor) {
             HomeGuideEditorView(listingId: myListingId, onSaved: { Task { await vm.load() } })
         }
-        .sheet(item: $reportItem) { item in
-            SafariView(url: item.url)
-        }
     }
 
     private func cockpitError(_ error: String) -> some View {
@@ -141,7 +138,11 @@ struct TripCockpitView: View {
                 eventLog(cockpit)
             }
 
-            reportProblem
+            DisputeFlowView(
+                agreementId: vm.agreementId,
+                otherName: otherName,
+                myUserId: auth.session?.id
+            )
         }
     }
 
@@ -382,25 +383,6 @@ struct TripCockpitView: View {
         .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
         .padding(.horizontal, 22)
-    }
-
-    // MARK: report a problem
-
-    private var reportProblem: some View {
-        Button {
-            reportItem = SafariItem(url: APIClient.shared.baseURL.appendingPathComponent("/help/contact"))
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "exclamationmark.bubble")
-                Text("Report a problem")
-            }
-            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-            .foregroundStyle(AirbnbPalette.text)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 22)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Report a problem with this trip")
     }
 
     private func phaseLabel(_ phase: TripCockpitPhase) -> String {
