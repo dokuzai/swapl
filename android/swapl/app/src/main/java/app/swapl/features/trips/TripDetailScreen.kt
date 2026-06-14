@@ -1,5 +1,7 @@
 package app.swapl.features.trips
 
+import android.content.Context
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,15 +17,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.compose.runtime.remember
 import app.swapl.core.model.ProposalDetail
+import app.swapl.core.model.TripCockpit
+import app.swapl.core.network.ApiClient
+import app.swapl.core.repository.ListingRepository
 import app.swapl.core.repository.ProposalRepository
 import app.swapl.core.repository.TripsRepository
 import app.swapl.design.components.KickerLabel
@@ -39,8 +47,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TripDetailViewModel @Inject constructor(
-    private val repo: TripsRepository,
+    val repo: TripsRepository,
     private val proposals: ProposalRepository,
+    val listings: ListingRepository,
+    val api: ApiClient,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val proposalId: String = checkNotNull(savedState["proposalId"])
@@ -54,11 +64,46 @@ class TripDetailViewModel @Inject constructor(
     var reviewError by mutableStateOf<String?>(null)
         private set
 
+    // Trip cockpit (DOK-152): the derived phase, countdown, gated address/guide,
+    // checklist and check events for the agreement attached to this proposal.
+    var cockpit by mutableStateOf<TripCockpit?>(null)
+        private set
+    var isCheckingIn by mutableStateOf(false)
+        private set
+
     fun load() = viewModelScope.launch {
         error = null
         runCatching { detail = repo.detail(proposalId) }
             .onFailure { error = it.message }
+        loadCockpit()
     }
+
+    private fun loadCockpit() = viewModelScope.launch {
+        val agreementId = detail?.agreement?.id ?: return@launch
+        runCatching { cockpit = repo.cockpit(agreementId) }
+    }
+
+    fun refreshCockpit() = viewModelScope.launch {
+        val agreementId = detail?.agreement?.id ?: return@launch
+        runCatching { cockpit = repo.cockpit(agreementId) }
+    }
+
+    // POST /api/agreements/{id}/check-in | check-out, then refresh the cockpit so
+    // the checklist + phase + event log update. Returns true on success so the
+    // caller can dismiss the sheet.
+    fun submitCheckEvent(isCheckIn: Boolean, note: String, photos: List<String>, onDone: () -> Unit) =
+        viewModelScope.launch {
+            val agreementId = detail?.agreement?.id ?: return@launch
+            isCheckingIn = true
+            runCatching {
+                if (isCheckIn) repo.checkIn(agreementId, note, photos)
+                else repo.checkOut(agreementId, note, photos)
+            }.onSuccess {
+                runCatching { cockpit = repo.cockpit(agreementId) }
+                onDone()
+            }
+            isCheckingIn = false
+        }
 
     // POST /api/agreements/{id}/review, then refresh so canReview clears.
     fun submitReview(rating: Int, text: String, onDone: () -> Unit) = viewModelScope.launch {
@@ -75,8 +120,10 @@ class TripDetailViewModel @Inject constructor(
     }
 }
 
-// Trip detail: the agreement view of an accepted swap. Key codes and the
-// insurance panel come from the shared AgreedPanel used by the swap thread.
+// Trip detail: the agreement view of an accepted swap. Once an agreement exists,
+// the TripCockpit becomes the cockpit (phases, countdown, checklist, gated home
+// guide, check-in/out). The legacy AgreedPanel still shows the keys-for-keys
+// summary above it.
 @Composable
 fun TripDetailScreen(
     onOpenProfile: (String) -> Unit = {},
@@ -113,7 +160,14 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
     val theirs = if (meIsProposer) d.targetListing else d.proposerListing
     val a = d.agreement
     val hostName = d.other.name ?: "your host"
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
     var showReview by remember { mutableStateOf(false) }
+    var checkInSheet by remember { mutableStateOf<Boolean?>(null) } // null = closed, true = check-in
+    var showGuideEditor by remember { mutableStateOf(false) }
+
+    val guideState = remember(mine.id) { HomeGuideEditorState(mine.id, vm.repo, scope) }
 
     Column(
         Modifier
@@ -155,6 +209,21 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
             AgreedPanel(a, hostName)
         }
 
+        // The cockpit: only renders once the /trip payload has loaded.
+        vm.cockpit?.let { cockpit ->
+            TripCockpit(
+                cockpit = cockpit,
+                otherName = d.other.name,
+                onFinishGuide = {
+                    guideState.load()
+                    showGuideEditor = true
+                },
+                onCheckIn = { checkInSheet = true },
+                onCheckOut = { checkInSheet = false },
+                onReportProblem = { openReportProblem(context, vm.api.baseUrl) },
+            )
+        }
+
         // After a COMPLETED swap the server flags canReview until the caller
         // has left their (single) review — DOK-147.
         if (a?.status == "COMPLETED" && a.canReview == true) {
@@ -164,6 +233,29 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
         TextButton(onClick = { onOpenProfile(d.other.id) }) {
             Text("View ${d.other.name ?: "host"}'s profile")
         }
+    }
+
+    checkInSheet?.let { isCheckIn ->
+        CheckEventSheet(
+            isCheckIn = isCheckIn,
+            isSubmitting = vm.isCheckingIn,
+            listingRepo = vm.listings,
+            onDismiss = { checkInSheet = null },
+            onSubmit = { note, photos ->
+                vm.submitCheckEvent(isCheckIn, note, photos) { checkInSheet = null }
+            },
+        )
+    }
+
+    if (showGuideEditor) {
+        HomeGuideEditorScreen(
+            state = guideState,
+            onClose = { showGuideEditor = false },
+            onSaved = {
+                showGuideEditor = false
+                vm.refreshCockpit()
+            },
+        )
     }
 
     if (showReview) {
@@ -177,4 +269,10 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
             },
         )
     }
+}
+
+// "Report a problem" opens the help/contact page in a Custom Tab.
+private fun openReportProblem(context: Context, baseUrl: String) {
+    val url = "$baseUrl/help/contact".toUri()
+    CustomTabsIntent.Builder().build().launchUrl(context, url)
 }
