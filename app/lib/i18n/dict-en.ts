@@ -708,6 +708,8 @@ export const en = {
   "dispute.case.resolvedNote": "This case has been resolved. Need more help? Reach our team any time.",
   "dispute.case.sent": "Reply sent",
   "dispute.case.photoCount": "{n} photo(s)",
+  "dispute.photo.remove": "Remove photo",
+  "dispute.charCount": "{n}/{max}",
   "dispute.open.success": "Case opened — we're on it.",
   "dispute.time.justNow": "just now",
 

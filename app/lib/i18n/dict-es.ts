@@ -696,6 +696,8 @@ export const es: Partial<Record<DictKey, string>> = {
   "dispute.case.resolvedNote": "Este caso se ha resuelto. ¿Necesitas más ayuda? Contacta con nuestro equipo cuando quieras.",
   "dispute.case.sent": "Respuesta enviada",
   "dispute.case.photoCount": "{n} foto(s)",
+  "dispute.photo.remove": "Eliminar foto",
+  "dispute.charCount": "{n}/{max}",
   "dispute.open.success": "Caso abierto — estamos en ello.",
   "dispute.time.justNow": "ahora mismo",
   // ---- Home guide editor (DOK-152) ----

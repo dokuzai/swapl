@@ -711,6 +711,8 @@ export const nl: Partial<Record<DictKey, string>> = {
   "dispute.case.resolvedNote": "Deze zaak is opgelost. Meer hulp nodig? Bereik ons team op elk moment.",
   "dispute.case.sent": "Antwoord verzonden",
   "dispute.case.photoCount": "{n} foto('s)",
+  "dispute.photo.remove": "Foto verwijderen",
+  "dispute.charCount": "{n}/{max}",
   "dispute.open.success": "Zaak geopend — we pakken het op.",
   "dispute.time.justNow": "zojuist",
   // ---- Home guide editor (DOK-152) ----

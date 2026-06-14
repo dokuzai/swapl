@@ -204,6 +204,8 @@ function OpenCaseModal({
     }
   }
 
+  const removePhoto = (src: string) => setPhotos((p) => p.filter((u) => u !== src));
+
   async function submit() {
     if (!category) return;
     setState("submitting");
@@ -313,9 +315,10 @@ function OpenCaseModal({
           rows={4}
           placeholder={t("dispute.open.descPlaceholder")}
           maxLength={4000}
-          className="w-full rounded-lg px-3 py-2 text-sm mb-4"
+          className="w-full rounded-lg px-3 py-2 text-sm mb-1"
           style={{ border: "1px solid var(--line)", background: "var(--cream)" }}
         />
+        <CharCount value={description} max={4000} />
 
         <label
           className="block font-mono text-[11px] uppercase tracking-[.08em] mb-1.5"
@@ -330,11 +333,13 @@ function OpenCaseModal({
           onChange={(e) => void addPhotos(e.target.files)}
           className="block w-full text-sm mb-2"
         />
-        {(uploading || photos.length > 0) && (
-          <p className="text-xs mb-3" style={{ color: "var(--navy-3)" }}>
-            {uploading ? t("dispute.open.uploading") : t("dispute.open.photoCount", { n: photos.length })}
+        <PhotoStrip photos={photos} onRemove={removePhoto} />
+        {uploading && (
+          <p className="text-xs mt-2 mb-3" style={{ color: "var(--navy-3)" }}>
+            {t("dispute.open.uploading")}
           </p>
         )}
+        {!uploading && photos.length > 0 && <div className="mb-3" />}
 
         {state === "error" && (
           <p className="text-sm mb-3" style={{ color: "var(--pink)" }}>
@@ -364,38 +369,93 @@ function StatusBadge({ status }: { status: DisputeStatus }) {
   const t = useT();
   const terminal = TERMINAL.has(status);
   const resolved = status === "resolved";
+  // "Awaiting your reply" is the only status that asks the user to act, so it
+  // gets a distinct amber treatment. Navy text on the warm amber fill clears
+  // WCAG AA (≈13:1), well apart from the pink "active" and grey "terminal" looks.
+  const awaiting = status === "awaiting_response";
+
+  let background: string;
+  let color: string;
+  if (awaiting) {
+    background = "#FBE6BF";
+    color = "var(--navy)";
+  } else if (resolved) {
+    background = "color-mix(in oklab, var(--pink) 14%, transparent)";
+    color = "var(--pink)";
+  } else if (terminal) {
+    background = "var(--line)";
+    color = "var(--navy-3)";
+  } else {
+    background = "var(--pink-light)";
+    color = "var(--pink)";
+  }
+
   return (
     <span
       className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-1 rounded-full whitespace-nowrap"
-      style={{
-        background: resolved
-          ? "color-mix(in oklab, var(--pink) 14%, transparent)"
-          : terminal
-            ? "var(--line)"
-            : "var(--pink-light)",
-        color: terminal && !resolved ? "var(--navy-3)" : "var(--pink)",
-      }}
+      style={
+        awaiting
+          ? { background, color, border: "1px solid #E0A23C" }
+          : { background, color }
+      }
     >
+      {awaiting && <span aria-hidden>● </span>}
       {t(`dispute.status.${status}` as const)}
     </span>
   );
 }
 
-function PhotoStrip({ photos }: { photos: string[] }) {
+/**
+ * Thumbnail strip. Read-only inside timeline bubbles; when `onRemove` is passed
+ * (the composers) each thumb gets a tap-target × button so a mis-picked photo
+ * costs one tap to drop rather than re-opening the whole sheet.
+ */
+function PhotoStrip({ photos, onRemove }: { photos: string[]; onRemove?: (src: string) => void }) {
+  const t = useT();
   if (photos.length === 0) return null;
   return (
     <div className="flex gap-1.5 flex-wrap mt-2">
       {photos.map((src) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={src}
-          src={src}
-          alt=""
-          className="h-16 w-16 rounded-lg object-cover"
-          style={{ border: "1px solid var(--line)" }}
-        />
+        <div key={src} className="relative">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src}
+            alt=""
+            className="h-16 w-16 rounded-lg object-cover"
+            style={{ border: "1px solid var(--line)" }}
+          />
+          {onRemove && (
+            <button
+              type="button"
+              aria-label={t("dispute.photo.remove")}
+              onClick={() => onRemove(src)}
+              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-xs leading-none"
+              style={{ background: "var(--navy)", color: "var(--cream)", border: "1.5px solid var(--cream)" }}
+            >
+              ×
+            </button>
+          )}
+        </div>
       ))}
     </div>
+  );
+}
+
+/**
+ * Live character counter shown under a textarea. Turns pink as the user nears
+ * the cap so the limit reads at a glance without blocking input.
+ */
+function CharCount({ value, max }: { value: string; max: number }) {
+  const t = useT();
+  const near = value.length >= max * 0.9;
+  return (
+    <p
+      className="font-mono text-[10px] text-right mb-3"
+      style={{ color: near ? "var(--pink)" : "var(--navy-3)" }}
+      aria-live="polite"
+    >
+      {t("dispute.charCount", { n: value.length, max })}
+    </p>
   );
 }
 
@@ -563,6 +623,8 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
     }
   }
 
+  const removePhoto = (src: string) => setPhotos((p) => p.filter((u) => u !== src));
+
   async function send() {
     setState("sending");
     try {
@@ -598,10 +660,12 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
         rows={2}
         placeholder={t("dispute.case.replyPlaceholder")}
         maxLength={4000}
-        className="w-full rounded-lg px-3 py-2 text-sm mb-2"
+        className="w-full rounded-lg px-3 py-2 text-sm mb-1"
         style={{ border: "1px solid var(--line)", background: "var(--cream)" }}
       />
-      <div className="flex items-center justify-between gap-2">
+      <CharCount value={body} max={4000} />
+      <PhotoStrip photos={photos} onRemove={removePhoto} />
+      <div className="flex items-center justify-between gap-2 mt-2">
         <label className="text-xs cursor-pointer" style={{ color: "var(--navy-3)" }}>
           📎 {uploading ? t("dispute.open.uploading") : t("dispute.case.photoCount", { n: photos.length })}
           <input

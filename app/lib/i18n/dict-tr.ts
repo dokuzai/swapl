@@ -711,6 +711,8 @@ export const tr: Partial<Record<DictKey, string>> = {
   "dispute.case.resolvedNote": "Bu vaka çözüldü. Daha fazla yardım mı lazım? Ekibimize istediğin zaman ulaş.",
   "dispute.case.sent": "Yanıt gönderildi",
   "dispute.case.photoCount": "{n} fotoğraf",
+  "dispute.photo.remove": "Fotoğrafı kaldır",
+  "dispute.charCount": "{n}/{max}",
   "dispute.open.success": "Vaka açıldı — ilgileniyoruz.",
   "dispute.time.justNow": "az önce",
   // ---- Home guide editor (DOK-152) ----
