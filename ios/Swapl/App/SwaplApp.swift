@@ -6,6 +6,7 @@ struct SwaplApp: App {
     @State private var auth = AuthService()
     @State private var pushService = PushService()
     @State private var favorites = FavoritesStore()
+    @State private var unread = UnreadStore()
 
     init() {
         SwaplFonts.register()
@@ -46,6 +47,7 @@ struct SwaplApp: App {
                 .environment(auth)
                 .environment(pushService)
                 .environment(favorites)
+                .environment(unread)
                 .tint(SwaplSemanticLight.primary)
         }
     }
@@ -55,6 +57,7 @@ struct RootView: View {
     @Environment(AuthService.self) private var auth
     @Environment(FavoritesStore.self) private var favorites
     @Environment(PushService.self) private var push
+    @Environment(UnreadStore.self) private var unread
 
     // Centralized deep-link routing: whatever the source (push tap, custom
     // scheme, universal link), the destination is presented as a sheet over
@@ -85,8 +88,10 @@ struct RootView: View {
         .task(id: auth.session?.id) {
             if auth.session == nil {
                 favorites.reset()
+                unread.reset()
             } else {
                 await favorites.loadIdsIfNeeded()
+                await unread.refresh()
             }
             consumePushDeepLink()
             flushStashedDeepLinkIfReady()
@@ -209,9 +214,27 @@ struct LaunchLoadingView: View {
 
 struct MainTabView: View {
     @Environment(\.horizontalSizeClass) private var size
+    @Environment(UnreadStore.self) private var unread
+    @Environment(\.scenePhase) private var scenePhase
     @State private var selection: AppSection = .explore
 
     var body: some View {
+        content
+            // Lightweight foreground poll so the Messages badge stays fresh
+            // without a WebSocket — suspends when the app isn't active.
+            .task(id: scenePhase) {
+                guard scenePhase == .active else { return }
+                await unread.refresh()
+                while !Task.isCancelled {
+                    try? await Task.sleep(for: .seconds(20))
+                    guard scenePhase == .active else { break }
+                    await unread.refresh()
+                }
+            }
+    }
+
+    @ViewBuilder
+    private var content: some View {
         if size == .regular {
             NavigationSplitView {
                 SidebarView(selection: $selection)
@@ -239,6 +262,7 @@ struct MainTabView: View {
                     .tabItem { Label("Trips", systemImage: "suitcase.rolling") }
                 SwapsInboxView()
                     .tabItem { Label("Messages", systemImage: "message") }
+                    .badge(unread.totalUnread)
                 AccountView()
                     .tabItem { Label("Profile", systemImage: "person.crop.circle") }
             }

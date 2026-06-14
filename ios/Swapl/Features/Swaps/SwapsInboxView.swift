@@ -532,6 +532,32 @@ struct ProposalDetailView: View {
 
             reviewSection(detail)
 
+            NavigationLink {
+                SwapChatView(proposalId: vm.proposalId, otherName: detail.other.name)
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "bubble.left.and.bubble.right.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text("Message \(detail.other.name ?? "your swap partner")")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
+                .foregroundStyle(AirbnbPalette.text)
+                .padding(.vertical, 16)
+                .padding(.horizontal, 18)
+                .frame(maxWidth: .infinity)
+                .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                        .stroke(AirbnbPalette.hairline)
+                )
+                .padding(.horizontal, 22)
+            }
+            .buttonStyle(.plain)
+
             NavigationLink { PublicProfileView(userId: detail.other.id) } label: {
                 Text("View \(detail.other.name ?? "host")'s profile")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
