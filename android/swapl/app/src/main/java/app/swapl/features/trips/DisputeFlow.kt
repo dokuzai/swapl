@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -327,7 +328,16 @@ fun DisputeOpenSheet(
     val trimmed = description.trim()
     val valid = category != null && trimmed.isNotEmpty() && trimmed.length <= 4000
 
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    // Guard against losing a typed-up report: if the description has any content,
+    // a back gesture/button or scrim dismiss first asks to discard (DOK-153).
+    var showDiscardConfirm by remember { mutableStateOf(false) }
+    val hasUnsavedWork = trimmed.isNotEmpty()
+    val onCloseRequest = { if (hasUnsavedWork) showDiscardConfirm = true else onDismiss() }
+
+    // Intercept the system back (gesture or button) while there's work to lose.
+    BackHandler(enabled = hasUnsavedWork) { showDiscardConfirm = true }
+
+    ModalBottomSheet(onDismissRequest = onCloseRequest) {
         Column(
             Modifier
                 .fillMaxWidth()
@@ -417,6 +427,23 @@ fun DisputeOpenSheet(
                 enabled = valid && !isSubmitting && uploadsInFlight == 0,
             )
         }
+    }
+
+    if (showDiscardConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDiscardConfirm = false },
+            title = { Text("Discard changes?") },
+            text = { Text("Your report hasn't been sent yet. If you leave now, what you've written will be lost.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDiscardConfirm = false
+                    onDismiss()
+                }) { Text("Discard") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDiscardConfirm = false }) { Text("Keep editing") }
+            },
+        )
     }
 }
 
