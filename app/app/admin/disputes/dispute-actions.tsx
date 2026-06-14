@@ -20,6 +20,7 @@ export default function DisputeActions({
     (STATUSES as readonly string[]).includes(status) ? (status as Status) : "investigating",
   );
   const [resolution, setResolution] = useState("");
+  const [confirming, setConfirming] = useState(false);
 
   function post(body: Record<string, unknown>) {
     start(async () => {
@@ -30,10 +31,19 @@ export default function DisputeActions({
       });
       if (res.ok) {
         setOpen(false);
+        setConfirming(false);
         setResolution("");
         router.refresh();
       }
     });
+  }
+
+  function save() {
+    if ((nextStatus === "resolved" || nextStatus === "closed") && !confirming) {
+      setConfirming(true);
+      return;
+    }
+    post({ status: nextStatus, resolution: resolution.trim() || undefined });
   }
 
   const terminal = status === "resolved" || status === "closed";
@@ -61,7 +71,10 @@ export default function DisputeActions({
     <div className="flex flex-col gap-2 min-w-[200px]">
       <select
         value={nextStatus}
-        onChange={(e) => setNextStatus(e.target.value as Status)}
+        onChange={(e) => {
+          setNextStatus(e.target.value as Status);
+          setConfirming(false);
+        }}
         className="text-sm rounded-lg px-2 py-1"
         style={{ border: "1px solid color-mix(in oklab, var(--navy) 18%, transparent)" }}
       >
@@ -79,23 +92,41 @@ export default function DisputeActions({
         className="text-sm rounded-lg px-2 py-1"
         style={{ border: "1px solid color-mix(in oklab, var(--navy) 18%, transparent)" }}
       />
-      <div className="flex flex-wrap gap-1.5">
-        <button
-          onClick={() =>
-            post({ status: nextStatus, resolution: resolution.trim() || undefined })
-          }
-          className="pill-primary"
-          disabled={pending}
-        >
-          Save
-        </button>
-        <button onClick={() => post({ assignToMe: true })} className="pill-ghost" disabled={pending}>
-          Assign me
-        </button>
-        <button onClick={() => setOpen(false)} className="pill-ghost" disabled={pending}>
-          Cancel
-        </button>
-      </div>
+      {confirming ? (
+        <div className="flex flex-col gap-1.5">
+          <p className="text-sm" style={{ color: "var(--navy)" }}>
+            Mark this dispute as <strong>{nextStatus}</strong>? This closes the case.
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            <button onClick={save} className="pill-primary" disabled={pending}>
+              Confirm {nextStatus}
+            </button>
+            <button
+              onClick={() => setConfirming(false)}
+              className="pill-ghost"
+              disabled={pending}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-1.5">
+          <button onClick={save} className="pill-primary" disabled={pending}>
+            Save
+          </button>
+          <button
+            onClick={() => post({ assignToMe: true })}
+            className="pill-ghost"
+            disabled={pending}
+          >
+            Assign me
+          </button>
+          <button onClick={() => setOpen(false)} className="pill-ghost" disabled={pending}>
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 }
