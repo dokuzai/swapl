@@ -92,6 +92,7 @@ class SwapThreadViewModel @Inject constructor(
 @Composable
 fun SwapThreadScreen(
     onOpenProfile: (String) -> Unit = {},
+    onOpenChat: (String) -> Unit = {},
     vm: SwapThreadViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) { vm.load() }
@@ -118,6 +119,13 @@ fun SwapThreadScreen(
             }
 
             ProposalBlock(d)
+
+            // First-class chat (DOK-154): the message thread is bound to the
+            // proposal and keeps flowing after it becomes an agreement.
+            PrimaryPill(
+                "Open chat" + (d.other.name?.let { " with $it" } ?: ""),
+                onClick = { onOpenChat(d.proposal.id) },
+            )
 
             if (d.proposal.status == "ACCEPTED" && d.agreement != null) {
                 AgreedPanel(d.agreement, d.other.name ?: "your host")

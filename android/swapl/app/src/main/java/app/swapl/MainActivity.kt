@@ -62,8 +62,16 @@ import app.swapl.features.profile.PersonalInfoScreen
 import app.swapl.features.profile.PrivacySettingsScreen
 import app.swapl.features.profile.PublicProfileScreen
 import app.swapl.features.profile.SavedSearchesScreen
+import app.swapl.features.swaps.SwapChatScreen
 import app.swapl.features.swaps.SwapThreadScreen
 import app.swapl.features.swaps.SwapsInboxScreen
+import app.swapl.features.swaps.UnreadViewModel
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.runtime.DisposableEffect
 import dagger.hilt.android.AndroidEntryPoint
 
 // Top-level navigation graph. Each tab has its own NavHost so back-stacks stay
@@ -154,6 +162,25 @@ private fun HomeShell(
     val browseNav = rememberNavController()
     val swapsNav = rememberNavController()
 
+    // Unread badge on the Messages (Swaps) tab — light foreground poll of
+    // GET /api/conversations (DOK-154). Pause in the background.
+    val unreadVm: UnreadViewModel = hiltViewModel()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> unreadVm.startPolling()
+                Lifecycle.Event.ON_PAUSE -> unreadVm.stopPolling()
+                else -> Unit
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+    // Refresh promptly when the user lands on the tab so the badge clears as
+    // threads are read.
+    LaunchedEffect(current) { if (current == HomeDest.Swaps) unreadVm.refresh() }
+
     // Route the incoming swapl:// or https://swapl.fun/... deep link. Malformed
     // URIs (push payload typos, hostile intents) must never crash the shell.
     LaunchedEffect(deepLink) {
@@ -185,7 +212,17 @@ private fun HomeShell(
                 item(
                     selected = current == d,
                     onClick = { current = d },
-                    icon = { Icon(d.icon, contentDescription = d.title) },
+                    icon = {
+                        if (d == HomeDest.Swaps && unreadVm.totalUnread > 0) {
+                            BadgedBox(badge = {
+                                Badge { Text(if (unreadVm.totalUnread > 99) "99+" else unreadVm.totalUnread.toString()) }
+                            }) {
+                                Icon(d.icon, contentDescription = d.title)
+                            }
+                        } else {
+                            Icon(d.icon, contentDescription = d.title)
+                        }
+                    },
                     label = { Text(d.title) }
                 )
             }
@@ -264,7 +301,15 @@ private fun HomeShell(
             HomeDest.Swaps -> NavHost(navController = swapsNav, startDestination = "inbox") {
                 composable("inbox") { SwapsInboxScreen(onOpen = { id -> swapsNav.navigate("thread/$id") }) }
                 composable("thread/{proposalId}", arguments = listOf(navArgument("proposalId") { type = NavType.StringType })) {
-                    SwapThreadScreen(onOpenProfile = { id -> swapsNav.navigate("profile/$id") })
+                    SwapThreadScreen(
+                        onOpenProfile = { id -> swapsNav.navigate("profile/$id") },
+                        onOpenChat = { id -> swapsNav.navigate("chat/$id") },
+                    )
+                }
+                composable("chat/{proposalId}", arguments = listOf(navArgument("proposalId") { type = NavType.StringType })) {
+                    // Reading the thread clears its unread; refresh the badge on exit.
+                    DisposableEffect(Unit) { onDispose { unreadVm.refresh() } }
+                    SwapChatScreen()
                 }
                 composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
                     PublicProfileScreen()
