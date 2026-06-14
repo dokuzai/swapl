@@ -708,7 +708,11 @@ export const nl: Partial<Record<DictKey, string>> = {
   "dispute.case.sending": "Versturen…",
   "dispute.case.sendError": "Versturen mislukt — probeer opnieuw.",
   "dispute.case.closedNote": "Deze zaak is gesloten. Meer hulp nodig? Bereik ons team op elk moment.",
+  "dispute.case.resolvedNote": "Deze zaak is opgelost. Meer hulp nodig? Bereik ons team op elk moment.",
+  "dispute.case.sent": "Antwoord verzonden",
   "dispute.case.photoCount": "{n} foto('s)",
+  "dispute.open.success": "Zaak geopend — we pakken het op.",
+  "dispute.time.justNow": "zojuist",
   // ---- Home guide editor (DOK-152) ----
   "guide.title": "Huisgids",
   "guide.lede": "Alles wat je gast nodig heeft om te settelen. Pas gedeeld zodra de swap is bevestigd en het onthulvenster opent.",

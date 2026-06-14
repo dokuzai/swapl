@@ -693,7 +693,11 @@ export const de: Partial<Record<DictKey, string>> = {
   "dispute.case.sending": "Wird gesendet…",
   "dispute.case.sendError": "Konnte nicht gesendet werden — versuche es erneut.",
   "dispute.case.closedNote": "Dieser Fall ist geschlossen. Mehr Hilfe nötig? Erreiche unser Team jederzeit.",
+  "dispute.case.resolvedNote": "Dieser Fall wurde gelöst. Mehr Hilfe nötig? Erreiche unser Team jederzeit.",
+  "dispute.case.sent": "Antwort gesendet",
   "dispute.case.photoCount": "{n} Foto(s)",
+  "dispute.open.success": "Fall eröffnet — wir kümmern uns darum.",
+  "dispute.time.justNow": "gerade eben",
   // ---- Home guide editor (DOK-152) ----
   "guide.title": "Hausführer",
   "guide.lede": "Alles, was dein Gast zum Ankommen braucht. Wird erst geteilt, wenn der Tausch bestätigt ist und das Freigabefenster öffnet.",

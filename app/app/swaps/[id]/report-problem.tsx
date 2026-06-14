@@ -14,8 +14,41 @@
 // re-fetches after every mutation so the status badge and timeline stay honest.
 
 import { useCallback, useEffect, useState } from "react";
-import { useT } from "@/lib/i18n/client";
+import { useT, useLocale } from "@/lib/i18n/client";
 import { useSupportContacts } from "@/lib/support-contacts";
+
+/**
+ * Relative-date label ("2 hours ago", "just now") via Intl.RelativeTimeFormat,
+ * so the cockpit reads at a glance on mobile without parsing absolute dates.
+ * Intl handles the locale plurals for all 8 langs; "just now" comes from i18n.
+ */
+function useRelativeTime() {
+  const locale = useLocale();
+  const t = useT();
+  return useCallback(
+    (iso: string): string => {
+      const then = new Date(iso).getTime();
+      if (Number.isNaN(then)) return "";
+      const diffSec = Math.round((then - Date.now()) / 1000);
+      const abs = Math.abs(diffSec);
+      if (abs < 45) return t("dispute.time.justNow");
+      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+      const units: [Intl.RelativeTimeFormatUnit, number][] = [
+        ["year", 31536000],
+        ["month", 2592000],
+        ["week", 604800],
+        ["day", 86400],
+        ["hour", 3600],
+        ["minute", 60],
+      ];
+      for (const [unit, secs] of units) {
+        if (abs >= secs) return rtf.format(Math.round(diffSec / secs), unit);
+      }
+      return rtf.format(Math.round(diffSec / 60), "minute");
+    },
+    [locale, t],
+  );
+}
 
 const CATEGORIES = ["access", "damage", "cleanliness", "safety", "no_show", "other"] as const;
 type Category = (typeof CATEGORIES)[number];
@@ -155,10 +188,11 @@ function OpenCaseModal({
   const [description, setDescription] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [state, setState] = useState<"idle" | "submitting" | "error">("idle");
+  const [state, setState] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
   const urgent = category === "safety" || category === "access";
-  const canSubmit = !!category && description.trim().length > 0 && !uploading && state !== "submitting";
+  const busy = state === "submitting" || state === "success";
+  const canSubmit = !!category && description.trim().length > 0 && !uploading && !busy;
 
   async function addPhotos(files: FileList | null) {
     setUploading(true);
@@ -184,7 +218,10 @@ function OpenCaseModal({
         }),
       });
       if (!res.ok) throw new Error();
-      onOpened();
+      // Show a brief success state before the sheet closes, so the tap registers
+      // as "done" rather than the sheet just vanishing.
+      setState("success");
+      setTimeout(onOpened, 900);
     } catch {
       setState("error");
     }
@@ -195,7 +232,7 @@ function OpenCaseModal({
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
       style={{ background: "color-mix(in oklab, var(--navy) 45%, transparent)" }}
       onClick={(e) => {
-        if (e.target === e.currentTarget && state !== "submitting") onClose();
+        if (e.target === e.currentTarget && !busy && !uploading) onClose();
       }}
     >
       <div
@@ -226,7 +263,7 @@ function OpenCaseModal({
         >
           {t("dispute.open.categoryLabel")}
         </label>
-        <div className="grid grid-cols-3 gap-2 mb-4">
+        <div className="grid grid-cols-1 min-[400px]:grid-cols-3 gap-2 mb-4">
           {CATEGORIES.map((c) => {
             const active = category === c;
             return (
@@ -305,9 +342,19 @@ function OpenCaseModal({
           </p>
         )}
 
-        <button type="button" className="pill-primary w-full" disabled={!canSubmit} onClick={submit}>
-          {state === "submitting" ? t("dispute.open.submitting") : t("dispute.open.submit")}
-        </button>
+        {state === "success" ? (
+          <p
+            className="text-sm rounded-lg px-3 py-2.5 text-center font-medium"
+            style={{ background: "var(--pink-light)", color: "var(--pink)" }}
+            role="status"
+          >
+            ✓ {t("dispute.open.success")}
+          </p>
+        ) : (
+          <button type="button" className="pill-primary w-full" disabled={!canSubmit} onClick={submit}>
+            {state === "submitting" ? t("dispute.open.submitting") : t("dispute.open.submit")}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -364,11 +411,9 @@ function CaseCard({
   phone: string;
 }) {
   const t = useT();
+  const rel = useRelativeTime();
   const terminal = TERMINAL.has(dispute.status);
-  const openedDate = new Date(dispute.createdAt).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
+  const openedDate = rel(dispute.createdAt);
 
   return (
     <div
@@ -416,8 +461,9 @@ function CaseCard({
       )}
 
       {terminal ? (
-        <p className="text-sm mt-3" style={{ color: "var(--navy-3)" }}>
-          {t("dispute.case.closedNote")}
+        <p className="text-sm mt-3 flex items-center gap-1.5" style={{ color: "var(--navy-3)" }}>
+          <span aria-hidden>✓</span>
+          {t(dispute.status === "resolved" ? "dispute.case.resolvedNote" : "dispute.case.closedNote")}
         </p>
       ) : (
         <Composer disputeId={dispute.id} onSent={onChanged} />
@@ -471,12 +517,8 @@ function Bubble({
   photos: string[];
   at: string;
 }) {
-  const time = new Date(at).toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const rel = useRelativeTime();
+  const time = rel(at);
   return (
     <li className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
       <div
@@ -507,7 +549,7 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
   const [body, setBody] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [state, setState] = useState<"idle" | "sending" | "error">("idle");
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const canSend = body.trim().length > 0 && !uploading && state !== "sending";
 
@@ -532,7 +574,10 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
       if (!res.ok) throw new Error();
       setBody("");
       setPhotos([]);
-      setState("idle");
+      // Flash a "sent" confirmation, then clear it once the refreshed timeline
+      // (which now carries the new bubble) lands.
+      setState("sent");
+      setTimeout(() => setState("idle"), 2500);
       onSent();
     } catch {
       setState("error");
@@ -574,6 +619,11 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
       {state === "error" && (
         <p className="text-sm mt-2" style={{ color: "var(--pink)" }}>
           {t("dispute.case.sendError")}
+        </p>
+      )}
+      {state === "sent" && (
+        <p className="text-sm mt-2" style={{ color: "var(--pink)" }} role="status">
+          ✓ {t("dispute.case.sent")}
         </p>
       )}
     </div>

@@ -693,7 +693,11 @@ export const fr: Partial<Record<DictKey, string>> = {
   "dispute.case.sending": "Envoi…",
   "dispute.case.sendError": "Échec de l'envoi — réessayez.",
   "dispute.case.closedNote": "Ce dossier est clôturé. Besoin d'aide ? Contactez notre équipe à tout moment.",
+  "dispute.case.resolvedNote": "Ce dossier a été résolu. Besoin d'aide ? Contactez notre équipe à tout moment.",
+  "dispute.case.sent": "Réponse envoyée",
   "dispute.case.photoCount": "{n} photo(s)",
+  "dispute.open.success": "Dossier ouvert — on s'en occupe.",
+  "dispute.time.justNow": "à l'instant",
   // ---- Home guide editor (DOK-152) ----
   "guide.title": "Guide de la maison",
   "guide.lede": "Tout ce dont votre invité a besoin pour s'installer. Partagé uniquement une fois l'échange confirmé et la fenêtre de révélation ouverte.",

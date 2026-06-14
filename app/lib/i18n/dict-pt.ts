@@ -708,7 +708,11 @@ export const pt: Partial<Record<DictKey, string>> = {
   "dispute.case.sending": "A enviar…",
   "dispute.case.sendError": "Não foi possível enviar — tenta de novo.",
   "dispute.case.closedNote": "Este caso está fechado. Precisas de mais ajuda? Fala com a nossa equipa quando quiseres.",
+  "dispute.case.resolvedNote": "Este caso foi resolvido. Precisas de mais ajuda? Fala com a nossa equipa quando quiseres.",
+  "dispute.case.sent": "Resposta enviada",
   "dispute.case.photoCount": "{n} foto(s)",
+  "dispute.open.success": "Caso aberto — estamos a tratar disso.",
+  "dispute.time.justNow": "agora mesmo",
   // ---- Home guide editor (DOK-152) ----
   "guide.title": "Guia da casa",
   "guide.lede": "Tudo o que o seu hóspede precisa para se instalar. Partilhado apenas quando a troca está confirmada e a janela de revelação abre.",

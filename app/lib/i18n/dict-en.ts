@@ -705,7 +705,11 @@ export const en = {
   "dispute.case.sending": "Sending…",
   "dispute.case.sendError": "Couldn't send — try again.",
   "dispute.case.closedNote": "This case is closed. Need more help? Reach our team any time.",
+  "dispute.case.resolvedNote": "This case has been resolved. Need more help? Reach our team any time.",
+  "dispute.case.sent": "Reply sent",
   "dispute.case.photoCount": "{n} photo(s)",
+  "dispute.open.success": "Case opened — we're on it.",
+  "dispute.time.justNow": "just now",
 
   // ---- Home guide editor (DOK-152) ----
   "guide.title": "Home guide",

@@ -708,7 +708,11 @@ export const tr: Partial<Record<DictKey, string>> = {
   "dispute.case.sending": "Gönderiliyor…",
   "dispute.case.sendError": "Gönderilemedi — tekrar dene.",
   "dispute.case.closedNote": "Bu vaka kapatıldı. Daha fazla yardım mı lazım? Ekibimize istediğin zaman ulaş.",
+  "dispute.case.resolvedNote": "Bu vaka çözüldü. Daha fazla yardım mı lazım? Ekibimize istediğin zaman ulaş.",
+  "dispute.case.sent": "Yanıt gönderildi",
   "dispute.case.photoCount": "{n} fotoğraf",
+  "dispute.open.success": "Vaka açıldı — ilgileniyoruz.",
+  "dispute.time.justNow": "az önce",
   // ---- Home guide editor (DOK-152) ----
   "guide.title": "Ev rehberi",
   "guide.lede": "Misafirinin yerleşmesi için gereken her şey. Yalnızca takas onaylandığında ve gösterim penceresi açıldığında paylaşılır.",
