@@ -140,6 +140,26 @@ describe("POST open dispute — gating + urgent + notify", () => {
     const res = await openDispute(req("https://x", { category: "cleanliness", description: "dust" }), ctx("agr-1"));
     expect((await res.json()).dispute.urgent).toBe(false);
   });
+
+  it("429 returns a RATE_LIMITED code + human message once the per-user cap is hit", async () => {
+    // The open limiter is keyed on the user (5 / 10 min), independent of IP, so
+    // a fresh user trips it on the 6th call within the window. The user must be
+    // a party of the agreement to clear the gating ahead of the limiter check.
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "ratelimit-victim" });
+    mocks.agreementFindUnique.mockResolvedValue(
+      agreement({ listing1: { userId: "ratelimit-victim", user: { id: "ratelimit-victim", name: "RL", email: "rl@swapl.test" } } }),
+    );
+    const body = { category: "other", description: "again" };
+    for (let i = 0; i < 5; i++) {
+      expect((await openDispute(req("https://x", body), ctx("agr-1"))).status).toBe(200);
+    }
+    const limited = await openDispute(req("https://x", body), ctx("agr-1"));
+    expect(limited.status).toBe(429);
+    const json = await limited.json();
+    expect(json.error).toBe("RATE_LIMITED");
+    expect(typeof json.message).toBe("string");
+    expect(json.message.length).toBeGreaterThan(0);
+  });
 });
 
 describe("GET dispute timeline", () => {

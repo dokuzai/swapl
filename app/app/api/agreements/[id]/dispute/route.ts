@@ -14,7 +14,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { forbidden, notFound, invalidInput, unauthenticated, apiError } from "@/lib/api/errors";
+import { forbidden, notFound, invalidInput, unauthenticated, rateLimited } from "@/lib/api/errors";
 import {
   DISPUTE_CATEGORIES,
   isUrgentCategory,
@@ -46,7 +46,10 @@ export async function POST(req: Request, { params }: RouteContext<"/api/agreemen
   // Opening a dispute is rare and heavy — 5 / 10 min per user covers retries
   // and photo re-submits without letting one user flood the queue.
   const rl = checkRateLimit(`dispute-open:${session.userId}`, 5, 10 * 60 * 1000);
-  if (!rl.ok) return apiError(429, "Rate limited");
+  if (!rl.ok)
+    return rateLimited(
+      "You've opened several cases in a short time. Please wait a few minutes, then try again — or call our 24/7 line if it's urgent.",
+    );
 
   const parsed = createSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return invalidInput("Invalid input", { issues: parsed.error.issues });

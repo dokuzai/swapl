@@ -89,6 +89,30 @@ type Dispute = {
 
 const TERMINAL: ReadonlySet<DisputeStatus> = new Set(["resolved", "closed"]);
 
+/**
+ * A submit failure we can show the user. `rateLimited` (HTTP 429) is called out
+ * specially so the UI can show the server's human message and invite a retry
+ * rather than the generic "try again" copy. `message` is the server-supplied
+ * human string when present (e.g. the 429 `message` field).
+ */
+type SubmitError = { rateLimited: boolean; message: string | null };
+
+/**
+ * Read a failed response into a SubmitError. The dispute routes return
+ * `{ error, message }`; for 429 (`error: "RATE_LIMITED"`) we surface `message`
+ * verbatim. Falls back to null so the caller can use its localized default.
+ */
+async function readSubmitError(res: Response): Promise<SubmitError> {
+  let message: string | null = null;
+  try {
+    const data = (await res.json()) as { error?: string; message?: string };
+    if (typeof data.message === "string" && data.message.trim()) message = data.message;
+  } catch {
+    /* non-JSON body — fall back to localized copy */
+  }
+  return { rateLimited: res.status === 429, message };
+}
+
 /** Upload picked files through the existing listing-photo pipeline. */
 async function uploadPhotos(files: FileList | null): Promise<string[]> {
   if (!files || files.length === 0) return [];
@@ -189,6 +213,7 @@ function OpenCaseModal({
   const [photos, setPhotos] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [state, setState] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [error, setError] = useState<SubmitError | null>(null);
 
   const urgent = category === "safety" || category === "access";
   const busy = state === "submitting" || state === "success";
@@ -209,6 +234,7 @@ function OpenCaseModal({
   async function submit() {
     if (!category) return;
     setState("submitting");
+    setError(null);
     try {
       const res = await fetch(`/api/agreements/${agreementId}/dispute`, {
         method: "POST",
@@ -219,12 +245,19 @@ function OpenCaseModal({
           photos: photos.length ? photos : undefined,
         }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        // Keep the typed description + photos so a 429 (or any failure) costs a
+        // single retry tap, not a re-type. The submit button stays enabled.
+        setError(await readSubmitError(res));
+        setState("error");
+        return;
+      }
       // Show a brief success state before the sheet closes, so the tap registers
       // as "done" rather than the sheet just vanishing.
       setState("success");
       setTimeout(onOpened, 900);
     } catch {
+      setError({ rateLimited: false, message: null });
       setState("error");
     }
   }
@@ -342,8 +375,10 @@ function OpenCaseModal({
         {!uploading && photos.length > 0 && <div className="mb-3" />}
 
         {state === "error" && (
-          <p className="text-sm mb-3" style={{ color: "var(--pink)" }}>
-            {t("dispute.open.error")}
+          <p className="text-sm mb-3" style={{ color: "var(--pink)" }} role="alert">
+            {error?.rateLimited
+              ? error.message ?? t("dispute.open.rateLimited")
+              : t("dispute.open.error")}
           </p>
         )}
 
@@ -610,6 +645,7 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
   const [photos, setPhotos] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [error, setError] = useState<SubmitError | null>(null);
 
   const canSend = body.trim().length > 0 && !uploading && state !== "sending";
 
@@ -627,13 +663,20 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
 
   async function send() {
     setState("sending");
+    setError(null);
     try {
       const res = await fetch(`/api/disputes/${disputeId}/message`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ body: body.trim(), photos: photos.length ? photos : undefined }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        // Preserve the typed reply + photos so a 429 (or any failure) is one
+        // retry tap away — never clear the composer on a failed send.
+        setError(await readSubmitError(res));
+        setState("error");
+        return;
+      }
       setBody("");
       setPhotos([]);
       // Flash a "sent" confirmation, then clear it once the refreshed timeline
@@ -642,6 +685,7 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
       setTimeout(() => setState("idle"), 2500);
       onSent();
     } catch {
+      setError({ rateLimited: false, message: null });
       setState("error");
     }
   }
@@ -681,8 +725,10 @@ function Composer({ disputeId, onSent }: { disputeId: string; onSent: () => void
         </button>
       </div>
       {state === "error" && (
-        <p className="text-sm mt-2" style={{ color: "var(--pink)" }}>
-          {t("dispute.case.sendError")}
+        <p className="text-sm mt-2" style={{ color: "var(--pink)" }} role="alert">
+          {error?.rateLimited
+            ? error.message ?? t("dispute.case.rateLimited")
+            : t("dispute.case.sendError")}
         </p>
       )}
       {state === "sent" && (

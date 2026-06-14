@@ -57,6 +57,19 @@ export function unprocessable(
   return apiError(422, error, extra);
 }
 
+/**
+ * 429 — too many requests. Machine-readable `RATE_LIMITED` code plus a human
+ * `message` clients can show verbatim. Routes used to return
+ * `apiError(429, "Rate limited")` — a bare code with no message — which reached
+ * users as an opaque generic error; this gives them something readable.
+ */
+export function rateLimited(
+  message = "You're going a little fast — please wait a moment and try again.",
+  extra?: Record<string, unknown>
+): NextResponse {
+  return apiError(429, "RATE_LIMITED", { message, ...extra });
+}
+
 /** 500 — unexpected failure. Keep the message generic; log details server-side. */
 export function serverError(error = "Internal server error"): NextResponse {
   return apiError(500, error);

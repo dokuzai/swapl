@@ -17,7 +17,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { forbidden, notFound, invalidInput, unauthenticated, apiError } from "@/lib/api/errors";
+import { forbidden, notFound, invalidInput, unauthenticated, apiError, rateLimited } from "@/lib/api/errors";
 import { isTerminal, parsePhotos, disputeAdminRecipients } from "@/lib/disputes";
 
 const schema = z.object({
@@ -31,7 +31,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/disputes
   if (!session) return unauthenticated();
 
   const rl = checkRateLimit(`dispute-message:${session.userId}`, 30, 5 * 60 * 1000);
-  if (!rl.ok) return apiError(429, "Rate limited");
+  if (!rl.ok)
+    return rateLimited("You're sending replies very quickly. Please wait a moment, then try again.");
 
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return invalidInput("Invalid input", { issues: parsed.error.issues });
