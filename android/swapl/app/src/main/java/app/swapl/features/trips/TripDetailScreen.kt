@@ -1,7 +1,5 @@
 package app.swapl.features.trips
 
-import android.content.Context
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,18 +20,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.core.model.Dispute
+import app.swapl.core.model.DisputeCategory
+import app.swapl.core.model.MeResponse
 import app.swapl.core.model.ProposalDetail
 import app.swapl.core.model.TripCockpit
 import app.swapl.core.network.ApiClient
+import app.swapl.core.repository.DisputeRepository
 import app.swapl.core.repository.ListingRepository
 import app.swapl.core.repository.ProposalRepository
 import app.swapl.core.repository.TripsRepository
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
@@ -50,9 +52,10 @@ class TripDetailViewModel @Inject constructor(
     val repo: TripsRepository,
     private val proposals: ProposalRepository,
     val listings: ListingRepository,
+    private val disputeRepo: DisputeRepository,
     val api: ApiClient,
     savedState: SavedStateHandle,
-) : ViewModel() {
+) : ViewModel(), DisputeFlowState {
     private val proposalId: String = checkNotNull(savedState["proposalId"])
 
     var detail by mutableStateOf<ProposalDetail?>(null)
@@ -71,11 +74,60 @@ class TripDetailViewModel @Inject constructor(
     var isCheckingIn by mutableStateOf(false)
         private set
 
+    // Dispute / resolution-center flow (DOK-153). myUserId lets the case card
+    // mark which timeline messages are "You"; it's loaded best-effort from /me.
+    override var disputes by mutableStateOf<List<Dispute>>(emptyList())
+        private set
+    override var isLoading by mutableStateOf(false)
+        private set
+    override var isSubmitting by mutableStateOf(false)
+        private set
+    override val baseUrl: String get() = api.baseUrl
+    var myUserId by mutableStateOf<String?>(null)
+        private set
+
     fun load() = viewModelScope.launch {
         error = null
         runCatching { detail = repo.detail(proposalId) }
             .onFailure { error = it.message }
         loadCockpit()
+        loadDisputes()
+        if (myUserId == null) {
+            runCatching { api.client.get("${api.baseUrl}/api/me").body<MeResponse>().user.id }
+                .onSuccess { myUserId = it }
+        }
+    }
+
+    private fun loadDisputes() = viewModelScope.launch {
+        val agreementId = detail?.agreement?.id ?: return@launch
+        isLoading = true
+        runCatching { disputes = disputeRepo.list(agreementId) }
+        isLoading = false
+    }
+
+    // POST /api/agreements/{id}/dispute, then refresh so the live case card shows.
+    override fun open(category: DisputeCategory, description: String, photos: List<String>, onDone: () -> Unit) {
+        val agreementId = detail?.agreement?.id ?: return
+        viewModelScope.launch {
+            isSubmitting = true
+            runCatching { disputeRepo.open(agreementId, category.raw, description, photos) }
+                .onSuccess {
+                    runCatching { disputes = disputeRepo.list(agreementId) }
+                    onDone()
+                }
+            isSubmitting = false
+        }
+    }
+
+    // POST /api/disputes/{id}/message, then refresh the timeline + status.
+    override fun reply(disputeId: String, body: String, photos: List<String>) {
+        val agreementId = detail?.agreement?.id ?: return
+        viewModelScope.launch {
+            isSubmitting = true
+            runCatching { disputeRepo.reply(disputeId, body, photos) }
+                .onSuccess { runCatching { disputes = disputeRepo.list(agreementId) } }
+            isSubmitting = false
+        }
     }
 
     private fun loadCockpit() = viewModelScope.launch {
@@ -160,7 +212,6 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
     val theirs = if (meIsProposer) d.targetListing else d.proposerListing
     val a = d.agreement
     val hostName = d.other.name ?: "your host"
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     var showReview by remember { mutableStateOf(false) }
@@ -220,7 +271,14 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
                 },
                 onCheckIn = { checkInSheet = true },
                 onCheckOut = { checkInSheet = false },
-                onReportProblem = { openReportProblem(context, vm.api.baseUrl) },
+                reportSlot = {
+                    DisputeSection(
+                        state = vm,
+                        otherName = d.other.name,
+                        myUserId = vm.myUserId,
+                        listingRepo = vm.listings,
+                    )
+                },
             )
         }
 
@@ -269,10 +327,4 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
             },
         )
     }
-}
-
-// "Report a problem" opens the help/contact page in a Custom Tab.
-private fun openReportProblem(context: Context, baseUrl: String) {
-    val url = "$baseUrl/help/contact".toUri()
-    CustomTabsIntent.Builder().build().launchUrl(context, url)
 }

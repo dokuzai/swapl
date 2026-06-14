@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.material.icons.outlined.ReportProblem
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -69,7 +68,9 @@ fun TripCockpit(
     onFinishGuide: () -> Unit,
     onCheckIn: () -> Unit,
     onCheckOut: () -> Unit,
-    onReportProblem: () -> Unit,
+    // The dispute / resolution-center flow (DOK-153) is rendered as the tail of
+    // the cockpit, replacing the old single "Report a problem" link-out.
+    reportSlot: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -83,11 +84,7 @@ fun TripCockpit(
         WhereYouStay(cockpit)
         CheckButtons(cockpit, onCheckIn, onCheckOut)
         if (cockpit.checkEvents.isNotEmpty()) EventLog(cockpit, otherName)
-        TextButton(onClick = onReportProblem) {
-            Icon(Icons.Outlined.ReportProblem, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(SwaplSpacing.s2))
-            Text("Report a problem")
-        }
+        reportSlot()
     }
 }
 
