@@ -14,6 +14,7 @@ import { PersonalisedSuggestions } from "@/components/affiliate/personalised-sug
 import { getEffectivePlan } from "@/lib/billing/limits";
 import { getConversations } from "../conversations";
 import { ConversationList } from "../conversation-list";
+import { ChatThread } from "./chat-thread";
 
 export const dynamic = "force-dynamic";
 
@@ -145,6 +146,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
             myUserId={session.userId}
             guestCode={isProposer ? proposal.agreement.keyCode2 : proposal.agreement.keyCode1}
             myCode={isProposer ? proposal.agreement.keyCode1 : proposal.agreement.keyCode2}
+            messageName={otherName ?? "swapl host"}
           />
         ) : undefined
       }
@@ -192,29 +194,40 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
             <div className="p-4 pt-0">{contextPanel}</div>
           </details>
 
-          <section className="surface-card p-6 mb-6">
-            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Original proposal</h2>
-            <p className="font-mono text-xs uppercase tracking-[.08em] mb-2" style={{ color: "var(--navy-3)" }}>
-              {formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString())}
-            </p>
-            <p className="text-[15px] leading-[1.6] whitespace-pre-line">
-              {proposal.message ?? <span style={{ color: "var(--navy-3)" }}>(no message)</span>}
-            </p>
-          </section>
-
-          {proposal.status === "COUNTERED" && (
-            <section className="surface-card p-6 mb-6" style={{ background: "var(--pink-light)" }}>
-              <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Counter-offer</h2>
-              <p className="font-mono text-xs uppercase tracking-[.08em] mb-2" style={{ color: "var(--pink)" }}>
-                {proposal.counterDateFrom &&
-                  proposal.counterDateTo &&
-                  formatDateRange(proposal.counterDateFrom.toISOString(), proposal.counterDateTo.toISOString())}
-              </p>
+          {/* Original proposal kept as compact, collapsible context above the
+              live chat — the conversation itself is now the primary surface. */}
+          <details className="surface-card mb-4 overflow-hidden">
+            <summary
+              className="cursor-pointer list-none p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[.08em]"
+              style={{ color: "var(--navy-2)" }}
+            >
+              <span>Original proposal · {formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString())}</span>
+              <span aria-hidden style={{ color: "var(--navy-3)" }}>+</span>
+            </summary>
+            <div className="p-4 pt-0">
               <p className="text-[15px] leading-[1.6] whitespace-pre-line">
-                {proposal.counterMessage ?? <span style={{ color: "var(--navy-3)" }}>(no message)</span>}
+                {proposal.message ?? <span style={{ color: "var(--navy-3)" }}>(no message)</span>}
               </p>
-            </section>
-          )}
+              {proposal.status === "COUNTERED" && (
+                <div className="mt-4 pt-4" style={{ borderTop: "1px solid var(--line)" }}>
+                  <p className="font-mono text-xs uppercase tracking-[.08em] mb-2" style={{ color: "var(--pink)" }}>
+                    Counter-offer ·{" "}
+                    {proposal.counterDateFrom &&
+                      proposal.counterDateTo &&
+                      formatDateRange(proposal.counterDateFrom.toISOString(), proposal.counterDateTo.toISOString())}
+                  </p>
+                  <p className="text-[15px] leading-[1.6] whitespace-pre-line">
+                    {proposal.counterMessage ?? <span style={{ color: "var(--navy-3)" }}>(no message)</span>}
+                  </p>
+                </div>
+              )}
+            </div>
+          </details>
+
+          {/* The real chat: bubbles, read ticks, composer with photo, polling. */}
+          <div id="chat" className="mb-6">
+            <ChatThread proposalId={proposal.id} otherName={otherName ?? "swapl host"} />
+          </div>
 
           {proposal.status === "ACCEPTED" && proposal.agreement && (
             <section className="surface-card p-6 mb-6" style={{ background: "var(--navy)", color: "var(--cream)" }}>

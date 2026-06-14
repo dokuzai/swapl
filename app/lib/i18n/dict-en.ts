@@ -739,6 +739,24 @@ export const en = {
   "guide.field.emergencyContact": "Emergency contact",
   "guide.section.core": "The essentials",
   "guide.section.extra": "Nice to have",
+
+  // Swap chat (DOK-154)
+  "chat.title": "Chat with {name}",
+  "chat.subtitle": "Live",
+  "chat.empty": "No messages yet. Say hello to {name}.",
+  "chat.placeholder": "Write a message…",
+  "chat.send": "Send",
+  "chat.sending": "Sending…",
+  "chat.sendError": "Couldn't send — try again.",
+  "chat.attach": "Attach a photo",
+  "chat.removePhoto": "Remove photo",
+  "chat.loadOlder": "Load older messages",
+  "chat.loading": "Loading…",
+  "chat.today": "Today",
+  "chat.yesterday": "Yesterday",
+  "chat.read": "Read",
+  "chat.sent": "Sent",
+  "chat.messageName": "Message {name}",
 } as const;
 
 export type DictKey = keyof typeof en;

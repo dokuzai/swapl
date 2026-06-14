@@ -741,4 +741,22 @@ export const nl: Partial<Record<DictKey, string>> = {
   "guide.field.emergencyContact": "Noodcontact",
   "guide.section.core": "De essentie",
   "guide.section.extra": "Fijn om te hebben",
+
+  // Swap-chat (DOK-154)
+  "chat.title": "Chat met {name}",
+  "chat.subtitle": "Live",
+  "chat.empty": "Nog geen berichten. Zeg {name} gedag.",
+  "chat.placeholder": "Schrijf een bericht…",
+  "chat.send": "Versturen",
+  "chat.sending": "Versturen…",
+  "chat.sendError": "Versturen mislukt — probeer opnieuw.",
+  "chat.attach": "Foto toevoegen",
+  "chat.removePhoto": "Foto verwijderen",
+  "chat.loadOlder": "Oudere berichten laden",
+  "chat.loading": "Laden…",
+  "chat.today": "Vandaag",
+  "chat.yesterday": "Gisteren",
+  "chat.read": "Gelezen",
+  "chat.sent": "Verzonden",
+  "chat.messageName": "{name} een bericht sturen",
 };

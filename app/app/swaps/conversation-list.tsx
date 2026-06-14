@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CityIllust } from "@/components/illustrations";
 import { paletteForCity } from "@/lib/cities";
@@ -37,8 +37,10 @@ function isArchivedStatus(status: string): boolean {
 
 // Master list pane of the three-pane swaps inbox (DOK-150). Rendered full
 // width on mobile (/swaps) and as the left column on desktop.
+const CONV_POLL_MS = 10000;
+
 export function ConversationList({
-  conversations,
+  conversations: initial,
   activeId,
 }: {
   conversations: Conversation[];
@@ -46,18 +48,50 @@ export function ConversationList({
 }) {
   const [filter, setFilter] = useState<FilterKey>("all");
   const [query, setQuery] = useState("");
+  // Seed from the server render, then keep the list fresh (last message,
+  // unread badges, reordering) with light polling while the tab is visible.
+  const [conversations, setConversations] = useState<Conversation[]>(initial);
+
+  useEffect(() => {
+    setConversations(initial);
+  }, [initial]);
+
+  useEffect(() => {
+    let alive = true;
+    async function refresh() {
+      if (document.visibilityState !== "visible") return;
+      try {
+        const res = await fetch("/api/conversations", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = (await res.json()) as { conversations: Conversation[] };
+        if (alive) setConversations(data.conversations);
+      } catch {
+        // keep the last good list
+      }
+    }
+    const timer = setInterval(refresh, CONV_POLL_MS);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, []);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return conversations.filter((c) => {
-      if (filter === "hosting" && (c.role !== "hosting" || isArchivedStatus(c.status))) return false;
-      if (filter === "traveling" && (c.role !== "traveling" || isArchivedStatus(c.status))) return false;
-      if (filter === "archived" && !isArchivedStatus(c.status)) return false;
-      if (filter === "all" && isArchivedStatus(c.status)) return false;
-      if (!q) return true;
-      const hay = `${c.otherName ?? ""} ${c.theirCity} ${c.theirNeighbourhood} ${c.myCity} ${c.myNeighbourhood}`.toLowerCase();
-      return hay.includes(q);
-    });
+    return conversations
+      .filter((c) => {
+        if (filter === "hosting" && (c.role !== "hosting" || isArchivedStatus(c.status))) return false;
+        if (filter === "traveling" && (c.role !== "traveling" || isArchivedStatus(c.status))) return false;
+        if (filter === "archived" && !isArchivedStatus(c.status)) return false;
+        if (filter === "all" && isArchivedStatus(c.status)) return false;
+        if (!q) return true;
+        const hay = `${c.otherName ?? ""} ${c.theirCity} ${c.theirNeighbourhood} ${c.myCity} ${c.myNeighbourhood}`.toLowerCase();
+        return hay.includes(q);
+      })
+      // Most recently active first: a fresh message outranks an old update.
+      .sort((a, b) => (b.lastMessageAt ?? b.updatedAt).localeCompare(a.lastMessageAt ?? a.updatedAt));
   }, [conversations, filter, query]);
 
   return (
@@ -129,11 +163,28 @@ export function ConversationList({
                       <span className="font-display text-[15px] tracking-[-0.01em] truncate">
                         {c.otherName ?? "swapl host"} · {c.theirCity}
                       </span>
-                      <span className="font-mono text-[10px] shrink-0" style={{ color: "var(--navy-3)" }}>
-                        {shortDate(c.updatedAt)}
+                      <span className="flex items-center gap-1.5 shrink-0">
+                        {c.unreadCount > 0 && !active && (
+                          <span
+                            className="min-w-[18px] h-[18px] px-1 rounded-full grid place-items-center font-mono text-[10px] leading-none"
+                            style={{ background: "var(--pink)", color: "var(--cream)" }}
+                            aria-label={`${c.unreadCount} unread`}
+                          >
+                            {c.unreadCount > 9 ? "9+" : c.unreadCount}
+                          </span>
+                        )}
+                        <span className="font-mono text-[10px]" style={{ color: "var(--navy-3)" }}>
+                          {shortDate(c.lastMessageAt ?? c.updatedAt)}
+                        </span>
                       </span>
                     </span>
-                    <span className="block text-xs truncate mt-0.5" style={{ color: "var(--navy-2)" }}>
+                    <span
+                      className="block text-xs truncate mt-0.5"
+                      style={{
+                        color: c.unreadCount > 0 && !active ? "var(--navy)" : "var(--navy-2)",
+                        fontWeight: c.unreadCount > 0 && !active ? 600 : 400,
+                      }}
+                    >
                       {c.lastLine ?? `${c.myNeighbourhood} ⇄ ${c.theirNeighbourhood}`}
                     </span>
                     <span className="flex items-center gap-1.5 mt-1">

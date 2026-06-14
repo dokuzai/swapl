@@ -741,4 +741,22 @@ export const tr: Partial<Record<DictKey, string>> = {
   "guide.field.emergencyContact": "Acil durum iletişimi",
   "guide.section.core": "Temel bilgiler",
   "guide.section.extra": "Olsa iyi olur",
+
+  // Takas sohbeti (DOK-154)
+  "chat.title": "{name} ile sohbet",
+  "chat.subtitle": "Canlı",
+  "chat.empty": "Henüz mesaj yok. {name} kişisine merhaba de.",
+  "chat.placeholder": "Bir mesaj yaz…",
+  "chat.send": "Gönder",
+  "chat.sending": "Gönderiliyor…",
+  "chat.sendError": "Gönderilemedi — tekrar dene.",
+  "chat.attach": "Fotoğraf ekle",
+  "chat.removePhoto": "Fotoğrafı kaldır",
+  "chat.loadOlder": "Önceki mesajları yükle",
+  "chat.loading": "Yükleniyor…",
+  "chat.today": "Bugün",
+  "chat.yesterday": "Dün",
+  "chat.read": "Okundu",
+  "chat.sent": "Gönderildi",
+  "chat.messageName": "{name} kişisine yaz",
 };

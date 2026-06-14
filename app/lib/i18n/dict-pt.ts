@@ -741,4 +741,22 @@ export const pt: Partial<Record<DictKey, string>> = {
   "guide.field.emergencyContact": "Contacto de emergência",
   "guide.section.core": "O essencial",
   "guide.section.extra": "Bom ter",
+
+  // Chat da troca (DOK-154)
+  "chat.title": "Conversa com {name}",
+  "chat.subtitle": "Ao vivo",
+  "chat.empty": "Ainda não há mensagens. Diga olá a {name}.",
+  "chat.placeholder": "Escreva uma mensagem…",
+  "chat.send": "Enviar",
+  "chat.sending": "A enviar…",
+  "chat.sendError": "Não foi possível enviar — tente novamente.",
+  "chat.attach": "Anexar uma foto",
+  "chat.removePhoto": "Remover foto",
+  "chat.loadOlder": "Carregar mensagens anteriores",
+  "chat.loading": "A carregar…",
+  "chat.today": "Hoje",
+  "chat.yesterday": "Ontem",
+  "chat.read": "Lida",
+  "chat.sent": "Enviada",
+  "chat.messageName": "Escrever a {name}",
 };

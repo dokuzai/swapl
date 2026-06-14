@@ -742,4 +742,22 @@ export const it: Partial<Record<DictKey, string>> = {
   "guide.field.emergencyContact": "Contatto di emergenza",
   "guide.section.core": "Gli essenziali",
   "guide.section.extra": "Bello da avere",
+
+  // Chat dello scambio (DOK-154)
+  "chat.title": "Chat con {name}",
+  "chat.subtitle": "In diretta",
+  "chat.empty": "Ancora nessun messaggio. Saluta {name}.",
+  "chat.placeholder": "Scrivi un messaggio…",
+  "chat.send": "Invia",
+  "chat.sending": "Invio…",
+  "chat.sendError": "Invio non riuscito — riprova.",
+  "chat.attach": "Allega una foto",
+  "chat.removePhoto": "Rimuovi foto",
+  "chat.loadOlder": "Carica messaggi precedenti",
+  "chat.loading": "Caricamento…",
+  "chat.today": "Oggi",
+  "chat.yesterday": "Ieri",
+  "chat.read": "Letto",
+  "chat.sent": "Inviato",
+  "chat.messageName": "Scrivi a {name}",
 };
