@@ -16,6 +16,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
 import { HomeGuideEditor } from "./home-guide-editor";
+import { ReportProblem } from "./report-problem";
 
 type TripPhase = "AGREED" | "PREPARING" | "READY" | "IN_PROGRESS" | "COMPLETED" | "INTERRUPTED";
 
@@ -79,11 +80,13 @@ const SUPPORT_PHONE = "+44 800 000 swap";
 export function TripCockpit({
   agreementId,
   myListingId,
+  myUserId,
   guestCode,
   myCode,
 }: {
   agreementId: string;
   myListingId: string;
+  myUserId: string;
   guestCode: string | null;
   myCode: string | null;
 }) {
@@ -159,7 +162,7 @@ export function TripCockpit({
 
       <HomeGuideEditor listingId={myListingId} collapsible />
 
-      <ReportProblem />
+      <ReportProblem agreementId={agreementId} myUserId={myUserId} />
     </div>
   );
 }
@@ -574,19 +577,3 @@ function CheckModal({
   );
 }
 
-function ReportProblem() {
-  const t = useT();
-  return (
-    <div className="surface-card p-5">
-      <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-2" style={{ color: "var(--navy-3)" }}>
-        {t("trip.report.title")}
-      </div>
-      <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>
-        {t("trip.report.body", { phone: SUPPORT_PHONE })}
-      </p>
-      <a href="https://swapl.fun/help" target="_blank" rel="noreferrer" className="pill-ghost inline-block">
-        {t("trip.report.cta")} →
-      </a>
-    </div>
-  );
-}

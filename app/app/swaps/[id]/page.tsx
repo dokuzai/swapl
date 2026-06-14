@@ -142,6 +142,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
           <TripCockpit
             agreementId={proposal.agreement.id}
             myListingId={myListing.id}
+            myUserId={session.userId}
             guestCode={isProposer ? proposal.agreement.keyCode2 : proposal.agreement.keyCode1}
             myCode={isProposer ? proposal.agreement.keyCode1 : proposal.agreement.keyCode2}
           />
