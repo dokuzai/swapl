@@ -78,6 +78,16 @@ export default async function EditListingPage(props: PageProps<"/listings/[id]/e
                 Edit →
               </span>
             </Link>
+
+            <Link href={`/listings/${id}/edit/home-guide`} className="surface-card p-6 block">
+              <h2 className="font-display text-xl tracking-[-0.01em] mb-2">Home guide</h2>
+              <p className="text-sm" style={{ color: "var(--navy-2)" }}>
+                Write the access, Wi-Fi and house notes your guest sees once a swap is confirmed.
+              </p>
+              <span className="mt-3 inline-block font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--pink)" }}>
+                Write guide →
+              </span>
+            </Link>
           </div>
         </div>
       </main>

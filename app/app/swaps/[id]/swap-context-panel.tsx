@@ -35,6 +35,12 @@ export type SwapContextProps = {
   } | null;
   /** Contextual actions (accept/decline/counter/withdraw…) rendered at the bottom. */
   actions: React.ReactNode;
+  /**
+   * Post-agreement trip cockpit (DOK-152). When present it replaces the static
+   * key-codes + insurance blocks — the cockpit renders its own phase timeline,
+   * checklist, keys, reveal-gated address/guide and check-in/out.
+   */
+  tripCockpit?: React.ReactNode;
 };
 
 // Right-hand "Swap" context panel of the three-pane thread (DOK-150).
@@ -49,6 +55,7 @@ export function SwapContextPanel({
   theirListing,
   agreement,
   actions,
+  tripCockpit,
 }: SwapContextProps) {
   return (
     <div className="space-y-4">
@@ -86,41 +93,17 @@ export function SwapContextPanel({
         </Link>
       </div>
 
-      {agreement && (
-        <div className="surface-card p-5" style={{ background: "var(--navy)", color: "var(--cream)" }}>
-          <h3 className="font-display text-lg mb-3" style={{ color: "var(--cream)" }}>
-            Keys for keys
-          </h3>
-          <div className="space-y-4">
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[.08em] mb-1" style={{ color: "color-mix(in oklab, var(--cream) 60%, transparent)" }}>
-                Your guest&rsquo;s code (theirs to use at your place)
-              </div>
-              <div className="font-mono text-2xl tracking-widest">{agreement.yourGuestCode ?? "—"}</div>
-            </div>
-            <div>
-              <div className="font-mono text-[10px] uppercase tracking-[.08em] mb-1" style={{ color: "color-mix(in oklab, var(--cream) 60%, transparent)" }}>
-                Your code (yours to use at their place)
-              </div>
-              <div className="font-mono text-2xl tracking-widest">{agreement.yourCode ?? "—"}</div>
-            </div>
+      {/* Post-agreement: the trip cockpit takes over the keys + insurance area.
+          Before acceptance (no agreement / no cockpit) we keep the static
+          insurance teaser so the value prop is visible pre-swap. */}
+      {tripCockpit ?? (
+        <div className="surface-card p-5">
+          <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-2" style={{ color: "var(--navy-3)" }}>
+            Insurance
           </div>
-          {agreement.insurancePolicy && (
-            <p className="text-sm mt-4" style={{ color: "color-mix(in oklab, var(--cream) 75%, transparent)" }}>
-              Policy <span className="font-mono">{agreement.insurancePolicy.policyNumber}</span> · €
-              {agreement.insurancePolicy.coverageAmount.toLocaleString()} cover · 24/7 line:{" "}
-              <span className="font-mono">+44 800 000 swap</span>
-            </p>
-          )}
+          <InsurancePanel policy={agreement?.insurancePolicy ?? null} agreementId={agreement?.id ?? null} />
         </div>
       )}
-
-      <div className="surface-card p-5">
-        <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-2" style={{ color: "var(--navy-3)" }}>
-          Insurance
-        </div>
-        <InsurancePanel policy={agreement?.insurancePolicy ?? null} agreementId={agreement?.id ?? null} />
-      </div>
 
       <div className="surface-card p-5">
         <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-3" style={{ color: "var(--navy-3)" }}>

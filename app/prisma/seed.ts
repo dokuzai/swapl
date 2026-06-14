@@ -745,9 +745,12 @@ async function main() {
   await prisma.organization.deleteMany();
   await prisma.report.deleteMany();
   await prisma.swapMessage.deleteMany();
+  await prisma.swapReview.deleteMany();
+  await prisma.swapCheckEvent.deleteMany();
   await prisma.insurancePolicy.deleteMany();
   await prisma.swapAgreement.deleteMany();
   await prisma.swapProposal.deleteMany();
+  await prisma.listingHomeGuide.deleteMany();
   await prisma.listing.deleteMany();
   await prisma.betaSignup.deleteMany();
   await prisma.user.deleteMany();

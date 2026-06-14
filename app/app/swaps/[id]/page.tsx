@@ -7,6 +7,7 @@ import { formatDateRange } from "@/lib/listing-utils";
 import SwapActions from "./swap-actions";
 import { LeaveReview } from "./leave-review";
 import { SwapContextPanel } from "./swap-context-panel";
+import { TripCockpit } from "./trip-cockpit";
 import { AffiliateLink } from "@/components/affiliate/affiliate-link";
 import { ConciergeSection, type AddOn as ConciergeAddOn } from "@/components/concierge/concierge-section";
 import { PersonalisedSuggestions } from "@/components/affiliate/personalised-suggestions";
@@ -136,6 +137,16 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
           : null
       }
       actions={actions}
+      tripCockpit={
+        proposal.agreement ? (
+          <TripCockpit
+            agreementId={proposal.agreement.id}
+            myListingId={myListing.id}
+            guestCode={isProposer ? proposal.agreement.keyCode2 : proposal.agreement.keyCode1}
+            myCode={isProposer ? proposal.agreement.keyCode1 : proposal.agreement.keyCode2}
+          />
+        ) : undefined
+      }
     />
   );
 
