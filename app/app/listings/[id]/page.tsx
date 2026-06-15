@@ -325,8 +325,11 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
 
         <aside className="space-y-5">
           {/* Booking-style card (DOK-150): availability cells, stay length,
-              primary CTA, insurance note — host context below. */}
-          <div className="surface-card surface-card--static p-6 sticky top-24">
+              primary CTA, insurance note — host context below. Sticky only on
+              desktop: on mobile the aside is a full-width stacked column, where
+              a sticky card pins on scroll and overlaps the Stay-with-Keys card
+              (calendar) below it. */}
+          <div className="surface-card surface-card--static p-6 lg:sticky lg:top-24">
             <div
               className="grid grid-cols-2 rounded-xl border overflow-hidden mb-3"
               style={{ borderColor: "var(--line)" }}
