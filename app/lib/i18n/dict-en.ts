@@ -675,6 +675,11 @@ export const en = {
   "trip.guideEditor.open": "Edit your home guide",
   "trip.error": "Couldn't load your trip — refresh to retry.",
 
+  // ---- Proof of cover on-chain (DOK-156) ----
+  "cover.proof.badge": "Verified on TON",
+  "cover.proof.blurb": "A tamper-proof record of your cover — no crypto, no payment, just proof your policy is real.",
+  "cover.proof.view": "View on TON",
+
   // ---- Report a problem / dispute flow (DOK-153) ----
   "dispute.report.cta": "Get help now",
   "dispute.open.title": "Report a problem",

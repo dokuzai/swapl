@@ -7,6 +7,7 @@ import { formatDateRange } from "@/lib/listing-utils";
 import SwapActions from "./swap-actions";
 import { LeaveReview } from "./leave-review";
 import { SwapContextPanel } from "./swap-context-panel";
+import { tonExplorerUrl } from "@/lib/insurance/access";
 import { TripCockpit } from "./trip-cockpit";
 import { AffiliateLink } from "@/components/affiliate/affiliate-link";
 import { ConciergeSection, type AddOn as ConciergeAddOn } from "@/components/concierge/concierge-section";
@@ -132,6 +133,13 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
                     coverageAmount: proposal.agreement.insurancePolicy.coverageAmount,
                     policyNumber: proposal.agreement.insurancePolicy.policyNumber,
                     documentsUrl: proposal.agreement.insurancePolicy.documentsUrl,
+                    // DOK-156 — proof-of-cover (null when anchoring disabled).
+                    onChainStatus: proposal.agreement.insurancePolicy.onChainStatus,
+                    onChainRef: proposal.agreement.insurancePolicy.onChainRef,
+                    explorerUrl: tonExplorerUrl(
+                      proposal.agreement.insurancePolicy.onChainRef,
+                      proposal.agreement.insurancePolicy.onChainNetwork,
+                    ),
                   }
                 : null,
             }

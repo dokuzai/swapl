@@ -21,6 +21,8 @@ import { parseSettings } from "@/lib/settings";
 import { marketingUrl } from "@/lib/marketing/urls";
 import { getI18n, t as tt } from "@/lib/i18n/server";
 import type { DictKey } from "@/lib/i18n/dict-en";
+import { ProofOfCoverBadge } from "@/components/insurance/proof-of-cover-badge";
+import { tonExplorerUrl } from "@/lib/insurance/access";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Account · swapl" };
@@ -266,6 +268,17 @@ export default async function AccountPage() {
                               Certificate →
                             </a>
                           )}
+                          <ProofOfCoverBadge
+                            tone="light"
+                            onChainStatus={p.onChainStatus}
+                            onChainRef={p.onChainRef}
+                            explorerUrl={tonExplorerUrl(p.onChainRef, p.onChainNetwork)}
+                            labels={{
+                              badge: t("cover.proof.badge"),
+                              blurb: t("cover.proof.blurb"),
+                              view: t("cover.proof.view"),
+                            }}
+                          />
                         </div>
                       </li>
                     ))}

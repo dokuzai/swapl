@@ -677,6 +677,11 @@ export const tr: Partial<Record<DictKey, string>> = {
   "trip.guideEditor.open": "Ev rehberini düzenle",
   "trip.error": "Yolculuğun yüklenemedi — yenileyip tekrar dene.",
 
+  // ---- Zincir üstü teminat kanıtı (DOK-156) ----
+  "cover.proof.badge": "TON'da doğrulandı",
+  "cover.proof.blurb": "Teminatının kurcalanamaz bir kanıtı — kripto yok, ödeme yok, yalnızca poliçenin gerçek olduğunun kanıtı.",
+  "cover.proof.view": "TON'da görüntüle",
+
   // ---- Sorun bildir / anlaşmazlık (DOK-153) ----
   "dispute.report.cta": "Hemen yardım al",
   "dispute.open.title": "Sorun bildir",

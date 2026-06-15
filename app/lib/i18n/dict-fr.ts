@@ -662,6 +662,11 @@ export const fr: Partial<Record<DictKey, string>> = {
   "trip.guideEditor.open": "Modifier votre guide de la maison",
   "trip.error": "Impossible de charger votre voyage — actualisez pour réessayer.",
 
+  // ---- Preuve de couverture on-chain (DOK-156) ----
+  "cover.proof.badge": "Vérifié sur TON",
+  "cover.proof.blurb": "Une preuve infalsifiable de votre couverture — pas de crypto, pas de paiement, juste la preuve que votre police est réelle.",
+  "cover.proof.view": "Voir sur TON",
+
   // ---- Signaler un problème / litige (DOK-153) ----
   "dispute.report.cta": "Obtenir de l'aide maintenant",
   "dispute.open.title": "Signaler un problème",

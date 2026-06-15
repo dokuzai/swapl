@@ -677,6 +677,11 @@ export const nl: Partial<Record<DictKey, string>> = {
   "trip.guideEditor.open": "Je huisgids bewerken",
   "trip.error": "Kon je reis niet laden — ververs om opnieuw te proberen.",
 
+  // ---- Dekkingsbewijs on-chain (DOK-156) ----
+  "cover.proof.badge": "Geverifieerd op TON",
+  "cover.proof.blurb": "Een fraudebestendig bewijs van je dekking — geen crypto, geen betaling, alleen het bewijs dat je polis echt is.",
+  "cover.proof.view": "Bekijk op TON",
+
   // ---- Probleem melden / geschil (DOK-153) ----
   "dispute.report.cta": "Nu hulp krijgen",
   "dispute.open.title": "Probleem melden",

@@ -4,6 +4,8 @@ import { paletteForCity } from "@/lib/cities";
 import { formatDateRange } from "@/lib/listing-utils";
 import { StatusPill } from "../status-pill";
 import { RetryCoverButton } from "@/components/insurance/retry-cover-button";
+import { ProofOfCoverBadge } from "@/components/insurance/proof-of-cover-badge";
+import { en } from "@/lib/i18n/dict-en";
 
 type PanelListing = {
   id: string;
@@ -18,6 +20,10 @@ type PanelPolicy = {
   coverageAmount: number;
   policyNumber: string;
   documentsUrl: string | null;
+  // DOK-156 — proof-of-cover DTO fields (null when anchoring is disabled).
+  onChainStatus: string | null;
+  onChainRef: string | null;
+  explorerUrl: string | null;
 };
 
 export type SwapContextProps = {
@@ -155,6 +161,18 @@ function InsurancePanel({ policy, agreementId }: { policy: PanelPolicy | null; a
           View certificate of cover →
         </a>
       )}
+      <ProofOfCoverBadge
+        tone="light"
+        className="mt-3"
+        onChainStatus={policy.onChainStatus}
+        onChainRef={policy.onChainRef}
+        explorerUrl={policy.explorerUrl}
+        labels={{
+          badge: en["cover.proof.badge"],
+          blurb: en["cover.proof.blurb"],
+          view: en["cover.proof.view"],
+        }}
+      />
     </>
   );
 }

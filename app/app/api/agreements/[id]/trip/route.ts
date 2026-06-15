@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { forbidden, notFound, unauthenticated } from "@/lib/api/errors";
 import { loadAgreement, resolveParty, computeGating, phaseOf } from "@/lib/trip/agreement";
+import { tonExplorerUrl } from "@/lib/insurance/access";
 import { HOME_GUIDE_CORE_FIELDS } from "@/lib/trip/phase";
 
 const GUIDE_FIELDS = [
@@ -74,6 +75,13 @@ export async function GET(req: Request, { params }: RouteContext<"/api/agreement
           coverageAmount: agreement.insurancePolicy.coverageAmount,
           status: agreement.insurancePolicy.status,
           expiresAt: agreement.insurancePolicy.expiresAt.toISOString(),
+          // DOK-156 — proof-of-cover. Null when anchoring is disabled (env-gated).
+          onChainStatus: agreement.insurancePolicy.onChainStatus ?? null,
+          onChainRef: agreement.insurancePolicy.onChainRef ?? null,
+          explorerUrl: tonExplorerUrl(
+            agreement.insurancePolicy.onChainRef,
+            agreement.insurancePolicy.onChainNetwork,
+          ),
         }
       : null,
     addressUnlocked: gating.unlocked,

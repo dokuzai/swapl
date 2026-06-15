@@ -15,6 +15,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
+import { ProofOfCoverBadge } from "@/components/insurance/proof-of-cover-badge";
 import { HomeGuideEditor } from "./home-guide-editor";
 import { ReportProblem } from "./report-problem";
 import { useSupportContacts } from "@/lib/support-contacts";
@@ -46,6 +47,10 @@ type TripPayload = {
     coverageAmount: number;
     status: string;
     expiresAt: string;
+    // DOK-156 — proof-of-cover DTO fields (null when anchoring is disabled).
+    onChainStatus: string | null;
+    onChainRef: string | null;
+    explorerUrl: string | null;
   } | null;
   addressUnlocked: boolean;
   otherAddress: string | null;
@@ -145,6 +150,20 @@ export function TripCockpit({
             {trip.insurance.coverageAmount.toLocaleString()} cover · 24/7 line:{" "}
             <span className="font-mono">{support.phone}</span>
           </p>
+        )}
+        {trip.insurance && (
+          <ProofOfCoverBadge
+            tone="dark"
+            className="mt-4"
+            onChainStatus={trip.insurance.onChainStatus}
+            onChainRef={trip.insurance.onChainRef}
+            explorerUrl={trip.insurance.explorerUrl}
+            labels={{
+              badge: t("cover.proof.badge"),
+              blurb: t("cover.proof.blurb"),
+              view: t("cover.proof.view"),
+            }}
+          />
         )}
       </div>
 
