@@ -1159,8 +1159,10 @@ model PropertyVerification {
   // AI property-document analysis (DOK-186). Env-gated best-effort: when the AI
   // is unconfigured/not vision-capable these stay null and the flow degrades to
   // pure DOK-162 manual review. The AI only PROPOSES — admin confirms/overrides.
-  // PRIVACY: we persist only the classification + entity type + a redacted
-  // ownerName for the match, plus bounded reasons — never the document content.
+  // PRIVACY: we persist only the classification + entity type + bounded reasons
+  // — never the titleholder name, the document content, or any other PII. The AI
+  // reads an ownerName in-memory to match the host, but it is intentionally NOT
+  // stored here; do not add an aiOwnerName column.
   aiClassification String? // private_owner | private_tenant | business | uncertain
   aiConfidence     Float?
   aiReasons        String? // JSON array of short strings (parseJSON)
