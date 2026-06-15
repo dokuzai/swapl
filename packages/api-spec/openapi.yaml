@@ -1687,6 +1687,72 @@ components:
         ok: { type: boolean }
         marked: { type: integer, description: Number of messages newly marked as read. }
 
+    ConversationParticipant:
+      type: object
+      required: [id, userId, invitedEmail, name, avatar, role, status]
+      properties:
+        id:
+          type: string
+          description: >-
+            Participant row id. For the two structural principals this is a
+            synthetic "principal:<userId>" id (they have no DB row).
+        userId:
+          type: [string, 'null']
+          description: Resolved account id, or null for an email-only pending invite.
+        invitedEmail:
+          type: [string, 'null']
+          description: The invited email for a pending seat, else null.
+        name: { type: [string, 'null'] }
+        avatar: { type: [string, 'null'] }
+        role:
+          type: string
+          enum: [principal, guest_participant]
+        status:
+          type: string
+          enum: [active, pending, removed]
+
+    ConversationParticipantsResponse:
+      type: object
+      required: [participants]
+      properties:
+        participants:
+          type: array
+          items: { $ref: '#/components/schemas/ConversationParticipant' }
+
+    ConversationParticipantInviteRequest:
+      type: object
+      description: Provide exactly one of byUserId or byEmail.
+      properties:
+        byUserId: { type: string, description: Add an existing account as an active guest. }
+        byEmail:
+          type: string
+          format: email
+          description: >-
+            Invite by email. Activates immediately if the address has an
+            account; otherwise a pending seat + invite email.
+
+    ConversationParticipantCreateResponse:
+      type: object
+      required: [participant]
+      properties:
+        participant: { $ref: '#/components/schemas/ConversationParticipant' }
+
+    ConversationParticipantSuggestion:
+      type: object
+      required: [userId, name, avatar]
+      properties:
+        userId: { type: string }
+        name: { type: [string, 'null'] }
+        avatar: { type: [string, 'null'] }
+
+    ConversationParticipantSuggestionsResponse:
+      type: object
+      required: [suggestions]
+      properties:
+        suggestions:
+          type: array
+          items: { $ref: '#/components/schemas/ConversationParticipantSuggestion' }
+
     Conversation:
       type: object
       required:
@@ -3431,6 +3497,111 @@ paths:
               schema: { $ref: '#/components/schemas/SwapMessagesReadResponse' }
         '401': { description: Unauthenticated }
         '403': { description: Not a party of this proposal }
+        '404': { description: Proposal not found }
+
+  /api/proposals/{id}/participants:
+    get:
+      tags: [proposals]
+      summary: List the conversation's participants
+      description: >-
+        Returns the two principal parties (proposer + target owner) plus any
+        guest participants (DOK-187). Visible to anyone with thread access:
+        both principals and active guests.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConversationParticipantsResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: No access to this conversation }
+        '404': { description: Proposal not found }
+    post:
+      tags: [proposals]
+      summary: Invite a co-traveler into the conversation
+      description: >-
+        Only a PRINCIPAL (proposer or target owner) may invite. Provide exactly
+        one of byUserId or byEmail. byUserId (or a byEmail matching an existing
+        account) adds an active guest seat immediately; an unknown byEmail
+        creates a pending seat and sends an invite email — the seat activates
+        when that address registers or signs in. Idempotent per (proposal,user)
+        and (proposal,email). Guests can read/write the thread but can never act
+        on the swap (accept/counter/decline/withdraw stay principal-only).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConversationParticipantInviteRequest' }
+      responses:
+        '201':
+          description: Participant added or invited
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConversationParticipantCreateResponse' }
+        '200':
+          description: Target is already a member (principal) — no-op
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, alreadyMember]
+                properties:
+                  ok: { type: boolean }
+                  alreadyMember: { type: boolean }
+        '400': { description: Must provide exactly one of byUserId or byEmail }
+        '401': { description: Unauthenticated }
+        '403': { description: Only swap principals can invite }
+        '404': { description: Proposal or user not found }
+
+  /api/proposals/{id}/participants/{participantId}:
+    delete:
+      tags: [proposals]
+      summary: Remove a guest participant
+      description: >-
+        Soft-removes a guest seat (status → removed). Principal-only; the two
+        principals can never be removed. Idempotent.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+        - { name: participantId, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Removed (or already removed)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties: { ok: { type: boolean } }
+        '401': { description: Unauthenticated }
+        '403': { description: Only principals can remove; principals are not removable }
+        '404': { description: Proposal or participant not found }
+
+  /api/proposals/{id}/participants/suggestions:
+    get:
+      tags: [proposals]
+      summary: Suggested co-travelers to invite
+      description: >-
+        Principal-only. Suggests accounts the caller has already swapped with
+        (counterparties of their other proposals), excluding anyone already in
+        this conversation. One-tap invite candidates for "Add co-travelers".
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConversationParticipantSuggestionsResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Only swap principals can invite }
         '404': { description: Proposal not found }
 
   /api/conversations:
