@@ -38,6 +38,7 @@ tags:
   - name: uploads
   - name: i18n
   - name: config
+  - name: keys
 
 components:
   securitySchemes:
@@ -345,6 +346,59 @@ components:
       properties:
         ok: { type: boolean }
         alreadyVerified: { type: boolean }
+
+    KeysTransaction:
+      type: object
+      required: [id, delta, kind, balanceAfter, createdAt]
+      properties:
+        id: { type: string }
+        delta: { type: integer, description: 'Signed: + credit, - debit' }
+        kind:
+          type: string
+          enum: [earn_host, spend_stay, welcome_bonus, gift_sent, gift_received, refund, hold, release]
+        balanceAfter: { type: integer }
+        stayId: { type: string, nullable: true }
+        note: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    KeysStay:
+      type: object
+      required: [id, role, listing, dateFrom, dateTo, nights, keysCost, status, createdAt]
+      properties:
+        id: { type: string }
+        role: { type: string, enum: [guest, host] }
+        listing:
+          type: object
+          properties:
+            id: { type: string }
+            title: { type: string }
+            city: { type: string }
+        dateFrom: { type: string, format: date-time }
+        dateTo: { type: string, format: date-time }
+        nights: { type: integer }
+        keysCost: { type: integer }
+        status: { type: string, enum: [pending, confirmed, declined, cancelled, completed] }
+        insurancePolicyId: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    KeysAvailability:
+      type: object
+      required: [listingId, nightlyKeys, availableFrom, availableTo, minStayDays, maxStayDays, bookedRanges]
+      properties:
+        listingId: { type: string }
+        nightlyKeys: { type: integer }
+        availableFrom: { type: string, format: date-time }
+        availableTo: { type: string, format: date-time }
+        minStayDays: { type: integer }
+        maxStayDays: { type: integer }
+        bookedRanges:
+          type: array
+          items:
+            type: object
+            required: [dateFrom, dateTo]
+            properties:
+              dateFrom: { type: string, format: date-time }
+              dateTo: { type: string, format: date-time }
 
     TravelProfile:
       type: object
@@ -3911,3 +3965,215 @@ paths:
                   ok: { type: boolean }
                   locale: { type: string }
         '400': { description: Unsupported locale }
+
+  # ---- Keys credit economy (DOK-155) ----
+  /api/keys:
+    get:
+      tags: [keys]
+      summary: My Keys wallet
+      description: >-
+        The caller's Keys balance (travel points — never money), the nightly
+        Keys value of each of their listings, and recent ledger transactions.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [balance, nightlyKeysForMyListings, recentTransactions]
+                properties:
+                  balance: { type: integer }
+                  nightlyKeysForMyListings:
+                    type: array
+                    items:
+                      type: object
+                      required: [listingId, title, nightlyKeys]
+                      properties:
+                        listingId: { type: string }
+                        title: { type: string }
+                        nightlyKeys: { type: integer }
+                  recentTransactions:
+                    type: array
+                    items: { $ref: '#/components/schemas/KeysTransaction' }
+        '401': { description: Unauthenticated }
+
+  /api/keys/gift:
+    post:
+      tags: [keys]
+      summary: Gift Keys to a verified member
+      description: >-
+        Internal, capped peer transfer (the only way Keys move between users).
+        Recipient and sender must both be verified; per-transfer, daily and
+        monthly caps apply; rate-limited. Keys cannot be bought or cashed out.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [toUserId, amount]
+              properties:
+                toUserId: { type: string }
+                amount: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Gifted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, amount, balanceAfter, recipientBalanceAfter]
+                properties:
+                  ok: { type: boolean }
+                  amount: { type: integer }
+                  balanceAfter: { type: integer }
+                  recipientBalanceAfter: { type: integer }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Sender or recipient not a verified member }
+        '404': { description: Recipient not found }
+        '422': { description: Self-gift, cap reached, or insufficient Keys }
+        '429': { description: Rate limited }
+
+  /api/listings/{id}/keys-availability:
+    get:
+      tags: [keys]
+      summary: Stay-with-Keys availability for a listing
+      description: >-
+        Bookable dates, nightly Keys value, and already-taken ranges for a
+        non-simultaneous Stay-with-Keys on this listing.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/KeysAvailability' }
+        '401': { description: Unauthenticated }
+        '404': { description: Listing not found }
+
+  /api/keys/stays:
+    get:
+      tags: [keys]
+      summary: My Keys stays (guest + host)
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [stays]
+                properties:
+                  stays:
+                    type: array
+                    items: { $ref: '#/components/schemas/KeysStay' }
+        '401': { description: Unauthenticated }
+    post:
+      tags: [keys]
+      summary: Request a Stay-with-Keys (non-simultaneous)
+      description: >-
+        The guest's Keys are HELD (not yet spent) and the host is notified to
+        confirm or decline. Distinct from a direct two-way swap.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listingId, dateFrom, dateTo]
+              properties:
+                listingId: { type: string }
+                dateFrom: { type: string, format: date-time }
+                dateTo: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Pending stay created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, stayId, status, nights, keysCost]
+                properties:
+                  ok: { type: boolean }
+                  stayId: { type: string }
+                  status: { type: string }
+                  nights: { type: integer }
+                  keysCost: { type: integer }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '404': { description: Listing not found }
+        '422': { description: Bad dates, conflict, or insufficient Keys }
+        '429': { description: Rate limited }
+
+  /api/keys/stays/{id}/confirm:
+    post:
+      tags: [keys]
+      summary: Host confirms a pending Keys stay
+      description: >-
+        Releases the guest's hold, charges the real spend, credits the host,
+        and issues a cover policy (insurance reused).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, stayId, keysCost]
+                properties:
+                  ok: { type: boolean }
+                  stayId: { type: string }
+                  keysCost: { type: integer }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the host }
+        '404': { description: Stay not found }
+        '422': { description: Stay not pending }
+
+  /api/keys/stays/{id}/decline:
+    post:
+      tags: [keys]
+      summary: Host declines a pending Keys stay
+      description: Releases the guest's held Keys back to their wallet.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Declined
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the host }
+        '404': { description: Stay not found }
+        '422': { description: Stay not pending }
+
+  /api/keys/stays/{id}/cancel:
+    post:
+      tags: [keys]
+      summary: Guest cancels their pending Keys stay
+      description: Releases the guest's held Keys back to their wallet.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Cancelled
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the guest }
+        '404': { description: Stay not found }
+        '422': { description: Stay not pending }

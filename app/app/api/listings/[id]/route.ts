@@ -8,6 +8,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { listingCreateSchema } from "@/lib/validators";
 import { generateCityArt } from "@/lib/ai/city-illustration";
 import { coordForCity, jitterCoord } from "@/lib/city-coords";
+import { nightlyKeysFor } from "@/lib/keys/value";
 import { toDTO } from "@/lib/listing-utils";
 import { computeMatchScore } from "@/lib/match/score";
 import { getViewerListing } from "@/lib/listing-query";
@@ -148,6 +149,14 @@ export async function PUT(req: Request, { params }: RouteContext<"/api/listings/
       lat,
       lng,
       sizeSqm: data.sizeSqm,
+      // Keys economy (DOK-155): recompute the cached value-per-night since
+      // size/sleeps/city may have changed; verification status is unchanged here.
+      nightlyKeys: nightlyKeysFor({
+        sizeSqm: data.sizeSqm,
+        sleeps: data.sleeps,
+        city: data.city,
+        isVerified: existing.isVerified,
+      }),
       sleeps: data.sleeps,
       bedrooms: data.bedrooms,
       bathrooms: data.bathrooms,

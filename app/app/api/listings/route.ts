@@ -8,6 +8,7 @@ import { ensureCanCreateListing, PlanLimitError } from "@/lib/billing/limits";
 import { parseFiltersFromSearchParams } from "@/lib/listing-filters";
 import { queryListings, getViewerListing } from "@/lib/listing-query";
 import { apiError, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
+import { nightlyKeysFor } from "@/lib/keys/value";
 
 // Mobile / SPA-friendly listing search. Mirrors what the /listings RSC page
 // does today, returning pre-scored results so clients don't recompute.
@@ -99,6 +100,9 @@ export async function POST(req: Request) {
       lat,
       lng,
       sizeSqm: data.sizeSqm,
+      // Keys economy (DOK-155): cache the derived value-per-night so reads
+      // don't recompute it. A new listing is never verified yet.
+      nightlyKeys: nightlyKeysFor({ sizeSqm: data.sizeSqm, sleeps: data.sleeps, city: data.city, isVerified: false }),
       sleeps: data.sleeps,
       bedrooms: data.bedrooms,
       bathrooms: data.bathrooms,

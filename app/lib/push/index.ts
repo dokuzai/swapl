@@ -20,6 +20,7 @@ export type PushPayload = {
     kind: PushKind;
     proposalId?: string;
     listingId?: string;
+    stayId?: string;
     deepLink: string; // e.g. "swapl://swaps/<id>"
   };
 };
@@ -48,7 +49,11 @@ export type PushKind =
   | "disputeStatusChanged"
   | "disputeMessage"
   | "identityVerified"
-  | "identityVerificationFailed";
+  | "identityVerificationFailed"
+  | "keysGiftReceived"
+  | "keysStayRequested"
+  | "keysStayConfirmed"
+  | "keysStayDeclined";
 
 export async function sendPush(userId: string, payload: PushPayload): Promise<void> {
   const devices = await prisma.device.findMany({ where: { userId } });
@@ -310,6 +315,35 @@ export const pushTemplates = {
       title: `${fromName} replied on your dispute`,
       body: "New reply in the resolution center. Tap to read.",
       data: { kind: "disputeMessage", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  // ---- Keys economy (DOK-155) ----
+  keysGiftReceived(amount: number): PushPayload {
+    return {
+      title: "You received Keys 🎁",
+      body: `Someone sent you ${amount} Keys. Tap to see your wallet.`,
+      data: { kind: "keysGiftReceived", deepLink: "swapl://keys" },
+    };
+  },
+  keysStayRequested(stayId: string, nights: number, keysCost: number): PushPayload {
+    return {
+      title: "New Stay-with-Keys request",
+      body: `A guest wants ${nights} night${nights === 1 ? "" : "s"} for ${keysCost} Keys. Tap to confirm or decline.`,
+      data: { kind: "keysStayRequested", stayId, deepLink: `swapl://keys/stays/${stayId}` },
+    };
+  },
+  keysStayConfirmed(stayId: string): PushPayload {
+    return {
+      title: "Your stay is confirmed 🔑",
+      body: "Your Keys stay is booked and covered. Tap for details.",
+      data: { kind: "keysStayConfirmed", stayId, deepLink: `swapl://keys/stays/${stayId}` },
+    };
+  },
+  keysStayDeclined(stayId: string): PushPayload {
+    return {
+      title: "Your stay request was declined",
+      body: "Your Keys have been returned to your wallet. Tap to browse other homes.",
+      data: { kind: "keysStayDeclined", stayId, deepLink: `swapl://keys/stays/${stayId}` },
     };
   },
 };

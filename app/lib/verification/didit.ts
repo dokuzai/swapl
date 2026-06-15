@@ -16,6 +16,8 @@
 
 import { createHmac, timingSafeEqual } from "crypto";
 import { prisma } from "@/lib/db";
+import { grantWelcomeBonus } from "@/lib/keys/ledger";
+import { WELCOME_BONUS_KEYS } from "@/lib/keys/config";
 
 const DIDIT_BASE_URL = "https://verification.didit.me";
 
@@ -229,6 +231,13 @@ export async function applyVerificationUpdate(
       where: { id: row.userId },
       data: { verified: true, verifiedAt: completedAt },
     });
+    // Keys economy (DOK-155): grant the one-time welcome bonus to the now-
+    // verified user. Idempotent at the ledger level — a replayed approval (or
+    // a re-verification) never double-grants. Best-effort: a failure here must
+    // not block the verification from completing.
+    await grantWelcomeBonus(row.userId, WELCOME_BONUS_KEYS).catch((err) =>
+      console.error("[keys:welcome-bonus]", err),
+    );
   }
 
   return { id: row.id, userId: row.userId, status: next, changed: true };

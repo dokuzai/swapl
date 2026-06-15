@@ -54,6 +54,12 @@ model User {
   proposalsCounterResetAt    DateTime @default(now())
   hideSponsoredContent       Boolean  @default(false)
 
+  // ---- Keys credit ledger (DOK-155) ----
+  // Cached saldo: the KeysTransaction ledger is the source of truth; this is
+  // kept in sync as the running sum and updated inside the same transaction
+  // that appends a ledger row. "Travel points", never money — see lib/keys.
+  keysBalance                Int      @default(0)
+
   // Social profile: interests are comma-separated slugs from
   // lib/interests.ts INTEREST_CATALOG (SQLite-friendly TEXT JSON array).
   interests                  String   @default("[]")
@@ -98,6 +104,11 @@ model User {
   disputesOpened   SwapDispute[]    @relation("DisputesOpened")
   disputesResolved SwapDispute[]    @relation("DisputesResolved")
   disputeMessages  DisputeMessage[]
+
+  // Keys economy (DOK-155)
+  keysTransactions KeysTransaction[]
+  keysStaysAsGuest KeysStay[]       @relation("KeysStayGuest")
+  keysStaysAsHost  KeysStay[]       @relation("KeysStayHost")
 }
 
 // ---------- AI ASSISTANT (DOK-146) ----------
@@ -345,6 +356,11 @@ model Listing {
   isFeatured               Boolean  @default(false)
   featuredUntil            DateTime?
 
+  // Keys economy (DOK-155): derived value-per-night in Keys, computed by
+  // lib/keys/value.ts from size/sleeps/city-tier/verification. Cached here so
+  // listing reads expose it without recomputation; recomputed on listing edits.
+  nightlyKeys    Int?
+
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -358,6 +374,7 @@ model Listing {
   featuredPurchases    ListingFeaturedPurchase[]
   favoritedBy          Favorite[]
   homeGuide            ListingHomeGuide?
+  keysStays            KeysStay[]
 
   @@index([city])
   @@index([userId])
@@ -610,6 +627,67 @@ model InsurancePolicy {
 
   expiresAt      DateTime
   createdAt      DateTime      @default(now())
+}
+
+// ---------- KEYS CREDIT LEDGER (DOK-155) ----------
+// Centralized, non-crypto "travel points" economy that sits ALONGSIDE the
+// direct simultaneous swap (SwapProposal/SwapAgreement), never replacing it.
+// The ledger is append-only and is the source of truth; User.keysBalance is a
+// cached running sum updated in the same transaction (lib/keys/ledger.ts).
+//
+// Keys are NOT money: they cannot be bought, cashed out, or withdrawn. The
+// only transfer is an in-app, capped "gift" between verified users — which
+// keeps them in the "air-miles" exemption (no MiCA / e-money exposure).
+
+model KeysTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Signed amount: positive credits, negative debits.
+  delta       Int
+  // earn_host | spend_stay | welcome_bonus | gift_sent | gift_received |
+  // refund | hold | release
+  kind        String
+  // The user's balance immediately after this row was applied (audit trail).
+  balanceAfter Int
+  // Optional link to the KeysStay that produced this row (hold/spend/earn/refund).
+  stayId      String?
+  note        String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+}
+
+// A one-directional, NON-simultaneous booking paid in Keys. Distinct from
+// SwapAgreement (which is a direct two-way swap). The guest spends Keys for
+// nights at the host's listing; the host earns them. Keys are HELD when the
+// stay is created (pending) and only become a real spend/earn on confirm.
+model KeysStay {
+  id                String   @id @default(cuid())
+  listingId         String
+  listing           Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  guestId           String
+  guest             User     @relation("KeysStayGuest", fields: [guestId], references: [id], onDelete: Cascade)
+  hostId            String
+  host              User     @relation("KeysStayHost", fields: [hostId], references: [id], onDelete: Cascade)
+
+  dateFrom          DateTime
+  dateTo            DateTime
+  nights            Int
+  keysCost          Int
+
+  // pending | confirmed | declined | cancelled | completed
+  status            String   @default("pending")
+
+  // Set on confirm when lib/insurance issues a cover policy for the stay.
+  insurancePolicyId String?
+
+  createdAt         DateTime @default(now())
+
+  @@index([listingId])
+  @@index([guestId])
+  @@index([hostId])
+  @@index([status])
 }
 
 model BetaSignup {
