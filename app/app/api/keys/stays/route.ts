@@ -8,11 +8,16 @@ import { createKeysStay, KeysStayError } from "@/lib/keys/stay";
 import { KeysLedgerError } from "@/lib/keys/ledger";
 import { STAY_RATE_LIMIT, STAY_RATE_WINDOW_MS } from "@/lib/keys/config";
 import { sendPush, pushTemplates } from "@/lib/push";
+import { resolveShareToken } from "@/lib/keys/earn";
 
 const bodySchema = z.object({
   listingId: z.string().min(1),
   dateFrom: z.coerce.date(),
   dateTo: z.coerce.date(),
+  // DOK-164: optional share token (?s=TOKEN) the guest arrived via. When it
+  // resolves to a share of THIS listing by another user, we record the pending
+  // conversion on the stay so the sharer is credited once the host confirms.
+  shareToken: z.string().min(1).max(64).optional(),
 });
 
 // GET /api/keys/stays — the caller's Keys stays, both as guest and as host.
@@ -63,6 +68,23 @@ export async function POST(req: Request) {
       dateTo: parsed.data.dateTo,
     });
     sendPush(stay.hostId, pushTemplates.keysStayRequested(stay.id, stay.nights, stay.keysCost)).catch(() => {});
+
+    // DOK-164: record the pending share→conversion on the attribution row so the
+    // SHARER is credited once the host confirms the stay (award happens at
+    // confirm, not on a still-cancellable pending booking). Best-effort; a bad
+    // or self token simply records nothing.
+    if (parsed.data.shareToken) {
+      resolveShareToken(parsed.data.shareToken, parsed.data.listingId)
+        .then((att) => {
+          if (!att || att.sharerId === session.userId) return;
+          return prisma.listingShareAttribution.update({
+            where: { id: att.attributionId },
+            data: { convertedById: session.userId, conversionRef: stay.id },
+          });
+        })
+        .catch((err) => console.error("[earn:share-pending]", err));
+    }
+
     return NextResponse.json({
       ok: true,
       stayId: stay.id,

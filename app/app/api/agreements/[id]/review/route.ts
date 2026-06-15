@@ -12,6 +12,7 @@ import { checkRateLimitDurable } from "@/lib/rate-limit";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { forbidden, invalidInput, notFound, unauthenticated, unprocessable, apiError } from "@/lib/api/errors";
+import { grantReviewBonus } from "@/lib/keys/earn";
 
 const schema = z.object({
   rating: z.number().int().min(1).max(5),
@@ -64,6 +65,12 @@ export async function POST(req: Request, { params }: RouteContext<"/api/agreemen
         text: parsed.data.text,
       },
     });
+
+    // DOK-164 earning hook: leaving a review after a COMPLETED swap mints a
+    // small bonus to the author (gated/idempotent/capped inside the hook).
+    grantReviewBonus({ authorId: session.userId, reviewId: review.id }).catch((err) =>
+      console.error("[earn:review]", err)
+    );
 
     // Notify the subject — best effort, never blocks the response.
     const authorName = session.name ?? "Your swap partner";

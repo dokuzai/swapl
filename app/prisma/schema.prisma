@@ -122,6 +122,10 @@ model User {
   // Growth engine (DOK-157)
   referralsOwned   Referral[] @relation("ReferralOwner")  // people I invited
   referralAsReferee Referral? @relation("ReferralReferee") // the row that brought me in
+
+  // Share-attribution (DOK-164): listings I shared / share-conversions I made.
+  shareAttributionsAsSharer    ListingShareAttribution[] @relation("ShareAttributionSharer")
+  shareAttributionsAsConverter ListingShareAttribution[] @relation("ShareAttributionConverter")
 }
 
 // ---------- AI ASSISTANT (DOK-146) ----------
@@ -418,6 +422,7 @@ model Listing {
   blockedRanges        ListingBlockedRange[]
   propertyVerifications PropertyVerification[]
   publishAcks          ListingPublishAck[]
+  shareAttributions    ListingShareAttribution[]
 
   @@index([city])
   @@index([userId])
@@ -713,13 +718,20 @@ model KeysTransaction {
   // Signed amount: positive credits, negative debits.
   delta       Int
   // earn_host | spend_stay | welcome_bonus | gift_sent | gift_received |
-  // refund | hold | release
+  // refund | hold | release | referral_bonus | invite_bonus |
+  // earn_property_verified | earn_review | earn_share_converted | earn_listing_complete
   kind        String
   // The user's balance immediately after this row was applied (audit trail).
   balanceAfter Int
   // Optional link to the KeysStay that produced this row (hold/spend/earn/refund).
   stayId      String?
   note        String?
+  // Deterministic idempotency key for one-shot EARN bonuses (DOK-164). A unique
+  // string per (kind, real-world event) — e.g. "earn_review:<reviewId>" — so a
+  // replayed event can never double-credit. Null for the high-frequency ledger
+  // rows (hold/release/spend/earn_host/gift…) that aren't idempotency-guarded
+  // here. Partial-unique semantics: many nulls allowed, non-null must be unique.
+  eventKey    String?  @unique
   createdAt   DateTime @default(now())
 
   @@index([userId])
@@ -813,6 +825,38 @@ model Referral {
 
   @@index([ownerId])
   @@index([refereeEmail])
+}
+
+// ---------- LISTING SHARE ATTRIBUTION (DOK-164) ----------
+// Minimal share→conversion attribution: when a user shares a listing they get a
+// short share token (?s=TOKEN on the listing link). The first time a NEW guest
+// who arrived via that token actually books/swaps that listing, the sharer earns
+// a one-time `earn_share_converted` bonus (identity-gated, idempotent, capped).
+//
+// One row per (listing, sharer) — re-sharing reuses the same token. `convertedAt`
+// + `keysAwardedAt` are the idempotency guards: a conversion is recorded once and
+// the Keys bonus is credited once, even if the booking event is replayed.
+model ListingShareAttribution {
+  id           String   @id @default(cuid())
+  listingId    String
+  listing      Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  // The user who shared the listing (earns the bonus on conversion).
+  sharerId     String
+  sharer       User     @relation("ShareAttributionSharer", fields: [sharerId], references: [id], onDelete: Cascade)
+  // Opaque token embedded in the share link (?s=TOKEN).
+  token        String   @unique
+  // The guest who converted (booked/swapped) via this share, set once.
+  convertedById String?
+  convertedBy   User?    @relation("ShareAttributionConverter", fields: [convertedById], references: [id], onDelete: SetNull)
+  // The KeysStay or SwapAgreement id that realised the conversion (audit).
+  conversionRef String?
+  convertedAt   DateTime?
+  // Stamped when the sharer's Keys bonus was credited (idempotency guard).
+  keysAwardedAt DateTime?
+  createdAt     DateTime @default(now())
+
+  @@unique([listingId, sharerId])
+  @@index([sharerId])
 }
 
 model BetaSignup {

@@ -13,6 +13,7 @@ import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { forbidden, notFound, invalidInput, unauthenticated } from "@/lib/api/errors";
 import { guideUnlocked, homeGuideComplete, homeGuideCompleteness } from "@/lib/trip/phase";
+import { maybeGrantListingCompleteBonus } from "@/lib/keys/earn";
 
 const GUIDE_FIELDS = [
   "accessInstructions",
@@ -137,6 +138,15 @@ export async function PUT(req: Request, { params }: RouteContext<"/api/listings/
     create: { listingId: id, ...data },
     update: data,
   });
+
+  // DOK-164: saving the guide may complete the listing (active + owner-verified
+  // + complete guide) → credit the owner once. Best-effort; the hook re-checks
+  // all three conditions and is idempotent/gated/capped.
+  if (homeGuideComplete(guide as GuideRow)) {
+    maybeGrantListingCompleteBonus(id).catch((err) =>
+      console.error("[earn:listing-complete]", err)
+    );
+  }
 
   return NextResponse.json({ ok: true, guide: serialize(guide as GuideRow) });
 }

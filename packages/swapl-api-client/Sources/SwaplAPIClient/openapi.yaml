@@ -357,11 +357,37 @@ components:
         delta: { type: integer, description: 'Signed: + credit, - debit' }
         kind:
           type: string
-          enum: [earn_host, spend_stay, welcome_bonus, gift_sent, gift_received, refund, hold, release, referral_bonus, invite_bonus]
+          enum: [earn_host, spend_stay, welcome_bonus, gift_sent, gift_received, refund, hold, release, referral_bonus, invite_bonus, earn_property_verified, earn_review, earn_share_converted, earn_listing_complete]
+        label:
+          type: string
+          description: Human-readable label for the kind (server-owned; clients may localize).
         balanceAfter: { type: integer }
         stayId: { type: string, nullable: true }
         note: { type: string, nullable: true }
         createdAt: { type: string, format: date-time }
+
+    EarnWay:
+      type: object
+      description: One way to earn Keys (DOK-164), with the user's done/to-do state.
+      required: [key, amount, repeatable, gatedOnIdentity, kind, done]
+      properties:
+        key:
+          type: string
+          enum: [verify_identity, verify_property, complete_listing, leave_review, share_converted, refer_friend]
+        amount: { type: integer, description: Keys minted by the action }
+        repeatable: { type: boolean, description: Whether the action can pay out more than once }
+        gatedOnIdentity: { type: boolean, description: Requires a verified identity (anti-farm gate) }
+        kind: { type: string, description: The ledger kind this action produces }
+        done: { type: boolean, description: Whether the user has earned this kind at least once }
+
+    EarnWaysPayload:
+      type: object
+      required: [identityVerified, ways]
+      properties:
+        identityVerified: { type: boolean }
+        ways:
+          type: array
+          items: { $ref: '#/components/schemas/EarnWay' }
 
     KeysStay:
       type: object
@@ -2630,6 +2656,32 @@ paths:
         '403': { description: Not the owner }
         '404': { description: Not found }
 
+  /api/listings/{id}/share:
+    get:
+      tags: [listings]
+      summary: Mint (or reuse) the caller's share link for a listing
+      description: >-
+        Returns a stable share URL carrying ?s=TOKEN (DOK-164). When a NEW guest
+        books or swaps the listing via that link, the sharer earns a one-time
+        earn_share_converted bonus (identity-gated, idempotent, capped). Re-calling
+        returns the same token so the attribution row is reused.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [token, shareUrl]
+                properties:
+                  token: { type: string }
+                  shareUrl: { type: string, format: uri }
+        '401': { description: Unauthenticated }
+        '404': { description: Not found or inactive }
+
   /api/listings/{id}/home-guide:
     get:
       tags: [listings]
@@ -4502,7 +4554,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [balance, nightlyKeysForMyListings, recentTransactions]
+                required: [balance, nightlyKeysForMyListings, recentTransactions, earnWays]
                 properties:
                   balance: { type: integer }
                   nightlyKeysForMyListings:
@@ -4517,6 +4569,24 @@ paths:
                   recentTransactions:
                     type: array
                     items: { $ref: '#/components/schemas/KeysTransaction' }
+                  earnWays: { $ref: '#/components/schemas/EarnWaysPayload' }
+        '401': { description: Unauthenticated }
+
+  /api/keys/earn-ways:
+    get:
+      tags: [keys]
+      summary: Ways to earn Keys
+      description: >-
+        The catalogue of actions that mint Keys (DOK-164) with the founder-set
+        amount, whether the action is repeatable, whether it requires a verified
+        identity (anti-farm gate), and the caller's done/to-do state per action.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EarnWaysPayload' }
         '401': { description: Unauthenticated }
 
   /api/keys/gift:
@@ -4712,6 +4782,13 @@ paths:
                 listingId: { type: string }
                 dateFrom: { type: string, format: date-time }
                 dateTo: { type: string, format: date-time }
+                shareToken:
+                  type: string
+                  description: >-
+                    Optional share token (?s=TOKEN) the guest arrived via
+                    (DOK-164). When it resolves to another user's share of this
+                    listing, the sharer earns a one-time bonus once the host
+                    confirms the stay.
       responses:
         '200':
           description: Pending stay created

@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdminFromRequest } from "@/lib/auth/abilities";
+import { grantPropertyVerifiedBonus, maybeGrantListingCompleteBonus } from "@/lib/keys/earn";
 
 const schema = z.object({
   decision: z.enum(["approve", "reject"]),
@@ -58,6 +59,17 @@ export async function POST(
       where: { id: row.listingId },
       data: { ownerVerified: true, ineligibleReason: null, ineligibleAt: null },
     });
+
+    // DOK-164 earning hooks — best-effort, never block the admin action:
+    //  - the owner earns the one-time "property verified" bonus, and
+    //  - the listing may now meet the "complete" milestone (active + verified +
+    //    complete guide), so re-check that too.
+    grantPropertyVerifiedBonus({ userId: row.userId, listingId: row.listingId }).catch((err) =>
+      console.error("[earn:property-verified]", err)
+    );
+    maybeGrantListingCompleteBonus(row.listingId).catch((err) =>
+      console.error("[earn:listing-complete]", err)
+    );
   }
 
   return NextResponse.json({ ok: true, status: updated.status });

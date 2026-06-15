@@ -4,6 +4,7 @@ import { forbidden, notFound, unauthenticated, unprocessable } from "@/lib/api/e
 import { confirmKeysStay, KeysStayError } from "@/lib/keys/stay";
 import { prisma } from "@/lib/db";
 import { sendPush, pushTemplates } from "@/lib/push";
+import { grantShareConvertedBonus } from "@/lib/keys/earn";
 
 // POST /api/keys/stays/{id}/confirm — host accepts a pending stay. The guest's
 // held Keys become a real spend, the host earns them, and a cover policy is
@@ -17,6 +18,28 @@ export async function POST(req: Request, { params }: RouteContext<"/api/keys/sta
     const result = await confirmKeysStay(id, session.userId);
     const stay = await prisma.keysStay.findUnique({ where: { id }, select: { guestId: true } });
     if (stay) sendPush(stay.guestId, pushTemplates.keysStayConfirmed(id)).catch(() => {});
+
+    // DOK-164: a confirmed stay realises any pending share→conversion recorded
+    // at booking time (attribution.conversionRef === stayId) → credit the
+    // SHARER once. Best-effort, idempotent/gated/capped inside the hook.
+    if (stay) {
+      prisma.listingShareAttribution
+        .findFirst({
+          where: { conversionRef: id, convertedById: stay.guestId, keysAwardedAt: null },
+          select: { id: true },
+        })
+        .then((att) =>
+          att
+            ? grantShareConvertedBonus({
+                attributionId: att.id,
+                converterId: stay.guestId,
+                conversionRef: id,
+              })
+            : null
+        )
+        .catch((err) => console.error("[earn:share-converted]", err));
+    }
+
     return NextResponse.json({ ok: true, stayId: result.id, keysCost: result.keysCost });
   } catch (err) {
     if (err instanceof KeysStayError) {

@@ -1772,6 +1772,65 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/listings/{id}/share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Mint (or reuse) the caller's share link for a listing
+         * @description Returns a stable share URL carrying ?s=TOKEN (DOK-164). When a NEW guest books or swaps the listing via that link, the sharer earns a one-time earn_share_converted bonus (identity-gated, idempotent, capped). Re-calling returns the same token so the attribution row is reused.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            token: string;
+                            /** Format: uri */
+                            shareUrl: string;
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found or inactive */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/listings/{id}/home-guide": {
         parameters: {
             query?: never;
@@ -6292,7 +6351,54 @@ export interface paths {
                                 nightlyKeys: number;
                             }[];
                             recentTransactions: components["schemas"]["KeysTransaction"][];
+                            earnWays: components["schemas"]["EarnWaysPayload"];
                         };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/keys/earn-ways": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ways to earn Keys
+         * @description The catalogue of actions that mint Keys (DOK-164) with the founder-set amount, whether the action is repeatable, whether it requires a verified identity (anti-farm gate), and the caller's done/to-do state per action.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["EarnWaysPayload"];
                     };
                 };
                 /** @description Unauthenticated */
@@ -6748,6 +6854,8 @@ export interface paths {
                         dateFrom: string;
                         /** Format: date-time */
                         dateTo: string;
+                        /** @description Optional share token (?s=TOKEN) the guest arrived via (DOK-164). When it resolves to another user's share of this listing, the sharer earns a one-time bonus once the host confirms the stay. */
+                        shareToken?: string;
                     };
                 };
             };
@@ -7584,12 +7692,33 @@ export interface components {
             /** @description Signed: + credit, - debit */
             delta: number;
             /** @enum {string} */
-            kind: "earn_host" | "spend_stay" | "welcome_bonus" | "gift_sent" | "gift_received" | "refund" | "hold" | "release" | "referral_bonus" | "invite_bonus";
+            kind: "earn_host" | "spend_stay" | "welcome_bonus" | "gift_sent" | "gift_received" | "refund" | "hold" | "release" | "referral_bonus" | "invite_bonus" | "earn_property_verified" | "earn_review" | "earn_share_converted" | "earn_listing_complete";
+            /** @description Human-readable label for the kind (server-owned; clients may localize). */
+            label?: string;
             balanceAfter: number;
             stayId?: string | null;
             note?: string | null;
             /** Format: date-time */
             createdAt: string;
+        };
+        /** @description One way to earn Keys (DOK-164), with the user's done/to-do state. */
+        EarnWay: {
+            /** @enum {string} */
+            key: "verify_identity" | "verify_property" | "complete_listing" | "leave_review" | "share_converted" | "refer_friend";
+            /** @description Keys minted by the action */
+            amount: number;
+            /** @description Whether the action can pay out more than once */
+            repeatable: boolean;
+            /** @description Requires a verified identity (anti-farm gate) */
+            gatedOnIdentity: boolean;
+            /** @description The ledger kind this action produces */
+            kind: string;
+            /** @description Whether the user has earned this kind at least once */
+            done: boolean;
+        };
+        EarnWaysPayload: {
+            identityVerified: boolean;
+            ways: components["schemas"]["EarnWay"][];
         };
         KeysStay: {
             id: string;

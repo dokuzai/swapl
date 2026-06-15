@@ -28,7 +28,13 @@ export type KeysKind =
   // Referral when the invitee verifies. referral_bonus -> the referrer (owner);
   // invite_bonus -> the newly-verified invitee (referee).
   | "referral_bonus"
-  | "invite_bonus";
+  | "invite_bonus"
+  // Earning hooks (DOK-164): modest, identity-gated, idempotent, capped bonuses
+  // credited when a user takes an action that ADDS supply/trust to the market.
+  | "earn_property_verified"
+  | "earn_review"
+  | "earn_share_converted"
+  | "earn_listing_complete";
 
 export const KEYS_KINDS: readonly KeysKind[] = [
   "earn_host",
@@ -41,7 +47,36 @@ export const KEYS_KINDS: readonly KeysKind[] = [
   "release",
   "referral_bonus",
   "invite_bonus",
+  "earn_property_verified",
+  "earn_review",
+  "earn_share_converted",
+  "earn_listing_complete",
 ];
+
+// Human-readable label per kind, server-owned so the wallet/ledger endpoints
+// expose a sensible label for every row (clients may still localize). Kept here
+// next to the closed KeysKind set so a new kind can't be added without a label.
+export const KEYS_KIND_LABELS: Record<KeysKind, string> = {
+  earn_host: "Hosted a Keys stay",
+  spend_stay: "Stay with Keys",
+  welcome_bonus: "Welcome bonus",
+  gift_sent: "Gift sent",
+  gift_received: "Gift received",
+  refund: "Refund",
+  hold: "Hold",
+  release: "Hold released",
+  referral_bonus: "Referral reward",
+  invite_bonus: "Invite bonus",
+  earn_property_verified: "Verified your property",
+  earn_review: "Left a review",
+  earn_share_converted: "Your share got booked",
+  earn_listing_complete: "Completed a listing",
+};
+
+/** Label for a ledger kind, falling back to the raw kind for unknown values. */
+export function keysKindLabel(kind: string): string {
+  return KEYS_KIND_LABELS[kind as KeysKind] ?? kind;
+}
 
 // A Prisma transaction client OR the root client — every helper accepts a `tx`
 // so callers can compose several ledger writes (e.g. spend + earn) atomically.
@@ -63,6 +98,10 @@ export type ApplyInput = {
   kind: KeysKind;
   stayId?: string | null;
   note?: string | null;
+  // Deterministic idempotency key (DOK-164). When set, a unique constraint on
+  // KeysTransaction.eventKey guarantees the row is written at most once even
+  // under concurrent/replayed events; see grantEarnOnce in lib/keys/earn.ts.
+  eventKey?: string | null;
 };
 
 export type LedgerRow = {
@@ -109,6 +148,7 @@ async function applyWithinTx(tx: Db, input: ApplyInput): Promise<LedgerRow> {
       balanceAfter,
       stayId: input.stayId ?? null,
       note: input.note ?? null,
+      eventKey: input.eventKey ?? null,
     },
   });
 

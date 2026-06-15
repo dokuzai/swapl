@@ -15,6 +15,7 @@ import {
   decideVerificationOutcome,
   BUSINESS_INELIGIBLE_REASON,
 } from "@/lib/listing/property-eligibility";
+import { grantPropertyVerifiedBonus, maybeGrantListingCompleteBonus } from "@/lib/keys/earn";
 
 const documentSchema = z.object({
   url: z.string().url(),
@@ -189,6 +190,20 @@ export async function POST(
     });
   } else if (outcome.setOwnerVerified) {
     await prisma.listing.update({ where: { id }, data: { ownerVerified: true } });
+  }
+
+  // DOK-164 earning hook: a verification that AUTO-APPROVES (private_owner or
+  // private_tenant under the auto-approve flag) is a real "property verified"
+  // event → credit the host once. Best-effort, gated/idempotent/capped inside
+  // the hook. The manual admin-approve path credits separately. Re-check the
+  // listing-complete milestone since ownerVerified may have just flipped.
+  if (outcome.status === "approved") {
+    grantPropertyVerifiedBonus({ userId: session.userId, listingId: id }).catch((err) =>
+      console.error("[earn:property-verified]", err)
+    );
+    maybeGrantListingCompleteBonus(id).catch((err) =>
+      console.error("[earn:listing-complete]", err)
+    );
   }
 
   return NextResponse.json({ verification: toDTO(row) }, { status: 201 });
