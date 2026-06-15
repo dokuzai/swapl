@@ -1822,7 +1822,7 @@ components:
     InsurancePolicyView:
       type: object
       description: One swap-insurance policy as rendered to a swap party (lib/insurance/access.ts policyView).
-      required: [id, agreementId, provider, policyNumber, status, active, coverageAmount, premiumCents, premiumEur, platformShareCents, expiresAt, createdAt]
+      required: [id, agreementId, provider, policyNumber, status, active, coverageAmount, premiumCents, premiumEur, platformShareCents, expiresAt, createdAt, onChainRef, onChainNetwork, onChainStatus, anchoredAt, explorerUrl]
       properties:
         id: { type: string }
         agreementId: { type: string }
@@ -1837,6 +1837,11 @@ components:
         documentsUrl: { type: string, nullable: true }
         expiresAt: { type: string, format: date-time }
         createdAt: { type: string, format: date-time }
+        onChainRef: { type: string, nullable: true, description: 'DOK-156 — TON proof-of-cover ref (tx/record hash). Null when on-chain anchoring is disabled.' }
+        onChainNetwork: { type: string, nullable: true, description: 'testnet | mainnet, or null.' }
+        onChainStatus: { type: string, nullable: true, description: 'pending | anchored | failed, or null.' }
+        anchoredAt: { type: string, format: date-time, nullable: true }
+        explorerUrl: { type: string, nullable: true, description: TON explorer URL for the proof-of-cover record, or null. }
         swap:
           type: object
           required: [dateFrom, dateTo, homes]
@@ -1847,6 +1852,20 @@ components:
               type: array
               items: { type: string }
               description: 'The two homes as "City, Country" strings.'
+
+    PolicyVerification:
+      type: object
+      description: DOK-156 proof-of-cover verification result (GET /api/insurance/verify/{policyNumber}).
+      required: [policyNumber, certificateHash, anchored, onChainRef, onChainNetwork, onChainStatus, anchoredAt, explorerUrl]
+      properties:
+        policyNumber: { type: string }
+        certificateHash: { type: string, description: Recomputed sha256 (hex) of the PII-free certificate metadata. }
+        anchored: { type: boolean, description: True when the policy has a confirmed on-chain record. }
+        onChainRef: { type: string, nullable: true }
+        onChainNetwork: { type: string, nullable: true, description: 'testnet | mainnet, or null.' }
+        onChainStatus: { type: string, nullable: true, description: 'pending | anchored | failed, or null.' }
+        anchoredAt: { type: string, format: date-time, nullable: true }
+        explorerUrl: { type: string, nullable: true }
 
     AffiliateSuggestion:
       type: object
@@ -4146,6 +4165,27 @@ paths:
           content:
             text/plain:
               schema: { type: string }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the policy's swap }
+        '404': { description: Not found }
+
+  /api/insurance/verify/{policyNumber}:
+    get:
+      tags: [insurance]
+      summary: Verify proof-of-cover (DOK-156)
+      description: >-
+        Recomputes the deterministic, PII-free certificate hash from the policy
+        metadata and reports whether the policy is anchored on TON, with the
+        explorer link. Read-only; only the two swap parties can read it.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: policyNumber, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Verification result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PolicyVerification' }
         '401': { description: Unauthenticated }
         '403': { description: Not a party of the policy's swap }
         '404': { description: Not found }

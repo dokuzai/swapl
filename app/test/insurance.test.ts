@@ -120,6 +120,23 @@ describe("policyView", () => {
     expect(view.active).toBe(false);
     expect(view.swap).toBeUndefined();
   });
+
+  it("exposes null on-chain fields when not anchored (DOK-156 default)", () => {
+    const view = policyView(samplePolicy, sampleAgreement);
+    expect(view.onChainRef).toBeNull();
+    expect(view.onChainStatus).toBeNull();
+    expect(view.explorerUrl).toBeNull();
+  });
+
+  it("surfaces the proof-of-cover ref + explorer URL once anchored", () => {
+    const view = policyView(
+      { ...samplePolicy, onChainRef: "deadbeef", onChainNetwork: "testnet", onChainStatus: "anchored", anchoredAt: day("2026-05-30T00:00:00Z") },
+      sampleAgreement,
+    );
+    expect(view.onChainStatus).toBe("anchored");
+    expect(view.explorerUrl).toBe("https://testnet.tonviewer.com/transaction/deadbeef");
+    expect(view.anchoredAt).toBe("2026-05-30T00:00:00.000Z");
+  });
 });
 
 describe("renderCertificate", () => {

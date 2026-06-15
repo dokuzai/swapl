@@ -8,6 +8,7 @@ import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { insuranceProvider } from "@/lib/insurance";
 import { policyView, userIsParty } from "@/lib/insurance/access";
+import { anchorIssuedPolicy } from "@/lib/insurance/anchor";
 
 export const runtime = "nodejs";
 
@@ -94,6 +95,9 @@ export async function POST(req: Request) {
       expiresAt: result.expiresAt,
     },
   });
+
+  // DOK-156 — best-effort proof-of-cover anchor for the now-active policy.
+  void anchorIssuedPolicy(updated.id);
 
   return NextResponse.json({ ok: true, policy: policyView(updated, agreement) });
 }

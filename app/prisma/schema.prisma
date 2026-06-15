@@ -678,6 +678,14 @@ model InsurancePolicy {
   documentsUrl       String?
   externalId         String?
 
+  // DOK-156 — env-gated TON "proof-of-cover" notarization. Stores ONLY a tamper-
+  // proof anchor of the certificate hash + minimal metadata (no personal data).
+  // All fields stay null when the TON env is unset (anchoring is a no-op).
+  onChainRef     String?       // tx hash / record address on TON
+  onChainNetwork String?       // "testnet" | "mainnet"
+  onChainStatus  String?       // "pending" | "anchored" | "failed" | null
+  anchoredAt     DateTime?
+
   expiresAt      DateTime
   createdAt      DateTime      @default(now())
 }

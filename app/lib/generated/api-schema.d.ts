@@ -5582,6 +5582,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/insurance/verify/{policyNumber}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Verify proof-of-cover (DOK-156)
+         * @description Recomputes the deterministic, PII-free certificate hash from the policy metadata and reports whether the policy is anchored on TON, with the explorer link. Read-only; only the two swap parties can read it.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    policyNumber: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Verification result */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PolicyVerification"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a party of the policy's swap */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/concierge/checkout": {
         parameters: {
             query?: never;
@@ -8544,6 +8606,16 @@ export interface components {
             expiresAt: string;
             /** Format: date-time */
             createdAt: string;
+            /** @description DOK-156 — TON proof-of-cover ref (tx/record hash). Null when on-chain anchoring is disabled. */
+            onChainRef: string | null;
+            /** @description testnet | mainnet, or null. */
+            onChainNetwork: string | null;
+            /** @description pending | anchored | failed, or null. */
+            onChainStatus: string | null;
+            /** Format: date-time */
+            anchoredAt: string | null;
+            /** @description TON explorer URL for the proof-of-cover record */
+            explorerUrl: string | null;
             swap?: {
                 /** Format: date-time */
                 dateFrom: string;
@@ -8552,6 +8624,22 @@ export interface components {
                 /** @description The two homes as "City, Country" strings. */
                 homes: string[];
             };
+        };
+        /** @description DOK-156 proof-of-cover verification result (GET /api/insurance/verify/{policyNumber}). */
+        PolicyVerification: {
+            policyNumber: string;
+            /** @description Recomputed sha256 (hex) of the PII-free certificate metadata. */
+            certificateHash: string;
+            /** @description True when the policy has a confirmed on-chain record. */
+            anchored: boolean;
+            onChainRef: string | null;
+            /** @description testnet | mainnet, or null. */
+            onChainNetwork: string | null;
+            /** @description pending | anchored | failed, or null. */
+            onChainStatus: string | null;
+            /** Format: date-time */
+            anchoredAt: string | null;
+            explorerUrl: string | null;
         };
         AffiliateSuggestion: {
             /** @enum {string} */

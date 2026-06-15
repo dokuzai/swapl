@@ -15,6 +15,23 @@ export interface PolicyRecord {
   externalId: string | null;
   expiresAt: Date;
   createdAt: Date;
+  // DOK-156 — env-gated TON proof-of-cover anchor (all null when disabled).
+  onChainRef?: string | null;
+  onChainNetwork?: string | null;
+  onChainStatus?: string | null;
+  anchoredAt?: Date | null;
+}
+
+// Pure explorer-URL builder for the proof-of-cover badge. Kept inline here (not
+// imported from lib/chain/ton) so this presentation module stays client-safe
+// and free of the server-only TON SDK / node:crypto.
+export function tonExplorerUrl(
+  ref: string | null | undefined,
+  network: string | null | undefined,
+): string | null {
+  if (!ref) return null;
+  const host = network === "mainnet" ? "tonviewer.com" : "testnet.tonviewer.com";
+  return `https://${host}/transaction/${ref}`;
 }
 
 interface ListingContext {
@@ -52,6 +69,12 @@ export type PolicyView = {
   documentsUrl: string | null;
   expiresAt: string;
   createdAt: string;
+  // DOK-156 — proof-of-cover. onChain* are null when anchoring is disabled.
+  onChainRef: string | null;
+  onChainNetwork: string | null;
+  onChainStatus: string | null;
+  anchoredAt: string | null;
+  explorerUrl: string | null;
   swap?: {
     dateFrom: string;
     dateTo: string;
@@ -74,6 +97,11 @@ export function policyView(policy: PolicyRecord, agreement?: AgreementContext): 
     documentsUrl: policy.documentsUrl,
     expiresAt: policy.expiresAt.toISOString(),
     createdAt: policy.createdAt.toISOString(),
+    onChainRef: policy.onChainRef ?? null,
+    onChainNetwork: policy.onChainNetwork ?? null,
+    onChainStatus: policy.onChainStatus ?? null,
+    anchoredAt: policy.anchoredAt ? policy.anchoredAt.toISOString() : null,
+    explorerUrl: tonExplorerUrl(policy.onChainRef, policy.onChainNetwork),
     ...(agreement
       ? {
           swap: {

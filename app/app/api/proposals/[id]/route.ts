@@ -5,6 +5,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { insuranceProvider } from "@/lib/insurance";
+import { anchorIssuedPolicy } from "@/lib/insurance/anchor";
 import { chargeInspirePackageOnAccept, cancelInspirePackagePayment } from "@/lib/billing/inspire";
 import { toDTO } from "@/lib/listing-utils";
 import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
@@ -293,7 +294,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
           status: "ACTIVE",
         },
       });
-      await tx.insurancePolicy.create({
+      const policy = await tx.insurancePolicy.create({
         data: {
           agreementId: agreement.id,
           provider: provider.name,
@@ -307,8 +308,13 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
           expiresAt: policyResult?.expiresAt ?? fallbackExpiry,
         },
       });
-      return agreement;
+      return { agreement, policyId: policy.id };
     });
+
+    // DOK-156 — env-gated TON proof-of-cover. Fire-and-forget: anchoring the
+    // certificate hash on-chain must NEVER block or fail acceptance. When the
+    // TON env is unset this is a no-op and onChainRef stays null.
+    void anchorIssuedPolicy(result.policyId);
 
     // Pay-on-accept (DOK-148): NOW — and only now — charge the confirmed
     // inspiration package linked to this proposal (selected concierge add-ons
@@ -324,7 +330,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       sendPush(uid, pushTemplates.proposalAccepted(proposal.id)).catch(console.error);
     });
 
-    return NextResponse.json({ ok: true, agreementId: result.id });
+    return NextResponse.json({ ok: true, agreementId: result.agreement.id });
   }
 
   return invalidInput("Unknown action");
