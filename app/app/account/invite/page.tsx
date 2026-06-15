@@ -121,7 +121,6 @@ export default async function InvitePage() {
             <section className="mb-8">
               <div className="surface-card surface-card--static p-5">
                 <ShareInvite
-                  code={code}
                   url={shareUrl}
                   listings={listings}
                   reward={REFERRAL_REWARD_KEYS}

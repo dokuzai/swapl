@@ -197,8 +197,12 @@ private fun HeroStat(value: String, label: String, modifier: Modifier = Modifier
 // Share — the code + one-tap Android share Intent.
 @Composable
 private fun ShareCard(dashboard: ReferralDashboard, onShare: () -> Unit) {
+    // The ONE pre-formatted link we surface (not the bare code), so people don't
+    // copy just "KWJ3YMF" and wonder whether they also need a URL. Displayed
+    // without the scheme for readability; the share Intent sends the full link.
+    val link = "$SHARE_ORIGIN/?ref=${dashboard.code}"
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-        KickerLabel("Your invite code")
+        KickerLabel("Your referral link")
         Box(
             Modifier
                 .fillMaxWidth()
@@ -207,8 +211,8 @@ private fun ShareCard(dashboard: ReferralDashboard, onShare: () -> Unit) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                 Text(
-                    dashboard.code,
-                    style = MaterialTheme.typography.titleLarge,
+                    link.removePrefix("https://"),
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = SwaplColors.Navy,
                     modifier = Modifier.weight(1f),
@@ -227,7 +231,7 @@ private fun ShareCard(dashboard: ReferralDashboard, onShare: () -> Unit) {
             }
         }
         Text(
-            "One tap to send it anywhere — Messages, WhatsApp, email. Your friend taps the link, joins, and once they verify you both get points.",
+            "Share this whole link — it's what counts. One tap sends it anywhere: Messages, WhatsApp, email. Your friend taps it, joins, and once they verify you both get points.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -501,7 +505,9 @@ class InviteToStayViewModel @Inject constructor(
                             "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out."
                         else
                             "You can only invite guests to your own listing."
-                    429 -> "You've sent a lot of invites recently — try again in a bit."
+                    // Unified cooldown copy (matches web + iOS): make clear it's
+                    // a temporary throttle, not a ban.
+                    429 -> "You've sent a lot of invites in the last hour — try again in a bit. It's a quick cooldown, not a ban."
                     else -> "Couldn't create the invite right now."
                 }
             } catch (t: Throwable) {

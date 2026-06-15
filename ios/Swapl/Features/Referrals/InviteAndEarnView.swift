@@ -144,15 +144,20 @@ struct InviteAndEarnView: View {
 
     private func shareCard(_ dashboard: ReferralDashboard) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Your invite code")
+            Text("Your referral link")
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
 
             HStack(spacing: 12) {
-                Text(dashboard.code)
-                    .font(.swaplMono(24, weight: .bold))
+                // Show the ONE pre-formatted link (not the bare code) so people
+                // don't copy just "KWJ3YMF" and wonder whether they also need a
+                // URL. We display it without the scheme for readability; the
+                // ShareLink still sends the full URL.
+                Text(shareURL(for: dashboard).absoluteString.replacingOccurrences(of: "https://", with: ""))
+                    .font(.swaplMono(15, weight: .bold))
                     .foregroundStyle(SwaplSemanticLight.primary)
-                    .kerning(2)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
                 Spacer()
                 ShareLink(
                     item: shareURL(for: dashboard),
@@ -172,7 +177,7 @@ struct InviteAndEarnView: View {
             .padding(18)
             .background(SwaplSemanticLight.accent, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
 
-            Text("One tap to send it anywhere — Messages, WhatsApp, email. Your friend taps the link, joins, and once they verify you both get points.")
+            Text("Share this whole link — it's what counts. One tap sends it anywhere: Messages, WhatsApp, email. Your friend taps it, joins, and once they verify you both get points.")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
@@ -569,7 +574,9 @@ struct InviteToStaySheet: View {
                 error = "You can only invite guests to your own listing."
             }
         } catch APIClient.APIError.status(429, _) {
-            error = "You've sent a lot of invites recently — try again in a bit."
+            // Unified cooldown copy (matches web + Android): make clear it's a
+            // temporary throttle, not a ban.
+            error = "You've sent a lot of invites in the last hour — try again in a bit. It's a quick cooldown, not a ban."
         } catch let caught {
             error = caught.localizedDescription
         }

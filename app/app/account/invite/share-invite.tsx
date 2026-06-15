@@ -29,19 +29,23 @@ type Listing = { id: string; title: string; isVerified: boolean };
 type Mode = "link" | "stay";
 
 export function ShareInvite({
-  code,
   url,
   listings,
   reward,
   referee,
 }: {
-  code: string;
+  /** Full referral link, e.g. https://swapl.fun/?ref=KWJ3YMF — the ONLY string
+   *  we surface to copy/share, so users never wonder code-vs-link. */
   url: string;
   listings: Listing[];
   reward: number;
   referee: number;
 }) {
   const t = useT();
+  // What we render in the copyable pill: the link without the scheme so it
+  // reads as a tappable link (swapl.fun/?ref=KWJ3YMF) while we still copy the
+  // full `url`.
+  const linkDisplay = url.replace(/^https?:\/\//, "");
   // Invite-to-stay only works from a VERIFIED listing: the friend's reward
   // qualifies on identity verification, but an invite minted from an unverified
   // listing leaves their Referral hanging (the API rejects it with
@@ -106,6 +110,12 @@ export function ShareInvite({
           if (res.ok && j.ok && j.shareUrl) {
             setStayLinks((prev) => ({ ...prev, [id]: j.shareUrl! }));
             resolve(j.shareUrl);
+          } else if (res.status === 429) {
+            // Rate-limited (too many invites this hour). Use the unified
+            // cooldown copy shared with iOS/Android — it's a temporary
+            // throttle, NOT a ban — instead of the generic "couldn't create".
+            setError("invite.toStay.rateLimited");
+            resolve(null);
           } else {
             // Surface the specific "verify your listing first" copy when the API
             // rejects an invite from an unverified listing; generic otherwise.
@@ -276,7 +286,11 @@ export function ShareInvite({
         )}
       </div>
 
-      {/* ---- The link being shared (referral link is always visible) ---- */}
+      {/* ---- The link being shared. We show ONE pre-formatted, copyable
+          string — the full ?ref= link — and label it as "the link that
+          counts", so non-technical users don't copy the bare code (KWJ3YMF)
+          and wonder whether they also need the URL. Tapping copies the whole
+          link; the code is no longer shown on its own. ---- */}
       {mode === "link" && (
         <div>
           <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
@@ -284,12 +298,16 @@ export function ShareInvite({
           </span>
           <button
             type="button"
-            onClick={() => void copyText(code)}
-            className="font-display text-2xl tracking-[0.12em] px-4 py-2 rounded-xl"
+            onClick={() => void copyText(url)}
+            className="w-full text-left font-mono text-[15px] px-4 py-3 rounded-xl break-all"
             style={{ background: "var(--cream-2)", color: "var(--navy)" }}
+            aria-label={`${t("invite.code.label")}: ${linkDisplay}`}
           >
-            {code}
+            {linkDisplay}
           </button>
+          <p className="mt-1.5 text-[13px]" style={{ color: "var(--navy-2)" }}>
+            {t("invite.link.hint")}
+          </p>
         </div>
       )}
 
