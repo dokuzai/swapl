@@ -270,6 +270,16 @@ private fun VerifyOwnershipDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
+                    stringResource(R.string.owner_verify_tenant_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    stringResource(R.string.owner_verify_privacy_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
                     stringResource(R.string.owner_verify_private_only_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
