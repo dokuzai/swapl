@@ -102,8 +102,8 @@ struct OwnerVerificationSheet: View {
                     text: "Renting is welcome. If you rent and your lease lets you host, you\u{2019}re fully eligible — you don\u{2019}t need to own the home."
                 )
                 infoRow(
-                    icon: "lock.fill",
-                    text: "We don\u{2019}t store your document after the check. Only the AI reads your personal details, and we keep just whether it shows a private home — never your ID, address, or the document itself."
+                    icon: "lock.shield.fill",
+                    text: "Your document is read once to check the home is yours, then it isn\u{2019}t stored — we keep only the result (verified or not), never the document or its contents."
                 )
                 infoRow(
                     icon: "person.2.fill",
@@ -216,6 +216,24 @@ struct OwnerVerificationSheet: View {
                 ForEach(PropertyDocumentType.allCases, id: \.self) { type in
                     documentTypeRow(type)
                 }
+
+                // DOK-186: positive, inclusive reassurance for renters right next
+                // to the deed/lease selector so it never reads as deed-only.
+                HStack(alignment: .top, spacing: 9) {
+                    Image(systemName: "key.fill")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                        .frame(width: 18)
+                    Text("Renting? You\u{2019}re welcome here too — upload your lease instead of a deed. You can host on Swapl as long as your rental contract lets you have guests.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(SwaplSemanticLight.accent, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+                .padding(.top, 4)
             }
             .padding(.bottom, 4)
 
