@@ -40,6 +40,7 @@ export async function Navbar() {
     invite: dict["invite.menu"],
     messages: dict["menu.messages"],
     profile: dict["menu.profile"],
+    story: dict["menu.story"],
     accountSettings: dict["dashboard.accountSettings"],
     help: dict["menu.help"],
     language: dict["locale.label"],

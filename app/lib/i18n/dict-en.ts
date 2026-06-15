@@ -25,6 +25,7 @@ export const en = {
   "menu.trips": "Trips",
   "menu.messages": "Messages",
   "menu.profile": "Profile",
+  "menu.story": "Your Swapl story",
   "menu.help": "Help",
   "menu.waitingOnYou": "{count} waiting on you",
 
@@ -1117,6 +1118,35 @@ export const en = {
   "admin.propVerif.notePlaceholder": "Optional note (shown to the host)",
   "admin.propVerif.approve": "Approve",
   "admin.propVerif.reject": "Reject",
+
+  // ---- Your Swapl story (DOK-158) ----
+  "story.title": "Your Swapl story",
+  "story.subtitle": "Every place you've stayed and everyone you've hosted — one growing postcard collection.",
+  "story.metaTitle": "Your Swapl story · swapl",
+  "story.counts.trips": "Trips",
+  "story.counts.hostings": "Guests hosted",
+  "story.counts.cities": "Cities",
+  "story.counts.countries": "Countries",
+  "story.timeline.heading": "Your postcards",
+  "story.stamp.trip": "Stayed",
+  "story.stamp.hosting": "Hosted",
+  "story.event.tripWith": "Hosted by {name}",
+  "story.event.hostingWith": "You hosted {name}",
+  "story.event.trip": "You stayed here",
+  "story.event.hosting": "You hosted a guest",
+  "story.empty.title": "Your story starts with one swap",
+  "story.empty.body": "You haven't completed a swap or a Keys stay yet. Make your first exchange and your postcards will appear here — places you've been, people you've hosted.",
+  "story.empty.cta": "Find a home",
+  "story.share.title": "Share your story",
+  "story.share.body": "Show friends where Swapl has taken you. Your share link invites them in — when they join and verify, you both earn Keys.",
+  "story.share.cta": "Share my story",
+  "story.share.sharing": "Sharing…",
+  "story.share.copy": "Copy link",
+  "story.share.copied": "Copied!",
+  "story.share.text": "{trips} trips, {hostings} guests hosted, {countries} countries — this is my Swapl story. Come swap homes with me:",
+  "story.share.cardTagline": "My Swapl story",
+  "story.share.cardJoin": "Swap homes on swapl.fun",
+  "story.error": "Couldn't load your story — try again.",
 } as const;
 
 export type DictKey = keyof typeof en;

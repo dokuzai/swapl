@@ -20,6 +20,7 @@ export type AvatarMenuLabels = {
   invite: string;
   messages: string;
   profile: string;
+  story: string;
   accountSettings: string;
   help: string;
   language: string;
@@ -172,6 +173,9 @@ export function AvatarMenu({
             </Link>
             <Link role="menuitem" href={`/profile/${userId}`} className={itemCls} onClick={() => setOpen(false)}>
               {labels.profile}
+            </Link>
+            <Link role="menuitem" href="/story" className={itemCls} onClick={() => setOpen(false)}>
+              {labels.story}
             </Link>
           </div>
 
