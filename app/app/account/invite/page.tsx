@@ -53,7 +53,7 @@ export default async function InvitePage() {
     }),
     prisma.listing.findMany({
       where: { userId: session.userId },
-      select: { id: true, title: true },
+      select: { id: true, title: true, isVerified: true },
       orderBy: { createdAt: "desc" },
     }),
     prisma.referral.groupBy({

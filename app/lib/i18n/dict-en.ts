@@ -931,6 +931,9 @@ export const en = {
   "invite.toStay.empty": "List a home first to invite guests to stay.",
   "invite.toStay.linkReady": "Invite link ready — share it in a tap.",
   "invite.toStay.error": "Couldn't create the link — try again.",
+  "invite.toStay.unverified": "Verify your home before inviting guests to stay — otherwise your friend's reward can't be paid out.",
+  "invite.toStay.unverifiedHint": "Verify your home first to unlock this",
+  "invite.toStay.verifyLink": "Verify your listing",
   // Unified share card (one CTA + picker for link vs. invite-to-stay).
   "invite.share.reward": "Earn {reward} Keys per friend",
   "invite.share.rewardHint": "You get {reward} Keys, your friend gets {referee} — the moment they verify.",

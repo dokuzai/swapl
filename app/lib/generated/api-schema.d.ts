@@ -6544,12 +6544,19 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Listing is not yours */
+                /** @description Forbidden. Either the listing is not yours, or it is not yet verified (body code `listing_not_verified`) — an invite from an unverified listing would leave the invitee's reward unpayable. */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": {
+                            error: string;
+                            /** @description Present as `listing_not_verified` when the listing is unverified. */
+                            code?: string;
+                            message?: string;
+                        };
+                    };
                 };
                 /** @description Listing not found */
                 404: {

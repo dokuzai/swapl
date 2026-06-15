@@ -404,6 +404,18 @@ struct InviteToStaySheet: View {
                         action: nil
                     )
                     .padding(.top, 40)
+                } else if listing?.isVerified == false {
+                    // An invite from an unverified listing would leave the
+                    // friend's reward unpayable (the API rejects it), so block
+                    // the flow and point the host to verification.
+                    SwaplEmptyState(
+                        systemImage: "checkmark.shield",
+                        title: "Verify your home first",
+                        description: "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out. Verify it from Account → your listing.",
+                        actionTitle: nil,
+                        action: nil
+                    )
+                    .padding(.top, 40)
                 } else {
                     form
                 }
@@ -548,8 +560,14 @@ struct InviteToStaySheet: View {
                 listingId: listing.id,
                 email: trimmed.isEmpty ? nil : trimmed
             )
-        } catch APIClient.APIError.status(403, _) {
-            error = "You can only invite guests to your own listing."
+        } catch APIClient.APIError.status(403, let body) {
+            // The route returns code `listing_not_verified` when the listing
+            // isn't verified yet; otherwise it's an ownership rejection.
+            if body?.contains("listing_not_verified") == true {
+                error = "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out."
+            } else {
+                error = "You can only invite guests to your own listing."
+            }
         } catch APIClient.APIError.status(429, _) {
             error = "You've sent a lot of invites recently — try again in a bit."
         } catch let caught {

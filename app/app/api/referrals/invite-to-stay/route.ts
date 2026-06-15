@@ -38,11 +38,22 @@ export async function POST(req: Request) {
   // people to stay at your OWN place.
   const listing = await prisma.listing.findUnique({
     where: { id: listingId },
-    select: { id: true, userId: true, title: true },
+    select: { id: true, userId: true, title: true, isVerified: true },
   });
   if (!listing) return notFound("Listing not found");
   if (listing.userId !== session.userId) {
     return forbidden("You can only invite guests to your own listing");
+  }
+  // The referral reward qualifies on the INVITEE's identity verification, not on
+  // the listing's. An invite minted from an UNVERIFIED listing would leave the
+  // friend's Referral hanging even after they verify, so we reject it up front
+  // with a machine-readable code the clients map to "verify your listing first".
+  if (!listing.isVerified) {
+    return forbidden("LISTING_NOT_VERIFIED", {
+      code: "listing_not_verified",
+      message:
+        "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out.",
+    });
   }
 
   const refereeEmail = email ? normaliseEmail(email) : null;

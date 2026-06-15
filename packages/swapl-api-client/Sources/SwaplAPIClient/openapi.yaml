@@ -4339,6 +4339,21 @@ paths:
                       title: { type: string }
         '400': { description: Invalid input }
         '401': { description: Unauthenticated }
-        '403': { description: Listing is not yours }
+        '403':
+          description: >-
+            Forbidden. Either the listing is not yours, or it is not yet
+            verified (body code `listing_not_verified`) — an invite from an
+            unverified listing would leave the invitee's reward unpayable.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error: { type: string }
+                  code:
+                    type: string
+                    description: Present as `listing_not_verified` when the listing is unverified.
+                  message: { type: string }
         '404': { description: Listing not found }
         '429': { description: Rate limited }

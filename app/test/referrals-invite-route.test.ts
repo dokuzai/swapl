@@ -38,7 +38,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   mocks.getSessionFromRequest.mockResolvedValue(session);
   mocks.checkRateLimitDurable.mockResolvedValue({ ok: true });
-  mocks.listingFindUnique.mockResolvedValue({ id: "L1", userId: "host", title: "Loft" });
+  mocks.listingFindUnique.mockResolvedValue({ id: "L1", userId: "host", title: "Loft", isVerified: true });
   mocks.referralCreate.mockImplementation(({ data }: any) => ({
     id: "ref_1",
     token: data.token,
@@ -78,9 +78,19 @@ describe("POST /api/referrals/invite-to-stay", () => {
   });
 
   it("403 when the listing is not yours", async () => {
-    mocks.listingFindUnique.mockResolvedValue({ id: "L1", userId: "someone-else", title: "X" });
+    mocks.listingFindUnique.mockResolvedValue({ id: "L1", userId: "someone-else", title: "X", isVerified: true });
     const res = await post({ listingId: "L1" });
     expect(res.status).toBe(403);
+    expect(mocks.referralCreate).not.toHaveBeenCalled();
+  });
+
+  it("403 listing_not_verified when the listing is unverified (no Referral created)", async () => {
+    mocks.listingFindUnique.mockResolvedValue({ id: "L1", userId: "host", title: "Loft", isVerified: false });
+    const res = await post({ listingId: "L1" });
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body).toMatchObject({ error: "LISTING_NOT_VERIFIED", code: "listing_not_verified" });
+    expect(body.message).toBeTruthy();
     expect(mocks.referralCreate).not.toHaveBeenCalled();
   });
 

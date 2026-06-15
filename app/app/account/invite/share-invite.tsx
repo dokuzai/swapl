@@ -11,8 +11,9 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useT } from "@/lib/i18n/client";
+import type { DictKey } from "@/lib/i18n/dict-en";
 
-type Listing = { id: string; title: string };
+type Listing = { id: string; title: string; isVerified: boolean };
 type Mode = "link" | "stay";
 
 export function ShareInvite({
@@ -29,15 +30,23 @@ export function ShareInvite({
   referee: number;
 }) {
   const t = useT();
-  const canInviteToStay = listings.length > 0;
+  // Invite-to-stay only works from a VERIFIED listing: the friend's reward
+  // qualifies on identity verification, but an invite minted from an unverified
+  // listing leaves their Referral hanging (the API rejects it with
+  // listing_not_verified). So the mode is only enabled when the host has at
+  // least one verified home, and the picker lists only verified ones.
+  const verifiedListings = listings.filter((l) => l.isVerified);
+  const canInviteToStay = verifiedListings.length > 0;
+  const hasUnverifiedOnly = listings.length > 0 && verifiedListings.length === 0;
 
   const [mode, setMode] = useState<Mode>("link");
-  const [listingId, setListingId] = useState(listings[0]?.id ?? "");
+  const [listingId, setListingId] = useState(verifiedListings[0]?.id ?? "");
   // The link that will actually be shared. For "link" mode it's the referral
   // url; for "stay" mode it's minted on demand and cached per listing.
   const [stayLink, setStayLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState(false);
+  // null = no error; otherwise the i18n key of the message to show.
+  const [error, setError] = useState<DictKey | null>(null);
   const [pending, start] = useTransition();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -62,7 +71,7 @@ export function ShareInvite({
   function mintStayLink(): Promise<string | null> {
     if (stayLink) return Promise.resolve(stayLink);
     return new Promise((resolve) => {
-      setError(false);
+      setError(null);
       start(async () => {
         try {
           const res = await fetch("/api/referrals/invite-to-stay", {
@@ -70,16 +79,22 @@ export function ShareInvite({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ listingId }),
           });
-          const j = (await res.json().catch(() => ({}))) as { ok?: boolean; shareUrl?: string };
+          const j = (await res.json().catch(() => ({}))) as {
+            ok?: boolean;
+            shareUrl?: string;
+            code?: string;
+          };
           if (res.ok && j.ok && j.shareUrl) {
             setStayLink(j.shareUrl);
             resolve(j.shareUrl);
           } else {
-            setError(true);
+            // Surface the specific "verify your listing first" copy when the API
+            // rejects an invite from an unverified listing; generic otherwise.
+            setError(j.code === "listing_not_verified" ? "invite.toStay.unverified" : "invite.toStay.error");
             resolve(null);
           }
         } catch {
-          setError(true);
+          setError("invite.toStay.error");
           resolve(null);
         }
       });
@@ -114,7 +129,7 @@ export function ShareInvite({
 
   function pickMode(next: Mode) {
     setMode(next);
-    setError(false);
+    setError(null);
     setCopied(false);
   }
 
@@ -169,10 +184,28 @@ export function ShareInvite({
           {tile(
             "stay",
             t("invite.share.mode.stay"),
-            canInviteToStay ? t("invite.share.mode.stayHint") : t("invite.toStay.empty"),
+            canInviteToStay
+              ? t("invite.share.mode.stayHint")
+              : hasUnverifiedOnly
+                ? t("invite.toStay.unverifiedHint")
+                : t("invite.toStay.empty"),
             !canInviteToStay,
           )}
         </div>
+        {/* When the host has homes but none are verified, point them to verify
+            the first one. */}
+        {hasUnverifiedOnly && (
+          <p className="mt-2 text-[13px]" style={{ color: "var(--navy-2)" }}>
+            {t("invite.toStay.unverified")}{" "}
+            <a
+              href={`/listings/${listings[0].id}/edit/verify`}
+              className="underline"
+              style={{ color: "var(--pink)" }}
+            >
+              {t("invite.toStay.verifyLink")}
+            </a>
+          </p>
+        )}
       </div>
 
       {/* ---- Listing picker, only for invite-to-stay ---- */}
@@ -183,11 +216,11 @@ export function ShareInvite({
           </span>
           <select
             value={listingId}
-            onChange={(e) => { setListingId(e.target.value); setStayLink(null); setError(false); }}
+            onChange={(e) => { setListingId(e.target.value); setStayLink(null); setError(null); }}
             className="w-full px-3 py-3 rounded-lg border outline-none text-sm"
             style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
           >
-            {listings.map((l) => (
+            {verifiedListings.map((l) => (
               <option key={l.id} value={l.id}>{l.title}</option>
             ))}
           </select>
@@ -211,7 +244,7 @@ export function ShareInvite({
         </div>
       )}
 
-      {error && <p className="text-sm" style={{ color: "#dc2626" }}>{t("invite.toStay.error")}</p>}
+      {error && <p className="text-sm" style={{ color: "#dc2626" }}>{t(error)}</p>}
 
       {/* ---- One Share CTA + Copy fallback ---- */}
       <div className="flex flex-col gap-2">

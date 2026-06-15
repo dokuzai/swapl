@@ -55,6 +55,7 @@ import app.swapl.designtokens.SwaplColors
 import app.swapl.designtokens.SwaplRadius
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -455,6 +456,9 @@ class InviteToStayViewModel @Inject constructor(
 ) : ViewModel() {
     var listingTitle by mutableStateOf<String?>(null); private set
     var listingId by mutableStateOf<String?>(null); private set
+    // An invite from an unverified listing would leave the friend's reward
+    // unpayable (the API rejects it), so we gate the flow on this.
+    var listingVerified by mutableStateOf(false); private set
     var invite by mutableStateOf<app.swapl.core.model.InviteToStayResponse?>(null); private set
     var error by mutableStateOf<String?>(null); private set
     var isLoadingListing by mutableStateOf(true); private set
@@ -471,7 +475,11 @@ class InviteToStayViewModel @Inject constructor(
         runCatching {
             val id = listings.search(app.swapl.core.repository.SearchFilters()).viewerListingId
             listingId = id
-            if (id != null) listingTitle = listings.detail(id).listing.title
+            if (id != null) {
+                val l = listings.detail(id).listing
+                listingTitle = l.title
+                listingVerified = l.isVerified
+            }
         }.onFailure { error = it.message }
         isLoadingListing = false
     }
@@ -486,7 +494,13 @@ class InviteToStayViewModel @Inject constructor(
                 invite = referrals.inviteToStay(id, trimmed.ifEmpty { null })
             } catch (t: io.ktor.client.plugins.ClientRequestException) {
                 error = when (t.response.status.value) {
-                    403 -> "You can only invite guests to your own listing."
+                    // The route returns code `listing_not_verified` when the
+                    // listing isn't verified; otherwise it's an ownership reject.
+                    403 ->
+                        if (t.response.bodyAsText().contains("listing_not_verified"))
+                            "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out."
+                        else
+                            "You can only invite guests to your own listing."
                     429 -> "You've sent a lot of invites recently — try again in a bit."
                     else -> "Couldn't create the invite right now."
                 }
@@ -518,6 +532,21 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
             Spacer(Modifier.height(SwaplSpacing.s2))
             Text(
                 "Invite-to-stay links are tied to your own listing. Create a home in Account, then invite a friend to come stay.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        !vm.listingVerified -> Column(
+            // An invite from an unverified listing would leave the friend's
+            // reward unpayable (the API rejects it), so block the flow here.
+            Modifier.fillMaxSize().padding(SwaplSpacing.s8),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text("Verify your home first", style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(SwaplSpacing.s2))
+            Text(
+                "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out. Verify it from Account → your listing.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
