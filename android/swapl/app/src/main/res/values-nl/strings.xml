@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_kicker_signin">Welkom terug</string>
+    <string name="auth_kicker_register">Word lid van Swapl</string>
+    <string name="auth_kicker_waitlist">Vroege toegang</string>
+    <string name="auth_headline_signin">Sleutels voor sleutels.</string>
+    <string name="auth_headline_register">Ruil huizen,\ngeen hotels.</string>
+    <string name="auth_headline_waitlist">Zet je op de lijst.</string>
+    <string name="auth_email">E-mail</string>
+    <string name="auth_password">Wachtwoord</string>
+    <string name="auth_password_register">Wachtwoord (min. 6 tekens)</string>
+    <string name="auth_signin">Inloggen</string>
+    <string name="auth_signin_busy">Bezig met inloggen…</string>
+    <string name="auth_create_account">Account aanmaken</string>
+    <string name="auth_create_account_busy">Account aanmaken…</string>
+    <string name="auth_join_waitlist">Op de wachtlijst</string>
+    <string name="auth_join_waitlist_busy">Aanmelden…</string>
+    <string name="auth_continue_with">of ga verder met</string>
+    <string name="auth_passkey">Inloggen met een passkey</string>
+    <string name="auth_google">Doorgaan met Google</string>
+    <string name="auth_email_code">E-mailcode</string>
+    <string name="auth_phone">Telefoon</string>
+    <string name="auth_switch_to_register">Nieuw bij Swapl? Account aanmaken</string>
+    <string name="auth_switch_to_waitlist">Nog niet klaar? Op de wachtlijst</string>
+    <string name="auth_switch_register_to_signin">Heb je al een account? Inloggen</string>
+    <string name="auth_switch_waitlist_to_signin">Heb je een account? Inloggen</string>
+    <string name="auth_google_failed">Inloggen met Google mislukt. Probeer het opnieuw.</string>
+    <string name="auth_passkey_unavailable">Inloggen met een passkey is nu niet beschikbaar.</string>
+    <string name="auth_passkey_failed">Inloggen met passkey mislukt. Probeer het opnieuw.</string>
+    <string name="auth_passkey_none">Nog geen passkey op dit apparaat. Log op een andere manier in en voeg er daarna een toe via je profiel.</string>
+    <string name="auth_otp_kicker_email">Inloggen met e-mailcode</string>
+    <string name="auth_otp_kicker_phone">Inloggen met telefoon</string>
+    <string name="auth_otp_headline_enter">Voer je code in.</string>
+    <string name="auth_otp_headline_get">Vraag een code aan.</string>
+    <string name="auth_otp_sent">We hebben een 6-cijferige code naar %1$s gestuurd. Deze verloopt over 10 minuten.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Telefoon (bijv. +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">Gebruik het internationale formaat, bijv. +39 333 123 4567.</string>
+    <string name="auth_otp_verify">Code verifiëren</string>
+    <string name="auth_otp_verify_busy">Verifiëren…</string>
+    <string name="auth_otp_resend">Niet ontvangen? Stuur een nieuwe code</string>
+    <string name="auth_otp_send">Code versturen</string>
+    <string name="auth_otp_send_busy">Versturen…</string>
+    <string name="auth_otp_back">Terug naar inloggen met wachtwoord</string>
+</resources>

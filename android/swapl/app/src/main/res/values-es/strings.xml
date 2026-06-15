@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_kicker_signin">Bienvenido de nuevo</string>
+    <string name="auth_kicker_register">Únete a Swapl</string>
+    <string name="auth_kicker_waitlist">Acceso anticipado</string>
+    <string name="auth_headline_signin">Llaves por llaves.</string>
+    <string name="auth_headline_register">Intercambia casas,\nno hoteles.</string>
+    <string name="auth_headline_waitlist">Apúntate a la lista.</string>
+    <string name="auth_email">Correo electrónico</string>
+    <string name="auth_password">Contraseña</string>
+    <string name="auth_password_register">Contraseña (mín. 6 caracteres)</string>
+    <string name="auth_signin">Iniciar sesión</string>
+    <string name="auth_signin_busy">Iniciando sesión…</string>
+    <string name="auth_create_account">Crear cuenta</string>
+    <string name="auth_create_account_busy">Creando cuenta…</string>
+    <string name="auth_join_waitlist">Únete a la lista de espera</string>
+    <string name="auth_join_waitlist_busy">Apuntándote…</string>
+    <string name="auth_continue_with">o continúa con</string>
+    <string name="auth_passkey">Inicia sesión con una passkey</string>
+    <string name="auth_google">Continuar con Google</string>
+    <string name="auth_email_code">Código por correo</string>
+    <string name="auth_phone">Teléfono</string>
+    <string name="auth_switch_to_register">¿Nuevo en Swapl? Crea una cuenta</string>
+    <string name="auth_switch_to_waitlist">¿No estás listo? Únete a la lista de espera</string>
+    <string name="auth_switch_register_to_signin">¿Ya tienes una cuenta? Inicia sesión</string>
+    <string name="auth_switch_waitlist_to_signin">¿Tienes una cuenta? Inicia sesión</string>
+    <string name="auth_google_failed">Error al iniciar sesión con Google. Inténtalo de nuevo.</string>
+    <string name="auth_passkey_unavailable">El inicio de sesión con passkey no está disponible ahora mismo.</string>
+    <string name="auth_passkey_failed">Error al iniciar sesión con passkey. Inténtalo de nuevo.</string>
+    <string name="auth_passkey_none">Aún no hay ninguna passkey en este dispositivo. Inicia sesión de otra forma y luego añade una desde tu perfil.</string>
+    <string name="auth_otp_kicker_email">Inicia sesión con código por correo</string>
+    <string name="auth_otp_kicker_phone">Inicia sesión con teléfono</string>
+    <string name="auth_otp_headline_enter">Introduce tu código.</string>
+    <string name="auth_otp_headline_get">Consigue un código.</string>
+    <string name="auth_otp_sent">Hemos enviado un código de 6 dígitos a %1$s. Caduca en 10 minutos.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Teléfono (ej. +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">Usa el formato internacional, ej. +39 333 123 4567.</string>
+    <string name="auth_otp_verify">Verificar código</string>
+    <string name="auth_otp_verify_busy">Verificando…</string>
+    <string name="auth_otp_resend">¿No lo recibiste? Envía un nuevo código</string>
+    <string name="auth_otp_send">Enviar código</string>
+    <string name="auth_otp_send_busy">Enviando…</string>
+    <string name="auth_otp_back">Volver al inicio de sesión con contraseña</string>
+</resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_kicker_signin">Bentornato</string>
+    <string name="auth_kicker_register">Unisciti a Swapl</string>
+    <string name="auth_kicker_waitlist">Accesso anticipato</string>
+    <string name="auth_headline_signin">Chiavi per chiavi.</string>
+    <string name="auth_headline_register">Scambia case,\nnon hotel.</string>
+    <string name="auth_headline_waitlist">Iscriviti alla lista.</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_password_register">Password (min 6 caratteri)</string>
+    <string name="auth_signin">Accedi</string>
+    <string name="auth_signin_busy">Accesso in corso…</string>
+    <string name="auth_create_account">Crea account</string>
+    <string name="auth_create_account_busy">Creazione account…</string>
+    <string name="auth_join_waitlist">Iscriviti alla lista d\'attesa</string>
+    <string name="auth_join_waitlist_busy">Iscrizione…</string>
+    <string name="auth_continue_with">oppure continua con</string>
+    <string name="auth_passkey">Accedi con una passkey</string>
+    <string name="auth_google">Continua con Google</string>
+    <string name="auth_email_code">Codice email</string>
+    <string name="auth_phone">Telefono</string>
+    <string name="auth_switch_to_register">Nuovo su Swapl? Crea un account</string>
+    <string name="auth_switch_to_waitlist">Non sei pronto? Iscriviti alla lista d\'attesa</string>
+    <string name="auth_switch_register_to_signin">Hai già un account? Accedi</string>
+    <string name="auth_switch_waitlist_to_signin">Hai un account? Accedi</string>
+    <string name="auth_google_failed">Accesso con Google non riuscito. Riprova.</string>
+    <string name="auth_passkey_unavailable">L\'accesso con passkey non è disponibile al momento.</string>
+    <string name="auth_passkey_failed">Accesso con passkey non riuscito. Riprova.</string>
+    <string name="auth_passkey_none">Nessuna passkey su questo dispositivo. Accedi in un altro modo, poi aggiungine una dal tuo profilo.</string>
+    <string name="auth_otp_kicker_email">Accedi con codice email</string>
+    <string name="auth_otp_kicker_phone">Accedi con telefono</string>
+    <string name="auth_otp_headline_enter">Inserisci il codice.</string>
+    <string name="auth_otp_headline_get">Ricevi un codice.</string>
+    <string name="auth_otp_sent">Abbiamo inviato un codice di 6 cifre a %1$s. Scade tra 10 minuti.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Telefono (es. +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">Usa il formato internazionale, es. +39 333 123 4567.</string>
+    <string name="auth_otp_verify">Verifica codice</string>
+    <string name="auth_otp_verify_busy">Verifica…</string>
+    <string name="auth_otp_resend">Non l\'hai ricevuto? Invia un nuovo codice</string>
+    <string name="auth_otp_send">Invia codice</string>
+    <string name="auth_otp_send_busy">Invio…</string>
+    <string name="auth_otp_back">Torna all\'accesso con password</string>
+</resources>

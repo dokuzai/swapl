@@ -27,8 +27,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import app.swapl.R
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
@@ -103,12 +105,12 @@ fun LoginScreen(vm: AuthViewModel) {
                 ) {
                     vm.signInWithGoogle(GoogleIdTokenCredential.createFrom(credential.data).idToken)
                 } else {
-                    localError = "Google sign-in failed. Try again."
+                    localError = context.getString(R.string.auth_google_failed)
                 }
             } catch (_: GetCredentialCancellationException) {
                 // User dismissed the sheet — not an error.
             } catch (_: GetCredentialException) {
-                localError = "Google sign-in failed. Try again."
+                localError = context.getString(R.string.auth_google_failed)
             }
         }
     }
@@ -124,7 +126,7 @@ fun LoginScreen(vm: AuthViewModel) {
             val optionsJson = try {
                 vm.passkeyLoginOptionsJson()
             } catch (_: Throwable) {
-                localError = "Passkey sign-in isn't available right now."
+                localError = context.getString(R.string.auth_passkey_unavailable)
                 return@launch
             }
             try {
@@ -136,14 +138,14 @@ fun LoginScreen(vm: AuthViewModel) {
                 if (credential is PublicKeyCredential) {
                     vm.signInWithPasskey(credential.authenticationResponseJson)
                 } else {
-                    localError = "Passkey sign-in failed. Try again."
+                    localError = context.getString(R.string.auth_passkey_failed)
                 }
             } catch (_: GetCredentialCancellationException) {
                 // User dismissed the sheet — not an error.
             } catch (_: NoCredentialException) {
-                localError = "No passkey on this device yet. Sign in another way, then add one from your profile."
+                localError = context.getString(R.string.auth_passkey_none)
             } catch (_: GetCredentialException) {
-                localError = "Passkey sign-in failed. Try again."
+                localError = context.getString(R.string.auth_passkey_failed)
             }
         }
     }
@@ -173,26 +175,30 @@ fun LoginScreen(vm: AuthViewModel) {
         }
 
         KickerLabel(
-            when (mode) {
-                AuthMode.SignIn -> "Welcome back"
-                AuthMode.Register -> "Join Swapl"
-                AuthMode.Waitlist -> "Early access"
-            }
+            stringResource(
+                when (mode) {
+                    AuthMode.SignIn -> R.string.auth_kicker_signin
+                    AuthMode.Register -> R.string.auth_kicker_register
+                    AuthMode.Waitlist -> R.string.auth_kicker_waitlist
+                }
+            )
         )
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            when (mode) {
-                AuthMode.SignIn -> "Keys for keys."
-                AuthMode.Register -> "Swap homes,\nnot hotels."
-                AuthMode.Waitlist -> "Get on the list."
-            },
+            stringResource(
+                when (mode) {
+                    AuthMode.SignIn -> R.string.auth_headline_signin
+                    AuthMode.Register -> R.string.auth_headline_register
+                    AuthMode.Waitlist -> R.string.auth_headline_waitlist
+                }
+            ),
             style = MaterialTheme.typography.displayMedium,
         )
         Spacer(Modifier.height(SwaplSpacing.s6))
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.auth_email)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
@@ -202,7 +208,7 @@ fun LoginScreen(vm: AuthViewModel) {
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text(if (mode == AuthMode.Register) "Password (min 6 characters)" else "Password") },
+                label = { Text(stringResource(if (mode == AuthMode.Register) R.string.auth_password_register else R.string.auth_password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -221,17 +227,17 @@ fun LoginScreen(vm: AuthViewModel) {
         val credentialsOk = email.isNotBlank() && password.length >= 6
         when (mode) {
             AuthMode.SignIn -> PrimaryPill(
-                text = if (busy) "Signing in…" else "Sign in",
+                text = stringResource(if (busy) R.string.auth_signin_busy else R.string.auth_signin),
                 onClick = { vm.signIn(email, password) },
                 enabled = credentialsOk && !busy,
             )
             AuthMode.Register -> PrimaryPill(
-                text = if (busy) "Creating account…" else "Create account",
+                text = stringResource(if (busy) R.string.auth_create_account_busy else R.string.auth_create_account),
                 onClick = { vm.register(email, password) },
                 enabled = credentialsOk && !busy,
             )
             AuthMode.Waitlist -> PrimaryPill(
-                text = if (busy) "Joining…" else "Join the waitlist",
+                text = stringResource(if (busy) R.string.auth_join_waitlist_busy else R.string.auth_join_waitlist),
                 onClick = { vm.joinWaitlist(email) },
                 enabled = email.contains("@") && !busy,
             )
@@ -249,7 +255,7 @@ fun LoginScreen(vm: AuthViewModel) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     HorizontalDivider(Modifier.weight(1f))
                     Text(
-                        "or continue with",
+                        stringResource(R.string.auth_continue_with),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = SwaplSpacing.s3),
@@ -258,13 +264,13 @@ fun LoginScreen(vm: AuthViewModel) {
                 }
                 Spacer(Modifier.height(SwaplSpacing.s4))
                 if (providers.passkey) {
-                    ProviderPill(text = "Sign in with a passkey", enabled = !busy) {
+                    ProviderPill(text = stringResource(R.string.auth_passkey), enabled = !busy) {
                         startPasskeySignIn()
                     }
                     Spacer(Modifier.height(SwaplSpacing.s3))
                 }
                 if (googleAvailable) {
-                    ProviderPill(text = "Continue with Google", enabled = !busy) {
+                    ProviderPill(text = stringResource(R.string.auth_google), enabled = !busy) {
                         startGoogleSignIn()
                     }
                     Spacer(Modifier.height(SwaplSpacing.s3))
@@ -272,14 +278,14 @@ fun LoginScreen(vm: AuthViewModel) {
                 Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                     if (providers.emailOtp) {
                         ProviderPill(
-                            text = "Email code",
+                            text = stringResource(R.string.auth_email_code),
                             enabled = !busy,
                             modifier = Modifier.weight(1f),
                         ) { openOtp(OtpChannel.Email) }
                     }
                     if (providers.phone) {
                         ProviderPill(
-                            text = "Phone",
+                            text = stringResource(R.string.auth_phone),
                             enabled = !busy,
                             modifier = Modifier.weight(1f),
                         ) { openOtp(OtpChannel.Sms) }
@@ -293,17 +299,17 @@ fun LoginScreen(vm: AuthViewModel) {
             when (mode) {
                 AuthMode.SignIn -> {
                     TextButton(onClick = { switchTo(AuthMode.Register) }) {
-                        Text("New to Swapl? Create account")
+                        Text(stringResource(R.string.auth_switch_to_register))
                     }
                     TextButton(onClick = { switchTo(AuthMode.Waitlist) }) {
-                        Text("Not ready? Join the waitlist", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.auth_switch_to_waitlist), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 AuthMode.Register -> TextButton(onClick = { switchTo(AuthMode.SignIn) }) {
-                    Text("Already have an account? Sign in")
+                    Text(stringResource(R.string.auth_switch_register_to_signin))
                 }
                 AuthMode.Waitlist -> TextButton(onClick = { switchTo(AuthMode.SignIn) }) {
-                    Text("Have an account? Sign in")
+                    Text(stringResource(R.string.auth_switch_waitlist_to_signin))
                 }
             }
         }
@@ -347,17 +353,17 @@ private fun OtpForm(
         OtpChannel.Sms -> trimmed.startsWith("+") && trimmed.count(Char::isDigit) >= 7
     }
 
-    KickerLabel(if (channel == OtpChannel.Email) "Sign in with email code" else "Sign in with phone")
+    KickerLabel(stringResource(if (channel == OtpChannel.Email) R.string.auth_otp_kicker_email else R.string.auth_otp_kicker_phone))
     Spacer(Modifier.height(SwaplSpacing.s2))
     Text(
-        if (codeSent) "Enter your code." else "Get a code.",
+        stringResource(if (codeSent) R.string.auth_otp_headline_enter else R.string.auth_otp_headline_get),
         style = MaterialTheme.typography.displayMedium,
     )
     Spacer(Modifier.height(SwaplSpacing.s6))
 
     if (codeSent) {
         Text(
-            "We sent a 6-digit code to $trimmed. It expires in 10 minutes.",
+            stringResource(R.string.auth_otp_sent, trimmed),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -365,7 +371,7 @@ private fun OtpForm(
         OutlinedTextField(
             value = code,
             onValueChange = onCodeChange,
-            label = { Text("123456") },
+            label = { Text(stringResource(R.string.auth_otp_code_hint)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             modifier = Modifier.fillMaxWidth()
@@ -374,7 +380,7 @@ private fun OtpForm(
         OutlinedTextField(
             value = destination,
             onValueChange = onDestinationChange,
-            label = { Text(if (channel == OtpChannel.Email) "Email" else "Phone (e.g. +39 333 123 4567)") },
+            label = { Text(stringResource(if (channel == OtpChannel.Email) R.string.auth_email else R.string.auth_otp_phone_label)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = if (channel == OtpChannel.Email) KeyboardType.Email else KeyboardType.Phone
@@ -384,7 +390,7 @@ private fun OtpForm(
         if (channel == OtpChannel.Sms) {
             Spacer(Modifier.height(SwaplSpacing.s2))
             Text(
-                "Use international format, e.g. +39 333 123 4567.",
+                stringResource(R.string.auth_otp_phone_help),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -399,7 +405,7 @@ private fun OtpForm(
 
     if (codeSent) {
         PrimaryPill(
-            text = if (busy) "Verifying…" else "Verify code",
+            text = stringResource(if (busy) R.string.auth_otp_verify_busy else R.string.auth_otp_verify),
             onClick = { vm.verifyOtp(trimmed, code) },
             enabled = code.length == 6 && !busy,
         )
@@ -409,12 +415,12 @@ private fun OtpForm(
                 onCodeChange("")
                 vm.resetOtp()
             }) {
-                Text("Didn't get it? Send a new code")
+                Text(stringResource(R.string.auth_otp_resend))
             }
         }
     } else {
         PrimaryPill(
-            text = if (busy) "Sending…" else "Send code",
+            text = stringResource(if (busy) R.string.auth_otp_send_busy else R.string.auth_otp_send),
             onClick = { vm.requestOtp(channel.wire, trimmed) },
             enabled = destinationPlausible && !busy,
         )
@@ -423,7 +429,7 @@ private fun OtpForm(
     Spacer(Modifier.height(SwaplSpacing.s2))
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         TextButton(onClick = onBack) {
-            Text("Back to password sign-in", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.auth_otp_back), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

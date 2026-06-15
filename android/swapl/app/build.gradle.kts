@@ -29,6 +29,10 @@ android {
         versionCode = (project.findProperty("swapl.versionCode") as String?)?.toInt() ?: 1
         versionName = (project.findProperty("swapl.versionName") as String?) ?: "0.1.0"
 
+        // UI locales — mirrors app/lib/i18n/locales.ts (en + 7). Keeps the APK
+        // from shipping stray translations pulled in by AndroidX dependencies.
+        resourceConfigurations += listOf("en", "it", "fr", "de", "es", "pt", "nl", "tr")
+
         // Read from local.properties: swapl.api.base.url=...
         val apiBaseUrl: String = (project.findProperty("swapl.api.base.url") as String?)
             ?: "http://10.0.2.2:3000"

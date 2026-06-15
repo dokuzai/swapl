@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_kicker_signin">Tekrar hoş geldin</string>
+    <string name="auth_kicker_register">Swapl\'a katıl</string>
+    <string name="auth_kicker_waitlist">Erken erişim</string>
+    <string name="auth_headline_signin">Anahtara anahtar.</string>
+    <string name="auth_headline_register">Otel değil,\nev takas et.</string>
+    <string name="auth_headline_waitlist">Listeye katıl.</string>
+    <string name="auth_email">E-posta</string>
+    <string name="auth_password">Şifre</string>
+    <string name="auth_password_register">Şifre (en az 6 karakter)</string>
+    <string name="auth_signin">Giriş yap</string>
+    <string name="auth_signin_busy">Giriş yapılıyor…</string>
+    <string name="auth_create_account">Hesap oluştur</string>
+    <string name="auth_create_account_busy">Hesap oluşturuluyor…</string>
+    <string name="auth_join_waitlist">Bekleme listesine katıl</string>
+    <string name="auth_join_waitlist_busy">Katılıyor…</string>
+    <string name="auth_continue_with">ya da şununla devam et</string>
+    <string name="auth_passkey">Passkey ile giriş yap</string>
+    <string name="auth_google">Google ile devam et</string>
+    <string name="auth_email_code">E-posta kodu</string>
+    <string name="auth_phone">Telefon</string>
+    <string name="auth_switch_to_register">Swapl\'da yeni misin? Hesap oluştur</string>
+    <string name="auth_switch_to_waitlist">Hazır değil misin? Bekleme listesine katıl</string>
+    <string name="auth_switch_register_to_signin">Zaten hesabın var mı? Giriş yap</string>
+    <string name="auth_switch_waitlist_to_signin">Hesabın var mı? Giriş yap</string>
+    <string name="auth_google_failed">Google ile giriş başarısız oldu. Tekrar dene.</string>
+    <string name="auth_passkey_unavailable">Passkey ile giriş şu anda kullanılamıyor.</string>
+    <string name="auth_passkey_failed">Passkey ile giriş başarısız oldu. Tekrar dene.</string>
+    <string name="auth_passkey_none">Bu cihazda henüz passkey yok. Başka bir yolla giriş yap, sonra profilinden bir tane ekle.</string>
+    <string name="auth_otp_kicker_email">E-posta koduyla giriş yap</string>
+    <string name="auth_otp_kicker_phone">Telefonla giriş yap</string>
+    <string name="auth_otp_headline_enter">Kodunu gir.</string>
+    <string name="auth_otp_headline_get">Bir kod al.</string>
+    <string name="auth_otp_sent">%1$s adresine 6 haneli bir kod gönderdik. 10 dakika içinde sona erer.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Telefon (örn. +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">Uluslararası biçim kullan, örn. +39 333 123 4567.</string>
+    <string name="auth_otp_verify">Kodu doğrula</string>
+    <string name="auth_otp_verify_busy">Doğrulanıyor…</string>
+    <string name="auth_otp_resend">Gelmedi mi? Yeni bir kod gönder</string>
+    <string name="auth_otp_send">Kod gönder</string>
+    <string name="auth_otp_send_busy">Gönderiliyor…</string>
+    <string name="auth_otp_back">Şifreyle girişe dön</string>
+</resources>

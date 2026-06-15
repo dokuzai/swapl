@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_kicker_signin">Bem-vindo de volta</string>
+    <string name="auth_kicker_register">Junte-se ao Swapl</string>
+    <string name="auth_kicker_waitlist">Acesso antecipado</string>
+    <string name="auth_headline_signin">Chaves por chaves.</string>
+    <string name="auth_headline_register">Troque casas,\nnão hotéis.</string>
+    <string name="auth_headline_waitlist">Entre na lista.</string>
+    <string name="auth_email">E-mail</string>
+    <string name="auth_password">Senha</string>
+    <string name="auth_password_register">Senha (mín. 6 caracteres)</string>
+    <string name="auth_signin">Entrar</string>
+    <string name="auth_signin_busy">Entrando…</string>
+    <string name="auth_create_account">Criar conta</string>
+    <string name="auth_create_account_busy">Criando conta…</string>
+    <string name="auth_join_waitlist">Entrar na lista de espera</string>
+    <string name="auth_join_waitlist_busy">Entrando…</string>
+    <string name="auth_continue_with">ou continue com</string>
+    <string name="auth_passkey">Entrar com uma passkey</string>
+    <string name="auth_google">Continuar com o Google</string>
+    <string name="auth_email_code">Código por e-mail</string>
+    <string name="auth_phone">Telefone</string>
+    <string name="auth_switch_to_register">Novo no Swapl? Crie uma conta</string>
+    <string name="auth_switch_to_waitlist">Ainda não? Entre na lista de espera</string>
+    <string name="auth_switch_register_to_signin">Já tem uma conta? Entrar</string>
+    <string name="auth_switch_waitlist_to_signin">Tem uma conta? Entrar</string>
+    <string name="auth_google_failed">Falha ao entrar com o Google. Tente novamente.</string>
+    <string name="auth_passkey_unavailable">O login com passkey não está disponível no momento.</string>
+    <string name="auth_passkey_failed">Falha ao entrar com passkey. Tente novamente.</string>
+    <string name="auth_passkey_none">Nenhuma passkey neste dispositivo ainda. Entre de outra forma e depois adicione uma no seu perfil.</string>
+    <string name="auth_otp_kicker_email">Entrar com código por e-mail</string>
+    <string name="auth_otp_kicker_phone">Entrar com telefone</string>
+    <string name="auth_otp_headline_enter">Digite o seu código.</string>
+    <string name="auth_otp_headline_get">Receba um código.</string>
+    <string name="auth_otp_sent">Enviamos um código de 6 dígitos para %1$s. Ele expira em 10 minutos.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Telefone (ex. +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">Use o formato internacional, ex. +39 333 123 4567.</string>
+    <string name="auth_otp_verify">Verificar código</string>
+    <string name="auth_otp_verify_busy">Verificando…</string>
+    <string name="auth_otp_resend">Não recebeu? Enviar um novo código</string>
+    <string name="auth_otp_send">Enviar código</string>
+    <string name="auth_otp_send_busy">Enviando…</string>
+    <string name="auth_otp_back">Voltar ao login com senha</string>
+</resources>

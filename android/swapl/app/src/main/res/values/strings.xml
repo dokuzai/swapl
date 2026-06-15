@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Base (English) UI strings. Mirrors the web app's i18n dictionaries
+  (app/lib/i18n/dict-en.ts). Locale overrides live in values-XX/strings.xml
+  for: it fr de es pt nl tr.
+
+  Keys are namespaced by feature: auth_*, common_*, etc.
+-->
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">Welcome back</string>
+    <string name="auth_kicker_register">Join Swapl</string>
+    <string name="auth_kicker_waitlist">Early access</string>
+    <string name="auth_headline_signin">Keys for keys.</string>
+    <string name="auth_headline_register">Swap homes,\nnot hotels.</string>
+    <string name="auth_headline_waitlist">Get on the list.</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_password_register">Password (min 6 characters)</string>
+    <string name="auth_signin">Sign in</string>
+    <string name="auth_signin_busy">Signing in…</string>
+    <string name="auth_create_account">Create account</string>
+    <string name="auth_create_account_busy">Creating account…</string>
+    <string name="auth_join_waitlist">Join the waitlist</string>
+    <string name="auth_join_waitlist_busy">Joining…</string>
+    <string name="auth_continue_with">or continue with</string>
+    <string name="auth_passkey">Sign in with a passkey</string>
+    <string name="auth_google">Continue with Google</string>
+    <string name="auth_email_code">Email code</string>
+    <string name="auth_phone">Phone</string>
+    <string name="auth_switch_to_register">New to Swapl? Create account</string>
+    <string name="auth_switch_to_waitlist">Not ready? Join the waitlist</string>
+    <string name="auth_switch_register_to_signin">Already have an account? Sign in</string>
+    <string name="auth_switch_waitlist_to_signin">Have an account? Sign in</string>
+    <string name="auth_google_failed">Google sign-in failed. Try again.</string>
+    <string name="auth_passkey_unavailable">Passkey sign-in isn\'t available right now.</string>
+    <string name="auth_passkey_failed">Passkey sign-in failed. Try again.</string>
+    <string name="auth_passkey_none">No passkey on this device yet. Sign in another way, then add one from your profile.</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">Sign in with email code</string>
+    <string name="auth_otp_kicker_phone">Sign in with phone</string>
+    <string name="auth_otp_headline_enter">Enter your code.</string>
+    <string name="auth_otp_headline_get">Get a code.</string>
+    <string name="auth_otp_sent">We sent a 6-digit code to %1$s. It expires in 10 minutes.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Phone (e.g. +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">Use international format, e.g. +39 333 123 4567.</string>
+    <string name="auth_otp_verify">Verify code</string>
+    <string name="auth_otp_verify_busy">Verifying…</string>
+    <string name="auth_otp_resend">Didn\'t get it? Send a new code</string>
+    <string name="auth_otp_send">Send code</string>
+    <string name="auth_otp_send_busy">Sending…</string>
+    <string name="auth_otp_back">Back to password sign-in</string>
+</resources>
