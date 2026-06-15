@@ -113,17 +113,18 @@ export function ConciergeSection({
                   </span>
                 </div>
               ) : (
-                <div className="mt-3 flex items-center justify-between gap-2">
-                  <span className="font-display text-lg">€{(a.priceCents / 100).toFixed(2)}</span>
+                <div className="mt-3 flex items-center justify-between gap-3">
+                  <span className="font-display text-lg leading-none">€{(a.priceCents / 100).toFixed(2)}</span>
                   {own ? (
-                    <span className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full whitespace-nowrap"
-                      style={{ background: "var(--pink)", color: "#fff" }}>
-                      Booked
+                    <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[.06em] h-9 px-3.5 rounded-full whitespace-nowrap shrink-0"
+                      style={{ background: "var(--pink-light)", color: "var(--pink)" }}>
+                      ✓ Booked
                     </span>
                   ) : (
                     <button
                       onClick={() => buy(a.slug)}
-                      className="pill-primary text-sm"
+                      className="inline-flex items-center justify-center font-medium text-[13px] h-9 px-5 rounded-full whitespace-nowrap shrink-0 transition disabled:opacity-60"
+                      style={{ background: "var(--pink)", color: "#fff" }}
                       disabled={pendingSlug !== null}
                     >
                       {pendingSlug === a.slug ? "Processing…" : "Add"}

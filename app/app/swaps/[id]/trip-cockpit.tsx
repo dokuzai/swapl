@@ -256,7 +256,7 @@ function PhaseStepper({
                     )}
                   </div>
                   <span
-                    className="font-mono text-[9px] uppercase tracking-[.06em] text-center leading-tight"
+                    className="block w-full px-0.5 font-mono text-[8px] uppercase tracking-[.02em] text-center leading-[1.15] [overflow-wrap:anywhere] hyphens-auto"
                     style={{ color: active ? "var(--pink)" : "var(--navy-3)" }}
                   >
                     {t(`trip.phase.${p}` as const)}
