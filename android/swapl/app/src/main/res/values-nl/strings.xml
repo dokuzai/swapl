@@ -52,19 +52,19 @@
 
     <string name="publish_ack_kicker">Voordat je publiceert</string>
     <string name="publish_ack_mode_question">Hoe bied je deze woning aan?</string>
-    <string name="publish_ack_mode_entire_home">De hele woning terwijl ik weg ben</string>
-    <string name="publish_ack_mode_entire_home_help">Gasten hebben de woning helemaal voor zichzelf.</string>
-    <string name="publish_ack_mode_room">Een kamer, of mijn woning terwijl ik aanwezig ben</string>
-    <string name="publish_ack_mode_room_help">Je blijft en bent gastheer — net als vrienden op bezoek.</string>
-    <string name="publish_ack_text_entire_home">Ik bevestig dat ik het recht heb om deze hele woning aan te bieden voor een ruil terwijl ik weg ben. Als ik huur, heb ik de toestemming van mijn verhuurder om gasten te ontvangen tijdens mijn afwezigheid zoals mijn huurcontract vereist, en ik houd me aan eventuele regels van de vereniging van eigenaren of het gebouw. Ik begrijp dat swapl dit niet verifieert en dat ik alleen verantwoordelijk ben voor het hebben van het recht om te hosten.</string>
-    <string name="publish_ack_text_room">Ik bevestig dat ik gastvrijheid bied in een woning waar ik woon — een kamer, of mijn woning terwijl ik als gastheer aanwezig ben. Ik respecteer eventuele regels van de vereniging van eigenaren of het gebouw en ben verantwoordelijk voor het verblijf dat ik host.</string>
+    <string name="publish_ack_mode_entire_home">De hele woning, terwijl ik weg ben</string>
+    <string name="publish_ack_mode_room">Een kamer, of terwijl ik er ben</string>
+    <string name="publish_ack_text_entire_home_headline">Ik heb het recht om mijn hele woning aan te bieden voor een ruil terwijl ik weg ben — en als ik huur, staat mijn huurcontract me toe gasten te ontvangen als ik er niet ben.</string>
+    <string name="publish_ack_text_entire_home_fineprint">Ik ben verantwoordelijk voor het naleven van mijn huurcontract, de gebouwregels en de lokale wetgeving.</string>
+    <string name="publish_ack_text_room_headline">Ik heb het recht om deze ruil te hosten.</string>
+    <string name="publish_ack_text_room_fineprint">Ik houd me aan de regels van mijn gebouw en de lokale wetgeving.</string>
     <string name="publish_ack_required_error">Bevestig de gastverklaring voordat je publiceert.</string>
     <string name="publish_submit_failed">Je advertentie kon niet worden gepubliceerd. Probeer het opnieuw.</string>
 
-    <string name="owner_verify_cta">Eigendom verifiëren (optioneel)</string>
-    <string name="owner_verify_cta_pending">Eigendomsverificatie — in beoordeling</string>
-    <string name="owner_verify_cta_rejected">Eigendomsverificatie — probeer opnieuw</string>
-    <string name="owner_verify_optional_note">Optioneel. Levert een vertrouwensbadge op en is niet vereist om te publiceren of te ruilen.</string>
+    <string name="owner_verify_cta">Badge geverifieerde eigenaar — optioneel</string>
+    <string name="owner_verify_cta_pending">Badge geverifieerde eigenaar — in beoordeling</string>
+    <string name="owner_verify_cta_rejected">Badge geverifieerde eigenaar — probeer opnieuw</string>
+    <string name="owner_verify_optional_note">Een vertrouwensplus voor gasten. Nooit vereist om te publiceren of te ruilen.</string>
     <string name="owner_verify_title">Eigendom verifiëren</string>
     <string name="owner_verify_explainer">Voeg een document toe waaruit blijkt dat je eigenaar van deze woning bent — een eigendomsakte, een aanslag onroerendezaakbelasting of een recente rekening op jouw naam. Een beheerder beoordeelt het en zodra het is goedgekeurd, toont je advertentie een badge \"Geverifieerde eigenaar\".</string>
     <string name="owner_verify_status_pending">Je laatste inzending wordt beoordeeld.</string>

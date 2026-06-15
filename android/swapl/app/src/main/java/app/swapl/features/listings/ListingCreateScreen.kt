@@ -685,21 +685,26 @@ private fun PublishAcknowledgment(vm: ListingCreateViewModel) {
         ModeOption(
             selected = vm.publishMode == PublishAckMode.ENTIRE_HOME,
             title = stringResource(R.string.publish_ack_mode_entire_home),
-            subtitle = stringResource(R.string.publish_ack_mode_entire_home_help),
             onSelect = { vm.publishMode = PublishAckMode.ENTIRE_HOME },
         )
         ModeOption(
             selected = vm.publishMode == PublishAckMode.ROOM_OR_HOST_PRESENT,
             title = stringResource(R.string.publish_ack_mode_room),
-            subtitle = stringResource(R.string.publish_ack_mode_room_help),
             onSelect = { vm.publishMode = PublishAckMode.ROOM_OR_HOST_PRESENT },
         )
     }
 
-    val ackText = stringResource(
+    // Two-part attestation: headline shown normally, fine print smaller/muted.
+    val ackHeadline = stringResource(
         when (vm.publishMode) {
-            PublishAckMode.ENTIRE_HOME -> R.string.publish_ack_text_entire_home
-            PublishAckMode.ROOM_OR_HOST_PRESENT -> R.string.publish_ack_text_room
+            PublishAckMode.ENTIRE_HOME -> R.string.publish_ack_text_entire_home_headline
+            PublishAckMode.ROOM_OR_HOST_PRESENT -> R.string.publish_ack_text_room_headline
+        },
+    )
+    val ackFineprint = stringResource(
+        when (vm.publishMode) {
+            PublishAckMode.ENTIRE_HOME -> R.string.publish_ack_text_entire_home_fineprint
+            PublishAckMode.ROOM_OR_HOST_PRESENT -> R.string.publish_ack_text_room_fineprint
         },
     )
     Row(
@@ -710,34 +715,33 @@ private fun PublishAcknowledgment(vm: ListingCreateViewModel) {
         horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
     ) {
         Checkbox(checked = vm.ackAccepted, onCheckedChange = { vm.ackAccepted = it })
-        Text(
-            ackText,
-            style = MaterialTheme.typography.bodySmall,
+        Column(
             modifier = Modifier
                 .weight(1f)
                 .padding(top = 12.dp),
-        )
-    }
-}
-
-@Composable
-private fun ModeOption(selected: Boolean, title: String, subtitle: String, onSelect: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onSelect),
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
-    ) {
-        RadioButton(selected = selected, onClick = onSelect)
-        Column(Modifier.weight(1f).padding(top = 12.dp)) {
-            Text(title, style = MaterialTheme.typography.bodyMedium)
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Text(ackHeadline, style = MaterialTheme.typography.bodyMedium)
             Text(
-                subtitle,
+                ackFineprint,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+@Composable
+private fun ModeOption(selected: Boolean, title: String, onSelect: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onSelect),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+    ) {
+        RadioButton(selected = selected, onClick = onSelect)
+        Text(title, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
     }
 }
 

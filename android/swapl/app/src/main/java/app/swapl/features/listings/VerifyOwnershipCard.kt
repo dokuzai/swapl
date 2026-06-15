@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -182,10 +183,12 @@ fun VerifyOwnershipCard(
     var showDialog by remember { mutableStateOf(false) }
     val reviewStatus = status?.verification?.status
 
-    OutlinedButton(
+    // Deliberately quiet, secondary styling — this is an optional trust boost,
+    // never a publish/swap gate, so it must not read as a primary CTA.
+    TextButton(
         onClick = { showDialog = true },
-        shape = androidx.compose.foundation.shape.CircleShape,
         modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
     ) {
         Icon(Icons.Default.WorkspacePremium, contentDescription = null, modifier = Modifier.size(18.dp))
         Spacer(Modifier.size(SwaplSpacing.s2))
@@ -195,6 +198,7 @@ fun VerifyOwnershipCard(
                 "rejected" -> stringResource(R.string.owner_verify_cta_rejected)
                 else -> stringResource(R.string.owner_verify_cta)
             },
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
     Text(

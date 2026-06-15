@@ -52,19 +52,19 @@
 
     <string name="publish_ack_kicker">Antes de publicar</string>
     <string name="publish_ack_mode_question">Como você está hospedando esta casa?</string>
-    <string name="publish_ack_mode_entire_home">A casa toda enquanto estou fora</string>
-    <string name="publish_ack_mode_entire_home_help">Os hóspedes têm a casa só para eles.</string>
-    <string name="publish_ack_mode_room">Um quarto, ou minha casa enquanto estou presente</string>
-    <string name="publish_ack_mode_room_help">Você fica e hospeda — como receber amigos.</string>
-    <string name="publish_ack_text_entire_home">Confirmo que tenho o direito de oferecer esta casa inteira para uma troca enquanto estou fora. Se eu alugo, tenho o consentimento do meu locador para hospedar convidados na minha ausência conforme exige meu contrato, e cumpro as regras do condomínio ou do edifício. Entendo que a swapl não verifica isso e que sou o único responsável por ter o direito de hospedar.</string>
-    <string name="publish_ack_text_room">Confirmo que ofereço hospitalidade em uma casa onde moro — um quarto, ou minha casa enquanto estou presente como anfitrião. Respeitarei as regras do condomínio ou do edifício e sou responsável pela estadia que hospedo.</string>
+    <string name="publish_ack_mode_entire_home">A casa toda, enquanto estou fora</string>
+    <string name="publish_ack_mode_room">Um quarto, ou enquanto estou presente</string>
+    <string name="publish_ack_text_entire_home_headline">Tenho o direito de oferecer minha casa toda para uma troca enquanto estou fora — e, se eu alugo, meu contrato me permite hospedar convidados quando não estou.</string>
+    <string name="publish_ack_text_entire_home_fineprint">Sou responsável por cumprir meu contrato, as regras do edifício e as leis locais.</string>
+    <string name="publish_ack_text_room_headline">Tenho o direito de hospedar esta troca.</string>
+    <string name="publish_ack_text_room_fineprint">Vou cumprir as regras do meu edifício e as leis locais.</string>
     <string name="publish_ack_required_error">Confirme a declaração de hospedagem antes de publicar.</string>
     <string name="publish_submit_failed">Não foi possível publicar seu anúncio. Tente novamente.</string>
 
-    <string name="owner_verify_cta">Verificar propriedade (opcional)</string>
-    <string name="owner_verify_cta_pending">Verificação de propriedade — em análise</string>
-    <string name="owner_verify_cta_rejected">Verificação de propriedade — tente novamente</string>
-    <string name="owner_verify_optional_note">Opcional. Concede um selo de confiança e não é necessária para publicar ou trocar.</string>
+    <string name="owner_verify_cta">Selo de proprietário verificado — opcional</string>
+    <string name="owner_verify_cta_pending">Selo de proprietário verificado — em análise</string>
+    <string name="owner_verify_cta_rejected">Selo de proprietário verificado — tente novamente</string>
+    <string name="owner_verify_optional_note">Um reforço de confiança para os hóspedes. Nunca exigido para publicar ou trocar.</string>
     <string name="owner_verify_title">Verificar propriedade</string>
     <string name="owner_verify_explainer">Adicione um documento que comprove que você é o proprietário desta casa — uma escritura, um carnê de IPTU ou uma conta recente em seu nome. Um administrador analisa e, depois de aprovado, seu anúncio exibe um selo \"Proprietário verificado\".</string>
     <string name="owner_verify_status_pending">Seu último envio está em análise.</string>

@@ -62,20 +62,20 @@
     <!-- Publish acknowledgment shown on the Review step before create -->
     <string name="publish_ack_kicker">Before you publish</string>
     <string name="publish_ack_mode_question">How are you hosting this home?</string>
-    <string name="publish_ack_mode_entire_home">The whole home while I\'m away</string>
-    <string name="publish_ack_mode_entire_home_help">Guests have the place to themselves.</string>
-    <string name="publish_ack_mode_room">A room, or my home while I\'m here</string>
-    <string name="publish_ack_mode_room_help">You stay and host — like having friends over.</string>
-    <string name="publish_ack_text_entire_home">I confirm I have the right to offer this entire home for a swap while I\'m away. If I rent it, I have my landlord\'s consent to host guests in my absence as my lease requires, and I comply with any condominium or building rules. I understand swapl does not verify this and that I alone am responsible for having the right to host.</string>
-    <string name="publish_ack_text_room">I confirm I\'m offering hospitality in a home I live in — a room, or my home while I\'m present as host. I\'ll respect any condominium or building rules and I\'m responsible for the stay I host.</string>
+    <string name="publish_ack_mode_entire_home">The whole home, while I\'m away</string>
+    <string name="publish_ack_mode_room">A room, or while I\'m here</string>
+    <string name="publish_ack_text_entire_home_headline">I have the right to offer my whole home for a swap while I\'m away — and if I rent, my lease lets me host guests when I\'m not there.</string>
+    <string name="publish_ack_text_entire_home_fineprint">I\'m responsible for following my lease, building rules, and local laws.</string>
+    <string name="publish_ack_text_room_headline">I have the right to host this swap.</string>
+    <string name="publish_ack_text_room_fineprint">I\'ll follow my building rules and local laws.</string>
     <string name="publish_ack_required_error">Please confirm the hosting acknowledgment before publishing.</string>
     <string name="publish_submit_failed">Couldn\'t publish your listing. Try again.</string>
 
     <!-- Optional "Verify ownership" entry -->
-    <string name="owner_verify_cta">Verify ownership (optional)</string>
-    <string name="owner_verify_cta_pending">Ownership verification — in review</string>
-    <string name="owner_verify_cta_rejected">Ownership verification — try again</string>
-    <string name="owner_verify_optional_note">Optional. It earns a trust badge and isn\'t required to publish or swap.</string>
+    <string name="owner_verify_cta">Verified owner badge — optional</string>
+    <string name="owner_verify_cta_pending">Verified owner badge — in review</string>
+    <string name="owner_verify_cta_rejected">Verified owner badge — try again</string>
+    <string name="owner_verify_optional_note">A trust boost for guests. Never required to publish or swap.</string>
     <string name="owner_verify_title">Verify ownership</string>
     <string name="owner_verify_explainer">Add a document that shows you own this home — a deed, property tax bill, or a recent utility bill in your name. An admin reviews it and, once approved, your listing shows a \"Verified owner\" badge.</string>
     <string name="owner_verify_status_pending">Your last submission is in review.</string>
