@@ -44,6 +44,9 @@ struct StayWithKeysSheet: View {
     @State private var requestError: String?
     @State private var isSubmitting = false
     @State private var requestedStayId: String?
+    // When the balance falls short we offer a path to the wallet's "ways to earn
+    // points" screen — never an offer to buy.
+    @State private var showEarnPaths = false
 
     let listing: Listing
     let onRequested: (String) -> Void
@@ -69,6 +72,13 @@ struct StayWithKeysSheet: View {
     private var canAfford: Bool {
         guard let balance = vm.balance else { return true }
         return balance >= totalKeys
+    }
+
+    // How many points the guest is missing for the current dates. 0 when they can
+    // afford it (or balance isn't loaded). Drives the "earn points" CTA + message.
+    private var shortBy: Int {
+        guard let balance = vm.balance, totalKeys > balance else { return 0 }
+        return totalKeys - balance
     }
 
     var body: some View {
@@ -103,6 +113,9 @@ struct StayWithKeysSheet: View {
                 }
             } message: {
                 Text("Your points are held until the host confirms. You'll find this stay under Trips.")
+            }
+            .sheet(isPresented: $showEarnPaths, onDismiss: { Task { await vm.load() } }) {
+                NavigationStack { KeysWalletView() }
             }
         }
         .task { await vm.load() }
@@ -141,7 +154,19 @@ struct StayWithKeysSheet: View {
             }
 
             if let requestError {
-                Section { Text(requestError).foregroundStyle(SwaplSemanticLight.destructive) }
+                Section {
+                    Text(requestError).foregroundStyle(SwaplSemanticLight.destructive)
+                    // Insufficient points is the one error with a next step: send
+                    // the guest to the wallet's "ways to earn points" screen.
+                    if shortBy > 0 {
+                        Button {
+                            showEarnPaths = true
+                        } label: {
+                            Label("See how to earn points", systemImage: "key.horizontal")
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        }
+                    }
+                }
             }
 
             Section {
@@ -196,8 +221,12 @@ struct StayWithKeysSheet: View {
             )
             requestedStayId = response.stayId
         } catch APIClient.APIError.status(422, let body) where (body ?? "").localizedCaseInsensitiveContains("enough") {
-            // Insufficient points — never an offer to buy; just inform.
-            requestError = "You don't have enough points for these dates. Try fewer nights or earn points by hosting."
+            // Insufficient points — never an offer to buy; quantify the gap and
+            // surface the "earn points" CTA (shortBy drives the button below).
+            let missing = shortBy > 0 ? shortBy : totalKeys - (vm.balance ?? 0)
+            requestError = missing > 0
+                ? "You're \(missing) points short for these dates (\(totalKeys) needed). Earn points by hosting, or pick fewer nights — points can't be bought."
+                : "You don't have enough points for these dates. Earn points by hosting, or pick fewer nights — points can't be bought."
         } catch let error as APIClient.APIError {
             // The API surfaces a human message in the error body (see APIError);
             // localizedDescription already extracts it for 422s like
