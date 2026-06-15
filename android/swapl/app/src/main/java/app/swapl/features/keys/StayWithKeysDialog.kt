@@ -123,6 +123,13 @@ fun StayWithKeysDialog(
         title = { Text("Stay with points") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+                // Distinguish this from "Propose swap": one-way, no hosting back.
+                Text(
+                    "Book one-way with your points — no need to host them back. Good when your dates or home aren't a match for a direct swap.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
                 DateField("Check-in", from, { from = it }, modifier = Modifier.fillMaxWidth())
                 DateField("Check-out", to, { to = it }, modifier = Modifier.fillMaxWidth())
                 Text(
@@ -145,9 +152,19 @@ fun StayWithKeysDialog(
                 }
 
                 balance?.let { b ->
+                    // Affordable: give the balance a scale ("= ~N nights here").
+                    // Short: turn the gap into a concrete next step — how many
+                    // nights of hosting close it — never an offer to buy.
+                    val text = if (canAfford) {
+                        val nightsCovered = if (nightlyKeys > 0) b / nightlyKeys else 0
+                        "You have $b points — enough for this stay (about $nightsCovered night${if (nightsCovered == 1) "" else "s"} at this rate)."
+                    } else {
+                        val short = totalKeys - b
+                        val hostNights = if (nightlyKeys > 0) (short + nightlyKeys - 1) / nightlyKeys else 0
+                        "You're $short points short. Host about $hostNights night${if (hostNights == 1) "" else "s"} at this rate to unlock this stay — or pick fewer nights. Points can't be bought."
+                    }
                     Text(
-                        if (canAfford) "You have $b points — enough for this stay."
-                        else "You have $b points — ${totalKeys - b} short. Earn points by hosting, or pick fewer nights. Points can't be bought.",
+                        text,
                         style = MaterialTheme.typography.bodySmall,
                         color = if (canAfford) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
                     )

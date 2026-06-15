@@ -91,15 +91,41 @@ fun KeysWalletScreen(vm: KeysWalletViewModel = hiltViewModel()) {
                 .padding(SwaplSpacing.s4),
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s5),
         ) {
-            Text("Travel points", style = MaterialTheme.typography.displaySmall)
+            Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
+                Text("Travel points", style = MaterialTheme.typography.displaySmall)
+                // First-touch one-liner: earn → spend, never money. This is the
+                // single sentence that has to land in 5 seconds.
+                Text(
+                    "Points you earn by hosting. Spend them on a stay — never money, never bought or cashed out.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
 
             BalanceCard(wallet.balance)
+
+            // Concrete example that closes the earn→spend loop ("flywheel").
+            // Uses one of the member's own homes as the rate when available so
+            // the numbers feel real; otherwise a representative rate.
+            InActionCard(wallet.nightlyKeysForMyListings.firstOrNull()?.nightlyKeys)
+
+            // When the wallet is empty, lead with how to fill it — never a dead
+            // end. The verification path shows its instant +30 reward up front.
+            if (wallet.balance == 0) {
+                EarnPathsCard(welcomeBonus = WELCOME_BONUS_KEYS)
+            }
+
             GiftEntry(onClick = { gifting = true })
 
             if (wallet.nightlyKeysForMyListings.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                     KickerLabel("Your homes earn")
-                    wallet.nightlyKeysForMyListings.forEach { NightlyRow(it) }
+                    Text(
+                        "This is what you earn each night a guest stays — points you can then spend on a stay elsewhere.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    wallet.nightlyKeysForMyListings.forEach { NightlyRow(it, wallet.balance) }
                 }
             }
 
@@ -193,15 +219,127 @@ private fun GiftEntry(onClick: () -> Unit) {
 }
 
 @Composable
-private fun NightlyRow(home: KeysWallet.NightlyKeysListing) {
+private fun NightlyRow(home: KeysWallet.NightlyKeysListing, balance: Int) {
     SurfaceCard {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-            Icon(Icons.Default.Home, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-            Text(home.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+        Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+                Icon(Icons.Default.Home, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                Text(home.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+                Text(
+                    "${home.nightlyKeys} / night",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            // Give the rate a scale: how many nights the member could already
+            // book at this home's rate with their current balance.
+            if (home.nightlyKeys > 0) {
+                val nights = balance / home.nightlyKeys
+                Text(
+                    "Your balance covers about $nights night${if (nights == 1) "" else "s"} at this rate.",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+// The "earning & spending in action" card — one concrete round trip that turns
+// the abstract "travel points" into something you can picture. Mirrors the web
+// example card on /account/keys. Rate defaults to a representative value when
+// the member has no home listed yet.
+@Composable
+private fun InActionCard(nightlyRate: Int?) {
+    val rate = (nightlyRate ?: 8).coerceAtLeast(1)
+    val earned = rate * 2
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .background(SwaplColors.TagBg, RoundedCornerShape(SwaplRadius.lg))
+            .padding(SwaplSpacing.s5),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+            KickerLabel("How points work")
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+                Icon(Icons.Default.Home, contentDescription = null, tint = SwaplColors.Navy, modifier = Modifier.size(20.dp))
+                Text(
+                    "Host 2 nights at $rate points/night",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = SwaplColors.Navy,
+                    modifier = Modifier.weight(1f),
+                )
+                Text("+$earned", style = MaterialTheme.typography.titleLarge, color = SwaplColors.Navy, fontWeight = FontWeight.Bold)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+                Icon(Icons.Default.VpnKey, contentDescription = null, tint = SwaplColors.Navy, modifier = Modifier.size(20.dp))
+                Text(
+                    "Spend those $earned points on 2 nights somewhere else",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = SwaplColors.Navy,
+                    modifier = Modifier.weight(1f),
+                )
+                Text("-$earned", style = MaterialTheme.typography.titleLarge, color = SwaplColors.Navy, fontWeight = FontWeight.Bold)
+            }
             Text(
-                "${home.nightlyKeys} / night",
+                "That's the whole loop: host → earn points → travel → repeat. No money changes hands.",
+                style = MaterialTheme.typography.bodySmall,
+                color = SwaplColors.Navy2,
+            )
+        }
+    }
+}
+
+// Shown when the balance is 0: the fastest paths to a first balance, with the
+// instant verification reward (+30) called out as the hero. No new endpoints —
+// pure onboarding copy.
+@Composable
+private fun EarnPathsCard(welcomeBonus: Int) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .background(SwaplColors.TagBg, RoundedCornerShape(SwaplRadius.lg))
+            .padding(SwaplSpacing.s5),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
+            Text("Get your first points", style = MaterialTheme.typography.titleLarge, color = SwaplColors.Navy)
+            EarnRow(
+                title = "Verify your identity",
+                body = "Get $welcomeBonus points the moment you're verified — instantly.",
+                badge = "+$welcomeBonus",
+            )
+            EarnRow(
+                title = "Host a stay",
+                body = "Earn points every night a guest stays with you.",
+                badge = null,
+            )
+            EarnRow(
+                title = "Receive a gift",
+                body = "A verified friend can send you points — share your member ID.",
+                badge = null,
+            )
+        }
+    }
+}
+
+@Composable
+private fun EarnRow(title: String, body: String, badge: String?) {
+    Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = SwaplColors.Navy)
+            Text(body, style = MaterialTheme.typography.bodySmall, color = SwaplColors.Navy2)
+        }
+        if (badge != null) {
+            Text(
+                badge,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(SwaplRadius.sm))
+                    .padding(horizontal = SwaplSpacing.s2, vertical = SwaplSpacing.s1),
             )
         }
     }
@@ -284,6 +422,10 @@ class GiftKeysViewModel @Inject constructor(private val repo: KeysRepository) : 
 
 private const val GIFT_MAX_PER_TRANSFER = 50
 private const val GIFT_DAILY_CAP = 100
+
+// Mirrors WELCOME_BONUS_KEYS in lib/keys/config.ts — the instant reward for
+// verifying. Surfaced as the hero earn path when the wallet is empty.
+private const val WELCOME_BONUS_KEYS = 30
 
 @Composable
 fun GiftKeysDialog(

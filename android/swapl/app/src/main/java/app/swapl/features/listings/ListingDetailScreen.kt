@@ -200,7 +200,7 @@ fun ListingDetailScreen(
                 Text("Stay with points")
             }
             Text(
-                "One-directional stay: pay in travel points, the host needn't travel.",
+                "Book one-way using the travel points you earned hosting — no swap back needed. Use this when a direct swap isn't a fit.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
