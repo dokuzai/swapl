@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useT } from "@/lib/i18n/client";
 
 export function ManageBillingButton() {
+  const t = useT();
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
   function open() {
@@ -13,16 +15,16 @@ export function ManageBillingButton() {
       if (res.ok && j.url) {
         window.location.href = j.url;
       } else if (res.status === 503) {
-        setError("Stripe isn't connected yet — billing portal will open at launch.");
+        setError(t("billing.portalUnavailable"));
       } else {
-        setError(j.error ?? "Couldn't open the billing portal.");
+        setError(j.error ?? t("billing.portalError"));
       }
     });
   }
   return (
     <div className="flex flex-col items-end gap-1">
       <button onClick={open} className="pill-ghost" disabled={pending}>
-        {pending ? "Opening…" : "Manage billing"}
+        {pending ? t("billing.opening") : t("billing.manageBilling")}
       </button>
       {error && <span className="text-xs" style={{ color: "#dc2626" }}>{error}</span>}
     </div>

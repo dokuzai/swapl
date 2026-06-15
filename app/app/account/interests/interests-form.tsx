@@ -3,11 +3,13 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { INTEREST_CATALOG, INTEREST_CATEGORIES } from "@/lib/interests";
+import { useT } from "@/lib/i18n/client";
 
 const MAX_PICKED = 12;
 
 export function InterestsForm({ initial, initialBio }: { initial: string[]; initialBio: string }) {
   const router = useRouter();
+  const t = useT();
   const [picked, setPicked] = useState<Set<string>>(new Set(initial));
   const [vibe, setVibe] = useState(initialBio);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export function InterestsForm({ initial, initialBio }: { initial: string[]; init
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
-        setError(j.error ?? "Couldn't save");
+        setError(j.error ?? t("interests.saveError"));
         return;
       }
       setStatus("saved");
@@ -57,27 +59,27 @@ export function InterestsForm({ initial, initialBio }: { initial: string[]; init
       <section className="surface-card p-6 space-y-3">
         <label className="block text-sm">
           <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
-            One-line vibe
+            {t("interests.vibeLabel")}
           </span>
           <input
             value={vibe}
             onChange={(e) => setVibe(e.target.value)}
             maxLength={160}
-            placeholder="Slow mornings, espresso, vintage shops, quiet nights."
+            placeholder={t("interests.vibePlaceholder")}
             className="w-full px-3 py-2.5 rounded-lg border outline-none"
             style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
           />
         </label>
         <p className="text-xs" style={{ color: "var(--navy-3)" }}>
-          Shown above your interests on /profile.
+          {t("interests.vibeHint")}
         </p>
       </section>
 
       <section className="surface-card p-6 space-y-5">
         <div className="flex items-baseline justify-between flex-wrap gap-2">
-          <h2 className="font-display text-xl tracking-[-0.01em]">Interests · {picked.size}/{MAX_PICKED}</h2>
+          <h2 className="font-display text-xl tracking-[-0.01em]">{t("interests.countHeading", { picked: picked.size, max: MAX_PICKED })}</h2>
           <p className="text-xs" style={{ color: "var(--navy-3)" }}>
-            Pick up to {MAX_PICKED}. Used for matching + recommendations.
+            {t("interests.pickHint", { max: MAX_PICKED })}
           </p>
         </div>
         <div className="space-y-5">
@@ -118,10 +120,10 @@ export function InterestsForm({ initial, initialBio }: { initial: string[]; init
       </section>
 
       <div className="flex items-center justify-between gap-3">
-        {status === "saved" && <span className="text-sm" style={{ color: "var(--pink)" }}>Saved.</span>}
+        {status === "saved" && <span className="text-sm" style={{ color: "var(--pink)" }}>{t("interests.saved")}</span>}
         {error && <span className="text-sm" style={{ color: "#dc2626" }}>{error}</span>}
         <button onClick={save} disabled={pending} className="pill-primary ml-auto">
-          {pending ? "Saving…" : "Save profile"}
+          {pending ? t("interests.saving") : t("interests.saveProfile")}
         </button>
       </div>
     </div>

@@ -4,6 +4,8 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { prisma, parseJSON } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
+import { getI18n, t as tt } from "@/lib/i18n/server";
+import type { DictKey } from "@/lib/i18n/dict-en";
 import type { PropertyType } from "@/lib/types";
 import ListingForm, { type ListingEditInitial } from "@/app/listings/new/listing-form";
 
@@ -17,6 +19,9 @@ export default async function EditDetailsPage(props: PageProps<"/listings/[id]/e
   const listing = await prisma.listing.findUnique({ where: { id } });
   if (!listing) notFound();
   if (listing.userId !== session.userId) redirect(`/listings/${id}`);
+
+  const { dict } = await getI18n();
+  const t = (key: DictKey, vars?: Record<string, string | number>) => tt(dict, key, vars);
 
   // JSON-string columns parsed here so the client form gets plain arrays.
   const initial: ListingEditInitial = {
@@ -70,15 +75,15 @@ export default async function EditDetailsPage(props: PageProps<"/listings/[id]/e
             className="font-mono text-xs uppercase tracking-[.08em] mb-6 inline-block"
             style={{ color: "var(--navy-3)" }}
           >
-            ← Manage listing
+            ← {t("editDetails.back")}
           </Link>
           <header className="mb-10 max-w-[640px]">
-            <p className="kicker mb-3">Edit listing</p>
+            <p className="kicker mb-3">{t("editDetails.kicker")}</p>
             <h1 className="font-display text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">
               {listing.title}
             </h1>
             <p className="mt-3 text-[16px]" style={{ color: "var(--navy-2)" }}>
-              Everything is pre-filled — jump to any step, change what you need, then save from the review step.
+              {t("editDetails.intro")}
             </p>
           </header>
           <ListingForm listing={initial} />

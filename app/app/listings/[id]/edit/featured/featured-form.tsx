@@ -2,14 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useT } from "@/lib/i18n/client";
+import type { DictKey } from "@/lib/i18n/dict-en";
 
-const OPTIONS: Array<{ days: 14 | 30; price: number; label: string; subtitle: string }> = [
-  { days: 14, price: 19, label: "14 days", subtitle: "Two weeks of priority placement." },
-  { days: 30, price: 29, label: "30 days", subtitle: "A full month at the top, best value." },
+const OPTIONS: Array<{ days: 14 | 30; price: number; labelKey: DictKey; subtitleKey: DictKey }> = [
+  { days: 14, price: 19, labelKey: "featured.opt14", subtitleKey: "featured.opt14sub" },
+  { days: 30, price: 29, labelKey: "featured.opt30", subtitleKey: "featured.opt30sub" },
 ];
 
 export default function FeaturedForm({ listingId }: { listingId: string }) {
   const router = useRouter();
+  const t = useT();
   const [duration, setDuration] = useState<14 | 30>(30);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -28,7 +31,7 @@ export default function FeaturedForm({ listingId }: { listingId: string }) {
       } else if (res.ok) {
         router.refresh();
       } else {
-        setError(j.error ?? "Couldn't purchase");
+        setError(j.error ?? t("featured.purchaseError"));
       }
     });
   }
@@ -49,16 +52,16 @@ export default function FeaturedForm({ listingId }: { listingId: string }) {
                 : { borderColor: "var(--line)" }
             }
           >
-            <div className="font-display text-2xl tracking-[-0.01em]">{opt.label}</div>
+            <div className="font-display text-2xl tracking-[-0.01em]">{t(opt.labelKey)}</div>
             <div className="font-display text-3xl mt-2">€{opt.price}</div>
-            <p className="mt-2 text-sm" style={{ color: "var(--navy-2)" }}>{opt.subtitle}</p>
+            <p className="mt-2 text-sm" style={{ color: "var(--navy-2)" }}>{t(opt.subtitleKey)}</p>
           </button>
         );
       })}
       <div className="sm:col-span-2 flex items-center justify-end gap-3 pt-2">
         {error && <span className="text-sm" style={{ color: "#dc2626" }}>{error}</span>}
         <button onClick={buy} disabled={pending} className="pill-primary">
-          {pending ? "Processing…" : `Boost for ${duration} days`}
+          {pending ? t("featured.processing") : t("featured.boostFor", { days: duration })}
         </button>
       </div>
     </div>

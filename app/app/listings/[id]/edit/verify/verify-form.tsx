@@ -3,11 +3,13 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { UploadDropzone } from "@/lib/uploadthing";
+import { useT } from "@/lib/i18n/client";
 
 // Hosts can either paste a Loom URL or upload an MP4/MOV ≤ 512 MB through
 // Uploadthing. The submit handler is identical — we POST the resolved URL.
 export default function VerifyForm({ listingId }: { listingId: string }) {
   const router = useRouter();
+  const t = useT();
   const [videoUrl, setVideoUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -28,7 +30,7 @@ export default function VerifyForm({ listingId }: { listingId: string }) {
       } else if (res.ok) {
         router.refresh();
       } else {
-        setError(j.error ?? "Couldn't submit");
+        setError(j.error ?? t("verifyListing.submitError"));
       }
     });
   }
@@ -37,7 +39,7 @@ export default function VerifyForm({ listingId }: { listingId: string }) {
     <form onSubmit={submit} className="surface-card p-6 space-y-5">
       <div>
         <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-          Option 1 · Upload a video
+          {t("verifyListing.uploadOption")}
         </span>
         <UploadDropzone
           endpoint="verificationVideo"
@@ -45,7 +47,7 @@ export default function VerifyForm({ listingId }: { listingId: string }) {
             const url = res?.[0]?.serverData?.url;
             if (url) {
               setVideoUrl(url);
-              setUploadInfo(`Uploaded · ${url.replace(/^https?:\/\//, "").slice(0, 60)}…`);
+              setUploadInfo(t("verifyListing.uploaded", { info: url.replace(/^https?:\/\//, "").slice(0, 60) }));
             }
           }}
           onUploadError={(err) => setError(err.message)}
@@ -57,12 +59,12 @@ export default function VerifyForm({ listingId }: { listingId: string }) {
       </div>
 
       <div className="text-center text-xs uppercase tracking-[.1em] font-mono" style={{ color: "var(--navy-3)" }}>
-        — or —
+        {t("verifyListing.or")}
       </div>
 
       <label className="block text-sm">
         <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-          Option 2 · Paste a Loom URL
+          {t("verifyListing.loomOption")}
         </span>
         <input
           type="url"
@@ -73,14 +75,14 @@ export default function VerifyForm({ listingId }: { listingId: string }) {
           style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
         />
         <span className="block mt-1 text-xs" style={{ color: "var(--navy-3)" }}>
-          60–120 seconds is enough. Show the entry, every room, the bathroom, the view, the WFH desk if you have one.
+          {t("verifyListing.loomHint")}
         </span>
       </label>
 
       <div className="flex items-center justify-between gap-3 pt-2">
-        <p className="text-sm" style={{ color: "var(--navy-2)" }}>One-time €39 — refunded if rejected.</p>
+        <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("verifyListing.price")}</p>
         <button type="submit" disabled={pending || !videoUrl} className="pill-primary">
-          {pending ? "Submitting…" : "Submit for review"}
+          {pending ? t("verifyListing.submitting") : t("verifyListing.submit")}
         </button>
       </div>
       {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}

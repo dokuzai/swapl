@@ -4,6 +4,9 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { getSession } from "@/lib/auth/session";
 import { getEffectivePlan } from "@/lib/billing/limits";
+import { I18nProviderShell } from "@/components/i18n/provider-shell";
+import { getI18n, t as tt } from "@/lib/i18n/server";
+import type { DictKey } from "@/lib/i18n/dict-en";
 import { marketingUrl } from "@/lib/marketing/urls";
 import { prisma } from "@/lib/db";
 import { SavedSearchTable } from "./table";
@@ -16,19 +19,21 @@ export default async function SavedSearchesPage() {
   if (!session) redirect("/login?next=/account/saved-searches");
   const plan = await getEffectivePlan(session.userId);
 
+  const { dict } = await getI18n();
+  const t = (key: DictKey, vars?: Record<string, string | number>) => tt(dict, key, vars);
+
   if (plan.id === "free") {
     return (
       <>
         <Navbar />
         <main className="flex-1">
           <div className="wrap py-10 lg:py-14 max-w-3xl">
-            <p className="kicker mb-3">Saved searches</p>
-            <h1 className="font-display text-4xl tracking-[-0.02em] mb-4">Save up to 20 searches with daily alerts.</h1>
+            <p className="kicker mb-3">{t("savedSearch.kicker")}</p>
+            <h1 className="font-display text-4xl tracking-[-0.02em] mb-4">{t("savedSearch.lockedTitle")}</h1>
             <p className="mb-6 text-[16px]" style={{ color: "var(--navy-2)" }}>
-              Saved searches are part of swapl Plus. Pin a city + dates + must-haves combo and we'll
-              email when a fresh listing matches.
+              {t("savedSearch.lockedBody")}
             </p>
-            <a href={marketingUrl("/pricing")} className="pill-primary">See plans</a>
+            <a href={marketingUrl("/pricing")} className="pill-primary">{t("savedSearch.seePlans")}</a>
           </div>
         </main>
         <Footer />
@@ -45,21 +50,22 @@ export default async function SavedSearchesPage() {
     <>
       <Navbar />
       <main className="flex-1">
+        <I18nProviderShell>
         <div className="wrap py-10 lg:py-14 max-w-3xl">
-          <p className="kicker mb-3">Saved searches</p>
-          <h1 className="font-display text-4xl tracking-[-0.02em] mb-4">Your alerts</h1>
+          <p className="kicker mb-3">{t("savedSearch.kicker")}</p>
+          <h1 className="font-display text-4xl tracking-[-0.02em] mb-4">{t("savedSearch.yourAlerts")}</h1>
           <p className="mb-6 text-[16px]" style={{ color: "var(--navy-2)" }}>
-            Save a filter combination from /listings and we'll send a daily email digest when new
-            homes match. Up to 20 saved searches. {items.length}/20 used.
+            {t("savedSearch.intro", { used: items.length })}
           </p>
           <SavedSearchTable items={items.map((s) => ({
             id: s.id, name: s.name, query: s.query, alertEnabled: s.alertEnabled, createdAt: s.createdAt.toISOString(),
           }))} />
           <p className="mt-8 text-sm" style={{ color: "var(--navy-3)" }}>
-            Tip: open <Link href="/listings" style={{ color: "var(--pink)" }}>browse</Link>, dial in the filters you want,
-            then come back here and add the URL's query string with a name.
+            {t("savedSearch.tip")}{" "}
+            <Link href="/listings" style={{ color: "var(--pink)" }}>{t("savedSearch.tipLink")}</Link>
           </p>
         </div>
+        </I18nProviderShell>
       </main>
       <Footer />
     </>

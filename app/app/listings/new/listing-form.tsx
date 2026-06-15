@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation";
 import { CITIES } from "@/lib/cities";
 import { PROPERTY_TYPES, propertyTypeKey, type PropertyType } from "@/lib/types";
 import { useT } from "@/lib/i18n/client";
+import type { DictKey } from "@/lib/i18n/dict-en";
 import { CityIllust, type CityMotif } from "@/components/illustrations";
 import type { Palette } from "@/components/illustrations";
 import type { Postcard } from "@/lib/ai/postcard-types";
 import { CityCombobox } from "@/components/listing/city-combobox";
-import { ackTextForMode, type PublishAckMode } from "@/lib/listing/publish-ack";
+import { type PublishAckMode } from "@/lib/listing/publish-ack";
+
+// Translation function shape shared with the step sub-components.
+type T = (key: DictKey, vars?: Record<string, string | number>) => string;
 
 type FormState = {
   // Step 1 — Location
@@ -101,16 +105,17 @@ const INITIAL: FormState = {
   description: "",
 };
 
-const STEPS = [
-  "Location",
-  "Space",
-  "Accessibility & pets",
-  "Work & amenities",
-  "Availability",
-  "Photos",
-  "Description",
-  "Review",
-] as const;
+// Step titles as dict keys; translated at render so the wizard localizes.
+const STEP_KEYS: DictKey[] = [
+  "wizard.step.location",
+  "wizard.step.space",
+  "wizard.step.access",
+  "wizard.step.amenities",
+  "wizard.step.availability",
+  "wizard.step.photos",
+  "wizard.step.description",
+  "wizard.step.review",
+];
 
 // Serializable slice of a Listing the edit page passes in. JSON-string columns
 // (photos/tags/petTypes) must already be parsed into arrays by the caller.
@@ -202,6 +207,7 @@ function stateFromListing(l: ListingEditInitial): FormState {
 
 export default function ListingForm({ listing }: { listing?: ListingEditInitial }) {
   const router = useRouter();
+  const t = useT();
   const editing = Boolean(listing);
   const [step, setStep] = useState(0);
   const [state, setState] = useState<FormState>(() => (listing ? stateFromListing(listing) : INITIAL));
@@ -222,10 +228,10 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
     setError(null);
     const v = validateStep(step, state);
     if (v) {
-      setError(v);
+      setError(t(v));
       return;
     }
-    setStep((s) => Math.min(STEPS.length - 1, s + 1));
+    setStep((s) => Math.min(STEP_KEYS.length - 1, s + 1));
   }
 
   function prev() {
@@ -235,11 +241,11 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
 
   function submit() {
     const v = validateStep(step, state);
-    if (v) return setError(v);
+    if (v) return setError(t(v));
 
     // Publishing (create) requires the acknowledgment; editing does not.
     if (!editing && !ackAccepted) {
-      return setError("Please confirm the statement above before publishing.");
+      return setError(t("wizard.ackRequired"));
     }
 
     const petTypes = (Object.keys(state.petTypes) as Array<keyof FormState["petTypes"]>).filter(
@@ -304,9 +310,9 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
         const j = await res.json().catch(() => ({}));
         // Backend rejects a missing/invalid ack with a 400 PUBLISH_ACK_REQUIRED.
         if (j.error === "PUBLISH_ACK_REQUIRED") {
-          setError("Please confirm the statement above before publishing.");
+          setError(t("wizard.ackRequired"));
         } else {
-          setError(j.error ?? (listing ? "Could not save changes" : "Could not publish listing"));
+          setError(j.error ?? t(listing ? "wizard.errorSave" : "wizard.errorPublish"));
         }
       }
     });
@@ -315,21 +321,21 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
   return (
     <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
       {/* When editing, every step already holds valid data — allow free jumps. */}
-      <Sidebar step={step} onJump={(i) => (editing || i < step) && setStep(i)} freeJump={editing} />
+      <Sidebar step={step} onJump={(i) => (editing || i < step) && setStep(i)} freeJump={editing} t={t} />
 
       <div className="surface-card p-7">
         <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1.5" style={{ color: "var(--navy-3)" }}>
-          Step {step + 1} of {STEPS.length}
+          {t("wizard.stepOf", { n: step + 1, total: STEP_KEYS.length })}
         </div>
-        <h2 className="font-display text-2xl tracking-[-0.01em] mb-6">{STEPS[step]}</h2>
+        <h2 className="font-display text-2xl tracking-[-0.01em] mb-6">{t(STEP_KEYS[step])}</h2>
 
-        {step === 0 && <LocationStep state={state} set={set} />}
-        {step === 1 && <SpaceStep state={state} set={set} />}
-        {step === 2 && <AccessibilityStep state={state} set={set} />}
-        {step === 3 && <AmenitiesStep state={state} set={set} />}
-        {step === 4 && <AvailabilityStep state={state} set={set} />}
-        {step === 5 && <PhotosStep state={state} set={set} />}
-        {step === 6 && <DescriptionStep state={state} set={set} />}
+        {step === 0 && <LocationStep state={state} set={set} t={t} />}
+        {step === 1 && <SpaceStep state={state} set={set} t={t} />}
+        {step === 2 && <AccessibilityStep state={state} set={set} t={t} />}
+        {step === 3 && <AmenitiesStep state={state} set={set} t={t} />}
+        {step === 4 && <AvailabilityStep state={state} set={set} t={t} />}
+        {step === 5 && <PhotosStep state={state} set={set} t={t} />}
+        {step === 6 && <DescriptionStep state={state} set={set} t={t} />}
         {step === 7 && (
           <ReviewStep
             state={state}
@@ -338,6 +344,7 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
             onModeChange={setPublishMode}
             ackAccepted={ackAccepted}
             onAckChange={setAckAccepted}
+            t={t}
           />
         )}
 
@@ -345,15 +352,15 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
 
         <div className="flex items-center justify-between mt-8 gap-3">
           <button onClick={prev} disabled={step === 0} className="pill-ghost disabled:opacity-40">
-            Back
+            {t("wizard.back")}
           </button>
-          {step < STEPS.length - 1 ? (
+          {step < STEP_KEYS.length - 1 ? (
             <button onClick={next} className="pill-primary">
-              Continue
+              {t("wizard.continue")}
             </button>
           ) : (
             <button onClick={submit} disabled={pending || (!editing && !ackAccepted)} className="pill-primary disabled:opacity-40">
-              {pending ? (editing ? "Saving…" : "Publishing…") : editing ? "Save changes" : "Publish listing"}
+              {pending ? t(editing ? "wizard.saving" : "wizard.publishing") : t(editing ? "wizard.saveChanges" : "wizard.publish")}
             </button>
           )}
         </div>
@@ -362,15 +369,15 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
   );
 }
 
-function Sidebar({ step, onJump, freeJump = false }: { step: number; onJump: (i: number) => void; freeJump?: boolean }) {
+function Sidebar({ step, onJump, freeJump = false, t }: { step: number; onJump: (i: number) => void; freeJump?: boolean; t: T }) {
   return (
     <aside className="lg:sticky lg:top-24 lg:self-start">
       <ol className="space-y-1">
-        {STEPS.map((label, i) => {
+        {STEP_KEYS.map((labelKey, i) => {
           const done = i < step;
           const current = i === step;
           return (
-            <li key={label}>
+            <li key={labelKey}>
               <button
                 onClick={() => onJump(i)}
                 className="w-full text-left rounded-lg px-3 py-2 text-sm flex items-center gap-3 transition-colors"
@@ -389,7 +396,7 @@ function Sidebar({ step, onJump, freeJump = false }: { step: number; onJump: (i:
                 >
                   {done ? "✓" : i + 1}
                 </span>
-                {label}
+                {t(labelKey)}
               </button>
             </li>
           );
@@ -399,30 +406,31 @@ function Sidebar({ step, onJump, freeJump = false }: { step: number; onJump: (i:
   );
 }
 
-function validateStep(step: number, s: FormState): string | null {
+// Returns a dict key for the first failing rule on a step, or null if valid.
+function validateStep(step: number, s: FormState): DictKey | null {
   if (step === 0) {
-    if (!s.city) return "Pick a city.";
-    if (!s.neighbourhood) return "Add a neighbourhood.";
-    if (!s.country) return "Country is required.";
+    if (!s.city) return "wizard.err.city";
+    if (!s.neighbourhood) return "wizard.err.neighbourhood";
+    if (!s.country) return "wizard.err.country";
   }
   if (step === 1) {
-    if (s.sizeSqm < 20) return "Size must be at least 20m².";
-    if (s.sleeps < 1) return "Must sleep at least one.";
+    if (s.sizeSqm < 20) return "wizard.err.size";
+    if (s.sleeps < 1) return "wizard.err.sleeps";
   }
   if (step === 4) {
     if (new Date(s.availableTo) <= new Date(s.availableFrom))
-      return "End date must be after start.";
+      return "wizard.err.dates";
   }
   if (step === 6) {
-    if (s.title.trim().length < 4) return "Title is too short.";
-    if (s.description.trim().length < 20) return "Tell us a bit more — at least 20 characters.";
+    if (s.title.trim().length < 4) return "wizard.err.titleShort";
+    if (s.description.trim().length < 20) return "wizard.err.descShort";
   }
   return null;
 }
 
 // --------------------- step components ---------------------
 
-function LocationStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+function LocationStep({ state, set, t }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void; t: T }) {
   const cityMatch = CITIES.find((c) => c.name.toLowerCase() === state.city.toLowerCase());
   const [customCity, setCustomCity] = useState("");
   const [art, setArt] = useState<{
@@ -466,7 +474,7 @@ function LocationStep({ state, set }: { state: FormState; set: <K extends keyof 
 
   return (
     <div className="space-y-5">
-      <Field label="Pick a featured city">
+      <Field label={t("wizard.loc.featuredCity")}>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {CITIES.map((c) => (
             <button
@@ -495,11 +503,10 @@ function LocationStep({ state, set }: { state: FormState; set: <K extends keyof 
 
       <div className="rounded-xl border p-4" style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}>
         <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
-          …or pick a city we cover
+          {t("wizard.loc.orCovered")}
         </div>
         <p className="text-xs mb-3" style={{ color: "var(--navy-3)" }}>
-          We hand-design or AI-generate the postcard for any city in this list. Type a few letters
-          to search by name, alias, or local form (Roma, München, 京都).
+          {t("wizard.loc.coveredHint")}
         </p>
         <CityCombobox
           value={customCity}
@@ -512,21 +519,21 @@ function LocationStep({ state, set }: { state: FormState; set: <K extends keyof 
         />
         {genState === "error" && (
           <p className="text-sm mt-2" style={{ color: "#dc2626" }}>
-            Couldn&rsquo;t generate the cover. Check your AI provider settings in /account.
+            {t("wizard.loc.coverError")}
           </p>
         )}
       </div>
 
-      <Field label="Neighbourhood">
-        <Input value={state.neighbourhood} onChange={(v) => set("neighbourhood", v)} placeholder="e.g. Cihangir" />
+      <Field label={t("wizard.loc.neighbourhood")}>
+        <Input value={state.neighbourhood} onChange={(v) => set("neighbourhood", v)} placeholder={t("wizard.loc.neighbourhoodPlaceholder")} />
       </Field>
-      <Field label="Country" hint="auto-filled from preset cities">
+      <Field label={t("wizard.loc.country")} hint={t("wizard.loc.countryHint")}>
         <Input value={state.country} onChange={(v) => set("country", v)} />
       </Field>
-      <Field label="Address (kept private — for the swap partner only)">
+      <Field label={t("wizard.loc.address")}>
         <Input value={state.address} onChange={(v) => set("address", v)} />
       </Field>
-      <Field label={`Floor · ${state.floor}`}>
+      <Field label={t("wizard.loc.floor", { floor: state.floor })}>
         <input
           type="range"
           min={-1}
@@ -549,11 +556,11 @@ function LocationStep({ state, set }: { state: FormState; set: <K extends keyof 
           </div>
           <div className="px-4 py-2 flex items-center justify-between text-xs font-mono" style={{ color: "var(--navy-3)" }}>
             <span>
-              Postcard preview · palette <b style={{ color: "var(--navy)" }}>{art?.postcard?.palette ?? art?.palette ?? cityMatch?.palette}</b>
+              {t("wizard.loc.postcardPreview")} <b style={{ color: "var(--navy)" }}>{art?.postcard?.palette ?? art?.palette ?? cityMatch?.palette}</b>
               {art?.postcard?.elements?.length ? (
                 <>
                   {" · "}
-                  <b style={{ color: "var(--navy)" }}>{art.postcard.elements.length} landmarks</b>
+                  <b style={{ color: "var(--navy)" }}>{t("wizard.loc.landmarks", { count: art.postcard.elements.length })}</b>
                 </>
               ) : null}
             </span>
@@ -565,7 +572,7 @@ function LocationStep({ state, set }: { state: FormState; set: <K extends keyof 
                   color: art.source === "ai" ? "var(--pink)" : "var(--navy-3)",
                 }}
               >
-                {art.source === "ai" ? "AI" : art.source === "cache" ? "Cached" : art.source === "preset" ? "Preset" : "Fallback"}
+                {art.source === "ai" ? t("wizard.loc.source.ai") : art.source === "cache" ? t("wizard.loc.source.cached") : art.source === "preset" ? t("wizard.loc.source.preset") : t("wizard.loc.source.fallback")}
               </span>
             )}
           </div>
@@ -575,31 +582,30 @@ function LocationStep({ state, set }: { state: FormState; set: <K extends keyof 
   );
 }
 
-function SpaceStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
-  const tr = useT();
+function SpaceStep({ state, set, t }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void; t: T }) {
   return (
     <div className="space-y-5">
-      <Field label="Property type">
+      <Field label={t("wizard.space.propertyType")}>
         <div className="flex flex-wrap gap-2">
-          {PROPERTY_TYPES.map((t) => (
+          {PROPERTY_TYPES.map((pt) => (
             <button
-              key={t}
+              key={pt}
               type="button"
-              onClick={() => set("propertyType", t)}
+              onClick={() => set("propertyType", pt)}
               className="px-4 py-2 rounded-full border text-sm"
               style={
-                state.propertyType === t
+                state.propertyType === pt
                   ? { background: "var(--pink)", color: "#fff", borderColor: "var(--pink)" }
                   : { borderColor: "var(--line)", background: "var(--card-bg)" }
               }
             >
-              {tr(propertyTypeKey(t))}
+              {t(propertyTypeKey(pt))}
             </button>
           ))}
         </div>
       </Field>
       <div className="grid grid-cols-2 gap-5">
-        <Field label={`Size · ${state.sizeSqm} m²`}>
+        <Field label={t("wizard.space.size", { n: state.sizeSqm })}>
           <input
             type="range"
             min={20}
@@ -609,7 +615,7 @@ function SpaceStep({ state, set }: { state: FormState; set: <K extends keyof For
             className="w-full"
           />
         </Field>
-        <Field label={`Sleeps · ${state.sleeps}`}>
+        <Field label={t("wizard.space.sleeps", { n: state.sleeps })}>
           <input
             type="range"
             min={1}
@@ -619,7 +625,7 @@ function SpaceStep({ state, set }: { state: FormState; set: <K extends keyof For
             className="w-full"
           />
         </Field>
-        <Field label={`Bedrooms · ${state.bedrooms}`}>
+        <Field label={t("wizard.space.bedrooms", { n: state.bedrooms })}>
           <input
             type="range"
             min={0}
@@ -629,7 +635,7 @@ function SpaceStep({ state, set }: { state: FormState; set: <K extends keyof For
             className="w-full"
           />
         </Field>
-        <Field label={`Bathrooms · ${state.bathrooms}`}>
+        <Field label={t("wizard.space.bathrooms", { n: state.bathrooms })}>
           <input
             type="range"
             min={0}
@@ -644,31 +650,31 @@ function SpaceStep({ state, set }: { state: FormState; set: <K extends keyof For
   );
 }
 
-function AccessibilityStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+function AccessibilityStep({ state, set, t }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void; t: T }) {
   return (
     <div className="space-y-3">
-      <Toggle label="Step-free access from street" on={state.stepFreeAccess} onChange={(v) => set("stepFreeAccess", v)} />
-      <Toggle label="Elevator in building" on={state.hasElevator} onChange={(v) => set("hasElevator", v)} />
-      <Toggle label="Pets allowed" on={state.petsAllowed} onChange={(v) => set("petsAllowed", v)} />
+      <Toggle label={t("wizard.access.stepFree")} on={state.stepFreeAccess} onChange={(v) => set("stepFreeAccess", v)} />
+      <Toggle label={t("wizard.access.elevator")} on={state.hasElevator} onChange={(v) => set("hasElevator", v)} />
+      <Toggle label={t("wizard.access.pets")} on={state.petsAllowed} onChange={(v) => set("petsAllowed", v)} />
       {state.petsAllowed && (
         <div className="ml-4 pl-4 border-l space-y-2" style={{ borderColor: "var(--line)" }}>
-          <Toggle label="Dogs" on={state.petTypes.dogs} onChange={(v) => set("petTypes", { ...state.petTypes, dogs: v })} />
-          <Toggle label="Cats" on={state.petTypes.cats} onChange={(v) => set("petTypes", { ...state.petTypes, cats: v })} />
-          <Toggle label="Other" on={state.petTypes.other} onChange={(v) => set("petTypes", { ...state.petTypes, other: v })} />
+          <Toggle label={t("wizard.access.dogs")} on={state.petTypes.dogs} onChange={(v) => set("petTypes", { ...state.petTypes, dogs: v })} />
+          <Toggle label={t("wizard.access.cats")} on={state.petTypes.cats} onChange={(v) => set("petTypes", { ...state.petTypes, cats: v })} />
+          <Toggle label={t("wizard.access.other")} on={state.petTypes.other} onChange={(v) => set("petTypes", { ...state.petTypes, other: v })} />
         </div>
       )}
     </div>
   );
 }
 
-function AmenitiesStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+function AmenitiesStep({ state, set, t }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void; t: T }) {
   return (
     <div className="space-y-5">
-      <Field label="Work-from-home setup">
+      <Field label={t("wizard.amen.wfhSetup")}>
         <div className="space-y-2">
-          <Toggle label="Has dedicated WFH space" on={state.wfhSetup} onChange={(v) => set("wfhSetup", v)} />
+          <Toggle label={t("wizard.amen.wfhSpace")} on={state.wfhSetup} onChange={(v) => set("wfhSetup", v)} />
           {state.wfhSetup && (
-            <Field label={`Desks · ${state.wfhDesks}`}>
+            <Field label={t("wizard.amen.desks", { n: state.wfhDesks })}>
               <input
                 type="range"
                 min={0}
@@ -681,36 +687,36 @@ function AmenitiesStep({ state, set }: { state: FormState; set: <K extends keyof
           )}
         </div>
       </Field>
-      <Field label="Outdoor & extras">
+      <Field label={t("wizard.amen.outdoor")}>
         <div className="grid grid-cols-2 gap-2">
           {(
             [
-              ["balcony", "Balcony"],
-              ["rooftop", "Rooftop"],
-              ["garden", "Garden"],
-              ["courtyard", "Courtyard"],
-              ["piano", "Piano"],
-              ["pool", "Pool"],
-              ["gym", "Gym"],
-              ["bikeIncluded", "Bike included"],
-              ["hasParking", "Parking"],
+              ["balcony", "wizard.amen.balcony"],
+              ["rooftop", "wizard.amen.rooftop"],
+              ["garden", "wizard.amen.garden"],
+              ["courtyard", "wizard.amen.courtyard"],
+              ["piano", "wizard.amen.piano"],
+              ["pool", "wizard.amen.pool"],
+              ["gym", "wizard.amen.gym"],
+              ["bikeIncluded", "wizard.amen.bike"],
+              ["hasParking", "wizard.amen.parking"],
             ] as const
-          ).map(([key, label]) => (
-            <Toggle key={key} label={label} on={state[key] as boolean} onChange={(v) => set(key, v)} />
+          ).map(([key, labelKey]) => (
+            <Toggle key={key} label={t(labelKey)} on={state[key] as boolean} onChange={(v) => set(key, v)} />
           ))}
         </div>
       </Field>
-      <Field label="Climate & laundry">
+      <Field label={t("wizard.amen.climate")}>
         <div className="grid grid-cols-2 gap-2">
           {(
             [
-              ["ac", "Air conditioning"],
-              ["dishwasher", "Dishwasher"],
-              ["washer", "Washer"],
-              ["dryer", "Dryer"],
+              ["ac", "wizard.amen.ac"],
+              ["dishwasher", "wizard.amen.dishwasher"],
+              ["washer", "wizard.amen.washer"],
+              ["dryer", "wizard.amen.dryer"],
             ] as const
-          ).map(([key, label]) => (
-            <Toggle key={key} label={label} on={state[key] as boolean} onChange={(v) => set(key, v)} />
+          ).map(([key, labelKey]) => (
+            <Toggle key={key} label={t(labelKey)} on={state[key] as boolean} onChange={(v) => set(key, v)} />
           ))}
         </div>
       </Field>
@@ -718,19 +724,19 @@ function AmenitiesStep({ state, set }: { state: FormState; set: <K extends keyof
   );
 }
 
-function AvailabilityStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+function AvailabilityStep({ state, set, t }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void; t: T }) {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Available from">
+        <Field label={t("wizard.avail.from")}>
           <Input type="date" value={state.availableFrom} onChange={(v) => set("availableFrom", v)} />
         </Field>
-        <Field label="Available to">
+        <Field label={t("wizard.avail.to")}>
           <Input type="date" value={state.availableTo} onChange={(v) => set("availableTo", v)} />
         </Field>
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <Field label={`Minimum stay · ${state.minStayDays} days`}>
+        <Field label={t("wizard.avail.minStay", { n: state.minStayDays })}>
           <input
             type="range"
             min={1}
@@ -740,7 +746,7 @@ function AvailabilityStep({ state, set }: { state: FormState; set: <K extends ke
             className="w-full"
           />
         </Field>
-        <Field label={`Maximum stay · ${state.maxStayDays} days`}>
+        <Field label={t("wizard.avail.maxStay", { n: state.maxStayDays })}>
           <input
             type="range"
             min={3}
@@ -755,7 +761,7 @@ function AvailabilityStep({ state, set }: { state: FormState; set: <K extends ke
   );
 }
 
-function PhotosStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+function PhotosStep({ state, set, t }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void; t: T }) {
   const [url, setUrl] = useState("");
   function add() {
     if (!url) return;
@@ -767,7 +773,7 @@ function PhotosStep({ state, set }: { state: FormState; set: <K extends keyof Fo
   return (
     <div className="space-y-4">
       <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-        Up to 20 photos. Paste image URLs for now — Uploadthing/Cloudinary upload wires in later.
+        {t("wizard.photos.intro")}
       </p>
       <div className="flex gap-2">
         <input
@@ -777,7 +783,7 @@ function PhotosStep({ state, set }: { state: FormState; set: <K extends keyof Fo
           className="flex-1 px-3 py-2.5 rounded-lg border outline-none"
           style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
         />
-        <button onClick={add} className="pill-primary" type="button">Add</button>
+        <button onClick={add} className="pill-primary" type="button">{t("wizard.photos.add")}</button>
       </div>
       {state.photos.length > 0 && (
         <ol className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -805,7 +811,7 @@ function PhotosStep({ state, set }: { state: FormState; set: <K extends keyof Fo
   );
 }
 
-function DescriptionStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+function DescriptionStep({ state, set, t }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void; t: T }) {
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
   const [source, setSource] = useState<"ai" | "fallback" | null>(null);
@@ -859,12 +865,12 @@ function DescriptionStep({ state, set }: { state: FormState; set: <K extends key
         }),
       });
       const j = await res.json();
-      if (!res.ok) throw new Error(j.error ?? "Couldn't draft");
+      if (!res.ok) throw new Error(j.error ?? t("wizard.desc.draftError"));
       set("title", j.title);
       set("description", j.description);
       setSource(j.source);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Couldn't draft");
+      setErr(e instanceof Error ? e.message : t("wizard.desc.draftError"));
     } finally {
       setBusy(false);
     }
@@ -879,16 +885,16 @@ function DescriptionStep({ state, set }: { state: FormState; set: <K extends key
         style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}
       >
         <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
-          Draft with AI · optional
+          {t("wizard.desc.draftKicker")}
         </div>
         <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>
-          We'll draft a title and description from the facts you've already entered, in swapl's voice. Add a few personal notes below if you want them woven in. You can edit anything after.
+          {t("wizard.desc.draftIntro")}
         </p>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
-          placeholder="Anything specific to mention — quiet street, view at sunset, the bakery downstairs…"
+          placeholder={t("wizard.desc.notesPlaceholder")}
           className="w-full px-3 py-2.5 rounded-lg border outline-none mb-3"
           style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
         />
@@ -899,7 +905,7 @@ function DescriptionStep({ state, set }: { state: FormState; set: <K extends key
             disabled={!ready || busy}
             className="pill-primary"
           >
-            {busy ? "Drafting…" : "Draft with AI"}
+            {busy ? t("wizard.desc.drafting") : t("wizard.desc.draft")}
           </button>
           {source && (
             <span
@@ -909,33 +915,33 @@ function DescriptionStep({ state, set }: { state: FormState; set: <K extends key
                 color: source === "ai" ? "var(--pink)" : "var(--navy-3)",
               }}
             >
-              {source === "ai" ? "AI draft" : "Template draft"}
+              {source === "ai" ? t("wizard.desc.aiDraft") : t("wizard.desc.templateDraft")}
             </span>
           )}
           {err && <span className="text-sm" style={{ color: "#dc2626" }}>{err}</span>}
         </div>
         {!ready && (
           <p className="mt-2 text-xs" style={{ color: "var(--navy-3)" }}>
-            Finish steps 1–2 first so the draft has somewhere to anchor.
+            {t("wizard.desc.notReady")}
           </p>
         )}
       </div>
 
-      <Field label="Title">
+      <Field label={t("wizard.desc.title")}>
         <Input
           value={state.title}
           onChange={(v) => set("title", v)}
-          placeholder={`${state.neighbourhood ? state.neighbourhood + " " : ""}flat with a great view`}
+          placeholder={t("wizard.desc.titlePlaceholder", { neighbourhood: state.neighbourhood ? state.neighbourhood + " " : "" })}
         />
       </Field>
-      <Field label="Description">
+      <Field label={t("wizard.desc.description")}>
         <textarea
           value={state.description}
           onChange={(e) => set("description", e.target.value)}
           rows={8}
           className="w-full px-3 py-2.5 rounded-lg border outline-none"
           style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
-          placeholder="What's special about your place? Light, quiet, neighbours, the local bakery, things you love."
+          placeholder={t("wizard.desc.descPlaceholder")}
         />
       </Field>
     </div>
@@ -949,6 +955,7 @@ function ReviewStep({
   onModeChange,
   ackAccepted,
   onAckChange,
+  t,
 }: {
   state: FormState;
   editing?: boolean;
@@ -956,18 +963,27 @@ function ReviewStep({
   onModeChange: (m: PublishAckMode) => void;
   ackAccepted: boolean;
   onAckChange: (v: boolean) => void;
+  t: T;
 }) {
-  const tr = useT();
+  const petKeyMap: Record<string, DictKey> = {
+    dogs: "wizard.access.dogs",
+    cats: "wizard.access.cats",
+    other: "wizard.access.other",
+  };
+  const petLabels = Object.entries(state.petTypes)
+    .filter(([, v]) => v)
+    .map(([k]) => (petKeyMap[k] ? t(petKeyMap[k]) : k))
+    .join(", ");
   return (
     <div className="space-y-5">
       <div className="surface-card p-5 space-y-2 text-sm">
-        <Row label="Where" value={`${state.neighbourhood} · ${state.city}, ${state.country}`} />
-        <Row label="Type" value={`${tr(propertyTypeKey(state.propertyType))} · ${state.sizeSqm}m² · sleeps ${state.sleeps}`} />
-        <Row label="Bedrooms / bathrooms" value={`${state.bedrooms} / ${state.bathrooms}`} />
-        <Row label="Available" value={`${state.availableFrom} → ${state.availableTo} (${state.minStayDays}–${state.maxStayDays} day stays)`} />
-        <Row label="Pets" value={state.petsAllowed ? Object.entries(state.petTypes).filter(([, v]) => v).map(([k]) => k).join(", ") || "Yes" : "No"} />
-        <Row label="WFH" value={state.wfhSetup ? `${state.wfhDesks} desk${state.wfhDesks === 1 ? "" : "s"}` : "—"} />
-        <Row label="Photos" value={`${state.photos.length} of 20`} />
+        <Row label={t("wizard.review.where")} value={`${state.neighbourhood} · ${state.city}, ${state.country}`} />
+        <Row label={t("wizard.review.type")} value={t("wizard.review.typeValue", { type: t(propertyTypeKey(state.propertyType)), size: state.sizeSqm, sleeps: state.sleeps })} />
+        <Row label={t("wizard.review.bedBath")} value={`${state.bedrooms} / ${state.bathrooms}`} />
+        <Row label={t("wizard.review.available")} value={t("wizard.review.availableValue", { from: state.availableFrom, to: state.availableTo, min: state.minStayDays, max: state.maxStayDays })} />
+        <Row label={t("wizard.review.pets")} value={state.petsAllowed ? (petLabels || t("wizard.review.petsYes")) : t("wizard.review.petsNo")} />
+        <Row label={t("wizard.review.wfh")} value={state.wfhSetup ? t(state.wfhDesks === 1 ? "wizard.review.desk" : "wizard.review.desks", { n: state.wfhDesks }) : "—"} />
+        <Row label={t("wizard.review.photos")} value={t("wizard.review.photosValue", { n: state.photos.length })} />
       </div>
 
       {/* Publish acknowledgment (DOK-162). Only on first publish — a mandatory
@@ -976,19 +992,19 @@ function ReviewStep({
       {!editing && (
         <div className="rounded-xl border p-5" style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}>
           <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-3" style={{ color: "var(--navy-3)" }}>
-            Before you publish
+            {t("wizard.review.beforePublish")}
           </div>
 
           <label className="block font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
-            How will you host?
+            {t("wizard.review.howHost")}
           </label>
           <div className="grid sm:grid-cols-2 gap-2 mb-4">
             {(
               [
-                ["entire_home_while_away", "The whole home, while I'm away"],
-                ["room_or_host_present", "A room, or while I'm here"],
+                ["entire_home_while_away", "wizard.review.modeEntire"],
+                ["room_or_host_present", "wizard.review.modeRoom"],
               ] as const
-            ).map(([mode, label]) => (
+            ).map(([mode, labelKey]) => (
               <button
                 key={mode}
                 type="button"
@@ -1000,24 +1016,19 @@ function ReviewStep({
                     : { borderColor: "var(--line)", background: "var(--card-bg)" }
                 }
               >
-                {label}
+                {t(labelKey)}
               </button>
             ))}
           </div>
 
-          {(() => {
-            const ack = ackTextForMode(publishMode);
-            return (
-              <div className="mb-3">
-                <p className="text-sm leading-[1.6]" style={{ color: "var(--navy-2)" }}>
-                  {ack.headline}
-                </p>
-                <p className="text-xs leading-[1.6] mt-1" style={{ color: "var(--navy-3)" }}>
-                  {ack.fineprint}
-                </p>
-              </div>
-            );
-          })()}
+          <div className="mb-3">
+            <p className="text-sm leading-[1.6]" style={{ color: "var(--navy-2)" }}>
+              {t(publishMode === "entire_home_while_away" ? "wizard.review.ackEntireHeadline" : "wizard.review.ackRoomHeadline")}
+            </p>
+            <p className="text-xs leading-[1.6] mt-1" style={{ color: "var(--navy-3)" }}>
+              {t(publishMode === "entire_home_while_away" ? "wizard.review.ackEntireFine" : "wizard.review.ackRoomFine")}
+            </p>
+          </div>
 
           <label className="flex items-start gap-3 cursor-pointer">
             <input
@@ -1028,16 +1039,14 @@ function ReviewStep({
               style={{ accentColor: "var(--pink)" }}
             />
             <span className="text-sm" style={{ color: "var(--navy)" }}>
-              I have read and agree to the statement above.
+              {t("wizard.review.ackConfirm")}
             </span>
           </label>
         </div>
       )}
 
       <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-        {editing
-          ? "Saving updates your live listing immediately — browse, matches and your profile all reflect the changes."
-          : "Once published, your listing surfaces in browse and others can propose swaps. You can edit anything later."}
+        {t(editing ? "wizard.review.afterEdit" : "wizard.review.afterPublish")}
       </p>
     </div>
   );

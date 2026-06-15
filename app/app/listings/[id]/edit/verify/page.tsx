@@ -4,6 +4,8 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
+import { getI18n, t as tt, type Dict } from "@/lib/i18n/server";
+import type { DictKey } from "@/lib/i18n/dict-en";
 import VerifyForm from "./verify-form";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +19,9 @@ export default async function VerifyPage(props: PageProps<"/listings/[id]/edit/v
   if (!listing) notFound();
   if (listing.userId !== session.userId) redirect(`/listings/${id}`);
 
+  const { locale, dict } = await getI18n();
+  const t = (key: DictKey, vars?: Record<string, string | number>) => tt(dict, key, vars);
+
   return (
     <>
       <Navbar />
@@ -25,30 +30,35 @@ export default async function VerifyPage(props: PageProps<"/listings/[id]/edit/v
           <Link href={`/listings/${id}`} className="font-mono text-xs uppercase tracking-[.08em] mb-6 inline-block" style={{ color: "var(--navy-3)" }}>
             ← {listing.title}
           </Link>
-          <p className="kicker mb-3">Verification</p>
-          <h1 className="font-display text-4xl tracking-[-0.02em] mb-3">Get the verified badge.</h1>
+          <p className="kicker mb-3">{t("verifyListing.kicker")}</p>
+          <h1 className="font-display text-4xl tracking-[-0.02em] mb-3">{t("verifyListing.title")}</h1>
           <p className="text-[16px] mb-8" style={{ color: "var(--navy-2)" }}>
-            One-time €39. Submit a 60-second walkthrough video (Loom link works), our team reviews
-            within 48 hours. On approval the listing surfaces above standard results and shows the
-            verified badge across browse, detail and your profile.
+            {t("verifyListing.intro")}
           </p>
 
           <div className="surface-card p-6 mb-6">
-            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">Status</h2>
-            <StatusPill status={listing.verificationStatus} />
+            <h2 className="font-display text-xl tracking-[-0.01em] mb-3">{t("verifyListing.status")}</h2>
+            <StatusPill status={listing.verificationStatus} dict={dict} />
             {listing.verificationStatus === "approved" && (
               <p className="mt-3 text-sm" style={{ color: "var(--navy-2)" }}>
-                You&rsquo;re verified. The badge is live on this listing.
+                {t("verifyListing.approvedNote")}
               </p>
             )}
             {listing.verificationStatus === "rejected" && (
               <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>
-                Your previous submission was rejected — you can re-submit below.
+                {t("verifyListing.rejectedNote")}
               </p>
             )}
             {listing.verificationStatus === "pending" && (
               <p className="mt-3 text-sm" style={{ color: "var(--navy-2)" }}>
-                Submitted on {listing.verificationSubmittedAt?.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}. Reviews finish within 48 hours.
+                {t("verifyListing.pendingNote", {
+                  date:
+                    listing.verificationSubmittedAt?.toLocaleDateString(locale, {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    }) ?? "",
+                })}
               </p>
             )}
           </div>
@@ -58,8 +68,7 @@ export default async function VerifyPage(props: PageProps<"/listings/[id]/edit/v
           )}
 
           <p className="mt-8 text-xs" style={{ color: "var(--navy-3)" }}>
-            By submitting you agree to swapl&rsquo;s verification terms — videos are stored securely
-            for 90 days and never shared with other users.
+            {t("verifyListing.terms")}
           </p>
         </div>
       </main>
@@ -68,12 +77,13 @@ export default async function VerifyPage(props: PageProps<"/listings/[id]/edit/v
   );
 }
 
-function StatusPill({ status }: { status: string }) {
-  const map: Record<string, { label: string; bg: string; fg: string }> = {
-    none: { label: "Not submitted", bg: "var(--cream-2)", fg: "var(--navy-3)" },
-    pending: { label: "In review", bg: "var(--pink-light)", fg: "var(--pink)" },
-    approved: { label: "Verified", bg: "var(--pink)", fg: "#fff" },
-    rejected: { label: "Rejected", bg: "var(--cream-2)", fg: "#dc2626" },
+function StatusPill({ status, dict }: { status: string; dict: Dict }) {
+  const t = (key: DictKey) => tt(dict, key);
+  const map: Record<string, { labelKey: DictKey; bg: string; fg: string }> = {
+    none: { labelKey: "verifyListing.statusNone", bg: "var(--cream-2)", fg: "var(--navy-3)" },
+    pending: { labelKey: "verifyListing.statusPending", bg: "var(--pink-light)", fg: "var(--pink)" },
+    approved: { labelKey: "verifyListing.statusApproved", bg: "var(--pink)", fg: "#fff" },
+    rejected: { labelKey: "verifyListing.statusRejected", bg: "var(--cream-2)", fg: "#dc2626" },
   };
   const s = map[status] ?? map.none;
   return (
@@ -81,7 +91,7 @@ function StatusPill({ status }: { status: string }) {
       className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full inline-block"
       style={{ background: s.bg, color: s.fg }}
     >
-      {s.label}
+      {t(s.labelKey)}
     </span>
   );
 }
