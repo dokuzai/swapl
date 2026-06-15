@@ -176,4 +176,10 @@ enum SwaplDateText {
     static func apiString(from date: Date) -> String {
         apiFormatter.string(from: date)
     }
+
+    // Single localized "MMM d, yyyy" date — used by the Keys ledger rows.
+    static func medium(from raw: String) -> String {
+        guard let date = parse(raw) else { return String(raw.prefix(10)) }
+        return monthDayYearFormatter.string(from: date)
+    }
 }

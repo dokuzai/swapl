@@ -28,8 +28,10 @@ struct ListingDetailView: View {
     @Environment(AuthService.self) private var auth
     @State private var vm: ListingDetailViewModel
     @State private var isShowingProposalSheet = false
+    @State private var isShowingKeysStaySheet = false
     @State private var isEditingListing = false
     @State private var sentProposalId: String?
+    @State private var requestedStayId: String?
 
     init(listingId: String) {
         _vm = State(initialValue: ListingDetailViewModel(listingId: listingId))
@@ -105,10 +107,23 @@ struct ListingDetailView: View {
                 }
             }
         }
+        .sheet(isPresented: $isShowingKeysStaySheet) {
+            if let listing = vm.detail?.listing {
+                StayWithKeysSheet(listing: listing) { stayId in
+                    requestedStayId = stayId
+                    isShowingKeysStaySheet = false
+                }
+            }
+        }
         .alert("Proposal sent", isPresented: proposalSentBinding) {
             Button("OK", role: .cancel) {}
         } message: {
             Text("You can follow the conversation from Messages.")
+        }
+        .alert("Stay requested", isPresented: stayRequestedBinding) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your points are held until the host confirms. Track it under Trips.")
         }
         .task { await vm.load() }
     }
@@ -141,6 +156,13 @@ struct ListingDetailView: View {
         Binding(
             get: { sentProposalId != nil },
             set: { if !$0 { sentProposalId = nil } }
+        )
+    }
+
+    private var stayRequestedBinding: Binding<Bool> {
+        Binding(
+            get: { requestedStayId != nil },
+            set: { if !$0 { requestedStayId = nil } }
         )
     }
 
@@ -289,29 +311,51 @@ struct ListingDetailView: View {
         }
     }
 
+    // Two ways to book this home, side by side (DOK-155): the direct
+    // simultaneous swap ("Propose"), and the one-directional Stay-with-Keys
+    // ("Stay with points"). Keys mode sits ALONGSIDE swaps, never replacing it.
     private func proposalCTA(_ detail: ListingDetailResponse) -> some View {
-        HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 2) {
+        VStack(spacing: 10) {
+            HStack {
                 Text(SwaplDateText.range(from: detail.listing.availableFrom, to: detail.listing.availableTo))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                Text(detail.viewerListingId == nil ? "Create a listing first" : "Send a swap proposal")
+                Spacer()
+                Text(detail.viewerListingId == nil ? "Create a listing to swap" : "Swap or stay with points")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
-            Spacer()
-            Button {
-                isShowingProposalSheet = true
-            } label: {
-                Text("Propose")
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
-                    .foregroundStyle(SwaplSemanticLight.primaryForeground)
-                    .padding(.horizontal, 26)
-                    .padding(.vertical, 15)
-                    .background(SwaplSemanticLight.primary, in: Capsule())
+
+            HStack(spacing: 12) {
+                // Stay with points — needs no listing of your own, so it stays
+                // enabled even when the viewer hasn't published a home.
+                Button {
+                    isShowingKeysStaySheet = true
+                } label: {
+                    Label("Stay with points", systemImage: "key.horizontal")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(SwaplSemanticLight.accent, in: Capsule())
+                }
+                .buttonStyle(.plain)
+
+                // Propose a direct swap — requires the viewer's own listing.
+                Button {
+                    isShowingProposalSheet = true
+                } label: {
+                    Text("Propose")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(SwaplSemanticLight.primary, in: Capsule())
+                }
+                .buttonStyle(.plain)
+                .disabled(detail.viewerListingId == nil)
+                .opacity(detail.viewerListingId == nil ? 0.45 : 1)
             }
-            .disabled(detail.viewerListingId == nil)
-            .opacity(detail.viewerListingId == nil ? 0.45 : 1)
         }
         .padding(.horizontal, 22)
         .padding(.vertical, 14)

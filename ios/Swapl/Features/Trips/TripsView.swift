@@ -87,12 +87,15 @@ struct TripsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let trips = vm.trips, trips.isEmpty {
             ScrollView {
+                // Keys stays show even with no reciprocal swaps yet.
+                KeysStaysSection()
+                    .padding(.horizontal, 22)
                 SwaplEmptyState(
                     systemImage: "suitcase.rolling",
                     title: "Trips",
-                    description: "Accepted swaps will become trips."
+                    description: "Accepted swaps and stays with points show up here."
                 )
-                .padding(.top, 120)
+                .padding(.top, 80)
             }
             .refreshable { await vm.load() }
         } else if let trips = vm.trips {
@@ -113,6 +116,8 @@ struct TripsView: View {
 
         return ScrollView {
             LazyVStack(alignment: .leading, spacing: 14) {
+                KeysStaysSection()
+
                 ForEach(sections, id: \.0) { phase, list in
                     Text(phase.rawValue)
                         .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))

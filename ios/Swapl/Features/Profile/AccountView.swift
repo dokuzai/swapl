@@ -26,6 +26,7 @@ struct AccountView: View {
                         // is off server-side or the user is already verified.
                         IdentityVerificationCard()
                         becomeHostCard
+                        keysCard
                         Color.clear.frame(height: 20)
 
                         // Airbnb-style settings jump list (DOK-147), mirroring
@@ -235,6 +236,46 @@ struct AccountView: View {
                         .foregroundStyle(AirbnbPalette.text)
                     Text(myListing.map { "Update \"\($0.title)\" — photos, dates, amenities." }
                         ?? "Create your home listing and start proposing swaps.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(2)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            .padding(18)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    // Entry to the Keys wallet (DOK-155) — "travel points", shown right after
+    // the host card so it sits with the member's swap tools.
+    private var keysCard: some View {
+        NavigationLink {
+            KeysWalletView()
+        } label: {
+            HStack(spacing: 18) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                        .fill(SwaplColor.navyDark)
+                    Image(systemName: "key.horizontal.fill")
+                        .font(.system(size: 30, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                }
+                .frame(width: 86, height: 86)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Travel points")
+                        .font(.swaplDisplay(23, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    Text("Your points balance, history, and gifting — stay somewhere without a simultaneous swap.")
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
