@@ -146,7 +146,6 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
             myUserId={session.userId}
             guestCode={isProposer ? proposal.agreement.keyCode2 : proposal.agreement.keyCode1}
             myCode={isProposer ? proposal.agreement.keyCode1 : proposal.agreement.keyCode2}
-            messageName={otherName ?? "swapl host"}
           />
         ) : undefined
       }

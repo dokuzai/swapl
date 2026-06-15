@@ -82,14 +82,12 @@ export function TripCockpit({
   myUserId,
   guestCode,
   myCode,
-  messageName,
 }: {
   agreementId: string;
   myListingId: string;
   myUserId: string;
   guestCode: string | null;
   myCode: string | null;
-  messageName: string;
 }) {
   const t = useT();
   const support = useSupportContacts();
@@ -128,19 +126,6 @@ export function TripCockpit({
 
   return (
     <div className="space-y-4">
-      <a
-        href="#chat"
-        className="surface-card flex items-center justify-between gap-3 p-4 hover:no-underline"
-      >
-        <span className="flex items-center gap-2.5 min-w-0">
-          <span aria-hidden style={{ color: "var(--pink)" }}>💬</span>
-          <span className="font-display text-[15px] tracking-[-0.01em] truncate">
-            {t("chat.messageName", { name: messageName })}
-          </span>
-        </span>
-        <span aria-hidden style={{ color: "var(--navy-3)" }}>→</span>
-      </a>
-
       <PhaseStepper phase={trip.phase} countdown={trip.countdown} insured={!!trip.insurance} />
 
       <Checklist trip={trip} />

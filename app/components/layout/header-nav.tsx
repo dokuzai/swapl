@@ -79,23 +79,21 @@ function CategoryTab({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className="relative flex flex-col items-center gap-1 px-3 pt-1 pb-2 shrink-0 transition-colors"
+      className="relative flex flex-col items-center gap-1 px-3 pt-3 pb-2 shrink-0 transition-colors"
       style={{
         color: active ? "var(--navy)" : "color-mix(in oklab, var(--navy) 60%, transparent)",
       }}
     >
-      <span className="relative">
-        <StrokeIcon d={ICONS[icon]} />
-        {isNew && (
-          <span
-            className="absolute -top-1.5 left-full ml-0.5 font-mono text-[8px] uppercase tracking-[.08em] leading-none px-1 py-0.5 rounded-full"
-            style={{ background: "var(--pink-light)", color: "var(--pink)" }}
-          >
-            {newLabel}
-          </span>
-        )}
-      </span>
+      <StrokeIcon d={ICONS[icon]} />
       <span className={`text-[13px] leading-none ${active ? "font-medium" : ""}`}>{label}</span>
+      {isNew && (
+        <span
+          className="absolute top-0 right-1 font-mono text-[8px] uppercase tracking-[.08em] leading-none px-1 py-px rounded-full"
+          style={{ background: "var(--pink-light)", color: "var(--pink)" }}
+        >
+          {newLabel}
+        </span>
+      )}
       <span
         aria-hidden
         className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full transition-opacity"
