@@ -147,5 +147,5 @@
 
     <string name="trip_oncover_badge">Geverifieerd op TON</string>
     <string name="trip_oncover_view">Bewijs bekijken</string>
-    <string name="trip_oncover_explainer">Een fraudebestendig bewijs van je dekking — geen crypto, geen betaling, alleen het bewijs dat je polis echt is.</string>
+    <string name="trip_oncover_explainer">Een fraudebestendig bewijs dat je dekking echt is — geen crypto, geen betaling, niets wat jij hoeft te doen.</string>
 </resources>

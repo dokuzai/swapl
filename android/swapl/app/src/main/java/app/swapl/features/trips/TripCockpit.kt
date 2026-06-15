@@ -303,60 +303,57 @@ private fun VerifiedOnTon(insurance: TripInsurance) {
     val explorerUrl = insurance.explorerUrl?.takeIf { it.isNotBlank() }
     Column(
         Modifier.padding(top = SwaplSpacing.s2),
-        verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1),
+        verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
     ) {
+        // (a) badge
         Row(
+            Modifier
+                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                .padding(horizontal = SwaplSpacing.s3, vertical = SwaplSpacing.s1),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+            horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s1),
         ) {
+            Icon(
+                Icons.Filled.Verified,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(15.dp),
+            )
+            Text(
+                stringResource(R.string.trip_oncover_badge),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+        // (b) prominent reassurance blurb
+        Text(
+            stringResource(R.string.trip_oncover_explainer),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        // (c) secondary, de-emphasized "View proof" link
+        if (explorerUrl != null) {
             Row(
                 Modifier
-                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
-                    .padding(horizontal = SwaplSpacing.s3, vertical = SwaplSpacing.s1),
+                    .clip(CircleShape)
+                    .clickable { uriHandler.openUri(explorerUrl) }
+                    .padding(vertical = SwaplSpacing.s1),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s1),
             ) {
-                Icon(
-                    Icons.Filled.Verified,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(15.dp),
-                )
                 Text(
-                    stringResource(R.string.trip_oncover_badge),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Medium,
+                    stringResource(R.string.trip_oncover_view),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-            }
-            if (explorerUrl != null) {
-                Row(
-                    Modifier
-                        .clip(CircleShape)
-                        .clickable { uriHandler.openUri(explorerUrl) }
-                        .padding(horizontal = SwaplSpacing.s2, vertical = SwaplSpacing.s1),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s1),
-                ) {
-                    Text(
-                        stringResource(R.string.trip_oncover_view),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Icon(
-                        Icons.AutoMirrored.Filled.OpenInNew,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(13.dp),
-                    )
-                }
+                Icon(
+                    Icons.AutoMirrored.Filled.OpenInNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(12.dp),
+                )
             }
         }
-        Text(
-            stringResource(R.string.trip_oncover_explainer),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
 

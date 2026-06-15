@@ -147,5 +147,5 @@
 
     <string name="trip_oncover_badge">Verificado na TON</string>
     <string name="trip_oncover_view">Ver prova</string>
-    <string name="trip_oncover_explainer">Uma prova à prova de adulteração da tua cobertura — sem cripto, sem pagamento, apenas a garantia de que a tua apólice é real.</string>
+    <string name="trip_oncover_explainer">Uma prova à prova de adulteração de que a tua cobertura é real — sem cripto, sem pagamento, nada que tenhas de fazer.</string>
 </resources>
