@@ -6340,6 +6340,239 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/keys/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Paginated, kind-filterable Keys ledger
+         * @description The caller's Keys transactions, newest first. Cursor-paginated over the append-only ledger; each row carries balanceAfter (the running balance at that point) so clients render a progressive balance with no math. Optional `kind` filters to one ledger kind.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    kind?: "earn_host" | "spend_stay" | "welcome_bonus" | "gift_sent" | "gift_received" | "refund" | "hold" | "release" | "referral_bonus" | "invite_bonus";
+                    /** @description id of the last row from the previous page */
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            transactions: components["schemas"]["KeysTransaction"][];
+                            nextCursor: string | null;
+                            hasMore: boolean;
+                        };
+                    };
+                };
+                /** @description Unknown kind or invalid limit */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/referrals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My referral / growth dashboard
+         * @description The caller's shareable referral code + link, the people they invited (with status), Keys earned from referrals, tier progress, a FOMO-styled waitlist position, and an anonymised leaderboard. Position and ranking are derived from the number of QUALIFIED referrals — the more people you bring (who verify), the higher you climb. Referrals earn Keys, not money.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            code: string;
+                            shareUrl: string;
+                            invitesSent: number;
+                            joined: {
+                                name?: string | null;
+                                /** @enum {string} */
+                                status: "pending" | "qualified" | "rewarded";
+                                /** @enum {string} */
+                                source: "link" | "invite_to_stay";
+                            }[];
+                            keysEarned: number;
+                            qualifiedCount: number;
+                            rewardPerReferral?: number;
+                            tierProgress: {
+                                current?: {
+                                    key?: string;
+                                    label?: string;
+                                    perk?: string;
+                                } | null;
+                                next?: {
+                                    key?: string;
+                                    label?: string;
+                                    threshold?: number;
+                                    remaining?: number;
+                                } | null;
+                            };
+                            waitlistPosition: number;
+                            leaderboardTop: {
+                                rank: number;
+                                name?: string | null;
+                                qualified: number;
+                                isYou: boolean;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/referrals/invite-to-stay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Invite someone to stay at your listing
+         * @description Issue an invitation tied to one of YOUR listings. Returns a shareable link carrying an opaque token; when the invitee registers (and later verifies their identity) the resulting Referral has source=invite_to_stay and credits Keys to both sides. An optional email targets the invite so it auto-links to that person on signup.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** Format: email */
+                        email?: string;
+                        listingId: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Invite created */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            referralId: string;
+                            token: string;
+                            shareUrl: string;
+                            listing: {
+                                id?: string;
+                                title?: string;
+                            };
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Listing is not yours */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Listing not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Rate limited */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -6570,7 +6803,7 @@ export interface components {
             /** @description Signed: + credit, - debit */
             delta: number;
             /** @enum {string} */
-            kind: "earn_host" | "spend_stay" | "welcome_bonus" | "gift_sent" | "gift_received" | "refund" | "hold" | "release";
+            kind: "earn_host" | "spend_stay" | "welcome_bonus" | "gift_sent" | "gift_received" | "refund" | "hold" | "release" | "referral_bonus" | "invite_bonus";
             balanceAfter: number;
             stayId?: string | null;
             note?: string | null;

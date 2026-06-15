@@ -11,6 +11,11 @@ import { verifyOtp, normaliseDestination } from "@/lib/auth/otp";
 import { respondWithSession } from "@/lib/auth/respond";
 import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
 import { apiError, accountSuspended, invalidInput } from "@/lib/api/errors";
+import {
+  attributeSignupByCode,
+  linkRefereeByEmail,
+  linkRefereeByInviteToken,
+} from "@/lib/growth/referrals";
 
 const MIN_MS = 60 * 1000;
 
@@ -48,6 +53,7 @@ export async function POST(req: Request) {
     return accountSuspended();
   }
 
+  const isNewAccount = !user;
   if (!user) {
     user =
       outcome.channel === "email"
@@ -75,6 +81,19 @@ export async function POST(req: Request) {
       where: { id: user.id },
       data: { emailVerifiedAt: new Date() },
     });
+  }
+
+  // Growth engine (DOK-157): record referral attribution on first-time signup.
+  // The two-sided Keys reward only credits later, when this user verifies their
+  // identity (anti-farm gate). Best-effort — login must never fail on this.
+  if (isNewAccount) {
+    try {
+      if (parsed.data.ref) await attributeSignupByCode(user.id, parsed.data.ref);
+      if (parsed.data.invite) await linkRefereeByInviteToken(user.id, parsed.data.invite);
+      if (outcome.channel === "email") await linkRefereeByEmail(user.id, user.email);
+    } catch (err) {
+      console.error("[otp:referral-attribution]", err);
+    }
   }
 
   return respondWithSession(user, parsed.data.platform, parsed.data.appVersion);

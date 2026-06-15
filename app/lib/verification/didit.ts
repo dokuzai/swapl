@@ -18,6 +18,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { prisma } from "@/lib/db";
 import { grantWelcomeBonus } from "@/lib/keys/ledger";
 import { WELCOME_BONUS_KEYS } from "@/lib/keys/config";
+import { qualifyReferralsForReferee } from "@/lib/growth/referrals";
 
 const DIDIT_BASE_URL = "https://verification.didit.me";
 
@@ -237,6 +238,13 @@ export async function applyVerificationUpdate(
     // not block the verification from completing.
     await grantWelcomeBonus(row.userId, WELCOME_BONUS_KEYS).catch((err) =>
       console.error("[keys:welcome-bonus]", err),
+    );
+    // Growth engine (DOK-157): identity verification is the qualifying action.
+    // Mark this user's referral(s) as qualified and credit Keys to BOTH sides
+    // exactly once (anti-farm: idempotent, capped). Best-effort — a failure
+    // here must not block the verification from completing.
+    await qualifyReferralsForReferee(row.userId).catch((err) =>
+      console.error("[growth:qualify-referrals]", err),
     );
   }
 

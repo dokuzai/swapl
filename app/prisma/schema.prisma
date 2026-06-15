@@ -60,6 +60,12 @@ model User {
   // that appends a ledger row. "Travel points", never money — see lib/keys.
   keysBalance                Int      @default(0)
 
+  // ---- Growth engine (DOK-157) ----
+  // Short, shareable referral code minted lazily on first /api/referrals read
+  // (or at signup). Unique so ?ref=CODE resolves to exactly one owner. The
+  // referral economy earns KEYS, never money — see lib/growth.
+  referralCode               String?  @unique
+
   // Social profile: interests are comma-separated slugs from
   // lib/interests.ts INTEREST_CATALOG (SQLite-friendly TEXT JSON array).
   interests                  String   @default("[]")
@@ -109,6 +115,10 @@ model User {
   keysTransactions KeysTransaction[]
   keysStaysAsGuest KeysStay[]       @relation("KeysStayGuest")
   keysStaysAsHost  KeysStay[]       @relation("KeysStayHost")
+
+  // Growth engine (DOK-157)
+  referralsOwned   Referral[] @relation("ReferralOwner")  // people I invited
+  referralAsReferee Referral? @relation("ReferralReferee") // the row that brought me in
 }
 
 // ---------- AI ASSISTANT (DOK-146) ----------
@@ -688,6 +698,43 @@ model KeysStay {
   @@index([guestId])
   @@index([hostId])
   @@index([status])
+}
+
+// ---------- GROWTH ENGINE / REFERRALS (DOK-157) ----------
+// One referral edge. Created `pending` at signup-with-?ref=CODE or when a host
+// issues an invite-to-stay; the refereeId is linked when the invitee's account
+// is created (email/registration match). It becomes `qualified` (and Keys are
+// credited to BOTH sides exactly once) when the invitee VERIFIES their identity
+// — the anti-farm gate. `rewarded` means the two-sided Keys reward was issued
+// (a referral past the daily/monthly cap stays `qualified`, no Keys, but still
+// counts toward waitlist position + leaderboard).
+//
+// Referral rewards are emitted through the Keys ledger (kinds referral_bonus /
+// invite_bonus), idempotent per Referral (one rewardedAt stamp guards it).
+model Referral {
+  id            String   @id @default(cuid())
+  ownerId       String
+  owner         User     @relation("ReferralOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  // Linked once the invitee's account exists. Unique: a user can be referred by
+  // at most one owner (the first attribution wins).
+  refereeId     String?  @unique
+  referee       User?    @relation("ReferralReferee", fields: [refereeId], references: [id], onDelete: SetNull)
+  // Captured at invite-to-stay time when no account exists yet; used to link
+  // refereeId on registration.
+  refereeEmail  String?
+  source        String   @default("link")              // link | invite_to_stay
+  // For invite_to_stay: the host's listing the invitation is tied to.
+  listingId     String?
+  // Opaque token for invite-to-stay links (?invite=TOKEN). Null for plain ?ref.
+  token         String?  @unique
+  status        String   @default("pending")           // pending | qualified | rewarded
+  // Idempotency guard for the two-sided Keys reward.
+  rewardedAt    DateTime?
+  createdAt     DateTime @default(now())
+  qualifiedAt   DateTime?
+
+  @@index([ownerId])
+  @@index([refereeEmail])
 }
 
 model BetaSignup {

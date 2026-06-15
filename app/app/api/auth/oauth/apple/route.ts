@@ -14,6 +14,11 @@ import { findOrCreateOAuthUser } from "@/lib/auth/oauth/account";
 import { respondWithSession } from "@/lib/auth/respond";
 import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
 import { apiError, accountSuspended, invalidInput, unprocessable } from "@/lib/api/errors";
+import {
+  attributeSignupByCode,
+  linkRefereeByEmail,
+  linkRefereeByInviteToken,
+} from "@/lib/growth/referrals";
 
 const MIN_MS = 60 * 1000;
 
@@ -73,6 +78,16 @@ export async function POST(req: Request) {
     await prisma.betaSignup
       .updateMany({ where: { email: user.email, userId: null }, data: { userId: user.id } })
       .catch((err: unknown) => console.error("[oauth-apple:link-beta-signup]", err));
+
+    // Growth engine (DOK-157): referral attribution on first-time signup. The
+    // reward credits later, on identity verification (anti-farm gate).
+    try {
+      if (parsed.data.ref) await attributeSignupByCode(user.id, parsed.data.ref);
+      if (parsed.data.invite) await linkRefereeByInviteToken(user.id, parsed.data.invite);
+      if (email) await linkRefereeByEmail(user.id, user.email);
+    } catch (err) {
+      console.error("[oauth-apple:referral-attribution]", err);
+    }
   }
 
   return respondWithSession(user, parsed.data.platform, parsed.data.appVersion);

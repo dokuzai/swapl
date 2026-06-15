@@ -8,6 +8,11 @@ import { sendEmail, emailTemplates } from "@/lib/email";
 import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { apiError, invalidInput } from "@/lib/api/errors";
+import {
+  attributeSignupByCode,
+  linkRefereeByEmail,
+  linkRefereeByInviteToken,
+} from "@/lib/growth/referrals";
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -55,6 +60,19 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     console.error("[register:link-beta-signup]", err);
+  }
+
+  // Growth engine (DOK-157): record referral attribution. A ?ref=CODE link
+  // creates a pending Referral owned by the code's owner; an invite-to-stay
+  // (email-keyed) row is linked by email. The reward only credits later, when
+  // this user VERIFIES their identity (anti-farm gate). Best-effort — signup
+  // must never fail on attribution.
+  try {
+    if (parsed.data.ref) await attributeSignupByCode(user.id, parsed.data.ref);
+    if (parsed.data.invite) await linkRefereeByInviteToken(user.id, parsed.data.invite);
+    await linkRefereeByEmail(user.id, user.email);
+  } catch (err) {
+    console.error("[register:referral-attribution]", err);
   }
 
   // Issue + send the verification email. The token is one-shot, hashed in

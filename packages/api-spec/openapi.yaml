@@ -39,6 +39,7 @@ tags:
   - name: i18n
   - name: config
   - name: keys
+  - name: referrals
 
 components:
   securitySchemes:
@@ -355,7 +356,7 @@ components:
         delta: { type: integer, description: 'Signed: + credit, - debit' }
         kind:
           type: string
-          enum: [earn_host, spend_stay, welcome_bonus, gift_sent, gift_received, refund, hold, release]
+          enum: [earn_host, spend_stay, welcome_bonus, gift_sent, gift_received, refund, hold, release, referral_bonus, invite_bonus]
         balanceAfter: { type: integer }
         stayId: { type: string, nullable: true }
         note: { type: string, nullable: true }
@@ -4177,3 +4178,150 @@ paths:
         '403': { description: Not the guest }
         '404': { description: Stay not found }
         '422': { description: Stay not pending }
+
+  /api/keys/transactions:
+    get:
+      tags: [keys]
+      summary: Paginated, kind-filterable Keys ledger
+      description: >-
+        The caller's Keys transactions, newest first. Cursor-paginated over the
+        append-only ledger; each row carries balanceAfter (the running balance
+        at that point) so clients render a progressive balance with no math.
+        Optional `kind` filters to one ledger kind.
+      parameters:
+        - name: kind
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [earn_host, spend_stay, welcome_bonus, gift_sent, gift_received, refund, hold, release, referral_bonus, invite_bonus]
+        - { name: cursor, in: query, required: false, schema: { type: string }, description: id of the last row from the previous page }
+        - { name: limit, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [transactions, nextCursor, hasMore]
+                properties:
+                  transactions:
+                    type: array
+                    items: { $ref: '#/components/schemas/KeysTransaction' }
+                  nextCursor: { type: string, nullable: true }
+                  hasMore: { type: boolean }
+        '400': { description: Unknown kind or invalid limit }
+        '401': { description: Unauthenticated }
+
+  /api/referrals:
+    get:
+      tags: [referrals]
+      summary: My referral / growth dashboard
+      description: >-
+        The caller's shareable referral code + link, the people they invited
+        (with status), Keys earned from referrals, tier progress, a FOMO-styled
+        waitlist position, and an anonymised leaderboard. Position and ranking
+        are derived from the number of QUALIFIED referrals — the more people you
+        bring (who verify), the higher you climb. Referrals earn Keys, not money.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [code, shareUrl, invitesSent, joined, keysEarned, qualifiedCount, tierProgress, waitlistPosition, leaderboardTop]
+                properties:
+                  code: { type: string }
+                  shareUrl: { type: string }
+                  invitesSent: { type: integer }
+                  joined:
+                    type: array
+                    items:
+                      type: object
+                      required: [status, source]
+                      properties:
+                        name: { type: string, nullable: true }
+                        status: { type: string, enum: [pending, qualified, rewarded] }
+                        source: { type: string, enum: [link, invite_to_stay] }
+                  keysEarned: { type: integer }
+                  qualifiedCount: { type: integer }
+                  rewardPerReferral: { type: integer }
+                  tierProgress:
+                    type: object
+                    properties:
+                      current:
+                        type: object
+                        nullable: true
+                        properties:
+                          key: { type: string }
+                          label: { type: string }
+                          perk: { type: string }
+                      next:
+                        type: object
+                        nullable: true
+                        properties:
+                          key: { type: string }
+                          label: { type: string }
+                          threshold: { type: integer }
+                          remaining: { type: integer }
+                  waitlistPosition: { type: integer }
+                  leaderboardTop:
+                    type: array
+                    items:
+                      type: object
+                      required: [rank, qualified, isYou]
+                      properties:
+                        rank: { type: integer }
+                        name: { type: string, nullable: true }
+                        qualified: { type: integer }
+                        isYou: { type: boolean }
+        '401': { description: Unauthenticated }
+
+  /api/referrals/invite-to-stay:
+    post:
+      tags: [referrals]
+      summary: Invite someone to stay at your listing
+      description: >-
+        Issue an invitation tied to one of YOUR listings. Returns a shareable
+        link carrying an opaque token; when the invitee registers (and later
+        verifies their identity) the resulting Referral has source=invite_to_stay
+        and credits Keys to both sides. An optional email targets the invite so
+        it auto-links to that person on signup.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listingId]
+              properties:
+                email: { type: string, format: email }
+                listingId: { type: string }
+      responses:
+        '200':
+          description: Invite created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, referralId, token, shareUrl, listing]
+                properties:
+                  ok: { type: boolean }
+                  referralId: { type: string }
+                  token: { type: string }
+                  shareUrl: { type: string }
+                  listing:
+                    type: object
+                    properties:
+                      id: { type: string }
+                      title: { type: string }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Listing is not yours }
+        '404': { description: Listing not found }
+        '429': { description: Rate limited }

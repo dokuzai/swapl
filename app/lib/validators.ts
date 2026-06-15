@@ -93,6 +93,11 @@ export const marketingEventSchema = z.object({
 export const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6).max(128),
+  // Growth engine (DOK-157): optional referral code from a ?ref=CODE link,
+  // forwarded by the client at signup so attribution can be recorded.
+  ref: z.string().min(3).max(32).optional(),
+  // Optional invite-to-stay token from a ?invite=TOKEN link.
+  invite: z.string().min(8).max(64).optional(),
 });
 
 // Mobile-only: same fields as credentials plus device metadata so we can stamp
@@ -115,10 +120,17 @@ export const deviceRegisterSchema = z.object({
 
 const optionalPlatform = z.enum(["ios", "android", "web-pwa"]).optional();
 
+// Growth engine (DOK-157): optional referral code + invite token carried
+// through OAuth signup.
+const optionalRef = z.string().min(3).max(32).optional();
+const optionalInvite = z.string().min(8).max(64).optional();
+
 export const oauthGoogleSchema = z.object({
   idToken: z.string().min(20).max(8192),
   platform: optionalPlatform,
   appVersion: z.string().max(40).optional(),
+  ref: optionalRef,
+  invite: optionalInvite,
 });
 
 export const oauthAppleSchema = z.object({
@@ -128,6 +140,8 @@ export const oauthAppleSchema = z.object({
   fullName: z.string().max(200).optional(),
   platform: optionalPlatform,
   appVersion: z.string().max(40).optional(),
+  ref: optionalRef,
+  invite: optionalInvite,
 });
 
 export const oauthTelegramSchema = z.object({
@@ -162,6 +176,10 @@ export const otpVerifySchema = z.object({
   code: z.string().regex(/^\d{6}$/),
   platform: optionalPlatform,
   appVersion: z.string().max(40).optional(),
+  // Growth engine (DOK-157): optional referral code / invite token, used only
+  // on first-time account creation via OTP.
+  ref: z.string().min(3).max(32).optional(),
+  invite: z.string().min(8).max(64).optional(),
 });
 
 export const reportSchema = z.object({

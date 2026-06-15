@@ -23,7 +23,12 @@ export type KeysKind =
   | "gift_received"
   | "refund"
   | "hold"
-  | "release";
+  | "release"
+  // Growth engine (DOK-157): two-sided referral reward, credited once per
+  // Referral when the invitee verifies. referral_bonus -> the referrer (owner);
+  // invite_bonus -> the newly-verified invitee (referee).
+  | "referral_bonus"
+  | "invite_bonus";
 
 export const KEYS_KINDS: readonly KeysKind[] = [
   "earn_host",
@@ -34,6 +39,8 @@ export const KEYS_KINDS: readonly KeysKind[] = [
   "refund",
   "hold",
   "release",
+  "referral_bonus",
+  "invite_bonus",
 ];
 
 // A Prisma transaction client OR the root client — every helper accepts a `tx`
