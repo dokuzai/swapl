@@ -18,7 +18,18 @@ export async function GET(req: Request) {
     }),
     prisma.listing.findMany({
       where: { userId: session.userId },
-      select: { id: true, title: true, sizeSqm: true, sleeps: true, city: true, isVerified: true },
+      select: {
+        id: true,
+        title: true,
+        sizeSqm: true,
+        sleeps: true,
+        city: true,
+        isVerified: true,
+        spaceType: true,
+        roomsOffered: true,
+        nightlyKeysBase: true,
+        nightlyKeysAdjustment: true,
+      },
     }),
     prisma.keysTransaction.findMany({
       where: { userId: session.userId },
@@ -32,12 +43,7 @@ export async function GET(req: Request) {
     nightlyKeysForMyListings: listings.map((l) => ({
       listingId: l.id,
       title: l.title,
-      nightlyKeys: nightlyKeysFor({
-        sizeSqm: l.sizeSqm,
-        sleeps: l.sleeps,
-        city: l.city,
-        isVerified: l.isVerified,
-      }),
+      nightlyKeys: nightlyKeysFor(l),
     })),
     recentTransactions: transactions.map((t) => ({
       id: t.id,

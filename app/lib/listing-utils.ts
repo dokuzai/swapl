@@ -1,4 +1,5 @@
 import { parseJSON } from "@/lib/db";
+import { parseValuationExplanation, type ValuationExplanation } from "@/lib/keys/valuation";
 import { paletteForCity } from "@/lib/cities";
 import { parseMotif } from "@/lib/ai/city-illustration";
 import { safeParsePostcard } from "@/lib/ai/postcard-types";
@@ -57,6 +58,14 @@ export type ListingDTO = {
   isVerified: boolean;
   // Owner-proof trust badge (DOK-162): host attested + admin-approved ownership.
   ownerVerified: boolean;
+  // Unified valuation v2 (DOK-163 / DOK-160).
+  spaceType: "entire_place" | "private_room";
+  roomsOffered: number | null;
+  nightlyKeys: number | null;
+  locationTier: number | null;
+  // Structured "how is this calculated" explanation — owner-only (null for
+  // non-owners) so the breakdown isn't leaked to other members.
+  valuationExplanation: ValuationExplanation | null;
 };
 
 type ListingRecord = {
@@ -109,9 +118,17 @@ type ListingRecord = {
   isVerified?: boolean;
   ownerVerified?: boolean;
   featuredUntil?: Date | null;
+  spaceType?: string;
+  roomsOffered?: number | null;
+  nightlyKeys?: number | null;
+  locationTier?: number | null;
+  valuationExplanation?: string | null;
 };
 
-export function toDTO(l: ListingRecord, opts?: { includeAddress?: boolean }): ListingDTO {
+export function toDTO(
+  l: ListingRecord,
+  opts?: { includeAddress?: boolean; includeValuation?: boolean },
+): ListingDTO {
   return {
     id: l.id,
     userId: l.userId,
@@ -161,6 +178,13 @@ export function toDTO(l: ListingRecord, opts?: { includeAddress?: boolean }): Li
     isFeatured: Boolean(l.isFeatured && l.featuredUntil && l.featuredUntil > new Date()),
     isVerified: Boolean(l.isVerified),
     ownerVerified: Boolean(l.ownerVerified),
+    spaceType: (l.spaceType as ListingDTO["spaceType"]) ?? "entire_place",
+    roomsOffered: l.roomsOffered ?? null,
+    nightlyKeys: l.nightlyKeys ?? null,
+    locationTier: l.locationTier ?? null,
+    valuationExplanation: opts?.includeValuation
+      ? parseValuationExplanation(l.valuationExplanation)
+      : null,
   };
 }
 

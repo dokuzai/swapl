@@ -840,6 +840,64 @@ components:
         ownerVerified:
           type: boolean
           description: Owner-proof trust badge (DOK-162) — host attested + admin-approved.
+        spaceType:
+          type: string
+          enum: [entire_place, private_room]
+          description: What's offered (DOK-160) — the whole home or a private room within it.
+        roomsOffered:
+          type: integer
+          nullable: true
+          description: Number of rooms offered when spaceType is private_room.
+        nightlyKeys:
+          type: integer
+          nullable: true
+          description: Persisted value-per-night in Keys (DOK-163 unified valuation v2).
+        locationTier:
+          type: integer
+          nullable: true
+          description: Destination-desirability tier 1..5 (1 = most desirable).
+        valuationExplanation:
+          allOf:
+            - $ref: '#/components/schemas/ValuationExplanation'
+          nullable: true
+          description: >-
+            Structured "how is this calculated" breakdown (DOK-163). Owner-only —
+            null for non-owners.
+
+    ValuationExplanation:
+      type: object
+      required: [version, base, adjustment, nightlyKeys, locationTier, spaceType, roomsCoefficient, factors, ai, feedback]
+      properties:
+        version: { type: integer, enum: [2] }
+        base: { type: integer, description: Pre-feedback value-per-night. }
+        adjustment: { type: number, format: double, description: Review feedback multiplier (±0.20). }
+        nightlyKeys: { type: integer }
+        locationTier: { type: integer }
+        spaceType: { type: string }
+        roomsCoefficient: { type: number, format: double }
+        factors:
+          type: array
+          items:
+            type: object
+            required: [key, label, points]
+            properties:
+              key: { type: string }
+              label: { type: string }
+              points: { type: number, format: double }
+        ai:
+          type: object
+          required: [source, bonus, summary]
+          properties:
+            source: { type: string, enum: [ai, fallback] }
+            bonus: { type: number, format: double }
+            summary: { type: string }
+        feedback:
+          type: object
+          required: [reviewCount, avgRating, applied]
+          properties:
+            reviewCount: { type: integer }
+            avgRating: { type: number, format: double, nullable: true }
+            applied: { type: boolean }
 
     ListingWithScore:
       type: object
@@ -947,6 +1005,14 @@ components:
         tags:
           type: array
           items: { type: string }
+        spaceType:
+          type: string
+          enum: [entire_place, private_room]
+          description: What's offered (DOK-160). Defaults to entire_place.
+        roomsOffered:
+          type: integer
+          nullable: true
+          description: Rooms offered when spaceType is private_room (1..15).
         ackAccepted:
           type: boolean
           description: >-

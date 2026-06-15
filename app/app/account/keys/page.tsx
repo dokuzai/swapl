@@ -49,7 +49,18 @@ export default async function KeysPage() {
     }),
     prisma.listing.findMany({
       where: { userId: session.userId },
-      select: { id: true, title: true, sizeSqm: true, sleeps: true, city: true, isVerified: true },
+      select: {
+        id: true,
+        title: true,
+        sizeSqm: true,
+        sleeps: true,
+        city: true,
+        isVerified: true,
+        spaceType: true,
+        roomsOffered: true,
+        nightlyKeysBase: true,
+        nightlyKeysAdjustment: true,
+      },
     }),
     prisma.keysTransaction.findMany({
       where: { userId: session.userId },
@@ -63,7 +74,7 @@ export default async function KeysPage() {
   const homeValues = listings.map((l) => ({
     id: l.id,
     title: l.title,
-    nightlyKeys: nightlyKeysFor({ sizeSqm: l.sizeSqm, sleeps: l.sleeps, city: l.city, isVerified: l.isVerified }),
+    nightlyKeys: nightlyKeysFor(l),
   }));
 
   const fmtDate = (d: Date) => d.toLocaleDateString(locale, { month: "short", day: "numeric" });

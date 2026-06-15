@@ -8,7 +8,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { listingCreateSchema } from "@/lib/validators";
 import { generateCityArt } from "@/lib/ai/city-illustration";
 import { coordForCity, jitterCoord } from "@/lib/city-coords";
-import { nightlyKeysFor } from "@/lib/keys/value";
+import { nightlyKeysFor, applyAdjustment } from "@/lib/keys/value";
 import { toDTO } from "@/lib/listing-utils";
 import { computeMatchScore } from "@/lib/match/score";
 import { getViewerListing } from "@/lib/listing-query";
@@ -37,7 +37,8 @@ export async function GET(req: Request, { params }: RouteContext<"/api/listings/
   }
 
   const session = await getSessionFromRequest(req);
-  const dto = toDTO(listing, { includeAddress: session?.userId === listing.userId });
+  const isOwner = session?.userId === listing.userId;
+  const dto = toDTO(listing, { includeAddress: isOwner, includeValuation: isOwner });
   const viewer = session ? await getViewerListing(session.userId) : null;
   const matchScore =
     viewer && viewer.id !== dto.id
@@ -136,6 +137,16 @@ export async function PUT(req: Request, { params }: RouteContext<"/api/listings/
     }
   }
 
+  const editBase = nightlyKeysFor({
+    sizeSqm: data.sizeSqm,
+    sleeps: data.sleeps,
+    city: data.city,
+    isVerified: existing.isVerified,
+    spaceType: data.spaceType,
+    roomsOffered: data.roomsOffered,
+    locationTier: existing.locationTier,
+  });
+
   const updated = await prisma.listing.update({
     where: { id },
     data: {
@@ -149,14 +160,15 @@ export async function PUT(req: Request, { params }: RouteContext<"/api/listings/
       lat,
       lng,
       sizeSqm: data.sizeSqm,
-      // Keys economy (DOK-155): recompute the cached value-per-night since
-      // size/sleeps/city may have changed; verification status is unchanged here.
-      nightlyKeys: nightlyKeysFor({
-        sizeSqm: data.sizeSqm,
-        sleeps: data.sleeps,
-        city: data.city,
-        isVerified: existing.isVerified,
-      }),
+      spaceType: data.spaceType,
+      roomsOffered: data.roomsOffered ?? null,
+      // Keys economy (DOK-155/DOK-163): recompute the deterministic BASE since
+      // size/sleeps/city/space may have changed; verification status is
+      // unchanged here. Preserve the existing location tier + review feedback
+      // adjustment so an edit doesn't reset them (the cron refreshes the AI
+      // signal + tier later). nightlyKeys reflects base × (1 + adjustment).
+      nightlyKeysBase: editBase,
+      nightlyKeys: applyAdjustment(editBase, existing.nightlyKeysAdjustment ?? 0),
       sleeps: data.sleeps,
       bedrooms: data.bedrooms,
       bathrooms: data.bathrooms,

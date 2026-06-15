@@ -13,6 +13,7 @@ import { GET as preTripReminders } from "../pre-trip-reminders/route";
 import { GET as reviewReminders } from "../review-reminders/route";
 import { GET as tripNudges } from "../trip-nudges/route";
 import { GET as windowProposals } from "../window-proposals/route";
+import { GET as listingValuation } from "../listing-valuation/route";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -25,6 +26,7 @@ const JOBS: Array<[string, (req: Request) => Promise<Response>]> = [
   ["review-reminders", reviewReminders],
   ["trip-nudges", tripNudges],
   ["window-proposals", windowProposals],
+  ["listing-valuation", listingValuation],
 ];
 
 const log = createLogger("cron:daily");

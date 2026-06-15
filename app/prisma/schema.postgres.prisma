@@ -378,6 +378,23 @@ model Listing {
   // listing reads expose it without recomputation; recomputed on listing edits.
   nightlyKeys    Int?
 
+  // What's offered (DOK-160): the whole home or just room(s) within it. A
+  // private_room earns fewer Keys/night than entire_place; roomsOffered scales
+  // a multi-room offer back up. Defaults keep every legacy row = whole home.
+  spaceType      String   @default("entire_place") // entire_place | private_room
+  roomsOffered   Int?     // # of rooms offered when spaceType=private_room (null/1 = one room)
+
+  // Unified valuation v2 (DOK-163). The nightly value is split into a persisted
+  // BASE (deterministic + AI feature signal + location tier) and a bounded
+  // ADJUSTMENT (review feedback loop, ±20% of base). nightlyKeys above always
+  // equals round(base*(1+adjustment)) clamped — recomputed periodically by the
+  // listing-valuation cron, never synchronously on the read path.
+  nightlyKeysBase       Int?    // pre-feedback value-per-night (base + tier + AI signal)
+  nightlyKeysAdjustment Float?  // review feedback multiplier delta, clamped to [-0.20, +0.20]
+  locationTier          Int?    // destination-desirability tier 1..5 (1 = most desirable)
+  valuationExplanation  String? // JSON (parseJSON): structured factors + weights for the UI
+  valuationUpdatedAt    DateTime? // last time the valuation cron recomputed this listing
+
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -401,6 +418,22 @@ model Listing {
   @@index([isActive])
   @@index([isFeatured, featuredUntil])
   @@index([isVerified])
+}
+
+// ---------- LOCATION TIER (DOK-163) ----------
+// Per-city destination-desirability tier, used by the valuation engine AND the
+// browse ranking. Persisted (not recomputed per read) and refreshed by the
+// listing-valuation cron from a seeded baseline + optional AI desirability.
+// Scale: tier 1 = world-magnet destinations … tier 5 = standard. The browse
+// boost derived from this is deliberately small so tier-5 small towns stay
+// visible (see lib/keys/location-tier.ts).
+model LocationTier {
+  id        String   @id @default(cuid())
+  city      String   @unique // matched case-insensitively via normalized key
+  tier      Int      // 1..5 (1 = most desirable)
+  source    String   @default("seed") // seed | ai | manual
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }
 
 // ---------- FAVORITE ----------

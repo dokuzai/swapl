@@ -1,84 +1,191 @@
-// Keys value derivation (DOK-155).
+// Keys value derivation — unified valuation engine v2 (DOK-163, DOK-160).
 //
 // Turns a listing into a transparent, predictable "Keys per night" number.
-// Keys are travel points, never money, so the formula is deliberately simple
-// and explainable to a member in one line — no opaque pricing.
+// Keys are travel points, never money, so the formula stays explainable to a
+// member in one line — no opaque pricing, no wild swings.
 //
-//   nightlyKeys = round( BASE
-//                        + sizePoints(sizeSqm)
-//                        + sleepsPoints(sleeps)
-//                        + cityTierPoints(city)
-//                        + verifiedBonus(isVerified) )
-//   clamped to [MIN_NIGHTLY_KEYS, MAX_NIGHTLY_KEYS].
+// The value is split into two persisted parts (see Listing schema):
 //
-// Rule of thumb the formula targets: a typical mid-size verified flat in a
-// popular city is ~10 Keys/night; a small place in a quiet city ~5; a large
-// verified home in a top-tier city ~16. Easy to reason about, no surprises.
+//   BASE       = round( BASE_NIGHTLY_KEYS
+//                       + sizePoints + sleepsPoints + locationTierPoints
+//                       + verifiedBonus + aiFeatureBonus )   × roomsCoefficient
+//   ADJUSTMENT = review feedback multiplier, clamped to ±FEEDBACK_BAND
+//
+//   nightlyKeys = clamp( round( base × (1 + adjustment) ) )
+//
+// BASE moves only when the home, its city tier, or the AI feature signal change
+// (recomputed by the listing-valuation cron). ADJUSTMENT drifts slowly from
+// review ratings within a hard band so a popular home is rewarded a little and
+// a poorly-rated one nudged down a little, never flipped. Everything here is
+// PURE + deterministic; the AI/persistence orchestration lives in
+// lib/keys/valuation.ts and reads back into these helpers.
 
 export const BASE_NIGHTLY_KEYS = 4;
 export const MIN_NIGHTLY_KEYS = 3;
 export const MAX_NIGHTLY_KEYS = 20;
 
-// City "tier" → extra Keys. Tier 1 = high-demand global cities, tier 2 =
-// popular, tier 3 (everything else) = standard. Names are matched
-// case-insensitively against the listing city. Kept small and visible on
-// purpose; unknown cities simply fall to tier 3 (no bonus).
-const TIER_1 = new Set(
-  ["paris", "tokyo", "brooklyn", "amsterdam", "seoul"].map((c) => c),
-);
-const TIER_2 = new Set(
-  ["lisbon", "berlin", "istanbul", "cdmx", "marrakesh"].map((c) => c),
-);
+// Feedback loop band (DOK-163): reviews may move a listing at most ±20% off its
+// base, ever. Keeps the value stable and ungameable.
+export const FEEDBACK_BAND = 0.2;
 
-export function cityTier(city: string): 1 | 2 | 3 {
-  const key = city.trim().toLowerCase();
-  if (TIER_1.has(key)) return 1;
-  if (TIER_2.has(key)) return 2;
-  return 3;
+// ---------- Location tier ----------
+// Destination desirability, tier 1 (world-magnet) … tier 5 (standard). The tier
+// is persisted per city (LocationTier table) and derived/refreshed by the
+// valuation cron; this seed map is the deterministic fallback when a city has
+// no persisted row yet (and the source of truth for the migration seed). See
+// lib/keys/location-tier.ts for the scale + browse boost.
+// Seeds preserve the original DOK-155 tiers (so legacy Keys values don't move):
+// the old "tier 1" cities map to desirability 1, the old "tier 2" to 2. Newer
+// strong-but-not-magnet destinations get 3/4; everything unknown is 5.
+const TIER_1 = ["paris", "tokyo", "brooklyn", "amsterdam", "seoul"];
+const TIER_2 = ["lisbon", "berlin", "istanbul", "cdmx", "marrakesh"];
+const TIER_3 = ["barcelona", "rome", "london", "new york", "vienna"];
+const TIER_4 = ["porto", "prague", "valencia", "naples", "lyon"];
+
+const SEED_TIERS: Record<string, number> = {};
+for (const c of TIER_1) SEED_TIERS[c] = 1;
+for (const c of TIER_2) SEED_TIERS[c] = 2;
+for (const c of TIER_3) SEED_TIERS[c] = 3;
+for (const c of TIER_4) SEED_TIERS[c] = 4;
+
+export function normalizeCityKey(city: string): string {
+  return city.trim().toLowerCase();
 }
 
-function cityTierPoints(city: string): number {
-  switch (cityTier(city)) {
+/** Seed/fallback desirability tier for a city (1..5). Unknown → 5 (standard). */
+export function seedLocationTier(city: string): number {
+  return SEED_TIERS[normalizeCityKey(city)] ?? 5;
+}
+
+/** Map a 1..5 desirability tier to bonus Keys. Bounded so it never dominates. */
+export function locationTierPoints(tier: number): number {
+  switch (clampTier(tier)) {
     case 1:
       return 4;
     case 2:
-      return 2;
+      return 2; // preserves the original DOK-155 tier-2 bonus
+    case 3:
+      return 1;
+    case 4:
+      return 1;
     default:
-      return 0;
+      return 0; // tier 5 — standard, no bonus
   }
 }
 
+export function clampTier(tier: number): number {
+  if (!Number.isFinite(tier)) return 5;
+  return Math.max(1, Math.min(5, Math.round(tier)));
+}
+
+// ---------- Legacy 1|2|3 city tier (kept for back-compat) ----------
+// The old API exposed cityTier(city) as 1|2|3. We keep it, mapping the new 1..5
+// desirability scale down: 1→1, 2→2, anything else → 3.
+export function cityTier(city: string): 1 | 2 | 3 {
+  const t = seedLocationTier(city);
+  if (t === 1) return 1;
+  if (t === 2) return 2;
+  return 3;
+}
+
+// ---------- Deterministic feature points ----------
 // Size: +1 Key per 25 m², capped at +6 (so a palace doesn't run away).
-function sizePoints(sizeSqm: number): number {
+export function sizePoints(sizeSqm: number): number {
   return Math.min(6, Math.floor(Math.max(0, sizeSqm) / 25));
 }
 
 // Sleeps: +1 Key per sleeping spot beyond 2, capped at +4.
-function sleepsPoints(sleeps: number): number {
+export function sleepsPoints(sleeps: number): number {
   return Math.min(4, Math.max(0, sleeps - 2));
 }
 
 // A verified home is worth a small, fixed premium (trust signal).
-function verifiedBonus(isVerified: boolean): number {
+export function verifiedBonus(isVerified: boolean): number {
   return isVerified ? 2 : 0;
 }
 
+// ---------- Rooms coefficient (DOK-160) ----------
+// A private room is worth a fraction of the whole home. With multiple rooms
+// offered the fraction rises but never reaches a full home. entire_place = 1.0.
+export const PRIVATE_ROOM_BASE_COEFFICIENT = 0.5; // one private room
+const PRIVATE_ROOM_PER_EXTRA = 0.12; // each extra offered room
+const PRIVATE_ROOM_MAX_COEFFICIENT = 0.85; // never a whole-home equivalent
+
+export function roomsCoefficient(spaceType: string, roomsOffered?: number | null): number {
+  if (spaceType !== "private_room") return 1;
+  const rooms = Math.max(1, Math.floor(roomsOffered ?? 1));
+  const coeff = PRIVATE_ROOM_BASE_COEFFICIENT + (rooms - 1) * PRIVATE_ROOM_PER_EXTRA;
+  return Math.min(PRIVATE_ROOM_MAX_COEFFICIENT, coeff);
+}
+
+// ---------- Inputs ----------
 export type ValuableListing = {
   sizeSqm: number;
   sleeps: number;
   city: string;
   isVerified: boolean;
+  // Optional v2 inputs — default to the legacy behaviour when omitted.
+  spaceType?: string | null;
+  roomsOffered?: number | null;
+  /** Persisted desirability tier (1..5). Falls back to the seed map for the city. */
+  locationTier?: number | null;
+  /** Bounded AI feature signal in Keys (already clamped by the caller). */
+  aiFeatureBonus?: number | null;
 };
 
-/** Derive the Keys-per-night value for a listing. Pure + deterministic. */
-export function nightlyKeysFor(listing: ValuableListing): number {
+/** Round + clamp a raw Keys value into the allowed nightly range. */
+export function clampNightly(raw: number): number {
+  return Math.max(MIN_NIGHTLY_KEYS, Math.min(MAX_NIGHTLY_KEYS, Math.round(raw)));
+}
+
+/**
+ * The BASE value-per-night (pre-feedback). Deterministic given its inputs.
+ * This is what gets persisted as Listing.nightlyKeysBase.
+ */
+export function computeBaseNightlyKeys(listing: ValuableListing): number {
+  const tier = listing.locationTier ?? seedLocationTier(listing.city);
   const raw =
     BASE_NIGHTLY_KEYS +
     sizePoints(listing.sizeSqm) +
     sleepsPoints(listing.sleeps) +
-    cityTierPoints(listing.city) +
-    verifiedBonus(listing.isVerified);
-  return Math.max(MIN_NIGHTLY_KEYS, Math.min(MAX_NIGHTLY_KEYS, Math.round(raw)));
+    locationTierPoints(tier) +
+    verifiedBonus(listing.isVerified) +
+    (listing.aiFeatureBonus ?? 0);
+  const scaled = raw * roomsCoefficient(listing.spaceType ?? "entire_place", listing.roomsOffered);
+  return clampNightly(scaled);
+}
+
+/** Clamp a feedback adjustment into the hard ±FEEDBACK_BAND band. */
+export function clampAdjustment(adjustment: number): number {
+  if (!Number.isFinite(adjustment)) return 0;
+  return Math.max(-FEEDBACK_BAND, Math.min(FEEDBACK_BAND, adjustment));
+}
+
+/**
+ * Apply a persisted feedback adjustment to a persisted base. Used by
+ * nightlyKeysFor when a listing has been valued by the cron.
+ */
+export function applyAdjustment(base: number, adjustment: number): number {
+  return clampNightly(base * (1 + clampAdjustment(adjustment)));
+}
+
+/**
+ * Derive the Keys-per-night value for a listing. Pure + deterministic.
+ *
+ * Back-compatible: with only the legacy inputs (size/sleeps/city/isVerified)
+ * this returns exactly the same number as before for whole-home listings — the
+ * deterministic fallback used everywhere the persisted value is absent.
+ *
+ * When persisted base/adjustment are supplied (the fast read path), they win:
+ * the value is round(base × (1 + adjustment)) clamped.
+ */
+export function nightlyKeysFor(
+  listing: ValuableListing & { nightlyKeysBase?: number | null; nightlyKeysAdjustment?: number | null },
+): number {
+  if (typeof listing.nightlyKeysBase === "number") {
+    return applyAdjustment(listing.nightlyKeysBase, listing.nightlyKeysAdjustment ?? 0);
+  }
+  return computeBaseNightlyKeys(listing);
 }
 
 const NIGHT_MS = 24 * 60 * 60 * 1000;

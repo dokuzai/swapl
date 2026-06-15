@@ -66,6 +66,10 @@ export async function keysAvailability(listingId: string): Promise<AvailabilityR
       sleeps: true,
       city: true,
       isVerified: true,
+      spaceType: true,
+      roomsOffered: true,
+      nightlyKeysBase: true,
+      nightlyKeysAdjustment: true,
       availableFrom: true,
       availableTo: true,
       minStayDays: true,
@@ -74,12 +78,7 @@ export async function keysAvailability(listingId: string): Promise<AvailabilityR
   });
   if (!listing) throw new KeysStayError("LISTING_NOT_FOUND", "Listing not found");
 
-  const nightly = nightlyKeysFor({
-    sizeSqm: listing.sizeSqm,
-    sleeps: listing.sleeps,
-    city: listing.city,
-    isVerified: listing.isVerified,
-  });
+  const nightly = nightlyKeysFor(listing);
 
   // All occupied ranges (agreements + Keys stays + host blocks) via the single
   // availability helper — no separate "what's taken" rule lives here.
@@ -137,6 +136,10 @@ export async function createKeysStay(args: {
       sleeps: true,
       city: true,
       isVerified: true,
+      spaceType: true,
+      roomsOffered: true,
+      nightlyKeysBase: true,
+      nightlyKeysAdjustment: true,
       availableFrom: true,
       availableTo: true,
       minStayDays: true,
@@ -166,12 +169,7 @@ export async function createKeysStay(args: {
     throw new KeysStayError("DATES_TAKEN", "Those dates are already booked");
   }
 
-  const nightly = nightlyKeysFor({
-    sizeSqm: listing.sizeSqm,
-    sleeps: listing.sleeps,
-    city: listing.city,
-    isVerified: listing.isVerified,
-  });
+  const nightly = nightlyKeysFor(listing);
   const keysCost = keysCostFor(nightly, nights);
 
   // Create the stay row and hold the guest's Keys in one transaction. The

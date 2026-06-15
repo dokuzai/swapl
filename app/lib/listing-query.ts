@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { type ListingDTO, toDTO } from "@/lib/listing-utils";
 import { computeMatchScore } from "@/lib/match/score";
 import { rangesOverlap } from "@/lib/listing/availability";
+import { browseTierBoost } from "@/lib/keys/location-tier";
 import type { ListingFilters } from "@/lib/listing-filters";
 
 const PAGE_SIZE = 12;
@@ -108,10 +109,15 @@ export async function queryListings(
       return { listing: dto, matchScore: score, band: rankBand(dto) };
     });
 
+    // Within a band, rank by match score plus a SMALL location-desirability
+    // boost (DOK-163) so strong destinations surface a little higher without
+    // burying quiet ones (boost is capped at BROWSE_TIER_MAX_BOOST).
     const ranked = applyFeaturedCap(
       scored.sort((a, b) => {
         if (BAND_WEIGHT[a.band] !== BAND_WEIGHT[b.band]) return BAND_WEIGHT[a.band] - BAND_WEIGHT[b.band];
-        return (b.matchScore ?? 0) - (a.matchScore ?? 0);
+        const aScore = (a.matchScore ?? 0) + browseTierBoost(a.listing.locationTier);
+        const bScore = (b.matchScore ?? 0) + browseTierBoost(b.listing.locationTier);
+        return bScore - aScore;
       })
     );
     return { items: ranked.slice(skip, skip + PAGE_SIZE), total: ranked.length, pageSize: PAGE_SIZE, page: filters.page };

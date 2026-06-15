@@ -101,6 +101,19 @@ export async function POST(req: Request) {
     }
   }
 
+  // Keys economy (DOK-155/DOK-163): cache the deterministic base value so reads
+  // don't recompute it. A new listing is never verified yet; the AI feature
+  // signal + location tier + feedback are layered in later by the
+  // listing-valuation cron (which sets nightlyKeysBase/Adjustment too).
+  const baseNightly = nightlyKeysFor({
+    sizeSqm: data.sizeSqm,
+    sleeps: data.sleeps,
+    city: data.city,
+    isVerified: false,
+    spaceType: data.spaceType,
+    roomsOffered: data.roomsOffered,
+  });
+
   const created = await prisma.listing.create({
     data: {
       userId: session.userId,
@@ -114,9 +127,10 @@ export async function POST(req: Request) {
       lat,
       lng,
       sizeSqm: data.sizeSqm,
-      // Keys economy (DOK-155): cache the derived value-per-night so reads
-      // don't recompute it. A new listing is never verified yet.
-      nightlyKeys: nightlyKeysFor({ sizeSqm: data.sizeSqm, sleeps: data.sleeps, city: data.city, isVerified: false }),
+      spaceType: data.spaceType,
+      roomsOffered: data.roomsOffered ?? null,
+      nightlyKeys: baseNightly,
+      nightlyKeysBase: baseNightly,
       sleeps: data.sleeps,
       bedrooms: data.bedrooms,
       bathrooms: data.bathrooms,

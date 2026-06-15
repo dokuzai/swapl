@@ -7828,6 +7828,54 @@ export interface components {
             isVerified: boolean;
             /** @description Owner-proof trust badge (DOK-162) — host attested + admin-approved. */
             ownerVerified: boolean;
+            /**
+             * @description What's offered (DOK-160) — the whole home or a private room within it.
+             * @enum {string}
+             */
+            spaceType?: "entire_place" | "private_room";
+            /** @description Number of rooms offered when spaceType is private_room. */
+            roomsOffered?: number | null;
+            /** @description Persisted value-per-night in Keys (DOK-163 unified valuation v2). */
+            nightlyKeys?: number | null;
+            /** @description Destination-desirability tier 1..5 (1 = most desirable). */
+            locationTier?: number | null;
+            /** @description Structured "how is this calculated" breakdown (DOK-163). Owner-only — null for non-owners. */
+            valuationExplanation?: components["schemas"]["ValuationExplanation"] | null;
+        };
+        ValuationExplanation: {
+            /** @enum {integer} */
+            version: 2;
+            /** @description Pre-feedback value-per-night. */
+            base: number;
+            /**
+             * Format: double
+             * @description Review feedback multiplier (±0.20).
+             */
+            adjustment: number;
+            nightlyKeys: number;
+            locationTier: number;
+            spaceType: string;
+            /** Format: double */
+            roomsCoefficient: number;
+            factors: {
+                key: string;
+                label: string;
+                /** Format: double */
+                points: number;
+            }[];
+            ai: {
+                /** @enum {string} */
+                source: "ai" | "fallback";
+                /** Format: double */
+                bonus: number;
+                summary: string;
+            };
+            feedback: {
+                reviewCount: number;
+                /** Format: double */
+                avgRating: number | null;
+                applied: boolean;
+            };
         };
         ListingWithScore: {
             listing: components["schemas"]["Listing"];
@@ -7898,6 +7946,13 @@ export interface components {
             maxStayDays: number;
             photos: string[];
             tags: string[];
+            /**
+             * @description What's offered (DOK-160). Defaults to entire_place.
+             * @enum {string}
+             */
+            spaceType?: "entire_place" | "private_room";
+            /** @description Rooms offered when spaceType is private_room (1..15). */
+            roomsOffered?: number | null;
             /** @description Publish acknowledgment (DOK-162). REQUIRED on create (POST /api/listings): the host self-attests they have the right to host in the chosen mode. Ignored on update. Missing/false -> 400 PUBLISH_ACK_REQUIRED. */
             ackAccepted?: boolean;
             /**

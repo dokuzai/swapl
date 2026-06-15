@@ -49,6 +49,10 @@ export const listingCreateSchema = z.object({
 
   photos: z.array(z.string().url()).max(20).default([]),
   tags: z.array(z.string()).max(20).default([]),
+
+  // What's offered (DOK-160). Defaults keep every listing a whole-home offer.
+  spaceType: z.enum(["entire_place", "private_room"]).default("entire_place"),
+  roomsOffered: z.number().int().min(1).max(15).optional(),
 });
 
 export type ListingCreateInput = z.infer<typeof listingCreateSchema>;
