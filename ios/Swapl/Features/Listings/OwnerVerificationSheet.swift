@@ -95,7 +95,15 @@ struct OwnerVerificationSheet: View {
             VStack(alignment: .leading, spacing: 8) {
                 infoRow(
                     icon: "sparkles",
-                    text: "We check your document automatically to confirm it really shows this home in your name."
+                    text: "We check your document automatically to confirm it really shows this home in your name. A person on our team always makes the final call."
+                )
+                infoRow(
+                    icon: "key.fill",
+                    text: "Renting is welcome. If you rent and your lease lets you host, you\u{2019}re fully eligible — you don\u{2019}t need to own the home."
+                )
+                infoRow(
+                    icon: "lock.fill",
+                    text: "We don\u{2019}t store your document after the check. Only the AI reads your personal details, and we keep just whether it shows a private home — never your ID, address, or the document itself."
                 )
                 infoRow(
                     icon: "person.2.fill",
@@ -128,11 +136,11 @@ struct OwnerVerificationSheet: View {
                 Image(systemName: "building.2.fill")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(SwaplSemanticLight.destructive)
-                Text("This looks like a business property")
+                Text("Our check suggests this may be a commercial property — we may have it wrong")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
             }
-            Text("Swapl is a home swap between private people, so company-owned or commercially managed properties can\u{2019}t be verified. If you think this is a mistake — for example, you own this home personally — we\u{2019}re happy to take another look.")
+            Text("Swapl is a home swap between private people, so company-owned or commercially managed properties can\u{2019}t be verified. But automated checks aren\u{2019}t perfect, and a real person — never the AI — makes the final decision. If this is your own home, get in touch: a member of our team reviews these personally, usually within 2 business days, and a lease, deed, or tax record in your name is enough to set it straight.")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
@@ -333,7 +341,7 @@ struct OwnerVerificationSheet: View {
         switch state {
         case "approved": return "Your listing shows the Verified owner badge."
         case "rejected": return note ?? "Try again with a clearer document in your name."
-        default: return "We'll review your document and update this within a few days."
+        default: return "A person on our team makes the final call — usually within 2 business days. If our automated check was unsure, it can take a little longer, but you're not stuck: we always follow up."
         }
     }
 
