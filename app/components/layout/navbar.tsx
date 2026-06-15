@@ -36,6 +36,7 @@ export async function Navbar() {
     wishlists: dict["menu.wishlists"],
     trips: dict["menu.trips"],
     keys: dict["keys.menu"],
+    invite: dict["invite.menu"],
     messages: dict["menu.messages"],
     profile: dict["menu.profile"],
     accountSettings: dict["dashboard.accountSettings"],

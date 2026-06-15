@@ -31,6 +31,8 @@ const KIND_KEY: Record<string, DictKey> = {
   refund: "keys.kind.refund",
   hold: "keys.kind.hold",
   release: "keys.kind.release",
+  referral_bonus: "keys.kind.referral_bonus",
+  invite_bonus: "keys.kind.invite_bonus",
 };
 
 export default async function KeysPage() {
@@ -149,9 +151,29 @@ export default async function KeysPage() {
               </div>
             </section>
 
+            {/* ---- Invite & earn entry point ---- */}
+            <section className="mb-10">
+              <Link
+                href="/account/invite"
+                className="surface-card surface-card--static p-6 flex items-center justify-between gap-4 group"
+              >
+                <div className="min-w-0">
+                  <p className="kicker mb-1.5">{t("invite.kicker")}</p>
+                  <h2 className="font-display text-2xl tracking-[-0.01em]">{t("invite.menu")}</h2>
+                  <p className="mt-1 text-sm" style={{ color: "var(--navy-2)" }}>{t("invite.subtitle")}</p>
+                </div>
+                <span className="shrink-0 text-2xl group-hover:translate-x-1 transition-transform" style={{ color: "var(--pink)" }} aria-hidden>→</span>
+              </Link>
+            </section>
+
             {/* ---- Ledger history ---- */}
             <section>
-              <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">{t("keys.history.title")}</h2>
+              <div className="flex items-baseline justify-between gap-3 mb-5">
+                <h2 className="font-display text-2xl tracking-[-0.01em]">{t("keys.history.title")}</h2>
+                <Link href="/account/keys/transactions" className="text-sm font-medium shrink-0" style={{ color: "var(--pink)" }}>
+                  {t("keys.tx.menu")}
+                </Link>
+              </div>
               <div className="surface-card surface-card--static p-6">
                 {transactions.length === 0 ? (
                   <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("keys.history.empty")}</p>
