@@ -74,7 +74,10 @@ class KeysWalletViewModel @Inject constructor(private val repo: KeysRepository) 
 }
 
 @Composable
-fun KeysWalletScreen(vm: KeysWalletViewModel = hiltViewModel()) {
+fun KeysWalletScreen(
+    onSeeAllTransactions: () -> Unit = {},
+    vm: KeysWalletViewModel = hiltViewModel(),
+) {
     LaunchedEffect(Unit) { vm.load() }
     var gifting by remember { mutableStateOf(false) }
 
@@ -149,6 +152,10 @@ fun KeysWalletScreen(vm: KeysWalletViewModel = hiltViewModel()) {
                                 }
                             }
                         }
+                    }
+                    // Filterable, paginated ledger (DOK-157).
+                    TextButton(onClick = onSeeAllTransactions, modifier = Modifier.fillMaxWidth()) {
+                        Text("See all points history")
                     }
                 }
             }

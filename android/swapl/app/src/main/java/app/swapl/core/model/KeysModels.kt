@@ -46,6 +46,8 @@ data class KeysTransaction(
             "refund" -> "Refund"
             "gift_sent" -> "Gift sent"
             "gift_received" -> "Gift received"
+            "referral_bonus" -> "Referral reward"
+            "invite_bonus" -> "Invite bonus"
             else -> kind.replace('_', ' ').replaceFirstChar { it.uppercase() }
         }
 }

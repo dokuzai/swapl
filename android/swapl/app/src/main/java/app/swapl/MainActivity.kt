@@ -48,11 +48,14 @@ import app.swapl.core.auth.AuthViewModel
 import app.swapl.design.SwaplApp
 import app.swapl.features.auth.LoginScreen
 import app.swapl.features.inspire.InspireScreen
+import app.swapl.features.keys.KeysTransactionsScreen
 import app.swapl.features.keys.KeysWalletScreen
 import app.swapl.features.listings.BrowseScreen
 import app.swapl.features.listings.ListingCreateScreen
 import app.swapl.features.listings.ListingDetailScreen
 import app.swapl.features.metrics.MetricsScreen
+import app.swapl.features.referrals.InviteAndEarnScreen
+import app.swapl.features.referrals.InviteToStayScreen
 import app.swapl.features.trips.TripDetailScreen
 import app.swapl.features.trips.TripsScreen
 import app.swapl.features.wishlists.WishlistsScreen
@@ -324,6 +327,7 @@ private fun HomeShell(
                             onOpenInterests = { accountNav.navigate("interests") },
                             onOpenSavedSearches = { accountNav.navigate("savedSearches") },
                             onOpenKeys = { accountNav.navigate("keys") },
+                            onOpenInvite = { accountNav.navigate("invite") },
                             onOpenMetrics = { accountNav.navigate("metrics") },
                             onOpenPublicProfile = { id -> accountNav.navigate("profile/$id") },
                             onOpenPersonalInfo = { accountNav.navigate("personalInfo") },
@@ -340,7 +344,14 @@ private fun HomeShell(
                         InterestsEditorScreen(onDone = { accountNav.popBackStack() })
                     }
                     composable("savedSearches") { SavedSearchesScreen() }
-                    composable("keys") { KeysWalletScreen() }
+                    composable("keys") {
+                        KeysWalletScreen(onSeeAllTransactions = { accountNav.navigate("keysHistory") })
+                    }
+                    composable("keysHistory") { KeysTransactionsScreen() }
+                    composable("invite") {
+                        InviteAndEarnScreen(onOpenInviteToStay = { accountNav.navigate("inviteToStay") })
+                    }
+                    composable("inviteToStay") { InviteToStayScreen() }
                     composable("metrics") { MetricsScreen() }
                     composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
                         PublicProfileScreen()

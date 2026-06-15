@@ -7,8 +7,10 @@ import app.swapl.core.model.KeysStayActionResponse
 import app.swapl.core.model.KeysStayCreateResponse
 import app.swapl.core.model.KeysStayRequest
 import app.swapl.core.model.KeysStaysResponse
+import app.swapl.core.model.KeysTransactionsResponse
 import app.swapl.core.model.KeysWallet
 import app.swapl.core.network.ApiClient
+import io.ktor.client.request.parameter
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -38,6 +40,20 @@ class KeysRepository @Inject constructor(private val api: ApiClient) {
     // GET /api/keys/stays — the caller's stays, both as guest and host.
     suspend fun stays(): KeysStaysResponse =
         api.client.get("${api.baseUrl}/api/keys/stays").body()
+
+    // GET /api/keys/transactions — paginated, kind-filterable ledger (DOK-157).
+    // `kind` narrows to one ledger kind server-side; `cursor` is the id of the
+    // last row from the previous page (stable cursor pagination, no offset drift).
+    suspend fun transactions(
+        kind: String? = null,
+        cursor: String? = null,
+        limit: Int = 50,
+    ): KeysTransactionsResponse =
+        api.client.get("${api.baseUrl}/api/keys/transactions") {
+            kind?.let { parameter("kind", it) }
+            cursor?.let { parameter("cursor", it) }
+            parameter("limit", limit)
+        }.body()
 
     // POST /api/keys/stays — request a stay. Holds the guest's Keys and notifies
     // the host. A 422 with "enough" in the body means insufficient balance.
