@@ -1114,6 +1114,52 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/me/story": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The caller's personal Swapl story
+         * @description Date-desc timeline of trips (places the caller stayed) and hostings (people the caller hosted), aggregated from COMPLETED swap agreements (each yields one trip + one hosting) and completed Keys stays (guest → trip, host → hosting), plus distinct city/country counts. Includes the caller's referral code/link so the share UI can compose the invite. Counterpart data is limited to display name + city/country.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StoryResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/profile": {
         parameters: {
             query?: never;
@@ -8228,6 +8274,44 @@ export interface components {
             reviews: components["schemas"]["ProfileReview"][];
             /** @description The host's active listings, newest first. */
             listings: components["schemas"]["Listing"][];
+        };
+        StoryEvent: {
+            /**
+             * @description trip = the caller stayed somewhere; hosting = the caller hosted someone.
+             * @enum {string}
+             */
+            kind: "trip" | "hosting";
+            city: string;
+            country: string;
+            /** Format: date-time */
+            dateFrom: string;
+            /** Format: date-time */
+            dateTo: string;
+            /** @description Year the stay ended (derived from dateTo). */
+            year: number;
+            /** @description The other party's display name, if known. No other counterpart data is exposed. */
+            counterpartName?: string | null;
+            /** @description Title of the home that was stayed in. */
+            listingTitle?: string | null;
+        };
+        StoryCounts: {
+            trips: number;
+            hostings: number;
+            /** @description Distinct city/country pairs across all events. */
+            cities: number;
+            /** @description Distinct countries across all events. */
+            countries: number;
+        };
+        StoryResponse: {
+            /** @description Trips + hostings, newest first by end date. */
+            timeline: components["schemas"]["StoryEvent"][];
+            counts: components["schemas"]["StoryCounts"];
+            share: {
+                /** @description The caller's referral code (minted lazily). */
+                referralCode: string;
+                /** @description Shareable ?ref= invite link for the code. */
+                referralUrl: string;
+            };
         };
         /** @description Partial update — only the keys present are touched. */
         ProfileUpdateRequest: {

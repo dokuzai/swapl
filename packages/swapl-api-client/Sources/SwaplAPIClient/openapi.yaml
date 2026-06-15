@@ -1452,6 +1452,53 @@ components:
           items: { $ref: '#/components/schemas/Listing' }
           description: The host's active listings, newest first.
 
+    StoryEvent:
+      type: object
+      required: [kind, city, country, dateFrom, dateTo, year]
+      properties:
+        kind:
+          type: string
+          enum: [trip, hosting]
+          description: trip = the caller stayed somewhere; hosting = the caller hosted someone.
+        city: { type: string }
+        country: { type: string }
+        dateFrom: { type: string, format: date-time }
+        dateTo: { type: string, format: date-time }
+        year: { type: integer, description: Year the stay ended (derived from dateTo). }
+        counterpartName:
+          type: string
+          nullable: true
+          description: The other party's display name, if known. No other counterpart data is exposed.
+        listingTitle:
+          type: string
+          nullable: true
+          description: Title of the home that was stayed in.
+
+    StoryCounts:
+      type: object
+      required: [trips, hostings, cities, countries]
+      properties:
+        trips: { type: integer }
+        hostings: { type: integer }
+        cities: { type: integer, description: Distinct city/country pairs across all events. }
+        countries: { type: integer, description: Distinct countries across all events. }
+
+    StoryResponse:
+      type: object
+      required: [timeline, counts, share]
+      properties:
+        timeline:
+          type: array
+          items: { $ref: '#/components/schemas/StoryEvent' }
+          description: Trips + hostings, newest first by end date.
+        counts: { $ref: '#/components/schemas/StoryCounts' }
+        share:
+          type: object
+          required: [referralCode, referralUrl]
+          properties:
+            referralCode: { type: string, description: The caller's referral code (minted lazily). }
+            referralUrl: { type: string, description: Shareable ?ref= invite link for the code. }
+
     ProfileUpdateRequest:
       type: object
       description: Partial update — only the keys present are touched.
@@ -2257,6 +2304,26 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/MeResponse' }
+        '401': { description: Unauthenticated }
+
+  /api/me/story:
+    get:
+      tags: [me]
+      summary: The caller's personal Swapl story
+      description: >-
+        Date-desc timeline of trips (places the caller stayed) and hostings
+        (people the caller hosted), aggregated from COMPLETED swap agreements
+        (each yields one trip + one hosting) and completed Keys stays (guest →
+        trip, host → hosting), plus distinct city/country counts. Includes the
+        caller's referral code/link so the share UI can compose the invite.
+        Counterpart data is limited to display name + city/country.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StoryResponse' }
         '401': { description: Unauthenticated }
 
   /api/profile:
