@@ -143,6 +143,9 @@ struct SwapChatView: View {
             composer
         }
         .background(SwaplSemanticLight.background.ignoresSafeArea())
+        // Hide the bottom tab bar inside a conversation so the composer sits
+        // flush at the bottom, like other messaging apps (WhatsApp etc.).
+        .toolbar(.hidden, for: .tabBar)
         .navigationTitle(otherName ?? "Messages")
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
