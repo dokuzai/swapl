@@ -180,4 +180,20 @@
     <string name="trip_oncover_badge">Verificado en TON</string>
     <string name="trip_oncover_view">Ver prueba</string>
     <string name="trip_oncover_explainer">Una prueba a prueba de manipulaciones de que tu cobertura es real: sin cripto, sin pagos, nada que tengas que hacer.</string>
+
+    <!-- Personas en la conversación del intercambio (DOK-187). -->
+    <string name="people_title">Personas</string>
+    <string name="people_role_principal">Compañero del intercambio</string>
+    <string name="people_role_guest">Invitado en el chat</string>
+    <string name="people_status_pending">Pendiente</string>
+    <string name="people_invite">Invitar</string>
+    <string name="people_add">Añadir</string>
+    <string name="people_add_cotravelers">Añadir coviajeros</string>
+    <string name="people_remove">Quitar a %1$s</string>
+    <string name="people_invite_title">Invitar a alguien al chat</string>
+    <string name="people_invite_reassure">Añade a un compañero o coviajero a la conversación. Puede chatear con todos aquí, pero solo los dos compañeros del intercambio pueden aceptar, contraofertar o cancelar el intercambio: invitar a alguien nunca le da ningún control sobre él.</string>
+    <string name="people_invite_field_label">Correo o usuario</string>
+    <string name="people_invite_field_placeholder">nombre@email.com o @usuario</string>
+    <string name="people_invite_send">Enviar invitación</string>
+    <string name="people_invite_cancel">Cancelar</string>
 </resources>

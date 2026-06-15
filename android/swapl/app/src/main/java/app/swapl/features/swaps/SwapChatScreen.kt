@@ -60,8 +60,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.core.model.ConversationParticipant
+import app.swapl.core.model.ParticipantSuggestion
 import app.swapl.core.model.SwapMessage
 import app.swapl.core.repository.ChatRepository
+import app.swapl.core.repository.ParticipantsRepository
+import io.ktor.client.plugins.ClientRequestException
 import app.swapl.designtokens.SwaplColors
 import app.swapl.designtokens.SwaplRadius
 import app.swapl.designtokens.SwaplSpacing
@@ -87,12 +91,24 @@ import javax.inject.Inject
 @HiltViewModel
 class SwapChatViewModel @Inject constructor(
     private val repo: ChatRepository,
+    private val participantsRepo: ParticipantsRepository,
     @ApplicationContext private val appContext: Context,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val proposalId: String = checkNotNull(savedState["proposalId"])
 
     val messages = mutableStateListOf<SwapMessage>()
+
+    // People panel (DOK-187). The roster is readable by everyone in the thread.
+    // `canManage` flips true only for the two principals — discovered by probing
+    // the principal-only suggestions endpoint (403 -> guest). Guests see who's
+    // here but never the invite/remove affordances.
+    val participants = mutableStateListOf<ConversationParticipant>()
+    val suggestions = mutableStateListOf<ParticipantSuggestion>()
+    var canManage by mutableStateOf(false); private set
+    var isInviting by mutableStateOf(false); private set
+    var inviteError by mutableStateOf<String?>(null); private set
+    var removingId by mutableStateOf<String?>(null); private set
     var draft by mutableStateOf("")
     val pendingPhotoUrls = mutableStateListOf<String>()
 
@@ -133,6 +149,75 @@ class SwapChatViewModel @Inject constructor(
         hasLoadedOnce = true
         isLoading = false
     }
+
+    // Roster + a one-shot probe for invite powers. The suggestions endpoint is
+    // principal-only, so a 200 means "you can manage people" (and gives us the
+    // co-traveler quick-picks for free); a 403 means the viewer is a guest.
+    fun loadParticipants() = viewModelScope.launch {
+        runCatching { participantsRepo.list(proposalId) }
+            .onSuccess {
+                participants.clear()
+                participants.addAll(it)
+            }
+        runCatching { participantsRepo.suggestions(proposalId) }
+            .onSuccess { list ->
+                canManage = true
+                suggestions.clear()
+                suggestions.addAll(list)
+            }
+            .onFailure { canManage = false }
+    }
+
+    fun invite(intent: PeopleInvite) = viewModelScope.launch {
+        isInviting = true
+        inviteError = null
+        runCatching {
+            when (intent) {
+                is PeopleInvite.ByEmail -> participantsRepo.inviteByEmail(proposalId, intent.email)
+                is PeopleInvite.ByHandle -> participantsRepo.inviteByUserId(proposalId, intent.handle)
+                is PeopleInvite.ByUserId -> participantsRepo.inviteByUserId(proposalId, intent.userId)
+            }
+        }
+            .onSuccess {
+                refreshParticipants()
+                inviteError = null
+            }
+            .onFailure { inviteError = inviteMessage(it) }
+        isInviting = false
+    }
+
+    fun remove(p: ConversationParticipant) = viewModelScope.launch {
+        if (p.isPrincipal) return@launch
+        removingId = p.id
+        runCatching { participantsRepo.remove(proposalId, p.id) }
+            .onSuccess { participants.remove(p) }
+            .onFailure { inviteError = inviteMessage(it) }
+        removingId = null
+    }
+
+    fun clearInviteError() { inviteError = null }
+
+    private suspend fun refreshParticipants() {
+        runCatching { participantsRepo.list(proposalId) }
+            .onSuccess {
+                participants.clear()
+                participants.addAll(it)
+            }
+        runCatching { participantsRepo.suggestions(proposalId) }
+            .onSuccess { list ->
+                suggestions.clear()
+                suggestions.addAll(list)
+            }
+    }
+
+    private fun inviteMessage(t: Throwable): String =
+        (t as? ClientRequestException)?.let {
+            when (it.response.status.value) {
+                403 -> "Only the two swap partners can invite people."
+                404 -> "We couldn't find that person. Check the email or handle."
+                else -> null
+            }
+        } ?: t.message ?: "Couldn't send the invite. Try again."
 
     // Older history: page backwards from the oldest message we hold. Peeks
     // (markRead=false) so paging history never changes receipts.
@@ -260,7 +345,10 @@ fun SwapChatScreen(
     otherName: String? = null,
     vm: SwapChatViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(Unit) { vm.load() }
+    LaunchedEffect(Unit) {
+        vm.load()
+        vm.loadParticipants()
+    }
 
     // Foreground-only poll: tie the loop to the screen's lifecycle so it pauses
     // in the background and resumes on return — no WebSocket, just a light GET.
@@ -286,6 +374,22 @@ fun SwapChatScreen(
     }
 
     Column(Modifier.fillMaxSize()) {
+        // People panel (DOK-187) — who's in this conversation, plus invite/remove
+        // for principals. Guests see the roster but no controls.
+        if (vm.participants.isNotEmpty()) {
+            PeoplePanel(
+                participants = vm.participants,
+                canManage = vm.canManage,
+                suggestions = vm.suggestions,
+                isInviting = vm.isInviting,
+                inviteError = vm.inviteError,
+                removingId = vm.removingId,
+                onInvite = { vm.invite(it) },
+                onRemove = { vm.remove(it) },
+                onDismissInviteError = { vm.clearInviteError() },
+            )
+        }
+
         Box(Modifier.weight(1f).fillMaxWidth()) {
             when {
                 vm.isLoading && !vm.hasLoadedOnce ->

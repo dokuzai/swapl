@@ -202,4 +202,22 @@
     <string name="trip_oncover_badge">Verified on TON</string>
     <string name="trip_oncover_view">View proof</string>
     <string name="trip_oncover_explainer">A tamper-proof record that your cover is real — not crypto, no payment, nothing for you to do.</string>
+
+    <!-- People in a swap conversation (DOK-187). Anyone in the thread can bring a
+         few extra people along — a partner, a co-traveler, a friend. Guests chat
+         like everyone else but never get any say over the swap itself. -->
+    <string name="people_title">People</string>
+    <string name="people_role_principal">Swap partner</string>
+    <string name="people_role_guest">Guest in the chat</string>
+    <string name="people_status_pending">Pending</string>
+    <string name="people_invite">Invite</string>
+    <string name="people_add">Add</string>
+    <string name="people_add_cotravelers">Add co-travelers</string>
+    <string name="people_remove">Remove %1$s</string>
+    <string name="people_invite_title">Invite someone to the chat</string>
+    <string name="people_invite_reassure">Add a partner or co-traveler to the conversation. They can chat with everyone here, but only the two swap partners can accept, counter, or cancel the swap — inviting someone never gives them any control over it.</string>
+    <string name="people_invite_field_label">Email or handle</string>
+    <string name="people_invite_field_placeholder">name@email.com or @handle</string>
+    <string name="people_invite_send">Send invite</string>
+    <string name="people_invite_cancel">Cancel</string>
 </resources>

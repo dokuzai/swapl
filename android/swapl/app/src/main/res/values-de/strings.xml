@@ -180,4 +180,20 @@
     <string name="trip_oncover_badge">Auf TON verifiziert</string>
     <string name="trip_oncover_view">Nachweis ansehen</string>
     <string name="trip_oncover_explainer">Ein fälschungssicherer Nachweis, dass dein Versicherungsschutz echt ist — keine Krypto, keine Zahlung, nichts, was du tun musst.</string>
+
+    <!-- Personen im Tausch-Chat (DOK-187). -->
+    <string name="people_title">Personen</string>
+    <string name="people_role_principal">Tauschpartner</string>
+    <string name="people_role_guest">Gast im Chat</string>
+    <string name="people_status_pending">Ausstehend</string>
+    <string name="people_invite">Einladen</string>
+    <string name="people_add">Hinzufügen</string>
+    <string name="people_add_cotravelers">Mitreisende hinzufügen</string>
+    <string name="people_remove">%1$s entfernen</string>
+    <string name="people_invite_title">Jemanden in den Chat einladen</string>
+    <string name="people_invite_reassure">Füge einen Partner oder Mitreisenden zur Unterhaltung hinzu. Er kann mit allen hier chatten, aber nur die beiden Tauschpartner können den Tausch annehmen, ein Gegenangebot machen oder abbrechen — eine Einladung gibt niemandem Kontrolle darüber.</string>
+    <string name="people_invite_field_label">E-Mail oder Handle</string>
+    <string name="people_invite_field_placeholder">name@email.com oder @handle</string>
+    <string name="people_invite_send">Einladung senden</string>
+    <string name="people_invite_cancel">Abbrechen</string>
 </resources>

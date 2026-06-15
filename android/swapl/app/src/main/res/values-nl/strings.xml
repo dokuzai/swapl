@@ -180,4 +180,20 @@
     <string name="trip_oncover_badge">Geverifieerd op TON</string>
     <string name="trip_oncover_view">Bewijs bekijken</string>
     <string name="trip_oncover_explainer">Een fraudebestendig bewijs dat je dekking echt is — geen crypto, geen betaling, niets wat jij hoeft te doen.</string>
+
+    <!-- Mensen in het ruilgesprek (DOK-187). -->
+    <string name="people_title">Mensen</string>
+    <string name="people_role_principal">Ruilpartner</string>
+    <string name="people_role_guest">Gast in de chat</string>
+    <string name="people_status_pending">In afwachting</string>
+    <string name="people_invite">Uitnodigen</string>
+    <string name="people_add">Toevoegen</string>
+    <string name="people_add_cotravelers">Medereizigers toevoegen</string>
+    <string name="people_remove">%1$s verwijderen</string>
+    <string name="people_invite_title">Iemand uitnodigen in de chat</string>
+    <string name="people_invite_reassure">Voeg een partner of medereiziger toe aan het gesprek. Die kan met iedereen hier chatten, maar alleen de twee ruilpartners kunnen de ruil accepteren, een tegenbod doen of annuleren — iemand uitnodigen geeft hen daar nooit zeggenschap over.</string>
+    <string name="people_invite_field_label">E-mail of handle</string>
+    <string name="people_invite_field_placeholder">naam@email.com of @handle</string>
+    <string name="people_invite_send">Uitnodiging sturen</string>
+    <string name="people_invite_cancel">Annuleren</string>
 </resources>

@@ -180,4 +180,20 @@
     <string name="trip_oncover_badge">Vérifié sur TON</string>
     <string name="trip_oncover_view">Voir la preuve</string>
     <string name="trip_oncover_explainer">Une preuve infalsifiable que votre couverture est réelle — pas de crypto, aucun paiement, rien à faire de votre côté.</string>
+
+    <!-- Personnes dans la conversation d'échange (DOK-187). -->
+    <string name="people_title">Personnes</string>
+    <string name="people_role_principal">Partenaire de l\'échange</string>
+    <string name="people_role_guest">Invité dans le chat</string>
+    <string name="people_status_pending">En attente</string>
+    <string name="people_invite">Inviter</string>
+    <string name="people_add">Ajouter</string>
+    <string name="people_add_cotravelers">Ajouter des co-voyageurs</string>
+    <string name="people_remove">Retirer %1$s</string>
+    <string name="people_invite_title">Inviter quelqu\'un dans le chat</string>
+    <string name="people_invite_reassure">Ajoutez un partenaire ou un co-voyageur à la conversation. Il peut discuter avec tout le monde ici, mais seuls les deux partenaires de l\'échange peuvent accepter, contre-proposer ou annuler l\'échange — inviter quelqu\'un ne lui donne jamais aucun contrôle dessus.</string>
+    <string name="people_invite_field_label">E-mail ou identifiant</string>
+    <string name="people_invite_field_placeholder">nom@email.com ou @identifiant</string>
+    <string name="people_invite_send">Envoyer l\'invitation</string>
+    <string name="people_invite_cancel">Annuler</string>
 </resources>

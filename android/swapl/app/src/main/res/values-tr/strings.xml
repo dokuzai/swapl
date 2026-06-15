@@ -180,4 +180,20 @@
     <string name="trip_oncover_badge">TON\'da doğrulandı</string>
     <string name="trip_oncover_view">Kanıtı gör</string>
     <string name="trip_oncover_explainer">Teminatının gerçek olduğunun kurcalanamaz bir kanıtı — kripto yok, ödeme yok, senin yapman gereken hiçbir şey yok.</string>
+
+    <!-- Takas sohbetindeki kişiler (DOK-187). -->
+    <string name="people_title">Kişiler</string>
+    <string name="people_role_principal">Takas ortağı</string>
+    <string name="people_role_guest">Sohbette misafir</string>
+    <string name="people_status_pending">Beklemede</string>
+    <string name="people_invite">Davet et</string>
+    <string name="people_add">Ekle</string>
+    <string name="people_add_cotravelers">Yol arkadaşları ekle</string>
+    <string name="people_remove">%1$s kişisini çıkar</string>
+    <string name="people_invite_title">Sohbete birini davet et</string>
+    <string name="people_invite_reassure">Sohbete bir partner veya yol arkadaşı ekle. Buradaki herkesle yazışabilir, ama takası yalnızca iki takas ortağı kabul edebilir, karşı teklif verebilir veya iptal edebilir — birini davet etmek ona takas üzerinde asla bir kontrol vermez.</string>
+    <string name="people_invite_field_label">E-posta veya kullanıcı adı</string>
+    <string name="people_invite_field_placeholder">ad@email.com veya @kullanıcıadı</string>
+    <string name="people_invite_send">Daveti gönder</string>
+    <string name="people_invite_cancel">İptal</string>
 </resources>
