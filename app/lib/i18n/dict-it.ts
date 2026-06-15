@@ -1025,19 +1025,20 @@ export const it: Partial<Record<DictKey, string>> = {
 
   "publishAck.heading": "Prima di pubblicare",
   "publishAck.modeLabel": "Come ospiterai?",
-  "publishAck.mode.entire": "Tutta la casa mentre sono via",
-  "publishAck.mode.room": "Una stanza, o la casa mentre sono presente",
-  "publishAck.mode.entireHint":
-    "Cedi l'intera casa. Se sei in affitto, di solito il contratto richiede il consenso del locatore — con o senza soldi.",
-  "publishAck.mode.roomHint":
-    "Pura ospitalità, come ospitare dei parenti. Nessun permesso necessario, anche da inquilino.",
+  "publishAck.mode.entire": "Tutta la casa, mentre sono via",
+  "publishAck.mode.room": "Una stanza, o mentre ci sono io",
+  "publishAck.text.entire":
+    "Ho il diritto di offrire tutta la mia casa per uno scambio mentre sono via — e se sono in affitto, il mio contratto mi permette di ospitare quando non ci sono.",
+  "publishAck.text.entireFine": "Sta a me rispettare il contratto d'affitto, le regole del condominio e le leggi locali.",
+  "publishAck.text.room": "Ho il diritto di ospitare questo scambio.",
+  "publishAck.text.roomFine": "Rispetterò le regole del condominio e le leggi locali.",
   "publishAck.checkbox": "Ho letto e accetto la dichiarazione qui sopra.",
   "publishAck.required": "Conferma la dichiarazione qui sopra prima di pubblicare.",
 
-  "verifyOwnership.card.title": "Verifica la proprietà",
+  "verifyOwnership.card.title": "Badge Proprietario verificato — facoltativo",
   "verifyOwnership.card.titleDone": "Proprietario verificato",
   "verifyOwnership.card.body":
-    "Facoltativo. Carica una prova di proprietà per ottenere il badge Proprietario verificato che aumenta la fiducia.",
+    "Una spinta di fiducia per gli ospiti. Mai obbligatorio per pubblicare o scambiare.",
   "verifyOwnership.card.bodyDone": "Il tuo annuncio mostra il badge Proprietario verificato.",
   "verifyOwnership.card.cta": "Aggiungi prova →",
   "verifyOwnership.card.ctaStatus": "Vedi stato →",

@@ -1009,19 +1009,20 @@ export const es: Partial<Record<DictKey, string>> = {
 
   "publishAck.heading": "Antes de publicar",
   "publishAck.modeLabel": "¿Cómo vas a hospedar?",
-  "publishAck.mode.entire": "Toda la casa mientras estoy fuera",
-  "publishAck.mode.room": "Una habitación, o mi casa estando yo presente",
-  "publishAck.mode.entireHint":
-    "Cedes toda la casa. Si alquilas, tu contrato suele requerir el consentimiento del arrendador — con dinero o sin él.",
-  "publishAck.mode.roomHint":
-    "Pura hospitalidad, como recibir a familiares. No se necesita permiso, ni siquiera como inquilino.",
+  "publishAck.mode.entire": "Toda la casa, mientras estoy fuera",
+  "publishAck.mode.room": "Una habitación, o estando yo presente",
+  "publishAck.text.entire":
+    "Tengo derecho a ofrecer toda mi casa para un intercambio mientras estoy fuera — y si alquilo, mi contrato me permite alojar invitados cuando no estoy.",
+  "publishAck.text.entireFine": "Me corresponde cumplir mi contrato de alquiler, las normas del edificio y las leyes locales.",
+  "publishAck.text.room": "Tengo derecho a alojar este intercambio.",
+  "publishAck.text.roomFine": "Cumpliré las normas del edificio y las leyes locales.",
   "publishAck.checkbox": "He leído y acepto la declaración anterior.",
   "publishAck.required": "Confirma la declaración anterior antes de publicar.",
 
-  "verifyOwnership.card.title": "Verificar propiedad",
+  "verifyOwnership.card.title": "Insignia de Propietario verificado — opcional",
   "verifyOwnership.card.titleDone": "Propietario verificado",
   "verifyOwnership.card.body":
-    "Opcional. Sube una prueba de propiedad para obtener la insignia de Propietario verificado que genera confianza.",
+    "Un plus de confianza para los huéspedes. Nunca obligatorio para publicar ni intercambiar.",
   "verifyOwnership.card.bodyDone": "Tu anuncio lleva la insignia de Propietario verificado.",
   "verifyOwnership.card.cta": "Añadir prueba →",
   "verifyOwnership.card.ctaStatus": "Ver estado →",

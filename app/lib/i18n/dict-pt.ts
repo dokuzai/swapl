@@ -1024,19 +1024,20 @@ export const pt: Partial<Record<DictKey, string>> = {
 
   "publishAck.heading": "Antes de publicar",
   "publishAck.modeLabel": "Como vai receber?",
-  "publishAck.mode.entire": "A casa inteira enquanto estou fora",
-  "publishAck.mode.room": "Um quarto, ou a minha casa estando eu presente",
-  "publishAck.mode.entireHint":
-    "Cede a casa inteira. Se arrenda, o seu contrato normalmente exige o consentimento do senhorio — com dinheiro ou não.",
-  "publishAck.mode.roomHint":
-    "Pura hospitalidade, como receber familiares. Não é preciso autorização, mesmo como inquilino.",
+  "publishAck.mode.entire": "A casa inteira, enquanto estou fora",
+  "publishAck.mode.room": "Um quarto, ou estando eu presente",
+  "publishAck.text.entire":
+    "Tenho o direito de oferecer a minha casa inteira para uma troca enquanto estou fora — e se arrendo, o meu contrato permite-me receber hóspedes quando não estou.",
+  "publishAck.text.entireFine": "Cabe-me cumprir o meu contrato de arrendamento, as regras do edifício e as leis locais.",
+  "publishAck.text.room": "Tenho o direito de receber esta troca.",
+  "publishAck.text.roomFine": "Vou cumprir as regras do edifício e as leis locais.",
   "publishAck.checkbox": "Li e concordo com a declaração acima.",
   "publishAck.required": "Confirme a declaração acima antes de publicar.",
 
-  "verifyOwnership.card.title": "Verificar propriedade",
+  "verifyOwnership.card.title": "Selo Proprietário verificado — opcional",
   "verifyOwnership.card.titleDone": "Proprietário verificado",
   "verifyOwnership.card.body":
-    "Opcional. Carregue uma prova de propriedade para obter o selo Proprietário verificado que gera confiança.",
+    "Um reforço de confiança para os hóspedes. Nunca obrigatório para publicar ou trocar.",
   "verifyOwnership.card.bodyDone": "O seu anúncio tem o selo Proprietário verificado.",
   "verifyOwnership.card.cta": "Adicionar prova →",
   "verifyOwnership.card.ctaStatus": "Ver estado →",

@@ -1010,18 +1010,19 @@ export const de: Partial<Record<DictKey, string>> = {
   "publishAck.heading": "Vor dem Veröffentlichen",
   "publishAck.modeLabel": "Wie wirst du gastgeben?",
   "publishAck.mode.entire": "Die ganze Wohnung, während ich weg bin",
-  "publishAck.mode.room": "Ein Zimmer, oder mein Zuhause, während ich da bin",
-  "publishAck.mode.entireHint":
-    "Du überlässt die ganze Wohnung. Wenn du mietest, verlangt dein Mietvertrag meist die Zustimmung des Vermieters — mit oder ohne Geld.",
-  "publishAck.mode.roomHint":
-    "Reine Gastfreundschaft, wie Verwandte zu Besuch. Keine Erlaubnis nötig, auch als Mieter.",
+  "publishAck.mode.room": "Ein Zimmer, oder während ich da bin",
+  "publishAck.text.entire":
+    "Ich habe das Recht, meine ganze Wohnung für einen Tausch anzubieten, während ich weg bin — und wenn ich miete, erlaubt mir mein Mietvertrag, Gäste zu beherbergen, wenn ich nicht da bin.",
+  "publishAck.text.entireFine": "Ich bin dafür verantwortlich, meinen Mietvertrag, die Hausordnung und die örtlichen Gesetze einzuhalten.",
+  "publishAck.text.room": "Ich habe das Recht, diesen Tausch zu beherbergen.",
+  "publishAck.text.roomFine": "Ich halte mich an die Hausordnung und die örtlichen Gesetze.",
   "publishAck.checkbox": "Ich habe die obige Erklärung gelesen und stimme ihr zu.",
   "publishAck.required": "Bitte bestätige die obige Erklärung vor dem Veröffentlichen.",
 
-  "verifyOwnership.card.title": "Eigentum verifizieren",
+  "verifyOwnership.card.title": "Abzeichen Verifizierter Eigentümer — optional",
   "verifyOwnership.card.titleDone": "Verifizierter Eigentümer",
   "verifyOwnership.card.body":
-    "Optional. Lade einen Eigentumsnachweis hoch, um das Abzeichen Verifizierter Eigentümer zu erhalten, das Vertrauen schafft.",
+    "Ein Vertrauensplus für Gäste. Nie erforderlich, um zu veröffentlichen oder zu tauschen.",
   "verifyOwnership.card.bodyDone": "Dein Inserat trägt das Abzeichen Verifizierter Eigentümer.",
   "verifyOwnership.card.cta": "Nachweis hinzufügen →",
   "verifyOwnership.card.ctaStatus": "Status ansehen →",

@@ -1024,19 +1024,20 @@ export const tr: Partial<Record<DictKey, string>> = {
 
   "publishAck.heading": "Yayınlamadan önce",
   "publishAck.modeLabel": "Nasıl ağırlayacaksın?",
-  "publishAck.mode.entire": "Ben yokken evin tamamı",
-  "publishAck.mode.room": "Bir oda ya da ben evdeyken evim",
-  "publishAck.mode.entireHint":
-    "Evin tamamını devredersin. Kiracıysan, sözleşmen genellikle ev sahibinin onayını gerektirir — para olsun olmasın.",
-  "publishAck.mode.roomHint":
-    "Akrabaları ağırlamak gibi saf misafirperverlik. Kiracı olsan bile izne gerek yok.",
+  "publishAck.mode.entire": "Evin tamamı, ben yokken",
+  "publishAck.mode.room": "Bir oda ya da ben evdeyken",
+  "publishAck.text.entire":
+    "Ben yokken evimin tamamını takas için sunma hakkım var — ve kiracıysam, sözleşmem ben yokken misafir ağırlamama izin veriyor.",
+  "publishAck.text.entireFine": "Kira sözleşmeme, bina kurallarına ve yerel yasalara uymak benim sorumluluğum.",
+  "publishAck.text.room": "Bu takası ağırlama hakkım var.",
+  "publishAck.text.roomFine": "Bina kurallarına ve yerel yasalara uyacağım.",
   "publishAck.checkbox": "Yukarıdaki beyanı okudum ve kabul ediyorum.",
   "publishAck.required": "Yayınlamadan önce yukarıdaki beyanı onayla.",
 
-  "verifyOwnership.card.title": "Mülkiyeti doğrula",
+  "verifyOwnership.card.title": "Doğrulanmış mal sahibi rozeti — isteğe bağlı",
   "verifyOwnership.card.titleDone": "Doğrulanmış mal sahibi",
   "verifyOwnership.card.body":
-    "İsteğe bağlı. Güven oluşturan Doğrulanmış mal sahibi rozetini kazanmak için bir mülkiyet kanıtı yükle.",
+    "Misafirler için bir güven artışı. Yayınlamak veya takas yapmak için asla gerekli değil.",
   "verifyOwnership.card.bodyDone": "İlanın Doğrulanmış mal sahibi rozetini taşıyor.",
   "verifyOwnership.card.cta": "Kanıt ekle →",
   "verifyOwnership.card.ctaStatus": "Durumu gör →",

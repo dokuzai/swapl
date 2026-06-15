@@ -58,16 +58,16 @@ export default async function EditListingPage(props: PageProps<"/listings/[id]/e
             >
               <div className="flex items-center gap-2 mb-2">
                 {listing.ownerVerified && <OwnerVerifiedBadge label="Verified owner" />}
-                <h2 className="font-display text-xl tracking-[-0.01em]">
-                  {listing.ownerVerified ? "Verified owner" : "Verify ownership"}
+                <h2 className="font-display text-xl tracking-[-0.01em]" style={listing.ownerVerified ? undefined : { color: "var(--navy-2)" }}>
+                  {listing.ownerVerified ? "Verified owner" : "Verified owner badge — optional"}
                 </h2>
               </div>
-              <p className="text-sm" style={{ color: "var(--navy-2)" }}>
+              <p className="text-sm" style={{ color: listing.ownerVerified ? "var(--navy-2)" : "var(--navy-3)" }}>
                 {listing.ownerVerified
                   ? "Your listing carries the Verified owner badge."
-                  : "Optional. Upload a proof of ownership to earn a Verified owner badge that builds trust with swappers."}
+                  : "A trust boost for guests. Never required to publish or swap."}
               </p>
-              <span className="mt-3 inline-block font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--pink)" }}>
+              <span className="mt-3 inline-block font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: listing.ownerVerified ? "var(--pink)" : "var(--navy-3)" }}>
                 {listing.ownerVerified ? "View status →" : "Add proof →"}
               </span>
             </Link>

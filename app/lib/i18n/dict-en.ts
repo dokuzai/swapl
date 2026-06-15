@@ -1038,20 +1038,21 @@ export const en = {
   // Publish acknowledgment (DOK-162) — mandatory self-attestation at publish
   "publishAck.heading": "Before you publish",
   "publishAck.modeLabel": "How will you host?",
-  "publishAck.mode.entire": "The whole home while I'm away",
-  "publishAck.mode.room": "A room, or my home while I'm here",
-  "publishAck.mode.entireHint":
-    "You hand over the whole place. If you rent, your lease usually needs your landlord's consent — money or not.",
-  "publishAck.mode.roomHint":
-    "Plain hospitality, like having relatives stay. No permission needed, even as a tenant.",
+  "publishAck.mode.entire": "The whole home, while I'm away",
+  "publishAck.mode.room": "A room, or while I'm here",
+  "publishAck.text.entire":
+    "I have the right to offer my whole home for a swap while I'm away — and if I rent, my lease lets me host guests when I'm not there.",
+  "publishAck.text.entireFine": "I'm responsible for following my lease, building rules, and local laws.",
+  "publishAck.text.room": "I have the right to host this swap.",
+  "publishAck.text.roomFine": "I'll follow my building rules and local laws.",
   "publishAck.checkbox": "I have read and agree to the statement above.",
   "publishAck.required": "Please confirm the statement above before publishing.",
 
   // Optional ownership verification (DOK-162)
-  "verifyOwnership.card.title": "Verify ownership",
+  "verifyOwnership.card.title": "Verified owner badge — optional",
   "verifyOwnership.card.titleDone": "Verified owner",
   "verifyOwnership.card.body":
-    "Optional. Upload a proof of ownership to earn a Verified owner badge that builds trust with swappers.",
+    "A trust boost for guests. Never required to publish or swap.",
   "verifyOwnership.card.bodyDone": "Your listing carries the Verified owner badge.",
   "verifyOwnership.card.cta": "Add proof →",
   "verifyOwnership.card.ctaStatus": "View status →",

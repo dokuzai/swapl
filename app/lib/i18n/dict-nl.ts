@@ -1024,19 +1024,20 @@ export const nl: Partial<Record<DictKey, string>> = {
 
   "publishAck.heading": "Voordat je publiceert",
   "publishAck.modeLabel": "Hoe ga je ontvangen?",
-  "publishAck.mode.entire": "De hele woning terwijl ik weg ben",
-  "publishAck.mode.room": "Een kamer, of mijn woning terwijl ik er ben",
-  "publishAck.mode.entireHint":
-    "Je geeft de hele woning uit handen. Als je huurt, vereist je huurcontract meestal toestemming van de verhuurder — geld of niet.",
-  "publishAck.mode.roomHint":
-    "Pure gastvrijheid, zoals familie op bezoek. Geen toestemming nodig, ook niet als huurder.",
+  "publishAck.mode.entire": "De hele woning, terwijl ik weg ben",
+  "publishAck.mode.room": "Een kamer, of terwijl ik er ben",
+  "publishAck.text.entire":
+    "Ik heb het recht om mijn hele woning aan te bieden voor een swap terwijl ik weg ben — en als ik huur, mag ik volgens mijn huurcontract gasten ontvangen als ik er niet ben.",
+  "publishAck.text.entireFine": "Ik ben verantwoordelijk voor het naleven van mijn huurcontract, de huisregels en de lokale wetgeving.",
+  "publishAck.text.room": "Ik heb het recht om deze swap te ontvangen.",
+  "publishAck.text.roomFine": "Ik houd me aan de huisregels en de lokale wetgeving.",
   "publishAck.checkbox": "Ik heb de bovenstaande verklaring gelezen en ga ermee akkoord.",
   "publishAck.required": "Bevestig de bovenstaande verklaring voordat je publiceert.",
 
-  "verifyOwnership.card.title": "Eigendom verifiëren",
+  "verifyOwnership.card.title": "Badge Geverifieerde eigenaar — optioneel",
   "verifyOwnership.card.titleDone": "Geverifieerde eigenaar",
   "verifyOwnership.card.body":
-    "Optioneel. Upload een eigendomsbewijs om de badge Geverifieerde eigenaar te krijgen die vertrouwen opbouwt.",
+    "Een vertrouwensboost voor gasten. Nooit verplicht om te publiceren of te swappen.",
   "verifyOwnership.card.bodyDone": "Je advertentie draagt de badge Geverifieerde eigenaar.",
   "verifyOwnership.card.cta": "Bewijs toevoegen →",
   "verifyOwnership.card.ctaStatus": "Status bekijken →",

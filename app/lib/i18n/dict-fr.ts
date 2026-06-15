@@ -1009,19 +1009,20 @@ export const fr: Partial<Record<DictKey, string>> = {
 
   "publishAck.heading": "Avant de publier",
   "publishAck.modeLabel": "Comment allez-vous accueillir ?",
-  "publishAck.mode.entire": "Tout le logement pendant mon absence",
-  "publishAck.mode.room": "Une chambre, ou mon logement en ma présence",
-  "publishAck.mode.entireHint":
-    "Vous cédez tout le logement. Si vous louez, votre bail exige généralement l'accord du propriétaire — argent ou non.",
-  "publishAck.mode.roomHint":
-    "Pure hospitalité, comme recevoir de la famille. Aucune autorisation requise, même en tant que locataire.",
+  "publishAck.mode.entire": "Tout le logement, pendant mon absence",
+  "publishAck.mode.room": "Une chambre, ou quand je suis là",
+  "publishAck.text.entire":
+    "J'ai le droit de proposer tout mon logement pour un échange pendant mon absence — et si je loue, mon bail me permet d'accueillir des invités quand je n'y suis pas.",
+  "publishAck.text.entireFine": "C'est à moi de respecter mon bail, le règlement de l'immeuble et les lois locales.",
+  "publishAck.text.room": "J'ai le droit d'accueillir cet échange.",
+  "publishAck.text.roomFine": "Je respecterai le règlement de l'immeuble et les lois locales.",
   "publishAck.checkbox": "J'ai lu et j'accepte la déclaration ci-dessus.",
   "publishAck.required": "Veuillez confirmer la déclaration ci-dessus avant de publier.",
 
-  "verifyOwnership.card.title": "Vérifier la propriété",
+  "verifyOwnership.card.title": "Badge Propriétaire vérifié — facultatif",
   "verifyOwnership.card.titleDone": "Propriétaire vérifié",
   "verifyOwnership.card.body":
-    "Facultatif. Téléversez une preuve de propriété pour obtenir le badge Propriétaire vérifié qui renforce la confiance.",
+    "Un gage de confiance pour les invités. Jamais requis pour publier ou échanger.",
   "verifyOwnership.card.bodyDone": "Votre annonce porte le badge Propriétaire vérifié.",
   "verifyOwnership.card.cta": "Ajouter une preuve →",
   "verifyOwnership.card.ctaStatus": "Voir le statut →",

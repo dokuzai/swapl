@@ -1,15 +1,15 @@
 // Canonical publish acknowledgment text (DOK-162).
 //
-// LEGAL FRAMING (do not soften): the line that matters is NOT money, it is
-// whether the host *cedes enjoyment of the home to a third party*.
-//   - Hosting with the host present, or letting a room, is plain hospitality
-//     (like relatives staying over): no permission is ever required, even for a
+// FRAMING (plain language, pending a final Italian-lawyer pass before launch):
+// the host self-attests they actually have the right to offer the swap in the
+// chosen mode. The substance differs by mode:
+//   - Hosting with the host present, or letting a room, is everyday hospitality
+//     (like relatives staying over): no special permission is needed, even for a
 //     tenant. -> "room_or_host_present" (light) variant.
-//   - Handing over the *entire home while the host is away* is a cession of
-//     enjoyment: a tenant's lease typically forbids subletting/loan-for-use
-//     without the landlord's consent (money or not). An owner is free to do so
-//     unless the condominium rules say otherwise. -> "entire_home_while_away"
-//     variant, which surfaces the possession-right / landlord-consent attestation.
+//   - Handing over the *entire home while the host is away* is more: a tenant's
+//     lease generally has to allow hosting guests in their absence. An owner is
+//     usually free to do so unless building rules say otherwise.
+//     -> "entire_home_while_away" variant.
 //
 // This is a SELF-ATTESTATION we log append-only (ListingPublishAck), never a
 // proof check. We never gate publishing on proof of ownership or a landlord's
@@ -22,28 +22,44 @@ export const PUBLISH_ACK_VERSION = "v1" as const;
 export const PUBLISH_ACK_MODES = ["entire_home_while_away", "room_or_host_present"] as const;
 export type PublishAckMode = (typeof PUBLISH_ACK_MODES)[number];
 
-/**
- * Entire home while the host is away — cession of enjoyment. Surfaces the
- * possession-right / landlord-consent attestation a tenant needs.
- */
-export const ACK_ENTIRE_HOME =
-  "I confirm I have the right to offer this entire home for a swap while I'm away. " +
-  "If I rent it, I have my landlord's consent to host guests in my absence as my lease " +
-  "requires, and I comply with any condominium or building rules. I understand swapl " +
-  "does not verify this and that I alone am responsible for having the right to host.";
+/** A two-part acknowledgment: a primary line + smaller muted fine print. */
+export type PublishAckText = {
+  /** Primary self-attestation line, shown prominently. */
+  headline: string;
+  /** Smaller, muted line clarifying the host's responsibilities. */
+  fineprint: string;
+};
 
 /**
- * A room, or the whole home with the host present — plain hospitality. No
- * permission needed; the lighter attestation reflects that.
+ * Entire home while the host is away. The primary line covers the right to
+ * offer the whole home (and, for renters, that the lease allows hosting).
  */
-export const ACK_ROOM_OR_HOST =
-  "I confirm I'm offering hospitality in a home I live in — a room, or my home while " +
-  "I'm present as host. I'll respect any condominium or building rules and I'm " +
-  "responsible for the stay I host.";
+export const ACK_ENTIRE_HOME: PublishAckText = {
+  headline:
+    "I have the right to offer my whole home for a swap while I'm away — and if I rent, my lease lets me host guests when I'm not there.",
+  fineprint: "I'm responsible for following my lease, building rules, and local laws.",
+};
 
-/** Canonical text for a given mode. */
-export function ackTextForMode(mode: PublishAckMode): string {
+/**
+ * A room, or the whole home with the host present — everyday hospitality.
+ */
+export const ACK_ROOM_OR_HOST: PublishAckText = {
+  headline: "I have the right to host this swap.",
+  fineprint: "I'll follow my building rules and local laws.",
+};
+
+/** Canonical two-part text for a given mode. */
+export function ackTextForMode(mode: PublishAckMode): PublishAckText {
   return mode === "entire_home_while_away" ? ACK_ENTIRE_HOME : ACK_ROOM_OR_HOST;
+}
+
+/**
+ * Flattened single string for the append-only consent log: headline + fine
+ * print, so ListingPublishAck.ackText still captures the full statement.
+ */
+export function ackLogTextForMode(mode: PublishAckMode): string {
+  const { headline, fineprint } = ackTextForMode(mode);
+  return `${headline} ${fineprint}`;
 }
 
 export function isPublishAckMode(value: unknown): value is PublishAckMode {

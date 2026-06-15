@@ -982,30 +982,39 @@ function ReviewStep({
           <div className="grid sm:grid-cols-2 gap-2 mb-4">
             {(
               [
-                ["entire_home_while_away", "The whole home while I'm away", "You hand over the whole place. If you rent, your lease usually needs your landlord's consent — money or not."],
-                ["room_or_host_present", "A room, or my home while I'm here", "Plain hospitality, like having relatives stay. No permission needed, even as a tenant."],
+                ["entire_home_while_away", "The whole home, while I'm away"],
+                ["room_or_host_present", "A room, or while I'm here"],
               ] as const
-            ).map(([mode, label, hint]) => (
+            ).map(([mode, label]) => (
               <button
                 key={mode}
                 type="button"
                 onClick={() => onModeChange(mode)}
-                className="text-left p-3 rounded-xl border transition-all"
+                className="text-left p-3 rounded-xl border transition-all font-medium text-sm"
                 style={
                   publishMode === mode
                     ? { borderColor: "var(--pink)", background: "var(--pink-light)" }
                     : { borderColor: "var(--line)", background: "var(--card-bg)" }
                 }
               >
-                <div className="font-medium text-sm mb-1">{label}</div>
-                <div className="text-xs" style={{ color: "var(--navy-3)" }}>{hint}</div>
+                {label}
               </button>
             ))}
           </div>
 
-          <p className="text-sm leading-[1.6] mb-3" style={{ color: "var(--navy-2)" }}>
-            {ackTextForMode(publishMode)}
-          </p>
+          {(() => {
+            const ack = ackTextForMode(publishMode);
+            return (
+              <div className="mb-3">
+                <p className="text-sm leading-[1.6]" style={{ color: "var(--navy-2)" }}>
+                  {ack.headline}
+                </p>
+                <p className="text-xs leading-[1.6] mt-1" style={{ color: "var(--navy-3)" }}>
+                  {ack.fineprint}
+                </p>
+              </div>
+            );
+          })()}
 
           <label className="flex items-start gap-3 cursor-pointer">
             <input

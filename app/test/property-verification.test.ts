@@ -68,7 +68,7 @@ import {
 } from "@/app/api/listings/[id]/property-verification/route";
 import { GET as adminQueue } from "@/app/api/admin/property-verifications/route";
 import { POST as adminReview } from "@/app/api/admin/property-verifications/[id]/route";
-import { ACK_ENTIRE_HOME, PUBLISH_ACK_VERSION } from "@/lib/listing/publish-ack";
+import { ackLogTextForMode, PUBLISH_ACK_VERSION } from "@/lib/listing/publish-ack";
 
 const owner = { userId: "u-owner" };
 const admin = { id: "admin-1", email: "ops@swapl.test", name: "Ops", role: "swapl_admin" };
@@ -147,7 +147,7 @@ describe("POST /api/listings publish acknowledgment (DOK-162)", () => {
       data: {
         listingId: "l-new",
         userId: "u-owner",
-        ackText: ACK_ENTIRE_HOME,
+        ackText: ackLogTextForMode("entire_home_while_away"),
         version: PUBLISH_ACK_VERSION,
         mode: "entire_home_while_away",
       },

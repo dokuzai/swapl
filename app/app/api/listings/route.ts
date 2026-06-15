@@ -9,7 +9,7 @@ import { parseFiltersFromSearchParams } from "@/lib/listing-filters";
 import { queryListings, getViewerListing } from "@/lib/listing-query";
 import { apiError, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { nightlyKeysFor } from "@/lib/keys/value";
-import { PUBLISH_ACK_VERSION, ackTextForMode, isPublishAckMode } from "@/lib/listing/publish-ack";
+import { PUBLISH_ACK_VERSION, ackLogTextForMode, isPublishAckMode } from "@/lib/listing/publish-ack";
 
 // Mobile / SPA-friendly listing search. Mirrors what the /listings RSC page
 // does today, returning pre-scored results so clients don't recompute.
@@ -157,7 +157,7 @@ export async function POST(req: Request) {
     data: {
       listingId: created.id,
       userId: session.userId,
-      ackText: ackTextForMode(ackMode),
+      ackText: ackLogTextForMode(ackMode),
       version: PUBLISH_ACK_VERSION,
       mode: ackMode,
     },
