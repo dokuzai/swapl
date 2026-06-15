@@ -7,9 +7,13 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import android.content.Intent
+import androidx.core.net.toUri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,11 +25,13 @@ import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -75,6 +81,10 @@ class VerifyOwnershipViewModel @Inject constructor(
 
     // Pending document uploads for the current submission.
     val pendingDocs = mutableStateListOf<PropertyVerificationDocument>()
+    // Optional hint for the AI classifier: "deed" (atto/visura) or "lease"
+    // (contratto di locazione). Null until the host picks one — never required.
+    var documentType by mutableStateOf<String?>(null)
+        private set
     var uploadsInFlight by mutableStateOf(0)
         private set
     var submitting by mutableStateOf(false)
@@ -119,14 +129,20 @@ class VerifyOwnershipViewModel @Inject constructor(
         pendingDocs.remove(doc)
     }
 
+    // Toggle the document-type hint; tapping the active chip clears it.
+    fun chooseDocumentType(type: String?) {
+        documentType = if (documentType == type) null else type
+    }
+
     fun submit(listingId: String, onDone: () -> Unit) {
         if (submitting || pendingDocs.isEmpty()) return
         submitting = true
         error = null
         viewModelScope.launch {
             try {
-                status = repo.submit(listingId, pendingDocs.toList())
+                status = repo.submit(listingId, pendingDocs.toList(), documentType)
                 pendingDocs.clear()
+                documentType = null
                 onDone()
             } catch (t: Throwable) {
                 error = t.message ?: appContext.getString(R.string.owner_verify_submit_failed)
@@ -181,7 +197,17 @@ fun VerifyOwnershipCard(
     if (status?.ownerVerified == true) return
 
     var showDialog by remember { mutableStateOf(false) }
-    val reviewStatus = status?.verification?.status
+    val verification = status?.verification
+    val reviewStatus = verification?.status
+
+    // Business-property block (DOK-186): the AI read the document as a company /
+    // commercial property. Swapl is a swap between private people, so this listing
+    // is not eligible. Show a calm, kind explanation with a way to ask for a human
+    // review — the admin can always override the AI.
+    if (verification?.rejectedAsBusiness == true) {
+        BusinessIneligibleNotice()
+        return
+    }
 
     // Deliberately quiet, secondary styling — this is an optional trust boost,
     // never a publish/swap gate, so it must not read as a primary CTA.
@@ -237,6 +263,17 @@ private fun VerifyOwnershipDialog(
                     stringResource(R.string.owner_verify_explainer),
                     style = MaterialTheme.typography.bodyMedium,
                 )
+                // AI + business-only-private copy (DOK-186).
+                Text(
+                    stringResource(R.string.owner_verify_ai_explainer),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    stringResource(R.string.owner_verify_private_only_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 Text(
                     stringResource(R.string.owner_verify_optional_note),
                     style = MaterialTheme.typography.bodySmall,
@@ -248,6 +285,19 @@ private fun VerifyOwnershipDialog(
                     "rejected" -> StatusLine(stringResource(R.string.owner_verify_status_rejected))
                     else -> {}
                 }
+
+                // Optional document-type hint — helps the AI read the right kind
+                // of paper. Never required; tapping the active chip clears it.
+                Text(
+                    stringResource(R.string.owner_verify_doc_type_label),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                DocumentTypeSelector(
+                    selected = vm.documentType,
+                    enabled = !vm.submitting,
+                    onSelect = vm::chooseDocumentType,
+                )
 
                 OutlinedButton(
                     onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
@@ -301,4 +351,65 @@ private fun VerifyOwnershipDialog(
 private fun StatusLine(text: String) {
     Spacer(Modifier.height(4.dp))
     Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+}
+
+// Two chips: deed/visura vs. lease. Selecting the active one again clears it,
+// so "no hint" stays a valid state — the AI handles "other" on its own.
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DocumentTypeSelector(
+    selected: String?,
+    enabled: Boolean,
+    onSelect: (String) -> Unit,
+) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+        FilterChip(
+            selected = selected == "deed",
+            enabled = enabled,
+            onClick = { onSelect("deed") },
+            label = { Text(stringResource(R.string.owner_verify_doc_type_deed)) },
+        )
+        FilterChip(
+            selected = selected == "lease",
+            enabled = enabled,
+            onClick = { onSelect("lease") },
+            label = { Text(stringResource(R.string.owner_verify_doc_type_lease)) },
+        )
+    }
+}
+
+// Shown in place of the verify CTA when the AI flagged the listing as a business
+// (DOK-186). Kind, non-accusatory copy + a "contact support" affordance, because
+// the admin can always override the AI. Never deletes or hides the host's work.
+@Composable
+private fun BusinessIneligibleNotice() {
+    val context = LocalContext.current
+    val supportEmail = stringResource(R.string.owner_verify_business_support_email)
+    val subject = stringResource(R.string.owner_verify_business_support_subject)
+
+    SurfaceCard(modifier = Modifier.fillMaxWidth()) {
+        Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+            Text(
+                stringResource(R.string.owner_verify_business_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                stringResource(R.string.owner_verify_business_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            OutlinedButton(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = "mailto:$supportEmail".toUri()
+                        putExtra(Intent.EXTRA_SUBJECT, subject)
+                    }
+                    runCatching { context.startActivity(intent) }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(stringResource(R.string.owner_verify_business_contact))
+            }
+        }
+    }
 }

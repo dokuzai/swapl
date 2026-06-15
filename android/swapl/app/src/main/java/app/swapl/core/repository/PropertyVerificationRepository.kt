@@ -27,9 +27,22 @@ data class PropertyVerification(
     val status: String,
     val documents: List<PropertyVerificationDocument> = emptyList(),
     val note: String? = null,
+    // AI document analysis (DOK-186). The AI only proposes; an admin can always
+    // override. Null when the AI is unconfigured → plain manual review.
+    /** "private_owner" | "private_tenant" | "business" | "uncertain" | null */
+    val aiClassification: String? = null,
+    val aiConfidence: Float? = null,
+    val aiReasons: List<String> = emptyList(),
+    val aiEntityType: String? = null,
+    /** "deed" | "lease" | "other" | null */
+    val documentType: String? = null,
     val createdAt: String,
     val updatedAt: String,
-)
+) {
+    /** True when this listing was rejected because the AI read it as a business. */
+    val rejectedAsBusiness: Boolean
+        get() = status == "rejected" && aiClassification == "business"
+}
 
 // GET/POST /api/listings/{id}/property-verification response.
 @kotlinx.serialization.Serializable
@@ -41,6 +54,8 @@ data class PropertyVerificationStatus(
 @kotlinx.serialization.Serializable
 data class PropertyVerificationSubmit(
     val documents: List<PropertyVerificationDocument>,
+    /** "deed" | "lease" | "other" — optional hint for the AI classifier. */
+    val documentType: String? = null,
 )
 
 @Singleton
@@ -51,9 +66,13 @@ class PropertyVerificationRepository @Inject constructor(private val api: ApiCli
         api.client.get("${api.baseUrl}/api/listings/$listingId/property-verification").body()
 
     // Owner-only submit: attach documents and open/reopen a pending review.
-    suspend fun submit(listingId: String, documents: List<PropertyVerificationDocument>): PropertyVerificationStatus =
+    suspend fun submit(
+        listingId: String,
+        documents: List<PropertyVerificationDocument>,
+        documentType: String? = null,
+    ): PropertyVerificationStatus =
         api.client.post("${api.baseUrl}/api/listings/$listingId/property-verification") {
             contentType(ContentType.Application.Json)
-            setBody(PropertyVerificationSubmit(documents = documents))
+            setBody(PropertyVerificationSubmit(documents = documents, documentType = documentType))
         }.body()
 }
