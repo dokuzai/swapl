@@ -47,6 +47,9 @@ data class Listing(
     val palette: String,
     val isFeatured: Boolean,
     val isVerified: Boolean,
+    // Owner-proof trust badge (DOK-162): host attested + admin-approved.
+    // Optional, never a publish gate — defaults false for older payloads.
+    val ownerVerified: Boolean = false,
 )
 
 // Request body for POST /api/listings and PUT /api/listings/{id}.
@@ -90,6 +93,13 @@ data class ListingCreateBody(
     val maxStayDays: Int = 30,
     val photos: List<String> = emptyList(),
     val tags: List<String> = emptyList(),
+    // Publish acknowledgment (DOK-162). REQUIRED on create: the host
+    // self-attests they have the right to host in the chosen `mode`. Ignored
+    // on update. Missing/false on create -> 400 PUBLISH_ACK_REQUIRED.
+    val ackAccepted: Boolean? = null,
+    // "entire_home_while_away" | "room_or_host_present". REQUIRED on create
+    // when ackAccepted is true.
+    val mode: String? = null,
 )
 
 // `{ ok: true, id }` from POST /api/listings and PUT /api/listings/{id}.

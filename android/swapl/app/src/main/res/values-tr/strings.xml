@@ -46,4 +46,37 @@
     <string name="verify_referral_toast_named">Doğrulandı! %1$s adlı kişinin daveti sana %2$d Keys kazandırdı. 🔑</string>
     <string name="referral_referrer_toast_named">%1$s az önce doğrulandı — %2$d Keys kazandın! 🔑</string>
     <string name="referral_referrer_toast">Davet ettiğin biri az önce doğrulandı — %1$d Keys kazandın! 🔑</string>
+
+    <!-- Mülkiyet doğrulaması + yayınlama beyanı (DOK-162) -->
+    <string name="owner_verified_badge">Doğrulanmış mal sahibi</string>
+
+    <string name="publish_ack_kicker">Yayınlamadan önce</string>
+    <string name="publish_ack_mode_question">Bu evi nasıl ağırlıyorsun?</string>
+    <string name="publish_ack_mode_entire_home">Ben yokken evin tamamı</string>
+    <string name="publish_ack_mode_entire_home_help">Misafirler evi tamamen kendilerine kullanır.</string>
+    <string name="publish_ack_mode_room">Bir oda ya da ben evdeyken evim</string>
+    <string name="publish_ack_mode_room_help">Sen kalır ve ev sahipliği yaparsın — arkadaş ağırlamak gibi.</string>
+    <string name="publish_ack_text_entire_home">Ben yokken bu evin tamamını bir takas için sunma hakkına sahip olduğumu onaylıyorum. Kiracıysam, kira sözleşmemin gerektirdiği şekilde yokluğumda misafir ağırlamak için ev sahibimin onayına sahibim ve varsa site ya da bina kurallarına uyuyorum. swapl\'in bunu doğrulamadığını ve ağırlama hakkına sahip olmaktan yalnızca benim sorumlu olduğumu anlıyorum.</string>
+    <string name="publish_ack_text_room">Yaşadığım bir evde konukseverlik sunduğumu onaylıyorum — bir oda ya da ev sahibi olarak ben oradayken evim. Varsa site ya da bina kurallarına uyacağım ve ağırladığım konaklamadan sorumluyum.</string>
+    <string name="publish_ack_required_error">Yayınlamadan önce ağırlama beyanını onayla.</string>
+    <string name="publish_submit_failed">İlanın yayınlanamadı. Tekrar dene.</string>
+
+    <string name="owner_verify_cta">Mülkiyeti doğrula (isteğe bağlı)</string>
+    <string name="owner_verify_cta_pending">Mülkiyet doğrulaması — inceleniyor</string>
+    <string name="owner_verify_cta_rejected">Mülkiyet doğrulaması — tekrar dene</string>
+    <string name="owner_verify_optional_note">İsteğe bağlı. Bir güven rozeti kazandırır ve yayınlamak ya da takas yapmak için gerekli değildir.</string>
+    <string name="owner_verify_title">Mülkiyeti doğrula</string>
+    <string name="owner_verify_explainer">Bu evin sahibi olduğunu gösteren bir belge ekle — tapu, emlak vergisi makbuzu ya da adına düzenlenmiş güncel bir fatura. Bir yönetici inceler ve onaylandığında ilanında \"Doğrulanmış mal sahibi\" rozeti görünür.</string>
+    <string name="owner_verify_status_pending">Son gönderimin inceleniyor.</string>
+    <string name="owner_verify_status_rejected">Son gönderimin onaylanmadı. Daha net bir belge ekleyip yeniden gönder.</string>
+    <string name="owner_verify_add_document">Belge ekle</string>
+    <string name="owner_verify_uploading">Yükleniyor…</string>
+    <string name="owner_verify_remove">Kaldır</string>
+    <string name="owner_verify_submit">İncelemeye gönder</string>
+    <string name="owner_verify_submitting">Gönderiliyor…</string>
+    <string name="owner_verify_cancel">İptal</string>
+    <string name="owner_verify_doc_label">Mülkiyet belgesi</string>
+    <string name="owner_verify_doc_read_error">Bu dosya okunamadı.</string>
+    <string name="owner_verify_upload_failed">Yükleme başarısız. Tekrar dene.</string>
+    <string name="owner_verify_submit_failed">Gönderilemedi. Tekrar dene.</string>
 </resources>

@@ -10,6 +10,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,10 +31,12 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -50,6 +53,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
@@ -57,6 +61,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.Listing
 import app.swapl.core.model.ListingCreateBody
 import app.swapl.core.repository.ListingRepository
@@ -67,6 +72,7 @@ import app.swapl.design.components.PrimaryPill
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -75,6 +81,17 @@ import java.time.LocalDate
 import java.util.Locale
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+
+// Hosting mode for the publish acknowledgment (DOK-162). The discriminator is
+// NOT money — it is whether the host cedes enjoyment of the home to a third
+// party. ENTIRE_HOME (host away) is a cession of enjoyment and surfaces the
+// landlord-consent attestation a tenant needs; ROOM_OR_HOST_PRESENT is plain
+// hospitality (a room, or the whole home with the host present) and needs no
+// permission. `wire` matches the backend enum exactly.
+enum class PublishAckMode(val wire: String) {
+    ENTIRE_HOME("entire_home_while_away"),
+    ROOM_OR_HOST_PRESENT("room_or_host_present"),
+}
 
 // Drives both the create wizard ("new" route) and the edit wizard
 // ("edit/{listingId}" route — prefilled from GET, submitted via PUT).
@@ -192,6 +209,18 @@ class ListingCreateViewModel @Inject constructor(
 
     // Step 7: Description (title is on step 1)
     var description by mutableStateOf("")
+
+    // Publish acknowledgment (DOK-162) — shown on the Review step before
+    // create. The host picks the hosting mode (which selects the canonical
+    // attestation text) and must check the box. This is a self-attestation we
+    // send as ackAccepted + mode; it is NOT a proof-of-ownership gate. Only
+    // required on create — edits skip it.
+    //
+    // "entire_home_while_away" | "room_or_host_present". Defaults to the entire
+    // home variant, which surfaces the landlord-consent attestation a tenant
+    // needs (the legally heavier path), so we never under-disclose by default.
+    var publishMode by mutableStateOf(PublishAckMode.ENTIRE_HOME)
+    var ackAccepted by mutableStateOf(false)
 
     // Location auto-fill (iOS parity): last known fix + reverse geocode.
     var isLocating by mutableStateOf(false); private set
@@ -320,6 +349,9 @@ class ListingCreateViewModel @Inject constructor(
         4 -> availableTo > availableFrom
         5 -> uploadsInFlight == 0
         6 -> description.length >= 20
+        // Review step: on create the publish acknowledgment is mandatory and
+        // blocks the Publish button until it's checked. Edits skip the ack.
+        stepTitles.lastIndex -> isEditing || ackAccepted
         else -> true
     }
 
@@ -367,11 +399,27 @@ class ListingCreateViewModel @Inject constructor(
                 maxStayDays = maxStayDays,
                 photos = photoUrls.toList(),
                 tags = tags,
+                // Publish acknowledgment — create only. The backend rejects a
+                // create without ackAccepted: true + a valid mode (400
+                // PUBLISH_ACK_REQUIRED); the UI gate above makes that
+                // unreachable, but we still send it so the server can log the
+                // append-only attestation row. Edits omit it.
+                ackAccepted = if (isEditing) null else true,
+                mode = if (isEditing) null else publishMode.wire,
             )
             val res = editListingId?.let { repo.update(it, body) } ?: repo.create(body)
             createdId = res.id
+        } catch (t: ResponseException) {
+            // Defensive: if the ack didn't reach the server (e.g. an older
+            // build), surface a clear, recoverable message instead of a raw
+            // error and keep the host on the Review step.
+            error = if (t.response.status.value == 400) {
+                appContext.getString(R.string.publish_ack_required_error)
+            } else {
+                t.message ?: appContext.getString(R.string.publish_submit_failed)
+            }
         } catch (t: Throwable) {
-            error = t.message ?: "Submit failed"
+            error = t.message ?: appContext.getString(R.string.publish_submit_failed)
         } finally {
             isSubmitting = false
         }
@@ -612,6 +660,85 @@ private fun ReviewStep(vm: ListingCreateViewModel) {
     Text("${vm.sizeSqm} m² · sleeps ${vm.sleeps} · ${vm.bedrooms} br / ${vm.bathrooms} ba", style = MaterialTheme.typography.bodyMedium)
     Text(vm.description, style = MaterialTheme.typography.bodyMedium)
     Text("Available ${vm.availableFrom} → ${vm.availableTo}", style = MaterialTheme.typography.labelMedium)
+
+    // Publish acknowledgment (DOK-162) — create only. Edits already have an ack
+    // on file and the body skips it server-side.
+    if (!vm.isEditing) {
+        Spacer(Modifier.height(SwaplSpacing.s2))
+        HorizontalDivider()
+        PublishAcknowledgment(vm)
+    }
+}
+
+// Hosting-mode picker + the mandatory self-attestation checkbox. Picking a mode
+// swaps in the canonical attestation text (entire home = landlord-consent
+// variant; room/host-present = light hospitality variant). The box must be
+// checked before Publish enables — enforced by canProceed on the Review step.
+@Composable
+private fun PublishAcknowledgment(vm: ListingCreateViewModel) {
+    KickerLabel(stringResource(R.string.publish_ack_kicker))
+    Text(
+        stringResource(R.string.publish_ack_mode_question),
+        style = MaterialTheme.typography.bodyMedium,
+    )
+    Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+        ModeOption(
+            selected = vm.publishMode == PublishAckMode.ENTIRE_HOME,
+            title = stringResource(R.string.publish_ack_mode_entire_home),
+            subtitle = stringResource(R.string.publish_ack_mode_entire_home_help),
+            onSelect = { vm.publishMode = PublishAckMode.ENTIRE_HOME },
+        )
+        ModeOption(
+            selected = vm.publishMode == PublishAckMode.ROOM_OR_HOST_PRESENT,
+            title = stringResource(R.string.publish_ack_mode_room),
+            subtitle = stringResource(R.string.publish_ack_mode_room_help),
+            onSelect = { vm.publishMode = PublishAckMode.ROOM_OR_HOST_PRESENT },
+        )
+    }
+
+    val ackText = stringResource(
+        when (vm.publishMode) {
+            PublishAckMode.ENTIRE_HOME -> R.string.publish_ack_text_entire_home
+            PublishAckMode.ROOM_OR_HOST_PRESENT -> R.string.publish_ack_text_room
+        },
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { vm.ackAccepted = !vm.ackAccepted },
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+    ) {
+        Checkbox(checked = vm.ackAccepted, onCheckedChange = { vm.ackAccepted = it })
+        Text(
+            ackText,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
+                .weight(1f)
+                .padding(top = 12.dp),
+        )
+    }
+}
+
+@Composable
+private fun ModeOption(selected: Boolean, title: String, subtitle: String, onSelect: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onSelect),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+    ) {
+        RadioButton(selected = selected, onClick = onSelect)
+        Column(Modifier.weight(1f).padding(top = 12.dp)) {
+            Text(title, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
 }
 
 @Composable

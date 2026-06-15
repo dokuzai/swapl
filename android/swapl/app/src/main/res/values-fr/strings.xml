@@ -46,4 +46,37 @@
     <string name="verify_referral_toast_named">Vérifié ! L’invitation de %1$s vient de vous rapporter %2$d Keys. 🔑</string>
     <string name="referral_referrer_toast_named">%1$s vient de se vérifier — vous avez gagné %2$d Keys ! 🔑</string>
     <string name="referral_referrer_toast">Une personne que vous avez invitée vient de se vérifier — vous avez gagné %1$d Keys ! 🔑</string>
+
+    <!-- Vérification de propriété + déclaration de publication (DOK-162) -->
+    <string name="owner_verified_badge">Propriétaire vérifié</string>
+
+    <string name="publish_ack_kicker">Avant de publier</string>
+    <string name="publish_ack_mode_question">Comment hébergez-vous ce logement ?</string>
+    <string name="publish_ack_mode_entire_home">Tout le logement pendant mon absence</string>
+    <string name="publish_ack_mode_entire_home_help">Les invités ont le logement pour eux seuls.</string>
+    <string name="publish_ack_mode_room">Une chambre, ou chez moi en ma présence</string>
+    <string name="publish_ack_mode_room_help">Vous restez et accueillez — comme recevoir des amis.</string>
+    <string name="publish_ack_text_entire_home">Je confirme avoir le droit de proposer ce logement entier pour un échange pendant mon absence. Si je suis locataire, j\'ai le consentement de mon propriétaire pour accueillir des invités en mon absence comme l\'exige mon bail, et je respecte le règlement de copropriété ou de l\'immeuble. Je comprends que swapl ne le vérifie pas et que je suis seul responsable d\'avoir le droit d\'accueillir.</string>
+    <string name="publish_ack_text_room">Je confirme offrir l\'hospitalité dans un logement où je vis — une chambre, ou mon logement pendant que je suis présent comme hôte. Je respecterai le règlement de copropriété ou de l\'immeuble et je suis responsable du séjour que j\'accueille.</string>
+    <string name="publish_ack_required_error">Veuillez confirmer la déclaration d\'hébergement avant de publier.</string>
+    <string name="publish_submit_failed">Impossible de publier votre annonce. Réessayez.</string>
+
+    <string name="owner_verify_cta">Vérifier la propriété (facultatif)</string>
+    <string name="owner_verify_cta_pending">Vérification de propriété — en cours d\'examen</string>
+    <string name="owner_verify_cta_rejected">Vérification de propriété — réessayez</string>
+    <string name="owner_verify_optional_note">Facultatif. Cela donne un badge de confiance et n\'est pas requis pour publier ou échanger.</string>
+    <string name="owner_verify_title">Vérifier la propriété</string>
+    <string name="owner_verify_explainer">Ajoutez un document prouvant que vous êtes propriétaire de ce logement — un acte, un avis de taxe foncière ou une facture récente à votre nom. Un administrateur l\'examine et, une fois approuvé, votre annonce affiche un badge « Propriétaire vérifié ».</string>
+    <string name="owner_verify_status_pending">Votre dernier envoi est en cours d\'examen.</string>
+    <string name="owner_verify_status_rejected">Votre dernier envoi n\'a pas été approuvé. Ajoutez un document plus clair et renvoyez-le.</string>
+    <string name="owner_verify_add_document">Ajouter un document</string>
+    <string name="owner_verify_uploading">Téléversement…</string>
+    <string name="owner_verify_remove">Retirer</string>
+    <string name="owner_verify_submit">Soumettre pour examen</string>
+    <string name="owner_verify_submitting">Envoi…</string>
+    <string name="owner_verify_cancel">Annuler</string>
+    <string name="owner_verify_doc_label">Document de propriété</string>
+    <string name="owner_verify_doc_read_error">Impossible de lire ce fichier.</string>
+    <string name="owner_verify_upload_failed">Échec du téléversement. Réessayez.</string>
+    <string name="owner_verify_submit_failed">Échec de l\'envoi. Réessayez.</string>
 </resources>

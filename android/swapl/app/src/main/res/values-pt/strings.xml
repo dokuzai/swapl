@@ -46,4 +46,37 @@
     <string name="verify_referral_toast_named">Verificado! O convite de %1$s acabou de lhe render %2$d Keys. 🔑</string>
     <string name="referral_referrer_toast_named">%1$s acabou de verificar — você ganhou %2$d Keys! 🔑</string>
     <string name="referral_referrer_toast">Alguém que você convidou acabou de verificar — você ganhou %1$d Keys! 🔑</string>
+
+    <!-- Verificação de propriedade + declaração de publicação (DOK-162) -->
+    <string name="owner_verified_badge">Proprietário verificado</string>
+
+    <string name="publish_ack_kicker">Antes de publicar</string>
+    <string name="publish_ack_mode_question">Como você está hospedando esta casa?</string>
+    <string name="publish_ack_mode_entire_home">A casa toda enquanto estou fora</string>
+    <string name="publish_ack_mode_entire_home_help">Os hóspedes têm a casa só para eles.</string>
+    <string name="publish_ack_mode_room">Um quarto, ou minha casa enquanto estou presente</string>
+    <string name="publish_ack_mode_room_help">Você fica e hospeda — como receber amigos.</string>
+    <string name="publish_ack_text_entire_home">Confirmo que tenho o direito de oferecer esta casa inteira para uma troca enquanto estou fora. Se eu alugo, tenho o consentimento do meu locador para hospedar convidados na minha ausência conforme exige meu contrato, e cumpro as regras do condomínio ou do edifício. Entendo que a swapl não verifica isso e que sou o único responsável por ter o direito de hospedar.</string>
+    <string name="publish_ack_text_room">Confirmo que ofereço hospitalidade em uma casa onde moro — um quarto, ou minha casa enquanto estou presente como anfitrião. Respeitarei as regras do condomínio ou do edifício e sou responsável pela estadia que hospedo.</string>
+    <string name="publish_ack_required_error">Confirme a declaração de hospedagem antes de publicar.</string>
+    <string name="publish_submit_failed">Não foi possível publicar seu anúncio. Tente novamente.</string>
+
+    <string name="owner_verify_cta">Verificar propriedade (opcional)</string>
+    <string name="owner_verify_cta_pending">Verificação de propriedade — em análise</string>
+    <string name="owner_verify_cta_rejected">Verificação de propriedade — tente novamente</string>
+    <string name="owner_verify_optional_note">Opcional. Concede um selo de confiança e não é necessária para publicar ou trocar.</string>
+    <string name="owner_verify_title">Verificar propriedade</string>
+    <string name="owner_verify_explainer">Adicione um documento que comprove que você é o proprietário desta casa — uma escritura, um carnê de IPTU ou uma conta recente em seu nome. Um administrador analisa e, depois de aprovado, seu anúncio exibe um selo \"Proprietário verificado\".</string>
+    <string name="owner_verify_status_pending">Seu último envio está em análise.</string>
+    <string name="owner_verify_status_rejected">Seu último envio não foi aprovado. Adicione um documento mais nítido e reenvie.</string>
+    <string name="owner_verify_add_document">Adicionar um documento</string>
+    <string name="owner_verify_uploading">Enviando…</string>
+    <string name="owner_verify_remove">Remover</string>
+    <string name="owner_verify_submit">Enviar para análise</string>
+    <string name="owner_verify_submitting">Enviando…</string>
+    <string name="owner_verify_cancel">Cancelar</string>
+    <string name="owner_verify_doc_label">Documento de propriedade</string>
+    <string name="owner_verify_doc_read_error">Não foi possível ler esse arquivo.</string>
+    <string name="owner_verify_upload_failed">Falha no envio. Tente novamente.</string>
+    <string name="owner_verify_submit_failed">Não foi possível enviar. Tente novamente.</string>
 </resources>

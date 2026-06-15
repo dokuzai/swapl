@@ -46,4 +46,37 @@
     <string name="verify_referral_toast_named">Verificato! L’invito di %1$s ti ha appena fatto guadagnare %2$d Keys. 🔑</string>
     <string name="referral_referrer_toast_named">%1$s si è appena verificato — hai guadagnato %2$d Keys! 🔑</string>
     <string name="referral_referrer_toast">Una persona che hai invitato si è appena verificata — hai guadagnato %1$d Keys! 🔑</string>
+
+    <!-- Verifica proprietà + dichiarazione di pubblicazione (DOK-162) -->
+    <string name="owner_verified_badge">Proprietario verificato</string>
+
+    <string name="publish_ack_kicker">Prima di pubblicare</string>
+    <string name="publish_ack_mode_question">Come ospiti questa casa?</string>
+    <string name="publish_ack_mode_entire_home">Tutta la casa mentre sono via</string>
+    <string name="publish_ack_mode_entire_home_help">Gli ospiti hanno la casa tutta per sé.</string>
+    <string name="publish_ack_mode_room">Una stanza, o casa mia mentre sono presente</string>
+    <string name="publish_ack_mode_room_help">Resti e fai da host — come avere amici a casa.</string>
+    <string name="publish_ack_text_entire_home">Confermo di avere il diritto di offrire questa intera casa per uno scambio mentre sono via. Se sono in affitto, ho il consenso del mio locatore a ospitare in mia assenza come richiesto dal contratto, e rispetto eventuali regolamenti condominiali o dell\'edificio. Capisco che swapl non lo verifica e che sono io l\'unico responsabile di avere il diritto di ospitare.</string>
+    <string name="publish_ack_text_room">Confermo di offrire ospitalità in una casa in cui vivo — una stanza, o casa mia mentre sono presente come host. Rispetterò eventuali regolamenti condominiali o dell\'edificio e sono responsabile del soggiorno che ospito.</string>
+    <string name="publish_ack_required_error">Conferma la dichiarazione di ospitalità prima di pubblicare.</string>
+    <string name="publish_submit_failed">Impossibile pubblicare l\'annuncio. Riprova.</string>
+
+    <string name="owner_verify_cta">Verifica proprietà (facoltativa)</string>
+    <string name="owner_verify_cta_pending">Verifica proprietà — in revisione</string>
+    <string name="owner_verify_cta_rejected">Verifica proprietà — riprova</string>
+    <string name="owner_verify_optional_note">Facoltativa. Dà un badge di fiducia e non è richiesta per pubblicare o scambiare.</string>
+    <string name="owner_verify_title">Verifica proprietà</string>
+    <string name="owner_verify_explainer">Aggiungi un documento che dimostri che sei il proprietario di questa casa — un atto, una bolletta della tassa sulla proprietà o una bolletta recente a tuo nome. Un amministratore lo esamina e, una volta approvato, il tuo annuncio mostra il badge \"Proprietario verificato\".</string>
+    <string name="owner_verify_status_pending">Il tuo ultimo invio è in revisione.</string>
+    <string name="owner_verify_status_rejected">Il tuo ultimo invio non è stato approvato. Aggiungi un documento più chiaro e invia di nuovo.</string>
+    <string name="owner_verify_add_document">Aggiungi un documento</string>
+    <string name="owner_verify_uploading">Caricamento…</string>
+    <string name="owner_verify_remove">Rimuovi</string>
+    <string name="owner_verify_submit">Invia per la revisione</string>
+    <string name="owner_verify_submitting">Invio…</string>
+    <string name="owner_verify_cancel">Annulla</string>
+    <string name="owner_verify_doc_label">Documento di proprietà</string>
+    <string name="owner_verify_doc_read_error">Impossibile leggere il file.</string>
+    <string name="owner_verify_upload_failed">Caricamento non riuscito. Riprova.</string>
+    <string name="owner_verify_submit_failed">Invio non riuscito. Riprova.</string>
 </resources>

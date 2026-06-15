@@ -46,4 +46,37 @@
     <string name="verify_referral_toast_named">Verifiziert! Die Einladung von %1$s hat dir gerade %2$d Keys eingebracht. 🔑</string>
     <string name="referral_referrer_toast_named">%1$s hat sich gerade verifiziert — du hast %2$d Keys verdient! 🔑</string>
     <string name="referral_referrer_toast">Jemand, den du eingeladen hast, hat sich gerade verifiziert — du hast %1$d Keys verdient! 🔑</string>
+
+    <!-- Eigentumsnachweis + Veröffentlichungsbestätigung (DOK-162) -->
+    <string name="owner_verified_badge">Verifizierter Eigentümer</string>
+
+    <string name="publish_ack_kicker">Bevor du veröffentlichst</string>
+    <string name="publish_ack_mode_question">Wie bietest du dieses Zuhause an?</string>
+    <string name="publish_ack_mode_entire_home">Das ganze Zuhause, während ich weg bin</string>
+    <string name="publish_ack_mode_entire_home_help">Gäste haben die Unterkunft für sich allein.</string>
+    <string name="publish_ack_mode_room">Ein Zimmer oder mein Zuhause, während ich da bin</string>
+    <string name="publish_ack_mode_room_help">Du bleibst und bist Gastgeber — wie Freunde zu Besuch.</string>
+    <string name="publish_ack_text_entire_home">Ich bestätige, dass ich das Recht habe, dieses gesamte Zuhause für einen Tausch anzubieten, während ich weg bin. Wenn ich Mieter bin, habe ich die Zustimmung meines Vermieters, in meiner Abwesenheit Gäste zu beherbergen, wie es mein Mietvertrag verlangt, und ich halte mich an etwaige Hausordnungen oder Regeln der Eigentümergemeinschaft. Mir ist bewusst, dass swapl dies nicht überprüft und dass ich allein dafür verantwortlich bin, das Recht zum Beherbergen zu haben.</string>
+    <string name="publish_ack_text_room">Ich bestätige, dass ich Gastfreundschaft in einem Zuhause anbiete, in dem ich wohne — ein Zimmer oder mein Zuhause, während ich als Gastgeber anwesend bin. Ich halte mich an etwaige Hausordnungen oder Regeln der Eigentümergemeinschaft und bin für den Aufenthalt verantwortlich, den ich beherberge.</string>
+    <string name="publish_ack_required_error">Bitte bestätige die Gastgeber-Erklärung, bevor du veröffentlichst.</string>
+    <string name="publish_submit_failed">Inserat konnte nicht veröffentlicht werden. Versuche es erneut.</string>
+
+    <string name="owner_verify_cta">Eigentum verifizieren (optional)</string>
+    <string name="owner_verify_cta_pending">Eigentumsnachweis — in Prüfung</string>
+    <string name="owner_verify_cta_rejected">Eigentumsnachweis — erneut versuchen</string>
+    <string name="owner_verify_optional_note">Optional. Bringt ein Vertrauensabzeichen und ist nicht erforderlich, um zu veröffentlichen oder zu tauschen.</string>
+    <string name="owner_verify_title">Eigentum verifizieren</string>
+    <string name="owner_verify_explainer">Füge ein Dokument hinzu, das zeigt, dass dir dieses Zuhause gehört — eine Urkunde, ein Grundsteuerbescheid oder eine aktuelle Rechnung auf deinen Namen. Ein Administrator prüft es, und nach der Freigabe zeigt dein Inserat ein Abzeichen „Verifizierter Eigentümer“.</string>
+    <string name="owner_verify_status_pending">Deine letzte Einreichung wird geprüft.</string>
+    <string name="owner_verify_status_rejected">Deine letzte Einreichung wurde nicht freigegeben. Füge ein klareres Dokument hinzu und reiche es erneut ein.</string>
+    <string name="owner_verify_add_document">Dokument hinzufügen</string>
+    <string name="owner_verify_uploading">Hochladen…</string>
+    <string name="owner_verify_remove">Entfernen</string>
+    <string name="owner_verify_submit">Zur Prüfung einreichen</string>
+    <string name="owner_verify_submitting">Wird gesendet…</string>
+    <string name="owner_verify_cancel">Abbrechen</string>
+    <string name="owner_verify_doc_label">Eigentumsdokument</string>
+    <string name="owner_verify_doc_read_error">Diese Datei konnte nicht gelesen werden.</string>
+    <string name="owner_verify_upload_failed">Hochladen fehlgeschlagen. Versuche es erneut.</string>
+    <string name="owner_verify_submit_failed">Einreichen fehlgeschlagen. Versuche es erneut.</string>
 </resources>

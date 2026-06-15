@@ -59,6 +59,7 @@ import app.swapl.design.components.FavoriteHeartButton
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.MatchBadge
+import app.swapl.design.components.OwnerVerifiedBadge
 import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
@@ -130,6 +131,8 @@ fun ListingDetailScreen(
         }
         d.matchScore?.let { MatchBadge(it) }
         Text(d.listing.title, style = MaterialTheme.typography.displaySmall)
+        // Owner-proof trust badge (DOK-162) — discreet, only when approved.
+        if (d.listing.ownerVerified) OwnerVerifiedBadge()
         Text(
             "${d.listing.neighbourhood} · ${d.listing.city}, ${d.listing.country}",
             style = MaterialTheme.typography.bodyMedium,
@@ -190,6 +193,9 @@ fun ListingDetailScreen(
             ) {
                 Text("Manage availability")
             }
+            // Optional owner-proof verification (DOK-162) — a trust badge, never
+            // a publish gate. Hidden once approved.
+            VerifyOwnershipCard(listingId = d.listing.id)
         } else {
             ProposeCta(d, onPropose = { showPropose = true })
 

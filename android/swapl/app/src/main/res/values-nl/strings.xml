@@ -46,4 +46,37 @@
     <string name="verify_referral_toast_named">Geverifieerd! De uitnodiging van %1$s leverde je zojuist %2$d Keys op. 🔑</string>
     <string name="referral_referrer_toast_named">%1$s is zojuist geverifieerd — je verdiende %2$d Keys! 🔑</string>
     <string name="referral_referrer_toast">Iemand die je hebt uitgenodigd is zojuist geverifieerd — je verdiende %1$d Keys! 🔑</string>
+
+    <!-- Eigendomsverificatie + publicatieverklaring (DOK-162) -->
+    <string name="owner_verified_badge">Geverifieerde eigenaar</string>
+
+    <string name="publish_ack_kicker">Voordat je publiceert</string>
+    <string name="publish_ack_mode_question">Hoe bied je deze woning aan?</string>
+    <string name="publish_ack_mode_entire_home">De hele woning terwijl ik weg ben</string>
+    <string name="publish_ack_mode_entire_home_help">Gasten hebben de woning helemaal voor zichzelf.</string>
+    <string name="publish_ack_mode_room">Een kamer, of mijn woning terwijl ik aanwezig ben</string>
+    <string name="publish_ack_mode_room_help">Je blijft en bent gastheer — net als vrienden op bezoek.</string>
+    <string name="publish_ack_text_entire_home">Ik bevestig dat ik het recht heb om deze hele woning aan te bieden voor een ruil terwijl ik weg ben. Als ik huur, heb ik de toestemming van mijn verhuurder om gasten te ontvangen tijdens mijn afwezigheid zoals mijn huurcontract vereist, en ik houd me aan eventuele regels van de vereniging van eigenaren of het gebouw. Ik begrijp dat swapl dit niet verifieert en dat ik alleen verantwoordelijk ben voor het hebben van het recht om te hosten.</string>
+    <string name="publish_ack_text_room">Ik bevestig dat ik gastvrijheid bied in een woning waar ik woon — een kamer, of mijn woning terwijl ik als gastheer aanwezig ben. Ik respecteer eventuele regels van de vereniging van eigenaren of het gebouw en ben verantwoordelijk voor het verblijf dat ik host.</string>
+    <string name="publish_ack_required_error">Bevestig de gastverklaring voordat je publiceert.</string>
+    <string name="publish_submit_failed">Je advertentie kon niet worden gepubliceerd. Probeer het opnieuw.</string>
+
+    <string name="owner_verify_cta">Eigendom verifiëren (optioneel)</string>
+    <string name="owner_verify_cta_pending">Eigendomsverificatie — in beoordeling</string>
+    <string name="owner_verify_cta_rejected">Eigendomsverificatie — probeer opnieuw</string>
+    <string name="owner_verify_optional_note">Optioneel. Levert een vertrouwensbadge op en is niet vereist om te publiceren of te ruilen.</string>
+    <string name="owner_verify_title">Eigendom verifiëren</string>
+    <string name="owner_verify_explainer">Voeg een document toe waaruit blijkt dat je eigenaar van deze woning bent — een eigendomsakte, een aanslag onroerendezaakbelasting of een recente rekening op jouw naam. Een beheerder beoordeelt het en zodra het is goedgekeurd, toont je advertentie een badge \"Geverifieerde eigenaar\".</string>
+    <string name="owner_verify_status_pending">Je laatste inzending wordt beoordeeld.</string>
+    <string name="owner_verify_status_rejected">Je laatste inzending is niet goedgekeurd. Voeg een duidelijker document toe en dien het opnieuw in.</string>
+    <string name="owner_verify_add_document">Document toevoegen</string>
+    <string name="owner_verify_uploading">Uploaden…</string>
+    <string name="owner_verify_remove">Verwijderen</string>
+    <string name="owner_verify_submit">Indienen ter beoordeling</string>
+    <string name="owner_verify_submitting">Indienen…</string>
+    <string name="owner_verify_cancel">Annuleren</string>
+    <string name="owner_verify_doc_label">Eigendomsdocument</string>
+    <string name="owner_verify_doc_read_error">Dat bestand kon niet worden gelezen.</string>
+    <string name="owner_verify_upload_failed">Uploaden mislukt. Probeer het opnieuw.</string>
+    <string name="owner_verify_submit_failed">Indienen mislukt. Probeer het opnieuw.</string>
 </resources>
