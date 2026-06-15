@@ -17,6 +17,14 @@ struct NightlyKeysExplainerSheet: View {
     let listing: Listing
     let explanation: ValuationExplanation
 
+    // Mirror of the backend valuation tunables (lib/ai/listing-valuation.ts,
+    // lib/keys/value.ts, lib/keys/valuation.ts) so the copy can state the real
+    // mechanics. Display-only — the backend still owns every number.
+    private let AI_FEATURE_BONUS_MAX = 3
+    private let FEEDBACK_MIN_REVIEWS = 3
+    private let FEEDBACK_BAND_PCT = 20
+    private let FEEDBACK_STEP_PCT = 5
+
     // The headline number, preferring the explanation's own final value, then
     // the listing DTO, so the sheet always agrees with the card that opened it.
     private var nightlyKeys: Int {
@@ -132,22 +140,46 @@ struct NightlyKeysExplainerSheet: View {
     }
 
     private func factorRow(_ factor: ValuationExplanation.Factor) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: iconForFactor(factor.key))
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(SwaplSemanticLight.primary)
-                .frame(width: 26)
-            Text(factor.label)
-                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.text)
-            Spacer()
-            Text(signedPoints(factor.points))
-                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
-                .foregroundStyle(factor.points < 0 ? AirbnbPalette.secondaryText : AirbnbPalette.text)
-                .monospacedDigit()
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 12) {
+                Image(systemName: iconForFactor(factor.key))
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .frame(width: 26)
+                Text(factor.label)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Spacer()
+                Text(signedPoints(factor.points))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(factor.points < 0 ? AirbnbPalette.secondaryText : AirbnbPalette.text)
+                    .monospacedDigit()
+            }
+            // Inline reassurance for the two factors that read badly without
+            // context: the AI appeal read, and a standard (+0) location tier.
+            if let note = factorNote(factor) {
+                Text(note)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, 38)
+            }
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 14)
+    }
+
+    // A small explanatory line under specific factor rows. Returns nil for
+    // factors that are self-explanatory (size, sleeps, verified, base).
+    private func factorNote(_ factor: ValuationExplanation.Factor) -> String? {
+        switch factor.key {
+        case "ai_appeal":
+            return "Our AI reads only how your listing is presented — photo coverage, how rich your amenities list is, and how detailed your description is. It never judges your home harshly or penalises small towns. Most homes score 0; it's a small optional bonus capped at +\(AI_FEATURE_BONUS_MAX), so a 0 is completely normal."
+        case "location_tier" where factor.points == 0:
+            return "Standard — your location isn't artificially boosted, but it's valued equally. Smaller towns and villages aren't penalised here."
+        default:
+            return nil
+        }
     }
 
     // The pre-feedback subtotal, so the factor rows visibly add up to a number
@@ -174,21 +206,34 @@ struct NightlyKeysExplainerSheet: View {
             HStack(spacing: 8) {
                 Image(systemName: "sparkles")
                     .foregroundStyle(SwaplSemanticLight.primary)
-                Text("Appeal read")
+                Text("Home appeal (AI)")
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
             }
             VStack(alignment: .leading, spacing: 8) {
+                // What the AI actually reads, plus the reassurance that it isn't
+                // a harsh black box and doesn't penalise small towns.
+                Text("Our AI reads only how your listing is presented — your photo coverage, how rich your amenities list is, and how detailed your description is. It doesn't judge your home harshly, and location is handled separately, so small towns are never penalised here.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
                 if let summary = ai.summary, !summary.isEmpty {
                     Text(summary)
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.text)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                // Baseline so the signed bonus is interpretable: most homes are 0,
+                // the bonus is capped at +AI_FEATURE_BONUS_MAX.
                 HStack(spacing: 8) {
-                    Text(ai.bonus >= 0 ? "Adds \(trimmed(ai.bonus)) points for standout appeal" : "\(trimmed(ai.bonus)) points")
+                    Text(ai.bonus > 0
+                         ? "Bonus for home appeal: +\(trimmed(ai.bonus)) (most homes score 0; capped at +\(AI_FEATURE_BONUS_MAX))"
+                         : (ai.bonus < 0
+                            ? "Home appeal: \(trimmed(ai.bonus)) (most homes score 0 — add a few photos or detail to lift it)"
+                            : "Home appeal: 0 — completely normal, like most homes (bonus capped at +\(AI_FEATURE_BONUS_MAX))"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
                     Spacer()
                     Text(ai.source == "ai" ? "Read by Swapl AI" : "Standard estimate")
                         .font(.swaplBody(SwaplDesignSystem.FontSize.tiny, weight: .semibold))
@@ -253,12 +298,18 @@ struct NightlyKeysExplainerSheet: View {
     }
 
     private func adjustmentCaption(_ feedback: ValuationExplanation.Feedback) -> String {
-        guard feedback.applied, let adjustment = explanation.adjustment, adjustment != 0 else {
-            return "Great reviews can nudge your value up a little — never more than 20%."
+        // Below the review threshold: say plainly it isn't applied yet and how
+        // many reviews are still needed, so "Not yet applied" isn't a mystery.
+        guard feedback.applied else {
+            return "Not yet applied — reviews start adjusting your value only after \(FEEDBACK_MIN_REVIEWS) reviews. You have \(feedback.reviewCount) so far."
+        }
+        guard let adjustment = explanation.adjustment, adjustment != 0 else {
+            // At/above the threshold but no net move yet: it's moving slowly.
+            return "Now moving slowly toward your rating — a little at a time, never all at once. Capped at ±\(FEEDBACK_BAND_PCT)%."
         }
         return adjustment > 0
-            ? "Strong reviews lifted your nightly value. This nudge is capped at +20%, so it can't run away."
-            : "Your nightly value was eased down slightly. This nudge is capped at 20% either way."
+            ? "Moving slowly toward your strong rating. It shifts at most \(FEEDBACK_STEP_PCT)% per cycle and is capped at +\(FEEDBACK_BAND_PCT)%, so it can't run away."
+            : "Easing slowly toward your current rating. It shifts at most \(FEEDBACK_STEP_PCT)% per cycle and is capped at \(FEEDBACK_BAND_PCT)% either way."
     }
 
     // MARK: - Private room coefficient (DOK-163 C)
@@ -319,7 +370,7 @@ struct NightlyKeysExplainerSheet: View {
                 Text("Steady by design")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
                     .foregroundStyle(AirbnbPalette.text)
-                Text("Your nightly value only moves within set limits, and reviews can shift it by at most 20%. It updates quietly in the background — never a sudden jump.")
+                Text("Your value moves at most \(FEEDBACK_STEP_PCT)% per update cycle, and only once you have \(FEEDBACK_MIN_REVIEWS)+ reviews. Even then, reaching the ±\(FEEDBACK_BAND_PCT)% limit takes many cycles — a hard cap reviews can never push past — so a bad review week can't crash your earnings overnight.")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
