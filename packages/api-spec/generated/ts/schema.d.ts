@@ -2148,6 +2148,220 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/travel-windows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The user's saved travel windows
+         * @description Date windows the AI turns into ready-made swap proposals; soonest first.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TravelWindowsResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Save a travel window
+         * @description Tier-capped (Free=3, Plus=10, Pro=unlimited; admins bypass).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["TravelWindowCreateRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TravelWindowCreateResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Tier travel-window cap reached */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PlanLimitError"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/travel-windows/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a travel window (owner only) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/travel-windows/{id}/proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * AI swap proposals for a travel window
+         * @description Real, active, available, date-compatible homes ranked by match score + travel profile, each annotated with the swap modes (direct swap + Stay-with-Keys) it supports for the window's dates.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TravelWindowProposalsResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found (or not yours) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description No active listing to swap from */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/ai/proposal-message": {
         parameters: {
             query?: never;
@@ -7673,6 +7887,61 @@ export interface components {
         SavedSearchCreateResponse: {
             ok: boolean;
             id: string;
+        };
+        TravelWindow: {
+            id: string;
+            /** @description yyyy-MM-dd. */
+            dateFrom: string;
+            /** @description yyyy-MM-dd. */
+            dateTo: string;
+            flexible: boolean;
+            /** @description Preferred cities/countries (may be empty). */
+            destinations: string[];
+            notes?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        TravelWindowsResponse: {
+            items: components["schemas"]["TravelWindow"][];
+        };
+        TravelWindowCreateRequest: {
+            /** @description yyyy-MM-dd. */
+            dateFrom: string;
+            /** @description yyyy-MM-dd; must be after dateFrom. */
+            dateTo: string;
+            /** @default false */
+            flexible: boolean;
+            destinations?: string[];
+            notes?: string;
+        };
+        TravelWindowCreateResponse: {
+            ok: boolean;
+            window: components["schemas"]["TravelWindow"];
+        };
+        TravelWindowProposal: {
+            listingId: string;
+            title: string;
+            city: string;
+            country: string;
+            photo: string | null;
+            matchScore: number;
+            modes: {
+                directSwap: boolean;
+                keysStay: boolean;
+            };
+            nightlyKeys: number | null;
+            why: string;
+            matchesDestination: boolean;
+        };
+        TravelWindowProposalsResponse: {
+            windowId: string;
+            dates: {
+                from: string;
+                to: string;
+                flexible: boolean;
+            };
+            destinations: string[];
+            proposals: components["schemas"]["TravelWindowProposal"][];
         };
         InterestTag: {
             slug: string;

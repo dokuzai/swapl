@@ -95,6 +95,7 @@ model User {
   affiliateClicks AffiliateClick[]
   orgMemberships  OrganizationMember[]
   savedSearches   SavedSearch[]
+  travelWindows   TravelWindow[]
   emailTokens     EmailToken[]
   authTokens      AuthToken[]
   devices         Device[]
@@ -1048,6 +1049,26 @@ model SavedSearch {
   lastNotifiedAt  DateTime?
   createdAt       DateTime @default(now())
   user            User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+// A saved "I want to travel around these dates" intent (DOK-161). Distinct from
+// SavedSearch (criteria) — a TravelWindow is a date window the AI turns into
+// ready-made swap proposals (real, available, date-compatible homes) and the
+// digest cron watches for new compatible homes to notify about.
+model TravelWindow {
+  id             String   @id @default(cuid())
+  userId         String
+  dateFrom       DateTime
+  dateTo         DateTime
+  flexible       Boolean  @default(false)
+  destinations   String?  // JSON array of preferred cities/countries (optional)
+  notes          String?
+  // Throttle/idempotency flag for the window-proposals digest cron.
+  lastNotifiedAt DateTime?
+  createdAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

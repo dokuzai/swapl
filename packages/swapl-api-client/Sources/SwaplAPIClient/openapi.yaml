@@ -20,6 +20,7 @@ tags:
   - name: listings
   - name: favorites
   - name: saved-searches
+  - name: travel-windows
   - name: proposals
   - name: reports
   - name: devices
@@ -1121,6 +1122,88 @@ components:
       properties:
         ok: { type: boolean }
         id: { type: string }
+
+    TravelWindow:
+      type: object
+      required: [id, dateFrom, dateTo, flexible, destinations, createdAt]
+      properties:
+        id: { type: string }
+        dateFrom: { type: string, description: yyyy-MM-dd. }
+        dateTo: { type: string, description: yyyy-MM-dd. }
+        flexible: { type: boolean }
+        destinations:
+          type: array
+          items: { type: string }
+          description: Preferred cities/countries (may be empty).
+        notes: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    TravelWindowsResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/TravelWindow' }
+
+    TravelWindowCreateRequest:
+      type: object
+      required: [dateFrom, dateTo]
+      properties:
+        dateFrom: { type: string, description: yyyy-MM-dd. }
+        dateTo: { type: string, description: yyyy-MM-dd; must be after dateFrom. }
+        flexible: { type: boolean, default: false }
+        destinations:
+          type: array
+          items: { type: string, minLength: 1, maxLength: 80 }
+          maxItems: 20
+        notes: { type: string, maxLength: 1000 }
+
+    TravelWindowCreateResponse:
+      type: object
+      required: [ok, window]
+      properties:
+        ok: { type: boolean }
+        window: { $ref: '#/components/schemas/TravelWindow' }
+
+    TravelWindowProposal:
+      type: object
+      required: [listingId, title, city, country, photo, matchScore, modes, nightlyKeys, why, matchesDestination]
+      properties:
+        listingId: { type: string }
+        title: { type: string }
+        city: { type: string }
+        country: { type: string }
+        photo: { type: string, nullable: true }
+        matchScore: { type: integer }
+        modes:
+          type: object
+          required: [directSwap, keysStay]
+          properties:
+            directSwap: { type: boolean }
+            keysStay: { type: boolean }
+        nightlyKeys: { type: integer, nullable: true }
+        why: { type: string }
+        matchesDestination: { type: boolean }
+
+    TravelWindowProposalsResponse:
+      type: object
+      required: [windowId, dates, destinations, proposals]
+      properties:
+        windowId: { type: string }
+        dates:
+          type: object
+          required: [from, to, flexible]
+          properties:
+            from: { type: string }
+            to: { type: string }
+            flexible: { type: boolean }
+        destinations:
+          type: array
+          items: { type: string }
+        proposals:
+          type: array
+          items: { $ref: '#/components/schemas/TravelWindowProposal' }
 
     InterestTag:
       type: object
@@ -2470,6 +2553,88 @@ paths:
               schema: { $ref: '#/components/schemas/OkResponse' }
         '401': { description: Unauthenticated }
         '404': { description: Not found (or not yours) }
+
+  /api/travel-windows:
+    get:
+      tags: [travel-windows]
+      summary: The user's saved travel windows
+      description: Date windows the AI turns into ready-made swap proposals; soonest first.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TravelWindowsResponse' }
+        '401': { description: Unauthenticated }
+    post:
+      tags: [travel-windows]
+      summary: Save a travel window
+      description: Tier-capped (Free=3, Plus=10, Pro=unlimited; admins bypass).
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TravelWindowCreateRequest' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TravelWindowCreateResponse' }
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { description: Unauthenticated }
+        '402':
+          description: Tier travel-window cap reached
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlanLimitError' }
+
+  /api/travel-windows/{id}:
+    delete:
+      tags: [travel-windows]
+      summary: Delete a travel window (owner only)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '401': { description: Unauthenticated }
+        '404': { description: Not found (or not yours) }
+
+  /api/travel-windows/{id}/proposals:
+    get:
+      tags: [travel-windows]
+      summary: AI swap proposals for a travel window
+      description: >-
+        Real, active, available, date-compatible homes ranked by match score +
+        travel profile, each annotated with the swap modes (direct swap +
+        Stay-with-Keys) it supports for the window's dates.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TravelWindowProposalsResponse' }
+        '401': { description: Unauthenticated }
+        '404': { description: Not found (or not yours) }
+        '409':
+          description: No active listing to swap from
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
 
   /api/ai/proposal-message:
     post:

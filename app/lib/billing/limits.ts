@@ -20,6 +20,7 @@ export type PlanLimits = {
   label: string;
   maxListings: number;            // 0 = unlimited
   maxProposalsMonth: number;      // 0 = unlimited
+  maxTravelWindows: number;       // 0 = unlimited
   prioritySearch: "standard" | "priority" | "top";
   fullFilters: boolean;
   calendarSync: boolean;
@@ -34,6 +35,7 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     label: "Free",
     maxListings: 1,
     maxProposalsMonth: 3,
+    maxTravelWindows: 3,
     prioritySearch: "standard",
     fullFilters: false,
     calendarSync: false,
@@ -46,6 +48,7 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     label: "swapl Plus",
     maxListings: 3,
     maxProposalsMonth: 0,
+    maxTravelWindows: 10,
     prioritySearch: "priority",
     fullFilters: true,
     calendarSync: true,
@@ -58,6 +61,7 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     label: "swapl Pro",
     maxListings: 0,
     maxProposalsMonth: 0,
+    maxTravelWindows: 0,
     prioritySearch: "top",
     fullFilters: true,
     calendarSync: true,
@@ -115,6 +119,21 @@ export async function ensureCanCreateListing(userId: string): Promise<void> {
       currentPlan: plan.id,
       reason: `Your ${plan.label} plan allows ${plan.maxListings} active listing${
         plan.maxListings === 1 ? "" : "s"
+      }.`,
+      upgradeTo: plan.id === "free" ? "plus" : "pro",
+    });
+  }
+}
+
+export async function ensureCanCreateTravelWindow(userId: string): Promise<void> {
+  const plan = await getEffectivePlan(userId);
+  if (plan.maxTravelWindows === 0) return; // unlimited (Pro / admin bypass)
+  const count = await prisma.travelWindow.count({ where: { userId } });
+  if (count >= plan.maxTravelWindows) {
+    throw new PlanLimitError({
+      currentPlan: plan.id,
+      reason: `Your ${plan.label} plan allows ${plan.maxTravelWindows} saved travel window${
+        plan.maxTravelWindows === 1 ? "" : "s"
       }.`,
       upgradeTo: plan.id === "free" ? "plus" : "pro",
     });

@@ -54,7 +54,8 @@ export type PushKind =
   | "keysStayRequested"
   | "keysStayConfirmed"
   | "keysStayDeclined"
-  | "referralRewarded";
+  | "referralRewarded"
+  | "windowProposals";
 
 export async function sendPush(userId: string, payload: PushPayload): Promise<void> {
   const devices = await prisma.device.findMany({ where: { userId } });
@@ -356,6 +357,13 @@ export const pushTemplates = {
       title: `${who} just verified 🔑`,
       body: `You earned ${keys} Keys. Tap to see your wallet.`,
       data: { kind: "referralRewarded", deepLink: "swapl://keys" },
+    };
+  },
+  windowProposals(monthLabel: string, count: number, topCity: string): PushPayload {
+    return {
+      title: `A swap for your ${monthLabel} trip`,
+      body: `${count} home${count === 1 ? "" : "s"} (incl. ${topCity}) are free for your dates. Tap to see them.`,
+      data: { kind: "windowProposals", deepLink: "swapl://trips" },
     };
   },
 };

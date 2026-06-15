@@ -276,6 +276,20 @@ export const templates = {
       text: `Your swap in ${destinationCity} starts today — check in from your trip cockpit: ${APP_URL}/swaps`,
     }),
 
+  // ---- Saved travel windows (DOK-161) ----
+  // Digest: new homes became available for a saved travel window's dates.
+  windowProposals: (toEmail: string, monthLabel: string, count: number, topCity: string) =>
+    build({
+      to: toEmail,
+      subject: `We found a swap for your ${monthLabel} trip`,
+      preview: `${count} home${count === 1 ? "" : "s"} just opened up for your dates.`,
+      heading: `A swap for your ${monthLabel} trip.`,
+      intro: `${count} home${count === 1 ? " is" : "s are"} now available for the dates you saved — including one in ${topCity}. Tap to see your ready-made proposals.`,
+      ctaLabel: "See your matches",
+      ctaHref: `${APP_URL}/trips`,
+      text: `${count} home${count === 1 ? "" : "s"} (incl. ${topCity}) are available for your ${monthLabel} travel window: ${APP_URL}/trips`,
+    }),
+
   // ---- Dispute / resolution center (DOK-153) ----
   // Sent to the OTHER party when a dispute is opened against their swap.
   // urgent (safety|access) swaps the copy toward the 24/7 line.

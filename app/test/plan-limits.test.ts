@@ -50,6 +50,12 @@ describe("PLAN_LIMITS", () => {
     expect(PLAN_LIMITS.pro.maxListings).toBe(0);
     expect(PLAN_LIMITS.pro.maxProposalsMonth).toBe(0);
   });
+
+  it("encodes the per-tier travel-window caps (Free=3, Plus=10, Pro=unlimited)", () => {
+    expect(PLAN_LIMITS.free.maxTravelWindows).toBe(3);
+    expect(PLAN_LIMITS.plus.maxTravelWindows).toBe(10);
+    expect(PLAN_LIMITS.pro.maxTravelWindows).toBe(0);
+  });
 });
 
 describe("getEffectivePlan", () => {
