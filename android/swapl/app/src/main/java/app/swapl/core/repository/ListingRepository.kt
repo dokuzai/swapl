@@ -1,12 +1,19 @@
 package app.swapl.core.repository
 
+import app.swapl.core.model.BlockRangeRequest
+import app.swapl.core.model.BlockRangeResponse
+import app.swapl.core.model.BlockedRangesResponse
+import app.swapl.core.model.ListingCalendar
 import app.swapl.core.model.ListingCreateBody
 import app.swapl.core.model.ListingDetailResponse
 import app.swapl.core.model.ListingMutationResponse
 import app.swapl.core.model.ListingSearchResponse
+import app.swapl.core.model.OkResponse
+import app.swapl.core.model.UnblockRangeRequest
 import app.swapl.core.model.UploadResponse
 import app.swapl.core.network.ApiClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -40,6 +47,32 @@ class ListingRepository @Inject constructor(private val api: ApiClient) {
 
     suspend fun detail(id: String): ListingDetailResponse =
         api.client.get("${api.baseUrl}/api/listings/$id").body()
+
+    // GET /api/listings/{id}/calendar — public availability snapshot for the
+    // date-picker: the published window plus every occupied/blocked range. THE
+    // single source of truth shared with web/iOS so "what's taken" is never
+    // recomputed on the client.
+    suspend fun calendar(id: String): ListingCalendar =
+        api.client.get("${api.baseUrl}/api/listings/$id/calendar").body()
+
+    // GET /api/listings/{id}/blocked-ranges — owner-only host blocks (with
+    // notes). Used by the calendar editor; the public surface is /calendar.
+    suspend fun blockedRanges(id: String): BlockedRangesResponse =
+        api.client.get("${api.baseUrl}/api/listings/$id/blocked-ranges").body()
+
+    // POST /api/listings/{id}/blocked-ranges — block a date range. Owner-only.
+    suspend fun blockRange(id: String, dateFrom: String, dateTo: String, note: String? = null): BlockRangeResponse =
+        api.client.post("${api.baseUrl}/api/listings/$id/blocked-ranges") {
+            contentType(ContentType.Application.Json)
+            setBody(BlockRangeRequest(dateFrom = dateFrom, dateTo = dateTo, note = note))
+        }.body()
+
+    // DELETE /api/listings/{id}/blocked-ranges — unblock a range by id.
+    suspend fun unblockRange(id: String, rangeId: String): OkResponse =
+        api.client.delete("${api.baseUrl}/api/listings/$id/blocked-ranges") {
+            contentType(ContentType.Application.Json)
+            setBody(UnblockRangeRequest(rangeId = rangeId))
+        }.body()
 
     suspend fun create(body: ListingCreateBody): ListingMutationResponse =
         api.client.post("${api.baseUrl}/api/listings") {

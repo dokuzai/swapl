@@ -50,6 +50,7 @@ import app.swapl.features.auth.LoginScreen
 import app.swapl.features.inspire.InspireScreen
 import app.swapl.features.keys.KeysTransactionsScreen
 import app.swapl.features.keys.KeysWalletScreen
+import app.swapl.features.listings.AvailabilityCalendarScreen
 import app.swapl.features.listings.BrowseScreen
 import app.swapl.features.listings.ListingCreateScreen
 import app.swapl.features.listings.ListingDetailScreen
@@ -259,6 +260,7 @@ private fun HomeShell(
                     ListingDetailScreen(
                         onOpenHost = { id -> browseNav.navigate("profile/$id") },
                         onEdit = { id -> browseNav.navigate("edit/$id") },
+                        onManageCalendar = { id -> browseNav.navigate("calendar/$id") },
                     )
                 }
                 composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
@@ -269,6 +271,9 @@ private fun HomeShell(
                 }
                 composable("edit/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
                     ListingCreateScreen(onDone = { browseNav.popBackStack() })
+                }
+                composable("calendar/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
+                    AvailabilityCalendarScreen(onDone = { browseNav.popBackStack() })
                 }
             }
             HomeDest.Wishlists -> {
@@ -281,7 +286,11 @@ private fun HomeShell(
                         ListingDetailScreen(
                             onOpenHost = { id -> wishlistsNav.navigate("profile/$id") },
                             onEdit = {},
+                            onManageCalendar = { id -> wishlistsNav.navigate("calendar/$id") },
                         )
+                    }
+                    composable("calendar/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
+                        AvailabilityCalendarScreen(onDone = { wishlistsNav.popBackStack() })
                     }
                     composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
                         PublicProfileScreen(onOpenListing = { id -> wishlistsNav.navigate("detail/$id") })
@@ -361,6 +370,9 @@ private fun HomeShell(
                     }
                     composable("edit/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
                         ListingCreateScreen(onDone = { accountNav.popBackStack() })
+                    }
+                    composable("calendar/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
+                        AvailabilityCalendarScreen(onDone = { accountNav.popBackStack() })
                     }
                 }
             }

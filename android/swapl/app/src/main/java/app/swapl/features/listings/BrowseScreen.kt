@@ -56,6 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.swapl.core.model.ListingWithScore
 import app.swapl.core.repository.SearchFilters
+import app.swapl.design.components.DateField
 import app.swapl.design.components.FavoriteHeartButton
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.ListingPhoto
@@ -260,6 +261,11 @@ private fun FilterSheet(
     var pets by remember { mutableStateOf(current.petsRequired) }
     var wfh by remember { mutableStateOf(current.wfhRequired) }
     var stepFree by remember { mutableStateOf(current.stepFreeRequired) }
+    // Date filter (DOK-159): empty = any dates. When set, the API returns only
+    // homes whose published window covers the range and that aren't already
+    // booked then — integrity is enforced server-side via lib/listing/availability.
+    var dateFrom by remember { mutableStateOf(current.dateFrom ?: "") }
+    var dateTo by remember { mutableStateOf(current.dateTo ?: "") }
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -267,6 +273,15 @@ private fun FilterSheet(
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
         ) {
             Text("Filters", style = MaterialTheme.typography.headlineMedium)
+
+            KickerLabel("When")
+            Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2), modifier = Modifier.fillMaxWidth()) {
+                DateField("From", dateFrom, { dateFrom = it }, modifier = Modifier.weight(1f))
+                DateField("To", dateTo, { dateTo = it }, modifier = Modifier.weight(1f))
+            }
+            if (dateFrom.isNotEmpty() || dateTo.isNotEmpty()) {
+                TextButton(onClick = { dateFrom = ""; dateTo = "" }) { Text("Clear dates") }
+            }
 
             KickerLabel("Property type")
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
@@ -294,6 +309,7 @@ private fun FilterSheet(
                     onClick = {
                         types = emptySet(); minSqm = 30f; minSleeps = 1f
                         pets = false; wfh = false; stepFree = false
+                        dateFrom = ""; dateTo = ""
                     },
                 ) { Text("Reset") }
                 Spacer(Modifier.weight(1f))
@@ -308,6 +324,8 @@ private fun FilterSheet(
                                 petsRequired = pets,
                                 wfhRequired = wfh,
                                 stepFreeRequired = stepFree,
+                                dateFrom = dateFrom.ifBlank { null },
+                                dateTo = dateTo.ifBlank { null },
                             ),
                         )
                     },

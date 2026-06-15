@@ -22,7 +22,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.swapl.core.model.KeysAvailability
 import app.swapl.core.repository.KeysRepository
-import app.swapl.design.components.DateField
+import app.swapl.design.components.AvailabilityCalendar
+import app.swapl.design.components.CalendarUnavailable
+import app.swapl.design.components.parseCalendarDate
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.plugins.ClientRequestException
@@ -130,12 +132,38 @@ fun StayWithKeysDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                DateField("Check-in", from, { from = it }, modifier = Modifier.fillMaxWidth())
-                DateField("Check-out", to, { to = it }, modifier = Modifier.fillMaxWidth())
                 Text(
-                    "Choose dates inside the home's availability (${availableFrom.take(10)} → ${availableTo.take(10)}). $minStayDays–$maxStayDays nights.",
+                    "Choose dates inside the home's availability (${availableFrom.take(10)} → ${availableTo.take(10)}). $minStayDays–$maxStayDays nights. Booked dates are crossed out.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                // Tap-to-pick on the real availability grid (DOK-159): booked
+                // ranges and out-of-window days are disabled, so the guest can
+                // never request dates the home isn't free. Falls back to the
+                // published window until /keys-availability resolves.
+                val avail = vm.availability
+                val unavailable = remember(avail) {
+                    avail?.bookedRanges?.map {
+                        CalendarUnavailable(
+                            from = parseCalendarDate(it.dateFrom),
+                            to = parseCalendarDate(it.dateTo),
+                            source = "keys_stay",
+                        )
+                    } ?: emptyList()
+                }
+                AvailabilityCalendar(
+                    windowStart = parseCalendarDate(availableFrom),
+                    windowEnd = parseCalendarDate(availableTo),
+                    unavailable = unavailable,
+                    selectedStart = runCatching { LocalDate.parse(from) }.getOrNull(),
+                    selectedEnd = runCatching { LocalDate.parse(to) }.getOrNull(),
+                    onSelect = { s, e ->
+                        from = s.toString()
+                        to = (e ?: s).toString()
+                    },
+                    minNights = maxOf(minStayDays, 1),
+                    maxNights = maxStayDays,
                 )
 
                 CostRow("Points per night", nightlyKeys.toString())

@@ -95,6 +95,7 @@ class ListingDetailViewModel @Inject constructor(
 fun ListingDetailScreen(
     onOpenHost: (String) -> Unit = {},
     onEdit: (String) -> Unit = {},
+    onManageCalendar: (String) -> Unit = {},
     vm: ListingDetailViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) { vm.load() }
@@ -180,6 +181,15 @@ fun ListingDetailScreen(
 
         if (isOwner) {
             PrimaryPill("Edit listing", onClick = { onEdit(d.listing.id) })
+            // Calendar editor (DOK-159): manage which dates are bookable —
+            // see confirmed swaps/points stays and block your own dates.
+            androidx.compose.material3.OutlinedButton(
+                onClick = { onManageCalendar(d.listing.id) },
+                shape = CircleShape,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Manage availability")
+            }
         } else {
             ProposeCta(d, onPropose = { showPropose = true })
 
