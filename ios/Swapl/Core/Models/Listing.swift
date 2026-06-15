@@ -49,6 +49,10 @@ struct Listing: Identifiable, Codable, Hashable, Sendable {
     let lng: Double?
     let isFeatured: Bool
     let isVerified: Bool
+    // Optional owner-proof verification (DOK-162). True once an admin approves a
+    // PropertyVerification submission; drives the discreet "Verified owner" trust
+    // badge. Optional so older servers that omit it still decode.
+    let ownerVerified: Bool?
 }
 
 struct ListingWithScore: Identifiable, Codable, Hashable, Sendable {

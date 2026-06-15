@@ -441,6 +441,12 @@ struct ListingCreationView: View {
     @State private var photoItems: [PhotosPickerItem] = []
     @State private var uploadingPhotos = false
 
+    // Publish acknowledgment (DOK-162). The host picks the hosting mode and must
+    // tick a self-attestation before a NEW listing can publish; never shown when
+    // editing (the ack is logged once at create time).
+    @State private var ackMode: PublishAckMode = .entireHomeWhileAway
+    @State private var ackAccepted = false
+
     // Edit mode: when set, the wizard is prefilled from the published listing
     // and submit issues PUT /api/listings/{id} instead of POST /api/listings.
     private let editingListingId: String?
@@ -747,6 +753,78 @@ struct ListingCreationView: View {
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .padding(.horizontal, 4)
+
+            if !isEditing {
+                publishAcknowledgment
+            }
+        }
+    }
+
+    // DOK-162: hosting-mode picker + required self-attestation. The discrimine is
+    // cession of enjoyment, not money — so the copy adapts to the chosen mode and
+    // we never ask for proof of ownership here (that's the separate, optional
+    // "Verify ownership" flow). Publish stays blocked until the box is ticked.
+    private var publishAcknowledgment: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("How are you hosting?")
+                .font(.swaplDisplay(20, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+
+            VStack(spacing: 10) {
+                ForEach(PublishAckMode.allCases, id: \.self) { mode in
+                    Button {
+                        if ackMode != mode { ackAccepted = false }
+                        ackMode = mode
+                    } label: {
+                        HStack(alignment: .top, spacing: 12) {
+                            Image(systemName: ackMode == mode ? "largecircle.fill.circle" : "circle")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundStyle(ackMode == mode ? SwaplSemanticLight.primary : AirbnbPalette.secondaryText)
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(mode.pickerTitle)
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                                    .foregroundStyle(AirbnbPalette.text)
+                                Text(mode.pickerSubtitle)
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                                    .foregroundStyle(AirbnbPalette.secondaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            Spacer(minLength: 0)
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                                .stroke(ackMode == mode ? SwaplSemanticLight.primary : AirbnbPalette.hairline, lineWidth: ackMode == mode ? 2 : 1)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            Button {
+                ackAccepted.toggle()
+                error = nil
+            } label: {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: ackAccepted ? "checkmark.square.fill" : "square")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(ackAccepted ? SwaplSemanticLight.primary : AirbnbPalette.secondaryText)
+                    Text(ackMode.ackText)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(AirbnbPalette.softBackground, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("I confirm I have the right to host")
+            .accessibilityValue(ackAccepted ? "Checked" : "Not checked")
         }
     }
 
@@ -816,6 +894,11 @@ struct ListingCreationView: View {
         case 3:
             if draft.availableTo <= draft.availableFrom { return "End date must be after start date." }
             if draft.maxStayDays < draft.minStayDays { return "Maximum stay must be at least the minimum stay." }
+        case steps.count - 1:
+            // Review step: the publish acknowledgment is mandatory on create.
+            if !isEditing && !ackAccepted {
+                return "Please confirm you have the right to host before publishing."
+            }
         default:
             break
         }
@@ -831,9 +914,16 @@ struct ListingCreationView: View {
             if let editingListingId {
                 response = try await ListingRepository.shared.update(id: editingListingId, draft.payload)
             } else {
-                response = try await ListingRepository.shared.create(draft.payload)
+                // Attach the publish acknowledgment only on create; the backend
+                // requires ackAccepted + mode and rejects with 400 otherwise.
+                var payload = draft.payload
+                payload.ackAccepted = true
+                payload.mode = ackMode.rawValue
+                response = try await ListingRepository.shared.create(payload)
             }
             createdListingId = response.id
+        } catch APIClient.APIError.status(400, let body) where (body ?? "").contains("PUBLISH_ACK") {
+            self.error = "Please confirm you have the right to host before publishing."
         } catch APIClient.APIError.status(403, _) {
             self.error = isEditing
                 ? "You can only edit your own listing."

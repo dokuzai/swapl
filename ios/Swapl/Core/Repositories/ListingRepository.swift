@@ -68,6 +68,11 @@ struct ListingCreateDraft: Encodable, Sendable {
     var maxStayDays: Int
     var photos: [String]
     var tags: [String]
+    // Publish acknowledgment (DOK-162). REQUIRED on create: the host self-attests
+    // they have the right to host in the chosen mode. Ignored on update — left nil
+    // so the edit flow's encoded body omits them entirely.
+    var ackAccepted: Bool? = nil
+    var mode: String? = nil
 }
 
 struct SearchFilters: Sendable {

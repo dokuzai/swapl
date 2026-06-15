@@ -31,6 +31,7 @@ struct ListingDetailView: View {
     @State private var isShowingKeysStaySheet = false
     @State private var isEditingListing = false
     @State private var isShowingCalendarEditor = false
+    @State private var isShowingOwnerVerification = false
     @State private var sentProposalId: String?
     @State private var requestedStayId: String?
 
@@ -103,6 +104,11 @@ struct ListingDetailView: View {
         .sheet(isPresented: $isShowingCalendarEditor, onDismiss: { Task { await vm.load() } }) {
             if let listing = vm.detail?.listing {
                 ListingCalendarEditorView(listingId: listing.id, listingTitle: listing.title)
+            }
+        }
+        .sheet(isPresented: $isShowingOwnerVerification, onDismiss: { Task { await vm.load() } }) {
+            if let listing = vm.detail?.listing {
+                OwnerVerificationSheet(listingId: listing.id)
             }
         }
         .sheet(isPresented: $isShowingProposalSheet) {
@@ -219,8 +225,55 @@ struct ListingDetailView: View {
             hostSection(detail)
             descriptionSection(detail.listing.description)
             amenitySection(detail.listing)
+            if isOwner(detail) {
+                ownerVerificationEntry(detail)
+            }
         }
         .padding(.bottom, 110)
+    }
+
+    // DOK-162: optional owner-proof entry, owner-only. Clearly framed as a trust
+    // boost, never a requirement — publishing is never gated on this.
+    private func ownerVerificationEntry(_ detail: ListingDetailResponse) -> some View {
+        Button {
+            isShowingOwnerVerification = true
+        } label: {
+            HStack(spacing: 16) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                        .fill(SwaplSemanticLight.accent)
+                    Image(systemName: detail.listing.ownerVerified == true ? "seal.fill" : "seal")
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                }
+                .frame(width: 56, height: 56)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(detail.listing.ownerVerified == true ? "You're a verified owner" : "Verify ownership")
+                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    Text(detail.listing.ownerVerified == true
+                        ? "Your home carries the Verified owner badge."
+                        : "Optional. Add proof to earn a trust badge — it's never required to publish.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            .padding(18)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            }
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 22)
     }
 
     private func hostSection(_ detail: ListingDetailResponse) -> some View {
@@ -241,6 +294,11 @@ struct ListingDetailView: View {
                 Text(detail.host.verified ? "Verified host" : "Swapl host")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
+                // DOK-162: discreet trust badge once an admin approved owner proof.
+                if detail.listing.ownerVerified == true {
+                    VerifiedOwnerBadge()
+                        .padding(.top, 2)
+                }
             }
             Spacer()
         }
