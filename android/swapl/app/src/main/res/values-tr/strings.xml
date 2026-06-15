@@ -79,4 +79,30 @@
     <string name="owner_verify_doc_read_error">Bu dosya okunamadı.</string>
     <string name="owner_verify_upload_failed">Yükleme başarısız. Tekrar dene.</string>
     <string name="owner_verify_submit_failed">Gönderilemedi. Tekrar dene.</string>
+
+    <!-- Gecelik Keys değerlemesi (DOK-163). -->
+    <string name="valuation_section_title">Gecelik Keys değerin nasıl hesaplanır</string>
+    <string name="valuation_per_night">%1$d / gece</string>
+    <string name="valuation_intro">Bir misafirin her konaklama gecesi için harcadığı — ve senin kazandığın — tutar budur. Değer, evinin özelliklerine göre adil biçimde belirlenir; ne sen ne de biz yükseltiriz.</string>
+    <string name="valuation_show">Ayrıntıyı göster</string>
+    <string name="valuation_hide">Ayrıntıyı gizle</string>
+    <string name="valuation_factors_kicker">Değeri oluşturan unsurlar</string>
+    <string name="valuation_base_label">Değerlendirme öncesi değer</string>
+    <string name="valuation_factor_base">Başlangıç değeri</string>
+    <string name="valuation_factor_size">Boyut</string>
+    <string name="valuation_factor_sleeps">Yatak kapasitesi</string>
+    <string name="valuation_factor_location_tier">Destinasyon talebi</string>
+    <string name="valuation_factor_verified">Doğrulanmış ev</string>
+    <string name="valuation_factor_ai_appeal">Evin çekiciliği</string>
+    <string name="valuation_ai_summary_kicker">Bu çekicilik puanı neden</string>
+    <string name="valuation_ai_fallback_note">Fotoğraflarından ve olanaklarından hesaplandı. Modelimiz ilanını inceledikten sonra daha ayrıntılı bir çekicilik değerlendirmesi eklenir.</string>
+    <string name="valuation_room_kicker">Bu bir oda</string>
+    <string name="valuation_room_note">Tüm evi değil özel bir oda sunduğun için gecelik değer yalnızca o odayı yansıtır — tüm ev ücretinin yaklaşık %1$d%% kadarı.</string>
+    <string name="valuation_location_note">Destinasyon talep düzeyi 5 üzerinden %1$d — bölgenin konaklama için ne kadar rağbet gördüğü.</string>
+    <string name="valuation_review_kicker">Misafir değerlendirmeleri</string>
+    <string name="valuation_review_applied_up">Değerlendirmelerin (%2$d değerlendirmeden %1$.1f★) değeri %3$d%% artırıyor.</string>
+    <string name="valuation_review_applied_down">Değerlendirmelerin (%2$d değerlendirmeden %1$.1f★) değeri %3$d%% azaltıyor.</string>
+    <string name="valuation_review_applied_neutral">Değerlendirmelerin (%2$d değerlendirmeden %1$.1f★) değeri aynı tutuyor.</string>
+    <string name="valuation_review_pending">Birkaç misafir değerlendirmen olduğunda bu değeri hafifçe ayarlayabilirler. O zamana kadar özelliklere dayalı düzeyinde kalır.</string>
+    <string name="valuation_bounded_note">Bu değer yalnızca küçük ve sınırlı adımlarla değişir — değerlendirme geri bildirimi onu en fazla ±20%% kaydırabilir, bu yüzden bir gecede sıçramaz.</string>
 </resources>

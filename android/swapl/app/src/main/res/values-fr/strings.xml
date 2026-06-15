@@ -79,4 +79,30 @@
     <string name="owner_verify_doc_read_error">Impossible de lire ce fichier.</string>
     <string name="owner_verify_upload_failed">Échec du téléversement. Réessayez.</string>
     <string name="owner_verify_submit_failed">Échec de l\'envoi. Réessayez.</string>
+
+    <!-- Estimation des Keys par nuit (DOK-163). -->
+    <string name="valuation_section_title">Comment vos Keys par nuit sont calculés</string>
+    <string name="valuation_per_night">%1$d / nuit</string>
+    <string name="valuation_intro">C\'est ce qu\'un voyageur dépense — et ce que vous gagnez — pour chaque nuit de séjour. La valeur est fixée équitablement à partir des caractéristiques de votre logement, jamais surenchérie par vous ni par nous.</string>
+    <string name="valuation_show">Afficher le détail</string>
+    <string name="valuation_hide">Masquer le détail</string>
+    <string name="valuation_factors_kicker">Ce qui compose la valeur</string>
+    <string name="valuation_base_label">Valeur avant avis</string>
+    <string name="valuation_factor_base">Valeur de départ</string>
+    <string name="valuation_factor_size">Surface</string>
+    <string name="valuation_factor_sleeps">Couchages</string>
+    <string name="valuation_factor_location_tier">Demande de la destination</string>
+    <string name="valuation_factor_verified">Logement vérifié</string>
+    <string name="valuation_factor_ai_appeal">Attrait du logement</string>
+    <string name="valuation_ai_summary_kicker">Pourquoi ce score d\'attrait</string>
+    <string name="valuation_ai_fallback_note">Estimé d\'après vos photos et équipements. Une analyse plus fine de l\'attrait est ajoutée une fois que notre modèle a examiné votre annonce.</string>
+    <string name="valuation_room_kicker">Il s\'agit d\'une chambre</string>
+    <string name="valuation_room_note">Comme vous proposez une chambre privée et non le logement entier, la valeur par nuit ne reflète que cette chambre — environ %1$d%% du tarif d\'un logement entier.</string>
+    <string name="valuation_location_note">Niveau de demande de la destination %1$d sur 5 — à quel point votre quartier est prisé pour les séjours.</string>
+    <string name="valuation_review_kicker">Avis des voyageurs</string>
+    <string name="valuation_review_applied_up">Vos avis (%1$.1f★ sur %2$d) augmentent la valeur de %3$d%%.</string>
+    <string name="valuation_review_applied_down">Vos avis (%1$.1f★ sur %2$d) réduisent la valeur de %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">Vos avis (%1$.1f★ sur %2$d) maintiennent la valeur inchangée.</string>
+    <string name="valuation_review_pending">Dès que vous aurez quelques avis, ils pourront ajuster doucement cette valeur. En attendant, elle reste à son niveau fondé sur les caractéristiques.</string>
+    <string name="valuation_bounded_note">Cette valeur n\'évolue que par petits paliers plafonnés — le retour des avis peut la déplacer au maximum de ±20%%, elle ne varie donc jamais brusquement.</string>
 </resources>

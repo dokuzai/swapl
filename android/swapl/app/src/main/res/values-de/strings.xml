@@ -79,4 +79,30 @@
     <string name="owner_verify_doc_read_error">Diese Datei konnte nicht gelesen werden.</string>
     <string name="owner_verify_upload_failed">Hochladen fehlgeschlagen. Versuche es erneut.</string>
     <string name="owner_verify_submit_failed">Einreichen fehlgeschlagen. Versuche es erneut.</string>
+
+    <!-- Keys-Bewertung pro Nacht (DOK-163). -->
+    <string name="valuation_section_title">So werden deine Keys pro Nacht berechnet</string>
+    <string name="valuation_per_night">%1$d / Nacht</string>
+    <string name="valuation_intro">Das gibt ein Gast aus — und das verdienst du — für jede Übernachtung. Der Wert wird fair aus den Merkmalen deines Zuhauses bestimmt, niemals von dir oder uns hochgetrieben.</string>
+    <string name="valuation_show">Aufschlüsselung anzeigen</string>
+    <string name="valuation_hide">Aufschlüsselung ausblenden</string>
+    <string name="valuation_factors_kicker">Was den Wert bildet</string>
+    <string name="valuation_base_label">Wert vor Bewertungen</string>
+    <string name="valuation_factor_base">Startwert</string>
+    <string name="valuation_factor_size">Größe</string>
+    <string name="valuation_factor_sleeps">Schlafplätze</string>
+    <string name="valuation_factor_location_tier">Nachfrage am Reiseziel</string>
+    <string name="valuation_factor_verified">Verifiziertes Zuhause</string>
+    <string name="valuation_factor_ai_appeal">Attraktivität des Zuhauses</string>
+    <string name="valuation_ai_summary_kicker">Warum dieser Attraktivitätswert</string>
+    <string name="valuation_ai_fallback_note">Aus deinen Fotos und Ausstattungen ermittelt. Eine genauere Einschätzung der Attraktivität kommt hinzu, sobald unser Modell dein Inserat geprüft hat.</string>
+    <string name="valuation_room_kicker">Das ist ein Zimmer</string>
+    <string name="valuation_room_note">Da du ein Privatzimmer und nicht das ganze Zuhause anbietest, spiegelt der Wert pro Nacht nur dieses Zimmer wider — etwa %1$d%% des Preises für ein ganzes Objekt.</string>
+    <string name="valuation_location_note">Nachfragestufe des Reiseziels %1$d von 5 — wie gefragt deine Gegend für Aufenthalte ist.</string>
+    <string name="valuation_review_kicker">Gästebewertungen</string>
+    <string name="valuation_review_applied_up">Deine Bewertungen (%1$.1f★ aus %2$d) heben den Wert um %3$d%% an.</string>
+    <string name="valuation_review_applied_down">Deine Bewertungen (%1$.1f★ aus %2$d) senken den Wert um %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">Deine Bewertungen (%1$.1f★ aus %2$d) halten den Wert konstant.</string>
+    <string name="valuation_review_pending">Sobald du einige Gästebewertungen hast, können sie diesen Wert behutsam anpassen. Bis dahin bleibt er auf dem merkmalsbasierten Niveau.</string>
+    <string name="valuation_bounded_note">Dieser Wert bewegt sich nur in kleinen, gedeckelten Schritten — Bewertungsfeedback kann ihn um höchstens ±20%% verschieben, sodass er nie über Nacht ausschlägt.</string>
 </resources>

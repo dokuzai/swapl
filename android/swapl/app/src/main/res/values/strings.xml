@@ -90,4 +90,31 @@
     <string name="owner_verify_doc_read_error">Couldn\'t read that file.</string>
     <string name="owner_verify_upload_failed">Upload failed. Try again.</string>
     <string name="owner_verify_submit_failed">Couldn\'t submit. Try again.</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). Owner-only "how your
+         nightly Keys are calculated" breakdown. -->
+    <string name="valuation_section_title">How your nightly Keys are calculated</string>
+    <string name="valuation_per_night">%1$d / night</string>
+    <string name="valuation_intro">This is what a guest spends — and what you earn — for each night they stay. It\'s set fairly from your home\'s features, never by you or by us bidding it up.</string>
+    <string name="valuation_show">Show the breakdown</string>
+    <string name="valuation_hide">Hide the breakdown</string>
+    <string name="valuation_factors_kicker">What builds the value</string>
+    <string name="valuation_base_label">Pre-review value</string>
+    <string name="valuation_factor_base">Starting value</string>
+    <string name="valuation_factor_size">Size</string>
+    <string name="valuation_factor_sleeps">Sleeps</string>
+    <string name="valuation_factor_location_tier">Destination demand</string>
+    <string name="valuation_factor_verified">Verified home</string>
+    <string name="valuation_factor_ai_appeal">Home appeal</string>
+    <string name="valuation_ai_summary_kicker">Why the appeal score</string>
+    <string name="valuation_ai_fallback_note">Scored from your photos and amenities. A richer appeal read is added once our home-appeal model has looked at your listing.</string>
+    <string name="valuation_room_kicker">This is a room</string>
+    <string name="valuation_room_note">Because you\'re offering a private room rather than the whole home, the nightly value reflects just that room — about %1$d%% of an entire-place rate.</string>
+    <string name="valuation_location_note">Destination demand tier %1$d of 5 — how sought-after your area is for stays.</string>
+    <string name="valuation_review_kicker">Guest reviews</string>
+    <string name="valuation_review_applied_up">Your reviews (%1$.1f★ from %2$d) nudge the value up by %3$d%%.</string>
+    <string name="valuation_review_applied_down">Your reviews (%1$.1f★ from %2$d) ease the value down by %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">Your reviews (%1$.1f★ from %2$d) keep the value right where it is.</string>
+    <string name="valuation_review_pending">Once you have a few guest reviews, they can gently adjust this value. Until then it stays at its feature-based level.</string>
+    <string name="valuation_bounded_note">This value moves only in small, capped steps — review feedback can shift it at most ±20%%, so it never swings on you overnight.</string>
 </resources>

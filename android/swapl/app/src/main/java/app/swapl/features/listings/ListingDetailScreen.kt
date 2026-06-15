@@ -150,6 +150,37 @@ fun ListingDetailScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
+        // Persisted nightly-Keys value (DOK-163), shown to every viewer so the
+        // Stay-with-Keys rate is transparent before they open the booking sheet.
+        // Read straight from the DTO — never recomputed on the client.
+        d.listing.nightlyKeys?.let { nightly ->
+            Row(
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+            ) {
+                Icon(
+                    Icons.Default.VpnKey,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp),
+                )
+                Text(
+                    "$nightly points / night",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            // Private-room transparency (DOK-163 C) for non-owners too: the
+            // nightly value reflects only the room, not the whole home.
+            if (d.listing.isPrivateRoom) {
+                Text(
+                    "This is a private room, so the nightly value reflects just the room — not the whole home.",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
         KickerLabel("About this home")
         Text(d.listing.description, style = MaterialTheme.typography.bodyMedium)
 
@@ -183,6 +214,11 @@ fun ListingDetailScreen(
         }
 
         if (isOwner) {
+            // "How your nightly Keys are calculated" (DOK-163). The structured
+            // explanation is owner-only — the server only sends it to the owner,
+            // so this only ever appears on your own listing.
+            d.listing.valuationExplanation?.let { NightlyKeysExplainer(it) }
+
             PrimaryPill("Edit listing", onClick = { onEdit(d.listing.id) })
             // Calendar editor (DOK-159): manage which dates are bookable —
             // see confirmed swaps/points stays and block your own dates.

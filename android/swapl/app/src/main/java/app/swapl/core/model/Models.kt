@@ -50,6 +50,68 @@ data class Listing(
     // Owner-proof trust badge (DOK-162): host attested + admin-approved.
     // Optional, never a publish gate — defaults false for older payloads.
     val ownerVerified: Boolean = false,
+    // Unified valuation v2 (DOK-163). All persisted server-side and read from
+    // the DTO — the client NEVER recomputes nightlyKeys. Optional so the app
+    // still decodes responses from older deploys.
+    // "entire_place" | "private_room".
+    val spaceType: String = "entire_place",
+    val roomsOffered: Int? = null,
+    // Persisted final nightly value (base × (1 + review adjustment)). Null until
+    // the valuation cron has run for this listing.
+    val nightlyKeys: Int? = null,
+    val locationTier: Int? = null,
+    // Owner-only structured breakdown of how nightlyKeys is calculated. Null for
+    // non-owners (the server withholds it) and on older deploys.
+    val valuationExplanation: ValuationExplanation? = null,
+) {
+    val isPrivateRoom: Boolean get() = spaceType == "private_room"
+}
+
+// Mirrors lib/keys/valuation.ts ValuationExplanation (version 2) — the
+// owner-only "how your nightly Keys are calculated" payload exposed on
+// GET /api/listings/{id}. The client only renders this; it never recomputes it.
+@Serializable
+data class ValuationExplanation(
+    val version: Int = 2,
+    // Pre-feedback nightly Keys built from the deterministic factors below.
+    val base: Int,
+    // Review-feedback multiplier, clamped to ±0.20. Positive nudges the value up.
+    val adjustment: Float = 0f,
+    // Final = clamp(round(base × (1 + adjustment))).
+    val nightlyKeys: Int,
+    val locationTier: Int,
+    val spaceType: String,
+    // < 1.0 for a private room (the value reflects only the room).
+    val roomsCoefficient: Float = 1f,
+    val factors: List<ValuationFactor> = emptyList(),
+    val ai: ValuationAi,
+    val feedback: ValuationFeedback,
+) {
+    val isPrivateRoom: Boolean get() = spaceType == "private_room"
+}
+
+@Serializable
+data class ValuationFactor(
+    // base | size | sleeps | location_tier | verified | ai_appeal
+    val key: String,
+    val label: String,
+    // Signed Keys contribution of this factor.
+    val points: Float,
+)
+
+@Serializable
+data class ValuationAi(
+    val source: String,   // "ai" | "fallback"
+    val bonus: Float = 0f,
+    val summary: String = "",
+)
+
+@Serializable
+data class ValuationFeedback(
+    val reviewCount: Int = 0,
+    val avgRating: Float? = null,
+    // False until enough reviews exist for the adjustment to apply.
+    val applied: Boolean = false,
 )
 
 // Request body for POST /api/listings and PUT /api/listings/{id}.

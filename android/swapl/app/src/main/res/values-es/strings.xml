@@ -79,4 +79,30 @@
     <string name="owner_verify_doc_read_error">No se pudo leer ese archivo.</string>
     <string name="owner_verify_upload_failed">Error al subir. Inténtalo de nuevo.</string>
     <string name="owner_verify_submit_failed">No se pudo enviar. Inténtalo de nuevo.</string>
+
+    <!-- Valoración de Keys por noche (DOK-163). -->
+    <string name="valuation_section_title">Cómo se calculan tus Keys por noche</string>
+    <string name="valuation_per_night">%1$d / noche</string>
+    <string name="valuation_intro">Esto es lo que gasta un huésped — y lo que ganas tú — por cada noche de estancia. Se fija de forma justa según las características de tu casa, nunca al alza por ti ni por nosotros.</string>
+    <string name="valuation_show">Mostrar el desglose</string>
+    <string name="valuation_hide">Ocultar el desglose</string>
+    <string name="valuation_factors_kicker">Qué compone el valor</string>
+    <string name="valuation_base_label">Valor antes de reseñas</string>
+    <string name="valuation_factor_base">Valor inicial</string>
+    <string name="valuation_factor_size">Tamaño</string>
+    <string name="valuation_factor_sleeps">Plazas</string>
+    <string name="valuation_factor_location_tier">Demanda del destino</string>
+    <string name="valuation_factor_verified">Casa verificada</string>
+    <string name="valuation_factor_ai_appeal">Atractivo de la casa</string>
+    <string name="valuation_ai_summary_kicker">Por qué esta puntuación de atractivo</string>
+    <string name="valuation_ai_fallback_note">Calculado a partir de tus fotos y servicios. Se añade una lectura más rica del atractivo cuando nuestro modelo haya revisado tu anuncio.</string>
+    <string name="valuation_room_kicker">Esto es una habitación</string>
+    <string name="valuation_room_note">Como ofreces una habitación privada y no la casa entera, el valor por noche refleja solo esa habitación — alrededor del %1$d%% de la tarifa de una casa completa.</string>
+    <string name="valuation_location_note">Nivel de demanda del destino %1$d de 5 — lo solicitada que es tu zona para estancias.</string>
+    <string name="valuation_review_kicker">Reseñas de huéspedes</string>
+    <string name="valuation_review_applied_up">Tus reseñas (%1$.1f★ de %2$d) suben el valor un %3$d%%.</string>
+    <string name="valuation_review_applied_down">Tus reseñas (%1$.1f★ de %2$d) bajan el valor un %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">Tus reseñas (%1$.1f★ de %2$d) mantienen el valor igual.</string>
+    <string name="valuation_review_pending">Cuando tengas algunas reseñas, podrán ajustar suavemente este valor. Hasta entonces se mantiene en su nivel basado en las características.</string>
+    <string name="valuation_bounded_note">Este valor solo se mueve en pasos pequeños y limitados — la opinión de las reseñas puede cambiarlo como máximo un ±20%%, así que nunca se dispara de un día para otro.</string>
 </resources>

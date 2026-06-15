@@ -79,4 +79,30 @@
     <string name="owner_verify_doc_read_error">Dat bestand kon niet worden gelezen.</string>
     <string name="owner_verify_upload_failed">Uploaden mislukt. Probeer het opnieuw.</string>
     <string name="owner_verify_submit_failed">Indienen mislukt. Probeer het opnieuw.</string>
+
+    <!-- Keys-waardering per nacht (DOK-163). -->
+    <string name="valuation_section_title">Hoe je Keys per nacht worden berekend</string>
+    <string name="valuation_per_night">%1$d / nacht</string>
+    <string name="valuation_intro">Dit is wat een gast uitgeeft — en wat jij verdient — voor elke overnachting. De waarde wordt eerlijk bepaald op basis van de kenmerken van je woning, nooit door jou of door ons opgedreven.</string>
+    <string name="valuation_show">Toon de opbouw</string>
+    <string name="valuation_hide">Verberg de opbouw</string>
+    <string name="valuation_factors_kicker">Wat de waarde bepaalt</string>
+    <string name="valuation_base_label">Waarde vóór reviews</string>
+    <string name="valuation_factor_base">Startwaarde</string>
+    <string name="valuation_factor_size">Oppervlakte</string>
+    <string name="valuation_factor_sleeps">Slaapplaatsen</string>
+    <string name="valuation_factor_location_tier">Vraag naar bestemming</string>
+    <string name="valuation_factor_verified">Geverifieerde woning</string>
+    <string name="valuation_factor_ai_appeal">Aantrekkelijkheid van de woning</string>
+    <string name="valuation_ai_summary_kicker">Waarom deze aantrekkelijkheidsscore</string>
+    <string name="valuation_ai_fallback_note">Berekend op basis van je foto\'s en voorzieningen. Een rijkere inschatting van de aantrekkelijkheid wordt toegevoegd zodra ons model je advertentie heeft bekeken.</string>
+    <string name="valuation_room_kicker">Dit is een kamer</string>
+    <string name="valuation_room_note">Omdat je een privékamer aanbiedt en niet de hele woning, weerspiegelt de waarde per nacht alleen die kamer — ongeveer %1$d%% van het tarief voor een hele woning.</string>
+    <string name="valuation_location_note">Vraagniveau van de bestemming %1$d van 5 — hoe gewild jouw buurt is voor verblijven.</string>
+    <string name="valuation_review_kicker">Gastbeoordelingen</string>
+    <string name="valuation_review_applied_up">Je beoordelingen (%1$.1f★ uit %2$d) verhogen de waarde met %3$d%%.</string>
+    <string name="valuation_review_applied_down">Je beoordelingen (%1$.1f★ uit %2$d) verlagen de waarde met %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">Je beoordelingen (%1$.1f★ uit %2$d) houden de waarde gelijk.</string>
+    <string name="valuation_review_pending">Zodra je enkele gastbeoordelingen hebt, kunnen die deze waarde licht bijstellen. Tot dan blijft hij op het op kenmerken gebaseerde niveau.</string>
+    <string name="valuation_bounded_note">Deze waarde beweegt alleen in kleine, begrensde stappen — feedback uit reviews kan hem hooguit ±20%% verschuiven, dus hij schiet nooit van de ene op de andere dag uit.</string>
 </resources>
