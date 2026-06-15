@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E66A0E090373270BD15A373 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A26750B03F9E5DE1807A9C /* Availability.swift */; };
+		8050D33948751980F006B0E2 /* CalendarRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0DAC217C813150DFB61009 /* CalendarRepository.swift */; };
+		288108BA48402EF82B163DC9 /* AvailabilityCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D3DFB66C331888143A66FC /* AvailabilityCalendar.swift */; };
+		285D80B4CF494D777B972ECC /* ListingCalendarEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E287A8317A62646254B9A30 /* ListingCalendarEditorView.swift */; };
 		004110AF6E2282A8C4857526 /* GoogleSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F8D20A60DA002DAD6CA36A /* GoogleSignInCoordinator.swift */; };
 		01A23378F38E2AA77EEE9AB2 /* Referral.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC8253E8B03396CC68DBEDE /* Referral.swift */; };
 		025918872EE8E347FE5DAB31 /* SwaplImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC3CE2737C2B041ADE0B63C /* SwaplImage.swift */; };
@@ -120,6 +124,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		04A26750B03F9E5DE1807A9C /* Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Availability.swift; sourceTree = "<group>"; };
+		1B0DAC217C813150DFB61009 /* CalendarRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarRepository.swift; sourceTree = "<group>"; };
+		95D3DFB66C331888143A66FC /* AvailabilityCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCalendar.swift; sourceTree = "<group>"; };
+		3E287A8317A62646254B9A30 /* ListingCalendarEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingCalendarEditorView.swift; sourceTree = "<group>"; };
 		06335EFCBD6A3915C648EB60 /* LeaveReviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveReviewSheet.swift; sourceTree = "<group>"; };
 		0B99C1E41BBF19C90616B214 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		0FB5692D60E8AAFB8D3017D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -311,6 +319,7 @@
 				BC848E7485CD6912E46E61BE /* SurfaceCard.swift */,
 				7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */,
 				BC51BEDDB64724941D1CAE27 /* SwaplPageTitle.swift */,
+				95D3DFB66C331888143A66FC /* AvailabilityCalendar.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -335,6 +344,7 @@
 				6DE55822504185C1726F7590 /* TripRepository.swift */,
 				6625DA305EE56FBB09BB7C24 /* UnreadStore.swift */,
 				D37E004482EF51FE52B2E81A /* VerificationRepository.swift */,
+				1B0DAC217C813150DFB61009 /* CalendarRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -406,6 +416,7 @@
 				DBC8253E8B03396CC68DBEDE /* Referral.swift */,
 				8E7E8D4971C41BA23909093D /* SwapMessage.swift */,
 				D2C15D1A79FEEAA9102F7520 /* Trip.swift */,
+				04A26750B03F9E5DE1807A9C /* Availability.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -419,6 +430,7 @@
 				64D0EB47C8D8295095D265D6 /* ListingPhotoGalleryView.swift */,
 				9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */,
 				4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */,
+				3E287A8317A62646254B9A30 /* ListingCalendarEditorView.swift */,
 			);
 			path = Listings;
 			sourceTree = "<group>";
@@ -705,6 +717,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E66A0E090373270BD15A373 /* Availability.swift in Sources */,
+				8050D33948751980F006B0E2 /* CalendarRepository.swift in Sources */,
+				288108BA48402EF82B163DC9 /* AvailabilityCalendar.swift in Sources */,
+				285D80B4CF494D777B972ECC /* ListingCalendarEditorView.swift in Sources */,
 				AC754A8C18363E68BFAC274A /* AIDraftRepository.swift in Sources */,
 				23AA1EF7371D4101ED70891C /* APIClient.swift in Sources */,
 				DC585C9A7870551BBEDC96F6 /* AccountSettingsViews.swift in Sources */,

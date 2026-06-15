@@ -114,6 +114,24 @@ struct KeysAvailability: Decodable, Sendable {
         let dateFrom: String
         let dateTo: String
     }
+
+    // Adapt to the shared ListingAvailability shape so the Stay-with-Keys date
+    // picker can reuse the same AvailabilityCalendar as the owner editor and the
+    // browse filter. The keys-availability feed omits the per-range source, so
+    // every range is reported as a generic "agreement" (the calendar only cares
+    // that the day is taken, not why).
+    var asListingAvailability: ListingAvailability {
+        ListingAvailability(
+            listingId: listingId,
+            availableFrom: availableFrom,
+            availableTo: availableTo,
+            minStayDays: minStayDays,
+            maxStayDays: maxStayDays,
+            bookedRanges: bookedRanges.map {
+                ListingAvailability.BookedRange(dateFrom: $0.dateFrom, dateTo: $0.dateTo, source: "agreement")
+            }
+        )
+    }
 }
 
 // MARK: - Stays (GET /api/keys/stays)

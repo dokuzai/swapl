@@ -177,10 +177,31 @@ struct StayWithKeysSheet: View {
             }
 
             Section {
-                DatePicker("Check-in", selection: $dateFrom, displayedComponents: .date)
-                DatePicker("Check-out", selection: $dateTo, displayedComponents: .date)
+                if let availability = vm.availability {
+                    AvailabilityCalendar(
+                        days: AvailabilityDays(availability: availability.asListingAvailability),
+                        mode: .range,
+                        selectionStart: Binding(
+                            get: { dateFrom },
+                            set: { if let v = $0 { dateFrom = v } }
+                        ),
+                        selectionEnd: Binding(
+                            get: { dateTo },
+                            set: { dateTo = $0 ?? dateFrom }
+                        ),
+                        onSelectionChange: { from, to in
+                            if let from { dateFrom = from }
+                            // Keep check-out at least one night past check-in until
+                            // the guest closes the range with a second tap.
+                            dateTo = to ?? Calendar.current.date(byAdding: .day, value: 1, to: from ?? dateFrom) ?? dateFrom
+                        }
+                    )
+                    .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                }
+            } header: {
+                Text("Dates")
             } footer: {
-                Text("Choose dates inside the home's availability. \(listing.minStayDays)–\(listing.maxStayDays) nights.")
+                Text("Tap a check-in then a check-out inside the home's availability. \(listing.minStayDays)–\(listing.maxStayDays) nights. Taken dates are greyed out.")
             }
 
             Section {

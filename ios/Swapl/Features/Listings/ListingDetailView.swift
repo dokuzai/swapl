@@ -30,6 +30,7 @@ struct ListingDetailView: View {
     @State private var isShowingProposalSheet = false
     @State private var isShowingKeysStaySheet = false
     @State private var isEditingListing = false
+    @State private var isShowingCalendarEditor = false
     @State private var sentProposalId: String?
     @State private var requestedStayId: String?
 
@@ -97,6 +98,11 @@ struct ListingDetailView: View {
                 ListingCreationView(editing: listing) {
                     Task { await vm.load() }
                 }
+            }
+        }
+        .sheet(isPresented: $isShowingCalendarEditor, onDismiss: { Task { await vm.load() } }) {
+            if let listing = vm.detail?.listing {
+                ListingCalendarEditorView(listingId: listing.id, listingTitle: listing.title)
             }
         }
         .sheet(isPresented: $isShowingProposalSheet) {
@@ -293,15 +299,27 @@ struct ListingDetailView: View {
             }
             Spacer()
             Button {
+                isShowingCalendarEditor = true
+            } label: {
+                Label("Dates", systemImage: "calendar")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(SwaplSemanticLight.accent, in: Capsule())
+            }
+            .accessibilityLabel("Manage availability dates")
+            Button {
                 isEditingListing = true
             } label: {
-                Label("Edit listing", systemImage: "square.and.pencil")
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                Label("Edit", systemImage: "square.and.pencil")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
                     .foregroundStyle(SwaplSemanticLight.primaryForeground)
-                    .padding(.horizontal, 22)
-                    .padding(.vertical, 15)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
                     .background(SwaplSemanticLight.primary, in: Capsule())
             }
+            .accessibilityLabel("Edit listing")
         }
         .padding(.horizontal, 22)
         .padding(.vertical, 14)
