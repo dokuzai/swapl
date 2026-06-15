@@ -1109,6 +1109,22 @@ export const en = {
   "verifyOwnership.status.rejected": "Not approved",
   "verifyOwnership.status.rejectedBody": "We couldn't verify ownership from these documents. You can submit new ones.",
   "verifyOwnership.reviewerNote": "Reviewer note",
+  "verifyOwnership.how.title": "How it works",
+  "verifyOwnership.how.ai":
+    "An AI assistant checks the document you upload to confirm it proves you own or rent the home.",
+  "verifyOwnership.how.docs":
+    "A title deed or property record works, or a lease agreement — upload whichever you have.",
+  "verifyOwnership.how.privateOnly":
+    "Swapl is a swap between private individuals — homes held by a company aren't eligible.",
+  "verifyOwnership.docType.label": "Document type",
+  "verifyOwnership.docType.deed": "Deed / record",
+  "verifyOwnership.docType.lease": "Lease agreement",
+  "verifyOwnership.docType.other": "Other",
+  "verifyOwnership.docType.hint": "This helps us read your document faster.",
+  "verifyOwnership.business.title": "This home looks like a business property",
+  "verifyOwnership.business.body":
+    "The document suggests this home is held under a company. Swapl is built for swaps between private individuals, so we can't verify it. If that's a mistake, reach out and a member of our team will review it personally.",
+  "verifyOwnership.business.contact": "Contact support",
 
   // Admin — property verification queue (DOK-162)
   "admin.propVerif.nav": "Owner verification",

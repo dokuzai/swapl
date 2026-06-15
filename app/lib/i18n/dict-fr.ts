@@ -1078,6 +1078,22 @@ export const fr: Partial<Record<DictKey, string>> = {
   "verifyOwnership.status.rejected": "Non approuvé",
   "verifyOwnership.status.rejectedBody": "Nous n'avons pas pu vérifier la propriété à partir de ces documents. Vous pouvez en envoyer de nouveaux.",
   "verifyOwnership.reviewerNote": "Note de l'examinateur",
+  "verifyOwnership.how.title": "Comment ça marche",
+  "verifyOwnership.how.ai":
+    "Un assistant IA vérifie le document que vous importez pour confirmer qu'il prouve que vous êtes propriétaire ou locataire du logement.",
+  "verifyOwnership.how.docs":
+    "Un acte de propriété ou un relevé cadastral convient, ou un bail de location — importez ce que vous avez.",
+  "verifyOwnership.how.privateOnly":
+    "Swapl est un échange entre particuliers : les logements détenus par une société ne sont pas admis.",
+  "verifyOwnership.docType.label": "Type de document",
+  "verifyOwnership.docType.deed": "Acte / relevé",
+  "verifyOwnership.docType.lease": "Bail de location",
+  "verifyOwnership.docType.other": "Autre",
+  "verifyOwnership.docType.hint": "Cela nous aide à lire votre document plus vite.",
+  "verifyOwnership.business.title": "Ce logement semble être un bien professionnel",
+  "verifyOwnership.business.body":
+    "Le document indique que ce logement est détenu par une société. Swapl est conçu pour les échanges entre particuliers, nous ne pouvons donc pas le vérifier. Si c'est une erreur, contactez-nous et un membre de notre équipe l'examinera personnellement.",
+  "verifyOwnership.business.contact": "Contacter le support",
 
   "admin.propVerif.nav": "Vérif. propriétaire",
   "admin.propVerif.kicker": "File",

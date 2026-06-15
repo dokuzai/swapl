@@ -1093,6 +1093,22 @@ export const tr: Partial<Record<DictKey, string>> = {
   "verifyOwnership.status.rejected": "Onaylanmadı",
   "verifyOwnership.status.rejectedBody": "Bu belgelerle mülkiyeti doğrulayamadık. Yenilerini gönderebilirsin.",
   "verifyOwnership.reviewerNote": "İnceleyen notu",
+  "verifyOwnership.how.title": "Nasıl çalışır",
+  "verifyOwnership.how.ai":
+    "Bir yapay zeka asistanı, yüklediğin belgeyi inceleyerek evin sahibi veya kiracısı olduğunu kanıtladığını doğrular.",
+  "verifyOwnership.how.docs":
+    "Tapu ya da tapu kaydı olur, veya bir kira sözleşmesi — elinde hangisi varsa yükle.",
+  "verifyOwnership.how.privateOnly":
+    "Swapl bireyler arası bir takastır — bir şirket adına kayıtlı evler uygun değildir.",
+  "verifyOwnership.docType.label": "Belge türü",
+  "verifyOwnership.docType.deed": "Tapu / kayıt",
+  "verifyOwnership.docType.lease": "Kira sözleşmesi",
+  "verifyOwnership.docType.other": "Diğer",
+  "verifyOwnership.docType.hint": "Belgeni daha hızlı okumamıza yardımcı olur.",
+  "verifyOwnership.business.title": "Bu ev ticari bir mülk gibi görünüyor",
+  "verifyOwnership.business.body":
+    "Belge, bu evin bir şirket adına kayıtlı olduğunu gösteriyor. Swapl bireyler arası takas için tasarlandığından bunu doğrulayamıyoruz. Bu bir hataysa bize ulaş, ekibimizden biri konuyu bizzat inceleyecek.",
+  "verifyOwnership.business.contact": "Destek ile iletişime geç",
 
   "admin.propVerif.nav": "Mal sahibi doğrulama",
   "admin.propVerif.kicker": "Kuyruk",

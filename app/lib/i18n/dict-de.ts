@@ -1078,6 +1078,22 @@ export const de: Partial<Record<DictKey, string>> = {
   "verifyOwnership.status.rejected": "Nicht genehmigt",
   "verifyOwnership.status.rejectedBody": "Wir konnten das Eigentum mit diesen Dokumenten nicht bestätigen. Du kannst neue einreichen.",
   "verifyOwnership.reviewerNote": "Anmerkung des Prüfers",
+  "verifyOwnership.how.title": "So funktioniert es",
+  "verifyOwnership.how.ai":
+    "Ein KI-Assistent prüft das hochgeladene Dokument, um zu bestätigen, dass es dein Eigentum oder Mietverhältnis an der Wohnung belegt.",
+  "verifyOwnership.how.docs":
+    "Eine Eigentumsurkunde bzw. ein Grundbuchauszug passt, oder ein Mietvertrag — lade hoch, was du hast.",
+  "verifyOwnership.how.privateOnly":
+    "Swapl ist ein Tausch zwischen Privatpersonen — Wohnungen im Besitz eines Unternehmens sind nicht zugelassen.",
+  "verifyOwnership.docType.label": "Dokumentart",
+  "verifyOwnership.docType.deed": "Urkunde / Grundbuchauszug",
+  "verifyOwnership.docType.lease": "Mietvertrag",
+  "verifyOwnership.docType.other": "Sonstiges",
+  "verifyOwnership.docType.hint": "Das hilft uns, dein Dokument schneller zu lesen.",
+  "verifyOwnership.business.title": "Diese Wohnung wirkt wie eine Gewerbeimmobilie",
+  "verifyOwnership.business.body":
+    "Das Dokument deutet darauf hin, dass die Wohnung einem Unternehmen gehört. Swapl ist für den Tausch zwischen Privatpersonen gedacht, daher können wir sie nicht verifizieren. Falls das ein Fehler ist, melde dich – ein Mitglied unseres Teams prüft es persönlich.",
+  "verifyOwnership.business.contact": "Support kontaktieren",
 
   "admin.propVerif.nav": "Eigentümer-Prüfung",
   "admin.propVerif.kicker": "Warteschlange",

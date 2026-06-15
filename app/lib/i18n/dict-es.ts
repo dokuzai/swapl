@@ -1078,6 +1078,22 @@ export const es: Partial<Record<DictKey, string>> = {
   "verifyOwnership.status.rejected": "No aprobado",
   "verifyOwnership.status.rejectedBody": "No pudimos verificar la propiedad con estos documentos. Puedes enviar otros nuevos.",
   "verifyOwnership.reviewerNote": "Nota del revisor",
+  "verifyOwnership.how.title": "Cómo funciona",
+  "verifyOwnership.how.ai":
+    "Un asistente de IA revisa el documento que subes para confirmar que demuestra que la vivienda es tuya o que la alquilas.",
+  "verifyOwnership.how.docs":
+    "Sirve una escritura o nota simple, o un contrato de alquiler: sube el que tengas.",
+  "verifyOwnership.how.privateOnly":
+    "Swapl es un intercambio entre particulares: las viviendas a nombre de una empresa no se admiten.",
+  "verifyOwnership.docType.label": "Tipo de documento",
+  "verifyOwnership.docType.deed": "Escritura / nota simple",
+  "verifyOwnership.docType.lease": "Contrato de alquiler",
+  "verifyOwnership.docType.other": "Otro",
+  "verifyOwnership.docType.hint": "Nos ayuda a leer tu documento más rápido.",
+  "verifyOwnership.business.title": "Esta vivienda parece una propiedad de empresa",
+  "verifyOwnership.business.body":
+    "El documento indica que la vivienda está a nombre de una empresa. Swapl está pensado para intercambios entre particulares, así que no podemos verificarla. Si es un error, escríbenos y un miembro de nuestro equipo lo revisará personalmente.",
+  "verifyOwnership.business.contact": "Contactar con soporte",
 
   "admin.propVerif.nav": "Verif. propietario",
   "admin.propVerif.kicker": "Cola",

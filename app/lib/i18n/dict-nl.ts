@@ -1093,6 +1093,22 @@ export const nl: Partial<Record<DictKey, string>> = {
   "verifyOwnership.status.rejected": "Niet goedgekeurd",
   "verifyOwnership.status.rejectedBody": "We konden het eigendom niet verifiëren met deze documenten. Je kunt nieuwe indienen.",
   "verifyOwnership.reviewerNote": "Opmerking beoordelaar",
+  "verifyOwnership.how.title": "Hoe het werkt",
+  "verifyOwnership.how.ai":
+    "Een AI-assistent controleert het document dat je uploadt om te bevestigen dat het aantoont dat je de woning bezit of huurt.",
+  "verifyOwnership.how.docs":
+    "Een eigendomsakte of kadastraal uittreksel werkt, of een huurovereenkomst — upload wat je hebt.",
+  "verifyOwnership.how.privateOnly":
+    "Swapl is een ruil tussen particulieren — woningen op naam van een bedrijf komen niet in aanmerking.",
+  "verifyOwnership.docType.label": "Documenttype",
+  "verifyOwnership.docType.deed": "Akte / uittreksel",
+  "verifyOwnership.docType.lease": "Huurovereenkomst",
+  "verifyOwnership.docType.other": "Anders",
+  "verifyOwnership.docType.hint": "Zo kunnen we je document sneller lezen.",
+  "verifyOwnership.business.title": "Deze woning lijkt een zakelijk pand",
+  "verifyOwnership.business.body":
+    "Het document suggereert dat deze woning op naam van een bedrijf staat. Swapl is bedoeld voor ruil tussen particulieren, dus we kunnen het niet verifiëren. Klopt dit niet? Neem contact op en een teamlid bekijkt het persoonlijk.",
+  "verifyOwnership.business.contact": "Contact met support",
 
   "admin.propVerif.nav": "Eigenaarsverificatie",
   "admin.propVerif.kicker": "Wachtrij",

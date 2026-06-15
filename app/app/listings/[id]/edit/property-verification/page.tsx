@@ -32,8 +32,18 @@ export default async function PropertyVerificationPage(
         status: current.status as VerificationInitial["status"],
         documents: parseJSON<StoredDoc[]>(current.documents, []),
         note: current.note,
+        aiClassification: current.aiClassification,
+        documentType: (current.documentType as VerificationInitial["documentType"]) ?? null,
+        ineligibleReason: listing.ineligibleReason,
       }
-    : { status: "none", documents: [], note: null };
+    : {
+        status: "none",
+        documents: [],
+        note: null,
+        aiClassification: null,
+        documentType: null,
+        ineligibleReason: listing.ineligibleReason,
+      };
 
   return (
     <I18nProviderShell>
