@@ -70,6 +70,7 @@
 		8AB0ADC83FAD22325D76D561 /* SwapMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E7E8D4971C41BA23909093D /* SwapMessage.swift */; };
 		8BD6E92752FEF19AB0E4E28E /* PersonalInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1951608EE0445C6866D16B76 /* PersonalInfoView.swift */; };
 		8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C16E51E119668C1E262BDB /* ListingRepository.swift */; };
+		8E25C2BCDFF5B26158833E9D /* ConversationPeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A688EA805E6089C0F4C00878 /* ConversationPeopleView.swift */; };
 		8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988E469B97C24C69D3CF04E2 /* CityIllust.swift */; };
 		91F501F91EB061312E6E69A5 /* SwaplEmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */; };
 		9239CF5AF751A30FC933193F /* ProofOfCoverBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9625256FBF2791330991EDB3 /* ProofOfCoverBadge.swift */; };
@@ -111,7 +112,9 @@
 		E1ED619555C03A5F0C2325FB /* ReferrerNotificationsToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1382129E24A1E08EAD67A84A /* ReferrerNotificationsToast.swift */; };
 		E2FB54694BF2D5D9EE68F9C9 /* ServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C443E61DB79308D24B4ECB /* ServicesView.swift */; };
 		E5FF16C039C517CC58D7C964 /* MetricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA825882F23D182F31FF514 /* MetricsView.swift */; };
+		E61823B9C45DA5C0B834C7FC /* ConversationParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AD192DE305AAE02F6DBCD0 /* ConversationParticipant.swift */; };
 		EBDDB31A079744568129222E /* HomeGuideEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDF6E34911C3ABCC1788F96 /* HomeGuideEditorView.swift */; };
+		EDA6A0A0ABCE902B1F08214F /* ParticipantRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBDE9C554FD3F5395E7EEAB /* ParticipantRepository.swift */; };
 		EF219F8863CF71827410F3E4 /* DisputeOpenSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2FF97BD7916B883AF9588 /* DisputeOpenSheet.swift */; };
 		EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */; };
 		F12C3AA109E59CDD8B01485E /* StayWithKeysSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5F70A7273F8977F9D6AA44 /* StayWithKeysSheet.swift */; };
@@ -191,6 +194,7 @@
 		71AD1C5D134C55DFD558A982 /* DisputeFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisputeFlowView.swift; sourceTree = "<group>"; };
 		74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftRepository.swift; sourceTree = "<group>"; };
 		76DD8536C922B611CF6505BC /* SwaplUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SwaplUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		77AD192DE305AAE02F6DBCD0 /* ConversationParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationParticipant.swift; sourceTree = "<group>"; };
 		78065E6D3BA14EC22992A812 /* InspireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspireView.swift; sourceTree = "<group>"; };
 		781B69502AE21A819387C19F /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
 		7CD6F3FA2F047154499EE042 /* IdentityVerificationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityVerificationCard.swift; sourceTree = "<group>"; };
@@ -222,6 +226,7 @@
 		A1E4A3420C9FC28FE105C9A4 /* Swapl.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Swapl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A28819C43CFF4F1CECF89818 /* LocationSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchService.swift; sourceTree = "<group>"; };
 		A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTokenStore.swift; sourceTree = "<group>"; };
+		A688EA805E6089C0F4C00878 /* ConversationPeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationPeopleView.swift; sourceTree = "<group>"; };
 		A76A41CFCED4F4593E5317DD /* SwapChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapChatView.swift; sourceTree = "<group>"; };
 		A9FBD4B316B85673A7BD2D2E /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		B0C16E51E119668C1E262BDB /* ListingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingRepository.swift; sourceTree = "<group>"; };
@@ -237,6 +242,7 @@
 		CAEEE99CFDC981E6B91926F5 /* PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushService.swift; sourceTree = "<group>"; };
 		CCD681952D45568C94F736A2 /* PrimaryPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryPill.swift; sourceTree = "<group>"; };
 		CCF2FF97BD7916B883AF9588 /* DisputeOpenSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisputeOpenSheet.swift; sourceTree = "<group>"; };
+		CEBDE9C554FD3F5395E7EEAB /* ParticipantRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRepository.swift; sourceTree = "<group>"; };
 		D2C15D1A79FEEAA9102F7520 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
 		D37E004482EF51FE52B2E81A /* VerificationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationRepository.swift; sourceTree = "<group>"; };
 		DBC8253E8B03396CC68DBEDE /* Referral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Referral.swift; sourceTree = "<group>"; };
@@ -365,6 +371,7 @@
 				FE31B7FB667BE216C5111617 /* KeysRepository.swift */,
 				B0C16E51E119668C1E262BDB /* ListingRepository.swift */,
 				FA8574BE693D92BD6FA207B6 /* MetricsRepository.swift */,
+				CEBDE9C554FD3F5395E7EEAB /* ParticipantRepository.swift */,
 				F03C53186E434F889C543582 /* ProfileRepository.swift */,
 				EDD08487D5CE6C55DAB16D19 /* PropertyVerificationRepository.swift */,
 				F39E0749085C3E362B239A25 /* ProposalRepository.swift */,
@@ -440,6 +447,7 @@
 			children = (
 				A9FBD4B316B85673A7BD2D2E /* Auth.swift */,
 				1F7B4163FD122E68FB389640 /* Availability.swift */,
+				77AD192DE305AAE02F6DBCD0 /* ConversationParticipant.swift */,
 				E26F930FB50115D11BD5133F /* Dispute.swift */,
 				0B99C1E41BBF19C90616B214 /* Keys.swift */,
 				9CCC5F71B34111A6A25719F4 /* Listing.swift */,
@@ -581,6 +589,7 @@
 		E931644CBEED9106DB254E61 /* Swaps */ = {
 			isa = PBXGroup;
 			children = (
+				A688EA805E6089C0F4C00878 /* ConversationPeopleView.swift */,
 				06335EFCBD6A3915C648EB60 /* LeaveReviewSheet.swift */,
 				A76A41CFCED4F4593E5317DD /* SwapChatView.swift */,
 				3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */,
@@ -773,6 +782,8 @@
 				670D86836AE68EA719BB626D /* CitiesRepository.swift in Sources */,
 				8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */,
 				6FBB7E9F562680E39B84E3FE /* CityStamp.swift in Sources */,
+				E61823B9C45DA5C0B834C7FC /* ConversationParticipant.swift in Sources */,
+				8E25C2BCDFF5B26158833E9D /* ConversationPeopleView.swift in Sources */,
 				F8B86291642BA41527F4648B /* DeepLinkRouter.swift in Sources */,
 				A19763CA566821073A00E4EE /* DiscoverRepository.swift in Sources */,
 				D74BBBC6F3B32322A6817C7D /* Dispute.swift in Sources */,
@@ -808,6 +819,7 @@
 				E5FF16C039C517CC58D7C964 /* MetricsView.swift in Sources */,
 				0E122F3A8ACC502ADFEBBC7D /* NightlyKeysExplainerSheet.swift in Sources */,
 				4954460104D27BCC493D9377 /* OwnerVerificationSheet.swift in Sources */,
+				EDA6A0A0ABCE902B1F08214F /* ParticipantRepository.swift in Sources */,
 				77BE80296D6FA035534F7FC8 /* PasskeyCoordinator.swift in Sources */,
 				B3BE098B95DBDDC8FE174FDF /* PasskeysView.swift in Sources */,
 				1638C230E7523760B6CEDA94 /* PaymentStepView.swift in Sources */,

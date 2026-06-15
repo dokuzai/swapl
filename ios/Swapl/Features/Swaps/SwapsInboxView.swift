@@ -533,7 +533,11 @@ struct ProposalDetailView: View {
             reviewSection(detail)
 
             NavigationLink {
-                SwapChatView(proposalId: vm.proposalId, otherName: detail.other.name)
+                SwapChatView(
+                    proposalId: vm.proposalId,
+                    otherName: detail.other.name,
+                    isPrincipal: detail.proposal.meSide == "proposer" || detail.proposal.meSide == "target"
+                )
             } label: {
                 HStack(spacing: 10) {
                     Image(systemName: "bubble.left.and.bubble.right.fill")

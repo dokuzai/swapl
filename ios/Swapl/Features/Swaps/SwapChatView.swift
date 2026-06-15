@@ -131,10 +131,15 @@ struct SwapChatView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     let otherName: String?
+    // Whether the current user is one of the two swap principals (proposer or
+    // target-listing owner). Drives the People panel's invite/remove controls
+    // (DOK-187) — guests see the roster but none of the management affordances.
+    let isPrincipal: Bool
 
-    init(proposalId: String, otherName: String?) {
+    init(proposalId: String, otherName: String?, isPrincipal: Bool) {
         _vm = State(initialValue: SwapChatViewModel(proposalId: proposalId))
         self.otherName = otherName
+        self.isPrincipal = isPrincipal
     }
 
     var body: some View {
@@ -159,6 +164,11 @@ struct SwapChatView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 10) {
+                    // People panel (DOK-187): the roster of everyone on this
+                    // thread, plus invite/remove for the two principals.
+                    ConversationPeopleView(proposalId: vm.proposalId, isPrincipal: isPrincipal)
+                        .padding(.bottom, 6)
+
                     if vm.isLoading && !vm.hasLoadedOnce {
                         ProgressView()
                             .frame(maxWidth: .infinity)
