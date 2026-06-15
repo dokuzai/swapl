@@ -20,9 +20,15 @@ import { useState } from "react";
 import { useT } from "@/lib/i18n/client";
 import type { DictKey } from "@/lib/i18n/dict-en";
 import type { ValuationExplanation } from "@/lib/keys/valuation";
-import { FEEDBACK_MIN_REVIEWS, FEEDBACK_STEP_PER_CYCLE } from "@/lib/keys/valuation";
-import { FEEDBACK_BAND } from "@/lib/keys/value";
-import { AI_FEATURE_BONUS_MAX } from "@/lib/ai/listing-valuation";
+// Client-safe constants only — importing them from the server valuation/value/ai
+// modules would drag the Prisma/pg/AI layer into the browser bundle (fs/dns
+// resolve errors at build). The type import above is erased at compile time.
+import {
+  FEEDBACK_MIN_REVIEWS,
+  FEEDBACK_STEP_PER_CYCLE,
+  FEEDBACK_BAND,
+  AI_FEATURE_BONUS_MAX,
+} from "@/lib/keys/valuation-constants";
 
 // Map a factor key to its i18n label so we control wording per locale rather
 // than trusting the English label stored in the explanation JSON.

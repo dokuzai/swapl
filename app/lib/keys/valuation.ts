@@ -38,9 +38,11 @@ import {
 } from "@/lib/ai/listing-valuation";
 import type { ResolveOptions } from "@/lib/ai/providers";
 
-// Feedback loop tunables (DOK-163).
-export const FEEDBACK_MIN_REVIEWS = 3; // need at least this many before applying
-export const FEEDBACK_STEP_PER_CYCLE = 0.05; // max move toward target per cron cycle
+// Feedback loop tunables (DOK-163). Defined in the client-safe constants module
+// (re-exported here) so UI can read them without pulling this server module's
+// db/AI imports into the browser bundle.
+export { FEEDBACK_MIN_REVIEWS, FEEDBACK_STEP_PER_CYCLE } from "./valuation-constants";
+import { FEEDBACK_MIN_REVIEWS, FEEDBACK_STEP_PER_CYCLE } from "./valuation-constants";
 // Map an average 1..5 rating to a target adjustment within the band:
 //   5★ → +band, 4★ → +band/2, ~3.4★ → 0, 2★ → −band/2, 1★ → −band.
 const FEEDBACK_NEUTRAL_RATING = 3.4;

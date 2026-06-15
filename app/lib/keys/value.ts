@@ -20,13 +20,18 @@
 // PURE + deterministic; the AI/persistence orchestration lives in
 // lib/keys/valuation.ts and reads back into these helpers.
 
+// Feedback band lives in the client-safe constants module so UI can read it
+// without server imports; used here for the clamp and re-exported below.
+import { FEEDBACK_BAND } from "./valuation-constants";
+
 export const BASE_NIGHTLY_KEYS = 4;
 export const MIN_NIGHTLY_KEYS = 3;
 export const MAX_NIGHTLY_KEYS = 20;
 
 // Feedback loop band (DOK-163): reviews may move a listing at most ±20% off its
-// base, ever. Keeps the value stable and ungameable.
-export const FEEDBACK_BAND = 0.2;
+// base, ever. Keeps the value stable and ungameable. Re-exported from the
+// client-safe constants module (imported at the top of this file).
+export { FEEDBACK_BAND };
 
 // ---------- Location tier ----------
 // Destination desirability, tier 1 (world-magnet) … tier 5 (standard). The tier

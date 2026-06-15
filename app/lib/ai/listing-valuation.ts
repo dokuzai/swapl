@@ -13,10 +13,12 @@
 // cron persists the result (see lib/keys/valuation.ts).
 
 import { resolveAIConfig, chat, type ResolveOptions } from "./providers";
+import { AI_FEATURE_BONUS_MAX } from "@/lib/keys/valuation-constants";
 
 // Hard clamp on the AI contribution, in Keys. Small by design: the AI refines,
-// it does not price.
-export const AI_FEATURE_BONUS_MAX = 3;
+// it does not price. AI_FEATURE_BONUS_MAX lives in the client-safe constants
+// module (re-exported here) so UI can read it without server imports.
+export { AI_FEATURE_BONUS_MAX };
 export const AI_FEATURE_BONUS_MIN = -2;
 
 export type ListingFeatureInput = {
