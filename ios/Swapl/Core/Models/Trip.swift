@@ -78,6 +78,22 @@ struct TripInsurance: Decodable, Sendable {
     let coverageAmount: Int
     let status: String
     let expiresAt: String
+
+    // DOK-156 — TON proof-of-cover. The policy certificate's HASH (never any
+    // personal data) is anchored on-chain as a tamper-proof record. All fields
+    // are optional and arrive only when the service-side TON env is configured;
+    // without it the policy stays purely off-chain and these decode to nil, so
+    // the UI shows nothing blockchain-related (graceful no-op, no error).
+    let onChainRef: String?
+    let onChainNetwork: String?
+    let onChainStatus: String?
+    let anchoredAt: String?
+    let explorerUrl: String?   // testnet.tonviewer.com / tonviewer.com, or nil
+
+    // The proof is shown only when the certificate is genuinely anchored.
+    var isAnchored: Bool {
+        onChainStatus == "anchored" || (onChainRef?.isEmpty == false)
+    }
 }
 
 // The other home's guide. When the reveal gate is open the server sends the

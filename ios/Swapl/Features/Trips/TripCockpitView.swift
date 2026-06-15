@@ -261,6 +261,12 @@ struct TripCockpitView: View {
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
+
+                    // DOK-156 — proof-of-cover badge, only when anchored on TON.
+                    if insurance.isAnchored {
+                        ProofOfCoverBadge(insurance: insurance)
+                            .padding(.top, 4)
+                    }
                 }
             }
         }
