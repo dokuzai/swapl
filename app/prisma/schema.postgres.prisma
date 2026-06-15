@@ -1106,7 +1106,7 @@ model PropertyVerification {
   listingId     String
   userId        String
   status        String   @default("pending")   // pending | approved | rejected
-  documents     Json     @default("[]")         // array of { url, label }
+  documents     String   @default("[]")         // JSON array of { url, label } (stored as text, parsed via parseJSON — matches sqlite + all other JSON fields)
   reviewedById  String?
   note          String?
   createdAt     DateTime @default(now())
