@@ -188,12 +188,15 @@ export function toDTO(
   };
 }
 
-// Quick formatter for date ranges shown on cards.
-export function formatDateRange(fromIso: string, toIso: string): string {
+// Quick formatter for date ranges shown on cards. `locale` defaults to "en-US"
+// to preserve existing behaviour for callers that don't pass one; client
+// components pass the active locale (via useLocale()) so e.g. IT renders
+// "23 ago – 8 set" instead of "Aug 23 – Sep 8".
+export function formatDateRange(fromIso: string, toIso: string, locale: string = "en-US"): string {
   const f = new Date(fromIso);
   const t = new Date(toIso);
   const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
-  return `${f.toLocaleDateString("en-US", opts)} – ${t.toLocaleDateString("en-US", opts)}`;
+  return `${f.toLocaleDateString(locale, opts)} – ${t.toLocaleDateString(locale, opts)}`;
 }
 
 // Returns an array of [key, label] for amenity chips that are true on a listing.

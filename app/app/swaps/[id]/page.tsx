@@ -3,6 +3,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { marketingUrl } from "@/lib/marketing/urls";
+import { getI18n, t } from "@/lib/i18n/server";
+import type { DictKey } from "@/lib/i18n/dict-en";
 import { formatDateRange } from "@/lib/listing-utils";
 import SwapActions from "./swap-actions";
 import { LeaveReview } from "./leave-review";
@@ -22,10 +24,24 @@ import { GuestThreadPage } from "./guest-thread";
 
 export const dynamic = "force-dynamic";
 
+const STATUS_LABEL_KEY: Record<string, DictKey> = {
+  PENDING: "swaps.status.pending",
+  COUNTERED: "swaps.status.countered",
+  ACCEPTED: "swaps.status.accepted",
+  DECLINED: "swaps.status.declined",
+  WITHDRAWN: "swaps.status.withdrawn",
+};
+
+function statusLabelKey(status: string): DictKey {
+  return STATUS_LABEL_KEY[status] ?? "swaps.status.pending";
+}
+
 export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
   const { id } = await props.params;
   const session = await getSession();
   if (!session) return null;
+
+  const { locale, dict } = await getI18n();
 
   const proposal = await prisma.swapProposal.findUnique({
     where: { id },
@@ -55,7 +71,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
         proposalId={proposal.id}
         status={proposal.status}
         threadTitle={`${proposal.proposerListing.neighbourhood} · ${proposal.proposerListing.city} ⇄ ${proposal.targetListing.neighbourhood} · ${proposal.targetListing.city}`}
-        dateRange={formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString())}
+        dateRange={formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString(), locale)}
         chatName={otherName ?? "swapl host"}
       />
     );
@@ -118,6 +134,8 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
       isProposer={isProposer}
       canRespondAsTarget={canRespondAsTarget}
       canCounter={canCounter}
+      otherName={otherName}
+      dateRange={formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString(), locale)}
       currentDateFrom={proposal.dateFrom.toISOString().slice(0, 10)}
       currentDateTo={proposal.dateTo.toISOString().slice(0, 10)}
     />
@@ -190,7 +208,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
         className="font-mono text-xs uppercase tracking-[.08em] mb-6 inline-block lg:hidden"
         style={{ color: "var(--navy-3)" }}
       >
-        ← All swaps
+        {t(dict, "swaps.backToAll")}
       </Link>
 
       {/* Three-pane layout (DOK-150): conversations | thread | swap context. */}
@@ -201,14 +219,14 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
 
         <div className="min-w-0">
           <header className="mb-6">
-            <p className="kicker mb-3">Proposal · {proposal.status.toLowerCase()}</p>
+            <p className="kicker mb-3">{t(dict, "swaps.panel.proposal")} · {t(dict, statusLabelKey(proposal.status))}</p>
             <h1 className="font-display text-3xl lg:text-4xl tracking-[-0.02em] leading-[1.05] font-medium">
               {myListing.neighbourhood} · {myListing.city}{" "}
               <span style={{ color: "var(--pink)" }}>⇄</span>{" "}
               {theirListing.neighbourhood} · {theirListing.city}
             </h1>
             <p className="mt-3" style={{ color: "var(--navy-2)" }}>
-              with {otherName ?? "swapl host"} · {formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString())}
+              {t(dict, "swaps.panel.with")} {otherName ?? "swapl host"} · {formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString(), locale)}
             </p>
           </header>
 
@@ -218,7 +236,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
               className="cursor-pointer list-none p-4 font-mono text-[11px] uppercase tracking-[.08em] flex items-center justify-between"
               style={{ color: "var(--navy-2)" }}
             >
-              Swap details
+              {t(dict, "swaps.panel.details")}
               <span aria-hidden style={{ color: "var(--navy-3)" }}>+</span>
             </summary>
             <div className="p-4 pt-0">{contextPanel}</div>
@@ -231,7 +249,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
               className="cursor-pointer list-none p-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[.08em]"
               style={{ color: "var(--navy-2)" }}
             >
-              <span>Original proposal · {formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString())}</span>
+              <span>{t(dict, "swaps.panel.original")} · {formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString(), locale)}</span>
               <span aria-hidden style={{ color: "var(--navy-3)" }}>+</span>
             </summary>
             <div className="p-4 pt-0">
@@ -241,10 +259,10 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
               {proposal.status === "COUNTERED" && (
                 <div className="mt-4 pt-4" style={{ borderTop: "1px solid var(--line)" }}>
                   <p className="font-mono text-xs uppercase tracking-[.08em] mb-2" style={{ color: "var(--pink)" }}>
-                    Counter-offer ·{" "}
+                    {t(dict, "swaps.status.countered")} ·{" "}
                     {proposal.counterDateFrom &&
                       proposal.counterDateTo &&
-                      formatDateRange(proposal.counterDateFrom.toISOString(), proposal.counterDateTo.toISOString())}
+                      formatDateRange(proposal.counterDateFrom.toISOString(), proposal.counterDateTo.toISOString(), locale)}
                   </p>
                   <p className="text-[15px] leading-[1.6] whitespace-pre-line">
                     {proposal.counterMessage ?? <span style={{ color: "var(--navy-3)" }}>(no message)</span>}

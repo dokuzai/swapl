@@ -10,6 +10,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
+import { AppRatingDialog } from "@/components/feedback/app-rating-dialog";
+import { useT } from "@/lib/i18n/client";
 import type { Locale } from "@/lib/i18n/locales";
 
 export type AvatarMenuLabels = {
@@ -41,7 +43,9 @@ export function AvatarMenu({
   locale: Locale;
   labels: AvatarMenuLabels;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [waiting, setWaiting] = useState(0);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -196,6 +200,17 @@ export function AvatarMenu({
             >
               {labels.help}
             </a>
+            <button
+              role="menuitem"
+              type="button"
+              className={`${itemCls} w-full text-left`}
+              onClick={() => {
+                setOpen(false);
+                setFeedbackOpen(true);
+              }}
+            >
+              {t("appFeedback.entry")}
+            </button>
             <div className="flex items-center justify-between gap-3 px-4 py-1.5 text-sm">
               <span style={{ color: "var(--navy-2)" }}>{labels.language}</span>
               <LocaleSwitcher locale={locale} label={labels.language} />
@@ -224,6 +239,13 @@ export function AvatarMenu({
           </form>
         </div>
       )}
+
+      <AppRatingDialog
+        open={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+        surface="account"
+        contextLabel="account"
+      />
     </div>
   );
 }

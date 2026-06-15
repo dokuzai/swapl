@@ -5,7 +5,8 @@ import { formatDateRange } from "@/lib/listing-utils";
 import { StatusPill } from "../status-pill";
 import { RetryCoverButton } from "@/components/insurance/retry-cover-button";
 import { ProofOfCoverBadge } from "@/components/insurance/proof-of-cover-badge";
-import { en } from "@/lib/i18n/dict-en";
+import { en, type DictKey } from "@/lib/i18n/dict-en";
+import { getI18n, t, type Dict } from "@/lib/i18n/server";
 
 type PanelListing = {
   id: string;
@@ -54,7 +55,15 @@ export type SwapContextProps = {
 // Right-hand "Swap" context panel of the three-pane thread (DOK-150).
 // On mobile the same panel renders inside a collapsible <details> at the
 // top of the thread.
-export function SwapContextPanel({
+const STATUS_LABEL_KEY: Record<string, DictKey> = {
+  PENDING: "swaps.status.pending",
+  COUNTERED: "swaps.status.countered",
+  ACCEPTED: "swaps.status.accepted",
+  DECLINED: "swaps.status.declined",
+  WITHDRAWN: "swaps.status.withdrawn",
+};
+
+export async function SwapContextPanel({
   status,
   dateFrom,
   dateTo,
@@ -66,6 +75,8 @@ export function SwapContextPanel({
   people,
   tripCockpit,
 }: SwapContextProps) {
+  const { locale, dict } = await getI18n();
+  const statusLabel = t(dict, STATUS_LABEL_KEY[status] ?? "swaps.status.pending");
   return (
     <div className="space-y-4">
       <Link href={`/listings/${theirListing.id}`} className="surface-card overflow-hidden block hover:no-underline">
@@ -76,7 +87,7 @@ export function SwapContextPanel({
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-                {otherName ? `${otherName}'s place` : "Their place"}
+                {otherName ? t(dict, "swaps.panel.theirPlaceNamed", { name: otherName }) : t(dict, "swaps.panel.theirPlace")}
               </div>
               <div className="font-display text-lg tracking-[-0.01em] mt-1">
                 {theirListing.neighbourhood} · {theirListing.city}
@@ -85,20 +96,20 @@ export function SwapContextPanel({
                 {theirListing.sizeSqm}m² · sleeps {theirListing.sleeps}
               </div>
             </div>
-            <StatusPill status={status} accent={status === "ACCEPTED"} />
+            <StatusPill status={status} accent={status === "ACCEPTED"} label={statusLabel} />
           </div>
           <div className="mt-3 font-mono text-xs uppercase tracking-[.08em]" style={{ color: "var(--navy-2)" }}>
-            {formatDateRange(dateFrom, dateTo)}
+            {formatDateRange(dateFrom, dateTo, locale)}
           </div>
         </div>
       </Link>
 
       <div className="surface-card p-4 text-sm flex items-center justify-between gap-3">
         <span style={{ color: "var(--navy-2)" }}>
-          Your home: {myListing.neighbourhood} · {myListing.city}
+          {t(dict, "swaps.panel.yourHome", { home: `${myListing.neighbourhood} · ${myListing.city}` })}
         </span>
         <Link href={`/listings/${myListing.id}`} className="font-mono text-[11px] uppercase tracking-[.08em] whitespace-nowrap" style={{ color: "var(--pink)" }}>
-          View →
+          {t(dict, "swaps.panel.view")}
         </Link>
       </div>
 
@@ -108,15 +119,15 @@ export function SwapContextPanel({
       {tripCockpit ?? (
         <div className="surface-card p-5">
           <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-2" style={{ color: "var(--navy-3)" }}>
-            Insurance
+            {t(dict, "swaps.accept.insTitle")}
           </div>
-          <InsurancePanel policy={agreement?.insurancePolicy ?? null} agreementId={agreement?.id ?? null} />
+          <InsurancePanel policy={agreement?.insurancePolicy ?? null} agreementId={agreement?.id ?? null} dict={dict} />
         </div>
       )}
 
       <div className="surface-card p-5">
         <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-3" style={{ color: "var(--navy-3)" }}>
-          Actions
+          {t(dict, "swaps.panel.actions")}
         </div>
         {actions}
       </div>
@@ -126,13 +137,13 @@ export function SwapContextPanel({
   );
 }
 
-function InsurancePanel({ policy, agreementId }: { policy: PanelPolicy | null; agreementId: string | null }) {
+function InsurancePanel({ policy, agreementId, dict }: { policy: PanelPolicy | null; agreementId: string | null; dict: Dict }) {
   if (!policy) {
     return (
       <>
-        <div className="font-display text-lg mb-2">Auto-issued on acceptance</div>
+        <div className="font-display text-lg mb-2">{t(dict, "swaps.accept.insTitle")}</div>
         <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-          When this swap is accepted, both homes are insured automatically. No checkbox, no upsell.
+          {t(dict, "swaps.accept.insBody")}
         </p>
       </>
     );
@@ -156,7 +167,7 @@ function InsurancePanel({ policy, agreementId }: { policy: PanelPolicy | null; a
         €{policy.coverageAmount.toLocaleString()} cover · {policy.status}
       </div>
       <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-        Auto-issued on acceptance. Property damage, third-party liability and trip interruption — both directions.
+        {t(dict, "swaps.accept.insBody")}
       </p>
       <p className="mt-2 font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
         Policy {policy.policyNumber}

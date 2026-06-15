@@ -1,5 +1,8 @@
 // Shared status pill for the swaps inbox + thread context panel (DOK-150).
-export function StatusPill({ status, accent }: { status: string; accent?: boolean }) {
+// `label`, when provided, is an already-localized string (each caller computes
+// it via its own t()); otherwise it falls back to the English map below. This
+// keeps the component hook-free so it can be used from server and client files.
+export function StatusPill({ status, accent, label }: { status: string; accent?: boolean; label?: string }) {
   const map: Record<string, { label: string; bg: string; fg: string }> = {
     PENDING: { label: "Pending", bg: "var(--cream-2)", fg: "var(--navy)" },
     COUNTERED: { label: "Countered", bg: "var(--pink-light)", fg: "var(--pink)" },
@@ -17,7 +20,7 @@ export function StatusPill({ status, accent }: { status: string; accent?: boolea
       className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full whitespace-nowrap"
       style={{ background: s.bg, color: s.fg }}
     >
-      {s.label}
+      {label ?? s.label}
     </span>
   );
 }

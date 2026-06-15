@@ -192,3 +192,15 @@ export const reportSchema = z.object({
   listingId: z.string().optional(),
   targetUserId: z.string().optional(),
 });
+
+// App-experience feedback (functional-spec A.4): rates the APP itself, not the
+// other traveller. score 1..5, optional comment, client source tag, and an
+// optional context payload that the route serializes to a JSON String column.
+export const appFeedbackSchema = z.object({
+  score: z.number().int().min(1).max(5),
+  comment: z.string().trim().max(1000).optional(),
+  source: z.enum(["web", "ios", "android"]),
+  surface: z.enum(["account", "post-swap", "post-review"]).default("account"),
+  contextKey: z.string().max(200).default(""),
+  context: z.record(z.string(), z.unknown()).optional(), // serialized to String before persist
+});

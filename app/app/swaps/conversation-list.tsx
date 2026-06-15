@@ -4,24 +4,31 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CityIllust } from "@/components/illustrations";
 import { paletteForCity } from "@/lib/cities";
+import { useT } from "@/lib/i18n/client";
+import type { DictKey } from "@/lib/i18n/dict-en";
 import { statusDotColor } from "./status-pill";
 import type { Conversation } from "./conversations";
 
 const FILTERS = [
-  { key: "all", label: "All" },
-  { key: "hosting", label: "Hosting" },
-  { key: "traveling", label: "Traveling" },
-  { key: "archived", label: "Archived" },
-] as const;
+  { key: "all", labelKey: "swaps.tab.all" },
+  { key: "hosting", labelKey: "swaps.tab.hosting" },
+  { key: "traveling", labelKey: "swaps.tab.traveling" },
+  { key: "archived", labelKey: "swaps.tab.archived" },
+] as const satisfies ReadonlyArray<{ key: string; labelKey: DictKey }>;
 
 type FilterKey = (typeof FILTERS)[number]["key"];
 
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: "Pending",
-  COUNTERED: "Countered",
-  ACCEPTED: "Active swap",
-  DECLINED: "Declined",
-  WITHDRAWN: "Withdrawn",
+const STATUS_KEY: Record<string, DictKey> = {
+  PENDING: "swaps.status.pending",
+  COUNTERED: "swaps.status.countered",
+  ACCEPTED: "swaps.status.accepted",
+  DECLINED: "swaps.status.declined",
+  WITHDRAWN: "swaps.status.withdrawn",
+};
+
+const ROLE_KEY: Record<string, DictKey> = {
+  hosting: "swaps.tab.hosting",
+  traveling: "swaps.tab.traveling",
 };
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -46,6 +53,7 @@ export function ConversationList({
   conversations: Conversation[];
   activeId?: string;
 }) {
+  const t = useT();
   const [filter, setFilter] = useState<FilterKey>("all");
   const [query, setQuery] = useState("");
   // Seed from the server render, then keep the list fresh (last message,
@@ -96,7 +104,7 @@ export function ConversationList({
 
   return (
     <div className="flex flex-col gap-4 min-h-0">
-      <div role="tablist" aria-label="Filter conversations" className="flex gap-2 overflow-x-auto pb-1 -mb-1">
+      <div role="tablist" aria-label={t("swaps.inbox.search")} className="flex gap-2 overflow-x-auto pb-1 -mb-1">
         {FILTERS.map((f) => {
           const active = filter === f.key;
           return (
@@ -112,19 +120,19 @@ export function ConversationList({
                   : { background: "transparent", color: "var(--navy-2)", borderColor: "var(--line)" }
               }
             >
-              {f.label}
+              {t(f.labelKey)}
             </button>
           );
         })}
       </div>
 
       <label className="block">
-        <span className="sr-only">Search conversations</span>
+        <span className="sr-only">{t("swaps.inbox.search")}</span>
         <input
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name or city"
+          placeholder={t("swaps.inbox.search")}
           className="w-full px-3.5 py-2 rounded-full border outline-none text-sm"
           style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
         />
@@ -132,9 +140,7 @@ export function ConversationList({
 
       {visible.length === 0 ? (
         <div className="surface-card p-6 text-sm" style={{ color: "var(--navy-2)" }}>
-          {conversations.length === 0
-            ? "No conversations yet. Propose a swap from any listing to start one."
-            : "Nothing here — try another filter or search."}
+          {conversations.length === 0 ? t("swaps.empty.body") : t("swaps.select.body")}
         </div>
       ) : (
         <ul className="space-y-2" aria-label="Conversations">
@@ -168,7 +174,7 @@ export function ConversationList({
                           <span
                             className="min-w-[18px] h-[18px] px-1 rounded-full grid place-items-center font-mono text-[10px] leading-none"
                             style={{ background: "var(--pink)", color: "var(--cream)" }}
-                            aria-label={`${c.unreadCount} unread`}
+                            aria-label={t("swaps.inbox.unread", { n: c.unreadCount })}
                           >
                             {c.unreadCount > 9 ? "9+" : c.unreadCount}
                           </span>
@@ -194,7 +200,8 @@ export function ConversationList({
                         aria-hidden
                       />
                       <span className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-                        {STATUS_LABEL[c.status] ?? c.status} · {c.role}
+                        {STATUS_KEY[c.status] ? t(STATUS_KEY[c.status]) : c.status} ·{" "}
+                        {ROLE_KEY[c.role] ? t(ROLE_KEY[c.role]) : c.role}
                       </span>
                     </span>
                   </span>

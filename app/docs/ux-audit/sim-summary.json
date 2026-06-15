@@ -1,0 +1,20 @@
+{
+  "batch": "b1",
+  "users": 600,
+  "listings": 1000,
+  "distinctOwners": 500,
+  "travellersWithoutListing": 100,
+  "proposals": 259,
+  "acceptedSwaps": 60,
+  "completedSwaps": 38,
+  "messages": 953,
+  "reviews": 76,
+  "statusBreakdown": {
+    "PENDING": 78,
+    "COUNTERED": 41,
+    "ACCEPTED": 60,
+    "DECLINED": 40,
+    "WITHDRAWN": 40
+  },
+  "note": "All ids namespaced sim-b1-*. Remove with: DELETE FROM \"User\" WHERE id LIKE 'sim-b1-%'; (cascades)."
+}

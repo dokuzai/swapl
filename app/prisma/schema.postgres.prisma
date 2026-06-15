@@ -109,6 +109,7 @@ model User {
   inspirationPackages InspirationPackage[]
   reviewsAuthored SwapReview[] @relation("ReviewsAuthored")
   reviewsReceived SwapReview[] @relation("ReviewsReceived")
+  appFeedback  AppFeedback[] @relation("AppFeedbackAuthored")
   checkEvents     SwapCheckEvent[]
   disputesOpened   SwapDispute[]    @relation("DisputesOpened")
   disputesResolved SwapDispute[]    @relation("DisputesResolved")
@@ -1275,4 +1276,28 @@ model ListingPublishAck {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([listingId])
+}
+
+model AppFeedback {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation("AppFeedbackAuthored", fields: [userId], references: [id], onDelete: Cascade)
+  score      Int      // 1..5, validated at the API layer (SQLite has no CHECK via Prisma)
+  comment    String?  // optional free text, ≤ 1000 chars (validated at API)
+  // Client that submitted: "web" | "ios" | "android". Validated at the API layer.
+  source     String
+  // Which moment triggered this: "account" | "post-swap" | "post-review".
+  surface    String   @default("account")
+  // Stable key for the triggering context (e.g. agreement id) used to de-dupe
+  // the no-re-nag rule. Empty string for the always-available account entry.
+  contextKey String   @default("")
+  // Free-form JSON CONTEXT, stored JSON-ENCODED as TEXT. Dual-schema rule:
+  // MUST be `String` in BOTH schema.prisma and schema.postgres.prisma — never `Json`.
+  context    String?
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, surface, contextKey])
+  @@index([userId])
+  @@index([source])
+  @@index([createdAt])
 }
