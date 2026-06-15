@@ -756,6 +756,28 @@ export const de: Partial<Record<DictKey, string>> = {
   "chat.sent": "Gesendet",
   "chat.messageName": "{name} schreiben",
 
+  // ---- Personen: Mehrpersonen-Tausch-Konversation (DOK-187) ----
+  "people.title": "Personen",
+  "people.subtitle": "Ihr beide in diesem Tausch.",
+  "people.subtitleWithGuests": "Alle in dieser Unterhaltung.",
+  "people.invite": "Einladen",
+  "people.close": "Fertig",
+  "people.role.principal": "Tauschpartei",
+  "people.role.guest": "Mitreisende:r",
+  "people.status.pending": "Ausstehend",
+  "people.remove": "Entfernen",
+  "people.removeError": "Konnte nicht entfernt werden – versuch es erneut.",
+  "people.unknownPerson": "Eingeladener Gast",
+  "people.inviteHelp":
+    "Füge eine:n Mitreisende:n per E-Mail oder Handle hinzu. Sie können hier mitschreiben, aber nur ihr beide könnt den Tausch annehmen, kontern oder abbrechen.",
+  "people.invitePlaceholder": "E-Mail oder Handle",
+  "people.inviteAction": "Hinzufügen",
+  "people.inviting": "Wird hinzugefügt…",
+  "people.inviteError": "Konnte nicht hinzugefügt werden – versuch es erneut.",
+  "people.inviteForbidden": "Nur die beiden Tauschparteien können Personen einladen.",
+  "people.alreadyMember": "Diese Person ist bereits in der Unterhaltung.",
+  "people.coTravelers": "Mitreisende hinzufügen",
+
   // ---- Keys: Reisepunkte, Verschenken, Aufenthalt mit Keys (DOK-155) ----
   "keys.menu": "Keys",
   "keys.kicker": "Reisepunkte",

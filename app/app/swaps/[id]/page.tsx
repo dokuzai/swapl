@@ -16,6 +16,9 @@ import { getEffectivePlan } from "@/lib/billing/limits";
 import { getConversations } from "../conversations";
 import { ConversationList } from "../conversation-list";
 import { ChatThread } from "./chat-thread";
+import { PeoplePanel } from "./people-panel";
+import { canAccessConversation } from "@/lib/conversation/participants";
+import { GuestThreadPage } from "./guest-thread";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +40,26 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
 
   const isProposer = proposal.proposerId === session.userId;
   const isTarget = proposal.targetListing.userId === session.userId;
-  if (!isProposer && !isTarget) notFound();
+  const isPrincipal = isProposer || isTarget;
+
+  // DOK-187: active guest co-travelers can read+write the thread, but only the
+  // message conversation + the People panel — never the swap cockpit, key codes
+  // or agreement (those stay principal-only). A non-principal who isn't an
+  // active guest has no access at all.
+  if (!isPrincipal) {
+    const allowed = await canAccessConversation(proposal, id, session.userId);
+    if (!allowed) notFound();
+    const otherName = proposal.proposer.name;
+    return (
+      <GuestThreadPage
+        proposalId={proposal.id}
+        status={proposal.status}
+        threadTitle={`${proposal.proposerListing.neighbourhood} · ${proposal.proposerListing.city} ⇄ ${proposal.targetListing.neighbourhood} · ${proposal.targetListing.city}`}
+        dateRange={formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString())}
+        chatName={otherName ?? "swapl host"}
+      />
+    );
+  }
 
   const myListing = isProposer ? proposal.proposerListing : proposal.targetListing;
   const theirListing = isProposer ? proposal.targetListing : proposal.proposerListing;
@@ -146,6 +168,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
           : null
       }
       actions={actions}
+      people={<PeoplePanel proposalId={proposal.id} isPrincipal={isPrincipal} />}
       tripCockpit={
         proposal.agreement ? (
           <TripCockpit

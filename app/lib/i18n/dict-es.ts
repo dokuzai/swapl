@@ -756,6 +756,28 @@ export const es: Partial<Record<DictKey, string>> = {
   "chat.sent": "Enviado",
   "chat.messageName": "Escribir a {name}",
 
+  // ---- Personas: conversación de intercambio con varias personas (DOK-187) ----
+  "people.title": "Personas",
+  "people.subtitle": "Vosotros dos en este intercambio.",
+  "people.subtitleWithGuests": "Todos en esta conversación.",
+  "people.invite": "Invitar",
+  "people.close": "Listo",
+  "people.role.principal": "Parte del intercambio",
+  "people.role.guest": "Acompañante",
+  "people.status.pending": "Pendiente",
+  "people.remove": "Quitar",
+  "people.removeError": "No se pudo quitar: inténtalo de nuevo.",
+  "people.unknownPerson": "Invitado",
+  "people.inviteHelp":
+    "Añade a un acompañante por email o usuario. Podrá escribir aquí, pero solo vosotros dos podéis aceptar, contraofertar o cancelar el intercambio.",
+  "people.invitePlaceholder": "Email o usuario",
+  "people.inviteAction": "Añadir",
+  "people.inviting": "Añadiendo…",
+  "people.inviteError": "No se pudo añadir: inténtalo de nuevo.",
+  "people.inviteForbidden": "Solo las dos partes del intercambio pueden invitar a personas.",
+  "people.alreadyMember": "Ya está en esta conversación.",
+  "people.coTravelers": "Añadir acompañantes",
+
   // ---- Keys: puntos de viaje, regalos, Estancia con Keys (DOK-155) ----
   "keys.menu": "Keys",
   "keys.kicker": "Puntos de viaje",

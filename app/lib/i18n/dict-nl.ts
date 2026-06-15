@@ -771,6 +771,28 @@ export const nl: Partial<Record<DictKey, string>> = {
   "chat.sent": "Verzonden",
   "chat.messageName": "{name} een bericht sturen",
 
+  // ---- Mensen: ruilgesprek met meerdere personen (DOK-187) ----
+  "people.title": "Mensen",
+  "people.subtitle": "Jullie twee in deze ruil.",
+  "people.subtitleWithGuests": "Iedereen in dit gesprek.",
+  "people.invite": "Uitnodigen",
+  "people.close": "Klaar",
+  "people.role.principal": "Ruilpartij",
+  "people.role.guest": "Medereiziger",
+  "people.status.pending": "In afwachting",
+  "people.remove": "Verwijderen",
+  "people.removeError": "Verwijderen mislukt: probeer het opnieuw.",
+  "people.unknownPerson": "Uitgenodigde gast",
+  "people.inviteHelp":
+    "Voeg een medereiziger toe via e-mail of gebruikersnaam. Ze kunnen hier meepraten, maar alleen jullie twee kunnen de ruil accepteren, tegenbieden of annuleren.",
+  "people.invitePlaceholder": "E-mail of gebruikersnaam",
+  "people.inviteAction": "Toevoegen",
+  "people.inviting": "Toevoegen…",
+  "people.inviteError": "Toevoegen mislukt: probeer het opnieuw.",
+  "people.inviteForbidden": "Alleen de twee ruilpartijen kunnen mensen uitnodigen.",
+  "people.alreadyMember": "Deze persoon zit al in dit gesprek.",
+  "people.coTravelers": "Medereizigers toevoegen",
+
   // ---- Keys: reispunten, schenken, Verblijf met Keys (DOK-155) ----
   "keys.menu": "Keys",
   "keys.kicker": "Reispunten",

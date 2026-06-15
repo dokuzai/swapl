@@ -770,6 +770,28 @@ export const en = {
   "chat.sent": "Sent",
   "chat.messageName": "Message {name}",
 
+  // ---- People: multi-party swap conversation (DOK-187) ----
+  "people.title": "People",
+  "people.subtitle": "The two of you on this swap.",
+  "people.subtitleWithGuests": "Everyone in this conversation.",
+  "people.invite": "Invite",
+  "people.close": "Done",
+  "people.role.principal": "Swap party",
+  "people.role.guest": "Co-traveler",
+  "people.status.pending": "Pending",
+  "people.remove": "Remove",
+  "people.removeError": "Couldn't remove — try again.",
+  "people.unknownPerson": "Invited guest",
+  "people.inviteHelp":
+    "Add a co-traveler by email or handle. They can chat here, but only the two of you can accept, counter or cancel the swap.",
+  "people.invitePlaceholder": "Email or handle",
+  "people.inviteAction": "Add",
+  "people.inviting": "Adding…",
+  "people.inviteError": "Couldn't add them — try again.",
+  "people.inviteForbidden": "Only the two swap parties can invite people.",
+  "people.alreadyMember": "They're already in this conversation.",
+  "people.coTravelers": "Add co-travelers",
+
   // ---- Keys: travel points, gifting, Stay-with-Keys (DOK-155) ----
   // Keys are travel points — never money. Copy must never imply currency,
   // purchase, or cash-out.

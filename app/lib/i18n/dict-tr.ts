@@ -771,6 +771,28 @@ export const tr: Partial<Record<DictKey, string>> = {
   "chat.sent": "Gönderildi",
   "chat.messageName": "{name} kişisine yaz",
 
+  // ---- Kişiler: çok kişili takas sohbeti (DOK-187) ----
+  "people.title": "Kişiler",
+  "people.subtitle": "Bu takasta ikiniz.",
+  "people.subtitleWithGuests": "Bu sohbetteki herkes.",
+  "people.invite": "Davet et",
+  "people.close": "Tamam",
+  "people.role.principal": "Takas tarafı",
+  "people.role.guest": "Yol arkadaşı",
+  "people.status.pending": "Beklemede",
+  "people.remove": "Çıkar",
+  "people.removeError": "Çıkarılamadı: tekrar dene.",
+  "people.unknownPerson": "Davet edilen misafir",
+  "people.inviteHelp":
+    "E-posta veya kullanıcı adıyla bir yol arkadaşı ekle. Burada sohbet edebilir, ama takası yalnızca ikiniz kabul edebilir, karşı teklif verebilir veya iptal edebilirsiniz.",
+  "people.invitePlaceholder": "E-posta veya kullanıcı adı",
+  "people.inviteAction": "Ekle",
+  "people.inviting": "Ekleniyor…",
+  "people.inviteError": "Eklenemedi: tekrar dene.",
+  "people.inviteForbidden": "Yalnızca iki takas tarafı kişileri davet edebilir.",
+  "people.alreadyMember": "Bu kişi zaten bu sohbette.",
+  "people.coTravelers": "Yol arkadaşı ekle",
+
   // ---- Keys: seyahat puanları, hediye, Keys ile konaklama (DOK-155) ----
   "keys.menu": "Keys",
   "keys.kicker": "Seyahat puanları",

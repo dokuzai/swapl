@@ -41,6 +41,8 @@ export type SwapContextProps = {
   } | null;
   /** Contextual actions (accept/decline/counter/withdraw…) rendered at the bottom. */
   actions: React.ReactNode;
+  /** "People" roster + invite controls (DOK-187). */
+  people?: React.ReactNode;
   /**
    * Post-agreement trip cockpit (DOK-152). When present it replaces the static
    * key-codes + insurance blocks — the cockpit renders its own phase timeline,
@@ -61,6 +63,7 @@ export function SwapContextPanel({
   theirListing,
   agreement,
   actions,
+  people,
   tripCockpit,
 }: SwapContextProps) {
   return (
@@ -117,6 +120,8 @@ export function SwapContextPanel({
         </div>
         {actions}
       </div>
+
+      {people}
     </div>
   );
 }
