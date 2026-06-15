@@ -1084,9 +1084,9 @@ export const de: Partial<Record<DictKey, string>> = {
   "verifyOwnership.how.docs":
     "Eine Eigentumsurkunde bzw. ein Grundbuchauszug passt, oder ein Mietvertrag — lade hoch, was du hast.",
   "verifyOwnership.how.tenant":
-    "Mieten ist willkommen. Wenn du zur Miete wohnst und dein Mietvertrag das Beherbergen erlaubt, bist du voll berechtigt — du musst die Wohnung nicht besitzen.",
+    "Zur Miete? Du bist hier ebenfalls willkommen — lade einfach deinen Mietvertrag statt einer Eigentumsurkunde hoch. Du kannst auf Swapl gastgeben, solange dein Mietvertrag Gäste erlaubt.",
   "verifyOwnership.how.privacy":
-    "Wir speichern dein Dokument nach der Prüfung nicht. Nur die KI liest deine persönlichen Daten, und wir behalten lediglich, ob es eine private Wohnung zeigt — niemals deinen Ausweis, deine Adresse oder das Dokument selbst.",
+    "Dein Dokument wird einmal gelesen, um zu prüfen, dass die Wohnung dir gehört, und danach nicht gespeichert — wir behalten nur das Ergebnis (verifiziert oder nicht), niemals das Dokument oder seinen Inhalt.",
   "verifyOwnership.how.privateOnly":
     "Swapl ist ein Tausch zwischen Privatpersonen — Wohnungen im Besitz eines Unternehmens sind nicht zugelassen.",
   "verifyOwnership.docType.label": "Dokumentart",

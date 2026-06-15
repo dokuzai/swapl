@@ -1084,9 +1084,9 @@ export const fr: Partial<Record<DictKey, string>> = {
   "verifyOwnership.how.docs":
     "Un acte de propriété ou un relevé cadastral convient, ou un bail de location — importez ce que vous avez.",
   "verifyOwnership.how.tenant":
-    "La location est la bienvenue. Si vous êtes locataire et que votre bail vous autorise à héberger, vous êtes pleinement éligible : nul besoin d'être propriétaire.",
+    "Vous êtes locataire ? Vous êtes aussi le bienvenu : téléversez votre bail plutôt qu'un titre de propriété. Vous pouvez héberger sur Swapl tant que votre contrat de location vous autorise à recevoir des invités.",
   "verifyOwnership.how.privacy":
-    "Nous ne conservons pas votre document après la vérification. Seule l'IA lit vos données personnelles, et nous n'enregistrons que s'il s'agit d'un logement privé — jamais votre pièce d'identité, votre adresse ou le document lui-même.",
+    "Votre document est lu une seule fois pour vérifier que le logement est bien le vôtre, puis il n'est pas conservé : nous ne gardons que le résultat (vérifié ou non), jamais le document ni son contenu.",
   "verifyOwnership.how.privateOnly":
     "Swapl est un échange entre particuliers : les logements détenus par une société ne sont pas admis.",
   "verifyOwnership.docType.label": "Type de document",

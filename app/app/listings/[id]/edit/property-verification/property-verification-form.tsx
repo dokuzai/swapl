@@ -105,10 +105,16 @@ export default function PropertyVerificationForm({
         <ul className="space-y-2 text-sm" style={{ color: "var(--navy-2)" }}>
           <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.ai")}</span></li>
           <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.docs")}</span></li>
-          <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.tenant")}</span></li>
-          <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.privacy")}</span></li>
           <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.privateOnly")}</span></li>
         </ul>
+        {/* Privacy reassurance (DOK-186) — prominent, with a lock cue. */}
+        <div
+          className="mt-4 flex gap-2.5 rounded-lg p-3 text-sm"
+          style={{ background: "var(--card-bg)", color: "var(--navy-2)" }}
+        >
+          <LockIcon />
+          <span>{t("verifyOwnership.how.privacy")}</span>
+        </div>
       </div>
 
       {businessBlocked && (
@@ -153,6 +159,13 @@ export default function PropertyVerificationForm({
             </div>
             <p className="mt-2 text-xs" style={{ color: "var(--navy-3)" }}>
               {t("verifyOwnership.docType.hint")}
+            </p>
+            {/* Tenant inclusion (DOK-186) — positive, right by the deed/lease choice. */}
+            <p
+              className="mt-3 rounded-lg p-3 text-sm"
+              style={{ background: "var(--cream-2)", color: "var(--navy-2)" }}
+            >
+              {t("verifyOwnership.how.tenant")}
             </p>
           </fieldset>
 
@@ -211,6 +224,27 @@ export default function PropertyVerificationForm({
         </form>
       )}
     </div>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="mt-0.5 shrink-0"
+      style={{ color: "var(--navy-3)" }}
+      aria-hidden
+    >
+      <rect x="4" y="11" width="16" height="9" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </svg>
   );
 }
 

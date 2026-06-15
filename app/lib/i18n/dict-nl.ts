@@ -1099,9 +1099,9 @@ export const nl: Partial<Record<DictKey, string>> = {
   "verifyOwnership.how.docs":
     "Een eigendomsakte of kadastraal uittreksel werkt, of een huurovereenkomst — upload wat je hebt.",
   "verifyOwnership.how.tenant":
-    "Huren is welkom. Als je huurt en je huurcontract gasten toestaat, ben je volledig geschikt — je hoeft de woning niet te bezitten.",
+    "Huur je? Je bent hier ook welkom — upload je huurcontract in plaats van een eigendomsakte. Je kunt op Swapl gastheer zijn zolang je huurcontract gasten toestaat.",
   "verifyOwnership.how.privacy":
-    "We bewaren je document niet na de controle. Alleen de AI leest je persoonlijke gegevens, en we bewaren enkel of het een particuliere woning betreft — nooit je ID, je adres of het document zelf.",
+    "Je document wordt één keer gelezen om te controleren of de woning van jou is en wordt daarna niet bewaard — we houden alleen het resultaat bij (geverifieerd of niet), nooit het document of de inhoud ervan.",
   "verifyOwnership.how.privateOnly":
     "Swapl is een ruil tussen particulieren — woningen op naam van een bedrijf komen niet in aanmerking.",
   "verifyOwnership.docType.label": "Documenttype",

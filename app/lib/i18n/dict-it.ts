@@ -1100,9 +1100,9 @@ export const it: Partial<Record<DictKey, string>> = {
   "verifyOwnership.how.docs":
     "Va bene un atto di proprietà o una visura, oppure un contratto di locazione: scegli ciò che hai.",
   "verifyOwnership.how.tenant":
-    "Anche chi è in affitto è il benvenuto. Se sei in affitto e il contratto ti permette di ospitare, sei pienamente idoneo: non serve essere proprietari.",
+    "Sei in affitto? Anche tu sei il benvenuto: carica il contratto di affitto invece dell'atto di proprietà. Puoi ospitare su Swapl finché il tuo contratto ti permette di avere ospiti.",
   "verifyOwnership.how.privacy":
-    "Non conserviamo il tuo documento dopo il controllo. Solo l'AI legge i tuoi dati personali e noi salviamo soltanto se risulta un'abitazione privata, mai il tuo documento d'identità, l'indirizzo o il documento stesso.",
+    "Il tuo documento viene letto una sola volta per verificare che la casa sia tua, poi non viene conservato: teniamo solo il risultato (verificato o no), mai il documento né il suo contenuto.",
   "verifyOwnership.how.privateOnly":
     "Swapl è uno scambio tra privati: gli immobili intestati ad aziende non sono ammessi.",
   "verifyOwnership.docType.label": "Tipo di documento",

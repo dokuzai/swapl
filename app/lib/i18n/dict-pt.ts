@@ -1099,9 +1099,9 @@ export const pt: Partial<Record<DictKey, string>> = {
   "verifyOwnership.how.docs":
     "Serve uma escritura ou certidão predial, ou um contrato de arrendamento — envia o que tiveres.",
   "verifyOwnership.how.tenant":
-    "Quem arrenda é bem-vindo. Se arrendas e o teu contrato permite receber hóspedes, és totalmente elegível: não precisas de ser proprietário.",
+    "Arrendas? Também és bem-vindo aqui — carrega o teu contrato de arrendamento em vez da escritura. Podes receber hóspedes no Swapl desde que o teu contrato de arrendamento o permita.",
   "verifyOwnership.how.privacy":
-    "Não guardamos o teu documento após a verificação. Apenas a IA lê os teus dados pessoais, e guardamos só se corresponde a uma casa particular — nunca o teu documento de identidade, a tua morada ou o próprio documento.",
+    "O teu documento é lido uma única vez para confirmar que a casa é tua e depois não é guardado — ficamos apenas com o resultado (verificado ou não), nunca o documento nem o seu conteúdo.",
   "verifyOwnership.how.privateOnly":
     "A Swapl é uma troca entre particulares — casas em nome de uma empresa não são elegíveis.",
   "verifyOwnership.docType.label": "Tipo de documento",

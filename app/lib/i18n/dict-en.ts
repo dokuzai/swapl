@@ -1115,9 +1115,9 @@ export const en = {
   "verifyOwnership.how.docs":
     "A title deed or property record works, or a lease agreement — upload whichever you have.",
   "verifyOwnership.how.tenant":
-    "Renting is welcome. If you rent and your lease lets you host, you're fully eligible — no need to own the home.",
+    "Renting? You're welcome here too — upload your lease instead of a deed. You can host on Swapl as long as your rental contract lets you have guests.",
   "verifyOwnership.how.privacy":
-    "We don't keep your document after the check. Only the AI reads your personal details, and we store just whether it shows a private home — never your ID, address, or the document itself.",
+    "Your document is read once to check the home is yours, then it isn't stored — we keep only the result (verified or not), never the document or its contents.",
   "verifyOwnership.how.privateOnly":
     "Swapl is a swap between private individuals — homes held by a company aren't eligible.",
   "verifyOwnership.docType.label": "Document type",

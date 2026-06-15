@@ -1099,9 +1099,9 @@ export const tr: Partial<Record<DictKey, string>> = {
   "verifyOwnership.how.docs":
     "Tapu ya da tapu kaydı olur, veya bir kira sözleşmesi — elinde hangisi varsa yükle.",
   "verifyOwnership.how.tenant":
-    "Kiracı olman sorun değil. Kiracıysan ve kira sözleşmen misafir ağırlamana izin veriyorsa tamamen uygunsun — evin sahibi olman gerekmez.",
+    "Kiracı mısın? Sen de buraya hoş geldin — tapu yerine kira sözleşmeni yükle. Kira sözleşmen misafir ağırlamana izin verdiği sürece Swapl'da ev sahipliği yapabilirsin.",
   "verifyOwnership.how.privacy":
-    "Kontrolden sonra belgeni saklamayız. Kişisel bilgilerini yalnızca yapay zekâ okur ve biz yalnızca özel bir konut olup olmadığını saklarız — kimliğini, adresini ya da belgenin kendisini asla.",
+    "Belgen, evin sana ait olduğunu doğrulamak için yalnızca bir kez okunur, ardından saklanmaz — yalnızca sonucu (doğrulandı ya da doğrulanmadı) tutarız, asla belgeyi veya içeriğini saklamayız.",
   "verifyOwnership.how.privateOnly":
     "Swapl bireyler arası bir takastır — bir şirket adına kayıtlı evler uygun değildir.",
   "verifyOwnership.docType.label": "Belge türü",
