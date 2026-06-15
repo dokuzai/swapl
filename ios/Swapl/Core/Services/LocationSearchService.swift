@@ -108,6 +108,26 @@ final class LocationSearchService: NSObject {
         }
     }
 
+    /// Resolve a tapped suggestion into a city/place name suitable for a text
+    /// filter (the browse filter matches listings by city string, not by map
+    /// coordinate). Prefers the resolved locality, then the administrative area,
+    /// falling back to the first component of the suggestion title.
+    func resolveCityName(_ suggestion: MKLocalSearchCompletion) async -> String? {
+        let titleFallback = suggestion.title
+            .components(separatedBy: ",").first?
+            .trimmingCharacters(in: .whitespaces)
+        let request = MKLocalSearch.Request(completion: suggestion)
+        do {
+            let response = try await MKLocalSearch(request: request).start()
+            let placemark = response.mapItems.first?.placemark
+            return placemark?.locality
+                ?? placemark?.administrativeArea
+                ?? titleFallback
+        } catch {
+            return titleFallback
+        }
+    }
+
     func clearSearch() {
         debounceTimer?.invalidate()
         searchQuery = ""; suggestions = []; isSearching = false

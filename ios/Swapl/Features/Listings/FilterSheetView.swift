@@ -1,5 +1,6 @@
 import SwiftUI
 import Observation
+import MapKit
 import SwaplDesignTokens
 
 // Browse filter panel, opened from the "Start your search" bar. Edits a local
@@ -22,10 +23,12 @@ struct FilterSheetView: View {
     @State private var dateFrom: Date
     @State private var dateTo: Date
 
-    // Type-ahead state
+    // Type-ahead state — MapKit place search (same engine as the browse map,
+    // DOK-182/183). The completer suggests real places worldwide; on tap we
+    // resolve the suggestion to a city name and add it as a filter chip.
     @State private var cityQuery = ""
-    @State private var suggestions: [CityAutocompleteItem] = []
-    @State private var isSearchingCities = false
+    @State private var location = LocationSearchService()
+    @State private var resolvingCity = false
     @FocusState private var cityFieldFocused: Bool
 
     private static let allPropertyTypes: [(value: String, label: String)] = [
@@ -88,7 +91,9 @@ struct FilterSheetView: View {
             }
             .safeAreaInset(edge: .bottom) { bottomBar }
         }
-        .task(id: cityQuery) { await fetchSuggestions() }
+        .onChange(of: cityQuery) { _, newValue in
+            location.updateSearch(newValue)
+        }
     }
 
     // MARK: - Destination (type-ahead, multi-select chips)
@@ -108,12 +113,12 @@ struct FilterSheetView: View {
                     .textInputAutocapitalization(.words)
                     .focused($cityFieldFocused)
                     .accessibilityLabel("Search destination cities")
-                if isSearchingCities {
+                if location.isSearching || resolvingCity {
                     ProgressView().controlSize(.small)
                 } else if !cityQuery.isEmpty {
                     Button {
                         cityQuery = ""
-                        suggestions = []
+                        location.clearSearch()
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(AirbnbPalette.secondaryText)
@@ -131,37 +136,36 @@ struct FilterSheetView: View {
                     .stroke(cityFieldFocused ? AirbnbPalette.text : AirbnbPalette.hairline)
             )
 
-            if !suggestions.isEmpty {
+            if !location.suggestions.isEmpty {
                 VStack(spacing: 0) {
-                    ForEach(suggestions) { item in
+                    ForEach(Array(location.suggestions.enumerated()), id: \.offset) { index, item in
                         Button {
-                            selectCity(item.city)
+                            selectSuggestion(item)
                         } label: {
                             HStack(spacing: 12) {
                                 Image(systemName: "mappin.circle")
                                     .font(.system(size: 18))
                                     .foregroundStyle(AirbnbPalette.secondaryText)
                                 VStack(alignment: .leading, spacing: 1) {
-                                    Text(item.city)
+                                    Text(item.title)
                                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                                         .foregroundStyle(AirbnbPalette.text)
-                                    Text(item.country)
-                                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
-                                        .foregroundStyle(AirbnbPalette.secondaryText)
+                                    if !item.subtitle.isEmpty {
+                                        Text(item.subtitle)
+                                            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                                            .foregroundStyle(AirbnbPalette.secondaryText)
+                                    }
                                 }
-                                Spacer()
-                                Text(item.listings == 1 ? "1 home" : "\(item.listings) homes")
-                                    .font(.swaplMono(SwaplDesignSystem.FontSize.small))
-                                    .foregroundStyle(AirbnbPalette.secondaryText)
+                                Spacer(minLength: 0)
                             }
                             .padding(.horizontal, 16)
                             .frame(minHeight: 52)
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("\(item.city), \(item.country), \(item.listings) homes")
+                        .accessibilityLabel("\(item.title), \(item.subtitle)")
 
-                        if item.id != suggestions.last?.id {
+                        if index != location.suggestions.count - 1 {
                             Divider().padding(.leading, 46)
                         }
                     }
@@ -196,32 +200,20 @@ struct FilterSheetView: View {
         }
     }
 
-    private func selectCity(_ city: String) {
-        if !cities.contains(city) { cities.append(city) }
-        cityQuery = ""
-        suggestions = []
+    // Resolve a tapped MapKit suggestion to a city name, then add it as a chip.
+    private func selectSuggestion(_ suggestion: MKLocalSearchCompletion) {
         cityFieldFocused = false
-    }
-
-    private func fetchSuggestions() async {
-        let query = cityQuery.trimmingCharacters(in: .whitespaces)
-        guard !query.isEmpty else {
-            suggestions = []
-            isSearchingCities = false
-            return
-        }
-        // ~250ms debounce; .task(id:) cancels the previous lookup on each keystroke.
-        try? await Task.sleep(nanoseconds: 250_000_000)
-        guard !Task.isCancelled else { return }
-        isSearchingCities = true
-        defer { isSearchingCities = false }
-        do {
-            let res = try await CitiesRepository.shared.autocomplete(prefix: query)
-            guard !Task.isCancelled else { return }
-            suggestions = res.items.filter { !cities.contains($0.city) }
-        } catch {
-            guard !Task.isCancelled else { return }
-            suggestions = []
+        resolvingCity = true
+        Task {
+            let resolved = await location.resolveCityName(suggestion)
+            let city = (resolved ?? suggestion.title)
+                .trimmingCharacters(in: .whitespaces)
+            if !city.isEmpty, !cities.contains(city) {
+                cities.append(city)
+            }
+            cityQuery = ""
+            location.clearSearch()
+            resolvingCity = false
         }
     }
 
@@ -395,8 +387,8 @@ struct FilterSheetView: View {
             stepFreeRequired = false
             filterByDates = false
             cityQuery = ""
-            suggestions = []
         }
+        location.clearSearch()
     }
 
     private var builtFilters: SearchFilters {
