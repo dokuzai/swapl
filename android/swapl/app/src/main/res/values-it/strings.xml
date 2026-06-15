@@ -68,6 +68,8 @@
     <string name="owner_verify_title">Verifica proprietà</string>
     <string name="owner_verify_explainer">Aggiungi un documento che dimostri il tuo diritto su questa casa — un atto o una visura, oppure un contratto di locazione a tuo nome. Un amministratore lo esamina e, una volta approvato, il tuo annuncio mostra il badge \"Proprietario verificato\".</string>
     <string name="owner_verify_ai_explainer">Un rapido controllo AI legge prima il documento per confermare che corrisponda a questa casa. La decisione finale spetta sempre a una persona del nostro team.</string>
+    <string name="owner_verify_tenant">Sei in affitto? Sei il benvenuto anche tu — carica il tuo contratto di locazione invece dell\'atto. Puoi ospitare su Swapl finché il tuo contratto d\'affitto ti permette di avere ospiti.</string>
+    <string name="owner_verify_privacy">Il tuo documento viene letto una sola volta per verificare che la casa sia tua, poi non viene conservato — teniamo solo l\'esito (verificato o no), mai il documento né il suo contenuto.</string>
     <string name="owner_verify_private_only_note">Swapl è uno scambio tra privati, quindi gli immobili aziendali o commerciali non possono essere pubblicati qui.</string>
     <string name="owner_verify_doc_type_label">Cosa stai caricando? (facoltativo)</string>
     <string name="owner_verify_doc_type_deed">Atto / visura</string>

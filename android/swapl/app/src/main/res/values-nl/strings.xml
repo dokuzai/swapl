@@ -68,6 +68,8 @@
     <string name="owner_verify_title">Eigendom verifiëren</string>
     <string name="owner_verify_explainer">Voeg een document toe waaruit je recht op deze woning blijkt — een eigendomsakte of kadastraal uittreksel, of een huurovereenkomst op jouw naam. Een beheerder beoordeelt het en zodra het is goedgekeurd, toont je advertentie een badge \"Geverifieerde eigenaar\".</string>
     <string name="owner_verify_ai_explainer">Een snelle AI-controle leest het document eerst om te bevestigen dat het bij deze woning past. Een persoon uit ons team heeft altijd het laatste woord.</string>
+    <string name="owner_verify_tenant">Huur je? Ook jij bent hier welkom — upload je huurovereenkomst in plaats van een eigendomsakte. Je kunt op Swapl gastheer zijn zolang je huurcontract je toestaat gasten te ontvangen.</string>
+    <string name="owner_verify_privacy">Je document wordt één keer gelezen om te controleren dat de woning van jou is en wordt daarna niet bewaard — we houden alleen het resultaat (geverifieerd of niet), nooit het document of de inhoud ervan.</string>
     <string name="owner_verify_private_only_note">Swapl is een ruil tussen particulieren, dus zakelijke of commerciële panden kunnen hier niet worden geplaatst.</string>
     <string name="owner_verify_doc_type_label">Wat upload je? (optioneel)</string>
     <string name="owner_verify_doc_type_deed">Eigendomsakte / uittreksel</string>

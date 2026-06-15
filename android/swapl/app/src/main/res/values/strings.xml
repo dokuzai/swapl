@@ -80,7 +80,9 @@
     <string name="owner_verify_explainer">Add a document that shows your right to this home — a deed or visura, or a lease in your name. An admin reviews it and, once approved, your listing shows a \"Verified owner\" badge.</string>
     <string name="owner_verify_ai_explainer">A quick AI check reads the document first to confirm it matches this home. A person on our team always has the final say.</string>
     <string name="owner_verify_tenant_note">Renting is welcome. If you rent and your lease lets you host, you\'re fully eligible — you don\'t need to own the home.</string>
+    <string name="owner_verify_tenant">Renting? You\'re welcome here too — upload your lease instead of a deed. You can host on Swapl as long as your rental contract lets you have guests.</string>
     <string name="owner_verify_privacy_note">We don\'t store your document after the check. Only the AI reads your personal details, and we keep just whether it shows a private home — never your ID, address, or the document itself.</string>
+    <string name="owner_verify_privacy">Your document is read once to check the home is yours, then it isn\'t stored — we keep only the result (verified or not), never the document or its contents.</string>
     <string name="owner_verify_private_only_note">Swapl is a swap between private people, so company or commercial properties can\'t be listed here.</string>
     <string name="owner_verify_doc_type_label">What are you uploading? (optional)</string>
     <string name="owner_verify_doc_type_deed">Deed / visura</string>

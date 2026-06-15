@@ -68,6 +68,8 @@
     <string name="owner_verify_title">Verificar propiedad</string>
     <string name="owner_verify_explainer">Añade un documento que demuestre tu derecho sobre esta vivienda — una escritura o nota simple, o un contrato de arrendamiento a tu nombre. Un administrador lo revisa y, una vez aprobado, tu anuncio muestra una insignia de \"Propietario verificado\".</string>
     <string name="owner_verify_ai_explainer">Una rápida comprobación con IA lee primero el documento para confirmar que coincide con esta vivienda. La decisión final siempre la toma una persona de nuestro equipo.</string>
+    <string name="owner_verify_tenant">¿Vives de alquiler? Tú también eres bienvenido — sube tu contrato de arrendamiento en lugar de la escritura. Puedes hospedar en Swapl siempre que tu contrato de alquiler te permita tener invitados.</string>
+    <string name="owner_verify_privacy">Tu documento se lee una sola vez para comprobar que la vivienda es tuya y luego no se almacena: solo guardamos el resultado (verificado o no), nunca el documento ni su contenido.</string>
     <string name="owner_verify_private_only_note">Swapl es un intercambio entre particulares, por lo que no se pueden publicar aquí inmuebles de empresa ni comerciales.</string>
     <string name="owner_verify_doc_type_label">¿Qué estás subiendo? (opcional)</string>
     <string name="owner_verify_doc_type_deed">Escritura / nota simple</string>

@@ -274,6 +274,12 @@ private fun VerifyOwnershipDialog(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                // Prominent privacy reassurance (DOK-186): document is read once,
+                // never stored — only the verified/not result is kept.
+                Text(
+                    stringResource(R.string.owner_verify_privacy),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
                 Text(
                     stringResource(R.string.owner_verify_privacy_note),
                     style = MaterialTheme.typography.bodySmall,
@@ -298,6 +304,12 @@ private fun VerifyOwnershipDialog(
 
                 // Optional document-type hint — helps the AI read the right kind
                 // of paper. Never required; tapping the active chip clears it.
+                // Positive tenant inclusion (DOK-186): renters upload a lease and
+                // are fully welcome to host. Placed right by the deed/lease selector.
+                Text(
+                    stringResource(R.string.owner_verify_tenant),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
                 Text(
                     stringResource(R.string.owner_verify_doc_type_label),
                     style = MaterialTheme.typography.bodySmall,

@@ -68,6 +68,8 @@
     <string name="owner_verify_title">Eigentum verifizieren</string>
     <string name="owner_verify_explainer">Füge ein Dokument hinzu, das dein Recht an diesem Zuhause zeigt — eine Eigentumsurkunde bzw. ein Grundbuchauszug oder ein Mietvertrag auf deinen Namen. Ein Administrator prüft es, und nach der Freigabe zeigt dein Inserat ein Abzeichen „Verifizierter Eigentümer“.</string>
     <string name="owner_verify_ai_explainer">Eine kurze KI-Prüfung liest das Dokument zuerst, um zu bestätigen, dass es zu diesem Zuhause passt. Die endgültige Entscheidung trifft immer ein Mensch aus unserem Team.</string>
+    <string name="owner_verify_tenant">Zur Miete? Du bist hier ebenso willkommen — lade einfach deinen Mietvertrag statt einer Urkunde hoch. Du kannst auf Swapl gastgeben, solange dein Mietvertrag dir erlaubt, Gäste zu empfangen.</string>
+    <string name="owner_verify_privacy">Dein Dokument wird einmal gelesen, um zu prüfen, dass das Zuhause dir gehört, danach wird es nicht gespeichert — wir behalten nur das Ergebnis (verifiziert oder nicht), niemals das Dokument oder seinen Inhalt.</string>
     <string name="owner_verify_private_only_note">Swapl ist ein Tausch zwischen Privatpersonen, daher können gewerbliche oder geschäftliche Immobilien hier nicht eingestellt werden.</string>
     <string name="owner_verify_doc_type_label">Was lädst du hoch? (optional)</string>
     <string name="owner_verify_doc_type_deed">Urkunde / Grundbuchauszug</string>

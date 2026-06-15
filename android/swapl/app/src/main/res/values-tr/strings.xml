@@ -68,6 +68,8 @@
     <string name="owner_verify_title">Mülkiyeti doğrula</string>
     <string name="owner_verify_explainer">Bu ev üzerindeki hakkını gösteren bir belge ekle — tapu ya da adına düzenlenmiş bir kira sözleşmesi. Bir yönetici inceler ve onaylandığında ilanında \"Doğrulanmış mal sahibi\" rozeti görünür.</string>
     <string name="owner_verify_ai_explainer">Hızlı bir yapay zekâ kontrolü, belgenin bu evle eşleştiğini doğrulamak için önce belgeyi okur. Son kararı her zaman ekibimizden bir kişi verir.</string>
+    <string name="owner_verify_tenant">Kiracı mısın? Sen de buraya hoş geldin — tapu yerine kira sözleşmeni yükle. Kira sözleşmen misafir ağırlamana izin verdiği sürece Swapl\'da ev sahipliği yapabilirsin.</string>
+    <string name="owner_verify_privacy">Belgen, evin sana ait olduğunu doğrulamak için yalnızca bir kez okunur, ardından saklanmaz — yalnızca sonucu (doğrulandı ya da doğrulanmadı) tutarız, belgeyi veya içeriğini asla saklamayız.</string>
     <string name="owner_verify_private_only_note">Swapl bireyler arasında bir takastır; bu yüzden şirkete ait ya da ticari mülkler burada yayınlanamaz.</string>
     <string name="owner_verify_doc_type_label">Ne yüklüyorsun? (isteğe bağlı)</string>
     <string name="owner_verify_doc_type_deed">Tapu</string>

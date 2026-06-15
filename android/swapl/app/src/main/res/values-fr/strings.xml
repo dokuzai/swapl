@@ -68,6 +68,8 @@
     <string name="owner_verify_title">Vérifier la propriété</string>
     <string name="owner_verify_explainer">Ajoutez un document prouvant votre droit sur ce logement — un acte de propriété, ou un bail à votre nom. Un administrateur l\'examine et, une fois approuvé, votre annonce affiche un badge « Propriétaire vérifié ».</string>
     <string name="owner_verify_ai_explainer">Une rapide vérification par IA lit d\'abord le document pour confirmer qu\'il correspond à ce logement. Une personne de notre équipe a toujours le dernier mot.</string>
+    <string name="owner_verify_tenant">Locataire ? Vous êtes aussi le bienvenu — téléversez votre bail plutôt qu\'un acte de propriété. Vous pouvez héberger sur Swapl tant que votre contrat de location vous autorise à recevoir des invités.</string>
+    <string name="owner_verify_privacy">Votre document est lu une seule fois pour vérifier que le logement est le vôtre, puis il n\'est pas conservé — nous ne gardons que le résultat (vérifié ou non), jamais le document ni son contenu.</string>
     <string name="owner_verify_private_only_note">Swapl est un échange entre particuliers ; les biens d\'entreprise ou commerciaux ne peuvent donc pas être publiés ici.</string>
     <string name="owner_verify_doc_type_label">Que téléversez-vous ? (facultatif)</string>
     <string name="owner_verify_doc_type_deed">Acte de propriété</string>
