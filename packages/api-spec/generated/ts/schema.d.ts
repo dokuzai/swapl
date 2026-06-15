@@ -1446,7 +1446,7 @@ export interface paths {
         put?: never;
         /**
          * Create (publish) a listing
-         * @description Requires a verified email; plan-gated.
+         * @description Requires a verified email; plan-gated. Also requires the publish acknowledgment (DOK-162): the body must include `ackAccepted: true` and a `mode`. A ListingPublishAck row is logged with the canonical text + version. Missing/invalid ack -> 400 PUBLISH_ACK_REQUIRED.
          */
         post: {
             parameters: {
@@ -1468,6 +1468,15 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["ListingCreateResponse"];
+                    };
+                };
+                /** @description PUBLISH_ACK_REQUIRED (missing/invalid acknowledgment) or invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
                     };
                 };
                 /** @description Unauthenticated */
@@ -1592,6 +1601,125 @@ export interface paths {
             };
         };
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/listings/{id}/property-verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Owner-verification status for a listing (owner only)
+         * @description Optional owner-proof verification (DOK-162). Returns the current ownerVerified flag and the latest PropertyVerification, if any. This is never a gate to publishing.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PropertyVerificationStatus"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not the owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Submit owner-verification documents (owner only)
+         * @description Optional owner-proof verification (DOK-162). Attaches documents (deed, utility bill, etc.) and opens/reopens a pending review. Approval earns the "Verified owner" badge but is never required to publish.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PropertyVerificationSubmit"];
+                };
+            };
+            responses: {
+                /** @description Submitted (pending review) */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PropertyVerificationStatus"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not the owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -7698,6 +7826,8 @@ export interface components {
             lng?: number | null;
             isFeatured: boolean;
             isVerified: boolean;
+            /** @description Owner-proof trust badge (DOK-162) — host attested + admin-approved. */
+            ownerVerified: boolean;
         };
         ListingWithScore: {
             listing: components["schemas"]["Listing"];
@@ -7768,10 +7898,38 @@ export interface components {
             maxStayDays: number;
             photos: string[];
             tags: string[];
+            /** @description Publish acknowledgment (DOK-162). REQUIRED on create (POST /api/listings): the host self-attests they have the right to host in the chosen mode. Ignored on update. Missing/false -> 400 PUBLISH_ACK_REQUIRED. */
+            ackAccepted?: boolean;
+            /**
+             * @description Hosting mode the acknowledgment applies to. REQUIRED on create when ackAccepted is true.
+             * @enum {string}
+             */
+            mode?: "entire_home_while_away" | "room_or_host_present";
         };
         ListingCreateResponse: {
             ok: boolean;
             id: string;
+        };
+        PropertyVerificationDocument: {
+            /** Format: uri */
+            url: string;
+            label: string;
+        };
+        PropertyVerification: {
+            id: string;
+            /** @enum {string} */
+            status: "pending" | "approved" | "rejected";
+            documents: components["schemas"]["PropertyVerificationDocument"][];
+            note?: string | null;
+            createdAt: string;
+            updatedAt: string;
+        };
+        PropertyVerificationStatus: {
+            ownerVerified: boolean;
+            verification: components["schemas"]["PropertyVerification"] | null;
+        };
+        PropertyVerificationSubmit: {
+            documents: components["schemas"]["PropertyVerificationDocument"][];
         };
         FavoritesResponse: {
             items: components["schemas"]["Listing"][];

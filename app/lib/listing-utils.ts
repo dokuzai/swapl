@@ -55,6 +55,8 @@ export type ListingDTO = {
   lng: number | null;
   isFeatured: boolean;
   isVerified: boolean;
+  // Owner-proof trust badge (DOK-162): host attested + admin-approved ownership.
+  ownerVerified: boolean;
 };
 
 type ListingRecord = {
@@ -105,6 +107,7 @@ type ListingRecord = {
   lng: number | null;
   isFeatured?: boolean;
   isVerified?: boolean;
+  ownerVerified?: boolean;
   featuredUntil?: Date | null;
 };
 
@@ -157,6 +160,7 @@ export function toDTO(l: ListingRecord, opts?: { includeAddress?: boolean }): Li
     lng: l.lng,
     isFeatured: Boolean(l.isFeatured && l.featuredUntil && l.featuredUntil > new Date()),
     isVerified: Boolean(l.isVerified),
+    ownerVerified: Boolean(l.ownerVerified),
   };
 }
 

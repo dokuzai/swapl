@@ -9,6 +9,7 @@ import { parseFiltersFromSearchParams } from "@/lib/listing-filters";
 import { queryListings, getViewerListing } from "@/lib/listing-query";
 import { apiError, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { nightlyKeysFor } from "@/lib/keys/value";
+import { PUBLISH_ACK_VERSION, ackTextForMode, isPublishAckMode } from "@/lib/listing/publish-ack";
 
 // Mobile / SPA-friendly listing search. Mirrors what the /listings RSC page
 // does today, returning pre-scored results so clients don't recompute.
@@ -69,6 +70,19 @@ export async function POST(req: Request) {
   if (data.availableTo <= data.availableFrom) {
     return invalidInput("End date must be after start.");
   }
+
+  // Publish acknowledgment (DOK-162): the host must self-attest they have the
+  // right to host in the chosen mode. This is a self-attestation we log, not a
+  // proof check — but it is required, so a missing/invalid ack is a 400.
+  const ack = (body ?? {}) as { ackAccepted?: unknown; mode?: unknown };
+  if (ack.ackAccepted !== true || !isPublishAckMode(ack.mode)) {
+    return invalidInput("PUBLISH_ACK_REQUIRED", {
+      message:
+        "You must confirm the hosting acknowledgment (ackAccepted: true) and choose a " +
+        "mode (entire_home_while_away | room_or_host_present) before publishing.",
+    });
+  }
+  const ackMode = ack.mode;
 
   // AI city-art uses the caller's preferred provider/key (looked up above).
   const userOverride = { provider: user.aiProvider, model: user.aiModel, apiKey: user.aiApiKey };
@@ -135,6 +149,17 @@ export async function POST(req: Request) {
       paletteHint: art.palette,
       motifHint: art.motif.join(",") || null,
       postcard: JSON.stringify(art.postcard),
+    },
+  });
+
+  // Append-only log of the consent the host gave at publish time.
+  await prisma.listingPublishAck.create({
+    data: {
+      listingId: created.id,
+      userId: session.userId,
+      ackText: ackTextForMode(ackMode),
+      version: PUBLISH_ACK_VERSION,
+      mode: ackMode,
     },
   });
 

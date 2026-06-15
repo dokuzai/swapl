@@ -103,6 +103,8 @@ model User {
   oauthAccounts   OAuthAccount[]
   webauthnCredentials WebAuthnCredential[]
   identityVerifications IdentityVerification[]
+  propertyVerifications PropertyVerification[]
+  publishAcks     ListingPublishAck[]
   travelProfile   TravelProfile?
   inspirationPackages InspirationPackage[]
   reviewsAuthored SwapReview[] @relation("ReviewsAuthored")
@@ -364,6 +366,10 @@ model Listing {
   verificationReviewedAt   DateTime?
   verificationReviewerId   String?
   isVerified               Boolean  @default(false)
+  // Owner-proof trust badge (DOK-162): set true when a PropertyVerification is
+  // approved by an admin. Distinct from isVerified (listing KYC, Feature 4) —
+  // this attests the host owns/controls the home. Optional, never a publish gate.
+  ownerVerified            Boolean  @default(false)
   isFeatured               Boolean  @default(false)
   featuredUntil            DateTime?
 
@@ -387,6 +393,8 @@ model Listing {
   homeGuide            ListingHomeGuide?
   keysStays            KeysStay[]
   blockedRanges        ListingBlockedRange[]
+  propertyVerifications PropertyVerification[]
+  publishAcks          ListingPublishAck[]
 
   @@index([city])
   @@index([userId])
@@ -1088,4 +1096,42 @@ model AffiliateClick {
 
   @@index([partnerSlug])
   @@index([destinationCity])
+}
+
+// Optional owner-proof verification (DOK-162). A host may attach documents
+// (deed, utility bill, etc.) to earn a "Verified owner" trust badge. This is
+// NEVER a gate to publishing — it only sets Listing.ownerVerified when approved.
+model PropertyVerification {
+  id            String   @id @default(cuid())
+  listingId     String
+  userId        String
+  status        String   @default("pending")   // pending | approved | rejected
+  documents     Json     @default("[]")         // array of { url, label }
+  reviewedById  String?
+  note          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([listingId])
+}
+
+// Append-only log of the host's publish self-attestation (DOK-162). Captures
+// the exact canonical text + version + mode the host agreed to at publish time.
+model ListingPublishAck {
+  id        String   @id @default(cuid())
+  listingId String
+  userId    String
+  ackText   String
+  version   String
+  mode      String?  // entire_home_while_away | room_or_host_present
+  createdAt DateTime @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
 }

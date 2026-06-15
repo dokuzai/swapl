@@ -784,6 +784,7 @@ components:
         - palette
         - isFeatured
         - isVerified
+        - ownerVerified
       properties:
         id: { type: string }
         userId: { type: string }
@@ -836,6 +837,9 @@ components:
         lng: { type: number, format: double, nullable: true }
         isFeatured: { type: boolean }
         isVerified: { type: boolean }
+        ownerVerified:
+          type: boolean
+          description: Owner-proof trust badge (DOK-162) — host attested + admin-approved.
 
     ListingWithScore:
       type: object
@@ -943,6 +947,19 @@ components:
         tags:
           type: array
           items: { type: string }
+        ackAccepted:
+          type: boolean
+          description: >-
+            Publish acknowledgment (DOK-162). REQUIRED on create (POST
+            /api/listings): the host self-attests they have the right to host in
+            the chosen mode. Ignored on update. Missing/false -> 400
+            PUBLISH_ACK_REQUIRED.
+        mode:
+          type: string
+          enum: [entire_home_while_away, room_or_host_present]
+          description: >-
+            Hosting mode the acknowledgment applies to. REQUIRED on create when
+            ackAccepted is true.
 
     ListingCreateResponse:
       type: object
@@ -950,6 +967,45 @@ components:
       properties:
         ok: { type: boolean }
         id: { type: string }
+
+    PropertyVerificationDocument:
+      type: object
+      required: [url, label]
+      properties:
+        url: { type: string, format: uri }
+        label: { type: string }
+
+    PropertyVerification:
+      type: object
+      required: [id, status, documents, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        status: { type: string, enum: [pending, approved, rejected] }
+        documents:
+          type: array
+          items: { $ref: '#/components/schemas/PropertyVerificationDocument' }
+        note: { type: string, nullable: true }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+
+    PropertyVerificationStatus:
+      type: object
+      required: [ownerVerified, verification]
+      properties:
+        ownerVerified: { type: boolean }
+        verification:
+          oneOf:
+            - $ref: '#/components/schemas/PropertyVerification'
+            - type: 'null'
+
+    PropertyVerificationSubmit:
+      type: object
+      required: [documents]
+      properties:
+        documents:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/PropertyVerificationDocument' }
 
     FavoritesResponse:
       type: object
@@ -2287,7 +2343,11 @@ paths:
     post:
       tags: [listings]
       summary: Create (publish) a listing
-      description: Requires a verified email; plan-gated.
+      description: >-
+        Requires a verified email; plan-gated. Also requires the publish
+        acknowledgment (DOK-162): the body must include `ackAccepted: true` and
+        a `mode`. A ListingPublishAck row is logged with the canonical text +
+        version. Missing/invalid ack -> 400 PUBLISH_ACK_REQUIRED.
       security: [{ bearerAuth: [] }, { cookieAuth: [] }]
       requestBody:
         required: true
@@ -2300,6 +2360,11 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ListingCreateResponse' }
+        '400':
+          description: PUBLISH_ACK_REQUIRED (missing/invalid acknowledgment) or invalid input
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
         '401': { description: Unauthenticated }
         '403':
           description: EMAIL_NOT_VERIFIED
@@ -2344,6 +2409,52 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ListingCreateResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the owner }
+        '404': { description: Not found }
+
+  /api/listings/{id}/property-verification:
+    get:
+      tags: [listings]
+      summary: Owner-verification status for a listing (owner only)
+      description: >-
+        Optional owner-proof verification (DOK-162). Returns the current
+        ownerVerified flag and the latest PropertyVerification, if any. This is
+        never a gate to publishing.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PropertyVerificationStatus' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the owner }
+        '404': { description: Not found }
+    post:
+      tags: [listings]
+      summary: Submit owner-verification documents (owner only)
+      description: >-
+        Optional owner-proof verification (DOK-162). Attaches documents (deed,
+        utility bill, etc.) and opens/reopens a pending review. Approval earns
+        the "Verified owner" badge but is never required to publish.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PropertyVerificationSubmit' }
+      responses:
+        '201':
+          description: Submitted (pending review)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PropertyVerificationStatus' }
+        '400': { description: Invalid input }
         '401': { description: Unauthenticated }
         '403': { description: Not the owner }
         '404': { description: Not found }
