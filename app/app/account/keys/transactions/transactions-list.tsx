@@ -31,6 +31,10 @@ const KIND_KEY: Record<string, DictKey> = {
   release: "keys.kind.release",
   referral_bonus: "keys.kind.referral_bonus",
   invite_bonus: "keys.kind.invite_bonus",
+  earn_property_verified: "keys.kind.earn_property_verified",
+  earn_review: "keys.kind.earn_review",
+  earn_share_converted: "keys.kind.earn_share_converted",
+  earn_listing_complete: "keys.kind.earn_listing_complete",
 };
 
 // Chip order — "all" first, then the kinds that matter most to a member.
@@ -38,6 +42,10 @@ const KIND_CHIPS: string[] = [
   "earn_host",
   "spend_stay",
   "welcome_bonus",
+  "earn_property_verified",
+  "earn_listing_complete",
+  "earn_review",
+  "earn_share_converted",
   "referral_bonus",
   "invite_bonus",
   "gift_received",

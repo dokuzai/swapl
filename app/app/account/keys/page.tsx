@@ -17,6 +17,7 @@ import { GIFT_MAX_PER_TRANSFER, GIFT_DAILY_CAP, WELCOME_BONUS_KEYS } from "@/lib
 import { GiftKeysForm } from "./gift-form";
 import { EarnPathsCard } from "./earn-paths";
 import { HowKeysWork } from "./how-keys-work";
+import { WaysToEarnKeys } from "./ways-to-earn";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Keys · swapl" };
@@ -33,6 +34,10 @@ const KIND_KEY: Record<string, DictKey> = {
   release: "keys.kind.release",
   referral_bonus: "keys.kind.referral_bonus",
   invite_bonus: "keys.kind.invite_bonus",
+  earn_property_verified: "keys.kind.earn_property_verified",
+  earn_review: "keys.kind.earn_review",
+  earn_share_converted: "keys.kind.earn_share_converted",
+  earn_listing_complete: "keys.kind.earn_listing_complete",
 };
 
 export default async function KeysPage() {
@@ -117,6 +122,9 @@ export default async function KeysPage() {
 
             {/* ---- Earn paths (zero balance only) — never a dead end ---- */}
             {balance === 0 && <EarnPathsCard welcomeBonus={WELCOME_BONUS_KEYS} />}
+
+            {/* ---- Ways to earn Keys (DOK-164) — server-owned catalogue ---- */}
+            <WaysToEarnKeys />
 
             {/* ---- Per-night value of your homes ---- */}
             <section className="mb-10">
