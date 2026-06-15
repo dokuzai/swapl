@@ -89,6 +89,11 @@ struct BrowseListView: View {
     @State private var isShowingInspire = false
     @State private var confirmedProposalId: String?
     @Environment(\.openURL) private var openURL
+    // Map search (DOK-182): MapKit autocomplete → recenter the browse map.
+    @State private var locationSearch = LocationSearchService()
+    @State private var mapSearchText = ""
+    @State private var mapRecenterTarget: MapRecenterTarget?
+    @FocusState private var mapSearchFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -188,7 +193,7 @@ struct BrowseListView: View {
 
     private var mapContent: some View {
         ZStack(alignment: .top) {
-            BrowseMapView(items: vm.items, selectedId: $selectedMapId)
+            BrowseMapView(items: vm.items, selectedId: $selectedMapId, searchRegion: $mapRecenterTarget)
             mapTopFade
             mapSearchHeader
         }
@@ -372,19 +377,199 @@ struct BrowseListView: View {
 
     // Map mode: floating search bar over the full-bleed map — Liquid Glass on
     // iOS 26, card-on-capsule fallback on earlier releases (target is 17.0).
+    // Typing here drives MapKit autocomplete (DOK-182); selecting a suggestion
+    // recenters the camera and feeds the city back into the existing filters.
     private var mapSearchHeader: some View {
-        Group {
-            if #available(iOS 26.0, *) {
-                searchBarContent
-                    .glassEffect(.regular, in: Capsule())
-            } else {
-                searchBarContent
-                    .background(SwaplSemanticLight.card, in: Capsule())
-                    .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
+        VStack(spacing: 10) {
+            Group {
+                if #available(iOS 26.0, *) {
+                    mapSearchBarContent
+                        .glassEffect(.regular, in: Capsule())
+                } else {
+                    mapSearchBarContent
+                        .background(SwaplSemanticLight.card, in: Capsule())
+                        .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
+                }
+            }
+
+            if mapSearchFocused && !locationSearch.suggestions.isEmpty {
+                mapSuggestionsDropdown
             }
         }
         .padding(.horizontal, 22)
         .padding(.top, 10)
+    }
+
+    // Editable map search bar: filter badge + live location field + clear/loading
+    // + sort. Mirrors `searchBarContent` styling so the capsule design is intact.
+    private var mapSearchBarContent: some View {
+        HStack(spacing: 12) {
+            Button {
+                isShowingFilters = true
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 20, weight: .semibold))
+                    if vm.filters.activeFilterCount > 0 {
+                        Text("\(vm.filters.activeFilterCount)")
+                            .font(.swaplMono(11, weight: .bold))
+                            .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                            .frame(minWidth: 17, minHeight: 17)
+                            .background(SwaplSemanticLight.primary, in: Circle())
+                            .offset(x: 11, y: -9)
+                    }
+                }
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(
+                vm.filters.activeFilterCount > 0
+                    ? "Filters, \(vm.filters.activeFilterCount) active"
+                    : "Filters"
+            )
+
+            TextField("Search a city", text: $mapSearchText)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .focused($mapSearchFocused)
+                .submitLabel(.search)
+                .textInputAutocapitalization(.words)
+                .autocorrectionDisabled()
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .onChange(of: mapSearchText) { _, newValue in
+                    locationSearch.updateSearch(newValue)
+                }
+                .onSubmit {
+                    Task {
+                        if let region = await locationSearch.searchForText(mapSearchText) {
+                            recenterMap(to: region, label: mapSearchText)
+                        }
+                    }
+                }
+
+            if locationSearch.isSearching {
+                ProgressView()
+                    .scaleEffect(0.8)
+                    .frame(width: 28, height: 44)
+            } else if !mapSearchText.isEmpty {
+                Button {
+                    mapSearchText = ""
+                    locationSearch.clearSearch()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .frame(width: 28, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
+            } else {
+                Menu {
+                    sortButton("Best match", value: "match")
+                    sortButton("Newest", value: "newest")
+                    sortButton("Largest", value: "size_desc")
+                } label: {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .frame(width: 28, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .accessibilityLabel("Sort homes")
+            }
+        }
+        .foregroundStyle(AirbnbPalette.text)
+        .padding(.horizontal, 22)
+        .padding(.vertical, 6)
+    }
+
+    // Suggestions dropdown, dressed in Swapl tokens (card + hairline + shadow).
+    private var mapSuggestionsDropdown: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(locationSearch.suggestions.prefix(5).enumerated()), id: \.offset) { index, suggestion in
+                Button {
+                    Task {
+                        if let region = await locationSearch.selectSuggestion(suggestion) {
+                            recenterMap(to: region, label: suggestion.title)
+                        }
+                    }
+                } label: {
+                    mapSuggestionRow(suggestion)
+                }
+                .buttonStyle(.plain)
+
+                if index < min(locationSearch.suggestions.count, 5) - 1 {
+                    Divider()
+                        .overlay(AirbnbPalette.hairline)
+                        .padding(.leading, 50)
+                }
+            }
+        }
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                .stroke(AirbnbPalette.hairline)
+        )
+        .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
+        .transition(.opacity.combined(with: .move(edge: .top)))
+    }
+
+    private func mapSuggestionRow(_ suggestion: MKLocalSearchCompletion) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: suggestionIcon(suggestion))
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(suggestion.title)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .lineLimit(1)
+                if !suggestion.subtitle.isEmpty {
+                    Text(suggestion.subtitle)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(1)
+                }
+            }
+            Spacer(minLength: 0)
+            Image(systemName: "arrow.up.left")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 12)
+        .contentShape(Rectangle())
+    }
+
+    private func suggestionIcon(_ suggestion: MKLocalSearchCompletion) -> String {
+        let s = suggestion.subtitle.lowercased()
+        if s.contains("restaurant") || s.contains("cafe") { return "fork.knife" }
+        if s.contains("hotel") { return "bed.double" }
+        if s.contains("airport") { return "airplane" }
+        if s.contains("station") { return "tram" }
+        if s.contains("school") || s.contains("university") { return "graduationcap" }
+        if s.contains("park") { return "leaf" }
+        return "mappin.circle"
+    }
+
+    // Recenter the camera and dismiss the dropdown. Also folds the searched place
+    // into the existing city filter so pins/results stay coherent (DOK-182 §c):
+    // a single-token title (a city, no comma) replaces the city filter.
+    private func recenterMap(to region: MKCoordinateRegion, label: String) {
+        mapRecenterTarget = MapRecenterTarget(region: region)
+        mapSearchText = label
+        mapSearchFocused = false
+
+        let city = label.split(separator: ",").first.map { String($0).trimmingCharacters(in: .whitespaces) } ?? label
+        if !city.isEmpty, vm.filters.cities != [city] {
+            var newFilters = vm.filters
+            newFilters.cities = [city]
+            Task { await vm.apply(newFilters) }
+        }
     }
 
     // Soft fade so the map recedes behind the floating search bar and status bar.
@@ -610,9 +795,15 @@ struct ListingCardView: View {
 struct BrowseMapView: View {
     let items: [ListingWithScore]
     @Binding var selectedId: String?
+    // Externally-driven recenter target (set by the map search bar). Each new
+    // region the search produces moves the camera; we track the live region so
+    // panning/zooming stays in sync (guide §3.2/§3.3). Wrapped because
+    // MKCoordinateRegion isn't Equatable — the id drives .onChange.
+    @Binding var searchRegion: MapRecenterTarget?
 
     @State private var camera: MapCameraPosition = .automatic
     @State private var didFocus = false
+    @State private var currentRegion: MKCoordinateRegion?
 
     private var points: [ListingMapPoint] { items.map(ListingMapPoint.init) }
 
@@ -631,6 +822,16 @@ struct BrowseMapView: View {
         .mapControls { MapUserLocationButton() }
         .ignoresSafeArea()
         .onAppear(perform: focusInitial)
+        .onMapCameraChange { context in
+            currentRegion = context.region
+        }
+        .onChange(of: searchRegion?.id) { _, _ in
+            guard let region = searchRegion?.region else { return }
+            withAnimation(.easeInOut(duration: 0.5)) {
+                camera = .region(region)
+                currentRegion = region
+            }
+        }
     }
 
     private func focusInitial() {
@@ -674,6 +875,13 @@ struct MapListingPin: View {
         .animation(.snappy(duration: 0.25), value: selected)
         .accessibilityLabel(point.matchScore.map { "\(point.title), \($0) percent match" } ?? point.title)
     }
+}
+
+// Recenter command for BrowseMapView. MKCoordinateRegion isn't Equatable, so we
+// carry a unique id per search result to drive the camera's .onChange.
+struct MapRecenterTarget: Identifiable {
+    let id = UUID()
+    let region: MKCoordinateRegion
 }
 
 struct ListingMapPoint: Identifiable {
