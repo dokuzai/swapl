@@ -53,6 +53,60 @@ struct Listing: Identifiable, Codable, Hashable, Sendable {
     // PropertyVerification submission; drives the discreet "Verified owner" trust
     // badge. Optional so older servers that omit it still decode.
     let ownerVerified: Bool?
+    // Nightly-Keys valuation (DOK-163). The persisted, server-computed value of a
+    // night in this home, in travel points. Optional so older servers omit it.
+    let nightlyKeys: Int?
+    // Whole-home vs single private room. "entire_place" | "private_room". When a
+    // room, the nightly value reflects a rooms coefficient (shown transparently).
+    let spaceType: String?
+    // Rooms offered when spaceType == "private_room"; nil for a whole place.
+    let roomsOffered: Int?
+    // 1..5 desirability tier for the home's location, feeding the valuation.
+    let locationTier: Int?
+    // Owner-only structured explanation of how nightlyKeys is calculated (v2).
+    // Present only on your own listing detail; nil for everyone else.
+    let valuationExplanation: ValuationExplanation?
+
+    // True when this listing is a single private room rather than a whole home.
+    var isPrivateRoom: Bool { spaceType == "private_room" }
+}
+
+// MARK: - Valuation explanation (DOK-163)
+
+// Owner-only "how your nightly Keys are calculated" payload. Mirrors the v2
+// JSON the backend persists on the listing: a clamped, bounded value the owner
+// can trust won't lurch. All fields optional so a v1 or partial payload still
+// decodes and the sheet degrades gracefully.
+struct ValuationExplanation: Codable, Hashable, Sendable {
+    let version: Int?
+    let base: Int?                 // pre-feedback nightly Keys
+    let adjustment: Double?        // ±0.20 review multiplier
+    let nightlyKeys: Int?          // final = clamp(round(base*(1+adjustment)))
+    let locationTier: Int?         // 1..5
+    let spaceType: String?
+    let roomsCoefficient: Double?
+    let factors: [Factor]?
+    let ai: AI?
+    let feedback: Feedback?
+
+    struct Factor: Codable, Hashable, Sendable, Identifiable {
+        let key: String
+        let label: String
+        let points: Double
+        var id: String { key }
+    }
+
+    struct AI: Codable, Hashable, Sendable {
+        let source: String         // "ai" | "fallback"
+        let bonus: Double
+        let summary: String?
+    }
+
+    struct Feedback: Codable, Hashable, Sendable {
+        let reviewCount: Int
+        let avgRating: Double?
+        let applied: Bool
+    }
 }
 
 struct ListingWithScore: Identifiable, Codable, Hashable, Sendable {

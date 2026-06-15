@@ -12,6 +12,7 @@
 		025918872EE8E347FE5DAB31 /* SwaplImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC3CE2737C2B041ADE0B63C /* SwaplImage.swift */; };
 		0569690334ACF761D79ECCA0 /* KeysRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE31B7FB667BE216C5111617 /* KeysRepository.swift */; };
 		09510D369FFD86683685D48E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE15DAF7CB60D8091AAB48 /* Theme.swift */; };
+		0E122F3A8ACC502ADFEBBC7D /* NightlyKeysExplainerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E4EC474A4BB7E4FBB7F2B6 /* NightlyKeysExplainerSheet.swift */; };
 		0FF9121641DAB4D4D85FDB4C /* Fraunces-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12CFB58AC5BAA13BBCFEAEC8 /* Fraunces-Variable.ttf */; };
 		10DEDCBBA64190E76F8FE03E /* SwaplCreateListingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */; };
 		12A73281C203C687F50C0A01 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DF9FF9E682ED439398C38D /* LoginView.swift */; };
@@ -168,6 +169,7 @@
 		526D3E645943E4B40E2EE02F /* AvailabilityCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCalendar.swift; sourceTree = "<group>"; };
 		63D199358A62C764FFD50BD6 /* TravelProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelProfileView.swift; sourceTree = "<group>"; };
 		64D0EB47C8D8295095D265D6 /* ListingPhotoGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingPhotoGalleryView.swift; sourceTree = "<group>"; };
+		65E4EC474A4BB7E4FBB7F2B6 /* NightlyKeysExplainerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NightlyKeysExplainerSheet.swift; sourceTree = "<group>"; };
 		6625DA305EE56FBB09BB7C24 /* UnreadStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadStore.swift; sourceTree = "<group>"; };
 		66A0B174CF8A85F86C93F228 /* Fraunces-Italic-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fraunces-Italic-Variable.ttf"; sourceTree = "<group>"; };
 		6834A289CE48A812B8A38852 /* Inter-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Variable.ttf"; sourceTree = "<group>"; };
@@ -448,6 +450,7 @@
 				A14FDEA84A230FABDE69D564 /* ListingCalendarEditorView.swift */,
 				348C7476795E59B9F7C4360C /* ListingDetailView.swift */,
 				64D0EB47C8D8295095D265D6 /* ListingPhotoGalleryView.swift */,
+				65E4EC474A4BB7E4FBB7F2B6 /* NightlyKeysExplainerSheet.swift */,
 				3092A45193B8AA45FFD34342 /* OwnerVerificationSheet.swift */,
 				9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */,
 				4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */,
@@ -788,6 +791,7 @@
 				12A73281C203C687F50C0A01 /* LoginView.swift in Sources */,
 				C3E296FCE8CA05711DC8BF33 /* MetricsRepository.swift in Sources */,
 				E5FF16C039C517CC58D7C964 /* MetricsView.swift in Sources */,
+				0E122F3A8ACC502ADFEBBC7D /* NightlyKeysExplainerSheet.swift in Sources */,
 				4954460104D27BCC493D9377 /* OwnerVerificationSheet.swift in Sources */,
 				77BE80296D6FA035534F7FC8 /* PasskeyCoordinator.swift in Sources */,
 				B3BE098B95DBDDC8FE174FDF /* PasskeysView.swift in Sources */,

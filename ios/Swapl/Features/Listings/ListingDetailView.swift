@@ -32,6 +32,7 @@ struct ListingDetailView: View {
     @State private var isEditingListing = false
     @State private var isShowingCalendarEditor = false
     @State private var isShowingOwnerVerification = false
+    @State private var isShowingValuationExplainer = false
     @State private var sentProposalId: String?
     @State private var requestedStayId: String?
 
@@ -109,6 +110,11 @@ struct ListingDetailView: View {
         .sheet(isPresented: $isShowingOwnerVerification, onDismiss: { Task { await vm.load() } }) {
             if let listing = vm.detail?.listing {
                 OwnerVerificationSheet(listingId: listing.id)
+            }
+        }
+        .sheet(isPresented: $isShowingValuationExplainer) {
+            if let listing = vm.detail?.listing, let explanation = listing.valuationExplanation {
+                NightlyKeysExplainerSheet(listing: listing, explanation: explanation)
             }
         }
         .sheet(isPresented: $isShowingProposalSheet) {
@@ -226,10 +232,66 @@ struct ListingDetailView: View {
             descriptionSection(detail.listing.description)
             amenitySection(detail.listing)
             if isOwner(detail) {
+                nightlyKeysEntry(detail.listing)
                 ownerVerificationEntry(detail)
             }
         }
         .padding(.bottom, 110)
+    }
+
+    // DOK-163: owner-only "How your nightly Keys are calculated" entry. Shows the
+    // persisted nightly value right on the card and, on tap, opens the full
+    // reassuring breakdown. Rendered only when the server returned a structured
+    // explanation (owner-only field), so it never appears for guests.
+    @ViewBuilder
+    private func nightlyKeysEntry(_ listing: Listing) -> some View {
+        if let explanation = listing.valuationExplanation {
+            let nightly = explanation.nightlyKeys ?? listing.nightlyKeys ?? 0
+            Button {
+                isShowingValuationExplainer = true
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "key.horizontal.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                        .frame(width: 44, height: 44)
+                        .background(SwaplSemanticLight.accent, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.small, style: .continuous))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 6) {
+                            Text("\(nightly) points / night")
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                                .foregroundStyle(AirbnbPalette.text)
+                            if listing.isPrivateRoom {
+                                Text("Private room")
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.tiny, weight: .semibold))
+                                    .foregroundStyle(SwaplSemanticLight.primary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(SwaplSemanticLight.accent, in: Capsule())
+                            }
+                        }
+                        Text("How your nightly Keys are calculated")
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
+                .padding(14)
+                .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                        .stroke(AirbnbPalette.hairline)
+                }
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 22)
+        }
     }
 
     // DOK-162: optional owner-proof entry, owner-only. Clearly framed as a trust
