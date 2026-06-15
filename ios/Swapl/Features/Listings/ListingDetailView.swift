@@ -238,39 +238,32 @@ struct ListingDetailView: View {
         Button {
             isShowingOwnerVerification = true
         } label: {
-            HStack(spacing: 16) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
-                        .fill(SwaplSemanticLight.accent)
-                    Image(systemName: detail.listing.ownerVerified == true ? "seal.fill" : "seal")
-                        .font(.system(size: 26, weight: .semibold))
-                        .foregroundStyle(SwaplSemanticLight.primary)
-                }
-                .frame(width: 56, height: 56)
+            HStack(spacing: 12) {
+                Image(systemName: detail.listing.ownerVerified == true ? "seal.fill" : "seal")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(detail.listing.ownerVerified == true ? "You're a verified owner" : "Verify ownership")
-                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.text)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(detail.listing.ownerVerified == true
+                        ? "You're a verified owner"
+                        : "Verified owner badge — optional")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
                     Text(detail.listing.ownerVerified == true
                         ? "Your home carries the Verified owner badge."
-                        : "Optional. Add proof to earn a trust badge — it's never required to publish.")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        : "A trust boost for guests. Never required to publish or swap.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
-            .padding(18)
-            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
-                    .stroke(AirbnbPalette.hairline)
-            }
+            .padding(14)
+            .background(AirbnbPalette.softBackground, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
         }
         .buttonStyle(.plain)
         .padding(.horizontal, 22)

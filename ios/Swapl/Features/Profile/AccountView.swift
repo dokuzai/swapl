@@ -776,19 +776,14 @@ struct ListingCreationView: View {
                         if ackMode != mode { ackAccepted = false }
                         ackMode = mode
                     } label: {
-                        HStack(alignment: .top, spacing: 12) {
+                        HStack(alignment: .center, spacing: 12) {
                             Image(systemName: ackMode == mode ? "largecircle.fill.circle" : "circle")
                                 .font(.system(size: 20, weight: .semibold))
                                 .foregroundStyle(ackMode == mode ? SwaplSemanticLight.primary : AirbnbPalette.secondaryText)
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(mode.pickerTitle)
-                                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
-                                    .foregroundStyle(AirbnbPalette.text)
-                                Text(mode.pickerSubtitle)
-                                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
-                                    .foregroundStyle(AirbnbPalette.secondaryText)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
+                            Text(mode.pickerTitle)
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                                .foregroundStyle(AirbnbPalette.text)
+                                .lineLimit(1)
                             Spacer(minLength: 0)
                         }
                         .padding(16)
@@ -811,11 +806,18 @@ struct ListingCreationView: View {
                     Image(systemName: ackAccepted ? "checkmark.square.fill" : "square")
                         .font(.system(size: 22, weight: .semibold))
                         .foregroundStyle(ackAccepted ? SwaplSemanticLight.primary : AirbnbPalette.secondaryText)
-                    Text(ackMode.ackText)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(ackMode.ackHeadline)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                            .foregroundStyle(AirbnbPalette.text)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text(ackMode.ackFineprint)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                     Spacer(minLength: 0)
                 }
                 .padding(16)

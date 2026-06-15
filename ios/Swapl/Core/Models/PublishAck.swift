@@ -21,36 +21,38 @@ enum PublishAckMode: String, CaseIterable, Sendable {
     case roomOrHostPresent = "room_or_host_present"
 
     // The choice the host makes in the publish flow, in plain language.
+    // Single-line option labels only — the ack text below explains the rest.
     var pickerTitle: String {
         switch self {
-        case .entireHomeWhileAway: return "My whole home while I'm away"
-        case .roomOrHostPresent: return "A room, or my home while I'm here"
+        case .entireHomeWhileAway: return "The whole home, while I'm away"
+        case .roomOrHostPresent: return "A room, or while I'm here"
         }
     }
 
-    var pickerSubtitle: String {
+    // Canonical attestation, split into a normal-weight headline and a
+    // smaller/muted fineprint, kept verbatim in sync with publish-ack.ts so the
+    // row the backend logs always matches what the host actually read.
+    var ackHeadline: String {
         switch self {
         case .entireHomeWhileAway:
-            return "Guests have the place to themselves."
+            return "I have the right to offer my whole home for a swap while I'm away — and if I rent, my lease lets me host guests when I'm not there."
         case .roomOrHostPresent:
-            return "Plain hospitality — like having friends stay over."
+            return "I have the right to host this swap."
         }
     }
 
-    // Canonical attestation text, kept verbatim in sync with publish-ack.ts so
-    // the row the backend logs always matches what the host actually read.
+    var ackFineprint: String {
+        switch self {
+        case .entireHomeWhileAway:
+            return "I'm responsible for following my lease, building rules, and local laws."
+        case .roomOrHostPresent:
+            return "I'll follow my building rules and local laws."
+        }
+    }
+
+    // The logged/submitted attestation = headline + " " + fineprint.
     var ackText: String {
-        switch self {
-        case .entireHomeWhileAway:
-            return "I confirm I have the right to offer this entire home for a swap while I'm away. "
-                + "If I rent it, I have my landlord's consent to host guests in my absence as my lease "
-                + "requires, and I comply with any condominium or building rules. I understand swapl "
-                + "does not verify this and that I alone am responsible for having the right to host."
-        case .roomOrHostPresent:
-            return "I confirm I'm offering hospitality in a home I live in — a room, or my home while "
-                + "I'm present as host. I'll respect any condominium or building rules and I'm "
-                + "responsible for the stay I host."
-        }
+        ackHeadline + " " + ackFineprint
     }
 }
 
