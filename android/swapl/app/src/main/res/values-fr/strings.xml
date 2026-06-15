@@ -144,4 +144,8 @@
         <item quantity="one">Pays</item>
         <item quantity="other">Pays</item>
     </plurals>
+
+    <string name="trip_oncover_badge">Vérifié sur TON</string>
+    <string name="trip_oncover_view">Voir la preuve</string>
+    <string name="trip_oncover_explainer">Une preuve infalsifiable de votre couverture — pas de crypto, pas de paiement, juste la garantie que votre police est réelle.</string>
 </resources>

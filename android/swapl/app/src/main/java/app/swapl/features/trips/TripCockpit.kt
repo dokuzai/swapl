@@ -21,7 +21,9 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -38,11 +40,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.swapl.R
 import app.swapl.core.model.HomeGuideFields
+import app.swapl.core.model.TripInsurance
 import app.swapl.core.model.TripCheckEvent
 import app.swapl.core.model.TripCockpit
 import app.swapl.design.MonoFamily
@@ -274,9 +280,83 @@ private fun KeyAndInsuranceCard(cockpit: TripCockpit) {
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    VerifiedOnTon(insurance)
                 }
             }
         }
+    }
+}
+
+// --- DOK-156: Verified-on-TON proof-of-cover badge ------------------------
+// Shown ONLY when the policy certificate hash has been anchored on-chain.
+// When the server has no TON env the anchor is a no-op and all on-chain fields
+// stay null — we render nothing (no anxious "pending" state, no error). This is
+// a tamper-proof proof of cover, NOT a crypto wallet / payment / token of value.
+
+private fun TripInsurance.isAnchored(): Boolean =
+    onChainStatus == "anchored" || !onChainRef.isNullOrBlank()
+
+@Composable
+private fun VerifiedOnTon(insurance: TripInsurance) {
+    if (!insurance.isAnchored()) return
+    val uriHandler = LocalUriHandler.current
+    val explorerUrl = insurance.explorerUrl?.takeIf { it.isNotBlank() }
+    Column(
+        Modifier.padding(top = SwaplSpacing.s2),
+        verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+        ) {
+            Row(
+                Modifier
+                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                    .padding(horizontal = SwaplSpacing.s3, vertical = SwaplSpacing.s1),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s1),
+            ) {
+                Icon(
+                    Icons.Filled.Verified,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(15.dp),
+                )
+                Text(
+                    stringResource(R.string.trip_oncover_badge),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+            if (explorerUrl != null) {
+                Row(
+                    Modifier
+                        .clip(CircleShape)
+                        .clickable { uriHandler.openUri(explorerUrl) }
+                        .padding(horizontal = SwaplSpacing.s2, vertical = SwaplSpacing.s1),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s1),
+                ) {
+                    Text(
+                        stringResource(R.string.trip_oncover_view),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    Icon(
+                        Icons.AutoMirrored.Filled.OpenInNew,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(13.dp),
+                    )
+                }
+            }
+        }
+        Text(
+            stringResource(R.string.trip_oncover_explainer),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

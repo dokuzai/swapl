@@ -162,4 +162,10 @@
         <item quantity="one">Country</item>
         <item quantity="other">Countries</item>
     </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). Shown only when
+         the policy certificate has been anchored on-chain. Not crypto/payment. -->
+    <string name="trip_oncover_badge">Verified on TON</string>
+    <string name="trip_oncover_view">View proof</string>
+    <string name="trip_oncover_explainer">A tamper-proof record of your cover — no crypto, no payment, just proof your policy is real.</string>
 </resources>

@@ -144,4 +144,8 @@
         <item quantity="one">País</item>
         <item quantity="other">Países</item>
     </plurals>
+
+    <string name="trip_oncover_badge">Verificado na TON</string>
+    <string name="trip_oncover_view">Ver prova</string>
+    <string name="trip_oncover_explainer">Uma prova à prova de adulteração da tua cobertura — sem cripto, sem pagamento, apenas a garantia de que a tua apólice é real.</string>
 </resources>

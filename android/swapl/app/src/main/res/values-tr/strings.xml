@@ -144,4 +144,8 @@
         <item quantity="one">Ülke</item>
         <item quantity="other">Ülke</item>
     </plurals>
+
+    <string name="trip_oncover_badge">TON\'da doğrulandı</string>
+    <string name="trip_oncover_view">Kanıtı gör</string>
+    <string name="trip_oncover_explainer">Teminatının kurcalanamaz bir kaydı — kripto yok, ödeme yok, yalnızca poliçenin gerçek olduğunun kanıtı.</string>
 </resources>

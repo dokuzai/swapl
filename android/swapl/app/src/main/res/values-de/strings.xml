@@ -144,4 +144,8 @@
         <item quantity="one">Land</item>
         <item quantity="other">Länder</item>
     </plurals>
+
+    <string name="trip_oncover_badge">Auf TON verifiziert</string>
+    <string name="trip_oncover_view">Nachweis ansehen</string>
+    <string name="trip_oncover_explainer">Ein fälschungssicherer Nachweis deines Versicherungsschutzes — keine Krypto, keine Zahlung, nur der Beleg, dass deine Police echt ist.</string>
 </resources>

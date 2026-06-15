@@ -144,4 +144,8 @@
         <item quantity="one">Land</item>
         <item quantity="other">Landen</item>
     </plurals>
+
+    <string name="trip_oncover_badge">Geverifieerd op TON</string>
+    <string name="trip_oncover_view">Bewijs bekijken</string>
+    <string name="trip_oncover_explainer">Een fraudebestendig bewijs van je dekking — geen crypto, geen betaling, alleen het bewijs dat je polis echt is.</string>
 </resources>

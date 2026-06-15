@@ -51,6 +51,14 @@ data class TripInsurance(
     val coverageAmount: Int,
     val status: String,
     val expiresAt: String,
+    // DOK-156: optional tamper-proof proof-of-cover anchored on TON. All null
+    // when the server has no TON env (no-op): the policy stays off-chain exactly
+    // as before. The badge renders ONLY when anchored. NO personal data on-chain.
+    val onChainRef: String? = null,
+    val onChainNetwork: String? = null,
+    val onChainStatus: String? = null,
+    val anchoredAt: String? = null,
+    val explorerUrl: String? = null,
 )
 
 @Serializable
