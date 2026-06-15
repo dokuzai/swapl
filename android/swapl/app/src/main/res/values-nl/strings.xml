@@ -47,6 +47,26 @@
     <string name="referral_referrer_toast_named">%1$s is zojuist geverifieerd — je verdiende %2$d Keys! 🔑</string>
     <string name="referral_referrer_toast">Iemand die je hebt uitgenodigd is zojuist geverifieerd — je verdiende %1$d Keys! 🔑</string>
 
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Manieren om Keys te verdienen</string>
+    <string name="keys_earn_ways_subtitle">Kleine acties die je reispunten aanvullen. Doe ze één keer of kom terug voor meer.</string>
+    <string name="keys_earn_way_done">Verdiend – goed gedaan!</string>
+    <string name="keys_earn_way_locked">Verifieer je identiteit om dit te ontgrendelen</string>
+    <string name="keys_earn_verify_identity_title">Verifieer je identiteit</string>
+    <string name="keys_earn_verify_identity_body">Een snelle controle ontgrendelt alle andere manieren om te verdienen.</string>
+    <string name="keys_earn_verify_property_title">Verifieer een woning</string>
+    <string name="keys_earn_verify_property_body">Bevestig dat je eigenaar bent van een woning die je plaatst.</string>
+    <string name="keys_earn_complete_listing_title">Maak je advertentie compleet</string>
+    <string name="keys_earn_complete_listing_body">Voeg foto\'s en details toe zodat gasten het verblijf kunnen voorstellen.</string>
+    <string name="keys_earn_leave_review_title">Laat een beoordeling achter</string>
+    <string name="keys_earn_leave_review_body">Vertel de community hoe een verblijf was.</string>
+    <string name="keys_earn_share_converted_title">Deel een woning die geboekt wordt</string>
+    <string name="keys_earn_share_converted_body">Deel een advertentie en verdien wanneer het tot een verblijf leidt.</string>
+    <string name="keys_earn_refer_friend_title">Nodig een vriend uit</string>
+    <string name="keys_earn_refer_friend_body">Jullie verdienen allebei wanneer hij lid wordt en zich verifieert.</string>
+    <string name="keys_earn_generic_title">Verdien Keys</string>
+    <string name="keys_earn_generic_body">Onderneem deze actie om reispunten te verdienen.</string>
+
     <!-- Eigendomsverificatie + publicatieverklaring (DOK-162) -->
     <string name="owner_verified_badge">Geverifieerde eigenaar</string>
 

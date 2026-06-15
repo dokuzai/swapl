@@ -47,6 +47,26 @@
     <string name="referral_referrer_toast_named">%1$s si è appena verificato — hai guadagnato %2$d Keys! 🔑</string>
     <string name="referral_referrer_toast">Una persona che hai invitato si è appena verificata — hai guadagnato %1$d Keys! 🔑</string>
 
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Modi per guadagnare Keys</string>
+    <string name="keys_earn_ways_subtitle">Piccole azioni che ricaricano i tuoi punti viaggio. Falle una volta o torna per guadagnarne altri.</string>
+    <string name="keys_earn_way_done">Guadagnati – ottimo lavoro!</string>
+    <string name="keys_earn_way_locked">Verifica la tua identità per sbloccarlo</string>
+    <string name="keys_earn_verify_identity_title">Verifica la tua identità</string>
+    <string name="keys_earn_verify_identity_body">Un controllo rapido sblocca tutti gli altri modi per guadagnare.</string>
+    <string name="keys_earn_verify_property_title">Verifica una proprietà</string>
+    <string name="keys_earn_verify_property_body">Conferma di possedere una casa che metti in annuncio.</string>
+    <string name="keys_earn_complete_listing_title">Completa il tuo annuncio</string>
+    <string name="keys_earn_complete_listing_body">Aggiungi foto e dettagli così gli ospiti possono immaginare il soggiorno.</string>
+    <string name="keys_earn_leave_review_title">Lascia una recensione</string>
+    <string name="keys_earn_leave_review_body">Racconta alla community com\'è andato un soggiorno.</string>
+    <string name="keys_earn_share_converted_title">Condividi una casa che viene prenotata</string>
+    <string name="keys_earn_share_converted_body">Condividi un annuncio e guadagna quando porta a un soggiorno.</string>
+    <string name="keys_earn_refer_friend_title">Invita un amico</string>
+    <string name="keys_earn_refer_friend_body">Guadagnate entrambi quando si iscrive e si verifica.</string>
+    <string name="keys_earn_generic_title">Guadagna Keys</string>
+    <string name="keys_earn_generic_body">Compi questa azione per guadagnare punti viaggio.</string>
+
     <!-- Verifica proprietà + dichiarazione di pubblicazione (DOK-162) -->
     <string name="owner_verified_badge">Proprietario verificato</string>
 

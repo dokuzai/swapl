@@ -18,7 +18,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CardGiftcard
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Checklist
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,11 +44,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
+import app.swapl.core.model.EarnWay
+import app.swapl.core.model.EarnWaysPayload
 import app.swapl.core.model.KeysTransaction
 import app.swapl.core.model.KeysWallet
 import app.swapl.core.repository.KeysRepository
@@ -64,12 +74,19 @@ import javax.inject.Inject
 @HiltViewModel
 class KeysWalletViewModel @Inject constructor(private val repo: KeysRepository) : ViewModel() {
     var wallet by mutableStateOf<KeysWallet?>(null); private set
+    var earnWays by mutableStateOf<EarnWaysPayload?>(null); private set
     var error by mutableStateOf<String?>(null); private set
 
     fun load() = viewModelScope.launch {
         error = null
         runCatching { wallet = repo.wallet() }
             .onFailure { if (wallet == null) error = it.message }
+        // Prefer the payload the wallet already embeds (one round trip). Only
+        // fall back to the standalone endpoint when an older server omits it.
+        wallet?.earnWays?.let { earnWays = it }
+        if (earnWays == null) {
+            runCatching { earnWays = repo.earnWays() }
+        }
     }
 }
 
@@ -117,6 +134,11 @@ fun KeysWalletScreen(
             if (wallet.balance == 0) {
                 EarnPathsCard(welcomeBonus = WELCOME_BONUS_KEYS)
             }
+
+            // Ways to earn Keys (DOK-164) — a server-owned catalogue of the
+            // actions that mint points, with amounts and a done/to-do state.
+            // Encouraging, not spammy: shown only when the backend exposes it.
+            vm.earnWays?.takeIf { it.ways.isNotEmpty() }?.let { WaysToEarnSection(it) }
 
             GiftEntry(onClick = { gifting = true })
 
@@ -350,6 +372,123 @@ private fun EarnRow(title: String, body: String, badge: String?) {
             )
         }
     }
+}
+
+// "Ways to earn Keys" (DOK-164). Lists the server-owned earn catalogue with each
+// action's amount and a done/to-do state. Gated rows show as locked until the
+// member verifies their identity. Reads entirely from the EarnWaysPayload — copy
+// & icon are mapped per stable `key`, never invented client-side.
+@Composable
+private fun WaysToEarnSection(payload: EarnWaysPayload) {
+    Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
+        KickerLabel(stringResource(R.string.keys_earn_ways_title))
+        Text(
+            stringResource(R.string.keys_earn_ways_subtitle),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        SurfaceCard {
+            Column {
+                payload.ways.forEachIndexed { index, way ->
+                    WayToEarnRow(way, identityVerified = payload.identityVerified)
+                    if (index < payload.ways.lastIndex) {
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WayToEarnRow(way: EarnWay, identityVerified: Boolean) {
+    // A gated action is "locked" until the member is verified. The identity
+    // action itself is never gated, so it's the one that unlocks the rest.
+    val locked = way.gatedOnIdentity && !identityVerified
+    // Non-repeatable + already earned = done. Repeatable actions never show as
+    // done; they keep encouraging the member to do it again.
+    val done = way.done && !way.repeatable
+
+    Row(
+        Modifier.fillMaxWidth().padding(vertical = SwaplSpacing.s2),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
+    ) {
+        Icon(
+            earnWayIcon(way.key),
+            contentDescription = null,
+            tint = if (locked) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(22.dp),
+        )
+        Column(Modifier.weight(1f)) {
+            Text(
+                stringResource(earnWayTitle(way.key)),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                when {
+                    locked -> stringResource(R.string.keys_earn_way_locked)
+                    done -> stringResource(R.string.keys_earn_way_done)
+                    else -> stringResource(earnWayBody(way.key))
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (done) {
+            Icon(
+                Icons.Default.CheckCircle,
+                contentDescription = stringResource(R.string.keys_earn_way_done),
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp),
+            )
+        } else {
+            Text(
+                "+${way.amount}",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = if (locked) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .background(
+                        if (locked) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.primary,
+                        RoundedCornerShape(SwaplRadius.sm),
+                    )
+                    .padding(horizontal = SwaplSpacing.s2, vertical = SwaplSpacing.s1),
+            )
+        }
+    }
+}
+
+// Per-action icon, keyed off the stable EarnWay.key.
+private fun earnWayIcon(key: String) = when (key) {
+    "verify_identity" -> Icons.Default.Verified
+    "verify_property" -> Icons.Default.Home
+    "complete_listing" -> Icons.Default.Checklist
+    "leave_review" -> Icons.Default.Star
+    "share_converted" -> Icons.Default.Share
+    "refer_friend" -> Icons.Default.Group
+    else -> Icons.Default.VpnKey
+}
+
+private fun earnWayTitle(key: String): Int = when (key) {
+    "verify_identity" -> R.string.keys_earn_verify_identity_title
+    "verify_property" -> R.string.keys_earn_verify_property_title
+    "complete_listing" -> R.string.keys_earn_complete_listing_title
+    "leave_review" -> R.string.keys_earn_leave_review_title
+    "share_converted" -> R.string.keys_earn_share_converted_title
+    "refer_friend" -> R.string.keys_earn_refer_friend_title
+    else -> R.string.keys_earn_generic_title
+}
+
+private fun earnWayBody(key: String): Int = when (key) {
+    "verify_identity" -> R.string.keys_earn_verify_identity_body
+    "verify_property" -> R.string.keys_earn_verify_property_body
+    "complete_listing" -> R.string.keys_earn_complete_listing_body
+    "leave_review" -> R.string.keys_earn_leave_review_body
+    "share_converted" -> R.string.keys_earn_share_converted_body
+    "refer_friend" -> R.string.keys_earn_refer_friend_body
+    else -> R.string.keys_earn_generic_body
 }
 
 @Composable

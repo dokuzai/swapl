@@ -56,6 +56,26 @@
     <string name="referral_referrer_toast_named">%1$s just verified — you earned %2$d Keys! 🔑</string>
     <string name="referral_referrer_toast">Someone you invited just verified — you earned %1$d Keys! 🔑</string>
 
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Ways to earn Keys</string>
+    <string name="keys_earn_ways_subtitle">Small actions that top up your travel points. Do them once or come back for more.</string>
+    <string name="keys_earn_way_done">Earned — nice work!</string>
+    <string name="keys_earn_way_locked">Verify your identity to unlock this</string>
+    <string name="keys_earn_verify_identity_title">Verify your identity</string>
+    <string name="keys_earn_verify_identity_body">A quick check unlocks every other way to earn.</string>
+    <string name="keys_earn_verify_property_title">Verify a property</string>
+    <string name="keys_earn_verify_property_body">Confirm you own a home you list.</string>
+    <string name="keys_earn_complete_listing_title">Complete your listing</string>
+    <string name="keys_earn_complete_listing_body">Add photos and details so guests can picture the stay.</string>
+    <string name="keys_earn_leave_review_title">Leave a review</string>
+    <string name="keys_earn_leave_review_body">Tell the community how a stay went.</string>
+    <string name="keys_earn_share_converted_title">Share a home that gets booked</string>
+    <string name="keys_earn_share_converted_body">Share a listing and earn when it leads to a stay.</string>
+    <string name="keys_earn_refer_friend_title">Invite a friend</string>
+    <string name="keys_earn_refer_friend_body">You both earn when they join and verify.</string>
+    <string name="keys_earn_generic_title">Earn Keys</string>
+    <string name="keys_earn_generic_body">Take this action to earn travel points.</string>
+
     <!-- Owner verification + publish acknowledgment (DOK-162) -->
     <string name="owner_verified_badge">Verified owner</string>
 

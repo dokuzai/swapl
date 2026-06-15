@@ -14,6 +14,9 @@ data class KeysWallet(
     val balance: Int,
     val nightlyKeysForMyListings: List<NightlyKeysListing> = emptyList(),
     val recentTransactions: List<KeysTransaction> = emptyList(),
+    // Embedded "ways to earn Keys" surface (DOK-164). Null on older servers; the
+    // wallet falls back to a standalone GET /api/keys/earn-ways fetch.
+    val earnWays: EarnWaysPayload? = null,
 ) {
     @Serializable
     data class NightlyKeysListing(
@@ -48,6 +51,11 @@ data class KeysTransaction(
             "gift_received" -> "Gift received"
             "referral_bonus" -> "Referral reward"
             "invite_bonus" -> "Invite bonus"
+            // Ways-to-earn bonuses (DOK-164). Mirrors keysKindLabel on the web.
+            "earn_property_verified" -> "Property verified"
+            "earn_review" -> "Review left"
+            "earn_share_converted" -> "Your share booked a stay"
+            "earn_listing_complete" -> "Listing completed"
             else -> kind.replace('_', ' ').replaceFirstChar { it.uppercase() }
         }
 }
@@ -136,4 +144,30 @@ data class KeysStayActionResponse(
     val ok: Boolean = false,
     val stayId: String,
     val keysCost: Int? = null,
+)
+
+// GET /api/keys/earn-ways — the "Ways to earn Keys" catalogue (DOK-164). A
+// server-owned list of the actions that mint Keys, each with its amount, whether
+// it's a one-time or repeatable earn, the identity gate, and (per user) whether
+// the member has already done it. Mirrors EarnWaysPayload in
+// lib/keys/earn-ways-dto.ts so every client shows the same surface; the wallet
+// also embeds this payload via the `earnWays` field of GET /api/keys.
+@Serializable
+data class EarnWaysPayload(
+    // Whether the caller's identity is verified — gated rows stay locked until true.
+    val identityVerified: Boolean = false,
+    val ways: List<EarnWay> = emptyList(),
+)
+
+@Serializable
+data class EarnWay(
+    // Stable action id — drives copy / icon on the client.
+    // verify_identity | verify_property | complete_listing | leave_review |
+    // share_converted | refer_friend
+    val key: String,
+    val amount: Int,            // Keys minted by the action.
+    val repeatable: Boolean = false,
+    val gatedOnIdentity: Boolean = false,
+    val kind: String = "",      // The ledger kind this action produces.
+    val done: Boolean = false,  // Whether the user has earned this kind at least once.
 )

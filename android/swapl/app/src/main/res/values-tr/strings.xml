@@ -47,6 +47,26 @@
     <string name="referral_referrer_toast_named">%1$s az önce doğrulandı — %2$d Keys kazandın! 🔑</string>
     <string name="referral_referrer_toast">Davet ettiğin biri az önce doğrulandı — %1$d Keys kazandın! 🔑</string>
 
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Keys kazanma yolları</string>
+    <string name="keys_earn_ways_subtitle">Seyahat puanlarını artıran küçük adımlar. Bir kez yap ya da daha fazlası için geri dön.</string>
+    <string name="keys_earn_way_done">Kazanıldı – harika iş!</string>
+    <string name="keys_earn_way_locked">Bunu açmak için kimliğini doğrula</string>
+    <string name="keys_earn_verify_identity_title">Kimliğini doğrula</string>
+    <string name="keys_earn_verify_identity_body">Hızlı bir kontrol diğer tüm kazanma yollarını açar.</string>
+    <string name="keys_earn_verify_property_title">Bir mülkü doğrula</string>
+    <string name="keys_earn_verify_property_body">İlan verdiğin bir evin sahibi olduğunu onayla.</string>
+    <string name="keys_earn_complete_listing_title">İlanını tamamla</string>
+    <string name="keys_earn_complete_listing_body">Misafirlerin konaklamayı canlandırabilmesi için fotoğraf ve ayrıntılar ekle.</string>
+    <string name="keys_earn_leave_review_title">Bir değerlendirme bırak</string>
+    <string name="keys_earn_leave_review_body">Bir konaklamanın nasıl geçtiğini topluluğa anlat.</string>
+    <string name="keys_earn_share_converted_title">Rezerve edilen bir ev paylaş</string>
+    <string name="keys_earn_share_converted_body">Bir ilan paylaş ve konaklamaya dönüştüğünde kazan.</string>
+    <string name="keys_earn_refer_friend_title">Bir arkadaşını davet et</string>
+    <string name="keys_earn_refer_friend_body">O katılıp doğrulandığında ikiniz de kazanırsınız.</string>
+    <string name="keys_earn_generic_title">Keys kazan</string>
+    <string name="keys_earn_generic_body">Seyahat puanı kazanmak için bu adımı at.</string>
+
     <!-- Mülkiyet doğrulaması + yayınlama beyanı (DOK-162) -->
     <string name="owner_verified_badge">Doğrulanmış mal sahibi</string>
 

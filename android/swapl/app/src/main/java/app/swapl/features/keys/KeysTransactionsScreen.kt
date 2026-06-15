@@ -23,8 +23,12 @@ import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -204,6 +208,11 @@ private fun iconFor(kind: String): ImageVector = when (kind) {
     "gift_sent", "gift_received" -> Icons.Default.CardGiftcard
     "referral_bonus" -> Icons.Default.Group
     "refund" -> Icons.AutoMirrored.Filled.Undo
+    // Ways-to-earn bonuses (DOK-164).
+    "earn_property_verified" -> Icons.Default.Verified
+    "earn_review" -> Icons.Default.Star
+    "earn_share_converted" -> Icons.Default.Share
+    "earn_listing_complete" -> Icons.Default.Checklist
     else -> Icons.Default.VpnKey
 }
 

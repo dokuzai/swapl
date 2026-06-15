@@ -1,5 +1,6 @@
 package app.swapl.core.repository
 
+import app.swapl.core.model.EarnWaysPayload
 import app.swapl.core.model.KeysAvailability
 import app.swapl.core.model.KeysGiftRequest
 import app.swapl.core.model.KeysGiftResponse
@@ -31,6 +32,13 @@ class KeysRepository @Inject constructor(private val api: ApiClient) {
     // listings, and recent ledger transactions.
     suspend fun wallet(): KeysWallet =
         api.client.get("${api.baseUrl}/api/keys").body()
+
+    // GET /api/keys/earn-ways — the "Ways to earn Keys" catalogue (DOK-164):
+    // each earn action with its amount, repeatable/gated flags, and the caller's
+    // per-action done state. GET /api/keys already embeds this payload; this is
+    // the standalone fetch used as a fallback when an older server omits it.
+    suspend fun earnWays(): EarnWaysPayload =
+        api.client.get("${api.baseUrl}/api/keys/earn-ways").body()
 
     // GET /api/listings/{id}/keys-availability — nightly Keys + bookable window
     // for a Stay-with-Keys on this listing.

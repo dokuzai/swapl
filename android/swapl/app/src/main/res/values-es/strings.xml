@@ -47,6 +47,26 @@
     <string name="referral_referrer_toast_named">%1$s acaba de verificarse: ¡ganaste %2$d Keys! 🔑</string>
     <string name="referral_referrer_toast">Alguien a quien invitaste acaba de verificarse: ¡ganaste %1$d Keys! 🔑</string>
 
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Formas de ganar Keys</string>
+    <string name="keys_earn_ways_subtitle">Pequeñas acciones que aumentan tus puntos de viaje. Hazlas una vez o vuelve por más.</string>
+    <string name="keys_earn_way_done">¡Ganado, buen trabajo!</string>
+    <string name="keys_earn_way_locked">Verifica tu identidad para desbloquearlo</string>
+    <string name="keys_earn_verify_identity_title">Verifica tu identidad</string>
+    <string name="keys_earn_verify_identity_body">Una comprobación rápida desbloquea todas las demás formas de ganar.</string>
+    <string name="keys_earn_verify_property_title">Verifica una propiedad</string>
+    <string name="keys_earn_verify_property_body">Confirma que eres el dueño de una casa que publicas.</string>
+    <string name="keys_earn_complete_listing_title">Completa tu anuncio</string>
+    <string name="keys_earn_complete_listing_body">Añade fotos y detalles para que los huéspedes imaginen la estancia.</string>
+    <string name="keys_earn_leave_review_title">Deja una reseña</string>
+    <string name="keys_earn_leave_review_body">Cuéntale a la comunidad cómo fue una estancia.</string>
+    <string name="keys_earn_share_converted_title">Comparte una casa que se reserve</string>
+    <string name="keys_earn_share_converted_body">Comparte un anuncio y gana cuando lleve a una estancia.</string>
+    <string name="keys_earn_refer_friend_title">Invita a un amigo</string>
+    <string name="keys_earn_refer_friend_body">Ambos ganáis cuando se une y se verifica.</string>
+    <string name="keys_earn_generic_title">Gana Keys</string>
+    <string name="keys_earn_generic_body">Realiza esta acción para ganar puntos de viaje.</string>
+
     <!-- Verificación de propiedad + declaración de publicación (DOK-162) -->
     <string name="owner_verified_badge">Propietario verificado</string>
 
