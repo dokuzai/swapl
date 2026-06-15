@@ -47,6 +47,9 @@ struct StayWithKeysSheet: View {
     // When the balance falls short we offer a path to the wallet's "ways to earn
     // points" screen — never an offer to buy.
     @State private var showEarnPaths = false
+    // Lightweight "how does this work?" explainer, on demand from the toolbar.
+    // Doesn't add a tap to the request flow — only the curious pay the cost.
+    @State private var showInfo = false
 
     let listing: Listing
     let onRequested: (String) -> Void
@@ -104,6 +107,18 @@ struct StayWithKeysSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showInfo = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                    }
+                    .accessibilityLabel("How staying with points works")
+                    .popover(isPresented: $showInfo) {
+                        infoPopover
+                            .presentationCompactAdaptation(.popover)
+                    }
                 }
             }
             .alert("Request sent", isPresented: requestedBinding) {
@@ -191,6 +206,35 @@ struct StayWithKeysSheet: View {
 
     private var canAffordAndValid: Bool {
         nights >= max(listing.minStayDays, 1) && nights <= listing.maxStayDays && canAfford
+    }
+
+    // On-demand explainer. Frames points as travel points earned by hosting —
+    // never money, never buyable — so the model stays "air miles", not currency.
+    private var infoPopover: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Staying with points", systemImage: "key.horizontal")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+
+            infoRow("You earn points by hosting other members — they're travel points, not money, and can't be bought.")
+            infoRow("Pick your dates and the home's nightly points show the total. The host doesn't need to travel back.")
+            infoRow("Your points are held when you request, and only spent once the host confirms. If they decline, you get them straight back.")
+            infoRow("Every confirmed stay is covered by a Swapl policy.")
+        }
+        .padding(18)
+        .frame(maxWidth: 320, alignment: .leading)
+    }
+
+    private func infoRow(_ text: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                .foregroundStyle(SwaplSemanticLight.primary)
+            Text(text)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                .foregroundStyle(AirbnbPalette.text)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private func costRow(_ label: String, _ value: String) -> some View {
