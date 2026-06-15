@@ -15,6 +15,7 @@ import { getViewerListing } from "@/lib/listing-query";
 import { computeMatchScore } from "@/lib/match/score";
 import ProposeSwapButton from "./propose-swap-button";
 import { StayWithKeys } from "./stay-with-keys";
+import { ValuationExplainer } from "./valuation-explainer";
 import { VerifiedBadge, FeaturedRibbon, OwnerVerifiedBadge } from "@/components/listing/badges";
 import { RecentlyViewedTracker } from "@/components/listing/recently-viewed-tracker";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
@@ -66,10 +67,12 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
   });
   if (!listing || !listing.isActive) notFound();
 
-  const dto = toDTO(listing);
   const session = await getSession();
   const viewerListing = await getViewerListing(session?.userId);
   const isOwner = session?.userId === listing.userId;
+  // Owner sees the structured valuation breakdown (DOK-163); other members
+  // never get it, so include the explanation only for the owner.
+  const dto = toDTO(listing, { includeValuation: isOwner });
 
   // Keys balance for the Stay-with-Keys mode (DOK-155). Only signed-in
   // non-owners can request a Keys stay; the host can't book their own home.
@@ -396,6 +399,18 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               </p>
             </div>
           </div>
+
+          {/* Owner-only valuation breakdown (DOK-163) — "how your nightly Keys
+              are calculated". The DTO carries the structured explanation only
+              for the owner, so non-owners never see this. */}
+          {isOwner && dto.valuationExplanation && (
+            <I18nProviderShell>
+              <ValuationExplainer
+                nightlyKeys={dto.nightlyKeys}
+                explanation={dto.valuationExplanation}
+              />
+            </I18nProviderShell>
+          )}
 
           {/* Stay with Keys (DOK-155) — non-simultaneous booking mode that
               sits ALONGSIDE the direct swap above. Signed-in non-owners only;
