@@ -168,7 +168,7 @@
    swapl utility classes — keep close to landing-page prototype
    ============================================================ */
 @layer components {
-  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+  .wrap { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
 
   /* nav */
   .nav-link { font-size: 14px; color: color-mix(in oklab, var(--navy) 75%, transparent); transition: color .15s; }
