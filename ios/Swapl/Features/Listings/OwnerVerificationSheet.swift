@@ -2,19 +2,26 @@ import SwiftUI
 import PhotosUI
 import SwaplDesignTokens
 
-// DOK-162: optional owner-proof verification flow.
+// DOK-162 / DOK-186: optional owner-proof verification flow.
 //
-// The host attaches a document (deed, utility bill, etc.); an admin reviews it
-// and, on approval, the listing earns the discreet "Verified owner" badge. This
-// is STRICTLY OPTIONAL — publishing is never gated on it. The copy makes that
-// explicit so no one mistakes it for a requirement.
+// The host attaches a document (deed/title OR a lease agreement); the backend AI
+// classifies it and an admin reviews it. On approval the listing earns the
+// discreet "Verified owner" badge. This is STRICTLY OPTIONAL — publishing is
+// never gated on it.
+//
+// DOK-186 adds: copy explaining the AI check, a document-type selector
+// (deed vs lease), and a gentle, actionable message when a submission is
+// rejected because the home was classified as a business property — Swapl is a
+// swap between private people, so company-owned listings aren't eligible.
 struct OwnerVerificationSheet: View {
     let listingId: String
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @State private var status: PropertyVerificationStatus?
     @State private var pickedDocuments: [PropertyVerificationDocument] = []
     @State private var photoItems: [PhotosPickerItem] = []
+    @State private var documentType: PropertyDocumentType = .deed
     @State private var uploading = false
     @State private var submitting = false
     @State private var loading = true
@@ -28,6 +35,11 @@ struct OwnerVerificationSheet: View {
 
                     if let verification = status?.verification {
                         statusCard(verification)
+                        // DOK-186: when the AI/admin rejected the home as a
+                        // business property, explain it kindly and offer help.
+                        if verification.status == "rejected", verification.isBusinessRejection {
+                            businessBlockCard
+                        }
                     }
 
                     // Hide the upload/submit affordance while a review is pending
@@ -70,13 +82,93 @@ struct OwnerVerificationSheet: View {
             Text("Add proof, earn a trust badge")
                 .font(.swaplDisplay(24, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
-            Text("This step is completely optional. Upload a document that shows you own this home — a deed, property-tax bill, or a recent utility bill in your name. Once an admin approves it, your listing shows a discreet \u{201C}Verified owner\u{201D} badge that helps guests trust you faster.")
+            Text("This step is completely optional. Upload a document that shows this is your home — your deed or title if you own it, or your lease agreement if you rent. A recent utility bill in your name works too.")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
             Text("It is never required to publish or to swap.")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
+
+            // DOK-186: set expectations about the automated check up front, so a
+            // business rejection later never feels arbitrary.
+            VStack(alignment: .leading, spacing: 8) {
+                infoRow(
+                    icon: "sparkles",
+                    text: "We check your document automatically to confirm it really shows this home in your name."
+                )
+                infoRow(
+                    icon: "person.2.fill",
+                    text: "Swapl is a swap between private people. Company-owned and business properties aren\u{2019}t eligible."
+                )
+            }
+            .padding(.top, 4)
+        }
+    }
+
+    private func infoRow(icon: String, text: String) -> some View {
+        HStack(alignment: .top, spacing: 9) {
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+                .frame(width: 18)
+            Text(text)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    // DOK-186: kind, actionable message when a listing was classified as a
+    // business property. The host can reach support or ask an admin to take a
+    // second look — approval is always sovereign over the AI.
+    private var businessBlockCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                Image(systemName: "building.2.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.destructive)
+                Text("This looks like a business property")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+            }
+            Text("Swapl is a home swap between private people, so company-owned or commercially managed properties can\u{2019}t be verified. If you think this is a mistake — for example, you own this home personally — we\u{2019}re happy to take another look.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                contactSupport()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "envelope.fill")
+                    Text("Contact support / request a review")
+                }
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 48)
+                .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                        .stroke(SwaplSemanticLight.primary.opacity(0.4))
+                }
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SwaplSemanticLight.destructive.opacity(0.06), in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                .stroke(SwaplSemanticLight.destructive.opacity(0.25))
+        }
+    }
+
+    private func contactSupport() {
+        let subject = "Property verification review (listing \(listingId))"
+        let encoded = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? subject
+        if let url = URL(string: "mailto:support@swapl.com?subject=\(encoded)") {
+            openURL(url)
         }
     }
 
@@ -107,6 +199,18 @@ struct OwnerVerificationSheet: View {
 
     private var uploadSection: some View {
         VStack(alignment: .leading, spacing: 12) {
+            // DOK-186: let the host tell us what they're uploading. Helps the AI
+            // classify correctly and keeps the flow honest about deed vs lease.
+            VStack(alignment: .leading, spacing: 8) {
+                Text("What are you uploading?")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                ForEach(PropertyDocumentType.allCases, id: \.self) { type in
+                    documentTypeRow(type)
+                }
+            }
+            .padding(.bottom, 4)
+
             PhotosPicker(selection: $photoItems, maxSelectionCount: 5, matching: .images) {
                 HStack(spacing: 10) {
                     if uploading { ProgressView() } else { Image(systemName: "doc.badge.plus") }
@@ -161,6 +265,44 @@ struct OwnerVerificationSheet: View {
             .disabled(pickedDocuments.isEmpty || uploading || submitting)
             .opacity(pickedDocuments.isEmpty ? 0.45 : 1)
         }
+    }
+
+    private func documentTypeRow(_ type: PropertyDocumentType) -> some View {
+        let selected = documentType == type
+        return Button {
+            documentType = type
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: type.icon)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(selected ? SwaplSemanticLight.primary : AirbnbPalette.secondaryText)
+                    .frame(width: 22)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(type.title)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    Text(type.subtitle)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 18, weight: .regular))
+                    .foregroundStyle(selected ? SwaplSemanticLight.primary : AirbnbPalette.secondaryText)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                (selected ? SwaplSemanticLight.accent : AirbnbPalette.softBackground),
+                in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                    .stroke(selected ? SwaplSemanticLight.primary.opacity(0.4) : .clear)
+            }
+        }
+        .buttonStyle(.plain)
+        .disabled(uploading || submitting)
     }
 
     private func statusIcon(_ state: String) -> String {
@@ -233,7 +375,8 @@ struct OwnerVerificationSheet: View {
         do {
             status = try await PropertyVerificationRepository.shared.submit(
                 listingId: listingId,
-                documents: pickedDocuments
+                documents: pickedDocuments,
+                documentType: documentType
             )
             pickedDocuments = []
         } catch {
