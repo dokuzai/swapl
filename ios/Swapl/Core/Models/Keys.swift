@@ -11,6 +11,10 @@ struct KeysWallet: Decodable, Sendable {
     let balance: Int
     let nightlyKeysForMyListings: [NightlyKeysListing]
     let recentTransactions: [KeysTransaction]
+    // "Ways to earn Keys" catalogue, server-owned (DOK-164). Embedded in the
+    // same GET /api/keys payload, so the wallet renders the list without a
+    // second round-trip. Optional: an older server build may omit it.
+    let earnWays: EarnWaysPayload?
 
     struct NightlyKeysListing: Decodable, Sendable, Identifiable {
         let listingId: String
@@ -20,29 +24,102 @@ struct KeysWallet: Decodable, Sendable {
     }
 }
 
+// MARK: - Ways to earn Keys (DOK-164)
+
+// Mirrors lib/keys/earn-ways-dto.ts. Server-owned catalogue of the actions that
+// mint Keys, with the founder-set amount, whether it repeats, the identity gate,
+// and a per-user `done` flag. Keys are travel points, never money.
+struct EarnWaysPayload: Decodable, Sendable {
+    let identityVerified: Bool
+    let ways: [EarnWay]
+}
+
+struct EarnWay: Decodable, Sendable, Identifiable {
+    let key: String           // "verify_identity" | "verify_property" | ...
+    let amount: Int
+    let repeatable: Bool
+    let gatedOnIdentity: Bool
+    let kind: String
+    let done: Bool
+
+    var id: String { key }
+
+    // Whether this row is currently locked behind identity verification.
+    func isLocked(identityVerified: Bool) -> Bool {
+        gatedOnIdentity && !identityVerified
+    }
+
+    // Encouraging, human title per action — hardcoded English coherent with web.
+    var title: String {
+        switch key {
+        case "verify_identity": return "Verify your identity"
+        case "verify_property": return "Verify a property"
+        case "complete_listing": return "Complete your listing"
+        case "leave_review": return "Leave a review"
+        case "share_converted": return "Share a home that gets booked"
+        case "refer_friend": return "Invite a friend"
+        default: return key.replacingOccurrences(of: "_", with: " ").capitalized
+        }
+    }
+
+    var subtitle: String {
+        switch key {
+        case "verify_identity": return "A one-time bonus the moment you're verified."
+        case "verify_property": return "Confirm a home is really yours."
+        case "complete_listing": return "Fill in the details and photos of a home."
+        case "leave_review": return "Tell the community how a stay went."
+        case "share_converted": return "Earn when a home you shared turns into a booking."
+        case "refer_friend": return "They join and verify — you both earn."
+        default: return ""
+        }
+    }
+
+    var symbol: String {
+        switch key {
+        case "verify_identity": return "checkmark.seal.fill"
+        case "verify_property": return "house.and.flag.fill"
+        case "complete_listing": return "square.and.pencil"
+        case "leave_review": return "star.fill"
+        case "share_converted": return "square.and.arrow.up"
+        case "refer_friend": return "person.2.fill"
+        default: return "key.horizontal.fill"
+        }
+    }
+}
+
 struct KeysTransaction: Decodable, Sendable, Identifiable {
     let id: String
     let delta: Int            // signed: +earned / -spent
-    let kind: String          // "welcome" | "spend_stay" | "earn_host" | "hold" | "release" | "gift_sent" | "gift_received" | ...
+    let kind: String          // "welcome_bonus" | "spend_stay" | "earn_host" | "earn_review" | ...
+    // Human label straight from the server (keysKindLabel, covers every kind
+    // including the DOK-164 earn_* ones). Optional so an older client/server
+    // pairing still decodes; we fall back to a local map below.
+    let label: String?
     let balanceAfter: Int
     let stayId: String?
     let note: String?
     let createdAt: String
 
-    // Human label for the ledger row. Falls back to the raw kind so an
-    // unknown future kind still renders sensibly.
+    // Human label for the ledger row. Prefers the server `label`; falls back to
+    // a local map (and finally the raw kind) so an unknown future kind still
+    // renders sensibly.
     var displayLabel: String {
+        if let label, !label.isEmpty { return label }
         switch kind {
-        case "welcome": return "Welcome points"
-        case "spend_stay": return "Stay booked"
-        case "earn_host": return "Hosted a stay"
+        case "welcome", "welcome_bonus": return "Welcome bonus"
+        case "spend_stay": return "Stay with Keys"
+        case "earn_host": return "Hosted a Keys stay"
         case "hold": return "Held for a stay"
         case "release": return "Hold released"
         case "gift_sent": return "Gift sent"
         case "gift_received": return "Gift received"
-        case "referral_bonus": return "Friend joined & verified"
-        case "invite_bonus": return "Welcome — you were invited"
+        case "referral_bonus": return "Referral reward"
+        case "invite_bonus": return "Invite bonus"
         case "refund": return "Refund"
+        case "earn_property_verified": return "Verified your property"
+        case "earn_review": return "Left a review"
+        case "earn_share_converted": return "Your share got booked"
+        case "earn_listing_complete": return "Completed a listing"
         default: return kind.replacingOccurrences(of: "_", with: " ").capitalized
         }
     }
@@ -50,7 +127,7 @@ struct KeysTransaction: Decodable, Sendable, Identifiable {
     // SF Symbol for the ledger row, so the filterable history reads at a glance.
     var symbol: String {
         switch kind {
-        case "welcome", "invite_bonus": return "sparkles"
+        case "welcome", "welcome_bonus", "invite_bonus": return "sparkles"
         case "spend_stay": return "airplane.departure"
         case "earn_host": return "house.fill"
         case "hold": return "lock.fill"
@@ -59,6 +136,10 @@ struct KeysTransaction: Decodable, Sendable, Identifiable {
         case "gift_received": return "gift.fill"
         case "referral_bonus": return "person.2.fill"
         case "refund": return "arrow.uturn.backward"
+        case "earn_property_verified": return "house.and.flag.fill"
+        case "earn_review": return "star.fill"
+        case "earn_share_converted": return "square.and.arrow.up"
+        case "earn_listing_complete": return "square.and.pencil"
         default: return "key.horizontal.fill"
         }
     }
@@ -67,7 +148,9 @@ struct KeysTransaction: Decodable, Sendable, Identifiable {
     // exactly one segment so the segmented control partitions the ledger cleanly.
     var category: KeysTransactionCategory {
         switch kind {
-        case "earn_host", "welcome", "referral_bonus", "invite_bonus", "gift_received", "refund", "release":
+        case "earn_host", "welcome", "welcome_bonus", "referral_bonus", "invite_bonus",
+             "gift_received", "refund", "release",
+             "earn_property_verified", "earn_review", "earn_share_converted", "earn_listing_complete":
             return .earned
         case "spend_stay", "hold", "gift_sent":
             return .spent

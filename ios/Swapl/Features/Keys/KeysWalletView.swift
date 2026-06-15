@@ -80,10 +80,19 @@ struct KeysWalletView: View {
             // home rate when we have it so the numbers feel real.
             flywheelCard(wallet)
 
-            if isZeroBalance(wallet) {
+            // "Ways to earn Keys" (DOK-164) — the server-owned catalogue with
+            // amounts and done/to-do state. Shown to everyone (it's a standing
+            // menu of how to grow the balance), not just an empty wallet. When
+            // the server omits it (older build) we fall back to the static
+            // three-paths card on a zero balance so the screen still has a CTA.
+            if let earnWays = wallet.earnWays {
+                WaysToEarnKeysSection(payload: earnWays, onVerifyIdentity: { dismiss() })
+            } else if isZeroBalance(wallet) {
                 earnPathsCard
-            } else {
-                // Only an offer-to-gift when there's something to give.
+            }
+
+            // Only an offer-to-gift when there's something to give.
+            if !isZeroBalance(wallet) {
                 giftButton
             }
 
