@@ -33,29 +33,29 @@ struct ProofOfCoverBadge: View {
                         .padding(.vertical, 7)
                         .background(AirbnbPalette.softBackground, in: Capsule())
 
-                    if let url = explorerURL {
-                        Button {
-                            safariItem = SafariItem(url: url)
-                        } label: {
-                            HStack(spacing: 4) {
-                                Text("View on TON")
-                                Image(systemName: "arrow.up.right")
-                                    .font(.system(size: 10, weight: .semibold))
-                            }
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
-                            .foregroundStyle(AirbnbPalette.text)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("View proof of cover on the TON explorer")
-                    }
-
                     Spacer(minLength: 0)
                 }
 
-                Text("Proof of cover, recorded so it can't be tampered with. It's not crypto or a payment — just a permanent receipt that your swap is insured.")
+                Text("A tamper-proof record that your cover is real — not crypto, no payment, nothing for you to do.")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
+
+                if let url = explorerURL {
+                    Button {
+                        safariItem = SafariItem(url: url)
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("View proof")
+                            Image(systemName: "arrow.up.right")
+                                .font(.system(size: 9, weight: .semibold))
+                        }
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.tiny, weight: .medium))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("View proof of cover on the TON explorer")
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .sheet(item: $safariItem) { item in
