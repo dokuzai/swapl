@@ -67,6 +67,7 @@ import app.swapl.features.profile.PersonalInfoScreen
 import app.swapl.features.profile.PrivacySettingsScreen
 import app.swapl.features.profile.PublicProfileScreen
 import app.swapl.features.profile.SavedSearchesScreen
+import app.swapl.features.profile.TravelWindowsScreen
 import app.swapl.features.swaps.SwapChatScreen
 import app.swapl.features.swaps.SwapThreadScreen
 import app.swapl.features.swaps.SwapsInboxScreen
@@ -335,6 +336,7 @@ private fun HomeShell(
                         AccountScreen(
                             onOpenInterests = { accountNav.navigate("interests") },
                             onOpenSavedSearches = { accountNav.navigate("savedSearches") },
+                            onOpenTravelWindows = { accountNav.navigate("travelWindows") },
                             onOpenKeys = { accountNav.navigate("keys") },
                             onOpenInvite = { accountNav.navigate("invite") },
                             onOpenMetrics = { accountNav.navigate("metrics") },
@@ -353,6 +355,16 @@ private fun HomeShell(
                         InterestsEditorScreen(onDone = { accountNav.popBackStack() })
                     }
                     composable("savedSearches") { SavedSearchesScreen() }
+                    composable("travelWindows") {
+                        TravelWindowsScreen(onOpenListing = { id -> accountNav.navigate("detail/$id") })
+                    }
+                    composable("detail/{listingId}", arguments = listOf(navArgument("listingId") { type = NavType.StringType })) {
+                        ListingDetailScreen(
+                            onOpenHost = { id -> accountNav.navigate("profile/$id") },
+                            onEdit = { id -> accountNav.navigate("edit/$id") },
+                            onManageCalendar = { id -> accountNav.navigate("calendar/$id") },
+                        )
+                    }
                     composable("keys") {
                         KeysWalletScreen(onSeeAllTransactions = { accountNav.navigate("keysHistory") })
                     }

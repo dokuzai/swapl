@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Redeem
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -91,6 +92,7 @@ class AccountOverviewViewModel @Inject constructor(
 fun AccountScreen(
     onOpenInterests: () -> Unit = {},
     onOpenSavedSearches: () -> Unit = {},
+    onOpenTravelWindows: () -> Unit = {},
     onOpenKeys: () -> Unit = {},
     onOpenInvite: () -> Unit = {},
     onOpenMetrics: () -> Unit = {},
@@ -257,6 +259,9 @@ fun AccountScreen(
             MenuRow(Icons.Default.Redeem, "Invite & earn", onClick = onOpenInvite)
             MenuRow(Icons.Default.Favorite, "Interests", onClick = onOpenInterests)
             MenuRow(Icons.Default.Search, "Saved searches", onClick = onOpenSavedSearches)
+            // Travel windows (DOK-161) — saved "when I want to go" intents the
+            // assistant turns into ready-made swaps.
+            MenuRow(Icons.Default.CalendarMonth, "Travel windows", onClick = onOpenTravelWindows)
             if (overview.me?.user?.role == "swapl_admin") {
                 MenuRow(Icons.Default.QueryStats, "Metrics", onClick = onOpenMetrics)
             }
