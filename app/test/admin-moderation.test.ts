@@ -43,6 +43,11 @@ vi.mock("@/lib/db", () => ({
       findUnique: vi.fn(async () => null),
       upsert: vi.fn(async () => ({})),
     },
+    // Multi-party conversation (DOK-187) — no guests in moderation scenarios.
+    conversationParticipant: {
+      findFirst: vi.fn(async () => null),
+      findMany: vi.fn(async () => []),
+    },
     // Public profile (DOK-147) stats/reviews — empty defaults keep the
     // moderation assertions focused on suspension behaviour.
     swapAgreement: { findMany: vi.fn(async () => []) },

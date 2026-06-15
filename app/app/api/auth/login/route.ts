@@ -6,6 +6,7 @@ import { setSession } from "@/lib/auth/session";
 import { normaliseEmail } from "@/lib/auth/tokens";
 import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
 import { apiError, accountSuspended, invalidInput } from "@/lib/api/errors";
+import { activateInvitedParticipants } from "@/lib/conversation/participants";
 
 const MIN_MS = 60 * 1000;
 
@@ -31,6 +32,13 @@ export async function POST(req: Request) {
     return accountSuspended();
   }
   await setSession({ userId: user.id, email: user.email, name: user.name });
+
+  // DOK-187 — materialise any pending swap-conversation invites addressed to
+  // this email into active guest seats. Best-effort; login must never fail here.
+  activateInvitedParticipants(user.id, user.email).catch((err) =>
+    console.error("[login:activate-participants]", err)
+  );
+
   return NextResponse.json({
     ok: true,
     userId: user.id,

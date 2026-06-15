@@ -490,6 +490,7 @@ model SwapProposal {
 
   agreement         SwapAgreement?
   messages          SwapMessage[]
+  participants      ConversationParticipant[]
 
   @@index([proposerId])
   @@index([targetListingId])
@@ -520,6 +521,42 @@ model SwapMessageEmailThrottle {
 
   @@id([proposalId, recipientId])
 }
+// ---------- CONVERSATION PARTICIPANTS (DOK-187) ----------
+// Multi-party swap conversation. The conversation is anchored to a
+// SwapProposal (which carries the SwapAgreement once accepted). The two
+// PRINCIPAL parties (proposer + target listing owner) are implicit — they are
+// always allowed to read/post/act and can never be removed. Additional
+// "guest_participant" rows let a principal pull co-travelers into the thread:
+// they can READ and WRITE messages but can never act on the swap itself
+// (accept/counter/decline/withdraw stay gated to the two principals).
+//
+// role:   "principal" | "guest_participant"
+// status: "active" | "pending" | "removed"
+// A guest invited by email lands as `pending` until that email registers/logs
+// in, at which point it is materialised to `active` with the resolved userId.
+model ConversationParticipant {
+  id           String   @id @default(cuid())
+  proposalId   String
+  proposal     SwapProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  // Resolved account once known. Email-only invites keep this null until the
+  // invitee signs in with the invited address.
+  userId       String?
+  invitedEmail String?
+
+  role         String   @default("guest_participant")
+  status       String   @default("pending")
+
+  invitedById  String
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([proposalId, userId])
+  @@unique([proposalId, invitedEmail])
+  @@index([proposalId])
+}
+
 
 // ---------- SWAP AGREEMENT ----------
 // status: ACTIVE | COMPLETED | INTERRUPTED

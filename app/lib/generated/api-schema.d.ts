@@ -3593,6 +3593,264 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/proposals/{id}/participants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List the conversation's participants
+         * @description Returns the two principal parties (proposer + target owner) plus any guest participants (DOK-187). Visible to anyone with thread access: both principals and active guests.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConversationParticipantsResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description No access to this conversation */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Proposal not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Invite a co-traveler into the conversation
+         * @description Only a PRINCIPAL (proposer or target owner) may invite. Provide exactly one of byUserId or byEmail. byUserId (or a byEmail matching an existing account) adds an active guest seat immediately; an unknown byEmail creates a pending seat and sends an invite email — the seat activates when that address registers or signs in. Idempotent per (proposal,user) and (proposal,email). Guests can read/write the thread but can never act on the swap (accept/counter/decline/withdraw stay principal-only).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ConversationParticipantInviteRequest"];
+                };
+            };
+            responses: {
+                /** @description Target is already a member (principal) — no-op */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            alreadyMember: boolean;
+                        };
+                    };
+                };
+                /** @description Participant added or invited */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConversationParticipantCreateResponse"];
+                    };
+                };
+                /** @description Must provide exactly one of byUserId or byEmail */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Only swap principals can invite */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Proposal or user not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/proposals/{id}/participants/{participantId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove a guest participant
+         * @description Soft-removes a guest seat (status → removed). Principal-only; the two principals can never be removed. Idempotent.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    participantId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Removed (or already removed) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Only principals can remove; principals are not removable */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Proposal or participant not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/proposals/{id}/participants/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Suggested co-travelers to invite
+         * @description Principal-only. Suggests accounts the caller has already swapped with (counterparties of their other proposals), excluding anyone already in this conversation. One-tap invite candidates for "Add co-travelers".
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConversationParticipantSuggestionsResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Only swap principals can invite */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Proposal not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/conversations": {
         parameters: {
             query?: never;
@@ -8609,6 +8867,44 @@ export interface components {
             ok: boolean;
             /** @description Number of messages newly marked as read. */
             marked: number;
+        };
+        ConversationParticipant: {
+            /** @description Participant row id. For the two structural principals this is a synthetic "principal:<userId>" id (they have no DB row). */
+            id: string;
+            /** @description Resolved account id, or null for an email-only pending invite. */
+            userId: string | null;
+            /** @description The invited email for a pending seat, else null. */
+            invitedEmail: string | null;
+            name: string | null;
+            avatar: string | null;
+            /** @enum {string} */
+            role: "principal" | "guest_participant";
+            /** @enum {string} */
+            status: "active" | "pending" | "removed";
+        };
+        ConversationParticipantsResponse: {
+            participants: components["schemas"]["ConversationParticipant"][];
+        };
+        /** @description Provide exactly one of byUserId or byEmail. */
+        ConversationParticipantInviteRequest: {
+            /** @description Add an existing account as an active guest. */
+            byUserId?: string;
+            /**
+             * Format: email
+             * @description Invite by email. Activates immediately if the address has an account; otherwise a pending seat + invite email.
+             */
+            byEmail?: string;
+        };
+        ConversationParticipantCreateResponse: {
+            participant: components["schemas"]["ConversationParticipant"];
+        };
+        ConversationParticipantSuggestion: {
+            userId: string;
+            name: string | null;
+            avatar: string | null;
+        };
+        ConversationParticipantSuggestionsResponse: {
+            suggestions: components["schemas"]["ConversationParticipantSuggestion"][];
         };
         Conversation: {
             id: string;

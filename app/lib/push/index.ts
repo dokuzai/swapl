@@ -55,7 +55,8 @@ export type PushKind =
   | "keysStayConfirmed"
   | "keysStayDeclined"
   | "referralRewarded"
-  | "windowProposals";
+  | "windowProposals"
+  | "swapParticipantInvited";
 
 export async function sendPush(userId: string, payload: PushPayload): Promise<void> {
   const devices = await prisma.device.findMany({ where: { userId } });
@@ -181,6 +182,13 @@ export const pushTemplates = {
       title: `${fromName} sent a message`,
       body: "Tap to open your swap thread.",
       data: { kind: "swapMessageReceived", proposalId, deepLink: deepLinkProposal(proposalId) },
+    };
+  },
+  swapParticipantInvited(proposalId: string, fromName: string): PushPayload {
+    return {
+      title: `${fromName} added you to a swap conversation`,
+      body: "Tap to join the thread and follow the trip.",
+      data: { kind: "swapParticipantInvited", proposalId, deepLink: deepLinkProposal(proposalId) },
     };
   },
   insurancePolicyCreated(proposalId: string, policyNumber: string): PushPayload {

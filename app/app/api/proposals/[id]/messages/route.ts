@@ -1,9 +1,10 @@
-// Swap thread messages — first-class chat (DOK-154).
+// Swap thread messages — first-class chat (DOK-154, multi-party DOK-187).
 //
-// The thread is the continuous history of the COUPLE OF PARTIES bound to a
+// The thread is the continuous history of the conversation bound to a
 // proposal: messages exchanged during negotiation stay and keep flowing after
-// the proposal is accepted into an agreement. Only the two parties (proposer
-// and the target listing's owner) may read or post.
+// the proposal is accepted into an agreement. The two PRINCIPAL parties
+// (proposer and the target listing's owner) plus any ACTIVE guest participant
+// (DOK-187) may read or post. Guests can chat but can never act on the swap.
 //
 // GET supports cursor pagination (newest-first page window) and, by default,
 // implicitly marks the caller's unread inbound messages as read. POST accepts
@@ -19,6 +20,7 @@ import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { accountSuspended } from "@/lib/api/errors";
+import { canAccessConversation } from "@/lib/conversation/participants";
 
 // Send at most one notification email per recipient per thread per window.
 const EMAIL_THROTTLE_MS = 15 * 60 * 1000; // 15 minutes
@@ -72,8 +74,8 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
   });
   if (!proposal) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const { isProposer, isTarget } = partyOf(proposal, session.userId);
-  if (!isProposer && !isTarget) {
+  // Principals + active guest participants (DOK-187) may read the thread.
+  if (!(await canAccessConversation(proposal, id, session.userId))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -141,12 +143,16 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
   if (!proposal) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const { isProposer, isTarget } = partyOf(proposal, session.userId);
-  if (!isProposer && !isTarget) {
+  const principal = isProposer || isTarget;
+  // Principals always have access; otherwise the caller must be an active guest
+  // participant (DOK-187). Guests can chat but never act on the swap.
+  if (!principal && !(await canAccessConversation(proposal, id, session.userId))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Moderation: no messaging while either party is suspended (caller or
-  // counterparty) — read access via GET stays untouched.
+  // Moderation: no messaging while either principal is suspended (covers both a
+  // suspended caller-principal and a suspended counterparty). Guests are gated
+  // on the principals' standing too — a suspended swap freezes the whole thread.
   if (proposal.proposerListing.user.suspendedAt || proposal.targetListing.user.suspendedAt) {
     return accountSuspended();
   }
@@ -160,19 +166,48 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     },
   });
 
-  // Notify the other party. Push fires every message; email is throttled per
-  // recipient per thread so an active back-and-forth doesn't flood the inbox.
-  const other = isProposer ? proposal.targetListing.user : proposal.proposerListing.user;
+  // Notify every OTHER member of the conversation: both principals plus active
+  // guest participants, minus the author. Push fires every message; email is
+  // throttled per recipient per thread so a back-and-forth doesn't flood inboxes.
   const fromName = session.name ?? session.email;
 
-  sendPush(other.id, pushTemplates.swapMessageReceived(proposal.id, fromName)).catch((err) =>
-    console.error("[swap-message:push]", err)
-  );
+  const guests = await prisma.conversationParticipant.findMany({
+    where: { proposalId: id, status: "active", userId: { not: null } },
+    select: { userId: true },
+  });
+  const guestIds = guests.map((g) => g.userId).filter((u): u is string => Boolean(u));
 
-  if (other.email) {
-    maybeSendEmail(proposal.id, other.id, other.email, fromName).catch((err) =>
-      console.error("[swap-message:email]", err)
+  const recipientIds = new Set<string>([
+    proposal.proposerListing.user.id,
+    proposal.targetListing.user.id,
+    ...guestIds,
+  ]);
+  recipientIds.delete(session.userId);
+
+  const emailByUserId = new Map<string, string | null>([
+    [proposal.proposerListing.user.id, proposal.proposerListing.user.email],
+    [proposal.targetListing.user.id, proposal.targetListing.user.email],
+  ]);
+  // Resolve guest emails (principals' emails already loaded above).
+  const guestNeedingEmail = [...recipientIds].filter((uid) => !emailByUserId.has(uid));
+  if (guestNeedingEmail.length) {
+    const guestUsers = await prisma.user.findMany({
+      where: { id: { in: guestNeedingEmail } },
+      select: { id: true, email: true },
+    });
+    for (const u of guestUsers) emailByUserId.set(u.id, u.email);
+  }
+
+  for (const uid of recipientIds) {
+    sendPush(uid, pushTemplates.swapMessageReceived(proposal.id, fromName)).catch((err) =>
+      console.error("[swap-message:push]", err)
     );
+    const email = emailByUserId.get(uid);
+    if (email) {
+      maybeSendEmail(proposal.id, uid, email, fromName).catch((err) =>
+        console.error("[swap-message:email]", err)
+      );
+    }
   }
 
   return NextResponse.json(

@@ -13,6 +13,7 @@ import {
   linkRefereeByEmail,
   linkRefereeByInviteToken,
 } from "@/lib/growth/referrals";
+import { activateInvitedParticipants } from "@/lib/conversation/participants";
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -85,6 +86,14 @@ export async function POST(req: Request) {
     );
   } catch (err) {
     console.error("[register:issue-token]", err);
+  }
+
+  // DOK-187 — if this email was invited into any swap conversation, promote
+  // those pending seats to active now that the account exists. Best-effort.
+  try {
+    await activateInvitedParticipants(user.id, user.email);
+  } catch (err) {
+    console.error("[register:activate-participants]", err);
   }
 
   await setSession({ userId: user.id, email: user.email, name: user.name });

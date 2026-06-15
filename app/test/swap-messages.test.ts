@@ -15,6 +15,9 @@ const mocks = vi.hoisted(() => ({
   updateManyMessages: vi.fn(),
   findUniqueThrottle: vi.fn(),
   upsertThrottle: vi.fn(),
+  cpFindFirst: vi.fn(),
+  cpFindMany: vi.fn(),
+  findManyUsers: vi.fn(),
   sendEmail: vi.fn(async () => {}),
   sendPush: vi.fn(async () => {}),
   swapMessageReceivedEmail: vi.fn((to: string) => ({ to, subject: "msg", text: "msg" })),
@@ -42,6 +45,11 @@ vi.mock("@/lib/db", async (importOriginal) => {
         findUnique: mocks.findUniqueThrottle,
         upsert: mocks.upsertThrottle,
       },
+      conversationParticipant: {
+        findFirst: mocks.cpFindFirst,
+        findMany: mocks.cpFindMany,
+      },
+      user: { findMany: mocks.findManyUsers },
     },
   };
 });
@@ -106,6 +114,9 @@ beforeEach(() => {
   mocks.updateManyMessages.mockResolvedValue({ count: 0 });
   mocks.findUniqueThrottle.mockResolvedValue(null);
   mocks.upsertThrottle.mockResolvedValue({});
+  mocks.cpFindFirst.mockResolvedValue(null); // no guest seat by default
+  mocks.cpFindMany.mockResolvedValue([]); // no guest participants by default
+  mocks.findManyUsers.mockResolvedValue([]);
   mocks.createMessage.mockImplementation(async ({ data }: { data: Record<string, string> }) => ({
     id: "msg-1",
     proposalId: data.proposalId,
@@ -185,6 +196,43 @@ describe("POST /api/proposals/[id]/messages", () => {
     const res = await post({ body: "Sounds good." });
     expect(res.status).toBe(201);
     expect(mocks.sendPush).toHaveBeenCalledWith("u-proposer", expect.anything());
+  });
+});
+
+describe("guest participants (DOK-187)", () => {
+  const guest = { userId: "u-guest", email: "cara@swapl.test", name: "Cara" };
+
+  it("lets an active guest read the thread", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue(guest);
+    mocks.cpFindFirst.mockResolvedValue({ id: "cp-1" }); // active guest seat
+    expect((await get()).status).toBe(200);
+  });
+
+  it("lets an active guest post a message", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue(guest);
+    mocks.cpFindFirst.mockResolvedValue({ id: "cp-1" });
+    const res = await post({ body: "Counting down to Lisbon!" });
+    expect(res.status).toBe(201);
+    expect((await res.json()).message.authorId).toBe("u-guest");
+    // Both principals get notified (author is the guest, so not them).
+    expect(mocks.sendPush).toHaveBeenCalledWith("u-proposer", expect.anything());
+    expect(mocks.sendPush).toHaveBeenCalledWith("u-target", expect.anything());
+  });
+
+  it("403s a stranger with no guest seat on read and write", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "u-stranger", email: "x@x.test", name: "X" });
+    mocks.cpFindFirst.mockResolvedValue(null);
+    expect((await get()).status).toBe(403);
+    expect((await post({ body: "hi" })).status).toBe(403);
+  });
+
+  it("fans out a principal's message to active guests too", async () => {
+    mocks.cpFindMany.mockResolvedValue([{ userId: "u-guest" }]);
+    mocks.findManyUsers.mockResolvedValue([{ id: "u-guest", email: "cara@swapl.test" }]);
+    const res = await post({ body: "Welcome aboard" });
+    expect(res.status).toBe(201);
+    expect(mocks.sendPush).toHaveBeenCalledWith("u-guest", expect.anything());
+    expect(mocks.sendPush).toHaveBeenCalledWith("u-target", expect.anything());
   });
 });
 

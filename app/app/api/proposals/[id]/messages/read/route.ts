@@ -8,6 +8,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
+import { canAccessConversation } from "@/lib/conversation/participants";
 
 export async function POST(req: Request, { params }: RouteContext<"/api/proposals/[id]/messages/read">) {
   const session = await getSessionFromRequest(req);
@@ -20,9 +21,10 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
   });
   if (!proposal) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const isParty =
-    proposal.proposerId === session.userId || proposal.targetListing.userId === session.userId;
-  if (!isParty) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  // Principals + active guest participants (DOK-187) may clear their unread badge.
+  if (!(await canAccessConversation(proposal, id, session.userId))) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const { count } = await prisma.swapMessage.updateMany({
     where: { proposalId: id, authorId: { not: session.userId }, readAt: null },

@@ -120,6 +120,22 @@ export const templates = {
       text: `${fromName} sent you a message in your swap thread. Read it: ${APP_URL}/swaps`,
     }),
 
+  // DOK-187 — a principal pulled a co-traveler into the swap conversation by
+  // email. Registering/logging in with this address materialises their guest
+  // seat (read+write on the thread; they can never act on the swap itself).
+  swapParticipantInvited: (toEmail: string, fromName: string) =>
+    build({
+      to: toEmail,
+      subject: `${fromName} added you to a swap conversation on swapl`,
+      preview: `${fromName} wants you in on the trip planning.`,
+      heading: `${fromName} added you to a swap.`,
+      intro:
+        `${fromName} invited you into a home-swap conversation so you can follow the trip and chat with everyone involved. Create your account (or sign in) with this email address and the thread will be waiting for you.`,
+      ctaLabel: "Join the conversation",
+      ctaHref: `${APP_URL}/register?utm_source=swap_invite&utm_campaign=participant`,
+      text: `${fromName} added you to a home-swap conversation on swapl. Sign in or register with this email to join the thread: ${APP_URL}/register?utm_source=swap_invite&utm_campaign=participant`,
+    }),
+
   insurancePolicyCreated: (toEmail: string, policyNumber: string) =>
     build({
       to: toEmail,
