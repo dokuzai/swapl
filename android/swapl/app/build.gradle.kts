@@ -116,6 +116,13 @@ dependencies {
     // Custom Tabs (Didit hosted identity verification)
     implementation("androidx.browser:browser:1.8.0")
 
+    // Play In-App Review (rate-the-app, M1). KTX adds suspend helpers; the API
+    // degrades gracefully (no dialog) when Play Services is unavailable.
+    implementation("com.google.android.play:review:2.0.2")
+    implementation("com.google.android.play:review-ktx:2.0.2")
+    // Task.await() for the Play review Task API.
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+
     // Image loading
     implementation("io.coil-kt.coil3:coil-compose:3.0.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")

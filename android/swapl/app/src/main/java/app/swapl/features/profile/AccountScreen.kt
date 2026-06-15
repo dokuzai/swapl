@@ -52,9 +52,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
+import app.swapl.R
 import androidx.credentials.CreatePublicKeyCredentialRequest
 import androidx.credentials.CreatePublicKeyCredentialResponse
 import androidx.credentials.CredentialManager
@@ -116,6 +119,7 @@ fun AccountScreen(
     var passkeyMessage by remember { mutableStateOf<String?>(null) }
     var addingPasskey by remember { mutableStateOf(false) }
     var showChangePassword by remember { mutableStateOf(false) }
+    var showRateApp by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     // "Passkeys" menu entry: options from the backend → Credential Manager
@@ -162,7 +166,7 @@ fun AccountScreen(
             .padding(SwaplSpacing.s5),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
-        Text("Profile", style = MaterialTheme.typography.displaySmall)
+        Text(stringResource(R.string.account_profile_title), style = MaterialTheme.typography.displaySmall)
 
         if (s != null) {
             SurfaceCard {
@@ -178,17 +182,17 @@ fun AccountScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    TagChip("Swapl member")
+                    TagChip(stringResource(R.string.account_member_badge))
 
                     overview.me?.let { me ->
                         Spacer(Modifier.height(SwaplSpacing.s1))
                         HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                         Spacer(Modifier.height(SwaplSpacing.s1))
                         Row(Modifier.fillMaxWidth()) {
-                            Stat("Waiting", me.counts.incomingProposals, Modifier.weight(1f))
-                            Stat("Sent", me.counts.outgoingProposals, Modifier.weight(1f))
-                            Stat("Active", me.counts.activeSwaps, Modifier.weight(1f), accent = true)
-                            Stat("Homes", me.counts.listings, Modifier.weight(1f))
+                            Stat(stringResource(R.string.account_stat_waiting), me.counts.incomingProposals, Modifier.weight(1f))
+                            Stat(stringResource(R.string.account_stat_sent), me.counts.outgoingProposals, Modifier.weight(1f))
+                            Stat(stringResource(R.string.account_stat_active), me.counts.activeSwaps, Modifier.weight(1f), accent = true)
+                            Stat(stringResource(R.string.account_stat_homes), me.counts.listings, Modifier.weight(1f))
                         }
                     }
                 }
@@ -209,12 +213,13 @@ fun AccountScreen(
                 )
                 Column {
                     Text(
-                        if (overview.ownListingId != null) "Edit your home" else "Become a host",
+                        if (overview.ownListingId != null) stringResource(R.string.account_edit_home_title)
+                        else stringResource(R.string.account_become_host_title),
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Text(
-                        if (overview.ownListingId != null) "Update photos, dates and details."
-                        else "List your home to start swapping.",
+                        if (overview.ownListingId != null) stringResource(R.string.account_edit_home_body)
+                        else stringResource(R.string.account_become_host_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -243,46 +248,48 @@ fun AccountScreen(
         // Airbnb-style structured settings (DOK-147), mirroring the iOS
         // AccountView and web /account sections.
         Column {
-            KickerLabel("Settings")
-            MenuRow(Icons.Default.AccountCircle, "Personal information", onClick = onOpenPersonalInfo)
+            KickerLabel(stringResource(R.string.account_section_settings))
+            MenuRow(Icons.Default.AccountCircle, stringResource(R.string.account_personal_info), onClick = onOpenPersonalInfo)
             // Login & security (DOK-149): in-place password change + passkeys.
-            MenuRow(Icons.Default.Lock, "Change password") { showChangePassword = true }
-            MenuRow(Icons.Default.Key, if (addingPasskey) "Login & security — Passkeys…" else "Login & security — Passkeys") { addPasskey() }
-            MenuRow(Icons.Default.PrivacyTip, "Privacy", onClick = onOpenPrivacy)
-            MenuRow(Icons.Default.Notifications, "Notifications", onClick = onOpenNotifications)
+            MenuRow(Icons.Default.Lock, stringResource(R.string.account_change_password)) { showChangePassword = true }
+            MenuRow(Icons.Default.Key, if (addingPasskey) stringResource(R.string.account_passkeys_busy) else stringResource(R.string.account_passkeys)) { addPasskey() }
+            MenuRow(Icons.Default.PrivacyTip, stringResource(R.string.account_privacy), onClick = onOpenPrivacy)
+            MenuRow(Icons.Default.Notifications, stringResource(R.string.account_notifications), onClick = onOpenNotifications)
         }
 
         Column {
-            KickerLabel("Profile")
-            MenuRow(Icons.Default.Person, "View profile") { s?.id?.let(onOpenPublicProfile) }
+            KickerLabel(stringResource(R.string.account_section_profile))
+            MenuRow(Icons.Default.Person, stringResource(R.string.account_view_profile)) { s?.id?.let(onOpenPublicProfile) }
             // Your Swapl story (DOK-158) — postcard timeline of trips & guests.
-            MenuRow(Icons.Default.AutoStories, "Your Swapl story", onClick = onOpenStory)
+            MenuRow(Icons.Default.AutoStories, stringResource(R.string.account_your_story), onClick = onOpenStory)
             // Keys wallet (DOK-155) — "travel points", never money.
-            MenuRow(Icons.Default.Key, "Travel points", onClick = onOpenKeys)
+            MenuRow(Icons.Default.Key, stringResource(R.string.account_travel_points), onClick = onOpenKeys)
             // Invite & earn (DOK-157) — referrals earn KEYS, never money.
-            MenuRow(Icons.Default.Redeem, "Invite & earn", onClick = onOpenInvite)
-            MenuRow(Icons.Default.Favorite, "Interests", onClick = onOpenInterests)
-            MenuRow(Icons.Default.Search, "Saved searches", onClick = onOpenSavedSearches)
+            MenuRow(Icons.Default.Redeem, stringResource(R.string.account_invite_earn), onClick = onOpenInvite)
+            MenuRow(Icons.Default.Favorite, stringResource(R.string.account_interests), onClick = onOpenInterests)
+            MenuRow(Icons.Default.Search, stringResource(R.string.account_saved_searches), onClick = onOpenSavedSearches)
             // Travel windows (DOK-161) — saved "when I want to go" intents the
             // assistant turns into ready-made swaps.
-            MenuRow(Icons.Default.CalendarMonth, "Travel windows", onClick = onOpenTravelWindows)
+            MenuRow(Icons.Default.CalendarMonth, stringResource(R.string.account_travel_windows), onClick = onOpenTravelWindows)
             if (overview.me?.user?.role == "swapl_admin") {
-                MenuRow(Icons.Default.QueryStats, "Metrics", onClick = onOpenMetrics)
+                MenuRow(Icons.Default.QueryStats, stringResource(R.string.account_metrics), onClick = onOpenMetrics)
             }
         }
 
         Column {
-            KickerLabel("Support")
-            MenuRow(Icons.AutoMirrored.Filled.HelpOutline, "Get help") { uriHandler.openUri("https://swapl.fun/contact") }
-            MenuRow(Icons.Default.PrivacyTip, "Privacy policy") { uriHandler.openUri("https://swapl.fun/privacy") }
-            MenuRow(Icons.Default.Description, "Terms of service") { uriHandler.openUri("https://swapl.fun/terms") }
+            KickerLabel(stringResource(R.string.account_section_support))
+            MenuRow(Icons.AutoMirrored.Filled.HelpOutline, stringResource(R.string.account_get_help)) { uriHandler.openUri("https://swapl.fun/contact") }
+            // Rate the app (M1) — structured feedback + Play In-App Review.
+            MenuRow(Icons.Default.StarRate, stringResource(R.string.account_rate_app)) { showRateApp = true }
+            MenuRow(Icons.Default.PrivacyTip, stringResource(R.string.account_privacy_policy)) { uriHandler.openUri("https://swapl.fun/privacy") }
+            MenuRow(Icons.Default.Description, stringResource(R.string.account_terms)) { uriHandler.openUri("https://swapl.fun/terms") }
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-            MenuRow(Icons.AutoMirrored.Filled.Logout, "Log out", destructive = true) { confirmSignOut = true }
+            MenuRow(Icons.AutoMirrored.Filled.Logout, stringResource(R.string.account_log_out), destructive = true) { confirmSignOut = true }
         }
 
         // Real version footer from BuildConfig — no hardcoded numbers.
         Text(
-            "Version ${app.swapl.BuildConfig.VERSION_NAME} (${app.swapl.BuildConfig.VERSION_CODE})",
+            stringResource(R.string.account_version, app.swapl.BuildConfig.VERSION_NAME, app.swapl.BuildConfig.VERSION_CODE),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
@@ -317,10 +324,10 @@ fun AccountScreen(
     passkeyMessage?.let { msg ->
         AlertDialog(
             onDismissRequest = { passkeyMessage = null },
-            title = { Text("Passkeys") },
+            title = { Text(stringResource(R.string.account_passkeys_dialog_title)) },
             text = { Text(msg) },
             confirmButton = {
-                TextButton(onClick = { passkeyMessage = null }) { Text("OK") }
+                TextButton(onClick = { passkeyMessage = null }) { Text(stringResource(R.string.common_ok)) }
             },
         )
     }
@@ -328,17 +335,21 @@ fun AccountScreen(
     if (confirmSignOut) {
         AlertDialog(
             onDismissRequest = { confirmSignOut = false },
-            title = { Text("Log out?") },
-            text = { Text("You'll need to sign in again to see your swaps.") },
+            title = { Text(stringResource(R.string.account_signout_title)) },
+            text = { Text(stringResource(R.string.account_signout_body)) },
             confirmButton = {
                 TextButton(onClick = { confirmSignOut = false; authVm.signOut() }) {
-                    Text("Log out", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.account_log_out), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { confirmSignOut = false }) { Text("Cancel") }
+                TextButton(onClick = { confirmSignOut = false }) { Text(stringResource(R.string.common_cancel)) }
             },
         )
+    }
+
+    if (showRateApp) {
+        RateAppDialog(onDismiss = { showRateApp = false })
     }
 }
 

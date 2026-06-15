@@ -214,7 +214,7 @@ private fun reviewsValue(stats: ProfileStats): String {
     if (avg != null && stats.reviewsCount > 0) {
         val formatted =
             if (avg % 1.0 == 0.0) "${avg.toInt()}"
-            else String.format(Locale.US, "%.1f", avg)
+            else String.format(Locale.getDefault(), "%.1f", avg)
         return "${stats.reviewsCount} · $formatted★"
     }
     return "${stats.reviewsCount}"
@@ -349,7 +349,7 @@ private fun ReviewCard(review: ProfileReview) {
 
 private fun reviewMonth(value: String): String = runCatching {
     LocalDate.parse(value.take(10))
-        .format(DateTimeFormatter.ofPattern("MMM yyyy", Locale.ENGLISH))
+        .format(DateTimeFormatter.ofPattern("MMM yyyy", Locale.getDefault()))
 }.getOrDefault(value.take(10))
 
 // Five-star row shared by the profile reviews and the leave-review dialog.

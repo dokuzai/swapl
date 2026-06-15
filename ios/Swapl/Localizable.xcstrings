@@ -1,0 +1,516 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%lld beds" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld camere" } }
+      }
+    },
+    "%lld beds · %lld%% match" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%1$lld camere · %2$lld%% di affinità" } }
+      }
+    },
+    "%lld guests · %lld beds" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%1$lld ospiti · %2$lld camere" } }
+      }
+    },
+    "%lld out of 5" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld su 5" } }
+      }
+    },
+    "%@ swap" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scambio a %@" } }
+      }
+    },
+    "%@ in %@" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%1$@ a %2$@" } }
+      }
+    },
+    "%@ · Hosted by %@" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%1$@ · Ospitato da %2$@" } }
+      }
+    },
+    "Accept & confirm swap" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accetta e conferma lo scambio" } }
+      }
+    },
+    "Accept swap" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accetta lo scambio" } }
+      }
+    },
+    "Accept this swap?" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accettare questo scambio?" } }
+      }
+    },
+    "Accepting issues the swap insurance policy for both homes and creates a binding agreement." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accettando viene emessa la polizza assicurativa dello scambio per entrambe le case e si crea un accordo vincolante." } }
+      }
+    },
+    "Admin" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Admin" } }
+      }
+    },
+    "Anything you'd like to add? (optional)" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Vuoi aggiungere qualcosa? (facoltativo)" } }
+      }
+    },
+    "Become a host" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Diventa host" } }
+      }
+    },
+    "Bring friends, earn travel points, and jump the early-access line." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Invita gli amici, guadagna punti viaggio e salta la fila dell'accesso anticipato." } }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Annulla" } }
+      }
+    },
+    "Change password" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Cambia password" } }
+      }
+    },
+    "Check in" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Check-in" } }
+      }
+    },
+    "Check out" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Check-out" } }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Chiudi" } }
+      }
+    },
+    "Confirmed swap" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scambio confermato" } }
+      }
+    },
+    "Confirming the swap for %@ issues the swap insurance policy for both homes. This creates a binding agreement." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Confermando lo scambio per %@ viene emessa la polizza assicurativa per entrambe le case. Si crea un accordo vincolante." } }
+      }
+    },
+    "Connections" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Contatti" } }
+      }
+    },
+    "Contact Swapl support" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Contatta l'assistenza Swapl" } }
+      }
+    },
+    "Counter offer" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Controproposta" } }
+      }
+    },
+    "Counter offer received" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Controproposta ricevuta" } }
+      }
+    },
+    "Create your home listing and start proposing swaps." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Crea l'annuncio della tua casa e inizia a proporre scambi." } }
+      }
+    },
+    "Decline" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Rifiuta" } }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Fatto" } }
+      }
+    },
+    "Edit your home" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Modifica la tua casa" } }
+      }
+    },
+    "e.g. would these dates work?" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "es. queste date vanno bene?" } }
+      }
+    },
+    "From" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Dal" } }
+      }
+    },
+    "Get help" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ottieni aiuto" } }
+      }
+    },
+    "Home" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Casa" } }
+      }
+    },
+    "Homes" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Case" } }
+      }
+    },
+    "Hosts you know" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Host che conosci" } }
+      }
+    },
+    "How is Swapl going for you?" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Come ti trovi con Swapl?" } }
+      }
+    },
+    "How was your swap?" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Com'è andato il tuo scambio?" } }
+      }
+    },
+    "host" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "host" } }
+      }
+    },
+    "Interests" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Interessi" } }
+      }
+    },
+    "Invite & earn" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Invita e guadagna" } }
+      }
+    },
+    "Leave a review" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Lascia una recensione" } }
+      }
+    },
+    "Log out" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Esci" } }
+      }
+    },
+    "Login & security" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accesso e sicurezza" } }
+      }
+    },
+    "Member since" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Membro dal" } }
+      }
+    },
+    "Message %@" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scrivi a %@" } }
+      }
+    },
+    "Messages" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Messaggi" } }
+      }
+    },
+    "Messages unavailable" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Messaggi non disponibili" } }
+      }
+    },
+    "Metrics" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Metriche" } }
+      }
+    },
+    "New dates" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nuove date" } }
+      }
+    },
+    "No conversations match your current search or filter." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nessuna conversazione corrisponde alla ricerca o al filtro attuale." } }
+      }
+    },
+    "No matches" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nessun risultato" } }
+      }
+    },
+    "No messages yet" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ancora nessun messaggio" } }
+      }
+    },
+    "Note (optional)" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nota (facoltativa)" } }
+      }
+    },
+    "Notifications" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Notifiche" } }
+      }
+    },
+    "Passkeys" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passkey" } }
+      }
+    },
+    "Past trips" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Viaggi passati" } }
+      }
+    },
+    "Personal information" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Informazioni personali" } }
+      }
+    },
+    "Privacy" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Privacy" } }
+      }
+    },
+    "Profile" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Profilo" } }
+      }
+    },
+    "Proposal declined" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Proposta rifiutata" } }
+      }
+    },
+    "Proposal sent" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Proposta inviata" } }
+      }
+    },
+    "Rate Swapl" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Valuta Swapl" } }
+      }
+    },
+    "Rate the app" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Valuta l'app" } }
+      }
+    },
+    "Saved searches" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ricerche salvate" } }
+      }
+    },
+    "Search by host or city" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Cerca per host o città" } }
+      }
+    },
+    "Send" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Invia" } }
+      }
+    },
+    "Send feedback" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Invia feedback" } }
+      }
+    },
+    "Share how the stay with %@ went — it helps the next guest." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Racconta com'è andato il soggiorno con %@ — aiuta il prossimo ospite." } }
+      }
+    },
+    "Sign out" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Esci" } }
+      }
+    },
+    "Sign out of Swapl?" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Uscire da Swapl?" } }
+      }
+    },
+    "Swapl member" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Membro Swapl" } }
+      }
+    },
+    "Swaps" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scambi" } }
+      }
+    },
+    "Switch to hosting" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Passa a host" } }
+      }
+    },
+    "Thanks for the feedback!" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Grazie per il feedback!" } }
+      }
+    },
+    "The other host will be notified. This can't be undone." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "L'altro host verrà avvisato. L'operazione non può essere annullata." } }
+      }
+    },
+    "This removes your proposal. You can always send a new one." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Questo rimuove la tua proposta. Puoi sempre inviarne una nuova." } }
+      }
+    },
+    "To" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Al" } }
+      }
+    },
+    "Travel points" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Punti viaggio" } }
+      }
+    },
+    "Travel windows" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Finestre di viaggio" } }
+      }
+    },
+    "Trip" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Viaggio" } }
+      }
+    },
+    "Trip details" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Dettagli del viaggio" } }
+      }
+    },
+    "Trip unavailable" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Viaggio non disponibile" } }
+      }
+    },
+    "Try Again" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Riprova" } }
+      }
+    },
+    "Update \"%@\" — photos, dates, amenities." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Aggiorna \"%@\" — foto, date, servizi." } }
+      }
+    },
+    "Version %@ (%@)" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Versione %1$@ (%2$@)" } }
+      }
+    },
+    "View %@'s profile" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Vedi il profilo di %@" } }
+      }
+    },
+    "View home & photos" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Vedi casa e foto" } }
+      }
+    },
+    "View public profile" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Vedi profilo pubblico" } }
+      }
+    },
+    "Waiting for your reply" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "In attesa della tua risposta" } }
+      }
+    },
+    "We read every response — it directly shapes what we build next." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Leggiamo ogni risposta — guida direttamente cosa costruiremo dopo." } }
+      }
+    },
+    "What's working, what isn't…" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Cosa funziona, cosa no…" } }
+      }
+    },
+    "When you send or receive a proposal, it appears here." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Quando invii o ricevi una proposta, compare qui." } }
+      }
+    },
+    "Withdraw" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ritira" } }
+      }
+    },
+    "Withdraw proposal" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ritira la proposta" } }
+      }
+    },
+    "Your completed swaps" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "I tuoi scambi completati" } }
+      }
+    },
+    "Your feedback helps us improve the app. It only takes a moment." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Il tuo feedback ci aiuta a migliorare l'app. Ci vuole solo un momento." } }
+      }
+    },
+    "Your home" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "La tua casa" } }
+      }
+    },
+    "Your points balance, history, and gifting — stay somewhere without a simultaneous swap." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Il tuo saldo punti, la cronologia e i regali — soggiorna da qualche parte senza uno scambio simultaneo." } }
+      }
+    },
+    "Your Swapl story" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "La tua storia Swapl" } }
+      }
+    },
+    "Your travel profile" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Il tuo profilo di viaggio" } }
+      }
+    },
+    "your swap partner" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "il tuo partner di scambio" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -68,17 +68,17 @@ struct SwapsInboxView: View {
                 } else if let error = vm.error {
                     SwaplEmptyState(
                         systemImage: "wifi.exclamationmark",
-                        title: "Messages unavailable",
+                        title: String(localized: "Messages unavailable"),
                         description: error,
-                        actionTitle: "Try Again",
+                        actionTitle: String(localized: "Try Again"),
                         action: { Task { await vm.load() } }
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if vm.isInboxEmpty {
                     SwaplEmptyState(
                         systemImage: "message",
-                        title: "No messages yet",
-                        description: "When you send or receive a proposal, it appears here."
+                        title: String(localized: "No messages yet"),
+                        description: String(localized: "When you send or receive a proposal, it appears here.")
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -123,8 +123,8 @@ struct SwapsInboxView: View {
                 if vm.proposals.isEmpty {
                     SwaplEmptyState(
                         systemImage: "magnifyingglass",
-                        title: "No matches",
-                        description: "No conversations match your current search or filter."
+                        title: String(localized: "No matches"),
+                        description: String(localized: "No conversations match your current search or filter.")
                     )
                     .padding(.top, 48)
                 } else {
@@ -148,7 +148,7 @@ struct SwapsInboxView: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.secondaryText)
-            TextField("Search by host or city", text: Bindable(vm).searchText)
+            TextField(String(localized: "Search by host or city"), text: Bindable(vm).searchText)
                 .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                 .foregroundStyle(AirbnbPalette.text)
                 .focused($searchFieldFocused)
@@ -173,7 +173,7 @@ struct SwapsInboxView: View {
     }
 
     private var messagesHeader: some View {
-        SwaplPageTitle("Messages") {
+        SwaplPageTitle(String(localized: "Messages")) {
             Button {
                 withAnimation(.snappy) {
                     isSearching.toggle()
@@ -231,10 +231,10 @@ struct MessageRow: View {
 
     private var statusLine: String {
         switch proposal.status {
-        case "ACCEPTED": return "Confirmed swap"
-        case "COUNTERED": return "Counter offer received"
-        case "DECLINED": return "Proposal declined"
-        default: return proposal.meSide == "target" ? "Waiting for your reply" : "Proposal sent"
+        case "ACCEPTED": return String(localized: "Confirmed swap")
+        case "COUNTERED": return String(localized: "Counter offer received")
+        case "DECLINED": return String(localized: "Proposal declined")
+        default: return proposal.meSide == "target" ? String(localized: "Waiting for your reply") : String(localized: "Proposal sent")
         }
     }
 
@@ -337,6 +337,17 @@ final class ProposalDetailViewModel {
         }
     }
 
+    // F11: seed the counter pickers from the proposal's existing dates (the
+    // counter dates when a counter already stands, else the original dates),
+    // so the host shifts from the current proposal instead of re-entering from
+    // today.
+    func seedCounterDates(from detail: ProposalDetail) {
+        let from = detail.proposal.counterDateFrom ?? detail.proposal.dateFrom
+        let to = detail.proposal.counterDateTo ?? detail.proposal.dateTo
+        if let parsed = SwaplDateText.parse(from) { counterFrom = parsed }
+        if let parsed = SwaplDateText.parse(to) { counterTo = parsed }
+    }
+
     func act(_ action: ProposalRepository.Action) async {
         isActing = true
         actionError = nil
@@ -356,6 +367,7 @@ struct ProposalDetailView: View {
     @State private var showReview = false
     @State private var isConfirmingDecline = false
     @State private var isConfirmingWithdraw = false
+    @State private var isConfirmingAccept = false
 
     init(proposalId: String) {
         _vm = State(initialValue: ProposalDetailViewModel(proposalId: proposalId))
@@ -370,9 +382,9 @@ struct ProposalDetailView: View {
             } else if let error = vm.error {
                 SwaplEmptyState(
                     systemImage: "exclamationmark.triangle",
-                    title: "Trip unavailable",
+                    title: String(localized: "Trip unavailable"),
                     description: error,
-                    actionTitle: "Try Again",
+                    actionTitle: String(localized: "Try Again"),
                     action: { Task { await vm.load() } }
                 )
                 .frame(maxWidth: .infinity)
@@ -383,7 +395,7 @@ struct ProposalDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationTitle("Trip")
+        .navigationTitle(String(localized: "Trip"))
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
         .sheet(isPresented: $showCounter) { counterSheet }
@@ -397,16 +409,28 @@ struct ProposalDetailView: View {
             }
         }
         .confirmationDialog("Decline this proposal?", isPresented: $isConfirmingDecline, titleVisibility: .visible) {
-            Button("Decline", role: .destructive) { Task { await vm.act(.decline) } }
-            Button("Cancel", role: .cancel) {}
+            Button(String(localized: "Decline"), role: .destructive) { Task { await vm.act(.decline) } }
+            Button(String(localized: "Cancel"), role: .cancel) {}
         } message: {
-            Text("The other host will be notified. This can't be undone.")
+            Text(String(localized: "The other host will be notified. This can't be undone."))
         }
         .confirmationDialog("Withdraw this proposal?", isPresented: $isConfirmingWithdraw, titleVisibility: .visible) {
-            Button("Withdraw", role: .destructive) { Task { await vm.act(.withdraw) } }
-            Button("Cancel", role: .cancel) {}
+            Button(String(localized: "Withdraw"), role: .destructive) { Task { await vm.act(.withdraw) } }
+            Button(String(localized: "Cancel"), role: .cancel) {}
         } message: {
-            Text("This removes your proposal. You can always send a new one.")
+            Text(String(localized: "This removes your proposal. You can always send a new one."))
+        }
+        // F10: accept is the highest-commitment action — gate it behind an
+        // explicit confirm that states a swap insurance policy is issued.
+        .confirmationDialog(String(localized: "Accept this swap?"), isPresented: $isConfirmingAccept, titleVisibility: .visible) {
+            Button(String(localized: "Accept & confirm swap")) { Task { await vm.act(.accept) } }
+            Button(String(localized: "Cancel"), role: .cancel) {}
+        } message: {
+            if let detail = vm.detail {
+                Text(String(localized: "Confirming the swap for \(SwaplDateText.range(from: detail.proposal.dateFrom, to: detail.proposal.dateTo)) issues the swap insurance policy for both homes. This creates a binding agreement."))
+            } else {
+                Text(String(localized: "Accepting issues the swap insurance policy for both homes and creates a binding agreement."))
+            }
         }
     }
 
@@ -417,7 +441,7 @@ struct ProposalDetailView: View {
         return VStack(alignment: .leading, spacing: 26) {
             VStack(alignment: .leading, spacing: 14) {
                 statusBadge(detail.proposal.status)
-                Text("\(tripListing.city) swap")
+                Text(String(localized: "\(tripListing.city) swap"))
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .lineLimit(2)
@@ -455,7 +479,7 @@ struct ProposalDetailView: View {
                         }
                         .overlay(alignment: .bottomTrailing) {
                             HStack(spacing: 6) {
-                                Text("View home & photos")
+                                Text(String(localized: "View home & photos"))
                                     .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
                                 Image(systemName: "chevron.right")
                                     .font(.system(size: 11, weight: .semibold))
@@ -471,12 +495,12 @@ struct ProposalDetailView: View {
                 .accessibilityLabel("View \(tripListing.city) home and all photos")
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("\(tripListing.propertyType.capitalized) in \(tripListing.city)")
+                    Text(String(localized: "\(tripListing.propertyType.capitalized) in \(tripListing.city)"))
                         .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(2)
                         .minimumScaleFactor(0.82)
-                    Text("\(tripListing.neighbourhood) · Hosted by \(detail.other.name ?? "your swap partner")")
+                    Text(String(localized: "\(tripListing.neighbourhood) · Hosted by \(detail.other.name ?? String(localized: "your swap partner"))"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(1)
@@ -488,7 +512,7 @@ struct ProposalDetailView: View {
 
                 HStack(spacing: 14) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Your home")
+                        Text(String(localized: "Your home"))
                             .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
                             .foregroundStyle(AirbnbPalette.secondaryText)
                         Text("\(homeListing.neighbourhood), \(homeListing.city)")
@@ -542,7 +566,7 @@ struct ProposalDetailView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "bubble.left.and.bubble.right.fill")
                         .font(.system(size: 16, weight: .semibold))
-                    Text("Message \(detail.other.name ?? "your swap partner")")
+                    Text(String(localized: "Message \(detail.other.name ?? String(localized: "your swap partner"))"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -563,7 +587,7 @@ struct ProposalDetailView: View {
             .buttonStyle(.plain)
 
             NavigationLink { PublicProfileView(userId: detail.other.id) } label: {
-                Text("View \(detail.other.name ?? "host")'s profile")
+                Text(String(localized: "View \(detail.other.name ?? String(localized: "host"))'s profile"))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -585,14 +609,14 @@ struct ProposalDetailView: View {
            agreement.status == "COMPLETED",
            agreement.canReview == true {
             VStack(alignment: .leading, spacing: 12) {
-                Text("How was your swap?")
+                Text(String(localized: "How was your swap?"))
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                Text("Share how the stay with \(detail.other.name ?? "your swap partner") went — it helps the next guest.")
+                Text(String(localized: "Share how the stay with \(detail.other.name ?? String(localized: "your swap partner")) went — it helps the next guest."))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
-                PrimaryPill(title: "Leave a review", action: { showReview = true })
+                PrimaryPill(title: String(localized: "Leave a review"), action: { showReview = true })
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(22)
@@ -623,12 +647,15 @@ struct ProposalDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 if canRespond && isTarget {
-                    PrimaryPill(title: "Accept swap", action: { Task { await vm.act(.accept) } }, isLoading: vm.isActing)
-                    GhostPill(title: "Counter offer", action: { showCounter = true })
-                    GhostPill(title: "Decline", action: { isConfirmingDecline = true })
+                    PrimaryPill(title: String(localized: "Accept swap"), action: { isConfirmingAccept = true }, isLoading: vm.isActing)
+                    GhostPill(title: String(localized: "Counter offer"), action: {
+                        vm.seedCounterDates(from: detail)
+                        showCounter = true
+                    })
+                    GhostPill(title: String(localized: "Decline"), action: { isConfirmingDecline = true })
                 }
                 if canRespond && isProposer {
-                    GhostPill(title: "Withdraw proposal", action: { isConfirmingWithdraw = true })
+                    GhostPill(title: String(localized: "Withdraw proposal"), action: { isConfirmingWithdraw = true })
                 }
             }
             .padding(.horizontal, 22)
@@ -639,22 +666,22 @@ struct ProposalDetailView: View {
     private var counterSheet: some View {
         NavigationStack {
             Form {
-                Section("New dates") {
-                    DatePicker("From", selection: $vm.counterFrom, displayedComponents: .date)
-                    DatePicker("To", selection: $vm.counterTo, displayedComponents: .date)
+                Section(String(localized: "New dates")) {
+                    DatePicker(String(localized: "From"), selection: $vm.counterFrom, displayedComponents: .date)
+                    DatePicker(String(localized: "To"), selection: $vm.counterTo, displayedComponents: .date)
                 }
-                Section("Note (optional)") {
-                    TextField("e.g. would these dates work?", text: $vm.counterMessage, axis: .vertical)
+                Section(String(localized: "Note (optional)")) {
+                    TextField(String(localized: "e.g. would these dates work?"), text: $vm.counterMessage, axis: .vertical)
                 }
             }
-            .navigationTitle("Counter offer")
+            .navigationTitle(String(localized: "Counter offer"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { showCounter = false }
+                    Button(String(localized: "Cancel")) { showCounter = false }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Send") {
+                    Button(String(localized: "Send")) {
                         let from = SwaplDateText.apiString(from: vm.counterFrom)
                         let to = SwaplDateText.apiString(from: vm.counterTo)
                         let msg = vm.counterMessage.isEmpty ? nil : vm.counterMessage
@@ -700,13 +727,13 @@ struct ProposalDetailView: View {
 
     private func itineraryRows(_ detail: ProposalDetail) -> some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Trip details")
+            Text(String(localized: "Trip details"))
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
                 .padding(.horizontal, 22)
 
-            tripRow(icon: "door.left.hand.open", title: "Check in", subtitle: String(detail.proposal.dateFrom.prefix(10)))
-            tripRow(icon: "door.left.hand.closed", title: "Check out", subtitle: String(detail.proposal.dateTo.prefix(10)))
+            tripRow(icon: "door.left.hand.open", title: String(localized: "Check in"), subtitle: String(detail.proposal.dateFrom.prefix(10)))
+            tripRow(icon: "door.left.hand.closed", title: String(localized: "Check out"), subtitle: String(detail.proposal.dateTo.prefix(10)))
         }
     }
 

@@ -4,6 +4,13 @@ options:
   deploymentTarget:
     iOS: "17.0"
   xcodeVersion: "16.0"
+  # Italian-market launch: ship en (development) + it. The String Catalog
+  # (Swapl/Localizable.xcstrings) carries the translations.
+  developmentLanguage: en
+  knownRegions:
+    - en
+    - it
+    - Base
 packages:
   SwaplDesignTokens:
     path: ../packages/design-tokens/build/swift
@@ -31,6 +38,12 @@ targets:
         CFBundleDisplayName: Swapl
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        # Italian-market launch: advertise both localizations so iOS offers the
+        # IT strings under an Italian device language (F1).
+        CFBundleLocalizations:
+          - en
+          - it
+        CFBundleDevelopmentRegion: en
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait

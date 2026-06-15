@@ -747,7 +747,7 @@ struct ListingCardView: View {
                 .foregroundStyle(AirbnbPalette.text)
                 .lineLimit(1)
                 .padding(.top, compact ? 3 : 0)
-            Text(compact ? "\(item.listing.bedrooms) beds · \(ratingText)" : "\(item.listing.sleeps) guests · \(item.listing.bedrooms) beds")
+            Text(compact ? compactSubtitle : String(localized: "\(item.listing.sleeps) guests · \(item.listing.bedrooms) beds"))
                 .font(.swaplBody(compact ? SwaplDesignSystem.FontSize.small : SwaplDesignSystem.FontSize.caption, weight: .regular))
                 .foregroundStyle(AirbnbPalette.secondaryText)
             Text("Available \(SwaplDateText.range(from: item.listing.availableFrom, to: item.listing.availableTo))")
@@ -761,11 +761,13 @@ struct ListingCardView: View {
         .background(SwaplSemanticLight.background)
     }
 
-    private var ratingText: String {
+    // F4: never synthesize a star rating from the match score. The compact card
+    // shows the real match % when available, otherwise just the bed count.
+    private var compactSubtitle: String {
         if let score = item.matchScore {
-            return String(format: "%.2f", max(4.5, Double(score) / 20))
+            return String(localized: "\(item.listing.bedrooms) beds · \(score)% match")
         }
-        return "4.8"
+        return String(localized: "\(item.listing.bedrooms) beds")
     }
 
     private var primaryLocation: String {

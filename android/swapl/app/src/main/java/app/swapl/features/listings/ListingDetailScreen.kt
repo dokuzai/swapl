@@ -45,7 +45,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.swapl.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -139,13 +142,23 @@ fun ListingDetailScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            "${d.listing.sleeps} guests · ${d.listing.bedrooms} bedroom${if (d.listing.bedrooms == 1) "" else "s"} · " +
-                "${d.listing.bathrooms} bath${if (d.listing.bathrooms == 1) "" else "s"} · ${d.listing.sizeSqm} m²",
+            stringResource(
+                R.string.detail_guests_rooms,
+                d.listing.sleeps,
+                pluralStringResource(R.plurals.detail_bedrooms, d.listing.bedrooms, d.listing.bedrooms),
+                pluralStringResource(R.plurals.detail_baths, d.listing.bathrooms, d.listing.bathrooms),
+                d.listing.sizeSqm,
+            ),
             style = MaterialTheme.typography.bodyMedium,
         )
         Text(
-            "Available ${d.listing.availableFrom.take(10)} → ${d.listing.availableTo.take(10)} · " +
-                "${d.listing.minStayDays}–${d.listing.maxStayDays} day stays",
+            stringResource(
+                R.string.detail_available_range,
+                localizedDate(d.listing.availableFrom),
+                localizedDate(d.listing.availableTo),
+                d.listing.minStayDays,
+                d.listing.maxStayDays,
+            ),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -165,7 +178,7 @@ fun ListingDetailScreen(
                     modifier = Modifier.size(18.dp),
                 )
                 Text(
-                    "$nightly points / night",
+                    stringResource(R.string.detail_points_per_night, nightly),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -174,17 +187,17 @@ fun ListingDetailScreen(
             // nightly value reflects only the room, not the whole home.
             if (d.listing.isPrivateRoom) {
                 Text(
-                    "This is a private room, so the nightly value reflects just the room — not the whole home.",
+                    stringResource(R.string.detail_private_room_note),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
 
-        KickerLabel("About this home")
+        KickerLabel(stringResource(R.string.detail_about_home))
         Text(d.listing.description, style = MaterialTheme.typography.bodyMedium)
 
-        KickerLabel("What this place offers")
+        KickerLabel(stringResource(R.string.detail_what_offered))
         AmenityGrid(amenities(d.listing))
 
         SurfaceCard(modifier = androidx.compose.ui.Modifier.clickable { onOpenHost(d.host.id) }) {
@@ -205,11 +218,11 @@ fun ListingDetailScreen(
                     )
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    KickerLabel("Hosted by")
-                    Text(d.host.name ?: "Anonymous", style = MaterialTheme.typography.titleLarge)
+                    KickerLabel(stringResource(R.string.detail_hosted_by))
+                    Text(d.host.name ?: stringResource(R.string.detail_anonymous), style = MaterialTheme.typography.titleLarge)
                     d.host.bio?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 }
-                if (d.host.verified) TagChip("Verified host")
+                if (d.host.verified) TagChip(stringResource(R.string.detail_verified_host))
             }
         }
 
@@ -219,7 +232,7 @@ fun ListingDetailScreen(
             // so this only ever appears on your own listing.
             d.listing.valuationExplanation?.let { NightlyKeysExplainer(it) }
 
-            PrimaryPill("Edit listing", onClick = { onEdit(d.listing.id) })
+            PrimaryPill(stringResource(R.string.detail_edit_listing), onClick = { onEdit(d.listing.id) })
             // Calendar editor (DOK-159): manage which dates are bookable —
             // see confirmed swaps/points stays and block your own dates.
             androidx.compose.material3.OutlinedButton(
@@ -227,7 +240,7 @@ fun ListingDetailScreen(
                 shape = CircleShape,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Manage availability")
+                Text(stringResource(R.string.detail_manage_availability))
             }
             // Optional owner-proof verification (DOK-162) — a trust badge, never
             // a publish gate. Hidden once approved.
@@ -249,16 +262,16 @@ fun ListingDetailScreen(
                     modifier = Modifier.size(18.dp),
                 )
                 androidx.compose.foundation.layout.Spacer(Modifier.size(SwaplSpacing.s2))
-                Text("Stay with points")
+                Text(stringResource(R.string.detail_stay_with_points))
             }
             Text(
-                "Book one-way using the travel points you earned hosting — no swap back needed. Use this when a direct swap isn't a fit.",
+                stringResource(R.string.detail_stay_with_points_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             androidx.compose.material3.TextButton(onClick = { showReport = true }) {
-                Text("Report this listing", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.detail_report_listing), color = MaterialTheme.colorScheme.error)
             }
         }
     }
@@ -281,10 +294,10 @@ fun ListingDetailScreen(
     if (keysStayRequested) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { keysStayRequested = false },
-            title = { Text("Request sent") },
-            text = { Text("Your points are held until the host confirms. You'll find this stay under Trips.") },
+            title = { Text(stringResource(R.string.detail_request_sent_title)) },
+            text = { Text(stringResource(R.string.detail_request_sent_body)) },
             confirmButton = {
-                androidx.compose.material3.TextButton(onClick = { keysStayRequested = false }) { Text("OK") }
+                androidx.compose.material3.TextButton(onClick = { keysStayRequested = false }) { Text(stringResource(R.string.common_ok)) }
             },
         )
     }
@@ -313,45 +326,56 @@ private fun ProposeCta(d: ListingDetailResponse, onPropose: () -> Unit) {
     when {
         d.viewerListingId == null -> {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                PrimaryPill("List your home first", onClick = {}, enabled = false)
+                PrimaryPill(stringResource(R.string.detail_list_home_first), onClick = {}, enabled = false)
                 Text(
-                    "Add your own listing before you can propose swaps.",
+                    stringResource(R.string.detail_list_home_first_body),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
-        else -> PrimaryPill("Propose a swap", onClick = onPropose)
+        else -> PrimaryPill(stringResource(R.string.detail_propose_swap), onClick = onPropose)
     }
 }
 
-// Same amenity catalogue and ordering as the iOS amenity grid.
-private fun amenities(l: Listing): List<Pair<String, ImageVector>> = buildList {
-    if (l.balcony) add("Balcony" to Icons.Default.Balcony)
-    if (l.rooftop) add("Rooftop" to Icons.Default.Roofing)
-    if (l.garden) add("Garden" to Icons.Default.Yard)
-    if (l.courtyard) add("Courtyard" to Icons.Default.Deck)
-    if (l.pool) add("Pool" to Icons.Default.Pool)
-    if (l.gym) add("Gym" to Icons.Default.FitnessCenter)
-    if (l.piano) add("Piano" to Icons.Default.Piano)
-    if (l.bikeIncluded) add("Bike included" to Icons.AutoMirrored.Default.DirectionsBike)
-    if (l.hasParking) add("Parking" to Icons.Default.LocalParking)
-    if (l.wfhSetup) add("Workspace" to Icons.Default.Computer)
-    if (l.petsAllowed) add("Pet friendly" to Icons.Default.Pets)
-    if (l.stepFreeAccess) add("Step-free" to Icons.Default.Accessible)
-    if (l.hasElevator) add("Elevator" to Icons.Default.Elevator)
-    if (l.ac) add("AC" to Icons.Default.AcUnit)
-    if (l.dishwasher) add("Dishwasher" to Icons.Default.Countertops)
-    if (l.washer) add("Washer" to Icons.Default.LocalLaundryService)
-    if (l.dryer) add("Dryer" to Icons.Default.Dry)
+// Localize an ISO date for display in the device locale (B2): "15 giu 2026"
+// in Italian, "Jun 15, 2026" in English. Falls back to the raw ISO date.
+private fun localizedDate(iso: String): String = runCatching {
+    java.time.LocalDate.parse(iso.take(10)).format(
+        java.time.format.DateTimeFormatter
+            .ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)
+            .withLocale(java.util.Locale.getDefault()),
+    )
+}.getOrDefault(iso.take(10))
+
+// Same amenity catalogue and ordering as the iOS amenity grid. Labels are
+// string-res ids resolved in the grid composable (B1).
+private fun amenities(l: Listing): List<Pair<Int, ImageVector>> = buildList {
+    if (l.balcony) add(R.string.amenity_balcony to Icons.Default.Balcony)
+    if (l.rooftop) add(R.string.amenity_rooftop to Icons.Default.Roofing)
+    if (l.garden) add(R.string.amenity_garden to Icons.Default.Yard)
+    if (l.courtyard) add(R.string.amenity_courtyard to Icons.Default.Deck)
+    if (l.pool) add(R.string.amenity_pool to Icons.Default.Pool)
+    if (l.gym) add(R.string.amenity_gym to Icons.Default.FitnessCenter)
+    if (l.piano) add(R.string.amenity_piano to Icons.Default.Piano)
+    if (l.bikeIncluded) add(R.string.amenity_bike to Icons.AutoMirrored.Default.DirectionsBike)
+    if (l.hasParking) add(R.string.amenity_parking to Icons.Default.LocalParking)
+    if (l.wfhSetup) add(R.string.amenity_workspace to Icons.Default.Computer)
+    if (l.petsAllowed) add(R.string.amenity_pets to Icons.Default.Pets)
+    if (l.stepFreeAccess) add(R.string.amenity_step_free to Icons.Default.Accessible)
+    if (l.hasElevator) add(R.string.amenity_elevator to Icons.Default.Elevator)
+    if (l.ac) add(R.string.amenity_ac to Icons.Default.AcUnit)
+    if (l.dishwasher) add(R.string.amenity_dishwasher to Icons.Default.Countertops)
+    if (l.washer) add(R.string.amenity_washer to Icons.Default.LocalLaundryService)
+    if (l.dryer) add(R.string.amenity_dryer to Icons.Default.Dry)
 }
 
 // Two-column amenity grid with icons, like iOS's "What this place offers".
 @Composable
-private fun AmenityGrid(items: List<Pair<String, ImageVector>>) {
+private fun AmenityGrid(items: List<Pair<Int, ImageVector>>) {
     if (items.isEmpty()) {
         Text(
-            "No amenities listed.",
+            stringResource(R.string.detail_no_amenities),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -360,14 +384,14 @@ private fun AmenityGrid(items: List<Pair<String, ImageVector>>) {
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
         items.chunked(2).forEach { rowItems ->
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2), modifier = Modifier.fillMaxWidth()) {
-                rowItems.forEach { (label, icon) ->
+                rowItems.forEach { (labelRes, icon) ->
                     Row(
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
                         modifier = Modifier.weight(1f),
                     ) {
                         Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
-                        Text(label, style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(labelRes), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
                 if (rowItems.size == 1) Box(Modifier.weight(1f))

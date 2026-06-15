@@ -196,4 +196,192 @@
     <string name="people_invite_field_placeholder">nome@email.com o @handle</string>
     <string name="people_invite_send">Invia invito</string>
     <string name="people_invite_cancel">Annulla</string>
+
+    <!-- Common -->
+    <string name="common_cancel">Annulla</string>
+    <string name="common_ok">OK</string>
+    <string name="common_retry">Riprova</string>
+
+    <!-- Valuta l\'app (M1) -->
+    <string name="account_rate_app">Valuta l\'app</string>
+    <string name="rate_app_title">Valuta l\'app</string>
+    <string name="rate_app_prompt">Come ti trovi con Swapl? La tua valutazione ci aiuta a migliorare.</string>
+    <string name="rate_app_score_label">La tua valutazione</string>
+    <string name="rate_app_comment_label">Vuoi aggiungere qualcosa?</string>
+    <string name="rate_app_comment_placeholder">Dicci cosa funziona — o cosa no (facoltativo)</string>
+    <string name="rate_app_submit">Invia</string>
+    <string name="rate_app_submitting">Invio…</string>
+
+    <!-- Account -->
+    <string name="account_profile_title">Profilo</string>
+    <string name="account_member_badge">Membro Swapl</string>
+    <string name="account_stat_waiting">In attesa</string>
+    <string name="account_stat_sent">Inviate</string>
+    <string name="account_stat_active">Attivi</string>
+    <string name="account_stat_homes">Case</string>
+    <string name="account_edit_home_title">Modifica la tua casa</string>
+    <string name="account_become_host_title">Diventa host</string>
+    <string name="account_edit_home_body">Aggiorna foto, date e dettagli.</string>
+    <string name="account_become_host_body">Pubblica la tua casa per iniziare a scambiare.</string>
+    <string name="account_section_settings">Impostazioni</string>
+    <string name="account_personal_info">Informazioni personali</string>
+    <string name="account_change_password">Cambia password</string>
+    <string name="account_passkeys">Accesso e sicurezza — Passkey</string>
+    <string name="account_passkeys_busy">Accesso e sicurezza — Passkey…</string>
+    <string name="account_privacy">Privacy</string>
+    <string name="account_notifications">Notifiche</string>
+    <string name="account_section_profile">Profilo</string>
+    <string name="account_view_profile">Vedi profilo</string>
+    <string name="account_your_story">La tua storia Swapl</string>
+    <string name="account_travel_points">Punti viaggio</string>
+    <string name="account_invite_earn">Invita e guadagna</string>
+    <string name="account_interests">Interessi</string>
+    <string name="account_saved_searches">Ricerche salvate</string>
+    <string name="account_travel_windows">Finestre di viaggio</string>
+    <string name="account_metrics">Metriche</string>
+    <string name="account_section_support">Assistenza</string>
+    <string name="account_get_help">Ricevi aiuto</string>
+    <string name="account_privacy_policy">Informativa sulla privacy</string>
+    <string name="account_terms">Termini di servizio</string>
+    <string name="account_log_out">Esci</string>
+    <string name="account_version">Versione %1$s (%2$d)</string>
+    <string name="account_signout_title">Vuoi uscire?</string>
+    <string name="account_signout_body">Dovrai accedere di nuovo per vedere i tuoi scambi.</string>
+    <string name="account_passkeys_dialog_title">Passkey</string>
+
+    <!-- Sfoglia -->
+    <string name="browse_title">Sfoglia</string>
+    <string name="browse_edit_home">Modifica la tua casa</string>
+    <string name="browse_list_home">+ Pubblica una casa</string>
+    <string name="browse_search_placeholder">Dove vuoi andare?</string>
+    <string name="browse_clear_search">Cancella ricerca</string>
+    <string name="browse_filters">Filtri</string>
+    <string name="browse_tab_homes">Case</string>
+    <string name="browse_tab_experiences">Esperienze</string>
+    <string name="browse_tab_services">Servizi</string>
+    <string name="browse_get_inspired_title">Lasciati ispirare</string>
+    <string name="browse_get_inspired_body">Descrivi il viaggio dei tuoi sogni — comporremo uno scambio per te.</string>
+    <string name="browse_sort">Ordina</string>
+    <string name="browse_sort_match">Più pertinenti</string>
+    <string name="browse_sort_newest">Più recenti</string>
+    <string name="browse_sort_largest">Più grandi</string>
+    <string name="browse_error_title">Case non disponibili</string>
+    <string name="browse_error_body">Non siamo riusciti a raggiungere Swapl. Controlla la connessione e riprova.</string>
+    <string name="browse_empty_title">Nessuna casa trovata</string>
+    <string name="browse_empty_body">Le nuove case compaiono qui man mano che i membri le pubblicano.</string>
+    <string name="browse_guests_size_type">%1$d ospiti · %2$d m² · %3$s</string>
+    <string name="browse_tag_featured">In evidenza</string>
+    <string name="browse_tag_verified">Verificata</string>
+    <!-- Filtri -->
+    <string name="filter_title">Filtri</string>
+    <string name="filter_when">Quando</string>
+    <string name="filter_from">Dal</string>
+    <string name="filter_to">Al</string>
+    <string name="filter_clear_dates">Cancella date</string>
+    <string name="filter_property_type">Tipo di immobile</string>
+    <string name="filter_min_size">Dimensione minima: %1$d m²</string>
+    <string name="filter_min_sleeps">Posti letto almeno: %1$d</string>
+    <string name="filter_pets">Solo case che accettano animali</string>
+    <string name="filter_wfh">Solo case con postazione di lavoro</string>
+    <string name="filter_step_free">Solo case senza barriere</string>
+    <string name="filter_reset">Reimposta</string>
+    <string name="filter_show_homes">Mostra case</string>
+
+    <!-- Dettaglio annuncio -->
+    <string name="detail_guests_rooms">%1$d ospiti · %2$s · %3$s · %4$d m²</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="one">%1$d camera</item>
+        <item quantity="other">%1$d camere</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="one">%1$d bagno</item>
+        <item quantity="other">%1$d bagni</item>
+    </plurals>
+    <string name="detail_available_range">Disponibile dal %1$s al %2$s · soggiorni di %3$d–%4$d giorni</string>
+    <string name="detail_points_per_night">%1$d punti / notte</string>
+    <string name="detail_private_room_note">Questa è una stanza privata, quindi il valore a notte riflette solo la stanza — non l\'intera casa.</string>
+    <string name="detail_about_home">Su questa casa</string>
+    <string name="detail_what_offered">Cosa offre questo alloggio</string>
+    <string name="detail_hosted_by">Ospitato da</string>
+    <string name="detail_anonymous">Anonimo</string>
+    <string name="detail_verified_host">Host verificato</string>
+    <string name="detail_edit_listing">Modifica annuncio</string>
+    <string name="detail_manage_availability">Gestisci disponibilità</string>
+    <string name="detail_propose_swap">Proponi uno scambio</string>
+    <string name="detail_list_home_first">Prima pubblica la tua casa</string>
+    <string name="detail_list_home_first_body">Aggiungi il tuo annuncio prima di poter proporre scambi.</string>
+    <string name="detail_stay_with_points">Soggiorna con i punti</string>
+    <string name="detail_stay_with_points_body">Prenota di sola andata usando i punti viaggio guadagnati ospitando — nessuno scambio di ritorno richiesto. Usalo quando uno scambio diretto non è adatto.</string>
+    <string name="detail_report_listing">Segnala questo annuncio</string>
+    <string name="detail_no_amenities">Nessun servizio indicato.</string>
+    <string name="detail_request_sent_title">Richiesta inviata</string>
+    <string name="detail_request_sent_body">I tuoi punti restano bloccati finché l\'host non conferma. Troverai questo soggiorno in Viaggi.</string>
+    <!-- Servizi -->
+    <string name="amenity_balcony">Balcone</string>
+    <string name="amenity_rooftop">Terrazza</string>
+    <string name="amenity_garden">Giardino</string>
+    <string name="amenity_courtyard">Cortile</string>
+    <string name="amenity_pool">Piscina</string>
+    <string name="amenity_gym">Palestra</string>
+    <string name="amenity_piano">Pianoforte</string>
+    <string name="amenity_bike">Bici inclusa</string>
+    <string name="amenity_parking">Parcheggio</string>
+    <string name="amenity_workspace">Postazione di lavoro</string>
+    <string name="amenity_pets">Animali ammessi</string>
+    <string name="amenity_step_free">Senza barriere</string>
+    <string name="amenity_elevator">Ascensore</string>
+    <string name="amenity_ac">Aria condizionata</string>
+    <string name="amenity_dishwasher">Lavastoviglie</string>
+    <string name="amenity_washer">Lavatrice</string>
+    <string name="amenity_dryer">Asciugatrice</string>
+
+    <!-- Proponi scambio -->
+    <string name="propose_title">Proponi uno scambio</string>
+    <string name="propose_message_label">Messaggio (facoltativo)</string>
+    <string name="propose_drafting">Scrittura…</string>
+    <string name="propose_write_for_me">Scrivilo per me</string>
+    <string name="propose_rewrite_ai">Riscrivi con l\'AI</string>
+    <string name="propose_draft_failed">Non è stato possibile creare un messaggio ora</string>
+    <string name="propose_send">Invia</string>
+
+    <!-- Conversazione di scambio -->
+    <string name="thread_with">con %1$s</string>
+    <string name="thread_open_chat">Apri chat</string>
+    <string name="thread_open_chat_with">Apri chat con %1$s</string>
+    <string name="thread_view_profile">Vedi il profilo di %1$s</string>
+    <string name="thread_host_fallback">host</string>
+    <string name="thread_host_fallback_possessive">il tuo host</string>
+    <string name="thread_proposal">Proposta</string>
+    <string name="thread_counter">Controproposta</string>
+    <string name="thread_size_sleeps">%1$d m² · posti letto %2$d</string>
+    <string name="thread_accept">Accetta scambio</string>
+    <string name="thread_counter_offer">Controproposta</string>
+    <string name="thread_decline">Rifiuta</string>
+    <string name="thread_withdraw">Ritira</string>
+    <string name="thread_message_optional">Messaggio (facoltativo)</string>
+    <!-- Consenso all\'accettazione + feedback azioni (M4) -->
+    <string name="thread_accept_confirm_title">Accettare questo scambio?</string>
+    <string name="thread_accept_confirm_body">Accettando confermi le date e viene emessa l\'assicurazione di viaggio per il soggiorno — entrambe le case sono quindi coperte. Potrai comunque chattare per coordinare la consegna.</string>
+    <string name="thread_accept_confirm_cta">Accetta e assicura</string>
+    <string name="thread_decline_confirm_title">Rifiutare questo scambio?</string>
+    <string name="thread_decline_confirm_body">Questo rifiuta la proposta. Non puoi annullare l\'azione, ma potrai sempre inviarne una nuova più avanti.</string>
+    <string name="thread_withdraw_confirm_title">Ritirare questa proposta?</string>
+    <string name="thread_withdraw_confirm_body">Questo ritira la tua offerta. Potrai inviarne una nuova più avanti.</string>
+    <string name="thread_accepted_toast">Scambio accettato — il tuo soggiorno è assicurato.</string>
+    <string name="thread_declined_toast">Proposta rifiutata.</string>
+    <string name="thread_withdrawn_toast">Proposta ritirata.</string>
+    <string name="thread_countered_toast">Controproposta inviata.</string>
+
+    <!-- Lascia una recensione -->
+    <string name="review_title">Lascia una recensione</string>
+    <string name="review_prompt">Com\'è andato lo scambio con %1$s?</string>
+    <string name="review_partner_fallback">il tuo partner di scambio</string>
+    <string name="review_rating_label">La tua valutazione</string>
+    <string name="review_text_label">La tua recensione</string>
+    <string name="review_text_placeholder">Com\'era la casa, il quartiere, la consegna delle chiavi?</string>
+    <string name="review_min_chars">Almeno 20 caratteri — %1$d finora.</string>
+    <string name="review_submit">Invia recensione</string>
+    <string name="review_submitting">Invio…</string>
+    <string name="review_card_title">Com\'è andato lo scambio?</string>
+    <string name="review_card_body">Lascia una recensione a %1$s — comparirà sul suo profilo pubblico.</string>
 </resources>

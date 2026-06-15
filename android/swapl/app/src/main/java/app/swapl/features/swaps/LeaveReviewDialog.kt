@@ -25,9 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import app.swapl.R
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.SurfaceCard
 import app.swapl.designtokens.SwaplColors
@@ -49,21 +51,22 @@ fun LeaveReviewDialog(
     var text by remember { mutableStateOf("") }
     val trimmed = text.trim()
     val isValid = rating in 1..5 && trimmed.length in 20..1000
+    val partnerName = otherName ?: stringResource(R.string.review_partner_fallback)
 
     AlertDialog(
         onDismissRequest = { if (!isSubmitting) onDismiss() },
-        title = { Text("Leave a review") },
+        title = { Text(stringResource(R.string.review_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                 Text(
-                    "How was your swap with ${otherName ?: "your swap partner"}?",
+                    stringResource(R.string.review_prompt, partnerName),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                KickerLabel("Your rating")
+                KickerLabel(stringResource(R.string.review_rating_label))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
-                    modifier = Modifier.semantics { contentDescription = "$rating out of 5 stars" },
+                    modifier = Modifier.semantics { contentDescription = "$rating / 5" },
                 ) {
                     (1..5).forEach { n ->
                         Icon(
@@ -76,15 +79,15 @@ fun LeaveReviewDialog(
                         )
                     }
                 }
-                KickerLabel("Your review")
+                KickerLabel(stringResource(R.string.review_text_label))
                 OutlinedTextField(
                     text,
                     { text = it },
-                    placeholder = { Text("How was the home, the neighbourhood, the handover?") },
+                    placeholder = { Text(stringResource(R.string.review_text_placeholder)) },
                     enabled = !isSubmitting,
                     supportingText = {
                         if (trimmed.isNotEmpty() && trimmed.length < 20) {
-                            Text("At least 20 characters — ${trimmed.length} so far.")
+                            Text(stringResource(R.string.review_min_chars, trimmed.length))
                         }
                     },
                     modifier = Modifier
@@ -100,10 +103,10 @@ fun LeaveReviewDialog(
             TextButton(
                 enabled = isValid && !isSubmitting,
                 onClick = { onSubmit(rating, trimmed) },
-            ) { Text(if (isSubmitting) "Submitting…" else "Submit review") }
+            ) { Text(if (isSubmitting) stringResource(R.string.review_submitting) else stringResource(R.string.review_submit)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !isSubmitting) { Text("Cancel") }
+            TextButton(onClick = onDismiss, enabled = !isSubmitting) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }
@@ -123,9 +126,9 @@ fun LeaveReviewCard(otherName: String?, onClick: () -> Unit) {
                 tint = MaterialTheme.colorScheme.primary,
             )
             Column {
-                Text("How was your swap?", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.review_card_title), style = MaterialTheme.typography.titleLarge)
                 Text(
-                    "Leave ${otherName ?: "your swap partner"} a review — it shows on their public profile.",
+                    stringResource(R.string.review_card_body, otherName ?: stringResource(R.string.review_partner_fallback)),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

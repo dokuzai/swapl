@@ -51,7 +51,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.annotation.StringRes
+import app.swapl.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.swapl.core.model.ListingWithScore
@@ -70,18 +73,18 @@ import app.swapl.features.discover.ServicesTab
 import androidx.compose.ui.graphics.vector.ImageVector
 
 private val SORT_OPTIONS = listOf(
-    "match" to "Best match",
-    "newest" to "Newest",
-    "size_desc" to "Largest",
+    "match" to R.string.browse_sort_match,
+    "newest" to R.string.browse_sort_newest,
+    "size_desc" to R.string.browse_sort_largest,
 )
 
 // Airbnb-style section chips under the search field (DOK-145). Homes is the
 // classic browse list; Experiences/Services are the env-gated affiliate
 // catalogue tabs.
-private enum class BrowseTab(val label: String, val icon: ImageVector) {
-    Homes("Homes", Icons.Default.Home),
-    Experiences("Experiences", Icons.Default.AutoAwesome),
-    Services("Services", Icons.Default.RoomService),
+private enum class BrowseTab(@StringRes val label: Int, val icon: ImageVector) {
+    Homes(R.string.browse_tab_homes, Icons.Default.Home),
+    Experiences(R.string.browse_tab_experiences, Icons.Default.AutoAwesome),
+    Services(R.string.browse_tab_services, Icons.Default.RoomService),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,13 +109,13 @@ fun BrowseScreen(
             modifier = Modifier.padding(horizontal = SwaplSpacing.s5, vertical = SwaplSpacing.s3).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("Browse", style = MaterialTheme.typography.displaySmall, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.browse_title), style = MaterialTheme.typography.displaySmall, modifier = Modifier.weight(1f))
             SortMenu(current = state.filters.sort, onSelect = { vm.setSort(it) })
             val ownListingId = state.viewerListingId
             if (ownListingId != null) {
-                TextButton(onClick = { onEditOwn(ownListingId) }) { Text("Edit your home") }
+                TextButton(onClick = { onEditOwn(ownListingId) }) { Text(stringResource(R.string.browse_edit_home)) }
             } else {
-                TextButton(onClick = onNew) { Text("+ List a home") }
+                TextButton(onClick = onNew) { Text(stringResource(R.string.browse_list_home)) }
             }
         }
 
@@ -126,12 +129,12 @@ fun BrowseScreen(
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = { Text("Where to?") },
+                placeholder = { Text(stringResource(R.string.browse_search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (query.isNotEmpty()) {
                         IconButton(onClick = { query = ""; vm.setCityQuery("") }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear search")
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.browse_clear_search))
                         }
                     }
                 },
@@ -142,7 +145,7 @@ fun BrowseScreen(
                 modifier = Modifier.weight(1f),
             )
             FilledTonalIconButton(onClick = { showFilters = true }) {
-                Icon(Icons.Default.Tune, contentDescription = "Filters")
+                Icon(Icons.Default.Tune, contentDescription = stringResource(R.string.browse_filters))
             }
         }
         Spacer(Modifier.height(SwaplSpacing.s2))
@@ -160,7 +163,7 @@ fun BrowseScreen(
                 FilterChip(
                     selected = tab == t,
                     onClick = { tab = t },
-                    label = { Text(t.label) },
+                    label = { Text(stringResource(t.label)) },
                     leadingIcon = {
                         Icon(t.icon, contentDescription = null, modifier = Modifier.height(18.dp))
                     },
@@ -233,9 +236,9 @@ private fun GetInspiredBanner(onClick: () -> Unit) {
         ) {
             Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f)) {
-                Text("Get Inspired", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.browse_get_inspired_title), style = MaterialTheme.typography.titleLarge)
                 Text(
-                    "Describe your dream trip — we'll compose a swap for you.",
+                    stringResource(R.string.browse_get_inspired_body),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -272,18 +275,18 @@ private fun FilterSheet(
             Modifier.padding(horizontal = SwaplSpacing.s5).padding(bottom = SwaplSpacing.s8),
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
         ) {
-            Text("Filters", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.filter_title), style = MaterialTheme.typography.headlineMedium)
 
-            KickerLabel("When")
+            KickerLabel(stringResource(R.string.filter_when))
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2), modifier = Modifier.fillMaxWidth()) {
-                DateField("From", dateFrom, { dateFrom = it }, modifier = Modifier.weight(1f))
-                DateField("To", dateTo, { dateTo = it }, modifier = Modifier.weight(1f))
+                DateField(stringResource(R.string.filter_from), dateFrom, { dateFrom = it }, modifier = Modifier.weight(1f))
+                DateField(stringResource(R.string.filter_to), dateTo, { dateTo = it }, modifier = Modifier.weight(1f))
             }
             if (dateFrom.isNotEmpty() || dateTo.isNotEmpty()) {
-                TextButton(onClick = { dateFrom = ""; dateTo = "" }) { Text("Clear dates") }
+                TextButton(onClick = { dateFrom = ""; dateTo = "" }) { Text(stringResource(R.string.filter_clear_dates)) }
             }
 
-            KickerLabel("Property type")
+            KickerLabel(stringResource(R.string.filter_property_type))
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 PROPERTY_TYPES.forEach { t ->
                     FilterChip(
@@ -294,15 +297,15 @@ private fun FilterSheet(
                 }
             }
 
-            KickerLabel("Minimum size: ${minSqm.toInt()} m²")
+            KickerLabel(stringResource(R.string.filter_min_size, minSqm.toInt()))
             Slider(value = minSqm, onValueChange = { minSqm = it }, valueRange = 30f..200f, steps = 16)
 
-            KickerLabel("Sleeps at least: ${minSleeps.toInt()}")
+            KickerLabel(stringResource(R.string.filter_min_sleeps, minSleeps.toInt()))
             Slider(value = minSleeps, onValueChange = { minSleeps = it }, valueRange = 1f..10f, steps = 8)
 
-            FilterSwitch("Pets welcome", pets) { pets = it }
-            FilterSwitch("Work-from-home setup", wfh) { wfh = it }
-            FilterSwitch("Step-free access", stepFree) { stepFree = it }
+            FilterSwitch(stringResource(R.string.filter_pets), pets) { pets = it }
+            FilterSwitch(stringResource(R.string.filter_wfh), wfh) { wfh = it }
+            FilterSwitch(stringResource(R.string.filter_step_free), stepFree) { stepFree = it }
 
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2), modifier = Modifier.fillMaxWidth()) {
                 TextButton(
@@ -311,10 +314,10 @@ private fun FilterSheet(
                         pets = false; wfh = false; stepFree = false
                         dateFrom = ""; dateTo = ""
                     },
-                ) { Text("Reset") }
+                ) { Text(stringResource(R.string.filter_reset)) }
                 Spacer(Modifier.weight(1f))
                 PrimaryPill(
-                    text = "Show homes",
+                    text = stringResource(R.string.filter_show_homes),
                     onClick = {
                         onApply(
                             current.copy(
@@ -349,12 +352,12 @@ private fun SortMenu(current: String, onSelect: (String) -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box {
         IconButton(onClick = { open = true }) {
-            Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = "Sort")
+            Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = stringResource(R.string.browse_sort))
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            SORT_OPTIONS.forEach { (value, label) ->
+            SORT_OPTIONS.forEach { (value, labelRes) ->
                 DropdownMenuItem(
-                    text = { Text(label) },
+                    text = { Text(stringResource(labelRes)) },
                     leadingIcon = { RadioButton(selected = current == value, onClick = null) },
                     onClick = { open = false; onSelect(value) },
                 )
@@ -370,15 +373,15 @@ private fun ErrorState(onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Homes unavailable", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.browse_error_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "We couldn't reach Swapl. Check your connection and try again.",
+            stringResource(R.string.browse_error_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(SwaplSpacing.s3))
-        TextButton(onClick = onRetry) { Text("Retry") }
+        TextButton(onClick = onRetry) { Text(stringResource(R.string.common_retry)) }
     }
 }
 
@@ -389,10 +392,10 @@ private fun EmptyState() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("No homes found", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.browse_empty_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "New homes appear here as members publish them.",
+            stringResource(R.string.browse_empty_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -428,15 +431,20 @@ private fun ListingCard(
                     )
                     Spacer(Modifier.height(2.dp))
                     Text(
-                        "${item.listing.sleeps} guests · ${item.listing.sizeSqm} m² · ${item.listing.propertyType.lowercase()}",
+                        stringResource(
+                            R.string.browse_guests_size_type,
+                            item.listing.sleeps,
+                            item.listing.sizeSqm,
+                            item.listing.propertyType.lowercase(),
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 when {
                     item.matchScore != null -> MatchBadge(item.matchScore)
-                    item.band == "featured" -> TagChip("Featured")
-                    item.band == "verified" -> TagChip("Verified")
+                    item.band == "featured" -> TagChip(stringResource(R.string.browse_tag_featured))
+                    item.band == "verified" -> TagChip(stringResource(R.string.browse_tag_verified))
                 }
             }
         }

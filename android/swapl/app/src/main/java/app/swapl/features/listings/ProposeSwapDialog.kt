@@ -22,7 +22,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.swapl.R
 import app.swapl.core.repository.ProposalRepository
 import app.swapl.design.components.DateField
 import app.swapl.designtokens.SwaplSpacing
@@ -120,14 +122,14 @@ fun ProposeSwapDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Propose a swap") },
+        title = { Text(stringResource(R.string.propose_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                DateField("From", from, { from = it }, modifier = Modifier.fillMaxWidth())
-                DateField("To", to, { to = it }, modifier = Modifier.fillMaxWidth())
+                DateField(stringResource(R.string.filter_from), from, { from = it }, modifier = Modifier.fillMaxWidth())
+                DateField(stringResource(R.string.filter_to), to, { to = it }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(
                     msg, { msg = it },
-                    label = { Text("Message (optional)") },
+                    label = { Text(stringResource(R.string.propose_message_label)) },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                 )
@@ -138,11 +140,11 @@ fun ProposeSwapDialog(
                     if (vm.isDrafting) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                         Spacer(Modifier.width(SwaplSpacing.s2))
-                        Text("Drafting…")
+                        Text(stringResource(R.string.propose_drafting))
                     } else {
                         Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.width(SwaplSpacing.s2))
-                        Text(if (msg.isBlank()) "Write it for me" else "Rewrite with AI")
+                        Text(if (msg.isBlank()) stringResource(R.string.propose_write_for_me) else stringResource(R.string.propose_rewrite_ai))
                     }
                 }
                 vm.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
@@ -159,8 +161,8 @@ fun ProposeSwapDialog(
                         message = msg.ifBlank { null }
                     )
                 }
-            ) { Text("Send") }
+            ) { Text(stringResource(R.string.propose_send)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }

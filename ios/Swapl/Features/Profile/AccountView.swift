@@ -13,12 +13,16 @@ struct AccountView: View {
     @State private var editingListing: Listing?
     @State private var helpItem: SafariItem?
     @State private var isChangingPassword = false
+    @State private var isRatingApp = false
+    // Real, data-driven profile stats (F19) — replaces the previously
+    // hardcoded "2 Trips / 1 Home / 2026 / verified". nil until /api/me loads.
+    @State private var me: MeResponse?
 
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
                 ScrollView {
-                    SwaplPageTitle("Profile")
+                    SwaplPageTitle(String(localized: "Profile"))
                     VStack(alignment: .leading, spacing: 24) {
                         profileCard
                         quickCards
@@ -32,53 +36,59 @@ struct AccountView: View {
 
                         // Airbnb-style settings jump list (DOK-147), mirroring
                         // the web /account sections.
-                        sectionHeader("Personal information")
-                        NavigationLink { PersonalInfoView() } label: { portedMenuRow("Personal information", "person.text.rectangle") }
+                        sectionHeader(String(localized: "Personal information"))
+                        NavigationLink { PersonalInfoView() } label: { portedMenuRow(String(localized: "Personal information"), "person.text.rectangle") }
                             .buttonStyle(.plain)
-                        NavigationLink { InterestsEditorView() } label: { portedMenuRow("Interests", "heart.text.square") }
+                        NavigationLink { InterestsEditorView() } label: { portedMenuRow(String(localized: "Interests"), "heart.text.square") }
                             .buttonStyle(.plain)
-                        NavigationLink { SavedSearchesView() } label: { portedMenuRow("Saved searches", "magnifyingglass") }
+                        NavigationLink { SavedSearchesView() } label: { portedMenuRow(String(localized: "Saved searches"), "magnifyingglass") }
                             .buttonStyle(.plain)
-                        NavigationLink { TravelWindowsView() } label: { portedMenuRow("Travel windows", "calendar.badge.clock") }
+                        NavigationLink { TravelWindowsView() } label: { portedMenuRow(String(localized: "Travel windows"), "calendar.badge.clock") }
                             .buttonStyle(.plain)
-                        NavigationLink { SwaplStoryView() } label: { portedMenuRow("Your Swapl story", "book.closed") }
+                        NavigationLink { SwaplStoryView() } label: { portedMenuRow(String(localized: "Your Swapl story"), "book.closed") }
                             .buttonStyle(.plain)
                         if let userId = auth.session?.id {
-                            NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow("View public profile", "person") }
+                            NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow(String(localized: "View public profile"), "person") }
                                 .buttonStyle(.plain)
                         }
 
-                        sectionHeader("Login & security")
+                        sectionHeader(String(localized: "Login & security"))
                         Button {
                             isChangingPassword = true
                         } label: {
-                            portedMenuRow("Change password", "lock.rotation")
+                            portedMenuRow(String(localized: "Change password"), "lock.rotation")
                         }
                         .buttonStyle(.plain)
-                        NavigationLink { PasskeysView() } label: { portedMenuRow("Passkeys", "person.badge.key") }
+                        NavigationLink { PasskeysView() } label: { portedMenuRow(String(localized: "Passkeys"), "person.badge.key") }
                             .buttonStyle(.plain)
 
-                        sectionHeader("Privacy")
-                        NavigationLink { PrivacySettingsView() } label: { portedMenuRow("Privacy", "hand.raised") }
+                        sectionHeader(String(localized: "Privacy"))
+                        NavigationLink { PrivacySettingsView() } label: { portedMenuRow(String(localized: "Privacy"), "hand.raised") }
                             .buttonStyle(.plain)
-                        NavigationLink { TravelProfileView() } label: { portedMenuRow("Your travel profile", "sparkles") }
-                            .buttonStyle(.plain)
-
-                        sectionHeader("Notifications")
-                        NavigationLink { NotificationSettingsView() } label: { portedMenuRow("Notifications", "bell") }
+                        NavigationLink { TravelProfileView() } label: { portedMenuRow(String(localized: "Your travel profile"), "sparkles") }
                             .buttonStyle(.plain)
 
-                        sectionHeader("Get help")
+                        sectionHeader(String(localized: "Notifications"))
+                        NavigationLink { NotificationSettingsView() } label: { portedMenuRow(String(localized: "Notifications"), "bell") }
+                            .buttonStyle(.plain)
+
+                        sectionHeader(String(localized: "Get help"))
                         Button {
                             helpItem = SafariItem(url: URL(string: "https://swapl.fun/contact")!)
                         } label: {
-                            portedMenuRow("Contact Swapl support", "questionmark.circle")
+                            portedMenuRow(String(localized: "Contact Swapl support"), "questionmark.circle")
+                        }
+                        .buttonStyle(.plain)
+                        Button {
+                            isRatingApp = true
+                        } label: {
+                            portedMenuRow(String(localized: "Rate the app"), "star")
                         }
                         .buttonStyle(.plain)
 
                         if auth.isAdmin {
-                            sectionHeader("Admin")
-                            NavigationLink { MetricsView() } label: { portedMenuRow("Metrics", "chart.bar") }
+                            sectionHeader(String(localized: "Admin"))
+                            NavigationLink { MetricsView() } label: { portedMenuRow(String(localized: "Metrics"), "chart.bar") }
                                 .buttonStyle(.plain)
                         }
 
@@ -94,7 +104,7 @@ struct AccountView: View {
                 Button {
                     isCreatingListing = true
                 } label: {
-                    Label("Switch to hosting", systemImage: "arrow.up.arrow.down")
+                    Label(String(localized: "Switch to hosting"), systemImage: "arrow.up.arrow.down")
                         .font(.swaplBody(17, weight: .bold))
                         .foregroundStyle(SwaplSemanticLight.primaryForeground)
                         .padding(.horizontal, 26)
@@ -120,18 +130,22 @@ struct AccountView: View {
                 }
             }
             .task { await loadMyListing() }
+            .task { await loadMe() }
             .sheet(isPresented: $isChangingPassword) {
                 ChangePasswordSheet()
+            }
+            .sheet(isPresented: $isRatingApp) {
+                RateAppSheet()
             }
             .sheet(item: $helpItem) { item in
                 SafariView(url: item.url)
                     .ignoresSafeArea()
             }
-            .confirmationDialog("Sign out of Swapl?", isPresented: $isConfirmingSignOut, titleVisibility: .visible) {
-                Button("Sign out", role: .destructive) {
+            .confirmationDialog(String(localized: "Sign out of Swapl?"), isPresented: $isConfirmingSignOut, titleVisibility: .visible) {
+                Button(String(localized: "Sign out"), role: .destructive) {
                     Task { await auth.signOut() }
                 }
-                Button("Cancel", role: .cancel) {}
+                Button(String(localized: "Cancel"), role: .cancel) {}
             }
         }
     }
@@ -147,7 +161,7 @@ struct AccountView: View {
     private var versionFooter: some View {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
-        return Text("Version \(version) (\(build))")
+        return Text(String(localized: "Version \(version) (\(build))"))
             .font(.swaplMono(SwaplDesignSystem.FontSize.tiny))
             .foregroundStyle(AirbnbPalette.secondaryText)
             .frame(maxWidth: .infinity, alignment: .center)
@@ -179,29 +193,35 @@ struct AccountView: View {
                                 .font(.swaplDisplay(44, weight: .semibold))
                                 .foregroundStyle(SwaplSemanticLight.primaryForeground)
                         }
-                    Image(systemName: "checkmark.shield.fill")
-                        .font(.system(size: 24, weight: .semibold))
-                        .foregroundStyle(SwaplSemanticLight.primaryForeground)
-                        .frame(width: 44, height: 44)
-                        .background(SwaplSemanticLight.primary, in: Circle())
-                        .overlay(Circle().stroke(SwaplSemanticLight.card, lineWidth: 4))
+                    // Verified badge is gated on real verification status
+                    // (F19) — only an ID-verified member sees the shield.
+                    if me?.user.verified == true {
+                        Image(systemName: "checkmark.shield.fill")
+                            .font(.system(size: 24, weight: .semibold))
+                            .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                            .frame(width: 44, height: 44)
+                            .background(SwaplSemanticLight.primary, in: Circle())
+                            .overlay(Circle().stroke(SwaplSemanticLight.card, lineWidth: 4))
+                    }
                 }
                 Text(displayName)
                     .font(.swaplDisplay(30, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .lineLimit(1)
-                Text("Swapl member")
+                Text(String(localized: "Swapl member"))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
             .frame(maxWidth: .infinity)
 
+            // Real stats from /api/me (F19). Until it loads we show em-dashes
+            // rather than fabricated numbers.
             VStack(alignment: .leading, spacing: 14) {
-                profileStat("2", "Trips")
+                profileStat(activeSwapsValue, String(localized: "Swaps"))
                 Divider()
-                profileStat("1", "Home")
+                profileStat(homesValue, homesLabel)
                 Divider()
-                profileStat("2026", "Member since")
+                profileStat(memberSinceValue, String(localized: "Member since"))
             }
             .frame(width: 120, alignment: .leading)
         }
@@ -216,8 +236,8 @@ struct AccountView: View {
 
     private var quickCards: some View {
         HStack(spacing: 14) {
-            ProfileFeatureCard(title: "Past trips", subtitle: "Your completed swaps", systemImage: "suitcase.rolling")
-            ProfileFeatureCard(title: "Connections", subtitle: "Hosts you know", systemImage: "person.2")
+            ProfileFeatureCard(title: String(localized: "Past trips"), subtitle: String(localized: "Your completed swaps"), systemImage: "suitcase.rolling")
+            ProfileFeatureCard(title: String(localized: "Connections"), subtitle: String(localized: "Hosts you know"), systemImage: "person.2")
         }
     }
 
@@ -240,11 +260,11 @@ struct AccountView: View {
                 .frame(width: 86, height: 86)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(myListing == nil ? "Become a host" : "Edit your home")
+                    Text(myListing == nil ? String(localized: "Become a host") : String(localized: "Edit your home"))
                         .font(.swaplDisplay(23, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
-                    Text(myListing.map { "Update \"\($0.title)\" — photos, dates, amenities." }
-                        ?? "Create your home listing and start proposing swaps.")
+                    Text(myListing.map { String(localized: "Update \"\($0.title)\" — photos, dates, amenities.") }
+                        ?? String(localized: "Create your home listing and start proposing swaps."))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
@@ -281,10 +301,10 @@ struct AccountView: View {
                 .frame(width: 86, height: 86)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Travel points")
+                    Text(String(localized: "Travel points"))
                         .font(.swaplDisplay(23, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
-                    Text("Your points balance, history, and gifting — stay somewhere without a simultaneous swap.")
+                    Text(String(localized: "Your points balance, history, and gifting — stay somewhere without a simultaneous swap."))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
@@ -322,10 +342,10 @@ struct AccountView: View {
                 .frame(width: 86, height: 86)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Invite & earn")
+                    Text(String(localized: "Invite & earn"))
                         .font(.swaplDisplay(23, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
-                    Text("Bring friends, earn travel points, and jump the early-access line.")
+                    Text(String(localized: "Bring friends, earn travel points, and jump the early-access line."))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
@@ -353,7 +373,7 @@ struct AccountView: View {
                 Image(systemName: "door.left.hand.open")
                     .font(.system(size: 24, weight: .regular))
                     .frame(width: 34)
-                Text("Log out")
+                Text(String(localized: "Log out"))
                     .font(.swaplBody(18, weight: .semibold))
                 Spacer()
             }
@@ -389,6 +409,31 @@ struct AccountView: View {
         } catch {
             // Non-fatal: the card simply stays in "Become a host" mode.
         }
+    }
+
+    private func loadMe() async {
+        guard auth.session != nil else { return }
+        me = try? await ProfileRepository.shared.me()
+    }
+
+    // Real, data-driven profile stats (F19). "—" while loading.
+    private var activeSwapsValue: String {
+        me.map { String($0.counts.activeSwaps) } ?? "—"
+    }
+
+    private var homesValue: String {
+        me.map { String($0.counts.listings) } ?? "—"
+    }
+
+    private var homesLabel: String {
+        (me?.counts.listings == 1) ? String(localized: "Home") : String(localized: "Homes")
+    }
+
+    private var memberSinceValue: String {
+        guard let createdAt = me?.user.createdAt,
+              let date = SwaplDateText.parse(createdAt) ?? ISO8601DateFormatter().date(from: createdAt)
+        else { return "—" }
+        return String(Calendar.current.component(.year, from: date))
     }
 
     private var displayName: String {

@@ -72,6 +72,7 @@
 		8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C16E51E119668C1E262BDB /* ListingRepository.swift */; };
 		8E25C2BCDFF5B26158833E9D /* ConversationPeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A688EA805E6089C0F4C00878 /* ConversationPeopleView.swift */; };
 		8FAA1E0A4B5259CACC27EE32 /* CityIllust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988E469B97C24C69D3CF04E2 /* CityIllust.swift */; };
+		916F1E53FE23D2DCF28627A4 /* RateAppSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E8D113F3B8A4A14DCC8140 /* RateAppSheet.swift */; };
 		91F501F91EB061312E6E69A5 /* SwaplEmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE353FCCFCE3DBB83ED7C8D /* SwaplEmptyState.swift */; };
 		9239CF5AF751A30FC933193F /* ProofOfCoverBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9625256FBF2791330991EDB3 /* ProofOfCoverBadge.swift */; };
 		94A7376576B5EFD95D9F3E6C /* WaysToEarnKeysSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437D4F5127D670D35AE1E443 /* WaysToEarnKeysSection.swift */; };
@@ -84,6 +85,7 @@
 		A3C42260DE018B11E3962F69 /* ListingCalendarEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14FDEA84A230FABDE69D564 /* ListingCalendarEditorView.swift */; };
 		A3E8A7FCE8B90BCB13F32DB6 /* ChatRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8AE27ECD7EFCDAD0C6D9E5F /* ChatRepository.swift */; };
 		A4612BDBF2A88F47402144CE /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7B4163FD122E68FB389640 /* Availability.swift */; };
+		A4DE418F40F63D5D46A60B30 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 53980DEFAFB361B5E8294BA3 /* Localizable.xcstrings */; };
 		A8F5EDDBDBC5050DDAC4A6AD /* WishlistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD770B97A9384AAECAFF4F3 /* WishlistsView.swift */; };
 		AC754A8C18363E68BFAC274A /* AIDraftRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */; };
 		ACD9753C612C2870B11AE400 /* TravelWindowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F55E6580093FF8311EB4091 /* TravelWindowsView.swift */; };
@@ -96,6 +98,7 @@
 		C4380034F6D9B20966B25C07 /* InspireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78065E6D3BA14EC22992A812 /* InspireView.swift */; };
 		C50E6EC4B47A130774948455 /* FilterSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880076B1A21E1999A8C9F405 /* FilterSheetView.swift */; };
 		C891793FB575D73DD4E0F494 /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6399269847F1E81A5CD48B0 /* Story.swift */; };
+		CA6E1F0EC764A412DA092FA5 /* AppFeedbackRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595F8A460E2778102DAB6D19 /* AppFeedbackRepository.swift */; };
 		CE2E19FCF7D3A7155FABE8CA /* AIDraftProposalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */; };
 		CE547916295A1F6905C7C90A /* VerificationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37E004482EF51FE52B2E81A /* VerificationRepository.swift */; };
 		D3BE46BE6BB8151E73F00A04 /* StoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03169BD5D127856C30A8AA8A /* StoryRepository.swift */; };
@@ -178,6 +181,8 @@
 		4BD0A0CB13B5D117AC603E41 /* CityStamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityStamp.swift; sourceTree = "<group>"; };
 		4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingView.swift; sourceTree = "<group>"; };
 		526D3E645943E4B40E2EE02F /* AvailabilityCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCalendar.swift; sourceTree = "<group>"; };
+		53980DEFAFB361B5E8294BA3 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		595F8A460E2778102DAB6D19 /* AppFeedbackRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFeedbackRepository.swift; sourceTree = "<group>"; };
 		63D199358A62C764FFD50BD6 /* TravelProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelProfileView.swift; sourceTree = "<group>"; };
 		64D0EB47C8D8295095D265D6 /* ListingPhotoGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingPhotoGalleryView.swift; sourceTree = "<group>"; };
 		65E4EC474A4BB7E4FBB7F2B6 /* NightlyKeysExplainerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NightlyKeysExplainerSheet.swift; sourceTree = "<group>"; };
@@ -232,6 +237,7 @@
 		B0C16E51E119668C1E262BDB /* ListingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingRepository.swift; sourceTree = "<group>"; };
 		B2ECF15F803E263DBFEB14FC /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = "../packages/design-tokens/build/swift"; sourceTree = SOURCE_ROOT; };
 		B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
+		B5E8D113F3B8A4A14DCC8140 /* RateAppSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateAppSheet.swift; sourceTree = "<group>"; };
 		B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplFonts.swift; sourceTree = "<group>"; };
 		B6477E2C6B0E83939EAA03A8 /* AssistantRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantRepository.swift; sourceTree = "<group>"; };
 		B8AE27ECD7EFCDAD0C6D9E5F /* ChatRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRepository.swift; sourceTree = "<group>"; };
@@ -361,6 +367,7 @@
 			isa = PBXGroup;
 			children = (
 				74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */,
+				595F8A460E2778102DAB6D19 /* AppFeedbackRepository.swift */,
 				B6477E2C6B0E83939EAA03A8 /* AssistantRepository.swift */,
 				F01DADDB142AF68EF028B8B6 /* CalendarRepository.swift */,
 				B8AE27ECD7EFCDAD0C6D9E5F /* ChatRepository.swift */,
@@ -490,6 +497,7 @@
 				F6B943B148842E2CAEA5E64F /* PasskeysView.swift */,
 				1951608EE0445C6866D16B76 /* PersonalInfoView.swift */,
 				13E87AFF2208189D059454DA /* PublicProfileView.swift */,
+				B5E8D113F3B8A4A14DCC8140 /* RateAppSheet.swift */,
 				781B69502AE21A819387C19F /* ReportSheet.swift */,
 				B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */,
 				1C77A2589550B9F463387094 /* SwaplStoryView.swift */,
@@ -515,6 +523,7 @@
 			children = (
 				832C6832461A871B16ADCD7A /* Assets.xcassets */,
 				0FB5692D60E8AAFB8D3017D8 /* Info.plist */,
+				53980DEFAFB361B5E8294BA3 /* Localizable.xcstrings */,
 				894AED6F36AAF11BFF8CA2FB /* PrivacyInfo.xcprivacy */,
 				69F50D0C2FA71A035FEFE2AF /* Swapl.entitlements */,
 				E3F0605B68321C873190B989 /* App */,
@@ -716,6 +725,7 @@
 			knownRegions = (
 				Base,
 				en,
+				it,
 			);
 			mainGroup = 0EA051C9F1519EEF833938DB;
 			minimizedProjectReferenceProxies = 1;
@@ -743,6 +753,7 @@
 				0FF9121641DAB4D4D85FDB4C /* Fraunces-Variable.ttf in Resources */,
 				42E7606893193D6EE6499537 /* Inter-Variable.ttf in Resources */,
 				510830DC97DA55495B08EBC9 /* JetBrainsMono-Variable.ttf in Resources */,
+				A4DE418F40F63D5D46A60B30 /* Localizable.xcstrings in Resources */,
 				1EB702BD888B0CA98111570F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -770,6 +781,7 @@
 				DC585C9A7870551BBEDC96F6 /* AccountSettingsViews.swift in Sources */,
 				817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */,
 				FBEF57AC2F8FBE1ACBAF6DAD /* AirbnbStyle.swift in Sources */,
+				CA6E1F0EC764A412DA092FA5 /* AppFeedbackRepository.swift in Sources */,
 				FD2ACE491285E50BADCCABC4 /* AssistantRepository.swift in Sources */,
 				274DA2C25CEC164CB11256CC /* Auth.swift in Sources */,
 				1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */,
@@ -835,6 +847,7 @@
 				36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */,
 				85E60D2EC077D5F6EBA8C390 /* PublishAck.swift in Sources */,
 				6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */,
+				916F1E53FE23D2DCF28627A4 /* RateAppSheet.swift in Sources */,
 				01A23378F38E2AA77EEE9AB2 /* Referral.swift in Sources */,
 				2B64C26032B8BA261A1EE899 /* ReferralRepository.swift in Sources */,
 				E1ED619555C03A5F0C2325FB /* ReferrerNotificationsToast.swift in Sources */,
