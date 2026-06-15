@@ -27,6 +27,7 @@ final class KeysWalletViewModel {
 }
 
 struct KeysWalletView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var vm = KeysWalletViewModel()
     @State private var isGifting = false
 
@@ -59,9 +60,21 @@ struct KeysWalletView: View {
         .refreshable { await vm.load() }
     }
 
+    // Empty wallet: no points earned yet and no ledger activity. We surface the
+    // three ways to earn instead of a dead balance, so the screen always has a
+    // next tap (PM follow-up: verify +30, host, gift).
+    private func isEmptyWallet(_ wallet: KeysWallet) -> Bool {
+        wallet.balance == 0 && wallet.recentTransactions.isEmpty
+    }
+
     private func content(_ wallet: KeysWallet) -> some View {
         VStack(alignment: .leading, spacing: 24) {
             balanceCard(wallet.balance)
+
+            if isEmptyWallet(wallet) {
+                earnPathsCard
+            }
+
             giftButton
 
             if !wallet.nightlyKeysForMyListings.isEmpty {
@@ -151,6 +164,91 @@ struct KeysWalletView: View {
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
             .padding(16)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    // Three ways to earn, shown only when the wallet is empty. Verify is the
+    // fastest (+30 points on identity verification); hosting and gifting are
+    // the ongoing paths. Verify/host send the member back to Account where the
+    // verification banner and host card live; gift opens the gift sheet inline.
+    private var earnPathsCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Three ways to earn points")
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+
+            VStack(spacing: 10) {
+                earnRow(
+                    icon: "checkmark.seal.fill",
+                    title: "Verify your identity",
+                    subtitle: "Get 30 points the moment you're verified.",
+                    badge: "+30",
+                    action: { dismiss() }
+                )
+                earnRow(
+                    icon: "house.fill",
+                    title: "Host a stay",
+                    subtitle: "Earn points every night a guest stays with you.",
+                    badge: nil,
+                    action: { dismiss() }
+                )
+                earnRow(
+                    icon: "gift.fill",
+                    title: "Receive a gift",
+                    subtitle: "A verified friend can send you points.",
+                    badge: nil,
+                    action: { isGifting = true }
+                )
+            }
+        }
+    }
+
+    private func earnRow(
+        icon: String,
+        title: String,
+        subtitle: String,
+        badge: String?,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .frame(width: 48, height: 48)
+                    .background(SwaplSemanticLight.accent, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    Text(subtitle)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
+                }
+                Spacer(minLength: 8)
+                if let badge {
+                    Text(badge)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(SwaplSemanticLight.accent, in: Capsule())
+                } else {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
