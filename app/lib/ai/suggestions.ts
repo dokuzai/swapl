@@ -40,7 +40,7 @@ export async function getSuggestionsForUser(ctx: SuggestionsContext): Promise<Sw
 
   // 2. Pull a candidate pool that excludes my own listings.
   const candidates = await prisma.listing.findMany({
-    where: { isActive: true, NOT: { userId: ctx.userId } },
+    where: { isActive: true, ineligibleReason: null, NOT: { userId: ctx.userId } },
     include: { user: { select: { name: true } } },
     take: 60,
   });

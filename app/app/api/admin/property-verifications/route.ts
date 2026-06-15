@@ -27,7 +27,16 @@ export async function GET(req: Request) {
     orderBy: { createdAt: "desc" },
     take: 300,
     include: {
-      listing: { select: { id: true, title: true, city: true, country: true, ownerVerified: true } },
+      listing: {
+        select: {
+          id: true,
+          title: true,
+          city: true,
+          country: true,
+          ownerVerified: true,
+          ineligibleReason: true,
+        },
+      },
       user: { select: { id: true, name: true, email: true } },
     },
   });
@@ -39,11 +48,24 @@ export async function GET(req: Request) {
     } catch {
       documents = [];
     }
+    let aiReasons: string[] = [];
+    try {
+      const parsed = r.aiReasons ? JSON.parse(r.aiReasons) : [];
+      if (Array.isArray(parsed)) aiReasons = parsed.filter((x): x is string => typeof x === "string");
+    } catch {
+      aiReasons = [];
+    }
     return {
       id: r.id,
       status: r.status,
       documents,
       note: r.note,
+      // AI proposal (DOK-186) surfaced so the admin can confirm or override it.
+      aiClassification: r.aiClassification,
+      aiConfidence: r.aiConfidence,
+      aiReasons,
+      aiEntityType: r.aiEntityType,
+      documentType: r.documentType,
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),
       listing: r.listing,

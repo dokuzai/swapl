@@ -36,7 +36,10 @@ export async function POST(
 
   const row = await prisma.propertyVerification.findUnique({ where: { id } });
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (row.status !== "pending") {
+  // Admin override is sovereign (DOK-186): an AI-auto-rejected business listing
+  // lands as "rejected", so the admin must be able to reverse it. We therefore
+  // allow review on pending OR rejected rows (already-approved is a no-op guard).
+  if (row.status === "approved") {
     return NextResponse.json({ error: "Not in review" }, { status: 409 });
   }
 
@@ -49,9 +52,11 @@ export async function POST(
   });
 
   if (approve) {
+    // Approving sets the owner badge AND clears any AI business-ineligible flag,
+    // restoring the listing to public feeds. The admin's call always wins.
     await prisma.listing.update({
       where: { id: row.listingId },
-      data: { ownerVerified: true },
+      data: { ownerVerified: true, ineligibleReason: null, ineligibleAt: null },
     });
   }
 

@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   // identically on SQLite (dev) and Postgres (prod).
   const groups = await prisma.listing.groupBy({
     by: ["city", "country"],
-    where: { isActive: true },
+    where: { isActive: true, ineligibleReason: null },
     _count: { _all: true },
   });
 

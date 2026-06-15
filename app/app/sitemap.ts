@@ -23,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // indexing (settings.searchEngineIndexing=false; their pages also carry
   // robots noindex, see app/listings/[id]/page.tsx).
   const listings = await prisma.listing.findMany({
-    where: { isActive: true },
+    where: { isActive: true, ineligibleReason: null },
     select: { id: true, updatedAt: true, user: { select: { settings: true } } },
     orderBy: { createdAt: "desc" },
   });

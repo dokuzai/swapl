@@ -1123,6 +1123,8 @@ export const en = {
   "admin.propVerif.notePlaceholder": "Optional note (shown to the host)",
   "admin.propVerif.approve": "Approve",
   "admin.propVerif.reject": "Reject",
+  "admin.propVerif.aiProposal": "AI proposal",
+  "admin.propVerif.ineligible": "Ineligible",
 
   // ---- Your Swapl story (DOK-158) ----
   "story.title": "Your Swapl story",

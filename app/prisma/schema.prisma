@@ -370,6 +370,12 @@ model Listing {
   // approved by an admin. Distinct from isVerified (listing KYC, Feature 4) —
   // this attests the host owns/controls the home. Optional, never a publish gate.
   ownerVerified            Boolean  @default(false)
+  // Eligibility gate (DOK-186): when the AI property-document analysis classifies
+  // the proof as a BUSINESS/corporate property (hotel, agency, property manager,
+  // company), the listing is flagged ineligible and excluded from public feeds
+  // until an admin reverses it. Never deletes data — admin override is sovereign.
+  ineligibleReason         String?  // e.g. "business_property"
+  ineligibleAt             DateTime?
   isFeatured               Boolean  @default(false)
   featuredUntil            DateTime?
 
@@ -1150,6 +1156,16 @@ model PropertyVerification {
   documents     String   @default("[]")        // JSON array of { url, label }
   reviewedById  String?
   note          String?
+  // AI property-document analysis (DOK-186). Env-gated best-effort: when the AI
+  // is unconfigured/not vision-capable these stay null and the flow degrades to
+  // pure DOK-162 manual review. The AI only PROPOSES — admin confirms/overrides.
+  // PRIVACY: we persist only the classification + entity type + a redacted
+  // ownerName for the match, plus bounded reasons — never the document content.
+  aiClassification String? // private_owner | private_tenant | business | uncertain
+  aiConfidence     Float?
+  aiReasons        String? // JSON array of short strings (parseJSON)
+  aiEntityType     String? // e.g. "person" | "company" | "agency" | "hotel"
+  documentType     String? // deed | lease | other
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

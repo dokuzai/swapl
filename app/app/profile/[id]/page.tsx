@@ -28,7 +28,7 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
     where: { id },
     include: {
       listings: {
-        where: { isActive: true },
+        where: { isActive: true, ineligibleReason: null },
         include: { user: { select: { name: true } } },
         orderBy: { createdAt: "desc" },
       },

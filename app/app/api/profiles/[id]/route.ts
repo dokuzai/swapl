@@ -51,7 +51,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/profiles/
 
   const [listings, completedAgreements, reviewAgg, reviews] = await Promise.all([
     prisma.listing.findMany({
-      where: { userId: id, isActive: true },
+      where: { userId: id, isActive: true, ineligibleReason: null },
       include: { user: { select: { name: true } } },
       orderBy: { createdAt: "desc" },
     }),

@@ -8084,6 +8084,13 @@ export interface components {
             status: "pending" | "approved" | "rejected";
             documents: components["schemas"]["PropertyVerificationDocument"][];
             note?: string | null;
+            /** @enum {string|null} */
+            aiClassification?: "private_owner" | "private_tenant" | "business" | "uncertain" | null;
+            aiConfidence?: number | null;
+            aiReasons?: string[];
+            aiEntityType?: string | null;
+            /** @enum {string|null} */
+            documentType?: "deed" | "lease" | "other" | null;
             createdAt: string;
             updatedAt: string;
         };
@@ -8093,6 +8100,11 @@ export interface components {
         };
         PropertyVerificationSubmit: {
             documents: components["schemas"]["PropertyVerificationDocument"][];
+            /**
+             * @description Host-declared document kind (DOK-186), used to help AI analysis.
+             * @enum {string}
+             */
+            documentType?: "deed" | "lease" | "other";
         };
         FavoritesResponse: {
             items: components["schemas"]["Listing"][];

@@ -203,7 +203,7 @@ describe("GET /api/discover/experiences", () => {
 
     // Same active-only groupBy the admin metrics use.
     expect(mocks.listingGroupBy).toHaveBeenCalledWith(
-      expect.objectContaining({ by: ["city", "country"], where: { isActive: true } })
+      expect.objectContaining({ by: ["city", "country"], where: { isActive: true, ineligibleReason: null } })
     );
     expect(items.map((i: { city: string }) => i.city)).toEqual(["Milan", "Lisbon"]);
     expect(items[0].photo).toEqual(PHOTO);

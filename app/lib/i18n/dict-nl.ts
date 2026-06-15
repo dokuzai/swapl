@@ -1106,6 +1106,8 @@ export const nl: Partial<Record<DictKey, string>> = {
   "admin.propVerif.notePlaceholder": "Optionele notitie (zichtbaar voor de gastheer)",
   "admin.propVerif.approve": "Goedkeuren",
   "admin.propVerif.reject": "Afwijzen",
+  "admin.propVerif.aiProposal": "AI-voorstel",
+  "admin.propVerif.ineligible": "Niet in aanmerking",
 
 
   // ---- Your Swapl story (DOK-158) ----

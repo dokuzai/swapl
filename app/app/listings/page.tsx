@@ -21,7 +21,7 @@ import { prisma } from "@/lib/db";
 async function getTopCities(): Promise<ShelfCity[]> {
   const groups = await prisma.listing.groupBy({
     by: ["city", "country"],
-    where: { isActive: true },
+    where: { isActive: true, ineligibleReason: null },
     _count: { _all: true },
     orderBy: { _count: { city: "desc" } },
     take: 8,

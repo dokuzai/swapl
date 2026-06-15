@@ -35,7 +35,7 @@ describe("GET /api/cities", () => {
   it("groups only active listings", async () => {
     await get();
     expect(mocks.groupBy).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { isActive: true } })
+      expect.objectContaining({ where: { isActive: true, ineligibleReason: null } })
     );
   });
 

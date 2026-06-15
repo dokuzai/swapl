@@ -1106,6 +1106,8 @@ export const tr: Partial<Record<DictKey, string>> = {
   "admin.propVerif.notePlaceholder": "İsteğe bağlı not (ev sahibine görünür)",
   "admin.propVerif.approve": "Onayla",
   "admin.propVerif.reject": "Reddet",
+  "admin.propVerif.aiProposal": "AI önerisi",
+  "admin.propVerif.ineligible": "Uygun değil",
 
 
   // ---- Your Swapl story (DOK-158) ----

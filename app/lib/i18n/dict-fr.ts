@@ -1091,6 +1091,8 @@ export const fr: Partial<Record<DictKey, string>> = {
   "admin.propVerif.notePlaceholder": "Note facultative (visible par l'hôte)",
   "admin.propVerif.approve": "Approuver",
   "admin.propVerif.reject": "Rejeter",
+  "admin.propVerif.aiProposal": "Proposition IA",
+  "admin.propVerif.ineligible": "Non éligible",
 
 
   // ---- Your Swapl story (DOK-158) ----

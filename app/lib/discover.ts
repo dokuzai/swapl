@@ -121,7 +121,7 @@ export async function getDiscoverExperiences(cityFilter?: string): Promise<Disco
   // and the country lookup for a filtered city come from this one groupBy.
   const groups = await prisma.listing.groupBy({
     by: ["city", "country"],
-    where: { isActive: true },
+    where: { isActive: true, ineligibleReason: null },
     _count: { _all: true },
     orderBy: { _count: { city: "desc" } },
   });

@@ -26,6 +26,7 @@ const mocks = vi.hoisted(() => ({
   pvUpdate: vi.fn(),
   ensureCanCreateListing: vi.fn(),
   generateCityArt: vi.fn(),
+  classifyPropertyDocument: vi.fn(),
 }));
 
 vi.mock("@/lib/auth/session", () => ({
@@ -58,6 +59,9 @@ vi.mock("@/lib/billing/limits", () => ({
 }));
 vi.mock("@/lib/ai/city-illustration", () => ({
   generateCityArt: mocks.generateCityArt,
+}));
+vi.mock("@/lib/ai/property-doc", () => ({
+  classifyPropertyDocument: mocks.classifyPropertyDocument,
 }));
 // nightlyKeysFor + geocode helpers are pure; keep the real ones.
 
@@ -116,7 +120,34 @@ beforeEach(() => {
   mocks.generateCityArt.mockResolvedValue({ palette: "p", motif: [], postcard: {} });
   mocks.listingCreate.mockResolvedValue({ id: "l-new" });
   mocks.publishAckCreate.mockResolvedValue({ id: "ack-1" });
+  // Default: AI disabled (no key / not vision-capable) → DOK-162 manual review.
+  mocks.classifyPropertyDocument.mockResolvedValue({
+    classification: "uncertain",
+    confidence: 0,
+    entityType: "unknown",
+    reasons: [],
+    aiDisabled: true,
+    source: "disabled",
+  });
 });
+
+// Default property-verification row shape (now with the DOK-186 ai* fields).
+function pvRow(over: Record<string, unknown> = {}) {
+  return {
+    id: "pv-1",
+    status: "pending",
+    documents: JSON.stringify([{ url: "https://x.test/deed.pdf", label: "Deed" }]),
+    note: null,
+    aiClassification: null,
+    aiConfidence: null,
+    aiReasons: null,
+    aiEntityType: null,
+    documentType: null,
+    createdAt: new Date("2026-06-01T00:00:00Z"),
+    updatedAt: new Date("2026-06-01T00:00:00Z"),
+    ...over,
+  };
+}
 
 describe("POST /api/listings publish acknowledgment (DOK-162)", () => {
   it("400 when the acknowledgment is missing", async () => {
@@ -170,16 +201,16 @@ describe("property-verification (owner only)", () => {
   });
 
   it("POST 201 creates a pending verification for the owner", async () => {
-    mocks.listingFindUnique.mockResolvedValue({ id: "l-1", userId: "u-owner" });
-    mocks.pvFindFirst.mockResolvedValue(null);
-    mocks.pvCreate.mockResolvedValue({
-      id: "pv-1",
-      status: "pending",
-      documents: JSON.stringify([{ url: "https://x.test/deed.pdf", label: "Deed" }]),
-      note: null,
-      createdAt: new Date("2026-06-01T00:00:00Z"),
-      updatedAt: new Date("2026-06-01T00:00:00Z"),
+    mocks.listingFindUnique.mockResolvedValue({
+      id: "l-1",
+      userId: "u-owner",
+      title: "Flat",
+      city: "Amsterdam",
+      country: "Netherlands",
+      user: { name: "Owner" },
     });
+    mocks.pvFindFirst.mockResolvedValue(null);
+    mocks.pvCreate.mockResolvedValue(pvRow());
     const res = await pvPost(
       new Request("https://swapl.test/api/listings/l-1/property-verification", {
         method: "POST",
@@ -191,6 +222,17 @@ describe("property-verification (owner only)", () => {
     const json = await res.json();
     expect(json.verification.status).toBe("pending");
     expect(json.verification.documents).toEqual([{ url: "https://x.test/deed.pdf", label: "Deed" }]);
+    // AI disabled → no ai* persisted, no listing side effect.
+    expect(mocks.listingUpdate).not.toHaveBeenCalled();
+    expect(mocks.pvCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "pending",
+          aiClassification: null,
+          documentType: null,
+        }),
+      })
+    );
   });
 
   it("GET 403 for a non-owner", async () => {
@@ -247,9 +289,10 @@ describe("admin property-verification queue + review", () => {
     );
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true, status: "approved" });
+    // DOK-186: approving also clears any AI business-ineligible flag.
     expect(mocks.listingUpdate).toHaveBeenCalledWith({
       where: { id: "l-1" },
-      data: { ownerVerified: true },
+      data: { ownerVerified: true, ineligibleReason: null, ineligibleAt: null },
     });
   });
 
@@ -268,7 +311,7 @@ describe("admin property-verification queue + review", () => {
     expect(mocks.listingUpdate).not.toHaveBeenCalled();
   });
 
-  it("409 when reviewing a verification that is not pending", async () => {
+  it("409 when reviewing a verification that is ALREADY approved", async () => {
     mocks.pvFindUnique.mockResolvedValue({ id: "pv-1", listingId: "l-1", status: "approved" });
     const res = await adminReview(
       new Request("https://swapl.test/api/admin/property-verifications/pv-1", {
@@ -278,5 +321,150 @@ describe("admin property-verification queue + review", () => {
       { params: Promise.resolve({ id: "pv-1" }) }
     );
     expect(res.status).toBe(409);
+  });
+
+  it("admin override can APPROVE an AI-rejected (business) verification (DOK-186)", async () => {
+    mocks.pvFindUnique.mockResolvedValue({ id: "pv-1", listingId: "l-1", status: "rejected" });
+    mocks.pvUpdate.mockResolvedValue({ id: "pv-1", status: "approved" });
+    const res = await adminReview(
+      new Request("https://swapl.test/api/admin/property-verifications/pv-1", {
+        method: "POST",
+        body: JSON.stringify({ decision: "approve", note: "verified manually" }),
+      }),
+      { params: Promise.resolve({ id: "pv-1" }) }
+    );
+    expect(res.status).toBe(200);
+    // Restores the listing: owner badge on, ineligible flag cleared.
+    expect(mocks.listingUpdate).toHaveBeenCalledWith({
+      where: { id: "l-1" },
+      data: { ownerVerified: true, ineligibleReason: null, ineligibleAt: null },
+    });
+  });
+});
+
+// ---- DOK-186: AI property-document analysis drives the submission outcome ----
+describe("property-verification AI outcome (DOK-186)", () => {
+  function submitReq(body: unknown) {
+    return new Request("https://swapl.test/api/listings/l-1/property-verification", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  }
+  const ownerListing = {
+    id: "l-1",
+    userId: "u-owner",
+    title: "Flat",
+    city: "Amsterdam",
+    country: "Netherlands",
+    user: { name: "Owner" },
+  };
+
+  it("confident BUSINESS → reject + mark listing ineligible (business_property)", async () => {
+    mocks.listingFindUnique.mockResolvedValue(ownerListing);
+    mocks.pvFindFirst.mockResolvedValue(null);
+    mocks.classifyPropertyDocument.mockResolvedValue({
+      classification: "business",
+      confidence: 0.95,
+      entityType: "company",
+      reasons: ["VAT number present", "registered company name"],
+      source: "ai",
+    });
+    mocks.pvCreate.mockResolvedValue(pvRow({ status: "rejected", aiClassification: "business" }));
+    const res = await pvPost(submitReq({ documents: [{ url: "https://x.test/a.jpg", label: "Deed" }] }), {
+      params: Promise.resolve({ id: "l-1" }),
+    });
+    expect(res.status).toBe(201);
+    expect((await res.json()).verification.status).toBe("rejected");
+    expect(mocks.pvCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ status: "rejected" }) })
+    );
+    expect(mocks.listingUpdate).toHaveBeenCalledWith({
+      where: { id: "l-1" },
+      data: expect.objectContaining({ ineligibleReason: "business_property" }),
+    });
+  });
+
+  it("low-confidence BUSINESS stays pending, no listing flag", async () => {
+    mocks.listingFindUnique.mockResolvedValue(ownerListing);
+    mocks.pvFindFirst.mockResolvedValue(null);
+    mocks.classifyPropertyDocument.mockResolvedValue({
+      classification: "business",
+      confidence: 0.4,
+      entityType: "unknown",
+      reasons: [],
+      source: "ai",
+    });
+    mocks.pvCreate.mockResolvedValue(pvRow());
+    const res = await pvPost(submitReq({ documents: [{ url: "https://x.test/a.jpg", label: "Deed" }] }), {
+      params: Promise.resolve({ id: "l-1" }),
+    });
+    expect(res.status).toBe(201);
+    expect(mocks.pvCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ status: "pending" }) })
+    );
+    expect(mocks.listingUpdate).not.toHaveBeenCalled();
+  });
+
+  it("private_owner → eligible but PENDING by default (AI proposes, admin confirms)", async () => {
+    mocks.listingFindUnique.mockResolvedValue(ownerListing);
+    mocks.pvFindFirst.mockResolvedValue(null);
+    mocks.classifyPropertyDocument.mockResolvedValue({
+      classification: "private_owner",
+      confidence: 0.97,
+      entityType: "person",
+      reasons: ["individual named on deed"],
+      source: "ai",
+    });
+    mocks.pvCreate.mockResolvedValue(pvRow({ aiClassification: "private_owner" }));
+    const res = await pvPost(submitReq({ documents: [{ url: "https://x.test/a.jpg", label: "Deed" }] }), {
+      params: Promise.resolve({ id: "l-1" }),
+    });
+    expect(res.status).toBe(201);
+    expect(mocks.pvCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ status: "pending" }) })
+    );
+    // Default-safe: no auto ownerVerified.
+    expect(mocks.listingUpdate).not.toHaveBeenCalled();
+  });
+
+  it("private_tenant → eligible, PENDING, never sets ownerVerified", async () => {
+    mocks.listingFindUnique.mockResolvedValue(ownerListing);
+    mocks.pvFindFirst.mockResolvedValue(null);
+    mocks.classifyPropertyDocument.mockResolvedValue({
+      classification: "private_tenant",
+      confidence: 0.96,
+      entityType: "person",
+      reasons: ["lease names an individual tenant"],
+      source: "ai",
+    });
+    mocks.pvCreate.mockResolvedValue(pvRow({ aiClassification: "private_tenant" }));
+    const res = await pvPost(submitReq({ documents: [{ url: "https://x.test/a.jpg", label: "Lease" }] }), {
+      params: Promise.resolve({ id: "l-1" }),
+    });
+    expect(res.status).toBe(201);
+    expect(mocks.listingUpdate).not.toHaveBeenCalled();
+  });
+
+  it("does NOT persist PII beyond classification/entityType/bounded reasons", async () => {
+    mocks.listingFindUnique.mockResolvedValue(ownerListing);
+    mocks.pvFindFirst.mockResolvedValue(null);
+    mocks.classifyPropertyDocument.mockResolvedValue({
+      classification: "private_owner",
+      confidence: 0.9,
+      entityType: "person",
+      ownerName: "Jane Doe",
+      reasons: ["individual named on deed"],
+      source: "ai",
+    });
+    mocks.pvCreate.mockResolvedValue(pvRow());
+    await pvPost(submitReq({ documents: [{ url: "https://x.test/a.jpg", label: "Deed" }] }), {
+      params: Promise.resolve({ id: "l-1" }),
+    });
+    const persisted = mocks.pvCreate.mock.calls[0][0].data;
+    // Whitelist of persisted ai* fields — ownerName / document content never land in the row.
+    expect(persisted).not.toHaveProperty("ownerName");
+    expect(JSON.stringify(persisted)).not.toContain("Jane Doe");
+    expect(persisted.aiClassification).toBe("private_owner");
+    expect(persisted.aiEntityType).toBe("person");
   });
 });
