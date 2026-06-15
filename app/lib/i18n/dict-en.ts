@@ -1030,6 +1030,66 @@ export const en = {
   "tw.noListing.body":
     "You can save travel windows now, but we can only match swaps once your home is listed. Publishing takes a couple of minutes.",
   "tw.noListing.cta": "Publish your home",
+
+  // Owner-verified trust badge (DOK-162)
+  "ownerVerified.badge": "Verified owner",
+  "ownerVerified.tooltip": "Ownership documents reviewed by swapl",
+
+  // Publish acknowledgment (DOK-162) — mandatory self-attestation at publish
+  "publishAck.heading": "Before you publish",
+  "publishAck.modeLabel": "How will you host?",
+  "publishAck.mode.entire": "The whole home while I'm away",
+  "publishAck.mode.room": "A room, or my home while I'm here",
+  "publishAck.mode.entireHint":
+    "You hand over the whole place. If you rent, your lease usually needs your landlord's consent — money or not.",
+  "publishAck.mode.roomHint":
+    "Plain hospitality, like having relatives stay. No permission needed, even as a tenant.",
+  "publishAck.checkbox": "I have read and agree to the statement above.",
+  "publishAck.required": "Please confirm the statement above before publishing.",
+
+  // Optional ownership verification (DOK-162)
+  "verifyOwnership.card.title": "Verify ownership",
+  "verifyOwnership.card.titleDone": "Verified owner",
+  "verifyOwnership.card.body":
+    "Optional. Upload a proof of ownership to earn a Verified owner badge that builds trust with swappers.",
+  "verifyOwnership.card.bodyDone": "Your listing carries the Verified owner badge.",
+  "verifyOwnership.card.cta": "Add proof →",
+  "verifyOwnership.card.ctaStatus": "View status →",
+  "verifyOwnership.heading": "Verify ownership",
+  "verifyOwnership.optional": "Optional",
+  "verifyOwnership.intro":
+    "This is entirely optional and never required to publish. Approved documents earn a discreet “Verified owner” badge that increases trust with potential swappers.",
+  "verifyOwnership.docLabel": "Document",
+  "verifyOwnership.docLabelPlaceholder": "e.g. Deed, Utility bill",
+  "verifyOwnership.docUrlPlaceholder": "https://… link to the document",
+  "verifyOwnership.addDoc": "Add document",
+  "verifyOwnership.remove": "Remove",
+  "verifyOwnership.submit": "Submit for review",
+  "verifyOwnership.submitting": "Submitting…",
+  "verifyOwnership.resubmit": "Resubmit",
+  "verifyOwnership.needDoc": "Add at least one document with a label and link.",
+  "verifyOwnership.error": "Couldn't submit — try again.",
+  "verifyOwnership.status.pending": "In review",
+  "verifyOwnership.status.pendingBody": "We're reviewing your documents. This usually takes a couple of days.",
+  "verifyOwnership.status.approved": "Approved",
+  "verifyOwnership.status.approvedBody": "Your listing now carries the Verified owner badge.",
+  "verifyOwnership.status.rejected": "Not approved",
+  "verifyOwnership.status.rejectedBody": "We couldn't verify ownership from these documents. You can submit new ones.",
+  "verifyOwnership.reviewerNote": "Reviewer note",
+
+  // Admin — property verification queue (DOK-162)
+  "admin.propVerif.nav": "Owner verification",
+  "admin.propVerif.kicker": "Queue",
+  "admin.propVerif.title": "Owner verification",
+  "admin.propVerif.subtitle": "Optional ownership proofs. Approving flips the Verified owner badge on.",
+  "admin.propVerif.pending": "Pending — {count}",
+  "admin.propVerif.empty": "Inbox zero. Nothing waiting on review.",
+  "admin.propVerif.recent": "Recently reviewed",
+  "admin.propVerif.recentEmpty": "Nothing yet.",
+  "admin.propVerif.documents": "Documents",
+  "admin.propVerif.notePlaceholder": "Optional note (shown to the host)",
+  "admin.propVerif.approve": "Approve",
+  "admin.propVerif.reject": "Reject",
 } as const;
 
 export type DictKey = keyof typeof en;

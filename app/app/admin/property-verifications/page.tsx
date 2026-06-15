@@ -1,0 +1,135 @@
+import Link from "next/link";
+import { prisma, parseJSON } from "@/lib/db";
+import { requireAdminPage } from "@/lib/auth/abilities";
+import { getDictionary, t } from "@/lib/i18n/server";
+import PropertyVerificationActions from "./property-verification-actions";
+
+export const dynamic = "force-dynamic";
+export const metadata = { title: "Owner verification · admin" };
+
+type Doc = { url: string; label: string };
+
+export default async function AdminPropertyVerifications() {
+  await requireAdminPage();
+  const dict = await getDictionary();
+
+  const pending = await prisma.propertyVerification.findMany({
+    where: { status: "pending" },
+    orderBy: { createdAt: "asc" },
+    include: {
+      listing: { select: { id: true, title: true, city: true, neighbourhood: true } },
+      user: { select: { name: true, email: true } },
+    },
+  });
+
+  const recent = await prisma.propertyVerification.findMany({
+    where: { status: { in: ["approved", "rejected"] } },
+    orderBy: { updatedAt: "desc" },
+    take: 12,
+    include: {
+      listing: { select: { id: true, title: true } },
+      user: { select: { email: true } },
+    },
+  });
+
+  return (
+    <>
+      <header className="mb-8">
+        <p className="kicker mb-3">{t(dict, "admin.propVerif.kicker")}</p>
+        <h1 className="font-display text-3xl tracking-[-0.02em]">{t(dict, "admin.propVerif.title")}</h1>
+        <p className="mt-2 text-sm" style={{ color: "var(--navy-2)" }}>
+          {t(dict, "admin.propVerif.subtitle")}
+        </p>
+      </header>
+
+      <section className="mb-12">
+        <h2 className="font-display text-xl tracking-[-0.01em] mb-4">
+          {t(dict, "admin.propVerif.pending", { count: pending.length })}
+        </h2>
+        {pending.length === 0 ? (
+          <div className="surface-card p-6 text-sm" style={{ color: "var(--navy-2)" }}>
+            {t(dict, "admin.propVerif.empty")}
+          </div>
+        ) : (
+          <ul className="space-y-4">
+            {pending.map((v) => {
+              const docs = parseJSON<Doc[]>(v.documents, []);
+              return (
+                <li key={v.id} className="surface-card p-5">
+                  <div className="flex flex-col sm:flex-row gap-4 sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <div className="font-display text-lg">
+                        <Link href={`/listings/${v.listing.id}`} className="hover:underline">
+                          {v.listing.title}
+                        </Link>
+                      </div>
+                      <div className="text-sm" style={{ color: "var(--navy-3)" }}>
+                        {v.listing.neighbourhood} · {v.listing.city} · {v.user?.name ?? v.user?.email}
+                      </div>
+                      <div className="mt-3">
+                        <div className="font-mono text-[10px] uppercase tracking-[.08em] mb-1" style={{ color: "var(--navy-3)" }}>
+                          {t(dict, "admin.propVerif.documents")}
+                        </div>
+                        <ul className="space-y-1">
+                          {docs.map((d, i) => (
+                            <li key={i}>
+                              <a
+                                href={d.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="font-mono text-[11px] hover:underline"
+                                style={{ color: "var(--pink)" }}
+                              >
+                                {d.label} →
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                    <PropertyVerificationActions
+                      id={v.id}
+                      notePlaceholder={t(dict, "admin.propVerif.notePlaceholder")}
+                      approveLabel={t(dict, "admin.propVerif.approve")}
+                      rejectLabel={t(dict, "admin.propVerif.reject")}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      <section>
+        <h2 className="font-display text-xl tracking-[-0.01em] mb-4">{t(dict, "admin.propVerif.recent")}</h2>
+        {recent.length === 0 ? (
+          <p className="text-sm" style={{ color: "var(--navy-3)" }}>{t(dict, "admin.propVerif.recentEmpty")}</p>
+        ) : (
+          <ul className="space-y-2 text-sm">
+            {recent.map((v) => (
+              <li key={v.id} className="flex items-center justify-between py-2 divider-dashed first:border-t-0 first:pt-0">
+                <span>
+                  <Link href={`/listings/${v.listing.id}`} className="font-medium hover:underline">
+                    {v.listing.title}
+                  </Link>
+                  <span className="ml-2 text-xs" style={{ color: "var(--navy-3)" }}>{v.user?.email}</span>
+                </span>
+                <span
+                  className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-0.5 rounded-full"
+                  style={
+                    v.status === "approved"
+                      ? { background: "var(--pink)", color: "#fff" }
+                      : { background: "var(--cream-2)", color: "#dc2626" }
+                  }
+                >
+                  {v.status}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </>
+  );
+}

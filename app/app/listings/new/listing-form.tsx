@@ -8,6 +8,7 @@ import { CityIllust, type CityMotif } from "@/components/illustrations";
 import type { Palette } from "@/components/illustrations";
 import type { Postcard } from "@/lib/ai/postcard-types";
 import { CityCombobox } from "@/components/listing/city-combobox";
+import { ackTextForMode, type PublishAckMode } from "@/lib/listing/publish-ack";
 
 type FormState = {
   // Step 1 — Location
@@ -206,6 +207,12 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
+  // Publish acknowledgment (DOK-162) — only at first publish (POST). A mandatory
+  // self-attestation; the publish button stays blocked until the box is ticked.
+  // Editing reuses this form via PUT, which the backend does not gate on the ack.
+  const [publishMode, setPublishMode] = useState<PublishAckMode>("entire_home_while_away");
+  const [ackAccepted, setAckAccepted] = useState(false);
+
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setState((s) => ({ ...s, [key]: value }));
   }
@@ -228,6 +235,11 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
   function submit() {
     const v = validateStep(step, state);
     if (v) return setError(v);
+
+    // Publishing (create) requires the acknowledgment; editing does not.
+    if (!editing && !ackAccepted) {
+      return setError("Please confirm the statement above before publishing.");
+    }
 
     const petTypes = (Object.keys(state.petTypes) as Array<keyof FormState["petTypes"]>).filter(
       (k) => state.petTypes[k]
@@ -273,6 +285,8 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
       // Free-text tags aren't editable in the form yet — keep what the
       // listing already has when editing, empty on create.
       tags: listing?.tags ?? [],
+      // Publish acknowledgment (DOK-162) — required on create, ignored on PUT.
+      ...(editing ? {} : { ackAccepted, mode: publishMode }),
     };
 
     start(async () => {
@@ -287,7 +301,12 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
         router.refresh();
       } else {
         const j = await res.json().catch(() => ({}));
-        setError(j.error ?? (listing ? "Could not save changes" : "Could not publish listing"));
+        // Backend rejects a missing/invalid ack with a 400 PUBLISH_ACK_REQUIRED.
+        if (j.error === "PUBLISH_ACK_REQUIRED") {
+          setError("Please confirm the statement above before publishing.");
+        } else {
+          setError(j.error ?? (listing ? "Could not save changes" : "Could not publish listing"));
+        }
       }
     });
   }
@@ -310,7 +329,16 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
         {step === 4 && <AvailabilityStep state={state} set={set} />}
         {step === 5 && <PhotosStep state={state} set={set} />}
         {step === 6 && <DescriptionStep state={state} set={set} />}
-        {step === 7 && <ReviewStep state={state} editing={editing} />}
+        {step === 7 && (
+          <ReviewStep
+            state={state}
+            editing={editing}
+            publishMode={publishMode}
+            onModeChange={setPublishMode}
+            ackAccepted={ackAccepted}
+            onAckChange={setAckAccepted}
+          />
+        )}
 
         {error && <p className="text-sm mt-4" style={{ color: "#dc2626" }}>{error}</p>}
 
@@ -323,7 +351,7 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
               Continue
             </button>
           ) : (
-            <button onClick={submit} disabled={pending} className="pill-primary">
+            <button onClick={submit} disabled={pending || (!editing && !ackAccepted)} className="pill-primary disabled:opacity-40">
               {pending ? (editing ? "Saving…" : "Publishing…") : editing ? "Save changes" : "Publish listing"}
             </button>
           )}
@@ -912,7 +940,21 @@ function DescriptionStep({ state, set }: { state: FormState; set: <K extends key
   );
 }
 
-function ReviewStep({ state, editing = false }: { state: FormState; editing?: boolean }) {
+function ReviewStep({
+  state,
+  editing = false,
+  publishMode,
+  onModeChange,
+  ackAccepted,
+  onAckChange,
+}: {
+  state: FormState;
+  editing?: boolean;
+  publishMode: PublishAckMode;
+  onModeChange: (m: PublishAckMode) => void;
+  ackAccepted: boolean;
+  onAckChange: (v: boolean) => void;
+}) {
   return (
     <div className="space-y-5">
       <div className="surface-card p-5 space-y-2 text-sm">
@@ -924,6 +966,62 @@ function ReviewStep({ state, editing = false }: { state: FormState; editing?: bo
         <Row label="WFH" value={state.wfhSetup ? `${state.wfhDesks} desk${state.wfhDesks === 1 ? "" : "s"}` : "—"} />
         <Row label="Photos" value={`${state.photos.length} of 20`} />
       </div>
+
+      {/* Publish acknowledgment (DOK-162). Only on first publish — a mandatory
+          self-attestation. The variant (and its legal weight) depends on whether
+          the host cedes the whole home or merely offers hospitality. */}
+      {!editing && (
+        <div className="rounded-xl border p-5" style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}>
+          <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-3" style={{ color: "var(--navy-3)" }}>
+            Before you publish
+          </div>
+
+          <label className="block font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
+            How will you host?
+          </label>
+          <div className="grid sm:grid-cols-2 gap-2 mb-4">
+            {(
+              [
+                ["entire_home_while_away", "The whole home while I'm away", "You hand over the whole place. If you rent, your lease usually needs your landlord's consent — money or not."],
+                ["room_or_host_present", "A room, or my home while I'm here", "Plain hospitality, like having relatives stay. No permission needed, even as a tenant."],
+              ] as const
+            ).map(([mode, label, hint]) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => onModeChange(mode)}
+                className="text-left p-3 rounded-xl border transition-all"
+                style={
+                  publishMode === mode
+                    ? { borderColor: "var(--pink)", background: "var(--pink-light)" }
+                    : { borderColor: "var(--line)", background: "var(--card-bg)" }
+                }
+              >
+                <div className="font-medium text-sm mb-1">{label}</div>
+                <div className="text-xs" style={{ color: "var(--navy-3)" }}>{hint}</div>
+              </button>
+            ))}
+          </div>
+
+          <p className="text-sm leading-[1.6] mb-3" style={{ color: "var(--navy-2)" }}>
+            {ackTextForMode(publishMode)}
+          </p>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={ackAccepted}
+              onChange={(e) => onAckChange(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0"
+              style={{ accentColor: "var(--pink)" }}
+            />
+            <span className="text-sm" style={{ color: "var(--navy)" }}>
+              I have read and agree to the statement above.
+            </span>
+          </label>
+        </div>
+      )}
+
       <p className="text-sm" style={{ color: "var(--navy-2)" }}>
         {editing
           ? "Saving updates your live listing immediately — browse, matches and your profile all reflect the changes."

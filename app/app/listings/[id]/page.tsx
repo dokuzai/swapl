@@ -15,9 +15,10 @@ import { getViewerListing } from "@/lib/listing-query";
 import { computeMatchScore } from "@/lib/match/score";
 import ProposeSwapButton from "./propose-swap-button";
 import { StayWithKeys } from "./stay-with-keys";
-import { VerifiedBadge, FeaturedRibbon } from "@/components/listing/badges";
+import { VerifiedBadge, FeaturedRibbon, OwnerVerifiedBadge } from "@/components/listing/badges";
 import { RecentlyViewedTracker } from "@/components/listing/recently-viewed-tracker";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
+import { getDictionary, t } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -117,6 +118,7 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
 
   const chips = amenityChips(dto);
   const hasPhotos = dto.photos.length > 0;
+  const dict = await getDictionary();
 
   // Real CC-licensed illustration of the city (Openverse, cached 30 days in
   // CityMedia kind="illustration"; a cache miss fetches within the provider's
@@ -226,6 +228,14 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               </span>
               {dto.isVerified && <VerifiedBadge size={16} />}
             </p>
+            {dto.ownerVerified && (
+              <div className="mt-2">
+                <OwnerVerifiedBadge
+                  label={t(dict, "ownerVerified.badge")}
+                  title={t(dict, "ownerVerified.tooltip")}
+                />
+              </div>
+            )}
           </div>
 
           {/* "Loved by swappers" — guest-favourite-style card, only when the
@@ -359,6 +369,14 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               <Link href={`/profile/${listing.user?.id ?? ""}`} className="font-display text-xl mb-1 block hover:underline">
                 {listing.user?.name ?? "swapl host"}
               </Link>
+              {dto.ownerVerified && (
+                <div className="mb-2">
+                  <OwnerVerifiedBadge
+                    label={t(dict, "ownerVerified.badge")}
+                    title={t(dict, "ownerVerified.tooltip")}
+                  />
+                </div>
+              )}
               {avgRating !== null && (
                 <p className="font-mono text-[11px] mb-2" style={{ color: "var(--navy-3)" }}>
                   ★ {avgRating} · {reviewCount} review{reviewCount === 1 ? "" : "s"}
