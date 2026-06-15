@@ -105,4 +105,43 @@
     <string name="valuation_review_applied_neutral">Deine Bewertungen (%1$.1f★ aus %2$d) halten den Wert konstant.</string>
     <string name="valuation_review_pending">Sobald du einige Gästebewertungen hast, können sie diesen Wert behutsam anpassen. Bis dahin bleibt er auf dem merkmalsbasierten Niveau.</string>
     <string name="valuation_bounded_note">Dieser Wert bewegt sich nur in kleinen, gedeckelten Schritten — Bewertungsfeedback kann ihn um höchstens ±20%% verschieben, sodass er nie über Nacht ausschlägt.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">Deine Swapl-Geschichte</string>
+    <string name="story_counts_heading">Deine Geschichte bisher</string>
+    <string name="story_passport">Dein Reisepass</string>
+    <string name="story_kind_trip">Reise</string>
+    <string name="story_kind_hosted">Gastgeber</string>
+    <string name="story_detail_hosted_by">Zu Gast bei %1$s</string>
+    <string name="story_detail_welcomed">%1$s empfangen</string>
+    <string name="story_detail_stay">Ein Aufenthalt auf Swapl</string>
+    <string name="story_detail_guest">Ein Gast in deinem Zuhause</string>
+    <string name="story_share_heading">Teile deine Geschichte</string>
+    <string name="story_share_button">Teilen</string>
+    <string name="story_share_note">Teile deine Geschichte überall — Nachrichten, WhatsApp, E-Mail. Sie enthält deinen Einladungslink: Wenn eine Freundin oder ein Freund darauf tippt und beitritt, verdient ihr beide Reisepunkte.</string>
+    <string name="story_share_subject">Meine Swapl-Geschichte</string>
+    <string name="story_share_chooser">Teile deine Geschichte</string>
+    <string name="story_share_message">Ich habe auf Swapl Häuser in %1$d Städten getauscht — reisen mit Punkten statt Bargeld. Komm mit meinem Link dazu, und wir bekommen beide Reisepunkte, wenn du dich verifizierst: %2$s</string>
+    <string name="story_empty_title">Deine Geschichte beginnt hier</string>
+    <string name="story_empty_body">Sobald du deinen ersten Tausch oder Keys-Aufenthalt abschließt, erscheinen deine Reisen und die Gäste, die du empfängst, hier als Pass-Stempel — eine Postkarte all deiner Swapl-Ziele.</string>
+    <string name="story_empty_share">Eine Freundin oder einen Freund einladen</string>
+    <string name="story_error_title">Geschichte nicht verfügbar</string>
+    <string name="story_error_body">Wir konnten deine Geschichte nicht laden. Zum Aktualisieren ziehen oder erneut versuchen.</string>
+    <string name="story_error_retry">Erneut versuchen</string>
+    <plurals name="story_count_trips">
+        <item quantity="one">Reise</item>
+        <item quantity="other">Reisen</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="one">Gast empfangen</item>
+        <item quantity="other">Gäste empfangen</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="one">Stadt</item>
+        <item quantity="other">Städte</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="one">Land</item>
+        <item quantity="other">Länder</item>
+    </plurals>
 </resources>

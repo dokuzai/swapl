@@ -105,4 +105,43 @@
     <string name="valuation_review_applied_neutral">Değerlendirmelerin (%2$d değerlendirmeden %1$.1f★) değeri aynı tutuyor.</string>
     <string name="valuation_review_pending">Birkaç misafir değerlendirmen olduğunda bu değeri hafifçe ayarlayabilirler. O zamana kadar özelliklere dayalı düzeyinde kalır.</string>
     <string name="valuation_bounded_note">Bu değer yalnızca küçük ve sınırlı adımlarla değişir — değerlendirme geri bildirimi onu en fazla ±20%% kaydırabilir, bu yüzden bir gecede sıçramaz.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">Swapl hikâyen</string>
+    <string name="story_counts_heading">Şimdiye kadarki hikâyen</string>
+    <string name="story_passport">Pasaportun</string>
+    <string name="story_kind_trip">Gezi</string>
+    <string name="story_kind_hosted">Ev sahibi</string>
+    <string name="story_detail_hosted_by">%1$s ağırladı</string>
+    <string name="story_detail_welcomed">%1$s\'i ağırladın</string>
+    <string name="story_detail_stay">Swapl\'da bir konaklama</string>
+    <string name="story_detail_guest">Evindeki bir misafir</string>
+    <string name="story_share_heading">Hikâyeni paylaş</string>
+    <string name="story_share_button">Paylaş</string>
+    <string name="story_share_note">Hikâyeni her yerde paylaş — Mesajlar, WhatsApp, e-posta. Davet bağlantını taşır: bir arkadaşın dokunup katıldığında ikiniz de seyahat puanı kazanırsınız.</string>
+    <string name="story_share_subject">Swapl hikâyem</string>
+    <string name="story_share_chooser">Hikâyeni paylaş</string>
+    <string name="story_share_message">Swapl\'da %1$d şehirde ev takası yaptım — nakitle değil puanla seyahat. Bağlantımla katıl, sen doğrulandığında ikimiz de seyahat puanı kazanalım: %2$s</string>
+    <string name="story_empty_title">Hikâyen burada başlıyor</string>
+    <string name="story_empty_body">İlk takasını ya da Keys konaklamanı tamamladığında, gezilerin ve ağırladığın misafirler burada pasaport damgaları olarak görünür — Swapl\'ın seni götürdüğü her yerin kartpostalı.</string>
+    <string name="story_empty_share">Bir arkadaşını takasa davet et</string>
+    <string name="story_error_title">Hikâye kullanılamıyor</string>
+    <string name="story_error_body">Hikâyeni yükleyemedik. Yenilemek için çek ya da tekrar dene.</string>
+    <string name="story_error_retry">Tekrar dene</string>
+    <plurals name="story_count_trips">
+        <item quantity="one">Gezi</item>
+        <item quantity="other">Gezi</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="one">Misafir ağırlandı</item>
+        <item quantity="other">Misafir ağırlandı</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="one">Şehir</item>
+        <item quantity="other">Şehir</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="one">Ülke</item>
+        <item quantity="other">Ülke</item>
+    </plurals>
 </resources>

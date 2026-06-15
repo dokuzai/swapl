@@ -123,4 +123,43 @@
     <string name="valuation_review_pending">Not yet applied — reviews start adjusting this value only after you\'ve received %1$d reviews. You have %2$d so far. Until then it stays at its feature-based level.</string>
     <string name="valuation_review_moving">Now moving slowly toward your %1$.1f★ rating from %2$d reviews — a little at a time, never all at once.</string>
     <string name="valuation_bounded_note">This value moves at most %1$d%% per update cycle, and only once you have %2$d+ reviews. Even then, reaching the ±%3$d%% limit takes many cycles — a hard cap reviews can never push past — so a bad review week can\'t crash your earnings overnight.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">Your Swapl story</string>
+    <string name="story_counts_heading">Your story so far</string>
+    <string name="story_passport">Your passport</string>
+    <string name="story_kind_trip">Trip</string>
+    <string name="story_kind_hosted">Hosted</string>
+    <string name="story_detail_hosted_by">Hosted by %1$s</string>
+    <string name="story_detail_welcomed">Welcomed %1$s</string>
+    <string name="story_detail_stay">A stay on Swapl</string>
+    <string name="story_detail_guest">A guest in your home</string>
+    <string name="story_share_heading">Share your story</string>
+    <string name="story_share_button">Share</string>
+    <string name="story_share_note">Send your story anywhere — Messages, WhatsApp, email. It carries your invite link, so when a friend taps it and joins, you both earn travel points.</string>
+    <string name="story_share_subject">My Swapl story</string>
+    <string name="story_share_chooser">Share your story</string>
+    <string name="story_share_message">I\'ve swapped homes across %1$d cities on Swapl — travel on points, not cash. Join me with my link and we both score travel points when you verify: %2$s</string>
+    <string name="story_empty_title">Your story starts here</string>
+    <string name="story_empty_body">Once you complete your first swap or Keys stay, your trips and the guests you welcome appear here as passport stamps — a postcard of everywhere Swapl takes you.</string>
+    <string name="story_empty_share">Invite a friend to swap</string>
+    <string name="story_error_title">Story unavailable</string>
+    <string name="story_error_body">We couldn\'t load your story. Pull to refresh or retry.</string>
+    <string name="story_error_retry">Retry</string>
+    <plurals name="story_count_trips">
+        <item quantity="one">Trip</item>
+        <item quantity="other">Trips</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="one">Guest welcomed</item>
+        <item quantity="other">Guests welcomed</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="one">City</item>
+        <item quantity="other">Cities</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="one">Country</item>
+        <item quantity="other">Countries</item>
+    </plurals>
 </resources>

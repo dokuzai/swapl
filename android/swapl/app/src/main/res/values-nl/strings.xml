@@ -105,4 +105,43 @@
     <string name="valuation_review_applied_neutral">Je beoordelingen (%1$.1f★ uit %2$d) houden de waarde gelijk.</string>
     <string name="valuation_review_pending">Zodra je enkele gastbeoordelingen hebt, kunnen die deze waarde licht bijstellen. Tot dan blijft hij op het op kenmerken gebaseerde niveau.</string>
     <string name="valuation_bounded_note">Deze waarde beweegt alleen in kleine, begrensde stappen — feedback uit reviews kan hem hooguit ±20%% verschuiven, dus hij schiet nooit van de ene op de andere dag uit.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">Jouw Swapl-verhaal</string>
+    <string name="story_counts_heading">Jouw verhaal tot nu toe</string>
+    <string name="story_passport">Jouw paspoort</string>
+    <string name="story_kind_trip">Reis</string>
+    <string name="story_kind_hosted">Gastheer</string>
+    <string name="story_detail_hosted_by">Te gast bij %1$s</string>
+    <string name="story_detail_welcomed">%1$s ontvangen</string>
+    <string name="story_detail_stay">Een verblijf op Swapl</string>
+    <string name="story_detail_guest">Een gast bij jou thuis</string>
+    <string name="story_share_heading">Deel jouw verhaal</string>
+    <string name="story_share_button">Delen</string>
+    <string name="story_share_note">Deel je verhaal overal — Berichten, WhatsApp, e-mail. Het bevat je uitnodigingslink: als een vriend erop tikt en lid wordt, verdienen jullie allebei reispunten.</string>
+    <string name="story_share_subject">Mijn Swapl-verhaal</string>
+    <string name="story_share_chooser">Deel jouw verhaal</string>
+    <string name="story_share_message">Ik heb op Swapl woningen geruild in %1$d steden — reizen op punten, niet op cash. Doe mee met mijn link en we verdienen allebei reispunten zodra je je verifieert: %2$s</string>
+    <string name="story_empty_title">Jouw verhaal begint hier</string>
+    <string name="story_empty_body">Zodra je je eerste ruil of Keys-verblijf afrondt, verschijnen je reizen en de gasten die je ontvangt hier als paspoortstempels — een ansichtkaart van overal waar Swapl je brengt.</string>
+    <string name="story_empty_share">Nodig een vriend uit om te ruilen</string>
+    <string name="story_error_title">Verhaal niet beschikbaar</string>
+    <string name="story_error_body">We konden je verhaal niet laden. Trek omlaag om te vernieuwen of probeer opnieuw.</string>
+    <string name="story_error_retry">Opnieuw</string>
+    <plurals name="story_count_trips">
+        <item quantity="one">Reis</item>
+        <item quantity="other">Reizen</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="one">Gast ontvangen</item>
+        <item quantity="other">Gasten ontvangen</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="one">Stad</item>
+        <item quantity="other">Steden</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="one">Land</item>
+        <item quantity="other">Landen</item>
+    </plurals>
 </resources>

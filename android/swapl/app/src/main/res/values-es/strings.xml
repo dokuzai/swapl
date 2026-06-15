@@ -105,4 +105,43 @@
     <string name="valuation_review_applied_neutral">Tus reseñas (%1$.1f★ de %2$d) mantienen el valor igual.</string>
     <string name="valuation_review_pending">Cuando tengas algunas reseñas, podrán ajustar suavemente este valor. Hasta entonces se mantiene en su nivel basado en las características.</string>
     <string name="valuation_bounded_note">Este valor solo se mueve en pasos pequeños y limitados — la opinión de las reseñas puede cambiarlo como máximo un ±20%%, así que nunca se dispara de un día para otro.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">Tu historia en Swapl</string>
+    <string name="story_counts_heading">Tu historia hasta ahora</string>
+    <string name="story_passport">Tu pasaporte</string>
+    <string name="story_kind_trip">Viaje</string>
+    <string name="story_kind_hosted">Anfitrión</string>
+    <string name="story_detail_hosted_by">Te alojó %1$s</string>
+    <string name="story_detail_welcomed">Recibiste a %1$s</string>
+    <string name="story_detail_stay">Una estancia en Swapl</string>
+    <string name="story_detail_guest">Un huésped en tu casa</string>
+    <string name="story_share_heading">Comparte tu historia</string>
+    <string name="story_share_button">Compartir</string>
+    <string name="story_share_note">Comparte tu historia donde quieras — Mensajes, WhatsApp, correo. Lleva tu enlace de invitación: cuando alguien lo toca y se une, ambos ganáis puntos de viaje.</string>
+    <string name="story_share_subject">Mi historia en Swapl</string>
+    <string name="story_share_chooser">Comparte tu historia</string>
+    <string name="story_share_message">He intercambiado casas en %1$d ciudades en Swapl — viajar con puntos, no con dinero. Únete con mi enlace y ambos ganamos puntos de viaje cuando te verifiques: %2$s</string>
+    <string name="story_empty_title">Tu historia empieza aquí</string>
+    <string name="story_empty_body">Cuando completes tu primer intercambio o estancia con Keys, tus viajes y los huéspedes que recibas aparecerán aquí como sellos de pasaporte — una postal de todos los lugares a los que te lleva Swapl.</string>
+    <string name="story_empty_share">Invita a un amigo a intercambiar</string>
+    <string name="story_error_title">Historia no disponible</string>
+    <string name="story_error_body">No pudimos cargar tu historia. Desliza para actualizar o reintenta.</string>
+    <string name="story_error_retry">Reintentar</string>
+    <plurals name="story_count_trips">
+        <item quantity="one">Viaje</item>
+        <item quantity="other">Viajes</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="one">Huésped recibido</item>
+        <item quantity="other">Huéspedes recibidos</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="one">Ciudad</item>
+        <item quantity="other">Ciudades</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="one">País</item>
+        <item quantity="other">Países</item>
+    </plurals>
 </resources>

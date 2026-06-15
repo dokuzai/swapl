@@ -65,6 +65,7 @@ import app.swapl.features.profile.InterestsEditorScreen
 import app.swapl.features.profile.NotificationSettingsScreen
 import app.swapl.features.profile.PersonalInfoScreen
 import app.swapl.features.profile.PrivacySettingsScreen
+import app.swapl.features.profile.SwaplStoryScreen
 import app.swapl.features.profile.PublicProfileScreen
 import app.swapl.features.profile.SavedSearchesScreen
 import app.swapl.features.profile.TravelWindowsScreen
@@ -338,6 +339,7 @@ private fun HomeShell(
                             onOpenSavedSearches = { accountNav.navigate("savedSearches") },
                             onOpenTravelWindows = { accountNav.navigate("travelWindows") },
                             onOpenKeys = { accountNav.navigate("keys") },
+                            onOpenStory = { accountNav.navigate("story") },
                             onOpenInvite = { accountNav.navigate("invite") },
                             onOpenMetrics = { accountNav.navigate("metrics") },
                             onOpenPublicProfile = { id -> accountNav.navigate("profile/$id") },
@@ -369,6 +371,7 @@ private fun HomeShell(
                         KeysWalletScreen(onSeeAllTransactions = { accountNav.navigate("keysHistory") })
                     }
                     composable("keysHistory") { KeysTransactionsScreen() }
+                    composable("story") { SwaplStoryScreen() }
                     composable("invite") {
                         InviteAndEarnScreen(onOpenInviteToStay = { accountNav.navigate("inviteToStay") })
                     }
