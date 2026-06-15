@@ -129,10 +129,16 @@ export default async function AccountPage() {
                 <Link href="/account/interests" className="pill-ghost">{t("account.interests.cta")}</Link>
               </div>
 
-              <div className="surface-card surface-card--static p-6">
+              <div className="surface-card surface-card--static p-6 mb-6">
                 <h3 className="font-display text-xl tracking-[-0.01em] mb-3">{t("account.savedSearches.title")}</h3>
                 <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>{t("account.savedSearches.body")}</p>
                 <Link href="/account/saved-searches" className="pill-ghost">{t("account.savedSearches.cta")}</Link>
+              </div>
+
+              <div className="surface-card surface-card--static p-6">
+                <h3 className="font-display text-xl tracking-[-0.01em] mb-3">{t("account.travelWindows.title")}</h3>
+                <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>{t("account.travelWindows.body")}</p>
+                <Link href="/account/travel-windows" className="pill-ghost">{t("account.travelWindows.cta")}</Link>
               </div>
             </section>
 

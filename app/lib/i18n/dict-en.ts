@@ -284,6 +284,10 @@ export const en = {
   "account.savedSearches.body":
     "Pin a filter combination from /listings and we'll email you a daily digest of new homes that match. Plus and Pro members can keep up to 20 saved searches.",
   "account.savedSearches.cta": "Manage saved searches",
+  "account.travelWindows.title": "Travel windows",
+  "account.travelWindows.body":
+    "Save the periods you want to travel and we'll line up ready-made swaps — real homes free for your exact dates.",
+  "account.travelWindows.cta": "Manage travel windows",
   "account.notifications.title": "Notifications",
   "account.notifications.body":
     "Email is on by default for new proposals, replies, and accepted swaps. We'll never email you about marketing.",
@@ -985,6 +989,43 @@ export const en = {
   "calendar.editor.unblock": "Unblock",
   "calendar.editor.yourBlocks": "Your blocked dates",
   "calendar.editor.error": "Couldn't update your calendar — try again.",
+
+  // Travel windows (DOK-161) — saved date intents + AI swap proposals.
+  "tw.kicker": "Travel windows",
+  "tw.title": "When do you want to travel?",
+  "tw.intro":
+    "Save a period and we'll keep ready-made swaps waiting — real homes that are free for your exact dates, with a match score and a one-tap path to a proposal or a Stay-with-Keys booking.",
+  "tw.counter": "{count}/{max} windows used",
+  "tw.counterUnlimited": "{count} windows · unlimited on your plan",
+  "tw.form.dateFrom": "From",
+  "tw.form.dateTo": "To",
+  "tw.form.flexible": "My dates are flexible (±a few days)",
+  "tw.form.destinations": "Preferred destinations (optional)",
+  "tw.form.destinationsHint": "Cities or countries, comma-separated. Leave empty to see swaps anywhere.",
+  "tw.form.notes": "Notes (optional)",
+  "tw.form.notesPlaceholder": "Anniversary trip, needs a desk for WFH…",
+  "tw.form.add": "Save travel window",
+  "tw.form.saving": "Saving…",
+  "tw.form.errorDates": "Pick an end date after the start date.",
+  "tw.empty": "No travel windows yet — save your first dates above.",
+  "tw.remove": "Remove",
+  "tw.removing": "Removing…",
+  "tw.flexibleBadge": "Flexible",
+  "tw.anywhere": "Anywhere",
+  "tw.limit.title": "You've reached your plan's travel windows",
+  "tw.limit.cta": "Upgrade plan",
+  "tw.proposals.heading": "Picked for your {month} trip",
+  "tw.proposals.loading": "Finding homes free for your dates…",
+  "tw.proposals.empty": "No homes are free for these exact dates yet — try a wider or more flexible window.",
+  "tw.proposals.noListing": "List your home first so we can match swaps for your dates.",
+  "tw.proposals.error": "Couldn't load proposals — try again.",
+  "tw.proposals.show": "Show proposals",
+  "tw.proposals.hide": "Hide",
+  "tw.proposals.matchBadge": "{score}% match",
+  "tw.proposals.inWishlistDest": "In your wishlist destination",
+  "tw.proposals.directSwap": "Propose a swap",
+  "tw.proposals.keysStay": "Stay with Keys",
+  "tw.proposals.nightlyKeys": "{keys} Keys/night",
 } as const;
 
 export type DictKey = keyof typeof en;

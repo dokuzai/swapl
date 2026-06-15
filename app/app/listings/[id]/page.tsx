@@ -383,7 +383,7 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               sits ALONGSIDE the direct swap above. Signed-in non-owners only;
               the host can't book their own home. */}
           {viewer && (
-            <div className="surface-card surface-card--static p-6">
+            <div id="stay-with-keys" className="surface-card surface-card--static p-6 scroll-mt-24">
               <I18nProviderShell>
                 <StayWithKeys listingId={dto.id} balance={viewer.keysBalance} />
               </I18nProviderShell>
