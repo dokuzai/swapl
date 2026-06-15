@@ -84,6 +84,27 @@ struct StayWithKeysSheet: View {
         return totalKeys - balance
     }
 
+    // "You have N points — enough for about M nights here" gives the balance a
+    // scale tied to THIS home's rate, computed live as dates/rate load.
+    private func balanceScaleText(balance: Int) -> String {
+        guard nightlyKeys > 0 else { return "You have \(balance) points — enough for this stay." }
+        let possibleNights = balance / nightlyKeys
+        return "You have \(balance) points — enough for this stay (about \(possibleNights) night\(possibleNights == 1 ? "" : "s") at this home)."
+    }
+
+    // Short balance: state the gap, then a concrete hosting fix ("host ~N nights
+    // of your own home to cover it"), never a purchase. Falls back gracefully if
+    // we don't know the member's own rate yet.
+    private func insufficientText(balance: Int) -> String {
+        let gap = totalKeys - balance
+        let myRate = vm.availability?.nightlyKeys ?? 0  // rate of THIS listing as a proxy scale
+        if myRate > 0 {
+            let nightsToHost = Int((Double(gap) / Double(myRate)).rounded(.up))
+            return "You have \(balance) points — \(gap) short. Host about \(nightsToHost) night\(nightsToHost == 1 ? "" : "s") to earn the rest, or pick fewer nights. Points can't be bought."
+        }
+        return "You have \(balance) points — \(gap) short. Earn points by hosting, or pick fewer nights. Points can't be bought."
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -138,6 +159,22 @@ struct StayWithKeysSheet: View {
 
     private var form: some View {
         Form {
+            // First-touch framing: what "stay with points" means and how it
+            // differs from a direct swap, so a guest isn't guessing whether the
+            // nightly rate is a price. One sentence, above the date pickers.
+            Section {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Book one-way — no hosting back required")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                    Text("Unlike a swap, the host doesn't travel to you. You spend travel points you earned by hosting — never money.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.vertical, 2)
+            }
+
             Section {
                 DatePicker("Check-in", selection: $dateFrom, displayedComponents: .date)
                 DatePicker("Check-out", selection: $dateTo, displayedComponents: .date)
@@ -158,11 +195,21 @@ struct StayWithKeysSheet: View {
                         .foregroundStyle(SwaplSemanticLight.primary)
                 }
                 if let balance = vm.balance {
-                    Text(canAfford
-                         ? "You have \(balance) points — enough for this stay."
-                         : "You have \(balance) points — \(totalKeys - balance) short. Earn points by hosting, or pick fewer nights. Points can't be bought.")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
-                        .foregroundStyle(canAfford ? AirbnbPalette.secondaryText : SwaplSemanticLight.destructive)
+                    if canAfford {
+                        // Give the balance a scale: a bare number means nothing
+                        // until it's "≈ N nights at this rate".
+                        Text(balanceScaleText(balance: balance))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                    } else {
+                        // Insufficient: quantify the gap AND give an actionable
+                        // next step in hosting terms, so "short" has a fix that
+                        // isn't "buy". Points are never money.
+                        Text(insufficientText(balance: balance))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                            .foregroundStyle(SwaplSemanticLight.destructive)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             } header: {
                 Text("Cost")
@@ -215,6 +262,11 @@ struct StayWithKeysSheet: View {
             Label("Staying with points", systemImage: "key.horizontal")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                 .foregroundStyle(SwaplSemanticLight.primary)
+
+            Text("Example: host 2 nights of your home (\(nightlyKeys > 0 ? nightlyKeys : 8) points / night) → earn \((nightlyKeys > 0 ? nightlyKeys : 8) * 2) points → spend them on 2 nights here.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .fixedSize(horizontal: false, vertical: true)
 
             infoRow("You earn points by hosting other members — they're travel points, not money, and can't be bought.")
             infoRow("Pick your dates and the home's nightly points show the total. The host doesn't need to travel back.")

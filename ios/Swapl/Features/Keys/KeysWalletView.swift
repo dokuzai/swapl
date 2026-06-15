@@ -74,6 +74,12 @@ struct KeysWalletView: View {
         VStack(alignment: .leading, spacing: 24) {
             balanceCard(wallet.balance)
 
+            // First-touch explainer: the earn→spend loop made concrete with one
+            // example, so "travel points" stops being abstract. Shown to everyone
+            // (it's the hardest concept at first contact), using the member's own
+            // home rate when we have it so the numbers feel real.
+            flywheelCard(wallet)
+
             if isZeroBalance(wallet) {
                 earnPathsCard
             } else {
@@ -83,7 +89,10 @@ struct KeysWalletView: View {
 
             if !wallet.nightlyKeysForMyListings.isEmpty {
                 section("Your homes earn") {
-                    VStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("This is what you earn for each night a guest stays with you.")
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
                         ForEach(wallet.nightlyKeysForMyListings) { home in
                             nightlyRow(home)
                         }
@@ -134,7 +143,7 @@ struct KeysWalletView: View {
             Text("\(balance)")
                 .font(.swaplDisplay(56, weight: .semibold))
                 .foregroundStyle(SwaplSemanticLight.primaryForeground)
-            Text("Spend them on a stay without a simultaneous swap. Points are not money — you can't buy or cash them out.")
+            Text("Like air miles for home swaps: earn them by hosting, spend them on a stay — no swapping back. Points are never money — you can't buy or cash them out.")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                 .foregroundStyle(SwaplSemanticLight.primaryForeground.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
@@ -142,6 +151,77 @@ struct KeysWalletView: View {
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(SwaplColor.navyDark, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.xLarge, style: .continuous))
+    }
+
+    // "Earning & spending in action" — the single concrete example that closes
+    // the loop between abstract "travel points" and a real stay. Uses the
+    // member's own nightly rate when we have a home (so the math is theirs),
+    // otherwise a neutral worked example. Three steps: host → earn → spend.
+    private func flywheelCard(_ wallet: KeysWallet) -> some View {
+        let rate = wallet.nightlyKeysForMyListings.first?.nightlyKeys ?? 8
+        let earned = rate * 2
+
+        return VStack(alignment: .leading, spacing: 14) {
+            Text("How it works, in one example")
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+
+            VStack(spacing: 0) {
+                flywheelStep(
+                    icon: "house.fill",
+                    title: "Host 2 nights",
+                    detail: "at \(rate) points / night",
+                    showConnector: true
+                )
+                flywheelStep(
+                    icon: "key.horizontal.fill",
+                    title: "Earn \(earned) points",
+                    detail: "added to your balance",
+                    showConnector: true
+                )
+                flywheelStep(
+                    icon: "airplane.departure",
+                    title: "Spend \(earned) points",
+                    detail: "on 2 nights somewhere else",
+                    showConnector: false
+                )
+            }
+
+            Text("That's the whole loop — host to earn, then travel. No money ever changes hands.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SwaplSemanticLight.accent, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+    }
+
+    private func flywheelStep(icon: String, title: String, detail: String, showConnector: Bool) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(spacing: 0) {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .frame(width: 36, height: 36)
+                    .background(SwaplSemanticLight.card, in: Circle())
+                if showConnector {
+                    Rectangle()
+                        .fill(SwaplSemanticLight.primary.opacity(0.3))
+                        .frame(width: 2, height: 18)
+                }
+            }
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Text(detail)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            .padding(.top, 8)
+            Spacer(minLength: 0)
+        }
     }
 
     private var giftButton: some View {
