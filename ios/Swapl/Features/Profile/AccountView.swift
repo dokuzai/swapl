@@ -41,6 +41,8 @@ struct AccountView: View {
                             .buttonStyle(.plain)
                         NavigationLink { TravelWindowsView() } label: { portedMenuRow("Travel windows", "calendar.badge.clock") }
                             .buttonStyle(.plain)
+                        NavigationLink { SwaplStoryView() } label: { portedMenuRow("Your Swapl story", "book.closed") }
+                            .buttonStyle(.plain)
                         if let userId = auth.session?.id {
                             NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow("View public profile", "person") }
                                 .buttonStyle(.plain)

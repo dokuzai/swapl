@@ -51,6 +51,7 @@
 		63F5F682FBAD0E8EDF7A3007 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C15D1A79FEEAA9102F7520 /* Trip.swift */; };
 		65EFA92459406FAB1651014D /* SurfaceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC848E7485CD6912E46E61BE /* SurfaceCard.swift */; };
 		670D86836AE68EA719BB626D /* CitiesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8086AB51A024B342543C18 /* CitiesRepository.swift */; };
+		6BE10CCFE888C0BCED3C7A12 /* SwaplStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C77A2589550B9F463387094 /* SwaplStoryView.swift */; };
 		6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEEE99CFDC981E6B91926F5 /* PushService.swift */; };
 		6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */; };
 		6FBB7E9F562680E39B84E3FE /* CityStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD0A0CB13B5D117AC603E41 /* CityStamp.swift */; };
@@ -91,8 +92,10 @@
 		C3E296FCE8CA05711DC8BF33 /* MetricsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8574BE693D92BD6FA207B6 /* MetricsRepository.swift */; };
 		C4380034F6D9B20966B25C07 /* InspireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78065E6D3BA14EC22992A812 /* InspireView.swift */; };
 		C50E6EC4B47A130774948455 /* FilterSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880076B1A21E1999A8C9F405 /* FilterSheetView.swift */; };
+		C891793FB575D73DD4E0F494 /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6399269847F1E81A5CD48B0 /* Story.swift */; };
 		CE2E19FCF7D3A7155FABE8CA /* AIDraftProposalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */; };
 		CE547916295A1F6905C7C90A /* VerificationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D37E004482EF51FE52B2E81A /* VerificationRepository.swift */; };
+		D3BE46BE6BB8151E73F00A04 /* StoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03169BD5D127856C30A8AA8A /* StoryRepository.swift */; };
 		D74BBBC6F3B32322A6817C7D /* Dispute.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26F930FB50115D11BD5133F /* Dispute.swift */; };
 		DA8C3FCC1426E8B95A52BD96 /* SwaplDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = A8D80844D3E9A3B2227C620A /* SwaplDesignTokens */; };
 		DACBA4DA3BDA42660BC27C0B /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8479450F71641A8B608B52 /* Profile.swift */; };
@@ -132,6 +135,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		03169BD5D127856C30A8AA8A /* StoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryRepository.swift; sourceTree = "<group>"; };
 		06335EFCBD6A3915C648EB60 /* LeaveReviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveReviewSheet.swift; sourceTree = "<group>"; };
 		0B99C1E41BBF19C90616B214 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		0FB5692D60E8AAFB8D3017D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -143,6 +147,7 @@
 		166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsEditorView.swift; sourceTree = "<group>"; };
 		1682FAF612F802B6DC0C9140 /* ReferralRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralRepository.swift; sourceTree = "<group>"; };
 		1951608EE0445C6866D16B76 /* PersonalInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInfoView.swift; sourceTree = "<group>"; };
+		1C77A2589550B9F463387094 /* SwaplStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplStoryView.swift; sourceTree = "<group>"; };
 		1CD770B97A9384AAECAFF4F3 /* WishlistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistsView.swift; sourceTree = "<group>"; };
 		1D471415D3273EA410BB0599 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
 		1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftProposalTests.swift; sourceTree = "<group>"; };
@@ -224,6 +229,7 @@
 		B8E01813089345C06F7B5499 /* MarketingScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketingScreenshotTests.swift; sourceTree = "<group>"; };
 		BC51BEDDB64724941D1CAE27 /* SwaplPageTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplPageTitle.swift; sourceTree = "<group>"; };
 		BC848E7485CD6912E46E61BE /* SurfaceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurfaceCard.swift; sourceTree = "<group>"; };
+		C6399269847F1E81A5CD48B0 /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		CAEEE99CFDC981E6B91926F5 /* PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushService.swift; sourceTree = "<group>"; };
 		CCD681952D45568C94F736A2 /* PrimaryPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryPill.swift; sourceTree = "<group>"; };
 		CCF2FF97BD7916B883AF9588 /* DisputeOpenSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisputeOpenSheet.swift; sourceTree = "<group>"; };
@@ -359,6 +365,7 @@
 				EDD08487D5CE6C55DAB16D19 /* PropertyVerificationRepository.swift */,
 				F39E0749085C3E362B239A25 /* ProposalRepository.swift */,
 				1682FAF612F802B6DC0C9140 /* ReferralRepository.swift */,
+				03169BD5D127856C30A8AA8A /* StoryRepository.swift */,
 				4304221FC5395A99BFD852C1 /* SupportContactsRepository.swift */,
 				F1D94E1D6419374CABF68FFC /* TravelWindowRepository.swift */,
 				6DE55822504185C1726F7590 /* TripRepository.swift */,
@@ -435,6 +442,7 @@
 				9105E39884B94E60E5BF0FCB /* Proposal.swift */,
 				88CDF96AA787954E6B258CE7 /* PublishAck.swift */,
 				DBC8253E8B03396CC68DBEDE /* Referral.swift */,
+				C6399269847F1E81A5CD48B0 /* Story.swift */,
 				8E7E8D4971C41BA23909093D /* SwapMessage.swift */,
 				32BC3634ACCFEE6B0949AC49 /* TravelWindow.swift */,
 				D2C15D1A79FEEAA9102F7520 /* Trip.swift */,
@@ -471,6 +479,7 @@
 				13E87AFF2208189D059454DA /* PublicProfileView.swift */,
 				781B69502AE21A819387C19F /* ReportSheet.swift */,
 				B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */,
+				1C77A2589550B9F463387094 /* SwaplStoryView.swift */,
 				63D199358A62C764FFD50BD6 /* TravelProfileView.swift */,
 				8F55E6580093FF8311EB4091 /* TravelWindowsView.swift */,
 			);
@@ -816,6 +825,8 @@
 				E2FB54694BF2D5D9EE68F9C9 /* ServicesView.swift in Sources */,
 				38FFAA04AD5C5FD4661D8B53 /* SpeechRecorder.swift in Sources */,
 				F12C3AA109E59CDD8B01485E /* StayWithKeysSheet.swift in Sources */,
+				C891793FB575D73DD4E0F494 /* Story.swift in Sources */,
+				D3BE46BE6BB8151E73F00A04 /* StoryRepository.swift in Sources */,
 				DB917B61A5F6ED29B7343D60 /* SupportContactsRepository.swift in Sources */,
 				65EFA92459406FAB1651014D /* SurfaceCard.swift in Sources */,
 				B3EE938B553972B8AA20A5D7 /* SwapChatView.swift in Sources */,
@@ -827,6 +838,7 @@
 				DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */,
 				025918872EE8E347FE5DAB31 /* SwaplImage.swift in Sources */,
 				1E9087DE48A98F8391B49E4F /* SwaplPageTitle.swift in Sources */,
+				6BE10CCFE888C0BCED3C7A12 /* SwaplStoryView.swift in Sources */,
 				3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */,
 				09510D369FFD86683685D48E /* Theme.swift in Sources */,
 				4F2BF100C270F1F6A1AE58C1 /* TravelProfileView.swift in Sources */,
