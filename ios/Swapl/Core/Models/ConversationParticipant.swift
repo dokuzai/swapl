@@ -23,7 +23,7 @@ struct ConversationParticipant: Identifiable, Decodable, Hashable, Sendable {
     var displayName: String {
         if let name, !name.isEmpty { return name }
         if let invitedEmail, !invitedEmail.isEmpty { return invitedEmail }
-        return "Guest"
+        return String(localized: "Guest")
     }
 
     var initial: String {

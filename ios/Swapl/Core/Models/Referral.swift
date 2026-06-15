@@ -30,7 +30,7 @@ struct ReferralDashboard: Decodable, Sendable {
 
         private enum CodingKeys: String, CodingKey { case name, status, source }
 
-        var displayName: String { name ?? "A friend" }
+        var displayName: String { name ?? String(localized: "A friend") }
 
         // Verified friends are the ones that paid out points — surface that.
         var isQualified: Bool { status == "qualified" || status == "rewarded" }
@@ -39,7 +39,7 @@ struct ReferralDashboard: Decodable, Sendable {
             switch status {
             case "rewarded": return "Verified · points earned"
             case "qualified": return "Verified"
-            default: return "Invited · waiting to verify"
+            default: return String(localized: "Invited · waiting to verify")
             }
         }
 
@@ -73,7 +73,7 @@ struct ReferralDashboard: Decodable, Sendable {
         let isYou: Bool
 
         var id: Int { rank }
-        var displayName: String { isYou ? "You" : (name ?? "A member") }
+        var displayName: String { isYou ? String(localized: "You") : (name ?? String(localized: "A member")) }
     }
 }
 
@@ -89,7 +89,7 @@ struct ReferrerNotification: Decodable, Sendable, Identifiable {
     let keys: Int
     let rewardedAt: String?
 
-    var displayName: String { refereeName ?? "Someone you invited" }
+    var displayName: String { refereeName ?? String(localized: "Someone you invited") }
 }
 
 struct ReferrerNotificationsResponse: Decodable, Sendable {

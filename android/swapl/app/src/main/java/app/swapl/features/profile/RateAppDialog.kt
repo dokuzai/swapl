@@ -97,10 +97,11 @@ fun RateAppDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 KickerLabel(stringResource(R.string.rate_app_score_label))
+                val ratingCd = stringResource(R.string.cd_rating_out_of_5, rating)
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
                     modifier = Modifier.semantics {
-                        contentDescription = "$rating / 5"
+                        contentDescription = ratingCd
                     },
                 ) {
                     (1..5).forEach { n ->

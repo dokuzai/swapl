@@ -88,9 +88,9 @@ struct StayWithKeysSheet: View {
     // "You have N points — enough for about M nights here" gives the balance a
     // scale tied to THIS home's rate, computed live as dates/rate load.
     private func balanceScaleText(balance: Int) -> String {
-        guard nightlyKeys > 0 else { return "You have \(balance) points — enough for this stay." }
+        guard nightlyKeys > 0 else { return String(localized: "You have \(balance) points — enough for this stay.") }
         let possibleNights = balance / nightlyKeys
-        return "You have \(balance) points — enough for this stay (about \(possibleNights) night\(possibleNights == 1 ? "" : "s") at this home)."
+        return String(localized: "You have \(balance) points — enough for this stay (about \(possibleNights) nights at this home).")
     }
 
     // Short balance: state the gap, then a concrete hosting fix ("host ~N nights
@@ -101,9 +101,9 @@ struct StayWithKeysSheet: View {
         let myRate = vm.availability?.nightlyKeys ?? 0  // rate of THIS listing as a proxy scale
         if myRate > 0 {
             let nightsToHost = Int((Double(gap) / Double(myRate)).rounded(.up))
-            return "You have \(balance) points — \(gap) short. Host about \(nightsToHost) night\(nightsToHost == 1 ? "" : "s") to earn the rest, or pick fewer nights. Points can't be bought."
+            return String(localized: "You have \(balance) points — \(gap) short. Host about \(nightsToHost) nights to earn the rest, or pick fewer nights. Points can't be bought.")
         }
-        return "You have \(balance) points — \(gap) short. Earn points by hosting, or pick fewer nights. Points can't be bought."
+        return String(localized: "You have \(balance) points — \(gap) short. Earn points by hosting, or pick fewer nights. Points can't be bought.")
     }
 
     var body: some View {
@@ -260,7 +260,7 @@ struct StayWithKeysSheet: View {
                     HStack {
                         Spacer()
                         if isSubmitting { ProgressView().tint(SwaplSemanticLight.primaryForeground) }
-                        Text(isSubmitting ? "Sending" : "Request with points")
+                        Text(isSubmitting ? String(localized: "Sending") : String(localized: "Request with points"))
                             .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                             .foregroundStyle(SwaplSemanticLight.primaryForeground)
                         Spacer()
@@ -325,7 +325,7 @@ struct StayWithKeysSheet: View {
 
     private func submit() async {
         guard nights > 0 else {
-            requestError = "Check-out must be after check-in."
+            requestError = String(localized: "Check-out must be after check-in.")
             return
         }
         isSubmitting = true

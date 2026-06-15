@@ -198,8 +198,8 @@ struct ChangePasswordSheet: View {
     @State private var didSucceed = false
 
     private var validationError: String? {
-        if newPassword.count < 6 { return "Use at least 6 characters." }
-        if newPassword != confirmPassword { return "Passwords don't match." }
+        if newPassword.count < 6 { return String(localized: "Use at least 6 characters.") }
+        if newPassword != confirmPassword { return String(localized: "Passwords don't match.") }
         return nil
     }
 

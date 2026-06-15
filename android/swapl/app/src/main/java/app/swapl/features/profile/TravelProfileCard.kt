@@ -22,12 +22,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import android.content.Context
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.TravelProfile
 import app.swapl.core.repository.AssistantRepository
 import app.swapl.design.components.KickerLabel
@@ -35,6 +38,7 @@ import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,6 +64,7 @@ data class TravelProfileState(
 @HiltViewModel
 class TravelProfileViewModel @Inject constructor(
     private val repo: AssistantRepository,
+    @ApplicationContext private val appContext: Context,
 ) : ViewModel() {
     private val _state = MutableStateFlow(TravelProfileState())
     val state: StateFlow<TravelProfileState> = _state.asStateFlow()
@@ -107,8 +112,8 @@ class TravelProfileViewModel @Inject constructor(
 
     private fun friendlyError(t: Throwable): String =
         when ((t as? ResponseException)?.response?.status?.value) {
-            429 -> "Profile refreshed too recently — try again in a bit."
-            else -> t.message ?: "Something went wrong. Please try again."
+            429 -> appContext.getString(R.string.travel_profile_error_429)
+            else -> t.message ?: appContext.getString(R.string.travel_profile_error_generic)
         }
 }
 
@@ -129,7 +134,7 @@ fun TravelProfileCard(vm: TravelProfileViewModel = hiltViewModel()) {
                     modifier = Modifier.size(18.dp),
                 )
                 Column(Modifier.weight(1f)) {
-                    KickerLabel("Your travel profile")
+                    KickerLabel(stringResource(R.string.travel_profile_kicker))
                 }
                 if (state.isLoading || state.isWorking) {
                     CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
@@ -138,7 +143,7 @@ fun TravelProfileCard(vm: TravelProfileViewModel = hiltViewModel()) {
 
             when {
                 state.deleted -> Text(
-                    "Profile deleted. We'll only rebuild it if you ask.",
+                    stringResource(R.string.travel_profile_deleted),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -155,16 +160,15 @@ fun TravelProfileCard(vm: TravelProfileViewModel = hiltViewModel()) {
                         }
                     }
                     Text(
-                        "Built only from what you do on Swapl" +
-                            (profile.sourcesUsed.takeIf { it.isNotEmpty() }
-                                ?.let { ": " + it.joinToString(", ") { s -> s.replace('_', ' ') } } ?: "") +
-                            ". You can refresh or delete it anytime.",
+                        profile.sourcesUsed.takeIf { it.isNotEmpty() }
+                            ?.let { stringResource(R.string.travel_profile_built_from_sources, it.joinToString(", ") { s -> s.replace('_', ' ') }) }
+                            ?: stringResource(R.string.travel_profile_built_from),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 state.isLoading -> Text(
-                    "Reading your profile…",
+                    stringResource(R.string.travel_profile_loading),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -177,15 +181,15 @@ fun TravelProfileCard(vm: TravelProfileViewModel = hiltViewModel()) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 if (state.deleted) {
                     TextButton(onClick = { vm.load(force = true) }, enabled = !state.isWorking && !state.isLoading) {
-                        Text("Build it again")
+                        Text(stringResource(R.string.travel_profile_build_again))
                     }
                 } else {
                     TextButton(onClick = { vm.refresh() }, enabled = !state.isWorking && !state.isLoading) {
-                        Text("Refresh")
+                        Text(stringResource(R.string.travel_profile_refresh))
                     }
                     Spacer(Modifier.weight(1f))
                     TextButton(onClick = { confirmDelete = true }, enabled = !state.isWorking && state.profile != null) {
-                        Text("Delete", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.common_delete), color = MaterialTheme.colorScheme.error)
                     }
                 }
             }
@@ -195,15 +199,15 @@ fun TravelProfileCard(vm: TravelProfileViewModel = hiltViewModel()) {
     if (confirmDelete) {
         AlertDialog(
             onDismissRequest = { confirmDelete = false },
-            title = { Text("Delete travel profile?") },
-            text = { Text("This erases the AI's summary of your tastes. It won't come back unless you rebuild it.") },
+            title = { Text(stringResource(R.string.travel_profile_delete_title)) },
+            text = { Text(stringResource(R.string.travel_profile_delete_body)) },
             confirmButton = {
                 TextButton(onClick = { confirmDelete = false; vm.delete() }) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.common_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { confirmDelete = false }) { Text("Cancel") }
+                TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.common_cancel)) }
             },
         )
     }

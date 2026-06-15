@@ -20,7 +20,7 @@ final class MetricsViewModel {
         do {
             metrics = try await MetricsRepository.shared.fetch()
         } catch APIClient.APIError.status(403, _) {
-            if metrics == nil { error = "This dashboard is for Swapl admins only." }
+            if metrics == nil { error = String(localized: "This dashboard is for Swapl admins only.") }
         } catch {
             // Keep showing stale numbers on a failed refresh.
             if metrics == nil { self.error = error.localizedDescription }

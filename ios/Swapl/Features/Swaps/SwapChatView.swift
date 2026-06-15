@@ -151,7 +151,7 @@ struct SwapChatView: View {
         // Hide the bottom tab bar inside a conversation so the composer sits
         // flush at the bottom, like other messaging apps (WhatsApp etc.).
         .toolbar(.hidden, for: .tabBar)
-        .navigationTitle(otherName ?? "Messages")
+        .navigationTitle(otherName ?? String(localized: "Messages"))
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
         .task(id: scenePhase) { await pollLoop() }
@@ -343,7 +343,7 @@ struct SwapChatView: View {
                 let url = try await APIClient.shared.uploadListingPhoto(jpeg)
                 vm.addUploadedPhoto(url)
             } catch {
-                vm.sendError = "Couldn't upload a photo. Check your connection and try again."
+                vm.sendError = String(localized: "Couldn't upload a photo. Check your connection and try again.")
             }
         }
         photoItems = []

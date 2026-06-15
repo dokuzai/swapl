@@ -42,8 +42,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import android.content.Context
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,6 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.swapl.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import app.swapl.core.model.EarnWay
 import app.swapl.core.model.EarnWaysPayload
 import app.swapl.core.model.KeysTransaction
@@ -112,11 +115,11 @@ fun KeysWalletScreen(
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s5),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
-                Text("Travel points", style = MaterialTheme.typography.displaySmall)
+                Text(stringResource(R.string.keys_travel_points), style = MaterialTheme.typography.displaySmall)
                 // First-touch one-liner: earn → spend, never money. This is the
                 // single sentence that has to land in 5 seconds.
                 Text(
-                    "Points you earn by hosting. Spend them on a stay — never money, never bought or cashed out.",
+                    stringResource(R.string.keys_intro),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -144,9 +147,9 @@ fun KeysWalletScreen(
 
             if (wallet.nightlyKeysForMyListings.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                    KickerLabel("Your homes earn")
+                    KickerLabel(stringResource(R.string.keys_your_homes_earn))
                     Text(
-                        "This is what you earn each night a guest stays — points you can then spend on a stay elsewhere.",
+                        stringResource(R.string.keys_your_homes_earn_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -155,11 +158,11 @@ fun KeysWalletScreen(
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("History")
+                KickerLabel(stringResource(R.string.keys_history))
                 if (wallet.recentTransactions.isEmpty()) {
                     SurfaceCard {
                         Text(
-                            "No points activity yet. Earn points by hosting, or gift some to a friend.",
+                            stringResource(R.string.keys_history_empty),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -177,7 +180,7 @@ fun KeysWalletScreen(
                     }
                     // Filterable, paginated ledger (DOK-157).
                     TextButton(onClick = onSeeAllTransactions, modifier = Modifier.fillMaxWidth()) {
-                        Text("See all points history")
+                        Text(stringResource(R.string.keys_see_all_history))
                     }
                 }
             }
@@ -209,7 +212,7 @@ private fun BalanceCard(balance: Int) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 Icon(Icons.Default.VpnKey, contentDescription = null, tint = SwaplColors.Cream)
                 Text(
-                    "Your travel points",
+                    stringResource(R.string.keys_your_travel_points),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.SemiBold,
                     color = SwaplColors.Cream,
@@ -221,7 +224,7 @@ private fun BalanceCard(balance: Int) {
                 color = SwaplColors.Cream,
             )
             Text(
-                "Spend them on a stay without a simultaneous swap. Points are not money — you can't buy or cash them out.",
+                stringResource(R.string.keys_balance_caption),
                 style = MaterialTheme.typography.bodySmall,
                 color = SwaplColors.Cream.copy(alpha = 0.85f),
             )
@@ -235,9 +238,9 @@ private fun GiftEntry(onClick: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
             Icon(Icons.Default.CardGiftcard, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f)) {
-                Text("Gift points", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.keys_gift_points), style = MaterialTheme.typography.titleLarge)
                 Text(
-                    "Send points to a verified friend",
+                    stringResource(R.string.keys_gift_entry_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -255,7 +258,7 @@ private fun NightlyRow(home: KeysWallet.NightlyKeysListing, balance: Int) {
                 Icon(Icons.Default.Home, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                 Text(home.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
                 Text(
-                    "${home.nightlyKeys} / night",
+                    stringResource(R.string.keys_per_night, home.nightlyKeys),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                 )
@@ -265,7 +268,7 @@ private fun NightlyRow(home: KeysWallet.NightlyKeysListing, balance: Int) {
             if (home.nightlyKeys > 0) {
                 val nights = balance / home.nightlyKeys
                 Text(
-                    "Your balance covers about $nights night${if (nights == 1) "" else "s"} at this rate.",
+                    pluralStringResource(R.plurals.keys_balance_covers, nights, nights),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -289,11 +292,11 @@ private fun InActionCard(nightlyRate: Int?) {
             .padding(SwaplSpacing.s5),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-            KickerLabel("How points work")
+            KickerLabel(stringResource(R.string.keys_how_it_works))
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 Icon(Icons.Default.Home, contentDescription = null, tint = SwaplColors.Navy, modifier = Modifier.size(20.dp))
                 Text(
-                    "Host 2 nights at $rate points/night",
+                    stringResource(R.string.keys_example_host, rate),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = SwaplColors.Navy,
@@ -304,7 +307,7 @@ private fun InActionCard(nightlyRate: Int?) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 Icon(Icons.Default.VpnKey, contentDescription = null, tint = SwaplColors.Navy, modifier = Modifier.size(20.dp))
                 Text(
-                    "Spend those $earned points on 2 nights somewhere else",
+                    stringResource(R.string.keys_example_spend, earned),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = SwaplColors.Navy,
@@ -313,7 +316,7 @@ private fun InActionCard(nightlyRate: Int?) {
                 Text("-$earned", style = MaterialTheme.typography.titleLarge, color = SwaplColors.Navy, fontWeight = FontWeight.Bold)
             }
             Text(
-                "That's the whole loop: host → earn points → travel → repeat. No money changes hands.",
+                stringResource(R.string.keys_loop_caption),
                 style = MaterialTheme.typography.bodySmall,
                 color = SwaplColors.Navy2,
             )
@@ -333,20 +336,20 @@ private fun EarnPathsCard(welcomeBonus: Int) {
             .padding(SwaplSpacing.s5),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-            Text("Get your first points", style = MaterialTheme.typography.titleLarge, color = SwaplColors.Navy)
+            Text(stringResource(R.string.keys_get_first), style = MaterialTheme.typography.titleLarge, color = SwaplColors.Navy)
             EarnRow(
-                title = "Verify your identity",
-                body = "Get $welcomeBonus points the moment you're verified — instantly.",
+                title = stringResource(R.string.keys_earn_verify_title),
+                body = stringResource(R.string.keys_earn_verify_body, welcomeBonus),
                 badge = "+$welcomeBonus",
             )
             EarnRow(
-                title = "Host a stay",
-                body = "Earn points every night a guest stays with you.",
+                title = stringResource(R.string.keys_earn_host_title),
+                body = stringResource(R.string.keys_earn_host_body),
                 badge = null,
             )
             EarnRow(
-                title = "Receive a gift",
-                body = "A verified friend can send you points — share your member ID.",
+                title = stringResource(R.string.keys_earn_gift_title),
+                body = stringResource(R.string.keys_earn_gift_body),
                 badge = null,
             )
         }
@@ -522,7 +525,7 @@ private fun ErrorState(message: String, onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Points unavailable", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.keys_error_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
             message,
@@ -530,14 +533,17 @@ private fun ErrorState(message: String, onRetry: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(SwaplSpacing.s3))
-        TextButton(onClick = onRetry) { Text("Try again") }
+        TextButton(onClick = onRetry) { Text(stringResource(R.string.common_try_again)) }
     }
 }
 
 // Gift dialog — caps mirror GIFT_MAX_PER_TRANSFER / GIFT_DAILY_CAP in
 // lib/keys/config.ts. Points are a gift: never bought, never cashed out.
 @HiltViewModel
-class GiftKeysViewModel @Inject constructor(private val repo: KeysRepository) : ViewModel() {
+class GiftKeysViewModel @Inject constructor(
+    private val repo: KeysRepository,
+    @ApplicationContext private val appContext: Context,
+) : ViewModel() {
     var isSending by mutableStateOf(false); private set
     var error by mutableStateOf<String?>(null); private set
     var success by mutableStateOf<String?>(null); private set
@@ -548,17 +554,19 @@ class GiftKeysViewModel @Inject constructor(private val repo: KeysRepository) : 
             isSending = true; error = null; success = null
             try {
                 val res = repo.gift(recipientId.trim(), amount)
-                success = "Sent ${res.amount} point${if (res.amount == 1) "" else "s"}. You now have ${res.balanceAfter}."
+                success = appContext.resources.getQuantityString(
+                    R.plurals.keys_gift_sent, res.amount, res.amount, res.balanceAfter,
+                )
                 onSent()
             } catch (t: ClientRequestException) {
                 error = when (t.response.status.value) {
-                    403 -> "Both you and your friend need to be verified members to gift points."
-                    404 -> "We couldn't find that member. Double-check the ID."
-                    422 -> "You don't have enough points for this gift."
-                    else -> "Couldn't send points right now."
+                    403 -> appContext.getString(R.string.keys_gift_error_unverified)
+                    404 -> appContext.getString(R.string.keys_gift_error_not_found)
+                    422 -> appContext.getString(R.string.keys_gift_error_insufficient)
+                    else -> appContext.getString(R.string.keys_gift_error_generic)
                 }
             } catch (t: Throwable) {
-                error = t.message ?: "Couldn't send points right now."
+                error = t.message ?: appContext.getString(R.string.keys_gift_error_generic)
             } finally {
                 isSending = false
             }
@@ -584,23 +592,23 @@ fun GiftKeysDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Gift points") },
+        title = { Text(stringResource(R.string.keys_gift_points)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 OutlinedTextField(
                     value = recipientId,
                     onValueChange = { recipientId = it },
-                    label = { Text("Member ID") },
+                    label = { Text(stringResource(R.string.keys_gift_member_id)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
-                    "Ask your friend for their Swapl member ID. They must be a verified member.",
+                    stringResource(R.string.keys_gift_member_id_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    "$amount point${if (amount == 1) "" else "s"}",
+                    pluralStringResource(R.plurals.keys_points_amount, amount, amount),
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Slider(
@@ -609,7 +617,7 @@ fun GiftKeysDialog(
                     valueRange = 1f..GIFT_MAX_PER_TRANSFER.toFloat(),
                 )
                 Text(
-                    "Up to $GIFT_MAX_PER_TRANSFER per gift, $GIFT_DAILY_CAP per day. Points are a gift — they can't be bought or cashed out.",
+                    stringResource(R.string.keys_gift_caps, GIFT_MAX_PER_TRANSFER, GIFT_DAILY_CAP),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -621,8 +629,8 @@ fun GiftKeysDialog(
             TextButton(
                 enabled = !vm.isSending && recipientId.isNotBlank(),
                 onClick = { vm.send(recipientId, amount, onSent) },
-            ) { Text(if (vm.isSending) "Sending…" else "Send") }
+            ) { Text(if (vm.isSending) stringResource(R.string.common_sending) else stringResource(R.string.common_send)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) } },
     )
 }

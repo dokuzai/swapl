@@ -41,8 +41,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.swapl.R
 import app.swapl.core.repository.ListingRepository
 import app.swapl.designtokens.SwaplRadius
 import app.swapl.designtokens.SwaplSpacing
@@ -83,13 +85,13 @@ fun CheckEventSheet(
                 try {
                     val jpeg = withContext(Dispatchers.IO) { downscaleToJpeg(context, uri) }
                     if (jpeg == null) {
-                        uploadError = "Couldn't read that image"
+                        uploadError = context.getString(R.string.dispute_photo_read_error)
                     } else {
                         val url = listingRepo.uploadPhoto(jpeg)
                         if (url !in photoUrls) photoUrls.add(url)
                     }
                 } catch (t: Throwable) {
-                    uploadError = "Couldn't upload a photo. Check your connection and try again."
+                    uploadError = context.getString(R.string.dispute_photo_upload_error)
                 } finally {
                     uploadsInFlight -= 1
                 }
@@ -97,7 +99,7 @@ fun CheckEventSheet(
         }
     }
 
-    val title = if (isCheckIn) "Check in" else "Check out"
+    val title = if (isCheckIn) stringResource(R.string.check_event_checkin) else stringResource(R.string.check_event_checkout)
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -110,9 +112,9 @@ fun CheckEventSheet(
             Text(title, style = MaterialTheme.typography.titleLarge)
             Text(
                 if (isCheckIn)
-                    "Snap a few baseline photos of the home as you arrive — it protects you both if anything's queried later."
+                    stringResource(R.string.check_event_checkin_body)
                 else
-                    "Snap a few photos as you leave, so the state of the home is on record.",
+                    stringResource(R.string.check_event_checkout_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -123,7 +125,7 @@ fun CheckEventSheet(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Baseline photos", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.check_event_baseline_photos), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
                     if (uploadsInFlight > 0) {
                         CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
                     }
@@ -136,7 +138,7 @@ fun CheckEventSheet(
                     },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text(if (photoUrls.isEmpty()) "Add photos" else "Add more")
+                    Text(if (photoUrls.isEmpty()) stringResource(R.string.dispute_add_photos) else stringResource(R.string.dispute_add_more_photos))
                 }
                 if (photoUrls.isNotEmpty()) {
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
@@ -158,7 +160,7 @@ fun CheckEventSheet(
                                 ) {
                                     Icon(
                                         Icons.Filled.Close,
-                                        contentDescription = "Remove photo",
+                                        contentDescription = stringResource(R.string.cd_remove_photo),
                                         tint = MaterialTheme.colorScheme.onSurface,
                                     )
                                 }
@@ -174,15 +176,15 @@ fun CheckEventSheet(
             OutlinedTextField(
                 value = note,
                 onValueChange = { note = it },
-                label = { Text("Note (optional)") },
-                placeholder = { Text("e.g. everything looks great, keys collected") },
+                label = { Text(stringResource(R.string.check_event_note_label)) },
+                placeholder = { Text(stringResource(R.string.check_event_note_placeholder)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 maxLines = 6,
             )
 
             PrimaryPill(
-                text = if (isSubmitting) "Saving…" else title,
+                text = if (isSubmitting) stringResource(R.string.common_saving) else title,
                 onClick = { onSubmit(note, photoUrls.toList()) },
                 enabled = !isSubmitting && uploadsInFlight == 0,
             )

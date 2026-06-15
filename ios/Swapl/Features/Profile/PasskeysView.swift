@@ -64,7 +64,7 @@ struct PasskeysView: View {
                         } else {
                             Image(systemName: "plus")
                         }
-                        Text(addedThisSession > 0 ? "Add another passkey" : "Add a passkey")
+                        Text(addedThisSession > 0 ? String(localized: "Add another passkey") : String(localized: "Add a passkey"))
                     }
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                     .foregroundStyle(SwaplSemanticLight.primaryForeground)
@@ -90,7 +90,7 @@ struct PasskeysView: View {
             titleVisibility: .visible,
             presenting: pendingRemoval
         ) { passkey in
-            Button("Remove \u{201C}\(passkey.name ?? "Passkey")\u{201D}", role: .destructive) {
+            Button("Remove \u{201C}\(passkey.name ?? String(localized: "Passkey"))\u{201D}", role: .destructive) {
                 removePasskey(passkey)
             }
             Button("Cancel", role: .cancel) {}
@@ -217,7 +217,7 @@ struct PasskeysView: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 8) {
-                    Text(passkey.name ?? "Passkey")
+                    Text(passkey.name ?? String(localized: "Passkey"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(1)
@@ -327,7 +327,7 @@ struct PasskeysView: View {
                 }
                 await load()
             } catch {
-                self.error = "Could not remove the passkey. Try again."
+                self.error = String(localized: "Could not remove the passkey. Try again.")
             }
         }
     }

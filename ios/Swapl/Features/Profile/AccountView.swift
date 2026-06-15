@@ -437,7 +437,7 @@ struct AccountView: View {
     }
 
     private var displayName: String {
-        auth.session?.name ?? auth.session?.email.components(separatedBy: "@").first ?? "Guest"
+        auth.session?.name ?? auth.session?.email.components(separatedBy: "@").first ?? String(localized: "Guest")
     }
 
     private var initials: String {
@@ -546,7 +546,7 @@ struct ListingCreationView: View {
                     dismiss()
                 }
             } message: {
-                Text(isEditing ? "Your listing has been updated." : "Your home is now ready for swaps.")
+                Text(isEditing ? String(localized: "Your listing has been updated.") : String(localized: "Your home is now ready for swaps."))
             }
             .toolbar(.hidden, for: .navigationBar)
             .onChange(of: locationService.detectedAddress) { _, address in
@@ -569,7 +569,7 @@ struct ListingCreationView: View {
             }
             .accessibilityLabel("Close")
             Spacer()
-            Text(isEditing ? "Edit your home" : "Create listing")
+            Text(isEditing ? String(localized: "Edit your home") : String(localized: "Create listing"))
                 .font(.swaplBody(17, weight: .bold))
                 .foregroundStyle(AirbnbPalette.text)
             Spacer()
@@ -686,7 +686,7 @@ struct ListingCreationView: View {
             PhotosPicker(selection: $photoItems, maxSelectionCount: 10, matching: .images) {
                 HStack(spacing: 10) {
                     Image(systemName: "photo.on.rectangle.angled")
-                    Text(draft.photos.isEmpty ? "Add photos" : "Add more photos")
+                    Text(draft.photos.isEmpty ? String(localized: "Add photos") : String(localized: "Add more photos"))
                 }
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
@@ -750,7 +750,7 @@ struct ListingCreationView: View {
                 let url = try await APIClient.shared.uploadListingPhoto(jpeg)
                 urls.append(url)
             } catch {
-                self.error = "Couldn't upload a photo. Check your connection and try again."
+                self.error = String(localized: "Couldn't upload a photo. Check your connection and try again.")
             }
         }
         if !urls.isEmpty {
@@ -777,7 +777,7 @@ struct ListingCreationView: View {
     private var reviewStep: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 8) {
-                Text(draft.title.isEmpty ? "Untitled home" : draft.title)
+                Text(draft.title.isEmpty ? String(localized: "Untitled home") : draft.title)
                     .font(.swaplDisplay(28, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .lineLimit(2)
@@ -900,7 +900,7 @@ struct ListingCreationView: View {
             } label: {
                 HStack {
                     if isPublishing { ProgressView().tint(SwaplSemanticLight.primaryForeground) }
-                    Text(step == steps.count - 1 ? (isEditing ? "Save changes" : "Publish") : "Continue")
+                    Text(step == steps.count - 1 ? (isEditing ? String(localized: "Save changes") : String(localized: "Publish")) : String(localized: "Continue"))
                 }
                 .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                 .foregroundStyle(SwaplSemanticLight.primaryForeground)
@@ -936,19 +936,19 @@ struct ListingCreationView: View {
     private func validate() -> String? {
         switch step {
         case 0:
-            if draft.city.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return "Add a city." }
-            if draft.neighbourhood.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return "Add a neighbourhood." }
-            if draft.country.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return "Add a country." }
+            if draft.city.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return String(localized: "Add a city.") }
+            if draft.neighbourhood.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return String(localized: "Add a neighbourhood.") }
+            if draft.country.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return String(localized: "Add a country.") }
         case 1:
-            if draft.title.trimmingCharacters(in: .whitespacesAndNewlines).count < 4 { return "Add a clearer title." }
-            if draft.description.trimmingCharacters(in: .whitespacesAndNewlines).count < 20 { return "Write at least 20 characters about your home." }
+            if draft.title.trimmingCharacters(in: .whitespacesAndNewlines).count < 4 { return String(localized: "Add a clearer title.") }
+            if draft.description.trimmingCharacters(in: .whitespacesAndNewlines).count < 20 { return String(localized: "Write at least 20 characters about your home.") }
         case 3:
-            if draft.availableTo <= draft.availableFrom { return "End date must be after start date." }
-            if draft.maxStayDays < draft.minStayDays { return "Maximum stay must be at least the minimum stay." }
+            if draft.availableTo <= draft.availableFrom { return String(localized: "End date must be after start date.") }
+            if draft.maxStayDays < draft.minStayDays { return String(localized: "Maximum stay must be at least the minimum stay.") }
         case steps.count - 1:
             // Review step: the publish acknowledgment is mandatory on create.
             if !isEditing && !ackAccepted {
-                return "Please confirm you have the right to host before publishing."
+                return String(localized: "Please confirm you have the right to host before publishing.")
             }
         default:
             break
@@ -974,15 +974,15 @@ struct ListingCreationView: View {
             }
             createdListingId = response.id
         } catch APIClient.APIError.status(400, let body) where (body ?? "").contains("PUBLISH_ACK") {
-            self.error = "Please confirm you have the right to host before publishing."
+            self.error = String(localized: "Please confirm you have the right to host before publishing.")
         } catch APIClient.APIError.status(403, _) {
             self.error = isEditing
                 ? "You can only edit your own listing."
                 : "Verify your email before publishing — see the banner at the top of the app."
         } catch APIClient.APIError.status(404, _) where isEditing {
-            self.error = "This listing no longer exists."
+            self.error = String(localized: "This listing no longer exists.")
         } catch APIClient.APIError.status(402, _) {
-            self.error = "You've reached your plan's listing limit. Upgrade to publish more homes."
+            self.error = String(localized: "You've reached your plan's listing limit. Upgrade to publish more homes.")
         } catch {
             self.error = error.localizedDescription
         }
@@ -1270,7 +1270,7 @@ private struct DetectedHomeAddress: Equatable {
 @MainActor
 private final class ListingLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var isResolving = false
-    @Published var statusText = "Fill location automatically while you are at the home."
+    @Published var statusText = String(localized: "Fill location automatically while you are at the home.")
     @Published var detectedAddress: DetectedHomeAddress?
 
     private let manager = CLLocationManager()
@@ -1282,20 +1282,20 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
 
     func requestCurrentHomeLocation() {
         guard CLLocationManager.locationServicesEnabled() else {
-            statusText = "Location services are off. Enter the address manually."
+            statusText = String(localized: "Location services are off. Enter the address manually.")
             return
         }
 
         switch manager.authorizationStatus {
         case .notDetermined:
-            statusText = "Allow location access to prefill your home details."
+            statusText = String(localized: "Allow location access to prefill your home details.")
             manager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
             locate()
         case .denied, .restricted:
-            statusText = "Location access is off for Swapl. Enter the address manually or enable it in Settings."
+            statusText = String(localized: "Location access is off for Swapl. Enter the address manually or enable it in Settings.")
         @unknown default:
-            statusText = "Enter the address manually."
+            statusText = String(localized: "Enter the address manually.")
         }
     }
 
@@ -1306,7 +1306,7 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
             case .authorizedWhenInUse, .authorizedAlways:
                 locate()
             case .denied, .restricted:
-                statusText = "Location access is off for Swapl. Enter the address manually or enable it in Settings."
+                statusText = String(localized: "Location access is off for Swapl. Enter the address manually or enable it in Settings.")
             default:
                 break
             }
@@ -1315,7 +1315,7 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
 
     private func locate() {
         isResolving = true
-        statusText = "Finding this home..."
+        statusText = String(localized: "Finding this home...")
         manager.requestLocation()
     }
 
@@ -1329,7 +1329,7 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
     nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         Task { @MainActor in
             isResolving = false
-            statusText = "Could not get your location. Enter the address manually."
+            statusText = String(localized: "Could not get your location. Enter the address manually.")
         }
     }
 
@@ -1346,7 +1346,7 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
     private func resolveWithMapKit(_ location: CLLocation) async {
         do {
             guard let request = MKReverseGeocodingRequest(location: location) else {
-                statusText = "Location found, but address lookup failed. Enter the address manually."
+                statusText = String(localized: "Location found, but address lookup failed. Enter the address manually.")
                 return
             }
             let mapItem = try await request.mapItems.first
@@ -1363,7 +1363,7 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
                 .joined(separator: ", ")
             apply(city: city, country: country, address: address, location: location)
         } catch {
-            statusText = "Location found, but address lookup failed. Enter the address manually."
+            statusText = String(localized: "Location found, but address lookup failed. Enter the address manually.")
         }
     }
 
@@ -1386,7 +1386,7 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
                 .joined(separator: ", ")
             apply(city: city, country: country, address: address, location: location)
         } catch {
-            statusText = "Location found, but address lookup failed. Enter the address manually."
+            statusText = String(localized: "Location found, but address lookup failed. Enter the address manually.")
         }
     }
 

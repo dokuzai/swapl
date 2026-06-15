@@ -20,10 +20,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.Dispute
 import app.swapl.core.model.DisputeCategory
 import app.swapl.core.model.MeResponse
@@ -39,8 +41,8 @@ import app.swapl.core.repository.TripsRepository
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import app.swapl.design.components.KickerLabel
+import app.swapl.design.components.StatusTagChip
 import app.swapl.design.components.SurfaceCard
-import app.swapl.design.components.TagChip
 import app.swapl.designtokens.SwaplSpacing
 import app.swapl.features.swaps.AgreedPanel
 import app.swapl.features.swaps.LeaveReviewCard
@@ -197,13 +199,13 @@ fun TripDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Text("Trip unavailable", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.trip_detail_error_title), style = MaterialTheme.typography.titleLarge)
             Text(
-                "We couldn't load this trip.",
+                stringResource(R.string.trip_detail_error_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            TextButton(onClick = { vm.load() }) { Text("Retry") }
+            TextButton(onClick = { vm.load() }) { Text(stringResource(R.string.common_retry)) }
         }
         d == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -218,7 +220,7 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
     val mine = if (meIsProposer) d.proposerListing else d.targetListing
     val theirs = if (meIsProposer) d.targetListing else d.proposerListing
     val a = d.agreement
-    val hostName = d.other.name ?: "your host"
+    val hostName = d.other.name ?: stringResource(R.string.trip_detail_host_fallback)
     val scope = rememberCoroutineScope()
 
     var showReview by remember { mutableStateOf(false) }
@@ -234,11 +236,11 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
             .padding(SwaplSpacing.s4),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s5),
     ) {
-        TagChip(a?.status ?: d.proposal.status)
-        Text("Trip to ${theirs.city}", style = MaterialTheme.typography.displaySmall)
+        StatusTagChip(a?.status ?: d.proposal.status)
+        Text(stringResource(R.string.trip_detail_trip_to, theirs.city), style = MaterialTheme.typography.displaySmall)
         d.other.name?.let {
             Text(
-                "Hosted by $it",
+                stringResource(R.string.trip_detail_hosted_by, it),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -246,17 +248,17 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
 
         SurfaceCard {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("Your stay")
+                KickerLabel(stringResource(R.string.trip_detail_your_stay))
                 Text(
                     "${(a?.dateFrom ?: d.proposal.dateFrom).take(10)} → ${(a?.dateTo ?: d.proposal.dateTo).take(10)}",
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Text(
-                    "Guest at $hostName's place — ${theirs.neighbourhood} · ${theirs.city}",
+                    stringResource(R.string.trip_detail_guest_at, hostName, theirs.neighbourhood, theirs.city),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
-                    "In return you host in ${mine.neighbourhood} · ${mine.city} for the same dates.",
+                    stringResource(R.string.trip_detail_in_return, mine.neighbourhood, mine.city),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -296,7 +298,7 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
         }
 
         TextButton(onClick = { onOpenProfile(d.other.id) }) {
-            Text("View ${d.other.name ?: "host"}'s profile")
+            Text(stringResource(R.string.trip_detail_view_profile, d.other.name ?: stringResource(R.string.trip_detail_host_word)))
         }
     }
 

@@ -343,7 +343,7 @@ struct ListingDetailView: View {
                 )
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Hosted by \(detail.host.name ?? "Anonymous")")
+                Text("Hosted by \(detail.host.name ?? String(localized: "Anonymous"))")
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Text(detail.host.verified ? String(localized: "Verified host") : String(localized: "Swapl host"))

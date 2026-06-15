@@ -58,9 +58,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import app.swapl.R
 import app.swapl.core.model.Dispute
 import app.swapl.core.model.DisputeCategory
 import app.swapl.core.model.DisputeMessage
@@ -150,10 +152,10 @@ fun DisputeSection(
                 )
                 // A resolved/closed history still lets you raise a fresh issue.
                 if (!state.hasOpenCase) {
-                    ReportProblemButton("Report a new problem") { showOpenSheet = true }
+                    ReportProblemButton(stringResource(R.string.dispute_report_new)) { showOpenSheet = true }
                 }
             }
-            else -> ReportProblemButton("Report a problem") { showOpenSheet = true }
+            else -> ReportProblemButton(stringResource(R.string.dispute_report_problem)) { showOpenSheet = true }
         }
     }
 
@@ -189,17 +191,17 @@ private fun PhoneFallbackDialog(phone: String, onCall: () -> Unit, onDismiss: ()
     val canDial = phone.dialableDigits().any { it.isDigit() }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Reach our 24/7 line") },
-        text = { Text("If anyone is unsafe or locked out, call $phone.") },
+        title = { Text(stringResource(R.string.dispute_phone_title)) },
+        text = { Text(stringResource(R.string.dispute_phone_body, phone)) },
         confirmButton = {
             if (canDial) {
-                TextButton(onClick = onCall) { Text("Call $phone") }
+                TextButton(onClick = onCall) { Text(stringResource(R.string.dispute_phone_call, phone)) }
             } else {
-                TextButton(onClick = onDismiss) { Text("OK") }
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_ok)) }
             }
         },
         dismissButton = if (canDial) {
-            { TextButton(onClick = onDismiss) { Text("Cancel") } }
+            { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } }
         } else null,
     )
 }
@@ -266,9 +268,9 @@ fun DisputeUrgentBanner(onCallLine: () -> Unit) {
             modifier = Modifier.size(20.dp),
         )
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text("Need help right now?", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
+            Text(stringResource(R.string.dispute_urgent_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
             Text(
-                "If anyone is unsafe or locked out, our 24/7 line is here. Tap to reach support now.",
+                stringResource(R.string.dispute_urgent_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -311,13 +313,13 @@ fun DisputeOpenSheet(
                 uploadError = null
                 try {
                     val jpeg = withContext(Dispatchers.IO) { downscaleDisputePhoto(context, uri) }
-                    if (jpeg == null) uploadError = "Couldn't read that image"
+                    if (jpeg == null) uploadError = context.getString(R.string.dispute_photo_read_error)
                     else {
                         val url = listingRepo.uploadPhoto(jpeg)
                         if (url !in photoUrls) photoUrls.add(url)
                     }
                 } catch (t: Throwable) {
-                    uploadError = "Couldn't upload a photo. Check your connection and try again."
+                    uploadError = context.getString(R.string.dispute_photo_upload_error)
                 } finally {
                     uploadsInFlight -= 1
                 }
@@ -345,10 +347,10 @@ fun DisputeOpenSheet(
                 .padding(bottom = SwaplSpacing.s8),
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s5),
         ) {
-            Text("Report a problem", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.dispute_report_problem), style = MaterialTheme.typography.titleLarge)
             Text(
-                "Tell us what's going on with your swap${otherName?.let { " with $it" } ?: ""}. " +
-                    "We'll loop in your swap partner and our support team.",
+                otherName?.let { stringResource(R.string.dispute_open_body_with, it) }
+                    ?: stringResource(R.string.dispute_open_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -356,7 +358,7 @@ fun DisputeOpenSheet(
             // Category picker
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 Text(
-                    "WHAT HAPPENED?",
+                    stringResource(R.string.dispute_what_happened),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -378,13 +380,13 @@ fun DisputeOpenSheet(
                     ) {
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(
-                                item.title,
+                                stringResource(item.titleRes),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Medium,
                                 color = if (item.isUrgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
-                                item.subtitle,
+                                stringResource(item.subtitleRes),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -406,8 +408,8 @@ fun DisputeOpenSheet(
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = { Text("Describe the problem") },
-                placeholder = { Text("What happened, when, and what you need from us.") },
+                label = { Text(stringResource(R.string.dispute_describe_label)) },
+                placeholder = { Text(stringResource(R.string.dispute_describe_placeholder)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 4,
                 maxLines = 8,
@@ -422,7 +424,7 @@ fun DisputeOpenSheet(
             )
 
             PrimaryPill(
-                text = if (isSubmitting) "Sending…" else "Send report",
+                text = if (isSubmitting) stringResource(R.string.common_sending) else stringResource(R.string.dispute_send_report),
                 onClick = { category?.let { onSubmit(it, trimmed, photoUrls.toList()) } },
                 enabled = valid && !isSubmitting && uploadsInFlight == 0,
             )
@@ -432,16 +434,16 @@ fun DisputeOpenSheet(
     if (showDiscardConfirm) {
         AlertDialog(
             onDismissRequest = { showDiscardConfirm = false },
-            title = { Text("Discard changes?") },
-            text = { Text("Your report hasn't been sent yet. If you leave now, what you've written will be lost.") },
+            title = { Text(stringResource(R.string.dispute_discard_title)) },
+            text = { Text(stringResource(R.string.dispute_discard_body)) },
             confirmButton = {
                 TextButton(onClick = {
                     showDiscardConfirm = false
                     onDismiss()
-                }) { Text("Discard") }
+                }) { Text(stringResource(R.string.dispute_discard_confirm)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDiscardConfirm = false }) { Text("Keep editing") }
+                TextButton(onClick = { showDiscardConfirm = false }) { Text(stringResource(R.string.dispute_discard_keep)) }
             },
         )
     }
@@ -476,13 +478,13 @@ fun DisputeCaseCard(
                 uploadError = null
                 try {
                     val jpeg = withContext(Dispatchers.IO) { downscaleDisputePhoto(context, uri) }
-                    if (jpeg == null) uploadError = "Couldn't read that image"
+                    if (jpeg == null) uploadError = context.getString(R.string.dispute_photo_read_error)
                     else {
                         val url = listingRepo.uploadPhoto(jpeg)
                         if (url !in photoUrls) photoUrls.add(url)
                     }
                 } catch (t: Throwable) {
-                    uploadError = "Couldn't upload a photo. Check your connection and try again."
+                    uploadError = context.getString(R.string.dispute_photo_upload_error)
                 } finally {
                     uploadsInFlight -= 1
                 }
@@ -499,9 +501,9 @@ fun DisputeCaseCard(
                 verticalAlignment = Alignment.Top,
             ) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(dispute.categoryKind.title, style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(dispute.categoryKind.titleRes), style = MaterialTheme.typography.titleLarge)
                     Text(
-                        "Reported ${dispute.createdAt.take(10)}",
+                        stringResource(R.string.dispute_reported_on, dispute.createdAt.take(10)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -530,7 +532,7 @@ fun DisputeCaseCard(
                     Icon(Icons.Filled.CheckCircle, contentDescription = null, modifier = Modifier.size(18.dp))
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            "RESOLUTION",
+                            stringResource(R.string.dispute_resolution_label),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -543,7 +545,7 @@ fun DisputeCaseCard(
             if (dispute.messages.isNotEmpty()) {
                 HorizontalDivider()
                 Text(
-                    "CONVERSATION",
+                    stringResource(R.string.dispute_conversation_label),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -564,7 +566,7 @@ fun DisputeCaseCard(
                         modifier = Modifier.size(18.dp),
                     )
                     Text(
-                        if (status == DisputeStatus.RESOLVED) "This case has been resolved." else "This case is closed.",
+                        if (status == DisputeStatus.RESOLVED) stringResource(R.string.dispute_case_resolved) else stringResource(R.string.dispute_case_closed),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -573,14 +575,14 @@ fun DisputeCaseCard(
                 HorizontalDivider()
                 Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                     Text(
-                        "REPLY",
+                        stringResource(R.string.dispute_reply_label),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     OutlinedTextField(
                         value = replyText,
                         onValueChange = { replyText = it },
-                        placeholder = { Text("Add a reply…") },
+                        placeholder = { Text(stringResource(R.string.dispute_reply_placeholder)) },
                         modifier = Modifier.fillMaxWidth(),
                         minLines = 2,
                         maxLines = 6,
@@ -594,7 +596,7 @@ fun DisputeCaseCard(
                     )
                     val canSend = replyText.trim().isNotEmpty() && !isSubmitting && uploadsInFlight == 0
                     PrimaryPill(
-                        text = if (isSubmitting) "Sending…" else "Send",
+                        text = if (isSubmitting) stringResource(R.string.common_sending) else stringResource(R.string.common_send),
                         onClick = {
                             onReply(replyText.trim(), photoUrls.toList())
                             replyText = ""
@@ -611,7 +613,7 @@ fun DisputeCaseCard(
 @Composable
 private fun StatusPill(status: DisputeStatus) {
     Text(
-        status.label,
+        stringResource(status.labelRes),
         style = MaterialTheme.typography.labelMedium,
         fontWeight = FontWeight.Medium,
         color = if (status.isTerminal) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
@@ -630,7 +632,7 @@ private fun DisputeMessageRow(message: DisputeMessage, mine: Boolean) {
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
             Text(
-                if (mine) "You" else (message.authorName ?: "Support"),
+                if (mine) stringResource(R.string.dispute_author_you) else (message.authorName ?: stringResource(R.string.dispute_author_support)),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Medium,
             )
@@ -674,14 +676,14 @@ private fun DisputePhotoField(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                "PHOTOS (OPTIONAL)",
+                stringResource(R.string.dispute_photos_label),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (uploadsInFlight > 0) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
         }
         OutlinedButton(onClick = onAdd, modifier = Modifier.fillMaxWidth()) {
-            Text(if (photoUrls.isEmpty()) "Add photos" else "Add more")
+            Text(if (photoUrls.isEmpty()) stringResource(R.string.dispute_add_photos) else stringResource(R.string.dispute_add_more_photos))
         }
         if (photoUrls.isNotEmpty()) {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
@@ -699,7 +701,7 @@ private fun DisputePhotoField(
                             onClick = { onRemove(url) },
                             modifier = Modifier.align(Alignment.TopEnd).size(28.dp),
                         ) {
-                            Icon(Icons.Filled.Close, contentDescription = "Remove photo", tint = MaterialTheme.colorScheme.onSurface)
+                            Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.cd_remove_photo), tint = MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 }

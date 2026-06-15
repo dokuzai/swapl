@@ -76,7 +76,7 @@ struct PublicProfileView: View {
             HStack(alignment: .center, spacing: SwaplSpacing.s5) {
                 VStack(spacing: SwaplSpacing.s2) {
                     avatar(p.user)
-                    Text(p.user.name ?? "Anonymous host")
+                    Text(p.user.name ?? String(localized: "Anonymous host"))
                         .font(.swaplDisplay(24, weight: .semibold))
                         .foregroundStyle(SwaplSemanticLight.foreground)
                         .multilineTextAlignment(.center)
@@ -174,7 +174,7 @@ struct PublicProfileView: View {
     private func tenureLabel(_ p: PublicProfile) -> String {
         let years = tenureYears(p)
         if years >= 1 { return years == 1 ? "Year on Swapl" : "Years on Swapl" }
-        return "Joined Swapl"
+        return String(localized: "Joined Swapl")
     }
 
     // MARK: - Info rows (work / languages / home city)
@@ -268,7 +268,7 @@ struct PublicProfileView: View {
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(SwaplSemanticLight.foreground)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("\(review.author.name ?? "A Swapl member") · \(reviewDate(review.createdAt))")
+                Text("\(review.author.name ?? String(localized: "A Swapl member")) · \(reviewDate(review.createdAt))")
                     .font(.swaplMono(SwaplDesignSystem.FontSize.tiny))
                     .foregroundStyle(SwaplSemanticLight.mutedForeground)
             }

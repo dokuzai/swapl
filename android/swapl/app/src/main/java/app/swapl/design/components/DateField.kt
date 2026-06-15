@@ -15,6 +15,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import app.swapl.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -64,9 +66,9 @@ fun DateField(
                         onChange(ld.format(DateTimeFormatter.ISO_LOCAL_DATE))
                     }
                     open = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.common_ok)) }
             },
-            dismissButton = { TextButton(onClick = { open = false }) { Text("Cancel") } }
+            dismissButton = { TextButton(onClick = { open = false }) { Text(stringResource(R.string.common_cancel)) } }
         ) {
             DatePicker(state = state)
         }

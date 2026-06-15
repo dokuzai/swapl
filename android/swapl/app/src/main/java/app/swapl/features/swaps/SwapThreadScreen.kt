@@ -40,6 +40,7 @@ import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
+import app.swapl.design.components.StatusTagChip
 import app.swapl.design.components.TagChip
 import app.swapl.designtokens.SwaplColors
 import app.swapl.designtokens.SwaplSpacing
@@ -145,7 +146,7 @@ fun SwapThreadScreen(
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s5),
     ) {
         if (d != null) {
-            TagChip(d.proposal.status)
+            StatusTagChip(d.proposal.status)
             Text("${d.proposerListing.city} ⇄ ${d.targetListing.city}", style = MaterialTheme.typography.displaySmall)
             d.other.name?.let { Text(stringResource(R.string.thread_with, it), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
 

@@ -17,15 +17,15 @@ import kotlinx.serialization.Serializable
 // truth for whether a given dispute is urgent (it stamps `dispute.urgent`).
 enum class DisputeCategory(
     val raw: String,
-    val title: String,
-    val subtitle: String,
+    @androidx.annotation.StringRes val titleRes: Int,
+    @androidx.annotation.StringRes val subtitleRes: Int,
 ) {
-    ACCESS("access", "Can't get in", "Locked out, wrong code, keys missing"),
-    DAMAGE("damage", "Damage", "Something got broken or damaged"),
-    CLEANLINESS("cleanliness", "Cleanliness", "The home wasn't ready or clean"),
-    SAFETY("safety", "Safety concern", "You feel unsafe or something's wrong"),
-    NO_SHOW("no_show", "No-show", "Your swap partner didn't follow through"),
-    OTHER("other", "Something else", "Anything else you need help with");
+    ACCESS("access", app.swapl.R.string.dispute_cat_access_title, app.swapl.R.string.dispute_cat_access_subtitle),
+    DAMAGE("damage", app.swapl.R.string.dispute_cat_damage_title, app.swapl.R.string.dispute_cat_damage_subtitle),
+    CLEANLINESS("cleanliness", app.swapl.R.string.dispute_cat_cleanliness_title, app.swapl.R.string.dispute_cat_cleanliness_subtitle),
+    SAFETY("safety", app.swapl.R.string.dispute_cat_safety_title, app.swapl.R.string.dispute_cat_safety_subtitle),
+    NO_SHOW("no_show", app.swapl.R.string.dispute_cat_no_show_title, app.swapl.R.string.dispute_cat_no_show_subtitle),
+    OTHER("other", app.swapl.R.string.dispute_cat_other_title, app.swapl.R.string.dispute_cat_other_subtitle);
 
     // Mirrors URGENT_CATEGORIES in lib/disputes — locked out / unsafe can't wait
     // on a queue, so the picker surfaces the 24/7 line straight away.
@@ -40,12 +40,12 @@ enum class DisputeCategory(
 
 // The dispute status machine (lib/disputes). resolved|closed are terminal and
 // accept no new messages (TERMINAL_STATUSES on the server).
-enum class DisputeStatus(val raw: String, val label: String) {
-    OPEN("open", "Open"),
-    INVESTIGATING("investigating", "We're on it"),
-    AWAITING_RESPONSE("awaiting_response", "Your move"),
-    RESOLVED("resolved", "Resolved"),
-    CLOSED("closed", "Closed");
+enum class DisputeStatus(val raw: String, @androidx.annotation.StringRes val labelRes: Int) {
+    OPEN("open", app.swapl.R.string.dispute_status_open),
+    INVESTIGATING("investigating", app.swapl.R.string.dispute_status_investigating),
+    AWAITING_RESPONSE("awaiting_response", app.swapl.R.string.dispute_status_awaiting),
+    RESOLVED("resolved", app.swapl.R.string.dispute_status_resolved),
+    CLOSED("closed", app.swapl.R.string.dispute_status_closed);
 
     val isTerminal: Boolean get() = this == RESOLVED || this == CLOSED
 

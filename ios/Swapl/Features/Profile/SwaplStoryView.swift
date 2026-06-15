@@ -288,7 +288,7 @@ private struct StoryStampRow: View {
         HStack(spacing: 5) {
             Image(systemName: isTrip ? "airplane" : "house.fill")
                 .font(.system(size: 11, weight: .bold))
-            Text(isTrip ? "TRIP" : "HOSTED")
+            Text(isTrip ? String(localized: "TRIP") : String(localized: "HOSTED"))
                 .font(.swaplMono(SwaplDesignSystem.FontSize.tiny, weight: .bold))
                 .tracking(0.08 * 11)
         }

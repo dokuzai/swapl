@@ -42,11 +42,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.ReferralDashboard
 import app.swapl.core.repository.ReferralRepository
 import app.swapl.design.components.KickerLabel
@@ -105,9 +108,9 @@ fun InviteAndEarnScreen(
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s5),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
-                Text("Invite & earn", style = MaterialTheme.typography.displaySmall)
+                Text(stringResource(R.string.invite_title), style = MaterialTheme.typography.displaySmall)
                 Text(
-                    "Bring friends, earn travel points, climb the early-access line. Points are never money.",
+                    stringResource(R.string.invite_intro),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -119,14 +122,13 @@ fun InviteAndEarnScreen(
                 dashboard = dashboard,
                 onShare = {
                     val link = "$SHARE_ORIGIN/?ref=${dashboard.code}"
-                    val message = "Join me on Swapl — swap homes and travel on points, not cash. " +
-                        "Use my link and we both score ${dashboard.rewardPerReferral} travel points when you verify: $link"
+                    val message = context.getString(R.string.invite_share_message, dashboard.rewardPerReferral, link)
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_SUBJECT, "Join me on Swapl")
+                        putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.invite_share_subject))
                         putExtra(Intent.EXTRA_TEXT, message)
                     }
-                    context.startActivity(Intent.createChooser(intent, "Share your invite"))
+                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.invite_share_chooser)))
                 },
             )
 
@@ -162,18 +164,18 @@ private fun HeroCard(dashboard: ReferralDashboard) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 Icon(Icons.Default.Bolt, contentDescription = null, tint = SwaplColors.Cream)
                 Text(
-                    "Bring friends, climb the line",
+                    stringResource(R.string.invite_hero_kicker),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.SemiBold,
                     color = SwaplColors.Cream.copy(alpha = 0.85f),
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s5)) {
-                HeroStat("${dashboard.keysEarned}", "points earned", Modifier.weight(1f))
-                HeroStat("#${dashboard.waitlistPosition}", "your spot in line", Modifier.weight(1f))
+                HeroStat("${dashboard.keysEarned}", stringResource(R.string.invite_hero_points_earned), Modifier.weight(1f))
+                HeroStat("#${dashboard.waitlistPosition}", stringResource(R.string.invite_hero_spot_in_line), Modifier.weight(1f))
             }
             Text(
-                "Every friend who joins and verifies earns you ${dashboard.rewardPerReferral} travel points — and bumps you up the early-access line. Points are never money.",
+                stringResource(R.string.invite_hero_body, dashboard.rewardPerReferral),
                 style = MaterialTheme.typography.bodySmall,
                 color = SwaplColors.Cream.copy(alpha = 0.85f),
             )
@@ -202,7 +204,7 @@ private fun ShareCard(dashboard: ReferralDashboard, onShare: () -> Unit) {
     // without the scheme for readability; the share Intent sends the full link.
     val link = "$SHARE_ORIGIN/?ref=${dashboard.code}"
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-        KickerLabel("Your referral link")
+        KickerLabel(stringResource(R.string.invite_referral_link_label))
         Box(
             Modifier
                 .fillMaxWidth()
@@ -226,12 +228,12 @@ private fun ShareCard(dashboard: ReferralDashboard, onShare: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
                 ) {
                     Icon(Icons.Default.Share, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(18.dp))
-                    Text("Share", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
+                    Text(stringResource(R.string.invite_share_button), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
         }
         Text(
-            "Share this whole link — it's what counts. One tap sends it anywhere: Messages, WhatsApp, email. Your friend taps it, joins, and once they verify you both get points.",
+            stringResource(R.string.invite_share_caption),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -245,9 +247,9 @@ private fun InviteToStayEntry(onClick: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
             Icon(Icons.Default.Houseboat, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f)) {
-                Text("Invite someone to stay", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.invite_to_stay_title), style = MaterialTheme.typography.titleLarge)
                 Text(
-                    "Send a personal invite tied to your home",
+                    stringResource(R.string.invite_to_stay_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -261,7 +263,7 @@ private fun InviteToStayEntry(onClick: () -> Unit) {
 @Composable
 private fun TierCard(progress: ReferralDashboard.TierProgress) {
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-        KickerLabel("Your tier")
+        KickerLabel(stringResource(R.string.invite_tier_label))
         SurfaceCard {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
@@ -275,12 +277,12 @@ private fun TierCard(progress: ReferralDashboard.TierProgress) {
                     }
                     Column(Modifier.weight(1f)) {
                         Text(
-                            progress.current?.label ?: "Not started",
+                            progress.current?.label ?: stringResource(R.string.invite_tier_not_started),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            progress.current?.perk ?: "Invite your first friend to unlock perks.",
+                            progress.current?.perk ?: stringResource(R.string.invite_tier_no_perk),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -294,15 +296,14 @@ private fun TierCard(progress: ReferralDashboard.TierProgress) {
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Text(
-                        if (next.remaining == 1) "1 more verified friend to reach ${next.label}."
-                        else "${next.remaining} more verified friends to reach ${next.label}.",
+                        pluralStringResource(R.plurals.invite_tier_remaining, next.remaining, next.remaining, next.label),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
                     )
                 } else if (progress.current != null) {
                     Text(
-                        "Top tier reached — you're a Swapl founder.",
+                        stringResource(R.string.invite_tier_top),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
@@ -317,7 +318,7 @@ private fun TierCard(progress: ReferralDashboard.TierProgress) {
 @Composable
 private fun LeaderboardCard(entries: List<ReferralDashboard.LeaderboardEntry>) {
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-        KickerLabel("Leaderboard")
+        KickerLabel(stringResource(R.string.invite_leaderboard_label))
         SurfaceCard {
             Column {
                 entries.forEachIndexed { index, entry ->
@@ -342,7 +343,7 @@ private fun LeaderboardCard(entries: List<ReferralDashboard.LeaderboardEntry>) {
                         )
                         if (entry.isYou) {
                             Text(
-                                "YOU",
+                                stringResource(R.string.invite_you_badge),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
@@ -371,7 +372,7 @@ private fun LeaderboardCard(entries: List<ReferralDashboard.LeaderboardEntry>) {
 @Composable
 private fun JoinedCard(invitesSent: Int, joined: List<ReferralDashboard.JoinedReferral>) {
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-        KickerLabel("Your invites ($invitesSent)")
+        KickerLabel(stringResource(R.string.invite_your_invites, invitesSent))
         SurfaceCard {
             Column {
                 joined.forEachIndexed { index, join ->
@@ -421,7 +422,7 @@ private fun AntiFarmNote() {
             modifier = Modifier.size(18.dp),
         )
         Text(
-            "Points land only once a friend verifies their identity — that keeps the line fair for everyone. Points are travel credit, never cash.",
+            stringResource(R.string.invite_antifarm_note),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -435,7 +436,7 @@ private fun ErrorState(message: String, onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Invites unavailable", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.invite_error_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
             message,
@@ -443,7 +444,7 @@ private fun ErrorState(message: String, onRetry: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(SwaplSpacing.s3))
-        TextButton(onClick = onRetry) { Text("Try again") }
+        TextButton(onClick = onRetry) { Text(stringResource(R.string.common_try_again)) }
     }
 }
 
@@ -457,6 +458,7 @@ private fun ErrorState(message: String, onRetry: () -> Unit) {
 class InviteToStayViewModel @Inject constructor(
     private val referrals: ReferralRepository,
     private val listings: app.swapl.core.repository.ListingRepository,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
 ) : ViewModel() {
     var listingTitle by mutableStateOf<String?>(null); private set
     var listingId by mutableStateOf<String?>(null); private set
@@ -502,16 +504,16 @@ class InviteToStayViewModel @Inject constructor(
                     // listing isn't verified; otherwise it's an ownership reject.
                     403 ->
                         if (t.response.bodyAsText().contains("listing_not_verified"))
-                            "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out."
+                            appContext.getString(R.string.invite_err_not_verified)
                         else
-                            "You can only invite guests to your own listing."
+                            appContext.getString(R.string.invite_err_not_owner)
                     // Unified cooldown copy (matches web + iOS): make clear it's
                     // a temporary throttle, not a ban.
-                    429 -> "You've sent a lot of invites in the last hour — try again in a bit. It's a quick cooldown, not a ban."
-                    else -> "Couldn't create the invite right now."
+                    429 -> appContext.getString(R.string.invite_err_cooldown)
+                    else -> appContext.getString(R.string.invite_err_generic)
                 }
             } catch (t: Throwable) {
-                error = t.message ?: "Couldn't create the invite right now."
+                error = t.message ?: appContext.getString(R.string.invite_err_generic)
             } finally {
                 isSending = false
             }
@@ -534,10 +536,10 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Text("List your home first", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.invite_list_home_title), style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(SwaplSpacing.s2))
             Text(
-                "Invite-to-stay links are tied to your own listing. Create a home in Account, then invite a friend to come stay.",
+                stringResource(R.string.invite_list_home_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -549,10 +551,10 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Text("Verify your home first", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.invite_verify_home_title), style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(SwaplSpacing.s2))
             Text(
-                "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out. Verify it from Account → your listing.",
+                stringResource(R.string.invite_verify_home_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -565,21 +567,21 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
-                KickerLabel("Inviting a guest to")
-                Text(vm.listingTitle ?: "Your home", style = MaterialTheme.typography.displaySmall)
+                KickerLabel(stringResource(R.string.invite_inviting_guest_to))
+                Text(vm.listingTitle ?: stringResource(R.string.invite_your_home), style = MaterialTheme.typography.displaySmall)
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                Text("Friend's email (optional)", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.invite_friend_email_label), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                 androidx.compose.material3.OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
                     singleLine = true,
-                    placeholder = { Text("friend@email.com") },
+                    placeholder = { Text(stringResource(R.string.invite_friend_email_placeholder)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
-                    "Add an email to auto-match the invite when they sign up, or leave it blank for an open link anyone can use.",
+                    stringResource(R.string.invite_friend_email_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -596,20 +598,19 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
                     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                             Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                            Text("Invite ready", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = SwaplColors.Navy)
+                            Text(stringResource(R.string.invite_ready), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = SwaplColors.Navy)
                         }
                         Row(
                             Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    val message = "I'd love to host you on Swapl — swap homes and travel on points, not cash. " +
-                                        "Here's your invite to stay at ${invite.listing.title}: ${invite.shareUrl}"
+                                    val message = context.getString(R.string.invite_stay_share_message, invite.listing.title, invite.shareUrl)
                                     val intent = Intent(Intent.ACTION_SEND).apply {
                                         type = "text/plain"
-                                        putExtra(Intent.EXTRA_SUBJECT, "Come stay at ${invite.listing.title}")
+                                        putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.invite_stay_share_subject, invite.listing.title))
                                         putExtra(Intent.EXTRA_TEXT, message)
                                     }
-                                    context.startActivity(Intent.createChooser(intent, "Share invite link"))
+                                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.invite_stay_share_chooser)))
                                 }
                                 .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(SwaplRadius.xl2))
                                 .padding(SwaplSpacing.s4),
@@ -617,7 +618,7 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
                             horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
                         ) {
                             Icon(Icons.Default.Share, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(18.dp))
-                            Text("Share invite link", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
+                            Text(stringResource(R.string.invite_share_link_button), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
                         }
                     }
                 }
@@ -631,7 +632,7 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        if (vm.isSending) "Creating…" else "Create invite link",
+                        if (vm.isSending) stringResource(R.string.invite_creating) else stringResource(R.string.invite_create_link),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -643,8 +644,8 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
 
             Text(
                 vm.rewardPerReferral?.let {
-                    "When they join and verify, you both earn $it travel points. Points are never money."
-                } ?: "When they join and verify, you both earn travel points. Points are never money.",
+                    stringResource(R.string.invite_stay_reward, it)
+                } ?: stringResource(R.string.invite_stay_reward_generic),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

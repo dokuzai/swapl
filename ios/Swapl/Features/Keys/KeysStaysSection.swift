@@ -80,7 +80,7 @@ private struct KeysStayCard: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(stay.isGuest ? "Stay in \(stay.listing.city)" : "Guest at \(stay.listing.title)")
+                    Text(stay.isGuest ? String(localized: "Stay in \(stay.listing.city)") : String(localized: "Guest at \(stay.listing.title)"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(1)

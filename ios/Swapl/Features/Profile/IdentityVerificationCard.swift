@@ -43,9 +43,9 @@ struct IdentityVerificationCard: View {
 
     private func rewardMessage(_ reward: ReferralReward) -> String {
         if let name = reward.referrerName {
-            return "Verified! \(name)'s invite just earned you \(reward.keys) Keys. 🔑"
+            return String(localized: "Verified! \(name)'s invite just earned you \(reward.keys) Keys. 🔑")
         }
-        return "Verified! You earned \(reward.keys) Keys for joining via a referral. 🔑"
+        return String(localized: "Verified! You earned \(reward.keys) Keys for joining via a referral. 🔑")
     }
 
     private func card(status: VerificationStatus) -> some View {
@@ -106,7 +106,7 @@ struct IdentityVerificationCard: View {
         switch state {
         case "pending": return "Finish verifying your identity"
         case "declined": return "Verification didn't go through"
-        default: return "Verify your identity"
+        default: return String(localized: "Verify your identity")
         }
     }
 
@@ -114,7 +114,7 @@ struct IdentityVerificationCard: View {
         switch state {
         case "pending": return "Pick up where you left off — it takes about two minutes."
         case "declined": return "You can try again with a clearer photo of your ID."
-        default: return "Get the ID-verified badge hosts trust. Takes about two minutes."
+        default: return String(localized: "Get the ID-verified badge hosts trust. Takes about two minutes.")
         }
     }
 
@@ -145,7 +145,7 @@ struct IdentityVerificationCard: View {
                     return
                 }
                 guard let raw = start.url, let url = URL(string: raw) else {
-                    error = "Verification is unavailable right now. Try again later."
+                    error = String(localized: "Verification is unavailable right now. Try again later.")
                     return
                 }
                 await webSession.present(url: url)

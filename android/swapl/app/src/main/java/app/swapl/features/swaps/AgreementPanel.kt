@@ -12,9 +12,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.swapl.R
 import app.swapl.core.model.Agreement
 import app.swapl.core.model.SupportContacts
 import app.swapl.design.MonoFamily
@@ -40,21 +42,21 @@ fun AgreedPanel(
             .padding(SwaplSpacing.s5),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
-        Text("Swap agreed — keys for keys", style = MaterialTheme.typography.displaySmall, color = SwaplColors.Cream)
+        Text(stringResource(R.string.agreement_title), style = MaterialTheme.typography.displaySmall, color = SwaplColors.Cream)
         Text(
-            "Stay between ${a.dateFrom.take(10)} → ${a.dateTo.take(10)} with $otherName.",
+            stringResource(R.string.agreement_stay_between, a.dateFrom.take(10), a.dateTo.take(10), otherName),
             style = MaterialTheme.typography.bodyMedium,
             color = SwaplColors.Cream.copy(alpha = 0.85f),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s4)) {
-            KeyCard("Your code (use at their place)", a.keyCode1, Modifier.weight(1f))
-            KeyCard("Their code (guest at your place)", a.keyCode2, Modifier.weight(1f))
+            KeyCard(stringResource(R.string.agreement_your_code), a.keyCode1, Modifier.weight(1f))
+            KeyCard(stringResource(R.string.agreement_their_code), a.keyCode2, Modifier.weight(1f))
         }
         if (a.insurance != null) {
             HorizontalDivider(color = SwaplColors.Cream.copy(alpha = 0.2f))
-            Text("Insurance · €${a.insurance.coverageAmount / 1000}k cover", style = MaterialTheme.typography.labelMedium, color = SwaplColors.Cream.copy(alpha = 0.6f))
+            Text(stringResource(R.string.agreement_insurance_cover, a.insurance.coverageAmount / 1000), style = MaterialTheme.typography.labelMedium, color = SwaplColors.Cream.copy(alpha = 0.6f))
             Text(a.insurance.policyNumber, style = MaterialTheme.typography.titleLarge, color = SwaplColors.Cream, fontWeight = FontWeight.Medium)
-            Text("Auto-issued · 24/7 line $supportPhone", style = MaterialTheme.typography.bodySmall, color = SwaplColors.Cream.copy(alpha = 0.7f))
+            Text(stringResource(R.string.agreement_auto_issued, supportPhone), style = MaterialTheme.typography.bodySmall, color = SwaplColors.Cream.copy(alpha = 0.7f))
         }
     }
 }

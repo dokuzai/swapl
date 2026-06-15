@@ -28,8 +28,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.swapl.R
 import app.swapl.core.model.HomeGuideUpdate
 import app.swapl.core.repository.TripsRepository
 import app.swapl.designtokens.SwaplSpacing
@@ -135,10 +137,10 @@ fun HomeGuideEditorScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Home guide") },
+                title = { Text(stringResource(R.string.home_guide_title)) },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Close")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_close))
                     }
                 },
                 actions = {
@@ -148,7 +150,7 @@ fun HomeGuideEditorScreen(
                             strokeWidth = 2.dp,
                         )
                     } else {
-                        TextButton(onClick = { state.save(onSaved) }) { Text("Save") }
+                        TextButton(onClick = { state.save(onSaved) }) { Text(stringResource(R.string.common_save)) }
                     }
                 },
             )
@@ -164,7 +166,7 @@ fun HomeGuideEditorScreen(
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                     Text(
-                        "${state.completeness}% complete",
+                        stringResource(R.string.home_guide_complete_pct, state.completeness),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Medium,
                     )
@@ -173,30 +175,30 @@ fun HomeGuideEditorScreen(
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Text(
-                        "Fill the essentials so your guest can settle in without messaging you.",
+                        stringResource(R.string.home_guide_intro),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
-                GuideSection("Getting in") {
-                    GuideField("Access instructions", state.accessInstructions) { state.accessInstructions = it }
-                    GuideField("Key pickup", state.keyPickup) { state.keyPickup = it }
+                GuideSection(stringResource(R.string.home_guide_section_access)) {
+                    GuideField(stringResource(R.string.home_guide_field_access), state.accessInstructions) { state.accessInstructions = it }
+                    GuideField(stringResource(R.string.home_guide_field_key_pickup), state.keyPickup) { state.keyPickup = it }
                 }
-                GuideSection("Wi-Fi") {
-                    GuideField("Network name", state.wifiName) { state.wifiName = it }
-                    GuideField("Password", state.wifiPassword) { state.wifiPassword = it }
+                GuideSection(stringResource(R.string.home_guide_section_wifi)) {
+                    GuideField(stringResource(R.string.home_guide_field_wifi_name), state.wifiName) { state.wifiName = it }
+                    GuideField(stringResource(R.string.home_guide_field_wifi_password), state.wifiPassword) { state.wifiPassword = it }
                 }
-                GuideSection("Living in the home") {
-                    GuideField("Heating & cooling", state.heatingCooling) { state.heatingCooling = it }
-                    GuideField("Kitchen", state.kitchen) { state.kitchen = it }
-                    GuideField("Bins & recycling", state.bins) { state.bins = it }
-                    GuideField("Pets & plants", state.petsPlants) { state.petsPlants = it }
+                GuideSection(stringResource(R.string.home_guide_section_living)) {
+                    GuideField(stringResource(R.string.home_guide_field_heating), state.heatingCooling) { state.heatingCooling = it }
+                    GuideField(stringResource(R.string.home_guide_field_kitchen), state.kitchen) { state.kitchen = it }
+                    GuideField(stringResource(R.string.home_guide_field_bins), state.bins) { state.bins = it }
+                    GuideField(stringResource(R.string.home_guide_field_pets), state.petsPlants) { state.petsPlants = it }
                 }
-                GuideSection("Good to know (optional)") {
-                    GuideField("House rules", state.houseRules) { state.houseRules = it }
-                    GuideField("Neighbourhood tips", state.neighbourhood) { state.neighbourhood = it }
-                    GuideField("Emergency contact", state.emergencyContact) { state.emergencyContact = it }
+                GuideSection(stringResource(R.string.home_guide_section_good_to_know)) {
+                    GuideField(stringResource(R.string.home_guide_field_house_rules), state.houseRules) { state.houseRules = it }
+                    GuideField(stringResource(R.string.home_guide_field_neighbourhood), state.neighbourhood) { state.neighbourhood = it }
+                    GuideField(stringResource(R.string.home_guide_field_emergency), state.emergencyContact) { state.emergencyContact = it }
                 }
 
                 state.error?.let {

@@ -127,7 +127,7 @@ struct TravelWindowsView: View {
                 Image(systemName: "calendar.badge.clock")
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundStyle(SwaplSemanticLight.primary)
-                Text(vm.items.isEmpty ? "When do you want to go?" : "\(vm.items.count) saved")
+                Text(vm.items.isEmpty ? String(localized: "When do you want to go?") : String(localized: "\(vm.items.count) saved"))
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
             }
@@ -183,7 +183,7 @@ private struct TravelWindowCard: View {
                                 .padding(.vertical, 3)
                                 .background(AirbnbPalette.softBackground, in: Capsule())
                         }
-                        Text(window.destinations.isEmpty ? "Anywhere" : window.destinations.joined(separator: " · "))
+                        Text(window.destinations.isEmpty ? String(localized: "Anywhere") : window.destinations.joined(separator: " · "))
                             .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                             .foregroundStyle(AirbnbPalette.secondaryText)
                             .lineLimit(1)
@@ -211,7 +211,7 @@ private struct TravelWindowCard: View {
                 HStack(spacing: 6) {
                     Image(systemName: "sparkles")
                         .font(.system(size: 13, weight: .semibold))
-                    Text(showingProposals ? "Hide swaps for these dates" : "Show swaps for these dates")
+                    Text(showingProposals ? String(localized: "Hide swaps for these dates") : String(localized: "Show swaps for these dates"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     Image(systemName: "chevron.down")
                         .font(.system(size: 11, weight: .bold))
@@ -258,7 +258,7 @@ private final class WindowProposalsViewModel {
             if (body ?? "").contains("NO_ACTIVE_LISTING") {
                 state = .noListing
             } else {
-                state = .error(APIClient.APIError.status(409, body).errorDescription ?? "Couldn't load swaps.")
+                state = .error(APIClient.APIError.status(409, body).errorDescription ?? String(localized: "Couldn't load swaps."))
             }
         } catch {
             state = .error(error.localizedDescription)

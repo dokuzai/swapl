@@ -202,7 +202,7 @@ struct DisputeCaseCard: View {
     private var terminalFooter: some View {
         HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
-            Text(dispute.status == .resolved ? "This case has been resolved." : "This case is closed.")
+            Text(dispute.status == .resolved ? String(localized: "This case has been resolved.") : String(localized: "This case is closed."))
         }
         .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
         .foregroundStyle(AirbnbPalette.secondaryText)
@@ -235,7 +235,7 @@ struct DisputeCaseCard: View {
                 let url = try await APIClient.shared.uploadListingPhoto(jpeg)
                 if !photoURLs.contains(url) { photoURLs.append(url) }
             } catch {
-                uploadError = "Couldn't upload a photo. Check your connection and try again."
+                uploadError = String(localized: "Couldn't upload a photo. Check your connection and try again.")
             }
         }
         photoItems = []
@@ -252,7 +252,7 @@ struct DisputeMessageRow: View {
         VStack(alignment: mine ? .trailing : .leading, spacing: 4) {
             HStack(spacing: 6) {
                 if mine { Spacer(minLength: 0) }
-                Text(mine ? "You" : (message.authorName ?? "Support"))
+                Text(mine ? String(localized: "You") : (message.authorName ?? String(localized: "Support")))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Text(DisputeDateText.relative(message.createdAt))

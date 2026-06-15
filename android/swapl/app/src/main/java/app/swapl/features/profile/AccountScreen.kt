@@ -72,6 +72,7 @@ import app.swapl.core.repository.ListingRepository
 import app.swapl.core.repository.ProfileRepository
 import app.swapl.core.repository.SearchFilters
 import app.swapl.design.components.KickerLabel
+import app.swapl.design.components.StatusTagChip
 import app.swapl.design.components.SurfaceCard
 import app.swapl.design.components.TagChip
 import app.swapl.designtokens.SwaplSpacing
@@ -237,10 +238,10 @@ fun AccountScreen(
             SurfaceCard {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        KickerLabel("Plan")
+                        KickerLabel(stringResource(R.string.account_plan_kicker))
                         Text(sub.planId.replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.titleLarge)
                     }
-                    TagChip(sub.status)
+                    StatusTagChip(sub.status)
                 }
             }
         }

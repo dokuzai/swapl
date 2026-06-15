@@ -37,6 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import app.swapl.R
 import app.swapl.designtokens.SwaplSpacing
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -84,12 +86,12 @@ import dagger.hilt.android.AndroidEntryPoint
 // Top-level navigation graph. Each tab has its own NavHost so back-stacks stay
 // per-tab (a la iOS NavigationStack-per-tab).
 
-private enum class HomeDest(val title: String, val icon: ImageVector, val route: String) {
-    Browse("Browse", Icons.Default.Home, "browse"),
-    Wishlists("Wishlists", Icons.Default.FavoriteBorder, "wishlists"),
-    Trips("Trips", Icons.Default.Luggage, "trips"),
-    Swaps("Swaps", Icons.Default.SwapHoriz, "swaps"),
-    Account("Account", Icons.Default.Person, "account"),
+private enum class HomeDest(@androidx.annotation.StringRes val titleRes: Int, val icon: ImageVector, val route: String) {
+    Browse(R.string.nav_browse, Icons.Default.Home, "browse"),
+    Wishlists(R.string.nav_wishlists, Icons.Default.FavoriteBorder, "wishlists"),
+    Trips(R.string.nav_trips, Icons.Default.Luggage, "trips"),
+    Swaps(R.string.nav_swaps, Icons.Default.SwapHoriz, "swaps"),
+    Account(R.string.nav_account, Icons.Default.Person, "account"),
 }
 
 @AndroidEntryPoint
@@ -220,17 +222,18 @@ private fun HomeShell(
                     selected = current == d,
                     onClick = { current = d },
                     icon = {
+                        val title = stringResource(d.titleRes)
                         if (d == HomeDest.Swaps && unreadVm.totalUnread > 0) {
                             BadgedBox(badge = {
                                 Badge { Text(if (unreadVm.totalUnread > 99) "99+" else unreadVm.totalUnread.toString()) }
                             }) {
-                                Icon(d.icon, contentDescription = d.title)
+                                Icon(d.icon, contentDescription = title)
                             }
                         } else {
-                            Icon(d.icon, contentDescription = d.title)
+                            Icon(d.icon, contentDescription = title)
                         }
                     },
-                    label = { Text(d.title) }
+                    label = { Text(stringResource(d.titleRes)) }
                 )
             }
         }

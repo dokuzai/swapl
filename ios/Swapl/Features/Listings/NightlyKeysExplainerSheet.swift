@@ -174,9 +174,9 @@ struct NightlyKeysExplainerSheet: View {
     private func factorNote(_ factor: ValuationExplanation.Factor) -> String? {
         switch factor.key {
         case "ai_appeal":
-            return "Our AI reads only how your listing is presented — photo coverage, how rich your amenities list is, and how detailed your description is. It never judges your home harshly or penalises small towns. Most homes score 0; it's a small optional bonus capped at +\(AI_FEATURE_BONUS_MAX), so a 0 is completely normal."
+            return String(localized: "Our AI reads only how your listing is presented — photo coverage, how rich your amenities list is, and how detailed your description is. It never judges your home harshly or penalises small towns. Most homes score 0; it's a small optional bonus capped at +\(AI_FEATURE_BONUS_MAX), so a 0 is completely normal.")
         case "location_tier" where factor.points == 0:
-            return "Standard — your location isn't artificially boosted, but it's valued equally. Smaller towns and villages aren't penalised here."
+            return String(localized: "Standard — your location isn't artificially boosted, but it's valued equally. Smaller towns and villages aren't penalised here.")
         default:
             return nil
         }
@@ -227,15 +227,15 @@ struct NightlyKeysExplainerSheet: View {
                 // the bonus is capped at +AI_FEATURE_BONUS_MAX.
                 HStack(spacing: 8) {
                     Text(ai.bonus > 0
-                         ? "Bonus for home appeal: +\(trimmed(ai.bonus)) (most homes score 0; capped at +\(AI_FEATURE_BONUS_MAX))"
+                         ? String(localized: "Bonus for home appeal: +\(trimmed(ai.bonus)) (most homes score 0; capped at +\(AI_FEATURE_BONUS_MAX))")
                          : (ai.bonus < 0
-                            ? "Home appeal: \(trimmed(ai.bonus)) (most homes score 0 — add a few photos or detail to lift it)"
-                            : "Home appeal: 0 — completely normal, like most homes (bonus capped at +\(AI_FEATURE_BONUS_MAX))"))
+                            ? String(localized: "Home appeal: \(trimmed(ai.bonus)) (most homes score 0 — add a few photos or detail to lift it)")
+                            : String(localized: "Home appeal: 0 — completely normal, like most homes (bonus capped at +\(AI_FEATURE_BONUS_MAX))")))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer()
-                    Text(ai.source == "ai" ? "Read by Swapl AI" : "Standard estimate")
+                    Text(ai.source == "ai" ? String(localized: "Read by Swapl AI") : String(localized: "Standard estimate"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.tiny, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .padding(.horizontal, 10)
@@ -265,7 +265,7 @@ struct NightlyKeysExplainerSheet: View {
                         .frame(width: 26)
                     VStack(alignment: .leading, spacing: 2) {
                         if let avg = feedback.avgRating {
-                            Text(String(format: "%.1f average over %d review%@", avg, feedback.reviewCount, feedback.reviewCount == 1 ? "" : "s"))
+                            Text(String(localized: "\(String(format: "%.1f", avg)) average over \(feedback.reviewCount) reviews"))
                                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                                 .foregroundStyle(AirbnbPalette.text)
                         } else {
@@ -301,15 +301,15 @@ struct NightlyKeysExplainerSheet: View {
         // Below the review threshold: say plainly it isn't applied yet and how
         // many reviews are still needed, so "Not yet applied" isn't a mystery.
         guard feedback.applied else {
-            return "Not yet applied — reviews start adjusting your value only after \(FEEDBACK_MIN_REVIEWS) reviews. You have \(feedback.reviewCount) so far."
+            return String(localized: "Not yet applied — reviews start adjusting your value only after \(FEEDBACK_MIN_REVIEWS) reviews. You have \(feedback.reviewCount) so far.")
         }
         guard let adjustment = explanation.adjustment, adjustment != 0 else {
             // At/above the threshold but no net move yet: it's moving slowly.
-            return "Now moving slowly toward your rating — a little at a time, never all at once. Capped at ±\(FEEDBACK_BAND_PCT)%."
+            return String(localized: "Now moving slowly toward your rating — a little at a time, never all at once. Capped at ±\(FEEDBACK_BAND_PCT)%.")
         }
         return adjustment > 0
-            ? "Moving slowly toward your strong rating. It shifts at most \(FEEDBACK_STEP_PCT)% per cycle and is capped at +\(FEEDBACK_BAND_PCT)%, so it can't run away."
-            : "Easing slowly toward your current rating. It shifts at most \(FEEDBACK_STEP_PCT)% per cycle and is capped at \(FEEDBACK_BAND_PCT)% either way."
+            ? String(localized: "Moving slowly toward your strong rating. It shifts at most \(FEEDBACK_STEP_PCT)% per cycle and is capped at +\(FEEDBACK_BAND_PCT)%, so it can't run away.")
+            : String(localized: "Easing slowly toward your current rating. It shifts at most \(FEEDBACK_STEP_PCT)% per cycle and is capped at \(FEEDBACK_BAND_PCT)% either way.")
     }
 
     // MARK: - Private room coefficient (DOK-163 C)
@@ -352,9 +352,9 @@ struct NightlyKeysExplainerSheet: View {
 
     private var roomCoefficientTitle: String {
         if let coeff = explanation.roomsCoefficient, coeff > 0 {
-            return "Room rate — \(Int((coeff * 100).rounded()))% of a whole-home value"
+            return String(localized: "Room rate — \(Int((coeff * 100).rounded()))% of a whole-home value")
         }
-        return "Room rate applied"
+        return String(localized: "Room rate applied")
     }
 
     // MARK: - Bounded reassurance

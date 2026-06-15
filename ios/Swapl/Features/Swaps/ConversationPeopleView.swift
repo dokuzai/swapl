@@ -67,7 +67,7 @@ final class ConversationPeopleViewModel {
     func inviteByEmail(_ raw: String) async -> Bool {
         let email = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         guard isLikelyEmail(email) else {
-            inviteError = "Enter a valid email address."
+            inviteError = String(localized: "Enter a valid email address.")
             return false
         }
         return await runInvite(notice: "Invite sent to \(email).") {
@@ -157,7 +157,7 @@ struct ConversationPeopleView: View {
             InvitePeopleSheet(vm: vm)
         }
         .confirmationDialog(
-            confirmRemove.map { "Remove \($0.displayName)?" } ?? "Remove this person?",
+            confirmRemove.map { String(localized: "Remove \($0.displayName)?") } ?? String(localized: "Remove this person?"),
             isPresented: Binding(get: { confirmRemove != nil }, set: { if !$0 { confirmRemove = nil } }),
             titleVisibility: .visible
         ) {
@@ -246,7 +246,7 @@ struct ParticipantRow: View {
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .lineLimit(1)
-                Text(participant.isPrincipal ? "Swap partner" : "Co-traveler")
+                Text(participant.isPrincipal ? String(localized: "Swap partner") : String(localized: "Co-traveler"))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                     .lineLimit(1)

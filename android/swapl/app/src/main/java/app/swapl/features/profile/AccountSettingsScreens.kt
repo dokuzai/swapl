@@ -26,19 +26,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import android.content.Context
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.UserSettings
 import app.swapl.core.repository.ProfileRepository
 import app.swapl.design.components.PrimaryPill
 import app.swapl.design.components.SurfaceCard
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -114,7 +118,7 @@ fun PersonalInfoScreen(vm: PersonalInfoViewModel = hiltViewModel()) {
             .padding(SwaplSpacing.s5),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
-        Text("Personal information", style = MaterialTheme.typography.displaySmall)
+        Text(stringResource(R.string.settings_personal_info_title), style = MaterialTheme.typography.displaySmall)
 
         if (vm.isLoading) {
             Box(Modifier.fillMaxWidth().padding(vertical = SwaplSpacing.s10), contentAlignment = Alignment.Center) {
@@ -123,42 +127,42 @@ fun PersonalInfoScreen(vm: PersonalInfoViewModel = hiltViewModel()) {
         } else {
             OutlinedTextField(
                 vm.name, { vm.name = it },
-                label = { Text("Display name") },
+                label = { Text(stringResource(R.string.settings_display_name)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 vm.bio, { vm.bio = it },
-                label = { Text("About you") },
-                placeholder = { Text("Tell hosts a little about yourself.") },
+                label = { Text(stringResource(R.string.settings_about_you)) },
+                placeholder = { Text(stringResource(R.string.settings_about_you_placeholder)) },
                 modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
             )
             OutlinedTextField(
                 vm.work, { vm.work = it },
-                label = { Text("My work") },
-                placeholder = { Text("e.g. Architect") },
+                label = { Text(stringResource(R.string.settings_my_work)) },
+                placeholder = { Text(stringResource(R.string.settings_my_work_placeholder)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 vm.languages, { vm.languages = it },
-                label = { Text("Languages") },
-                placeholder = { Text("e.g. English, Italian") },
-                supportingText = { Text("Separate languages with commas.") },
+                label = { Text(stringResource(R.string.settings_languages)) },
+                placeholder = { Text(stringResource(R.string.settings_languages_placeholder)) },
+                supportingText = { Text(stringResource(R.string.settings_languages_hint)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 vm.homeCity, { vm.homeCity = it },
-                label = { Text("Home city") },
-                placeholder = { Text("e.g. Milan") },
+                label = { Text(stringResource(R.string.settings_home_city)) },
+                placeholder = { Text(stringResource(R.string.settings_home_city_placeholder)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 vm.homeCountry, { vm.homeCountry = it },
-                label = { Text("Home country") },
-                placeholder = { Text("e.g. Italy") },
+                label = { Text(stringResource(R.string.settings_home_country)) },
+                placeholder = { Text(stringResource(R.string.settings_home_country_placeholder)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -177,12 +181,12 @@ fun PersonalInfoScreen(vm: PersonalInfoViewModel = hiltViewModel()) {
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp),
                     )
-                    Text("Saved. Your public profile is up to date.", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.settings_saved_confirm), style = MaterialTheme.typography.bodyMedium)
                 }
             }
 
             PrimaryPill(
-                if (vm.isSaving) "Saving…" else "Save changes",
+                if (vm.isSaving) stringResource(R.string.common_saving) else stringResource(R.string.settings_save_changes),
                 onClick = { vm.save() },
                 enabled = !vm.isSaving,
             )
@@ -200,6 +204,7 @@ fun PersonalInfoScreen(vm: PersonalInfoViewModel = hiltViewModel()) {
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
     private val repo: ProfileRepository,
+    @ApplicationContext private val appContext: Context,
 ) : ViewModel() {
     var currentPassword by mutableStateOf("")
     var newPassword by mutableStateOf("")
@@ -210,8 +215,8 @@ class ChangePasswordViewModel @Inject constructor(
     fun submit(onSuccess: () -> Unit) {
         if (isSubmitting) return
         error = when {
-            newPassword.length < 6 -> "Use at least 6 characters."
-            newPassword != confirmPassword -> "Passwords don't match."
+            newPassword.length < 6 -> appContext.getString(R.string.pw_error_min6)
+            newPassword != confirmPassword -> appContext.getString(R.string.pw_error_mismatch)
             else -> null
         }
         if (error != null) return
@@ -231,10 +236,10 @@ class ChangePasswordViewModel @Inject constructor(
 
     private fun friendlyError(t: Throwable): String =
         when ((t as? ResponseException)?.response?.status?.value) {
-            400 -> "Use at least 6 characters."
-            403 -> "Current password is incorrect."
-            429 -> "Too many attempts — try again in an hour."
-            else -> "Couldn't change the password. Try again."
+            400 -> appContext.getString(R.string.pw_error_min6)
+            403 -> appContext.getString(R.string.pw_error_incorrect)
+            429 -> appContext.getString(R.string.pw_error_too_many)
+            else -> appContext.getString(R.string.pw_error_generic)
         }
 }
 
@@ -246,28 +251,28 @@ fun ChangePasswordDialog(
 ) {
     AlertDialog(
         onDismissRequest = { if (!vm.isSubmitting) onDismiss() },
-        title = { Text("Change password") },
+        title = { Text(stringResource(R.string.settings_change_password)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                 OutlinedTextField(
                     vm.currentPassword, { vm.currentPassword = it },
-                    label = { Text("Current password") },
+                    label = { Text(stringResource(R.string.pw_current_label)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    supportingText = { Text("Leave empty if you signed up with Google, Telegram or an email code.") },
+                    supportingText = { Text(stringResource(R.string.pw_current_hint)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
                     vm.newPassword, { vm.newPassword = it },
-                    label = { Text("New password") },
+                    label = { Text(stringResource(R.string.pw_new_label)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    supportingText = { Text("At least 6 characters. Other devices get signed out.") },
+                    supportingText = { Text(stringResource(R.string.pw_new_hint)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
                     vm.confirmPassword, { vm.confirmPassword = it },
-                    label = { Text("Confirm new password") },
+                    label = { Text(stringResource(R.string.pw_confirm_label)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
@@ -282,11 +287,11 @@ fun ChangePasswordDialog(
                 onClick = { vm.submit(onSuccess) },
                 enabled = !vm.isSubmitting && vm.newPassword.isNotEmpty() && vm.confirmPassword.isNotEmpty(),
             ) {
-                Text(if (vm.isSubmitting) "Saving…" else "Change password")
+                Text(if (vm.isSubmitting) stringResource(R.string.common_saving) else stringResource(R.string.settings_change_password))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !vm.isSubmitting) { Text("Cancel") }
+            TextButton(onClick = onDismiss, enabled = !vm.isSubmitting) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }
@@ -335,7 +340,7 @@ fun PrivacySettingsScreen(vm: AccountSettingsViewModel = hiltViewModel()) {
             .padding(SwaplSpacing.s5),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
-        Text("Privacy", style = MaterialTheme.typography.displaySmall)
+        Text(stringResource(R.string.settings_privacy_title), style = MaterialTheme.typography.displaySmall)
 
         if (s == null) {
             Box(Modifier.fillMaxWidth().padding(vertical = SwaplSpacing.s10), contentAlignment = Alignment.Center) {
@@ -343,8 +348,8 @@ fun PrivacySettingsScreen(vm: AccountSettingsViewModel = hiltViewModel()) {
             }
         } else {
             SettingToggleRow(
-                title = "Search engine indexing",
-                subtitle = "Allow your listing pages to appear in search engines like Google.",
+                title = stringResource(R.string.settings_seo_title),
+                subtitle = stringResource(R.string.settings_seo_subtitle),
                 checked = s.searchEngineIndexing,
                 onToggle = { value ->
                     vm.update(
@@ -354,8 +359,8 @@ fun PrivacySettingsScreen(vm: AccountSettingsViewModel = hiltViewModel()) {
                 },
             )
             SettingToggleRow(
-                title = "Show my home city",
-                subtitle = "Display your home city and country on your public profile.",
+                title = stringResource(R.string.settings_show_home_city_title),
+                subtitle = stringResource(R.string.settings_show_home_city_subtitle),
                 checked = s.showHomeCity,
                 onToggle = { value ->
                     vm.update(
@@ -386,7 +391,7 @@ fun NotificationSettingsScreen(vm: AccountSettingsViewModel = hiltViewModel()) {
             .padding(SwaplSpacing.s5),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
-        Text("Notifications", style = MaterialTheme.typography.displaySmall)
+        Text(stringResource(R.string.settings_notifications_title), style = MaterialTheme.typography.displaySmall)
 
         if (s == null) {
             Box(Modifier.fillMaxWidth().padding(vertical = SwaplSpacing.s10), contentAlignment = Alignment.Center) {
@@ -394,8 +399,8 @@ fun NotificationSettingsScreen(vm: AccountSettingsViewModel = hiltViewModel()) {
             }
         } else {
             SettingToggleRow(
-                title = "Email notifications",
-                subtitle = "Proposals, confirmations and trip reminders by email.",
+                title = stringResource(R.string.settings_email_notif_title),
+                subtitle = stringResource(R.string.settings_email_notif_subtitle),
                 checked = s.emailNotifications,
                 onToggle = { value ->
                     vm.update(
@@ -405,8 +410,8 @@ fun NotificationSettingsScreen(vm: AccountSettingsViewModel = hiltViewModel()) {
                 },
             )
             SettingToggleRow(
-                title = "Push notifications",
-                subtitle = "Real-time alerts on this device when something needs you.",
+                title = stringResource(R.string.settings_push_notif_title),
+                subtitle = stringResource(R.string.settings_push_notif_subtitle),
                 checked = s.pushNotifications,
                 onToggle = { value ->
                     vm.update(

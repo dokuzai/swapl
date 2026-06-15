@@ -39,7 +39,7 @@ struct ReferrerNotificationsToast: View {
         if let name = n.refereeName {
             return "\(name) just verified — you earned \(n.keys) Keys! 🔑"
         }
-        return "Someone you invited just verified — you earned \(n.keys) Keys! 🔑"
+        return String(localized: "Someone you invited just verified — you earned \(n.keys) Keys! 🔑")
     }
 
     private func pollLoop() async {

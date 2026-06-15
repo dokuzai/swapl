@@ -66,10 +66,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.swapl.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -183,6 +186,7 @@ data class InspireUiState(
 @HiltViewModel
 class InspireViewModel @Inject constructor(
     private val repo: AssistantRepository,
+    @ApplicationContext private val appContext: android.content.Context,
 ) : ViewModel() {
     private val _state = MutableStateFlow(InspireUiState())
     val state: StateFlow<InspireUiState> = _state.asStateFlow()
@@ -330,11 +334,11 @@ class InspireViewModel @Inject constructor(
     // The backend's coded refusals, in plain words (same tone as iOS).
     private fun friendlyError(t: Throwable): String =
         when ((t as? ResponseException)?.response?.status?.value) {
-            422 -> "We need an active home of yours — and at least one compatible match — to compose a package."
-            429 -> "You're dreaming fast! Give it a few minutes and try again."
-            402 -> "You've reached your plan's proposal limit. Upgrade to send more."
-            403 -> "Your account can't send proposals right now."
-            else -> t.message ?: "Something went wrong. Please try again."
+            422 -> appContext.getString(R.string.inspire_err_no_match)
+            429 -> appContext.getString(R.string.inspire_err_rate)
+            402 -> appContext.getString(R.string.inspire_err_limit)
+            403 -> appContext.getString(R.string.inspire_err_forbidden)
+            else -> t.message ?: appContext.getString(R.string.inspire_err_generic)
         }
 }
 
@@ -457,10 +461,10 @@ private fun InspirePromptContent(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
             Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-            Text("Get Inspired", style = MaterialTheme.typography.displaySmall)
+            Text(stringResource(R.string.inspire_title), style = MaterialTheme.typography.displaySmall)
         }
         Text(
-            "Tell us the trip you're dreaming about — we'll compose a swap from real homes that match yours.",
+            stringResource(R.string.inspire_intro),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -468,8 +472,8 @@ private fun InspirePromptContent(
         OutlinedTextField(
             value = prompt,
             onValueChange = { prompt = it },
-            label = { Text("Your wish") },
-            placeholder = { Text("Somewhere warm with great food, walkable, good for working remotely…") },
+            label = { Text(stringResource(R.string.inspire_wish_label)) },
+            placeholder = { Text(stringResource(R.string.inspire_wish_placeholder)) },
             minLines = 3,
             maxLines = 6,
             modifier = Modifier.fillMaxWidth(),
@@ -481,7 +485,7 @@ private fun InspirePromptContent(
                     ) {
                         Icon(
                             Icons.Default.Mic,
-                            contentDescription = if (isRecording) "Stop listening" else "Dictate your wish",
+                            contentDescription = if (isRecording) stringResource(R.string.inspire_mic_stop) else stringResource(R.string.inspire_mic_start),
                             tint = if (isRecording) {
                                 MaterialTheme.colorScheme.primary
                             } else {
@@ -496,13 +500,13 @@ private fun InspirePromptContent(
         )
         if (isRecording) {
             Text(
-                "Listening — speak freely, tap the mic again to stop.",
+                stringResource(R.string.inspire_listening),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
             )
         } else if (voiceDenied) {
             Text(
-                "Microphone access is turned off for Swapl — enable it in Settings to dictate your wish.",
+                stringResource(R.string.inspire_mic_denied),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -510,9 +514,9 @@ private fun InspirePromptContent(
 
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.weight(1f)) {
-                Text("I have dates in mind", style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.inspire_dates_in_mind), style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    "Otherwise we'll use your home's availability.",
+                    stringResource(R.string.inspire_dates_in_mind_sub),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -521,8 +525,8 @@ private fun InspirePromptContent(
         }
         if (useDates) {
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2), modifier = Modifier.fillMaxWidth()) {
-                DateField("From", dateFrom, { dateFrom = it }, Modifier.weight(1f))
-                DateField("To", dateTo, { dateTo = it }, Modifier.weight(1f))
+                DateField(stringResource(R.string.tw_date_from), dateFrom, { dateFrom = it }, Modifier.weight(1f))
+                DateField(stringResource(R.string.tw_date_to), dateTo, { dateTo = it }, Modifier.weight(1f))
             }
         }
 
@@ -534,7 +538,7 @@ private fun InspirePromptContent(
             InspireLoading()
         } else {
             PrimaryPill(
-                text = "Dream up my swap",
+                text = stringResource(R.string.inspire_dream_up),
                 onClick = {
                     if (isRecording) {
                         recognizer?.stopListening()
@@ -555,10 +559,10 @@ private fun InspirePromptContent(
 @Composable
 private fun InspireLoading() {
     val messages = listOf(
-        "Dreaming up your swap…",
-        "Matching homes to your vibe…",
-        "Checking who's free when you are…",
-        "Packing your virtual bags…",
+        stringResource(R.string.inspire_loading_1),
+        stringResource(R.string.inspire_loading_2),
+        stringResource(R.string.inspire_loading_3),
+        stringResource(R.string.inspire_loading_4),
     )
     var index by rememberSaveable { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
@@ -600,7 +604,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
             .padding(SwaplSpacing.s5),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s5),
     ) {
-        Text("Your swap package", style = MaterialTheme.typography.displaySmall)
+        Text(stringResource(R.string.inspire_package_title), style = MaterialTheme.typography.displaySmall)
 
         // "Understood: …" — the structured filters parsed from the (possibly
         // spoken) prompt, copy-aligned with web and iOS.
@@ -614,7 +618,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
                         modifier = Modifier.size(18.dp),
                     )
                     Text(
-                        "Understood: $understood",
+                        stringResource(R.string.inspire_understood, understood),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -655,14 +659,14 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
 
         // Dates — editable before confirming.
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-            KickerLabel("Dates")
+            KickerLabel(stringResource(R.string.inspire_dates_label))
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2), modifier = Modifier.fillMaxWidth()) {
-                DateField("From", state.dateFrom, vm::setDateFrom, Modifier.weight(1f))
-                DateField("To", state.dateTo, vm::setDateTo, Modifier.weight(1f))
+                DateField(stringResource(R.string.tw_date_from), state.dateFrom, vm::setDateFrom, Modifier.weight(1f))
+                DateField(stringResource(R.string.tw_date_to), state.dateTo, vm::setDateTo, Modifier.weight(1f))
             }
             if (pkg.dates.source == "availability") {
                 Text(
-                    "Suggested from your home's availability — adjust freely.",
+                    stringResource(R.string.inspire_dates_suggested),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -671,7 +675,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
 
         // Pre-drafted proposal message — fully editable.
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-            KickerLabel("Your message")
+            KickerLabel(stringResource(R.string.inspire_message_label))
             OutlinedTextField(
                 value = state.message,
                 onValueChange = vm::setMessage,
@@ -680,7 +684,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
             )
             if (pkg.proposalMessageSource == "ai") {
                 Text(
-                    "Drafted by AI from your listing and theirs — make it yours.",
+                    stringResource(R.string.inspire_message_ai),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -690,7 +694,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
         // Alternatives: tapping swaps the hero, no extra network call.
         if (state.alternatives.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("Or swap the pick")
+                KickerLabel(stringResource(R.string.inspire_swap_pick))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                     items(state.alternatives, key = { it.listingId }) { candidate ->
                         Column(
@@ -708,7 +712,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
                                 maxLines = 1,
                             )
                             Text(
-                                "${candidate.matchScore}% match",
+                                stringResource(R.string.inspire_match_pct, candidate.matchScore),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -723,7 +727,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
         // charged by us, never in the payable total.
         if (state.experiences.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("While you're there")
+                KickerLabel(stringResource(R.string.inspire_while_there))
                 state.experiences.forEach { item ->
                     ExperienceRow(
                         item = item,
@@ -732,7 +736,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
                     )
                 }
                 Text(
-                    "Booked on our partners' sites at their prices — swapl may earn a commission, never a markup.",
+                    stringResource(R.string.inspire_experiences_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -740,7 +744,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
         }
         if (state.services.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("Travel essentials")
+                KickerLabel(stringResource(R.string.inspire_travel_essentials))
                 state.services.forEach { service ->
                     ServiceRow(
                         service = service,
@@ -754,7 +758,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
         // swapl concierge add-ons — the ONLY payable items in the package.
         if (state.addOns.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("swapl concierge add-ons")
+                KickerLabel(stringResource(R.string.inspire_concierge_addons))
                 state.addOns.forEach { addOn ->
                     AddOnRow(
                         addOn = addOn,
@@ -762,7 +766,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
                     )
                 }
                 Text(
-                    "Real catalogue prices. Untick anything you don't want — you'll only be charged if the host accepts your swap.",
+                    stringResource(R.string.inspire_addons_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -775,7 +779,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (state.payableTotalCents > 0) {
                     Text(
-                        "Payable if the host accepts",
+                        stringResource(R.string.inspire_payable_if_accepts),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.weight(1f),
@@ -787,7 +791,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
                     )
                 } else {
                     Text(
-                        "Nothing payable — confirming just sends the proposal.",
+                        stringResource(R.string.inspire_nothing_payable),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -806,14 +810,14 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
                 CircularProgressIndicator(modifier = Modifier.padding(SwaplSpacing.s2))
             } else {
                 PrimaryPill(
-                    text = "Confirm & send proposal",
+                    text = stringResource(R.string.inspire_confirm_send),
                     onClick = vm::startConfirm,
                     enabled = !state.isDismissing,
                 )
             }
             if (state.payableTotalCents > 0) {
                 Text(
-                    "You'll only be charged if the host accepts your swap.",
+                    stringResource(R.string.inspire_charged_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = SwaplSpacing.s2),
@@ -821,7 +825,7 @@ private fun PackageContent(state: InspireUiState, vm: InspireViewModel) {
             }
             TextButton(onClick = vm::dismissPackage, enabled = !state.isConfirming && !state.isDismissing) {
                 Text(
-                    if (state.isDismissing) "Dismissing…" else "Not feeling it",
+                    if (state.isDismissing) stringResource(R.string.inspire_dismissing) else stringResource(R.string.inspire_not_feeling),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -856,13 +860,13 @@ private fun PaymentStepContent(state: InspireUiState, vm: InspireViewModel) {
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
-            KickerLabel("Almost there")
-            Text("Payment & reservation", style = MaterialTheme.typography.displaySmall)
+            KickerLabel(stringResource(R.string.inspire_almost_there))
+            Text(stringResource(R.string.inspire_payment_title), style = MaterialTheme.typography.displaySmall)
         }
 
         SurfaceCard {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                KickerLabel("Your selection")
+                KickerLabel(stringResource(R.string.inspire_your_selection))
                 checkout.summary.payableItems.forEach { line ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -880,7 +884,7 @@ private fun PaymentStepContent(state: InspireUiState, vm: InspireViewModel) {
                 HorizontalDivider()
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "Payable if the host accepts",
+                        stringResource(R.string.inspire_payable_if_accepts),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.weight(1f),
@@ -903,14 +907,14 @@ private fun PaymentStepContent(state: InspireUiState, vm: InspireViewModel) {
                     modifier = Modifier.size(18.dp),
                 )
                 Text(
-                    checkout.note ?: "You'll only be charged if the host accepts your swap.",
+                    checkout.note ?: stringResource(R.string.inspire_charged_note),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }
 
         Text(
-            "Partner experiences and services are booked on the partners' sites — never charged by swapl and not part of this total.",
+            stringResource(R.string.inspire_partner_note),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -924,7 +928,7 @@ private fun PaymentStepContent(state: InspireUiState, vm: InspireViewModel) {
                 CircularProgressIndicator(modifier = Modifier.padding(SwaplSpacing.s2))
             } else {
                 PrimaryPill(
-                    text = "Save card & send proposal",
+                    text = stringResource(R.string.inspire_save_card),
                     onClick = {
                         // Same web payment page iOS opens — Stripe Payment
                         // Element saves the card; coming back resumes confirm.
@@ -936,10 +940,10 @@ private fun PaymentStepContent(state: InspireUiState, vm: InspireViewModel) {
                 // The card is optional by design: the proposal can go out with
                 // nothing saved — then nothing can ever be charged.
                 TextButton(onClick = vm::confirm) {
-                    Text("Send without saving a card", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.inspire_send_no_card), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 TextButton(onClick = vm::cancelPayment) {
-                    Text("Back to package", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.inspire_back_to_package), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -980,7 +984,7 @@ private fun ExperienceRow(item: InspireExperienceItem, onOpen: () -> Unit, onTog
                 Column(Modifier.weight(1f)) {
                     Text(item.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, maxLines = 2)
                     Text(
-                        "Book on ${item.partnerDisplayName}",
+                        stringResource(R.string.inspire_book_on, item.partnerDisplayName),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

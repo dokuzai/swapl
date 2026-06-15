@@ -49,6 +49,7 @@ import app.swapl.core.repository.ProposalRepository
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.SurfaceCard
+import app.swapl.design.components.StatusTagChip
 import app.swapl.design.components.TagChip
 import app.swapl.designtokens.SwaplRadius
 import app.swapl.designtokens.SwaplSpacing
@@ -242,7 +243,7 @@ private fun ProposalRow(p: ProposalSummary, onClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            TagChip(p.status)
+            StatusTagChip(p.status)
         }
     }
 }

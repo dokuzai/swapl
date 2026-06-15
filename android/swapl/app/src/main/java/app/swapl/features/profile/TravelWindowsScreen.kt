@@ -47,8 +47,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.swapl.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -190,10 +192,10 @@ fun TravelWindowsScreen(
 
         state.upsell?.let { reason ->
             SurfaceCard {
-                KickerLabel("Plus / Pro")
+                KickerLabel(stringResource(R.string.tw_plus_pro))
                 Spacer(Modifier.height(SwaplSpacing.s1))
                 Text(
-                    "You've reached your plan's travel-window limit",
+                    stringResource(R.string.tw_limit_reached),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -209,7 +211,7 @@ fun TravelWindowsScreen(
         if (state.isAdding) {
             AddTravelWindowCard(state = state, onSave = vm::create, onCancel = { vm.setAdding(false) })
         } else {
-            PrimaryPill(text = "Add a travel window", onClick = { vm.setAdding(true) })
+            PrimaryPill(text = stringResource(R.string.tw_add_window), onClick = { vm.setAdding(true) })
         }
 
         if (state.items.isEmpty() && state.hasLoaded && !state.isAdding) {
@@ -217,9 +219,9 @@ fun TravelWindowsScreen(
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                     Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     Column(Modifier.weight(1f)) {
-                        Text("No travel windows yet", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.tw_empty_title), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                         Text(
-                            "Tell us when you'd like to travel — we'll bring you ready-made swaps for those dates.",
+                            stringResource(R.string.tw_empty_body),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -244,12 +246,12 @@ private fun Header(count: Int) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
             Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Text(
-                if (count == 0) "When do you want to go?" else "$count saved",
+                if (count == 0) stringResource(R.string.tw_header_empty) else stringResource(R.string.tw_header_count, count),
                 style = MaterialTheme.typography.displaySmall,
             )
         }
         Text(
-            "Save the dates you're dreaming about. The assistant composes swaps from real homes that are free exactly then.",
+            stringResource(R.string.tw_header_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -274,15 +276,15 @@ private fun AddTravelWindowCard(
 
     SurfaceCard {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-            KickerLabel("New travel window")
+            KickerLabel(stringResource(R.string.tw_new_window))
 
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2), modifier = Modifier.fillMaxWidth()) {
-                DateField("From", dateFrom, { dateFrom = it }, Modifier.weight(1f))
-                DateField("To", dateTo, { dateTo = it }, Modifier.weight(1f))
+                DateField(stringResource(R.string.tw_date_from), dateFrom, { dateFrom = it }, Modifier.weight(1f))
+                DateField(stringResource(R.string.tw_date_to), dateTo, { dateTo = it }, Modifier.weight(1f))
             }
             if (!validRange) {
                 Text(
-                    "Your end date must be after the start date.",
+                    stringResource(R.string.tw_end_after_start),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -290,9 +292,9 @@ private fun AddTravelWindowCard(
 
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.weight(1f)) {
-                    Text("My dates are flexible", style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.tw_flexible_title), style = MaterialTheme.typography.bodyLarge)
                     Text(
-                        "We'll widen the search around these days.",
+                        stringResource(R.string.tw_flexible_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -303,14 +305,14 @@ private fun AddTravelWindowCard(
             OutlinedTextField(
                 value = destinations,
                 onValueChange = { destinations = it },
-                label = { Text("Where to? (optional)") },
-                placeholder = { Text("Lisbon, Portugal, Barcelona") },
+                label = { Text(stringResource(R.string.tw_where_label)) },
+                placeholder = { Text(stringResource(R.string.tw_where_placeholder)) },
                 singleLine = false,
                 maxLines = 2,
                 modifier = Modifier.fillMaxWidth(),
             )
             Text(
-                "Comma-separated cities or countries — leave empty for anywhere.",
+                stringResource(R.string.tw_where_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -318,8 +320,8 @@ private fun AddTravelWindowCard(
             OutlinedTextField(
                 value = notes,
                 onValueChange = { notes = it },
-                label = { Text("Notes (optional)") },
-                placeholder = { Text("Anniversary trip, want somewhere walkable…") },
+                label = { Text(stringResource(R.string.tw_notes_label)) },
+                placeholder = { Text(stringResource(R.string.tw_notes_placeholder)) },
                 minLines = 2,
                 maxLines = 4,
                 modifier = Modifier.fillMaxWidth(),
@@ -331,7 +333,7 @@ private fun AddTravelWindowCard(
                 }
             } else {
                 PrimaryPill(
-                    text = "Save travel window",
+                    text = stringResource(R.string.tw_save_window),
                     enabled = validRange,
                     onClick = {
                         val dests = destinations.split(",").map { it.trim() }.filter { it.isNotEmpty() }
@@ -339,7 +341,7 @@ private fun AddTravelWindowCard(
                     },
                 )
                 TextButton(onClick = onCancel, enabled = !state.isCreating) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.common_cancel), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -368,7 +370,7 @@ private fun TravelWindowCard(
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                         if (window.flexible) {
                             Text(
-                                "Flexible",
+                                stringResource(R.string.tw_flexible_chip),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -379,7 +381,7 @@ private fun TravelWindowCard(
                             )
                         }
                         Text(
-                            window.destinations.takeIf { it.isNotEmpty() }?.joinToString(" · ") ?: "Anywhere",
+                            window.destinations.takeIf { it.isNotEmpty() }?.joinToString(" · ") ?: stringResource(R.string.tw_anywhere),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -392,7 +394,7 @@ private fun TravelWindowCard(
                 IconButton(onClick = onRemove) {
                     Icon(
                         Icons.Default.Delete,
-                        contentDescription = "Remove this travel window",
+                        contentDescription = stringResource(R.string.tw_remove_window),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -416,7 +418,7 @@ private fun TravelWindowCard(
                     modifier = Modifier.size(16.dp),
                 )
                 Text(
-                    if (showingProposals) "Hide swaps for these dates" else "Show swaps for these dates",
+                    if (showingProposals) stringResource(R.string.tw_hide_swaps) else stringResource(R.string.tw_show_swaps),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
@@ -456,6 +458,7 @@ private fun WindowProposalsSection(
     val repo = rememberProposalsRepo()
     var state by remember(windowId) { mutableStateOf<ProposalsState>(ProposalsState.Loading) }
     val scope = rememberCoroutineScope()
+    val loadError = stringResource(R.string.tw_proposals_load_error)
 
     LaunchedEffect(windowId) {
         state = ProposalsState.Loading
@@ -467,10 +470,10 @@ private fun WindowProposalsSection(
                 if (t.response.status.value == 409 && t.response.bodyAsText().contains("NO_ACTIVE_LISTING")) {
                     ProposalsState.NoListing
                 } else {
-                    ProposalsState.Error(t.message ?: "Couldn't load swaps.")
+                    ProposalsState.Error(t.message ?: loadError)
                 }
             } catch (t: Throwable) {
-                ProposalsState.Error(t.message ?: "Couldn't load swaps.")
+                ProposalsState.Error(t.message ?: loadError)
             }
         }
     }
@@ -486,14 +489,14 @@ private fun WindowProposalsSection(
             ) {
                 CircularProgressIndicator(modifier = Modifier.size(18.dp))
                 Text(
-                    "Finding homes free for your dates…",
+                    stringResource(R.string.tw_proposals_loading),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
             is ProposalsState.NoListing -> Text(
-                "Add an active listing first — a swap needs two homes.",
+                stringResource(R.string.tw_proposals_no_listing),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -506,7 +509,7 @@ private fun WindowProposalsSection(
 
             is ProposalsState.Ready -> if (s.proposals.isEmpty()) {
                 Text(
-                    "Nothing free for these exact dates yet — we'll keep watching and email you when a match appears.",
+                    stringResource(R.string.tw_proposals_empty),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -541,7 +544,7 @@ private fun WindowProposalCard(proposal: WindowProposal, onOpen: () -> Unit) {
         Box {
             ProposalPhoto(proposal)
             Text(
-                "${proposal.matchScore}% match",
+                stringResource(R.string.tw_match_pct, proposal.matchScore),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -562,7 +565,7 @@ private fun WindowProposalCard(proposal: WindowProposal, onOpen: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
                     Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(14.dp))
                     Text(
-                        "On your wishlist destinations",
+                        stringResource(R.string.tw_on_wishlist),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
@@ -574,11 +577,13 @@ private fun WindowProposalCard(proposal: WindowProposal, onOpen: () -> Unit) {
             }
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 if (proposal.modes.directSwap) {
-                    ModeChip("Direct swap", Icons.Default.SwapHoriz, filled = true)
+                    ModeChip(stringResource(R.string.tw_mode_direct_swap), Icons.Default.SwapHoriz, filled = true)
                 }
                 if (proposal.modes.keysStay) {
-                    val keys = proposal.nightlyKeys?.takeIf { it > 0 }?.let { " · $it Keys/night" } ?: ""
-                    ModeChip("Stay with Keys$keys", Icons.Default.Key, filled = false)
+                    val keysLabel = proposal.nightlyKeys?.takeIf { it > 0 }
+                        ?.let { stringResource(R.string.tw_mode_keys_stay_nightly, it) }
+                        ?: stringResource(R.string.tw_mode_keys_stay)
+                    ModeChip(keysLabel, Icons.Default.Key, filled = false)
                 }
             }
         }

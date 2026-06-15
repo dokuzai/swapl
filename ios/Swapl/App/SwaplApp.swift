@@ -159,7 +159,7 @@ struct VerifyEmailBanner: View {
                 Text("Verify your email")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
                     .foregroundStyle(SwaplSemanticLight.foreground)
-                Text(status ?? "Required before you can publish a home.")
+                Text(status ?? String(localized: "Required before you can publish a home."))
                     .font(.swaplBody(12))
                     .foregroundStyle(SwaplSemanticLight.mutedForeground)
             }

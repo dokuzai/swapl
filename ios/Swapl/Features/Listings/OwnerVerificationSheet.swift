@@ -240,7 +240,7 @@ struct OwnerVerificationSheet: View {
             PhotosPicker(selection: $photoItems, maxSelectionCount: 5, matching: .images) {
                 HStack(spacing: 10) {
                     if uploading { ProgressView() } else { Image(systemName: "doc.badge.plus") }
-                    Text(pickedDocuments.isEmpty ? "Add a document" : "Add another document")
+                    Text(pickedDocuments.isEmpty ? String(localized: "Add a document") : String(localized: "Add another document"))
                 }
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
@@ -351,14 +351,14 @@ struct OwnerVerificationSheet: View {
         switch state {
         case "approved": return "Ownership verified"
         case "rejected": return "Couldn't verify this time"
-        default: return "Under review"
+        default: return String(localized: "Under review")
         }
     }
 
     private func statusSubtitle(_ state: String, note: String?) -> String {
         switch state {
         case "approved": return "Your listing shows the Verified owner badge."
-        case "rejected": return note ?? "Try again with a clearer document in your name."
+        case "rejected": return note ?? String(localized: "Try again with a clearer document in your name.")
         default: return "A person on our team makes the final call — usually within 2 business days. If our automated check was unsure, it can take a little longer, but you're not stuck: we always follow up."
         }
     }
@@ -387,7 +387,7 @@ struct OwnerVerificationSheet: View {
                     pickedDocuments.append(PropertyVerificationDocument(url: url, label: label))
                 }
             } catch {
-                self.error = "Couldn't upload that document. Check your connection and try again."
+                self.error = String(localized: "Couldn't upload that document. Check your connection and try again.")
             }
         }
         photoItems = []

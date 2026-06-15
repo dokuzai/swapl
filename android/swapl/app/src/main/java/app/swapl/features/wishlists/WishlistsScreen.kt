@@ -32,11 +32,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.swapl.R
 import app.swapl.core.favorites.FavoritesStore
 import app.swapl.core.model.Listing
 import app.swapl.core.repository.FavoritesRepository
@@ -146,7 +149,7 @@ fun WishlistsScreen(
             ) {
                 item(span = { GridItemSpan(2) }) {
                     Text(
-                        "Wishlists",
+                        stringResource(R.string.wishlists_title),
                         style = MaterialTheme.typography.displaySmall,
                         modifier = Modifier.padding(horizontal = SwaplSpacing.s1, vertical = SwaplSpacing.s2),
                     )
@@ -195,12 +198,16 @@ private fun WishlistCard(
             maxLines = 1,
         )
         Text(
-            "${listing.sleeps} guests · ${listing.bedrooms} bed${if (listing.bedrooms == 1) "" else "s"}",
+            stringResource(
+                R.string.wishlists_guests_beds,
+                listing.sleeps,
+                pluralStringResource(R.plurals.beds_count, listing.bedrooms, listing.bedrooms),
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            "Available ${listing.availableFrom.take(10)} → ${listing.availableTo.take(10)}",
+            stringResource(R.string.wishlists_available, listing.availableFrom.take(10), listing.availableTo.take(10)),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
@@ -215,16 +222,16 @@ private fun ErrorState(onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Wishlists unavailable", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.wishlists_error_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "We couldn't reach Swapl. Check your connection and try again.",
+            stringResource(R.string.wishlists_error_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(SwaplSpacing.s3))
-        TextButton(onClick = onRetry) { Text("Try Again") }
+        TextButton(onClick = onRetry) { Text(stringResource(R.string.common_try_again)) }
     }
 }
 
@@ -249,10 +256,10 @@ private fun EmptyState() {
             )
         }
         Spacer(Modifier.height(SwaplSpacing.s4))
-        Text("No saved homes yet", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.wishlists_empty_title), style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "Tap the heart on any home to save it here.",
+            stringResource(R.string.wishlists_empty_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

@@ -235,10 +235,10 @@ struct InviteAndEarnView: View {
                     .frame(width: 48, height: 48)
                     .background(SwaplSemanticLight.accent, in: Circle())
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(progress.current?.label ?? "Not started")
+                    Text(progress.current?.label ?? String(localized: "Not started"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                         .foregroundStyle(AirbnbPalette.text)
-                    Text(progress.current?.perk ?? "Invite your first friend to unlock perks.")
+                    Text(progress.current?.perk ?? String(localized: "Invite your first friend to unlock perks."))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
@@ -498,7 +498,7 @@ struct InviteToStaySheet: View {
                     } label: {
                         HStack {
                             if isSending { ProgressView().tint(SwaplSemanticLight.primaryForeground) }
-                            Text(isSending ? "Creating" : "Create invite link")
+                            Text(isSending ? String(localized: "Creating") : String(localized: "Create invite link"))
                         }
                         .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                         .foregroundStyle(SwaplSemanticLight.primaryForeground)
@@ -529,9 +529,9 @@ struct InviteToStaySheet: View {
     // never money — and they only land once the friend verifies (anti-farm).
     private var rewardCopy: String {
         if let reward = rewardPerReferral {
-            return "When they join and verify, you both earn \(reward) travel points. Points are never money."
+            return String(localized: "When they join and verify, you both earn \(reward) travel points. Points are never money.")
         }
-        return "When they join and verify, you both earn travel points. Points are never money."
+        return String(localized: "When they join and verify, you both earn travel points. Points are never money.")
     }
 
     private func loadListing() async {
@@ -569,14 +569,14 @@ struct InviteToStaySheet: View {
             // The route returns code `listing_not_verified` when the listing
             // isn't verified yet; otherwise it's an ownership rejection.
             if body?.contains("listing_not_verified") == true {
-                error = "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out."
+                error = String(localized: "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out.")
             } else {
-                error = "You can only invite guests to your own listing."
+                error = String(localized: "You can only invite guests to your own listing.")
             }
         } catch APIClient.APIError.status(429, _) {
             // Unified cooldown copy (matches web + Android): make clear it's a
             // temporary throttle, not a ban.
-            error = "You've sent a lot of invites in the last hour — try again in a bit. It's a quick cooldown, not a ban."
+            error = String(localized: "You've sent a lot of invites in the last hour — try again in a bit. It's a quick cooldown, not a ban.")
         } catch let caught {
             error = caught.localizedDescription
         }

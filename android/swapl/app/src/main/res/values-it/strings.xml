@@ -642,4 +642,496 @@
     <string name="keys_tx_balance">%1$d saldo</string>
     <string name="keys_tx_error_title">Cronologia punti non disponibile</string>
     <string name="keys_tx_try_again">Riprova</string>
+
+    <!-- ===== Localizzazione UI 100% (DOK) ===== -->
+    <!-- Comune / condivisi -->
+    <string name="common_save">Salva</string>
+    <string name="common_saving">Salvataggio…</string>
+    <string name="common_send">Invia</string>
+    <string name="common_sending">Invio…</string>
+    <string name="common_close">Chiudi</string>
+    <string name="common_done">Fatto</string>
+    <string name="common_delete">Elimina</string>
+    <string name="common_try_again">Riprova</string>
+    <string name="cd_remove_photo">Rimuovi foto</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">%1$d stelle su 5</string>
+    <plurals name="cd_n_stars">
+        <item quantity="one">%1$d stella</item>
+        <item quantity="other">%1$d stelle</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="one">%1$d notte</item>
+        <item quantity="other">%1$d notti</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="one">%1$d letto</item>
+        <item quantity="other">%1$d letti</item>
+    </plurals>
+
+    <!-- Chip stato -->
+    <string name="status_pending">In attesa</string>
+    <string name="status_accepted">Confermato</string>
+    <string name="status_countered">Controproposta</string>
+    <string name="status_declined">Rifiutato</string>
+    <string name="status_withdrawn">Ritirato</string>
+    <string name="status_active">Attivo</string>
+    <string name="status_upcoming">In arrivo</string>
+    <string name="status_in_progress">In corso</string>
+    <string name="status_completed">Completato</string>
+    <string name="status_cancelled">Annullato</string>
+    <string name="status_disputed">Contestato</string>
+    <string name="status_resolved">Risolto</string>
+    <string name="status_open">Aperto</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">Piano</string>
+
+    <!-- Dettaglio viaggio -->
+    <string name="trip_detail_error_title">Viaggio non disponibile</string>
+    <string name="trip_detail_error_body">Non siamo riusciti a caricare questo viaggio.</string>
+    <string name="trip_detail_host_fallback">il tuo host</string>
+    <string name="trip_detail_host_word">host</string>
+    <string name="trip_detail_trip_to">Viaggio a %1$s</string>
+    <string name="trip_detail_hosted_by">Ospitato da %1$s</string>
+    <string name="trip_detail_your_stay">Il tuo soggiorno</string>
+    <string name="trip_detail_guest_at">Ospite da %1$s — %2$s · %3$s</string>
+    <string name="trip_detail_in_return">In cambio ospiti a %1$s · %2$s nelle stesse date.</string>
+    <string name="trip_detail_view_profile">Vedi il profilo di %1$s</string>
+
+    <!-- Pannello accordo -->
+    <string name="agreement_title">Scambio confermato — chiavi per chiavi</string>
+    <string name="agreement_stay_between">Soggiorno dal %1$s al %2$s con %3$s.</string>
+    <string name="agreement_your_code">Il tuo codice (da usare a casa loro)</string>
+    <string name="agreement_their_code">Il loro codice (ospite a casa tua)</string>
+    <string name="agreement_insurance_cover">Assicurazione · copertura €%1$dk</string>
+    <string name="agreement_auto_issued">Emessa automaticamente · linea 24/7 %1$s</string>
+
+    <!-- Controversie / centro assistenza -->
+    <string name="dispute_report_problem">Segnala un problema</string>
+    <string name="dispute_report_new">Segnala un nuovo problema</string>
+    <string name="dispute_phone_title">Contatta la nostra linea 24/7</string>
+    <string name="dispute_phone_body">Se qualcuno è in pericolo o chiuso fuori, chiama %1$s.</string>
+    <string name="dispute_phone_call">Chiama %1$s</string>
+    <string name="dispute_urgent_title">Hai bisogno di aiuto subito?</string>
+    <string name="dispute_urgent_body">Se qualcuno è in pericolo o chiuso fuori, la nostra linea 24/7 è qui. Tocca per contattare l\'assistenza ora.</string>
+    <string name="dispute_open_body">Raccontaci cosa succede con il tuo scambio. Coinvolgeremo il tuo partner di scambio e il nostro team di assistenza.</string>
+    <string name="dispute_open_body_with">Raccontaci cosa succede con il tuo scambio con %1$s. Coinvolgeremo il tuo partner di scambio e il nostro team di assistenza.</string>
+    <string name="dispute_what_happened">COSA È SUCCESSO?</string>
+    <string name="dispute_describe_label">Descrivi il problema</string>
+    <string name="dispute_describe_placeholder">Cosa è successo, quando e cosa ti serve da noi.</string>
+    <string name="dispute_send_report">Invia segnalazione</string>
+    <string name="dispute_discard_title">Scartare le modifiche?</string>
+    <string name="dispute_discard_body">La tua segnalazione non è ancora stata inviata. Se esci ora, perderai quello che hai scritto.</string>
+    <string name="dispute_discard_confirm">Scarta</string>
+    <string name="dispute_discard_keep">Continua a modificare</string>
+    <string name="dispute_reported_on">Segnalato il %1$s</string>
+    <string name="dispute_resolution_label">RISOLUZIONE</string>
+    <string name="dispute_conversation_label">CONVERSAZIONE</string>
+    <string name="dispute_case_resolved">Questo caso è stato risolto.</string>
+    <string name="dispute_case_closed">Questo caso è chiuso.</string>
+    <string name="dispute_reply_label">RISPONDI</string>
+    <string name="dispute_reply_placeholder">Aggiungi una risposta…</string>
+    <string name="dispute_author_you">Tu</string>
+    <string name="dispute_author_support">Assistenza</string>
+    <string name="dispute_photos_label">FOTO (FACOLTATIVO)</string>
+    <string name="dispute_add_photos">Aggiungi foto</string>
+    <string name="dispute_add_more_photos">Aggiungi altre</string>
+    <string name="dispute_photo_read_error">Impossibile leggere l\'immagine</string>
+    <string name="dispute_photo_upload_error">Impossibile caricare una foto. Controlla la connessione e riprova.</string>
+    <string name="dispute_cat_access_title">Non riesco a entrare</string>
+    <string name="dispute_cat_access_subtitle">Chiuso fuori, codice errato, chiavi mancanti</string>
+    <string name="dispute_cat_damage_title">Danni</string>
+    <string name="dispute_cat_damage_subtitle">Qualcosa si è rotto o danneggiato</string>
+    <string name="dispute_cat_cleanliness_title">Pulizia</string>
+    <string name="dispute_cat_cleanliness_subtitle">La casa non era pronta o pulita</string>
+    <string name="dispute_cat_safety_title">Problema di sicurezza</string>
+    <string name="dispute_cat_safety_subtitle">Ti senti in pericolo o qualcosa non va</string>
+    <string name="dispute_cat_no_show_title">Assenza</string>
+    <string name="dispute_cat_no_show_subtitle">Il tuo partner di scambio non si è presentato</string>
+    <string name="dispute_cat_other_title">Altro</string>
+    <string name="dispute_cat_other_subtitle">Qualsiasi altra cosa per cui ti serve aiuto</string>
+    <string name="dispute_status_open">Aperto</string>
+    <string name="dispute_status_investigating">Ci stiamo lavorando</string>
+    <string name="dispute_status_awaiting">Tocca a te</string>
+    <string name="dispute_status_resolved">Risolto</string>
+    <string name="dispute_status_closed">Chiuso</string>
+
+    <!-- Editor guida di casa -->
+    <string name="home_guide_title">Guida di casa</string>
+    <string name="home_guide_complete_pct">%1$d%% completata</string>
+    <string name="home_guide_intro">Compila l\'essenziale così il tuo ospite può sistemarsi senza scriverti.</string>
+    <string name="home_guide_section_access">Come entrare</string>
+    <string name="home_guide_field_access">Istruzioni di accesso</string>
+    <string name="home_guide_field_key_pickup">Ritiro chiavi</string>
+    <string name="home_guide_section_wifi">Wi-Fi</string>
+    <string name="home_guide_field_wifi_name">Nome rete</string>
+    <string name="home_guide_field_wifi_password">Password</string>
+    <string name="home_guide_section_living">Vivere in casa</string>
+    <string name="home_guide_field_heating">Riscaldamento e climatizzazione</string>
+    <string name="home_guide_field_kitchen">Cucina</string>
+    <string name="home_guide_field_bins">Rifiuti e riciclo</string>
+    <string name="home_guide_field_pets">Animali e piante</string>
+    <string name="home_guide_section_good_to_know">Buono a sapersi (facoltativo)</string>
+    <string name="home_guide_field_house_rules">Regole della casa</string>
+    <string name="home_guide_field_neighbourhood">Consigli sul quartiere</string>
+    <string name="home_guide_field_emergency">Contatto di emergenza</string>
+
+    <!-- Sheet check-in / check-out -->
+    <string name="check_event_checkin">Check-in</string>
+    <string name="check_event_checkout">Check-out</string>
+    <string name="check_event_checkin_body">Scatta qualche foto di base della casa al tuo arrivo — tutela entrambi se qualcosa viene messo in discussione in seguito.</string>
+    <string name="check_event_checkout_body">Scatta qualche foto alla partenza, così lo stato della casa resta documentato.</string>
+    <string name="check_event_baseline_photos">Foto di base</string>
+    <string name="check_event_note_label">Nota (facoltativo)</string>
+    <string name="check_event_note_placeholder">es. tutto in ordine, chiavi ritirate</string>
+
+    <!-- Metriche -->
+    <string name="metrics_title">Metriche</string>
+    <string name="metrics_section_now">Ora</string>
+    <string name="metrics_online_now">Online ora</string>
+    <string name="metrics_today">Oggi</string>
+    <string name="metrics_7_days">7 giorni</string>
+    <string name="metrics_30_days">30 giorni</string>
+    <string name="metrics_section_users">Utenti</string>
+    <string name="metrics_total">Totale</string>
+    <string name="metrics_email_verified">Email verificata</string>
+    <string name="metrics_with_active_listing">Con annuncio attivo</string>
+    <string name="metrics_new_7d">Nuovi (7 giorni)</string>
+    <string name="metrics_new_30d">Nuovi (30 giorni)</string>
+    <string name="metrics_section_listings_per_user">Annunci per utente</string>
+    <string name="metrics_avg_per_user">Media per utente con annuncio</string>
+    <string name="metrics_top_hosts">Host principali</string>
+    <string name="metrics_online_only">Solo online</string>
+    <string name="metrics_no_hosts_online">Nessun host online al momento.</string>
+    <string name="metrics_online">Online</string>
+    <string name="metrics_offline">Offline</string>
+    <string name="metrics_section_top_cities">Città principali</string>
+    <string name="metrics_active_listings">Annunci attivi</string>
+    <string name="metrics_section_proposals">Proposte</string>
+    <string name="metrics_accept_rate">Tasso di accettazione</string>
+    <string name="metrics_section_engagement">Coinvolgimento</string>
+    <string name="metrics_active_agreements">Accordi attivi</string>
+    <string name="metrics_completed_agreements">Accordi completati</string>
+    <string name="metrics_messages_total">Messaggi (totale)</string>
+    <string name="metrics_messages_7d">Messaggi (7 giorni)</string>
+    <string name="metrics_favorites_total">Preferiti (totale)</string>
+    <string name="metrics_favorites_7d">Preferiti (7 giorni)</string>
+    <string name="metrics_saved_searches">Ricerche salvate</string>
+    <string name="metrics_generated_at">Generato il %1$s UTC</string>
+    <string name="metrics_error_title">Metriche non disponibili</string>
+    <string name="metrics_error_body">Non siamo riusciti a caricare le metriche. Trascina per aggiornare o riprova.</string>
+
+    <!-- Calendario / disponibilità -->
+    <string name="calendar_title">Il tuo calendario</string>
+    <string name="calendar_intro">Le date prenotate da scambi confermati e soggiorni con punti sono barrate — gli ospiti non possono sceglierle. Tocca un giorno di inizio e uno di fine per bloccare date per te (ristrutturazioni, uso personale).</string>
+    <string name="calendar_block_summary">Blocca %1$s → %2$s (%3$s)</string>
+    <string name="calendar_clear">Cancella</string>
+    <string name="calendar_blocking">Blocco in corso…</string>
+    <string name="calendar_block_dates">Blocca queste date</string>
+    <string name="calendar_pick_checkout">Ora tocca il giorno di check-out per completare il blocco.</string>
+    <string name="calendar_blocked_label">Date che hai bloccato</string>
+    <string name="calendar_unblock">Sblocca</string>
+    <string name="calendar_legend_selected">Selezionato</string>
+    <string name="calendar_legend_booked">Prenotato / bloccato</string>
+
+    <!-- Dialog segnalazione -->
+    <string name="report_title">Segnala</string>
+    <string name="report_reason_label">Motivo</string>
+    <string name="report_details_label">Dettagli (facoltativo)</string>
+    <string name="report_reason_inappropriate">Contenuto inappropriato</string>
+    <string name="report_reason_scam">Truffa o annuncio falso</string>
+    <string name="report_reason_harassment">Molestie</string>
+    <string name="report_reason_discrimination">Discriminazione</string>
+    <string name="report_reason_other">Altro</string>
+
+    <!-- Liste dei desideri -->
+    <string name="wishlists_title">Liste dei desideri</string>
+    <string name="wishlists_guests_beds">%1$d ospiti · %2$s</string>
+    <string name="wishlists_available">Disponibile %1$s → %2$s</string>
+    <string name="wishlists_error_title">Liste dei desideri non disponibili</string>
+    <string name="wishlists_error_body">Non siamo riusciti a raggiungere Swapl. Controlla la connessione e riprova.</string>
+    <string name="wishlists_empty_title">Ancora nessuna casa salvata</string>
+    <string name="wishlists_empty_body">Tocca il cuore su una casa per salvarla qui.</string>
+
+    <!-- Profilo di viaggio -->
+    <string name="travel_profile_kicker">Il tuo profilo di viaggio</string>
+    <string name="travel_profile_deleted">Profilo eliminato. Lo ricostruiremo solo se lo chiedi.</string>
+    <string name="travel_profile_built_from">Costruito solo da ciò che fai su Swapl. Puoi aggiornarlo o eliminarlo quando vuoi.</string>
+    <string name="travel_profile_built_from_sources">Costruito solo da ciò che fai su Swapl: %1$s. Puoi aggiornarlo o eliminarlo quando vuoi.</string>
+    <string name="travel_profile_loading">Lettura del tuo profilo…</string>
+    <string name="travel_profile_build_again">Ricostruiscilo</string>
+    <string name="travel_profile_refresh">Aggiorna</string>
+    <string name="travel_profile_delete_title">Eliminare il profilo di viaggio?</string>
+    <string name="travel_profile_delete_body">Questo cancella il riepilogo dei tuoi gusti fatto dall\'IA. Non tornerà a meno che tu non lo ricostruisca.</string>
+    <string name="travel_profile_error_429">Profilo aggiornato troppo di recente — riprova tra poco.</string>
+    <string name="travel_profile_error_generic">Qualcosa è andato storto. Riprova.</string>
+
+    <!-- Finestre di viaggio -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">Hai raggiunto il limite di finestre di viaggio del tuo piano</string>
+    <string name="tw_add_window">Aggiungi una finestra di viaggio</string>
+    <string name="tw_empty_title">Ancora nessuna finestra di viaggio</string>
+    <string name="tw_empty_body">Dicci quando vorresti viaggiare — ti porteremo scambi pronti per quelle date.</string>
+    <string name="tw_header_empty">Quando vuoi partire?</string>
+    <string name="tw_header_count">%1$d salvate</string>
+    <string name="tw_header_body">Salva le date che sogni. L\'assistente compone scambi da case reali libere proprio in quel periodo.</string>
+    <string name="tw_new_window">Nuova finestra di viaggio</string>
+    <string name="tw_date_from">Dal</string>
+    <string name="tw_date_to">Al</string>
+    <string name="tw_end_after_start">La data di fine deve essere successiva a quella di inizio.</string>
+    <string name="tw_flexible_title">Le mie date sono flessibili</string>
+    <string name="tw_flexible_body">Allargheremo la ricerca attorno a questi giorni.</string>
+    <string name="tw_where_label">Dove? (facoltativo)</string>
+    <string name="tw_where_placeholder">Lisbona, Portogallo, Barcellona</string>
+    <string name="tw_where_hint">Città o paesi separati da virgole — lascia vuoto per qualsiasi destinazione.</string>
+    <string name="tw_notes_label">Note (facoltativo)</string>
+    <string name="tw_notes_placeholder">Viaggio per l\'anniversario, vorrei un posto comodo a piedi…</string>
+    <string name="tw_save_window">Salva finestra di viaggio</string>
+    <string name="tw_flexible_chip">Flessibile</string>
+    <string name="tw_anywhere">Ovunque</string>
+    <string name="tw_remove_window">Rimuovi questa finestra di viaggio</string>
+    <string name="tw_hide_swaps">Nascondi scambi per queste date</string>
+    <string name="tw_show_swaps">Mostra scambi per queste date</string>
+    <string name="tw_proposals_load_error">Impossibile caricare gli scambi.</string>
+    <string name="tw_proposals_loading">Cerchiamo case libere per le tue date…</string>
+    <string name="tw_proposals_no_listing">Aggiungi prima un annuncio attivo — uno scambio richiede due case.</string>
+    <string name="tw_proposals_empty">Niente di libero per queste date esatte per ora — continuiamo a controllare e ti scriviamo via email quando arriva un match.</string>
+    <string name="tw_match_pct">%1$d%% di affinità</string>
+    <string name="tw_on_wishlist">Tra le tue destinazioni dei desideri</string>
+    <string name="tw_mode_direct_swap">Scambio diretto</string>
+    <string name="tw_mode_keys_stay">Soggiorno con Punti</string>
+    <string name="tw_mode_keys_stay_nightly">Soggiorno con Punti · %1$d Punti/notte</string>
+
+    <!-- Profilo pubblico -->
+    <string name="profile_report_user">Segnala questo utente</string>
+    <string name="profile_anonymous_host">Host anonimo</string>
+    <string name="profile_id_verified">Identità verificata</string>
+    <string name="profile_host_avatar">Avatar host</string>
+    <string name="profile_work">Il mio lavoro: %1$s</string>
+    <string name="profile_speaks">Parla %1$s</string>
+    <string name="profile_lives_in">Vive a %1$s</string>
+    <string name="profile_joined_swapl">Iscritto a Swapl</string>
+    <string name="profile_a_member">Un membro di Swapl</string>
+    <string name="profile_visited_label">Dove sono stato</string>
+    <string name="profile_visited_empty">Ancora nessuno scambio completato — i timbri del passaporto appaiono qui dopo ogni soggiorno.</string>
+    <string name="profile_reviews_label_plain">Recensioni</string>
+    <string name="profile_reviews_label_count">Recensioni (%1$d)</string>
+    <string name="profile_reviews_empty">Ancora nessuna recensione — gli host si recensiscono a vicenda dopo uno scambio completato.</string>
+    <string name="profile_interests_label">Interessi</string>
+    <string name="profile_their_homes">Le loro case</string>
+    <string name="profile_sqm_sleeps">%1$d m² · per %2$d persone</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="one">Scambio</item>
+        <item quantity="other">Scambi</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="one">Recensione</item>
+        <item quantity="other">Recensioni</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="one">Anno su Swapl</item>
+        <item quantity="other">Anni su Swapl</item>
+    </plurals>
+
+    <!-- Impostazioni account -->
+    <string name="settings_personal_info_title">Informazioni personali</string>
+    <string name="settings_display_name">Nome visualizzato</string>
+    <string name="settings_about_you">Su di te</string>
+    <string name="settings_about_you_placeholder">Racconta agli host qualcosa di te.</string>
+    <string name="settings_my_work">Il mio lavoro</string>
+    <string name="settings_my_work_placeholder">es. Architetto</string>
+    <string name="settings_languages">Lingue</string>
+    <string name="settings_languages_placeholder">es. Italiano, Inglese</string>
+    <string name="settings_languages_hint">Separa le lingue con le virgole.</string>
+    <string name="settings_home_city">Città di residenza</string>
+    <string name="settings_home_city_placeholder">es. Milano</string>
+    <string name="settings_home_country">Paese di residenza</string>
+    <string name="settings_home_country_placeholder">es. Italia</string>
+    <string name="settings_saved_confirm">Salvato. Il tuo profilo pubblico è aggiornato.</string>
+    <string name="settings_save_changes">Salva le modifiche</string>
+    <string name="settings_change_password">Cambia password</string>
+    <string name="pw_current_label">Password attuale</string>
+    <string name="pw_current_hint">Lascia vuoto se ti sei registrato con Google, Telegram o un codice via email.</string>
+    <string name="pw_new_label">Nuova password</string>
+    <string name="pw_new_hint">Almeno 6 caratteri. Gli altri dispositivi verranno disconnessi.</string>
+    <string name="pw_confirm_label">Conferma nuova password</string>
+    <string name="pw_error_min6">Usa almeno 6 caratteri.</string>
+    <string name="pw_error_mismatch">Le password non corrispondono.</string>
+    <string name="pw_error_incorrect">La password attuale non è corretta.</string>
+    <string name="pw_error_too_many">Troppi tentativi — riprova tra un\'ora.</string>
+    <string name="pw_error_generic">Impossibile cambiare la password. Riprova.</string>
+    <string name="settings_privacy_title">Privacy</string>
+    <string name="settings_seo_title">Indicizzazione sui motori di ricerca</string>
+    <string name="settings_seo_subtitle">Consenti alle pagine del tuo annuncio di apparire nei motori di ricerca come Google.</string>
+    <string name="settings_show_home_city_title">Mostra la mia città</string>
+    <string name="settings_show_home_city_subtitle">Mostra la tua città e il tuo paese sul profilo pubblico.</string>
+    <string name="settings_notifications_title">Notifiche</string>
+    <string name="settings_email_notif_title">Notifiche email</string>
+    <string name="settings_email_notif_subtitle">Proposte, conferme e promemoria di viaggio via email.</string>
+    <string name="settings_push_notif_title">Notifiche push</string>
+    <string name="settings_push_notif_subtitle">Avvisi in tempo reale su questo dispositivo quando serve la tua attenzione.</string>
+
+    <!-- Portafoglio punti -->
+    <string name="keys_travel_points">Punti viaggio</string>
+    <string name="keys_intro">Punti che guadagni ospitando. Spendili per un soggiorno — mai denaro, mai acquistabili o convertibili in contanti.</string>
+    <string name="keys_your_homes_earn">Le tue case guadagnano</string>
+    <string name="keys_your_homes_earn_body">Questo è ciò che guadagni per ogni notte che un ospite soggiorna — punti che puoi poi spendere per un soggiorno altrove.</string>
+    <string name="keys_history">Cronologia</string>
+    <string name="keys_history_empty">Ancora nessuna attività punti. Guadagna punti ospitando, o regalane ad un amico.</string>
+    <string name="keys_see_all_history">Vedi tutta la cronologia punti</string>
+    <string name="keys_your_travel_points">I tuoi punti viaggio</string>
+    <string name="keys_balance_caption">Spendili per un soggiorno senza uno scambio simultaneo. I punti non sono denaro — non puoi acquistarli o convertirli in contanti.</string>
+    <string name="keys_gift_points">Regala punti</string>
+    <string name="keys_gift_entry_subtitle">Invia punti ad un amico verificato</string>
+    <string name="keys_per_night">%1$d / notte</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="one">Il tuo saldo copre circa %1$d notte a questa tariffa.</item>
+        <item quantity="other">Il tuo saldo copre circa %1$d notti a questa tariffa.</item>
+    </plurals>
+    <string name="keys_how_it_works">Come funzionano i punti</string>
+    <string name="keys_example_host">Ospita 2 notti a %1$d punti/notte</string>
+    <string name="keys_example_spend">Spendi quei %1$d punti per 2 notti altrove</string>
+    <string name="keys_loop_caption">Ecco l\'intero ciclo: ospita → guadagna punti → viaggia → ripeti. Nessuno scambio di denaro.</string>
+    <string name="keys_get_first">Ottieni i tuoi primi punti</string>
+    <string name="keys_earn_verify_title">Verifica la tua identità</string>
+    <string name="keys_earn_verify_body">Ottieni %1$d punti nel momento in cui vieni verificato — all\'istante.</string>
+    <string name="keys_earn_host_title">Ospita un soggiorno</string>
+    <string name="keys_earn_host_body">Guadagna punti per ogni notte che un ospite soggiorna da te.</string>
+    <string name="keys_earn_gift_title">Ricevi un regalo</string>
+    <string name="keys_earn_gift_body">Un amico verificato può inviarti punti — condividi il tuo ID membro.</string>
+    <string name="keys_error_title">Punti non disponibili</string>
+    <string name="keys_gift_member_id">ID membro</string>
+    <string name="keys_gift_member_id_hint">Chiedi al tuo amico il suo ID membro Swapl. Deve essere un membro verificato.</string>
+    <string name="keys_gift_caps">Fino a %1$d per regalo, %2$d al giorno. I punti sono un regalo — non possono essere acquistati o convertiti in contanti.</string>
+    <plurals name="keys_points_amount">
+        <item quantity="one">%1$d punto</item>
+        <item quantity="other">%1$d punti</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="one">Inviato %1$d punto. Ora hai %2$d.</item>
+        <item quantity="other">Inviati %1$d punti. Ora hai %2$d.</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">Sia tu che il tuo amico dovete essere membri verificati per regalare punti.</string>
+    <string name="keys_gift_error_not_found">Non abbiamo trovato quel membro. Ricontrolla l\'ID.</string>
+    <string name="keys_gift_error_insufficient">Non hai punti sufficienti per questo regalo.</string>
+    <string name="keys_gift_error_generic">Impossibile inviare punti al momento.</string>
+
+    <!-- Invita e guadagna -->
+    <string name="invite_title">Invita e guadagna</string>
+    <string name="invite_intro">Porta amici, guadagna punti viaggio, sali nella lista ad accesso anticipato. I punti non sono mai denaro.</string>
+    <string name="invite_share_message">Unisciti a me su Swapl — scambia case e viaggia con i punti, non con i contanti. Usa il mio link e guadagniamo entrambi %1$d punti viaggio quando ti verifichi: %2$s</string>
+    <string name="invite_share_subject">Unisciti a me su Swapl</string>
+    <string name="invite_share_chooser">Condividi il tuo invito</string>
+    <string name="invite_hero_kicker">Porta amici, sali nella lista</string>
+    <string name="invite_hero_points_earned">punti guadagnati</string>
+    <string name="invite_hero_spot_in_line">la tua posizione in lista</string>
+    <string name="invite_hero_body">Ogni amico che si iscrive e si verifica ti fa guadagnare %1$d punti viaggio — e ti fa salire nella lista ad accesso anticipato. I punti non sono mai denaro.</string>
+    <string name="invite_referral_link_label">Il tuo link di invito</string>
+    <string name="invite_share_button">Condividi</string>
+    <string name="invite_share_caption">Condividi tutto questo link — è ciò che conta. Un tocco lo invia ovunque: Messaggi, WhatsApp, email. Il tuo amico lo tocca, si iscrive e, una volta verificato, ottenete entrambi i punti.</string>
+    <string name="invite_to_stay_title">Invita qualcuno a soggiornare</string>
+    <string name="invite_to_stay_subtitle">Invia un invito personale legato alla tua casa</string>
+    <string name="invite_tier_label">Il tuo livello</string>
+    <string name="invite_tier_not_started">Non iniziato</string>
+    <string name="invite_tier_no_perk">Invita il tuo primo amico per sbloccare i vantaggi.</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="one">%1$d amico verificato in più per raggiungere %2$s.</item>
+        <item quantity="other">%1$d amici verificati in più per raggiungere %2$s.</item>
+    </plurals>
+    <string name="invite_tier_top">Livello massimo raggiunto — sei un fondatore di Swapl.</string>
+    <string name="invite_leaderboard_label">Classifica</string>
+    <string name="invite_you_badge">TU</string>
+    <string name="invite_your_invites">I tuoi inviti (%1$d)</string>
+    <string name="invite_antifarm_note">I punti arrivano solo quando un amico verifica la propria identità — così la lista resta equa per tutti. I punti sono credito di viaggio, mai contanti.</string>
+    <string name="invite_error_title">Inviti non disponibili</string>
+    <string name="invite_list_home_title">Pubblica prima la tua casa</string>
+    <string name="invite_list_home_body">I link di invito a soggiornare sono legati al tuo annuncio. Crea una casa in Account, poi invita un amico a venire a soggiornare.</string>
+    <string name="invite_verify_home_title">Verifica prima la tua casa</string>
+    <string name="invite_verify_home_body">Verifica questo annuncio prima di invitare ospiti a soggiornare — altrimenti la ricompensa del tuo amico non potrà essere pagata. Verificalo da Account → il tuo annuncio.</string>
+    <string name="invite_inviting_guest_to">Stai invitando un ospite a</string>
+    <string name="invite_your_home">La tua casa</string>
+    <string name="invite_friend_email_label">Email dell\'amico (facoltativo)</string>
+    <string name="invite_friend_email_placeholder">amico@email.com</string>
+    <string name="invite_friend_email_hint">Aggiungi un\'email per abbinare automaticamente l\'invito alla registrazione, o lascialo vuoto per un link aperto utilizzabile da chiunque.</string>
+    <string name="invite_ready">Invito pronto</string>
+    <string name="invite_stay_share_message">Mi piacerebbe ospitarti su Swapl — scambia case e viaggia con i punti, non con i contanti. Ecco il tuo invito a soggiornare a %1$s: %2$s</string>
+    <string name="invite_stay_share_subject">Vieni a soggiornare a %1$s</string>
+    <string name="invite_stay_share_chooser">Condividi link di invito</string>
+    <string name="invite_share_link_button">Condividi link di invito</string>
+    <string name="invite_creating">Creazione…</string>
+    <string name="invite_create_link">Crea link di invito</string>
+    <string name="invite_stay_reward">Quando si iscrive e si verifica, guadagnate entrambi %1$d punti viaggio. I punti non sono mai denaro.</string>
+    <string name="invite_stay_reward_generic">Quando si iscrive e si verifica, guadagnate entrambi punti viaggio. I punti non sono mai denaro.</string>
+    <string name="invite_err_not_verified">Verifica questo annuncio prima di invitare ospiti a soggiornare — altrimenti la ricompensa del tuo amico non potrà essere pagata.</string>
+    <string name="invite_err_not_owner">Puoi invitare ospiti solo al tuo annuncio.</string>
+    <string name="invite_err_cooldown">Hai inviato molti inviti nell\'ultima ora — riprova tra poco. È una breve pausa, non un blocco.</string>
+    <string name="invite_err_generic">Impossibile creare l\'invito al momento.</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">Lasciati ispirare</string>
+    <string name="inspire_intro">Raccontaci il viaggio che sogni — comporremo uno scambio da case reali che si abbinano alla tua.</string>
+    <string name="inspire_wish_label">Il tuo desiderio</string>
+    <string name="inspire_wish_placeholder">Un posto caldo con ottimo cibo, comodo a piedi, ideale per lavorare da remoto…</string>
+    <string name="inspire_mic_stop">Smetti di ascoltare</string>
+    <string name="inspire_mic_start">Detta il tuo desiderio</string>
+    <string name="inspire_listening">In ascolto — parla liberamente, tocca di nuovo il microfono per fermarti.</string>
+    <string name="inspire_mic_denied">L\'accesso al microfono è disattivato per Swapl — abilitalo in Impostazioni per dettare il tuo desiderio.</string>
+    <string name="inspire_dates_in_mind">Ho delle date in mente</string>
+    <string name="inspire_dates_in_mind_sub">Altrimenti useremo la disponibilità della tua casa.</string>
+    <string name="inspire_dream_up">Crea il mio scambio</string>
+    <string name="inspire_loading_1">Stiamo immaginando il tuo scambio…</string>
+    <string name="inspire_loading_2">Abbiniamo le case al tuo stile…</string>
+    <string name="inspire_loading_3">Controlliamo chi è libero quando lo sei tu…</string>
+    <string name="inspire_loading_4">Prepariamo le valigie virtuali…</string>
+    <string name="inspire_package_title">Il tuo pacchetto di scambio</string>
+    <string name="inspire_understood">Ho capito: %1$s</string>
+    <string name="inspire_dates_label">Date</string>
+    <string name="inspire_dates_suggested">Suggerite dalla disponibilità della tua casa — modificale liberamente.</string>
+    <string name="inspire_message_label">Il tuo messaggio</string>
+    <string name="inspire_message_ai">Redatto dall\'IA dal tuo annuncio e dal loro — rendilo tuo.</string>
+    <string name="inspire_swap_pick">O cambia la scelta</string>
+    <string name="inspire_match_pct">%1$d%% di affinità</string>
+    <string name="inspire_while_there">Mentre sei lì</string>
+    <string name="inspire_experiences_note">Prenotato sui siti dei nostri partner ai loro prezzi — swapl può guadagnare una commissione, mai un ricarico.</string>
+    <string name="inspire_travel_essentials">Essenziali di viaggio</string>
+    <string name="inspire_concierge_addons">Extra concierge swapl</string>
+    <string name="inspire_addons_note">Prezzi reali da catalogo. Deseleziona ciò che non vuoi — ti verrà addebitato solo se l\'host accetta il tuo scambio.</string>
+    <string name="inspire_payable_if_accepts">Da pagare se l\'host accetta</string>
+    <string name="inspire_nothing_payable">Niente da pagare — confermando invii solo la proposta.</string>
+    <string name="inspire_confirm_send">Conferma e invia proposta</string>
+    <string name="inspire_charged_note">Ti verrà addebitato solo se l\'host accetta il tuo scambio.</string>
+    <string name="inspire_dismissing">Rimozione…</string>
+    <string name="inspire_not_feeling">Non mi convince</string>
+    <string name="inspire_almost_there">Ci siamo quasi</string>
+    <string name="inspire_payment_title">Pagamento e prenotazione</string>
+    <string name="inspire_your_selection">La tua selezione</string>
+    <string name="inspire_partner_note">Le esperienze e i servizi dei partner si prenotano sui siti dei partner — mai addebitati da swapl e non inclusi in questo totale.</string>
+    <string name="inspire_save_card">Salva carta e invia proposta</string>
+    <string name="inspire_send_no_card">Invia senza salvare una carta</string>
+    <string name="inspire_back_to_package">Torna al pacchetto</string>
+    <string name="inspire_book_on">Prenota su %1$s</string>
+    <string name="inspire_err_no_match">Ci serve una tua casa attiva — e almeno un match compatibile — per comporre un pacchetto.</string>
+    <string name="inspire_err_rate">Stai sognando in fretta! Aspetta qualche minuto e riprova.</string>
+    <string name="inspire_err_limit">Hai raggiunto il limite di proposte del tuo piano. Esegui l\'upgrade per inviarne altre.</string>
+    <string name="inspire_err_forbidden">Il tuo account non può inviare proposte al momento.</string>
+    <string name="inspire_err_generic">Qualcosa è andato storto. Riprova.</string>
+
+    <!-- Chiavi non tradotte in precedenza -->
+    <string name="owner_verify_tenant_note">Anche chi affitta è il benvenuto. Se sei in affitto e il contratto ti consente di ospitare, sei pienamente idoneo — non devi possedere la casa.</string>
+    <string name="owner_verify_privacy_note">Non conserviamo il tuo documento dopo la verifica. Solo l\'IA legge i tuoi dati personali e teniamo soltanto se mostra una casa privata — mai il documento, l\'indirizzo o il documento stesso.</string>
+    <string name="valuation_factor_location_tier_standard">Standard — la tua posizione non viene gonfiata artificialmente, ma è valutata allo stesso modo. Piccoli centri e paesi non vengono penalizzati qui.</string>
+    <string name="valuation_ai_what_note">La nostra IA legge solo come è presentato il tuo annuncio — la copertura delle foto, quanto è ricco l\'elenco dei servizi e quanto è dettagliata la descrizione. Non giudica la tua casa con severità e non penalizza mai piccoli centri o paesi — la posizione è gestita separatamente.</string>
+    <string name="valuation_ai_baseline_pos">Bonus per l\'attrattiva della casa: +%1$s (la maggior parte delle case ottiene 0; massimo +%2$d).</string>
+    <string name="valuation_ai_baseline_zero">Attrattiva della casa: 0 — del tutto normale, come la maggior parte delle case (bonus massimo +%1$d).</string>
+    <string name="valuation_ai_baseline_neg">Attrattiva della casa: %1$s (la maggior parte delle case ottiene 0 — aggiungi qualche foto o dettaglio per migliorarla).</string>
+    <string name="valuation_review_moving">Ora ci avviciniamo lentamente al tuo punteggio di %1$.1f★ da %2$d recensioni — un po\' alla volta, mai tutto in una volta.</string>
+
+
+    <!-- Navigazione inferiore -->
+    <string name="nav_browse">Sfoglia</string>
+    <string name="nav_wishlists">Liste</string>
+    <string name="nav_trips">Viaggi</string>
+    <string name="nav_swaps">Scambi</string>
+    <string name="nav_account">Account</string>
 </resources>

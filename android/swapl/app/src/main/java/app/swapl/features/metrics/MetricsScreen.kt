@@ -33,12 +33,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.AdminMetrics
 import app.swapl.core.repository.MetricsRepository
 import app.swapl.design.components.KickerLabel
@@ -79,7 +81,7 @@ fun MetricsScreen(vm: MetricsViewModel = hiltViewModel()) {
 
     Column(Modifier.fillMaxSize()) {
         Text(
-            "Metrics",
+            stringResource(R.string.metrics_title),
             style = MaterialTheme.typography.displaySmall,
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,30 +114,30 @@ private fun MetricsContent(m: AdminMetrics) {
     ) {
         // Now
         item(key = "now") {
-            Section("Now") {
+            Section(stringResource(R.string.metrics_section_now)) {
                 Row(Modifier.fillMaxWidth()) {
-                    BigStat("Online now", m.now.online, Modifier.weight(1f), accent = true)
-                    BigStat("Today", m.now.dau, Modifier.weight(1f))
-                    BigStat("7 days", m.now.wau, Modifier.weight(1f))
-                    BigStat("30 days", m.now.mau, Modifier.weight(1f))
+                    BigStat(stringResource(R.string.metrics_online_now), m.now.online, Modifier.weight(1f), accent = true)
+                    BigStat(stringResource(R.string.metrics_today), m.now.dau, Modifier.weight(1f))
+                    BigStat(stringResource(R.string.metrics_7_days), m.now.wau, Modifier.weight(1f))
+                    BigStat(stringResource(R.string.metrics_30_days), m.now.mau, Modifier.weight(1f))
                 }
             }
         }
 
         // Users
         item(key = "users") {
-            Section("Users") {
-                MetricRow("Total", m.users.total.toString())
-                MetricRow("Email verified", m.users.emailVerified.toString())
-                MetricRow("With active listing", m.users.withActiveListing.toString())
-                MetricRow("New (7 days)", m.users.new7d.toString())
-                MetricRow("New (30 days)", m.users.new30d.toString())
+            Section(stringResource(R.string.metrics_section_users)) {
+                MetricRow(stringResource(R.string.metrics_total), m.users.total.toString())
+                MetricRow(stringResource(R.string.metrics_email_verified), m.users.emailVerified.toString())
+                MetricRow(stringResource(R.string.metrics_with_active_listing), m.users.withActiveListing.toString())
+                MetricRow(stringResource(R.string.metrics_new_7d), m.users.new7d.toString())
+                MetricRow(stringResource(R.string.metrics_new_30d), m.users.new30d.toString())
             }
         }
 
         // Listings per user
         item(key = "listingsPerUser") {
-            Section("Listings per user") {
+            Section(stringResource(R.string.metrics_section_listings_per_user)) {
                 val d = m.listingsPerUser.distribution
                 Row(Modifier.fillMaxWidth()) {
                     BigStat("0", d.zero, Modifier.weight(1f))
@@ -145,18 +147,18 @@ private fun MetricsContent(m: AdminMetrics) {
                 }
                 Spacer(Modifier.height(SwaplSpacing.s2))
                 MetricRow(
-                    "Avg per user with listing",
+                    stringResource(R.string.metrics_avg_per_user),
                     String.format(Locale.US, "%.2f", m.listingsPerUser.avgPerUserWithListing),
                 )
                 if (m.listingsPerUser.topUsers.isNotEmpty()) {
                     var onlineOnly by remember { mutableStateOf(false) }
                     Spacer(Modifier.height(SwaplSpacing.s2))
-                    KickerLabel("Top hosts")
+                    KickerLabel(stringResource(R.string.metrics_top_hosts))
                     Spacer(Modifier.height(SwaplSpacing.s1))
                     FilterChip(
                         selected = onlineOnly,
                         onClick = { onlineOnly = !onlineOnly },
-                        label = { Text("Online only") },
+                        label = { Text(stringResource(R.string.metrics_online_only)) },
                     )
                     Spacer(Modifier.height(SwaplSpacing.s1))
                     val shownUsers = if (onlineOnly) {
@@ -166,7 +168,7 @@ private fun MetricsContent(m: AdminMetrics) {
                     }
                     if (shownUsers.isEmpty()) {
                         Text(
-                            "No hosts online right now.",
+                            stringResource(R.string.metrics_no_hosts_online),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.fillMaxWidth().padding(vertical = SwaplSpacing.s1),
@@ -177,7 +179,7 @@ private fun MetricsContent(m: AdminMetrics) {
                             Modifier.fillMaxWidth().padding(vertical = SwaplSpacing.s1),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            val statusLabel = if (u.online) "Online" else "Offline"
+                            val statusLabel = if (u.online) stringResource(R.string.metrics_online) else stringResource(R.string.metrics_offline)
                             Box(
                                 Modifier
                                     .size(8.dp)
@@ -210,8 +212,8 @@ private fun MetricsContent(m: AdminMetrics) {
 
         // Top cities
         item(key = "cities") {
-            Section("Top cities") {
-                MetricRow("Active listings", m.cities.totalActiveListings.toString())
+            Section(stringResource(R.string.metrics_section_top_cities)) {
+                MetricRow(stringResource(R.string.metrics_active_listings), m.cities.totalActiveListings.toString())
                 if (m.cities.top.isNotEmpty()) {
                     Spacer(Modifier.height(SwaplSpacing.s1))
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline)
@@ -239,9 +241,9 @@ private fun MetricsContent(m: AdminMetrics) {
 
         // Proposals
         item(key = "proposals") {
-            Section("Proposals") {
-                MetricRow("Total", m.engagement.proposalsTotal.toString())
-                MetricRow("Accept rate", formatPercent(m.engagement.proposalAcceptRate))
+            Section(stringResource(R.string.metrics_section_proposals)) {
+                MetricRow(stringResource(R.string.metrics_total), m.engagement.proposalsTotal.toString())
+                MetricRow(stringResource(R.string.metrics_accept_rate), formatPercent(m.engagement.proposalAcceptRate))
                 if (m.engagement.proposalsByStatus.isNotEmpty()) {
                     Spacer(Modifier.height(SwaplSpacing.s1))
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline)
@@ -257,20 +259,20 @@ private fun MetricsContent(m: AdminMetrics) {
 
         // Engagement
         item(key = "engagement") {
-            Section("Engagement") {
-                MetricRow("Active agreements", m.engagement.agreementsActive.toString())
-                MetricRow("Completed agreements", m.engagement.agreementsCompleted.toString())
-                MetricRow("Messages (total)", m.engagement.messagesTotal.toString())
-                MetricRow("Messages (7 days)", m.engagement.messages7d.toString())
-                MetricRow("Favorites (total)", m.engagement.favoritesTotal.toString())
-                MetricRow("Favorites (7 days)", m.engagement.favorites7d.toString())
-                MetricRow("Saved searches", m.engagement.savedSearches.toString())
+            Section(stringResource(R.string.metrics_section_engagement)) {
+                MetricRow(stringResource(R.string.metrics_active_agreements), m.engagement.agreementsActive.toString())
+                MetricRow(stringResource(R.string.metrics_completed_agreements), m.engagement.agreementsCompleted.toString())
+                MetricRow(stringResource(R.string.metrics_messages_total), m.engagement.messagesTotal.toString())
+                MetricRow(stringResource(R.string.metrics_messages_7d), m.engagement.messages7d.toString())
+                MetricRow(stringResource(R.string.metrics_favorites_total), m.engagement.favoritesTotal.toString())
+                MetricRow(stringResource(R.string.metrics_favorites_7d), m.engagement.favorites7d.toString())
+                MetricRow(stringResource(R.string.metrics_saved_searches), m.engagement.savedSearches.toString())
             }
         }
 
         item(key = "generatedAt") {
             Text(
-                "Generated ${m.generatedAt.take(19).replace('T', ' ')} UTC",
+                stringResource(R.string.metrics_generated_at, m.generatedAt.take(19).replace('T', ' ')),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
@@ -332,14 +334,14 @@ private fun ErrorState(onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Metrics unavailable", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.metrics_error_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "We couldn't load the metrics. Pull to refresh or retry.",
+            stringResource(R.string.metrics_error_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(SwaplSpacing.s3))
-        TextButton(onClick = onRetry) { Text("Retry") }
+        TextButton(onClick = onRetry) { Text(stringResource(R.string.common_retry)) }
     }
 }

@@ -323,7 +323,7 @@ struct TripCockpitView: View {
                 .font(.system(size: 20))
                 .foregroundStyle(AirbnbPalette.secondaryText)
             VStack(alignment: .leading, spacing: 4) {
-                Text(cockpit.otherCity.map { "The exact address in \($0) unlocks soon" } ?? "The exact address unlocks soon")
+                Text(cockpit.otherCity.map { String(localized: "The exact address in \($0) unlocks soon") } ?? String(localized: "The exact address unlocks soon"))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .fixedSize(horizontal: false, vertical: true)
@@ -586,7 +586,7 @@ struct TripEventRow: View {
     }
 
     private var title: String {
-        let who = event.mine ? "You" : (otherName ?? "Your swap partner")
+        let who = event.mine ? String(localized: "You") : (otherName ?? String(localized: "Your swap partner"))
         return event.type == "checkin" ? "\(who) checked in" : "\(who) checked out"
     }
 

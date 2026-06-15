@@ -111,7 +111,7 @@ final class AuthService {
             session = res.user
             await refreshSession()   // pick up email-verified status
         } catch APIClient.APIError.status(401, _) {
-            errorMessage = "Invalid email or password."
+            errorMessage = String(localized: "Invalid email or password.")
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -138,7 +138,7 @@ final class AuthService {
             // falling back to a minimal session so the user can proceed.
             await loadSession(fallbackId: res.userId, fallbackEmail: email)
         } catch APIClient.APIError.status(409, _) {
-            errorMessage = "That email is already registered. Try signing in."
+            errorMessage = String(localized: "That email is already registered. Try signing in.")
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -324,7 +324,7 @@ final class AuthService {
         } catch PasskeyError.canceled {
             // User dismissed the system sheet — not an error.
         } catch APIClient.APIError.status(401, _) {
-            errorMessage = "Passkey sign-in failed. Try again."
+            errorMessage = String(localized: "Passkey sign-in failed. Try again.")
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -48,8 +48,8 @@ final class APIClient: @unchecked Sendable {
             switch self {
             case .status(let code, let body):
                 if let message = Self.serverMessage(from: body) { return message }
-                if (500..<600).contains(code) { return "Something went wrong on our side." }
-                return "Something went wrong. Try again."
+                if (500..<600).contains(code) { return String(localized: "Something went wrong on our side.") }
+                return String(localized: "Something went wrong. Try again.")
             case .decoding: return "Something went wrong. Try again."
             case .transport: return "Connection problem. Try again."
             case .unauthenticated: return "Please sign in to continue."

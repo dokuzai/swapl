@@ -504,11 +504,11 @@ struct GiftKeysSheet: View {
             success = "Sent \(response.amount) point\(response.amount == 1 ? "" : "s"). You now have \(response.balanceAfter)."
             recipientId = ""
         } catch APIClient.APIError.status(403, _) {
-            error = "Both you and your friend need to be verified members to gift points."
+            error = String(localized: "Both you and your friend need to be verified members to gift points.")
         } catch APIClient.APIError.status(404, _) {
-            error = "We couldn't find that member. Double-check the ID."
+            error = String(localized: "We couldn't find that member. Double-check the ID.")
         } catch APIClient.APIError.status(422, let body) where (body ?? "").localizedCaseInsensitiveContains("enough") {
-            error = "You don't have enough points for this gift."
+            error = String(localized: "You don't have enough points for this gift.")
         } catch let caught {
             error = caught.localizedDescription
         }

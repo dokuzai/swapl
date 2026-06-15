@@ -111,7 +111,7 @@ struct PaymentStepView: View {
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(SwaplSemanticLight.primary)
                 .padding(.top, 1)
-            Text(checkout.note ?? "You'll only be charged if the host accepts your swap.")
+            Text(checkout.note ?? String(localized: "You'll only be charged if the host accepts your swap."))
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                 .foregroundStyle(AirbnbPalette.text)
         }

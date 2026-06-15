@@ -39,7 +39,7 @@ struct CheckEventSheet: View {
                         PhotosPicker(selection: $photoItems, maxSelectionCount: 8, matching: .images) {
                             HStack(spacing: 10) {
                                 Image(systemName: "camera")
-                                Text(photoURLs.isEmpty ? "Add photos" : "Add more")
+                                Text(photoURLs.isEmpty ? String(localized: "Add photos") : String(localized: "Add more"))
                             }
                             .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                             .foregroundStyle(AirbnbPalette.text)
@@ -131,7 +131,7 @@ struct CheckEventSheet: View {
                 let url = try await APIClient.shared.uploadListingPhoto(jpeg)
                 if !photoURLs.contains(url) { photoURLs.append(url) }
             } catch {
-                uploadError = "Couldn't upload a photo. Check your connection and try again."
+                uploadError = String(localized: "Couldn't upload a photo. Check your connection and try again.")
             }
         }
         photoItems = []

@@ -59,6 +59,31 @@ fun SurfaceCard(
     ) { content() }
 }
 
+// Maps a server-side swap/agreement status code to a localized display label.
+// Logic keeps the raw enum value; only the visible chip text is localized.
+// Unknown codes fall through to the raw value (e.g. catalog/subscription data).
+@Composable
+fun statusTagLabel(status: String): String = when (status.uppercase()) {
+    "PENDING" -> stringResource(R.string.status_pending)
+    "ACCEPTED", "CONFIRMED" -> stringResource(R.string.status_accepted)
+    "COUNTERED" -> stringResource(R.string.status_countered)
+    "DECLINED" -> stringResource(R.string.status_declined)
+    "WITHDRAWN" -> stringResource(R.string.status_withdrawn)
+    "ACTIVE" -> stringResource(R.string.status_active)
+    "UPCOMING" -> stringResource(R.string.status_upcoming)
+    "IN_PROGRESS" -> stringResource(R.string.status_in_progress)
+    "COMPLETED" -> stringResource(R.string.status_completed)
+    "CANCELLED", "CANCELED" -> stringResource(R.string.status_cancelled)
+    "DISPUTED" -> stringResource(R.string.status_disputed)
+    "RESOLVED" -> stringResource(R.string.status_resolved)
+    "OPEN" -> stringResource(R.string.status_open)
+    else -> status
+}
+
+// Convenience: a TagChip whose label is the localized status display name.
+@Composable
+fun StatusTagChip(status: String) = TagChip(statusTagLabel(status))
+
 @Composable
 fun TagChip(label: String) {
     Text(

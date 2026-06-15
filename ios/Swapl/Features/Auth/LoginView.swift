@@ -462,7 +462,7 @@ struct WaitlistView: View {
                 )
                 done = true
             } catch {
-                self.error = "Something went wrong. Please try again."
+                self.error = String(localized: "Something went wrong. Please try again.")
             }
             busy = false
         }

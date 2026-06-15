@@ -17,9 +17,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.repository.ProfileRepository
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,12 +48,12 @@ class ReportViewModel @Inject constructor(
     }
 }
 
-private val PRESETS = listOf(
-    "Inappropriate content",
-    "Scam or fake listing",
-    "Harassment",
-    "Discrimination",
-    "Other",
+private val PRESET_RES = listOf(
+    R.string.report_reason_inappropriate,
+    R.string.report_reason_scam,
+    R.string.report_reason_harassment,
+    R.string.report_reason_discrimination,
+    R.string.report_reason_other,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +64,8 @@ fun ReportDialog(
     onDismiss: () -> Unit,
     vm: ReportViewModel = hiltViewModel(),
 ) {
-    var reason by remember { mutableStateOf(PRESETS[0]) }
+    val presets = PRESET_RES.map { stringResource(it) }
+    var reason by remember(presets) { mutableStateOf(presets[0]) }
     var detail by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
@@ -70,7 +73,7 @@ fun ReportDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Report") },
+        title = { Text(stringResource(R.string.report_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
@@ -78,25 +81,25 @@ fun ReportDialog(
                         value = reason,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Reason") },
+                        label = { Text(stringResource(R.string.report_reason_label)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                         modifier = Modifier.menuAnchor(),
                     )
                     ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        PRESETS.forEach { p ->
+                        presets.forEach { p ->
                             DropdownMenuItem(text = { Text(p) }, onClick = { reason = p; expanded = false })
                         }
                     }
                 }
-                OutlinedTextField(detail, { detail = it }, label = { Text("Details (optional)") })
+                OutlinedTextField(detail, { detail = it }, label = { Text(stringResource(R.string.report_details_label)) })
                 vm.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             }
         },
         confirmButton = {
             TextButton(enabled = !vm.isSubmitting, onClick = {
                 vm.submit(reason, detail.ifBlank { null }, listingId, targetUserId)
-            }) { Text("Send") }
+            }) { Text(stringResource(R.string.common_send)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }

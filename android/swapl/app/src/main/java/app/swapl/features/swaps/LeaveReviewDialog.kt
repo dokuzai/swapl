@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -64,14 +65,15 @@ fun LeaveReviewDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 KickerLabel(stringResource(R.string.review_rating_label))
+                val ratingCd = stringResource(R.string.cd_rating_out_of_5, rating)
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
-                    modifier = Modifier.semantics { contentDescription = "$rating / 5" },
+                    modifier = Modifier.semantics { contentDescription = ratingCd },
                 ) {
                     (1..5).forEach { n ->
                         Icon(
                             if (n <= rating) Icons.Default.Star else Icons.Default.StarBorder,
-                            contentDescription = "$n star" + if (n == 1) "" else "s",
+                            contentDescription = pluralStringResource(R.plurals.cd_n_stars, n, n),
                             tint = if (n <= rating) SwaplColors.Pink else SwaplColors.Cream2,
                             modifier = Modifier
                                 .size(36.dp)

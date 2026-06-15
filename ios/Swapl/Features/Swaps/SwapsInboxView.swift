@@ -549,7 +549,7 @@ struct ProposalDetailView: View {
             .padding(.horizontal, 22)
 
             if let message = detail.proposal.message, !message.isEmpty {
-                infoCard(title: detail.other.name.map { "Message from \($0)" } ?? "Message", body: message)
+                infoCard(title: detail.other.name.map { String(localized: "Message from \($0)") } ?? String(localized: "Message"), body: message)
             }
 
             // Once a swap is accepted there's an agreement — swap the static

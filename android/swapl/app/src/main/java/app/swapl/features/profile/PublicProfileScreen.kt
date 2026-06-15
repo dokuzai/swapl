@@ -43,6 +43,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.Listing
 import app.swapl.core.model.ProfileReview
 import app.swapl.core.model.ProfileStats
@@ -112,7 +115,7 @@ fun PublicProfileScreen(
             ListingsBlock(p.listings, onOpenListing)
 
             TextButton(onClick = { showReport = true }) {
-                Text("Report this user", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.profile_report_user), color = MaterialTheme.colorScheme.error)
             }
         }
     }
@@ -154,7 +157,7 @@ private fun IdentityCard(p: PublicProfile) {
             ) {
                 ProfileAvatar(p.user)
                 Text(
-                    p.user.name ?: "Anonymous host",
+                    p.user.name ?: stringResource(R.string.profile_anonymous_host),
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Center,
                 )
@@ -170,7 +173,7 @@ private fun IdentityCard(p: PublicProfile) {
                             modifier = Modifier.size(14.dp),
                         )
                         Text(
-                            "ID verified",
+                            stringResource(R.string.profile_id_verified),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.SemiBold,
                             color = SwaplColors.Pink,
@@ -185,12 +188,12 @@ private fun IdentityCard(p: PublicProfile) {
             ) {
                 StatRow(
                     value = "${stats.swapsCompleted}",
-                    label = if (stats.swapsCompleted == 1) "Swap" else "Swaps",
+                    label = pluralStringResource(R.plurals.profile_swaps_label, stats.swapsCompleted),
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                 StatRow(
                     value = reviewsValue(stats),
-                    label = if (stats.reviewsCount == 1) "Review" else "Reviews",
+                    label = pluralStringResource(R.plurals.profile_reviews_label, stats.reviewsCount),
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                 val years = tenureYears(p)
@@ -198,11 +201,8 @@ private fun IdentityCard(p: PublicProfile) {
                 // join year ("Joined Swapl") until then.
                 StatRow(
                     value = if (years >= 1) "$years" else "${joinYear(p)}",
-                    label = when {
-                        years == 1 -> "Year on Swapl"
-                        years > 1 -> "Years on Swapl"
-                        else -> "Joined Swapl"
-                    },
+                    label = if (years >= 1) pluralStringResource(R.plurals.profile_years_on_swapl, years)
+                        else stringResource(R.string.profile_joined_swapl),
                 )
             }
         }
@@ -247,7 +247,7 @@ private fun ProfileAvatar(u: PublicProfileUser) {
         if (u.avatar != null) {
             SubcomposeAsyncImage(
                 model = u.avatar,
-                contentDescription = u.name ?: "Host avatar",
+                contentDescription = u.name ?: stringResource(R.string.profile_host_avatar),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
                 loading = { initial() },
@@ -269,9 +269,9 @@ private fun InfoRows(u: PublicProfileUser) {
     if (work == null && languages.isEmpty() && home.isEmpty()) return
 
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-        work?.let { InfoRow(Icons.Default.Work, "My work: $it") }
-        if (languages.isNotEmpty()) InfoRow(Icons.Default.Language, "Speaks ${languages.joinToString(", ")}")
-        if (home.isNotEmpty()) InfoRow(Icons.Default.Place, "Lives in $home")
+        work?.let { InfoRow(Icons.Default.Work, stringResource(R.string.profile_work, it)) }
+        if (languages.isNotEmpty()) InfoRow(Icons.Default.Language, stringResource(R.string.profile_speaks, languages.joinToString(", ")))
+        if (home.isNotEmpty()) InfoRow(Icons.Default.Place, stringResource(R.string.profile_lives_in, home))
     }
 }
 
@@ -302,10 +302,10 @@ private fun BioBlock(u: PublicProfileUser) {
 private fun VisitedBlock(p: PublicProfile) {
     val visited = p.visited.orEmpty()
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-        KickerLabel("Where I've been")
+        KickerLabel(stringResource(R.string.profile_visited_label))
         if (visited.isEmpty()) {
             Text(
-                "No completed swaps yet — passport stamps appear here after each stay.",
+                stringResource(R.string.profile_visited_empty),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -319,10 +319,10 @@ private fun VisitedBlock(p: PublicProfile) {
 private fun ReviewsBlock(p: PublicProfile) {
     val reviews = p.reviews.orEmpty()
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-        KickerLabel(if (reviews.isEmpty()) "Reviews" else "Reviews (${statsOf(p).reviewsCount})")
+        KickerLabel(if (reviews.isEmpty()) stringResource(R.string.profile_reviews_label_plain) else stringResource(R.string.profile_reviews_label_count, statsOf(p).reviewsCount))
         if (reviews.isEmpty()) {
             Text(
-                "No reviews yet — hosts review each other after a completed swap.",
+                stringResource(R.string.profile_reviews_empty),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -339,7 +339,7 @@ private fun ReviewCard(review: ProfileReview) {
             StarsRow(rating = review.rating)
             Text(review.text, style = MaterialTheme.typography.bodyMedium)
             Text(
-                "${review.author.name ?: "A Swapl member"} · ${reviewMonth(review.createdAt)}",
+                "${review.author.name ?: stringResource(R.string.profile_a_member)} · ${reviewMonth(review.createdAt)}",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -355,9 +355,10 @@ private fun reviewMonth(value: String): String = runCatching {
 // Five-star row shared by the profile reviews and the leave-review dialog.
 @Composable
 fun StarsRow(rating: Int, size: Dp = 14.dp) {
+    val ratingCd = stringResource(R.string.cd_rating_out_of_5_stars, rating)
     Row(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
-        modifier = Modifier.semantics { contentDescription = "$rating out of 5 stars" },
+        modifier = Modifier.semantics { contentDescription = ratingCd },
     ) {
         (1..5).forEach { n ->
             Icon(
@@ -375,7 +376,7 @@ fun StarsRow(rating: Int, size: Dp = 14.dp) {
 private fun InterestsBlock(u: PublicProfileUser) {
     if (u.interests.isEmpty()) return
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-        KickerLabel("Interests")
+        KickerLabel(stringResource(R.string.profile_interests_label))
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
@@ -389,7 +390,7 @@ private fun InterestsBlock(u: PublicProfileUser) {
 private fun ListingsBlock(listings: List<Listing>, onOpenListing: (String) -> Unit) {
     if (listings.isEmpty()) return
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-        KickerLabel("Their homes")
+        KickerLabel(stringResource(R.string.profile_their_homes))
         listings.forEach { l -> ListingThumbnail(l, onClick = { onOpenListing(l.id) }) }
     }
 }
@@ -400,7 +401,7 @@ private fun ListingThumbnail(l: Listing, onClick: () -> Unit) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
             ListingPhoto(photoUrl = l.photos.firstOrNull(), palette = l.palette, height = 140.dp)
             Text("${l.neighbourhood} · ${l.city}", style = MaterialTheme.typography.titleLarge)
-            Text("${l.sizeSqm} m² · sleeps ${l.sleeps}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.profile_sqm_sleeps, l.sizeSqm, l.sleeps), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

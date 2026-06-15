@@ -32,8 +32,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.swapl.R
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -169,9 +172,9 @@ fun AvailabilityCalendarScreen(
             .padding(SwaplSpacing.s5),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4),
     ) {
-        Text("Your calendar", style = MaterialTheme.typography.displaySmall)
+        Text(stringResource(R.string.calendar_title), style = MaterialTheme.typography.displaySmall)
         Text(
-            "Booked dates from confirmed swaps and points stays are shown crossed out — guests can't pick them. Tap a start and end day to block dates for yourself (renovations, personal use).",
+            stringResource(R.string.calendar_intro),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -197,13 +200,18 @@ fun AvailabilityCalendarScreen(
             SurfaceCard {
                 Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                     Text(
-                        "Block $s → $e ($nights night${if (nights == 1) "" else "s"})",
+                        stringResource(
+                            R.string.calendar_block_summary,
+                            s.toString(),
+                            e.toString(),
+                            pluralStringResource(R.plurals.nights_count, nights, nights),
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-                        OutlinedButton(onClick = { vm.clearSelection() }, shape = CircleShape) { Text("Clear") }
+                        OutlinedButton(onClick = { vm.clearSelection() }, shape = CircleShape) { Text(stringResource(R.string.calendar_clear)) }
                         PrimaryPill(
-                            text = if (vm.isSaving) "Blocking…" else "Block these dates",
+                            text = if (vm.isSaving) stringResource(R.string.calendar_blocking) else stringResource(R.string.calendar_block_dates),
                             onClick = { vm.blockSelection() },
                             enabled = !vm.isSaving,
                             modifier = Modifier.weight(1f),
@@ -213,7 +221,7 @@ fun AvailabilityCalendarScreen(
             }
         } else if (s != null) {
             Text(
-                "Now tap the checkout day to finish blocking.",
+                stringResource(R.string.calendar_pick_checkout),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -223,7 +231,7 @@ fun AvailabilityCalendarScreen(
 
         if (blockSpans.isNotEmpty()) {
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-            KickerLabel("Dates you've blocked")
+            KickerLabel(stringResource(R.string.calendar_blocked_label))
             // Match each visible block span to its owner range id so it can be
             // lifted. The /blocked-ranges list carries the ids + notes.
             vm.hostBlocks.forEach { block ->
@@ -237,7 +245,7 @@ fun AvailabilityCalendarScreen(
 
         Spacer(Modifier.height(SwaplSpacing.s2))
         OutlinedButton(onClick = onDone, shape = CircleShape, modifier = Modifier.fillMaxWidth()) {
-            Text("Done")
+            Text(stringResource(R.string.common_done))
         }
     }
 }
@@ -260,7 +268,7 @@ private fun BlockedRangeRow(block: BlockedRange, enabled: Boolean, onUnblock: ()
             }
         }
         IconButton(onClick = onUnblock, enabled = enabled) {
-            Icon(Icons.Default.Close, contentDescription = "Unblock", tint = MaterialTheme.colorScheme.primary)
+            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.calendar_unblock), tint = MaterialTheme.colorScheme.primary)
         }
     }
 }
@@ -268,8 +276,8 @@ private fun BlockedRangeRow(block: BlockedRange, enabled: Boolean, onUnblock: ()
 @Composable
 private fun LegendRow() {
     Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s4)) {
-        LegendDot(MaterialTheme.colorScheme.primary, "Selected")
-        LegendDot(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f), "Booked / blocked")
+        LegendDot(MaterialTheme.colorScheme.primary, stringResource(R.string.calendar_legend_selected))
+        LegendDot(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f), stringResource(R.string.calendar_legend_booked))
     }
 }
 
