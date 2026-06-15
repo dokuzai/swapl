@@ -103,10 +103,15 @@
     <string name="valuation_factor_base">Starting value</string>
     <string name="valuation_factor_size">Size</string>
     <string name="valuation_factor_sleeps">Sleeps</string>
-    <string name="valuation_factor_location_tier">Destination demand</string>
+    <string name="valuation_factor_location_tier">Location appeal</string>
+    <string name="valuation_factor_location_tier_standard">Standard — your location isn\'t artificially boosted, but it\'s valued equally. Smaller towns and villages aren\'t penalised here.</string>
     <string name="valuation_factor_verified">Verified home</string>
-    <string name="valuation_factor_ai_appeal">Home appeal</string>
-    <string name="valuation_ai_summary_kicker">Why the appeal score</string>
+    <string name="valuation_factor_ai_appeal">Home appeal (AI)</string>
+    <string name="valuation_ai_summary_kicker">Home appeal (AI)</string>
+    <string name="valuation_ai_what_note">Our AI reads only how your listing is presented — your photo coverage, how rich your amenities list is, and how detailed your description is. It doesn\'t judge your home harshly, and it never penalises small towns or villages — location is handled separately.</string>
+    <string name="valuation_ai_baseline_pos">Bonus for home appeal: +%1$s (most homes score 0; capped at +%2$d).</string>
+    <string name="valuation_ai_baseline_zero">Home appeal: 0 — completely normal, like most homes (bonus capped at +%1$d).</string>
+    <string name="valuation_ai_baseline_neg">Home appeal: %1$s (most homes score 0 — add a few photos or detail to lift it).</string>
     <string name="valuation_ai_fallback_note">Scored from your photos and amenities. A richer appeal read is added once our home-appeal model has looked at your listing.</string>
     <string name="valuation_room_kicker">This is a room</string>
     <string name="valuation_room_note">Because you\'re offering a private room rather than the whole home, the nightly value reflects just that room — about %1$d%% of an entire-place rate.</string>
@@ -115,6 +120,7 @@
     <string name="valuation_review_applied_up">Your reviews (%1$.1f★ from %2$d) nudge the value up by %3$d%%.</string>
     <string name="valuation_review_applied_down">Your reviews (%1$.1f★ from %2$d) ease the value down by %3$d%%.</string>
     <string name="valuation_review_applied_neutral">Your reviews (%1$.1f★ from %2$d) keep the value right where it is.</string>
-    <string name="valuation_review_pending">Once you have a few guest reviews, they can gently adjust this value. Until then it stays at its feature-based level.</string>
-    <string name="valuation_bounded_note">This value moves only in small, capped steps — review feedback can shift it at most ±20%%, so it never swings on you overnight.</string>
+    <string name="valuation_review_pending">Not yet applied — reviews start adjusting this value only after you\'ve received %1$d reviews. You have %2$d so far. Until then it stays at its feature-based level.</string>
+    <string name="valuation_review_moving">Now moving slowly toward your %1$.1f★ rating from %2$d reviews — a little at a time, never all at once.</string>
+    <string name="valuation_bounded_note">This value moves at most %1$d%% per update cycle, and only once you have %2$d+ reviews. Even then, reaching the ±%3$d%% limit takes many cycles — a hard cap reviews can never push past — so a bad review week can\'t crash your earnings overnight.</string>
 </resources>

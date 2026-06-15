@@ -40,6 +40,14 @@ import app.swapl.designtokens.SwaplRadius
 import app.swapl.designtokens.SwaplSpacing
 import kotlin.math.roundToInt
 
+// Display-only mirror of the backend valuation tunables
+// (lib/ai/listing-valuation.ts, lib/keys/value.ts, lib/keys/valuation.ts) so the
+// copy can state the real mechanics. The backend still owns every number.
+private const val AI_FEATURE_BONUS_MAX = 3
+private const val FEEDBACK_MIN_REVIEWS = 3
+private const val FEEDBACK_BAND_PCT = 20
+private const val FEEDBACK_STEP_PCT = 5
+
 // "How your nightly Keys are calculated" (DOK-163). OWNER-ONLY: the structured
 // valuationExplanation is withheld by the server for non-owners, so this is only
 // rendered on the owner's own listing (manage view). It renders the persisted
@@ -142,7 +150,7 @@ fun NightlyKeysExplainer(
 
                 // Reassurance that the value is bounded / never swings.
                 Text(
-                    stringResource(R.string.valuation_bounded_note),
+                    stringResource(R.string.valuation_bounded_note, FEEDBACK_STEP_PCT, FEEDBACK_MIN_REVIEWS, FEEDBACK_BAND_PCT),
                     style = MaterialTheme.typography.bodySmall,
                     color = SwaplColors.Navy2,
                 )
@@ -206,30 +214,56 @@ private fun FactorsBreakdown(explanation: ValuationExplanation) {
 
 @Composable
 private fun FactorRow(factor: ValuationFactor) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            factorLabel(factor),
-            style = MaterialTheme.typography.bodySmall,
-            color = SwaplColors.Navy,
-            modifier = Modifier.weight(1f),
-        )
-        Text(
-            formatPoints(factor.points),
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.SemiBold,
-            color = SwaplColors.Navy,
-        )
+    Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                factorLabel(factor),
+                style = MaterialTheme.typography.bodySmall,
+                color = SwaplColors.Navy,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                formatPoints(factor.points),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.SemiBold,
+                color = SwaplColors.Navy,
+            )
+        }
+        // Reassurance for the two factors that read badly without context: a
+        // standard (+0) location tier, and the AI appeal read.
+        factorNoteRes(factor)?.let { res ->
+            Text(
+                stringResource(res),
+                style = MaterialTheme.typography.bodySmall,
+                color = SwaplColors.Navy2,
+            )
+        }
     }
+}
+
+// String resource for a factor's explanatory note, or null when none applies.
+private fun factorNoteRes(factor: ValuationFactor): Int? = when {
+    factor.key == "ai_appeal" -> R.string.valuation_ai_what_note
+    factor.key == "location_tier" && factor.points == 0f -> R.string.valuation_factor_location_tier_standard
+    else -> null
 }
 
 @Composable
 private fun AppealNote(explanation: ValuationExplanation) {
     val summary = explanation.ai.summary.trim()
+    val bonus = explanation.ai.bonus
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
         KickerLabel(stringResource(R.string.valuation_ai_summary_kicker))
+        // What the AI actually reads + the no-harsh-judgement / no-small-town
+        // penalty reassurance.
+        Text(
+            stringResource(R.string.valuation_ai_what_note),
+            style = MaterialTheme.typography.bodySmall,
+            color = SwaplColors.Navy2,
+        )
         if (explanation.ai.source == "ai" && summary.isNotEmpty()) {
             Text(
                 summary,
@@ -243,6 +277,19 @@ private fun AppealNote(explanation: ValuationExplanation) {
                 color = SwaplColors.Navy2,
             )
         }
+        // Baseline so the signed bonus is interpretable: most homes score 0,
+        // capped at +AI_FEATURE_BONUS_MAX.
+        val baseline = when {
+            bonus > 0f -> stringResource(R.string.valuation_ai_baseline_pos, formatPoints(bonus).removePrefix("+"), AI_FEATURE_BONUS_MAX)
+            bonus < 0f -> stringResource(R.string.valuation_ai_baseline_neg, formatPoints(bonus))
+            else -> stringResource(R.string.valuation_ai_baseline_zero, AI_FEATURE_BONUS_MAX)
+        }
+        Text(
+            baseline,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold,
+            color = SwaplColors.Navy2,
+        )
     }
 }
 
@@ -264,19 +311,25 @@ private fun ReviewNote(explanation: ValuationExplanation) {
             val rating = fb.avgRating
             if (fb.applied && rating != null) {
                 val pct = (explanation.adjustment * 100).roundToInt()
-                val res = when {
-                    pct > 0 -> R.string.valuation_review_applied_up
-                    pct < 0 -> R.string.valuation_review_applied_down
-                    else -> R.string.valuation_review_applied_neutral
+                if (pct == 0) {
+                    // At/above the threshold but no net move yet: moving slowly.
+                    Text(
+                        stringResource(R.string.valuation_review_moving, rating, fb.reviewCount),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = SwaplColors.Navy2,
+                    )
+                } else {
+                    val res = if (pct > 0) R.string.valuation_review_applied_up else R.string.valuation_review_applied_down
+                    Text(
+                        stringResource(res, rating, fb.reviewCount, kotlin.math.abs(pct)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = SwaplColors.Navy2,
+                    )
                 }
-                Text(
-                    stringResource(res, rating, fb.reviewCount, kotlin.math.abs(pct)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = SwaplColors.Navy2,
-                )
             } else {
+                // Show exactly where the host sits on the threshold.
                 Text(
-                    stringResource(R.string.valuation_review_pending),
+                    stringResource(R.string.valuation_review_pending, FEEDBACK_MIN_REVIEWS, fb.reviewCount),
                     style = MaterialTheme.typography.bodySmall,
                     color = SwaplColors.Navy2,
                 )
