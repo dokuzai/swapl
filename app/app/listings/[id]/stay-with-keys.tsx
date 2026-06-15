@@ -63,6 +63,10 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
   const cost = avail ? nights * avail.nightlyKeys : 0;
   const insufficient = cost > 0 && cost > balance;
   const shortBy = insufficient ? cost - balance : 0;
+  // Live "≈ N nights" scale so the balance number means something at this rate.
+  const balanceNights = avail && avail.nightlyKeys > 0 ? Math.floor(balance / avail.nightlyKeys) : 0;
+  // How many nights of hosting would close the gap (rounded up).
+  const hostNightsToCover = avail && avail.nightlyKeys > 0 ? Math.ceil(shortBy / avail.nightlyKeys) : 0;
   const outsideMinMax = avail !== null && nights > 0 && (nights < avail.minStayDays || nights > avail.maxStayDays);
 
   function submit(e: React.FormEvent) {
@@ -138,18 +142,24 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
           {t("stay.keys.title")} · {t("stay.keys.subtitle")}
         </div>
         <p className="text-sm mt-2" style={{ color: "var(--navy-2)" }}>{t("stay.keys.body")}</p>
+        {/* Swap-vs-Keys guidance — makes the choice obvious at first touch. */}
+        <p className="text-[13px] mt-2" style={{ color: "var(--navy-3)" }}>{t("stay.keys.whenToUse")}</p>
       </div>
 
       <div
-        className="flex items-baseline justify-between rounded-xl border p-3"
+        className="rounded-xl border p-3"
         style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}
       >
-        <span className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-          {t("stay.keys.perNight", { count: avail.nightlyKeys })}
-        </span>
-        <span className="font-display text-xl" style={{ color: "var(--pink)" }}>
-          {avail.nightlyKeys}
-        </span>
+        <div className="flex items-baseline justify-between">
+          <span className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
+            {t("stay.keys.perNight", { count: avail.nightlyKeys })}
+          </span>
+          <span className="font-display text-xl" style={{ color: "var(--pink)" }}>
+            {avail.nightlyKeys}
+          </span>
+        </div>
+        {/* What the rate means: cost here = what the host earns per night. */}
+        <p className="text-[12px] mt-1.5" style={{ color: "var(--navy-3)" }}>{t("stay.keys.rateContext")}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -190,14 +200,25 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
 
       <p className="font-mono text-[11px]" style={{ color: insufficient ? "#dc2626" : "var(--navy-3)" }}>
         {t("stay.keys.yourBalance", { count: balance })}
+        {balanceNights > 0 && (
+          <span style={{ color: "var(--navy-3)" }}> · {t("stay.keys.balanceScale", { count: balanceNights })}</span>
+        )}
       </p>
 
       {insufficient && (
         <div className="text-sm rounded-lg p-3 space-y-2" style={{ background: "var(--cream-2)", color: "var(--navy-2)" }}>
           <p>{t("stay.keys.insufficient", { short: shortBy })}</p>
-          <a href="/account/keys" className="inline-flex font-medium" style={{ color: "var(--pink)" }}>
-            {t("stay.keys.earnLink")} →
-          </a>
+          {hostNightsToCover > 0 && (
+            <p style={{ color: "var(--navy-2)" }}>{t("stay.keys.insufficientAction", { nights: hostNightsToCover })}</p>
+          )}
+          <div className="flex flex-wrap items-center gap-3">
+            <a href="/listings/new" className="pill-primary text-[13px]">
+              {t("stay.keys.listHomeCta")}
+            </a>
+            <a href="/account/keys" className="inline-flex font-medium" style={{ color: "var(--pink)" }}>
+              {t("stay.keys.earnLink")} →
+            </a>
+          </div>
         </div>
       )}
       {error && !insufficient && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}

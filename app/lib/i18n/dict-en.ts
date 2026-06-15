@@ -768,6 +768,22 @@ export const en = {
   "keys.balance.label": "Your balance",
   "keys.balance.unit": "Keys",
   "keys.balance.empty": "No Keys yet. Host a stay to start earning.",
+  // First-touch explainer: the host → earn → stay flywheel, always visible.
+  "keys.how.title": "How Keys work",
+  "keys.how.body": "Keys are travel points — like air miles, never money. You can't buy them or cash them out.",
+  "keys.how.step1": "Host a guest",
+  "keys.how.step1Body": "Open your home for a few nights.",
+  "keys.how.step2": "Earn Keys",
+  "keys.how.step2Body": "Each night earns you Keys.",
+  "keys.how.step3": "Stay anywhere",
+  "keys.how.step3Body": "Spend them on a home elsewhere — no swap needed.",
+  // One concrete example that closes the earn→spend loop.
+  "keys.example.title": "A quick example",
+  "keys.example.earn": "Host 2 nights at 8 Keys/night",
+  "keys.example.earnValue": "+16 Keys",
+  "keys.example.spend": "Stay 2 nights elsewhere at 8 Keys/night",
+  "keys.example.spendValue": "−16 Keys",
+  "keys.example.caption": "Host once, travel once — the loop is even.",
   "keys.earn.title": "Three ways to earn Keys",
   "keys.earn.body": "Keys are travel points, not money — here's how to collect them.",
   "keys.earn.verify": "Verify your identity",
@@ -813,8 +829,14 @@ export const en = {
   "stay.tab.keys": "Stay with Keys",
   "stay.keys.title": "Stay with Keys",
   "stay.keys.body": "Book these dates one-way with your Keys — no need to host them back.",
-  "stay.keys.subtitle": "Book without swapping back",
+  "stay.keys.subtitle": "Book one-way (no hosting back)",
+  // When to use Stay-with-Keys vs a direct swap — makes the choice obvious.
+  "stay.keys.whenToUse": "Use Keys when you can't host them back — no matching dates, or you'd rather travel solo. Want a true home swap instead? Propose a swap above.",
   "stay.keys.perNight": "{count} Keys / night",
+  // Tells the guest what the rate means: it's the cost here, and what this home earns its host.
+  "stay.keys.rateContext": "What this stay costs in Keys — and what the host earns per night.",
+  // Live scale so a balance number means something: "≈ N nights here".
+  "stay.keys.balanceScale": "≈ {count} nights at this rate",
   "stay.keys.from": "From",
   "stay.keys.to": "To",
   "stay.keys.nights": "{count} nights",
@@ -824,6 +846,9 @@ export const en = {
   "stay.keys.requesting": "Requesting…",
   "stay.keys.requested": "Request sent — the host will confirm or decline.",
   "stay.keys.insufficient": "You're {short} Keys short for these dates. Keys are travel points, not money — earn more by hosting a stay.",
+  // Actionable next step: how fast hosting closes the gap.
+  "stay.keys.insufficientAction": "Host about {nights} night(s) at this rate to cover the gap.",
+  "stay.keys.listHomeCta": "List my home",
   "stay.keys.earnLink": "See ways to earn Keys",
   "stay.keys.minMax": "Stays of {min}–{max} nights.",
   "stay.keys.invalidRange": "Pick a valid date range.",

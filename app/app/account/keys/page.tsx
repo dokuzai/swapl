@@ -16,6 +16,7 @@ import { nightlyKeysFor } from "@/lib/keys/value";
 import { GIFT_MAX_PER_TRANSFER, GIFT_DAILY_CAP, WELCOME_BONUS_KEYS } from "@/lib/keys/config";
 import { GiftKeysForm } from "./gift-form";
 import { EarnPathsCard } from "./earn-paths";
+import { HowKeysWork } from "./how-keys-work";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Keys · swapl" };
@@ -97,6 +98,9 @@ export default async function KeysPage() {
                 )}
               </div>
             </section>
+
+            {/* ---- First-touch explainer: host → earn → stay flywheel + example ---- */}
+            <HowKeysWork />
 
             {/* ---- Earn paths (zero balance only) — never a dead end ---- */}
             {balance === 0 && <EarnPathsCard welcomeBonus={WELCOME_BONUS_KEYS} />}
