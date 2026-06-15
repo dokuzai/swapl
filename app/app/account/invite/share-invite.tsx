@@ -8,6 +8,18 @@
 // stated explicitly up top (20 Keys per verified friend). BINDING: referrals
 // earn KEYS, never money; the reward only lands when the invitee VERIFIES — the
 // API/lib enforce this, the copy just says it.
+//
+// FRICTION (PM follow-up): invite-to-stay used to cost 3-4 taps (pick mode →
+// reveal picker → "Create invite link" → share). Now it's ~2 taps, at parity
+// with iOS ShareLink:
+//   1. The listing <select> lives INLINE under the "stay" tile (no separate
+//      reveal step), labelled with the mode.
+//   2. Picking a listing AUTO-MINTS the token (POST on change) — no "Create
+//      invite link" button.
+//   3. The Share CTA fires the Web Share API immediately; if the token is still
+//      minting it waits on the in-flight request. Copy fallback is preserved.
+// The reward badge is sticky so it stays in view while choosing on a 390px
+// screen.
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useT } from "@/lib/i18n/client";
@@ -41,9 +53,12 @@ export function ShareInvite({
 
   const [mode, setMode] = useState<Mode>("link");
   const [listingId, setListingId] = useState(verifiedListings[0]?.id ?? "");
-  // The link that will actually be shared. For "link" mode it's the referral
-  // url; for "stay" mode it's minted on demand and cached per listing.
-  const [stayLink, setStayLink] = useState<string | null>(null);
+  // Cache of minted invite-to-stay links keyed by listingId, so re-selecting a
+  // listing we already coined doesn't hit the API again.
+  const [stayLinks, setStayLinks] = useState<Record<string, string>>({});
+  // Tracks the in-flight mint so the Share CTA can await the same promise
+  // instead of firing a second POST.
+  const mintInFlight = useRef<Promise<string | null> | null>(null);
   const [copied, setCopied] = useState(false);
   // null = no error; otherwise the i18n key of the message to show.
   const [error, setError] = useState<DictKey | null>(null);
@@ -67,17 +82,21 @@ export function ShareInvite({
     }
   }
 
-  // Mints (once per listing) the invite-to-stay link, returning it.
-  function mintStayLink(): Promise<string | null> {
-    if (stayLink) return Promise.resolve(stayLink);
-    return new Promise((resolve) => {
+  // Mints (once per listing) the invite-to-stay link for `id`, returning it.
+  // Coalesces concurrent callers onto a single in-flight request.
+  function mintStayLink(id: string): Promise<string | null> {
+    const cached = stayLinks[id];
+    if (cached) return Promise.resolve(cached);
+    if (mintInFlight.current) return mintInFlight.current;
+
+    const p = new Promise<string | null>((resolve) => {
       setError(null);
       start(async () => {
         try {
           const res = await fetch("/api/referrals/invite-to-stay", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ listingId }),
+            body: JSON.stringify({ listingId: id }),
           });
           const j = (await res.json().catch(() => ({}))) as {
             ok?: boolean;
@@ -85,7 +104,7 @@ export function ShareInvite({
             code?: string;
           };
           if (res.ok && j.ok && j.shareUrl) {
-            setStayLink(j.shareUrl);
+            setStayLinks((prev) => ({ ...prev, [id]: j.shareUrl! }));
             resolve(j.shareUrl);
           } else {
             // Surface the specific "verify your listing first" copy when the API
@@ -96,15 +115,30 @@ export function ShareInvite({
         } catch {
           setError("invite.toStay.error");
           resolve(null);
+        } finally {
+          mintInFlight.current = null;
         }
       });
     });
+    mintInFlight.current = p;
+    return p;
+  }
+
+  // Auto-mint when a listing is chosen (or when switching into "stay" mode with
+  // a listing already selected), so the token is ready before the user taps
+  // Share — collapsing the old "Create invite link" step.
+  function selectListing(id: string) {
+    setListingId(id);
+    setError(null);
+    setCopied(false);
+    if (id) void mintStayLink(id);
   }
 
   // Resolves the link to share for the current mode, minting if needed.
   async function resolveLink(): Promise<string | null> {
     if (mode === "link") return url;
-    return mintStayLink();
+    if (!listingId) return null;
+    return stayLinks[listingId] ?? mintStayLink(listingId);
   }
 
   async function share() {
@@ -131,6 +165,8 @@ export function ShareInvite({
     setMode(next);
     setError(null);
     setCopied(false);
+    // Switching into "stay" with a listing already chosen pre-mints its token.
+    if (next === "stay" && listingId && !stayLinks[listingId]) void mintStayLink(listingId);
   }
 
   const tile = (m: Mode, label: string, hint: string, disabled = false) => {
@@ -155,8 +191,12 @@ export function ShareInvite({
 
   return (
     <div className="space-y-5">
-      {/* ---- Reward, stated explicitly ---- */}
-      <div className="flex items-center gap-3">
+      {/* ---- Reward, stated explicitly — STICKY so it stays in view while the
+          user scrolls the picker on a small (390px) screen. ---- */}
+      <div
+        className="sticky top-2 z-10 flex items-center gap-3 rounded-xl px-3 py-2 -mx-1"
+        style={{ background: "var(--pink-light)" }}
+      >
         <div
           className="shrink-0 grid place-items-center rounded-full font-display text-lg"
           style={{ width: 52, height: 52, background: "var(--pink)", color: "#fff" }}
@@ -181,6 +221,10 @@ export function ShareInvite({
         </span>
         <div className="space-y-2">
           {tile("link", t("invite.share.mode.link"), t("invite.share.mode.linkHint"))}
+
+          {/* "Invite to stay" tile. When enabled, the listing <select> is shown
+              INLINE right below it (no separate reveal step), and choosing a
+              listing auto-mints the token. */}
           {tile(
             "stay",
             t("invite.share.mode.stay"),
@@ -190,6 +234,30 @@ export function ShareInvite({
                 ? t("invite.toStay.unverifiedHint")
                 : t("invite.toStay.empty"),
             !canInviteToStay,
+          )}
+
+          {mode === "stay" && canInviteToStay && (
+            <label className="block pl-1">
+              <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
+                {t("invite.toStay.pick")}
+              </span>
+              <select
+                value={listingId}
+                onChange={(e) => selectListing(e.target.value)}
+                className="w-full px-3 py-3 rounded-lg border outline-none text-sm"
+                style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
+              >
+                {verifiedListings.map((l) => (
+                  <option key={l.id} value={l.id}>{l.title}</option>
+                ))}
+              </select>
+              {/* Confirms the token is ready so the next tap shares for real. */}
+              {stayLinks[listingId] && !error && (
+                <span className="block mt-1.5 text-[13px]" style={{ color: "var(--navy-2)" }}>
+                  {t("invite.toStay.linkReady")}
+                </span>
+              )}
+            </label>
           )}
         </div>
         {/* When the host has homes but none are verified, point them to verify
@@ -207,25 +275,6 @@ export function ShareInvite({
           </p>
         )}
       </div>
-
-      {/* ---- Listing picker, only for invite-to-stay ---- */}
-      {mode === "stay" && canInviteToStay && (
-        <label className="block">
-          <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-            {t("invite.toStay.pick")}
-          </span>
-          <select
-            value={listingId}
-            onChange={(e) => { setListingId(e.target.value); setStayLink(null); setError(null); }}
-            className="w-full px-3 py-3 rounded-lg border outline-none text-sm"
-            style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
-          >
-            {verifiedListings.map((l) => (
-              <option key={l.id} value={l.id}>{l.title}</option>
-            ))}
-          </select>
-        </label>
-      )}
 
       {/* ---- The link being shared (referral link is always visible) ---- */}
       {mode === "link" && (
