@@ -60,22 +60,26 @@ struct KeysWalletView: View {
         .refreshable { await vm.load() }
     }
 
-    // Empty wallet: no points earned yet and no ledger activity. We surface the
-    // three ways to earn instead of a dead balance, so the screen always has a
-    // next tap (PM follow-up: verify +30, host, gift).
-    private func isEmptyWallet(_ wallet: KeysWallet) -> Bool {
-        wallet.balance == 0 && wallet.recentTransactions.isEmpty
+    // Zero balance: nothing to spend or gift. We surface the three ways to earn
+    // instead of a dead balance, so the screen always has a next tap (PM
+    // follow-up "balance zero": verify +30, host, gift). This fires whenever the
+    // balance is 0 — including a member who earned then spent down to nothing,
+    // not just a brand-new wallet — because gifting/spending 0 always fails
+    // server-side ("Not enough Keys").
+    private func isZeroBalance(_ wallet: KeysWallet) -> Bool {
+        wallet.balance == 0
     }
 
     private func content(_ wallet: KeysWallet) -> some View {
         VStack(alignment: .leading, spacing: 24) {
             balanceCard(wallet.balance)
 
-            if isEmptyWallet(wallet) {
+            if isZeroBalance(wallet) {
                 earnPathsCard
+            } else {
+                // Only an offer-to-gift when there's something to give.
+                giftButton
             }
-
-            giftButton
 
             if !wallet.nightlyKeysForMyListings.isEmpty {
                 section("Your homes earn") {
@@ -201,9 +205,9 @@ struct KeysWalletView: View {
                 earnRow(
                     icon: "gift.fill",
                     title: "Receive a gift",
-                    subtitle: "A verified friend can send you points.",
+                    subtitle: "Share your member ID — a verified friend can send you points.",
                     badge: nil,
-                    action: { isGifting = true }
+                    action: nil
                 )
             }
         }
@@ -214,9 +218,9 @@ struct KeysWalletView: View {
         title: String,
         subtitle: String,
         badge: String?,
-        action: @escaping () -> Void
+        action: (() -> Void)?
     ) -> some View {
-        Button(action: action) {
+        Button(action: { action?() }) {
             HStack(spacing: 14) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .semibold))
@@ -241,7 +245,7 @@ struct KeysWalletView: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
                         .background(SwaplSemanticLight.accent, in: Capsule())
-                } else {
+                } else if action != nil {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.secondaryText)
@@ -256,6 +260,7 @@ struct KeysWalletView: View {
             }
         }
         .buttonStyle(.plain)
+        .disabled(action == nil)
     }
 
     private func nightlyRow(_ home: KeysWallet.NightlyKeysListing) -> some View {
