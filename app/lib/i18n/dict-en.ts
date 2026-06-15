@@ -965,6 +965,26 @@ export const en = {
   "keys.tx.error": "Couldn't load transactions — try again.",
   "keys.kind.referral_bonus": "Referral reward",
   "keys.kind.invite_bonus": "Welcome — invited",
+
+  // Availability calendar (DOK-159) — shared month grid, host editor, pickers.
+  "calendar.prevMonth": "Previous month",
+  "calendar.nextMonth": "Next month",
+  "calendar.dayUnavailable": "Unavailable",
+  "calendar.legend.available": "Available",
+  "calendar.legend.booked": "Booked",
+  "calendar.legend.blocked": "Blocked",
+  "calendar.editor.kicker": "Manage listing",
+  "calendar.editor.title": "Availability",
+  "calendar.editor.intro": "Booked dates from swaps and Keys stays show here. Block any nights you don't want bookable — they'll disappear from search and date pickers.",
+  "calendar.editor.loading": "Loading your calendar…",
+  "calendar.editor.hint": "Tap a free day to start a block, then tap another to set the range. Tap a blocked day to free it.",
+  "calendar.editor.selected": "{count} night(s) selected",
+  "calendar.editor.block": "Block these dates",
+  "calendar.editor.cancel": "Cancel",
+  "calendar.editor.saving": "Saving…",
+  "calendar.editor.unblock": "Unblock",
+  "calendar.editor.yourBlocks": "Your blocked dates",
+  "calendar.editor.error": "Couldn't update your calendar — try again.",
 } as const;
 
 export type DictKey = keyof typeof en;

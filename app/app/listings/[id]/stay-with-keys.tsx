@@ -6,9 +6,13 @@
 // Keys are travel points: if the balance is short we say "host more to earn
 // Keys" — never "buy". On success the host gets a pending request to confirm.
 
-import { useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
+import { MonthCalendar } from "@/components/calendar/month-calendar";
+import { type DayStatus, dayKey, toISODate } from "@/lib/listing/calendar-days";
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 type Availability = {
   listingId: string;
@@ -37,8 +41,9 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
-  // Load availability + nightly Keys once on mount, and seed the date inputs
-  // to the earliest valid stay within the window.
+  // Load availability + nightly Keys once on mount. The guest picks their dates
+  // on the calendar below (which greys out every booked/blocked night), so we
+  // don't pre-seed a range — an empty picker reads as "choose your nights".
   useEffect(() => {
     let alive = true;
     fetch(`/api/listings/${listingId}/keys-availability`)
@@ -46,18 +51,67 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
       .then((d: Availability | null) => {
         if (!alive || !d) return;
         setAvail(d);
-        const from = new Date(d.availableFrom);
-        const to = new Date(from.getTime() + d.minStayDays * 24 * 60 * 60 * 1000);
-        const cap = new Date(d.availableTo);
-        const end = to <= cap ? to : cap;
-        setDateFrom(from.toISOString().slice(0, 10));
-        setDateTo(end.toISOString().slice(0, 10));
       })
       .catch(() => {});
     return () => {
       alive = false;
     };
   }, [listingId]);
+
+  // Calendar range pick: first tap sets check-in, second sets check-out. The
+  // stored dateTo is the checkout day (exclusive), so a tap on day N as the end
+  // books through the night of N. Only "available" days are clickable, so a
+  // selection can never span a booked/blocked night.
+  const onDayClick = useCallback(
+    (date: Date, status: DayStatus) => {
+      if (status !== "available") return;
+      const iso = toISODate(date);
+      setError(null);
+      // No start yet, or restarting after a complete range → set check-in.
+      if (!dateFrom || (dateFrom && dateTo)) {
+        setDateFrom(iso);
+        setDateTo("");
+        return;
+      }
+      // Second tap: the checkout is the day AFTER the tapped night.
+      const checkout = toISODate(new Date(date.getTime() + DAY_MS));
+      if (new Date(checkout).getTime() <= new Date(dateFrom).getTime()) {
+        // Tapped before/at check-in → treat as a new check-in.
+        setDateFrom(iso);
+        setDateTo("");
+        return;
+      }
+      setDateTo(checkout);
+    },
+    [dateFrom, dateTo],
+  );
+
+  const selectionFor = useCallback(
+    (date: Date): "start" | "end" | "in" | undefined => {
+      if (!dateFrom) return undefined;
+      const tms = date.getTime();
+      const from = dayKey(dateFrom).getTime();
+      // Render the inclusive last night (checkout − 1 day) as the end marker.
+      const lastNight = dateTo ? dayKey(dateTo).getTime() - DAY_MS : from;
+      if (tms === from) return "start";
+      if (tms === lastNight && dateTo) return "end";
+      if (tms > from && tms < lastNight) return "in";
+      return undefined;
+    },
+    [dateFrom, dateTo],
+  );
+
+  const snapshot = useMemo(
+    () =>
+      avail
+        ? {
+            availableFrom: avail.availableFrom,
+            availableTo: avail.availableTo,
+            bookedRanges: avail.bookedRanges,
+          }
+        : null,
+    [avail],
+  );
 
   const nights = nightsBetween(dateFrom, dateTo);
   const cost = avail ? nights * avail.nightlyKeys : 0;
@@ -131,10 +185,6 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
     );
   }
 
-  const labelCls = "block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]";
-  const inputCls = "w-full px-3 py-2.5 rounded-lg border outline-none text-sm";
-  const inputStyle = { borderColor: "var(--line)", background: "var(--card-bg)" } as const;
-
   return (
     <form onSubmit={submit} className="space-y-4">
       <div>
@@ -162,33 +212,40 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
         <p className="text-[12px] mt-1.5" style={{ color: "var(--navy-3)" }}>{t("stay.keys.rateContext")}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <label className="block">
-          <span className={labelCls} style={{ color: "var(--navy-3)" }}>{t("stay.keys.from")}</span>
-          <input
-            type="date"
-            required
-            value={dateFrom}
-            min={avail.availableFrom.slice(0, 10)}
-            max={avail.availableTo.slice(0, 10)}
-            onChange={(e) => setDateFrom(e.target.value)}
-            className={inputCls}
-            style={inputStyle}
+      {/* Calendar picker: booked/blocked nights are greyed out and unclickable,
+          so a guest can only assemble a genuinely free range (DOK-159). */}
+      <div className="rounded-xl border p-4" style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}>
+        <div className="flex items-center justify-between mb-3 text-sm">
+          <span style={{ color: "var(--navy-2)" }}>
+            <span className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
+              {t("stay.keys.from")}{" "}
+            </span>
+            {dateFrom ? new Date(dateFrom).toLocaleDateString() : "—"}
+          </span>
+          <span style={{ color: "var(--navy-2)" }}>
+            <span className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
+              {t("stay.keys.to")}{" "}
+            </span>
+            {dateTo ? new Date(dateTo).toLocaleDateString() : "—"}
+          </span>
+        </div>
+        {snapshot && (
+          <MonthCalendar
+            snapshot={snapshot}
+            onDayClick={onDayClick}
+            selectionFor={selectionFor}
+            monthsBound={{
+              min: {
+                year: dayKey(avail.availableFrom).getUTCFullYear(),
+                month: dayKey(avail.availableFrom).getUTCMonth(),
+              },
+              max: {
+                year: dayKey(avail.availableTo).getUTCFullYear(),
+                month: dayKey(avail.availableTo).getUTCMonth(),
+              },
+            }}
           />
-        </label>
-        <label className="block">
-          <span className={labelCls} style={{ color: "var(--navy-3)" }}>{t("stay.keys.to")}</span>
-          <input
-            type="date"
-            required
-            value={dateTo}
-            min={dateFrom || avail.availableFrom.slice(0, 10)}
-            max={avail.availableTo.slice(0, 10)}
-            onChange={(e) => setDateTo(e.target.value)}
-            className={inputCls}
-            style={inputStyle}
-          />
-        </label>
+        )}
       </div>
 
       {nights > 0 && (

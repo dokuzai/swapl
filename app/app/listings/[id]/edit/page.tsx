@@ -88,6 +88,16 @@ export default async function EditListingPage(props: PageProps<"/listings/[id]/e
                 Write guide →
               </span>
             </Link>
+
+            <Link href={`/listings/${id}/edit/calendar`} className="surface-card p-6 block">
+              <h2 className="font-display text-xl tracking-[-0.01em] mb-2">Availability</h2>
+              <p className="text-sm" style={{ color: "var(--navy-2)" }}>
+                See your booked dates and block the nights you don&apos;t want bookable.
+              </p>
+              <span className="mt-3 inline-block font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--pink)" }}>
+                Manage calendar →
+              </span>
+            </Link>
           </div>
         </div>
       </main>
