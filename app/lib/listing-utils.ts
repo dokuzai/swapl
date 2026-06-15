@@ -5,6 +5,8 @@ import { parseMotif } from "@/lib/ai/city-illustration";
 import { safeParsePostcard } from "@/lib/ai/postcard-types";
 import type { Postcard } from "@/lib/ai/postcard-types";
 import type { Palette, CityMotif } from "@/components/illustrations";
+import type { DictKey } from "@/lib/i18n/dict-en";
+import { en } from "@/lib/i18n/dict-en";
 
 // A serializable shape we can pass from server -> client components.
 export type ListingDTO = {
@@ -199,24 +201,48 @@ export function formatDateRange(fromIso: string, toIso: string, locale: string =
   return `${f.toLocaleDateString(locale, opts)} – ${t.toLocaleDateString(locale, opts)}`;
 }
 
-// Returns an array of [key, label] for amenity chips that are true on a listing.
-export function amenityChips(l: ListingDTO): string[] {
-  const out: string[] = [];
-  if (l.balcony) out.push("Balcony");
-  if (l.rooftop) out.push("Rooftop");
-  if (l.garden) out.push("Garden");
-  if (l.courtyard) out.push("Courtyard");
-  if (l.pool) out.push("Pool");
-  if (l.piano) out.push("Piano");
-  if (l.bikeIncluded) out.push("Bike incl.");
-  if (l.hasParking) out.push("Parking");
-  if (l.wfhSetup) out.push(`WFH${l.wfhDesks > 1 ? ` ${l.wfhDesks} desks` : ""}`);
-  if (l.petsAllowed) out.push("Pet-friendly");
-  if (l.stepFreeAccess) out.push("Step-free");
-  if (l.hasElevator) out.push("Elevator");
-  if (l.ac) out.push("AC");
-  if (l.dishwasher) out.push("Dishwasher");
-  if (l.washer) out.push("Washer");
-  if (l.dryer) out.push("Dryer");
+// A localizable amenity chip: a stable dict key plus optional template vars.
+// UI consumers render it via `t(dict, chip.key, chip.vars)`; the AI/valuation
+// path uses `amenityLabelsEn()` for stable English prompt input.
+export type AmenityChip = { key: DictKey; vars?: Record<string, string | number> };
+
+// Returns the amenity chips that are true on a listing, as stable i18n keys.
+// Taxonomy mirrors mobile (iOS/Android `amenity_*`). The WFH chip carries the
+// desk count so the active locale can render "WFH · 2 scrivanie" etc.
+export function amenityChips(l: ListingDTO): AmenityChip[] {
+  const out: AmenityChip[] = [];
+  if (l.balcony) out.push({ key: "amenity.balcony" });
+  if (l.rooftop) out.push({ key: "amenity.rooftop" });
+  if (l.garden) out.push({ key: "amenity.garden" });
+  if (l.courtyard) out.push({ key: "amenity.courtyard" });
+  if (l.pool) out.push({ key: "amenity.pool" });
+  if (l.piano) out.push({ key: "amenity.piano" });
+  if (l.bikeIncluded) out.push({ key: "amenity.bike" });
+  if (l.hasParking) out.push({ key: "amenity.parking" });
+  if (l.wfhSetup)
+    out.push(
+      l.wfhDesks > 1
+        ? { key: "amenity.workspaceDesks", vars: { n: l.wfhDesks } }
+        : { key: "amenity.workspace" },
+    );
+  if (l.petsAllowed) out.push({ key: "amenity.pets" });
+  if (l.stepFreeAccess) out.push({ key: "amenity.stepFree" });
+  if (l.hasElevator) out.push({ key: "amenity.elevator" });
+  if (l.ac) out.push({ key: "amenity.ac" });
+  if (l.dishwasher) out.push({ key: "amenity.dishwasher" });
+  if (l.washer) out.push({ key: "amenity.washer" });
+  if (l.dryer) out.push({ key: "amenity.dryer" });
   return out;
+}
+
+// Stable ENGLISH amenity labels for non-UI consumers (AI prompt input for the
+// listing-content drafter and the valuation engine). These must stay in English
+// regardless of locale so prompts are deterministic — never localize this.
+export function amenityLabelsEn(l: ListingDTO): string[] {
+  return amenityChips(l).map((c) =>
+    Object.entries(c.vars ?? {}).reduce<string>(
+      (s, [k, v]) => s.replace(new RegExp(`\\{${k}\\}`, "g"), String(v)),
+      en[c.key],
+    ),
+  );
 }

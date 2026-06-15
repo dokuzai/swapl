@@ -6,7 +6,7 @@
 // never blocked when no AI key is configured.
 
 import { resolveAIConfig, chat, type ResolveOptions } from "./providers";
-import { propertyLabel, type PropertyType } from "@/lib/types";
+import { propertyLabelEn, type PropertyType } from "@/lib/types";
 
 export type ListingFacts = {
   city: string;
@@ -117,7 +117,7 @@ function sanitiseDescription(raw: unknown, _facts: ListingFacts): string | null 
 }
 
 function fallback(f: ListingFacts): ListingDraft {
-  const title = `${f.neighbourhood} ${propertyLabel(f.propertyType).toLowerCase()} in ${f.city}`;
+  const title = `${f.neighbourhood} ${propertyLabelEn(f.propertyType).toLowerCase()} in ${f.city}`;
   const beds = `${f.bedrooms}-bedroom`;
   const stairs = f.stepFreeAccess
     ? "Step-free from the street"
@@ -133,7 +133,7 @@ function fallback(f: ListingFacts): ListingDraft {
   const extras = f.amenities && f.amenities.length ? f.amenities.slice(0, 3).join(", ") : "";
 
   const description = [
-    `A ${beds} ${propertyLabel(f.propertyType).toLowerCase()} in ${f.neighbourhood}, ${f.city}. ${f.sizeSqm}m², sleeps ${f.sleeps}.`,
+    `A ${beds} ${propertyLabelEn(f.propertyType).toLowerCase()} in ${f.neighbourhood}, ${f.city}. ${f.sizeSqm}m², sleeps ${f.sleeps}.`,
     `${stairs}. ${wfh}. ${pets}.${extras ? ` ${extras}.` : ""}`,
     f.hostNotes ? f.hostNotes.trim() : "Tell guests what makes the neighbourhood feel like home — the bakery downstairs, the morning light, the corner shop that always remembers your order.",
   ].join("\n\n");

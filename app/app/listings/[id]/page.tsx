@@ -9,7 +9,7 @@ import { ShareListingButton, SaveListingButton } from "@/components/listing/list
 import { getCityIllustration } from "@/lib/city-media";
 import { toDTO, formatDateRange, amenityChips } from "@/lib/listing-utils";
 import { CityIllust, SwapArrows, Pin } from "@/components/illustrations";
-import { propertyLabel } from "@/lib/types";
+import { propertyTypeKey } from "@/lib/types";
 import { getSession } from "@/lib/auth/session";
 import { getViewerListing } from "@/lib/listing-query";
 import { computeMatchScore } from "@/lib/match/score";
@@ -19,7 +19,7 @@ import { ValuationExplainer } from "./valuation-explainer";
 import { VerifiedBadge, FeaturedRibbon, OwnerVerifiedBadge } from "@/components/listing/badges";
 import { RecentlyViewedTracker } from "@/components/listing/recently-viewed-tracker";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
-import { getDictionary, t } from "@/lib/i18n/server";
+import { getDictionary, getI18n, t } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,10 @@ export async function generateMetadata(props: PageProps<"/listings/[id]">) {
     where: { id },
     include: { user: { select: { settings: true } } },
   });
-  if (!l) return { title: "Listing not found · swapl" };
+  if (!l) {
+    const dict = await getDictionary();
+    return { title: `${t(dict, "listingDetail.notFoundTitle")} · swapl` };
+  }
   const cover = parseJSON<string[]>(l.photos, [])[0];
   // Owner opted out of search-engine indexing → noindex (the listing is also
   // excluded from the sitemap, see app/sitemap.ts).
@@ -55,8 +58,8 @@ export async function generateMetadata(props: PageProps<"/listings/[id]">) {
   };
 }
 
-function fmtDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+function fmtDate(iso: string, locale: string = "en-US"): string {
+  return new Date(iso).toLocaleDateString(locale, { month: "short", day: "numeric", year: "numeric" });
 }
 
 export default async function ListingDetailPage(props: PageProps<"/listings/[id]">) {
@@ -121,7 +124,7 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
 
   const chips = amenityChips(dto);
   const hasPhotos = dto.photos.length > 0;
-  const dict = await getDictionary();
+  const { locale, dict } = await getI18n();
 
   // Real CC-licensed illustration of the city (Openverse, cached 30 days in
   // CityMedia kind="illustration"; a cache miss fetches within the provider's
@@ -133,9 +136,9 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
   const mediaOverlay = (
     <>
       {matchScore !== null && (
-        <span className="absolute top-4 left-4 match-badge text-sm py-1 px-3">{matchScore}% match</span>
+        <span className="absolute top-4 left-4 match-badge text-sm py-1 px-3">{t(dict, "listing.matchBadge", { score: matchScore })}</span>
       )}
-      {dto.isFeatured && <FeaturedRibbon />}
+      {dto.isFeatured && <FeaturedRibbon label={t(dict, "listing.featuredRibbon")} />}
     </>
   );
 
@@ -143,15 +146,15 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
   // the content on small screens).
   const cta = isOwner ? (
     <Link href={`/listings/${dto.id}/edit`} className="pill-ghost w-full justify-center">
-      Edit your listing
+      {t(dict, "listingDetail.ctaEdit")}
     </Link>
   ) : !session ? (
     <Link href={`/login?next=/listings/${dto.id}`} className="pill-primary w-full justify-center">
-      Sign in to propose a swap
+      {t(dict, "listing.signInToPropose")}
     </Link>
   ) : !viewerListing ? (
     <Link href="/listings/new" className="pill-primary w-full justify-center">
-      List your home first
+      {t(dict, "listing.listFirst")}
     </Link>
   ) : (
     <ProposeSwapButton proposerListing={viewerListing} targetListing={dto} />
@@ -226,10 +229,10 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
             <p className="text-[16px] font-medium inline-flex flex-wrap items-center gap-x-2 gap-y-1">
               <Pin color="var(--pink)" size={12} style={{ display: "inline-block", verticalAlign: "middle" }} />
               <span>
-                {dto.neighbourhood}, {dto.city} · {propertyLabel(dto.propertyType)} · {dto.sleeps} guests ·{" "}
-                {dto.bedrooms} beds · {dto.bathrooms} baths
+                {dto.neighbourhood}, {dto.city} · {t(dict, propertyTypeKey(dto.propertyType))} · {t(dict, "listingDetail.guests", { count: dto.sleeps })} ·{" "}
+                {t(dict, "listingDetail.beds", { count: dto.bedrooms })} · {t(dict, "listingDetail.baths", { count: dto.bathrooms })}
               </span>
-              {dto.isVerified && <VerifiedBadge size={16} />}
+              {dto.isVerified && <VerifiedBadge size={16} label={t(dict, "listing.verifiedBadge")} />}
             </p>
             {dto.ownerVerified && (
               <div className="mt-2">
@@ -249,9 +252,9 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
             >
               <div className="min-w-0">
-                <div className="font-display text-lg tracking-[-0.01em] font-medium">Loved by swappers</div>
+                <div className="font-display text-lg tracking-[-0.01em] font-medium">{t(dict, "listingDetail.lovedTitle")}</div>
                 <p className="text-sm" style={{ color: "var(--navy-2)" }}>
-                  One of the strongest candidates for your next home swap.
+                  {t(dict, "listingDetail.lovedBody")}
                 </p>
               </div>
               <div className="flex items-center gap-5 shrink-0 text-center">
@@ -261,7 +264,7 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
                       {matchScore}%
                     </div>
                     <div className="font-mono text-[10px] uppercase tracking-[.08em] mt-1" style={{ color: "var(--navy-3)" }}>
-                      match
+                      {t(dict, "listingDetail.matchLabel")}
                     </div>
                   </div>
                 )}
@@ -269,7 +272,7 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
                   <div>
                     <div className="font-display text-2xl leading-none">★ {avgRating}</div>
                     <div className="font-mono text-[10px] uppercase tracking-[.08em] mt-1" style={{ color: "var(--navy-3)" }}>
-                      {reviewCount} review{reviewCount === 1 ? "" : "s"}
+                      {t(dict, reviewCount === 1 ? "listingDetail.reviewCount.one" : "listingDetail.reviewCount.other", { count: reviewCount })}
                     </div>
                   </div>
                 )}
@@ -277,26 +280,26 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
             </div>
           )}
 
-          <Section title="About this home">
+          <Section title={t(dict, "listing.about")}>
             <p className="text-[16px] leading-[1.65] whitespace-pre-line">{dto.description}</p>
           </Section>
 
-          <Section title="The space">
+          <Section title={t(dict, "listing.theSpace")}>
             <dl className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-6 text-sm">
-              <Stat label="Property" value={propertyLabel(dto.propertyType)} />
-              <Stat label="Size" value={`${dto.sizeSqm} m²`} />
-              <Stat label="Sleeps" value={String(dto.sleeps)} />
-              <Stat label="Bedrooms" value={String(dto.bedrooms)} />
-              <Stat label="Bathrooms" value={String(dto.bathrooms)} />
-              <Stat label="Floor" value={dto.floor !== null ? String(dto.floor) : "—"} />
+              <Stat label={t(dict, "listingDetail.statProperty")} value={t(dict, propertyTypeKey(dto.propertyType))} />
+              <Stat label={t(dict, "listingDetail.statSize")} value={`${dto.sizeSqm} m²`} />
+              <Stat label={t(dict, "listingDetail.statSleeps")} value={String(dto.sleeps)} />
+              <Stat label={t(dict, "listingDetail.statBedrooms")} value={String(dto.bedrooms)} />
+              <Stat label={t(dict, "listingDetail.statBathrooms")} value={String(dto.bathrooms)} />
+              <Stat label={t(dict, "listingDetail.statFloor")} value={dto.floor !== null ? String(dto.floor) : "—"} />
             </dl>
           </Section>
 
           {chips.length > 0 && (
-            <Section title="Amenities">
+            <Section title={t(dict, "listing.amenities")}>
               <div className="flex flex-wrap gap-2">
                 {chips.map((c) => (
-                  <span key={c} className="tag-chip">{c}</span>
+                  <span key={c.key} className="tag-chip">{t(dict, c.key, c.vars)}</span>
                 ))}
               </div>
             </Section>
@@ -305,7 +308,7 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
           {/* The city illustration demotes here when real photos hold the
               hero slot — it stays in the product as the Discover opener. */}
           {hasPhotos && heroIllustration && (
-            <Section title={`Postcard from ${dto.city}`}>
+            <Section title={t(dict, "listingDetail.postcardFrom", { city: dto.city })}>
               <div
                 className="relative overflow-hidden rounded-2xl border aspect-[16/9]"
                 style={{ borderColor: "var(--line)", background: "var(--cream-2)" }}
@@ -336,44 +339,44 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
             >
               <div className="p-3">
                 <div className="font-mono text-[10px] uppercase tracking-[.08em] mb-1" style={{ color: "var(--navy-3)" }}>
-                  From
+                  {t(dict, "listingDetail.from")}
                 </div>
-                <div className="text-sm font-medium">{fmtDate(dto.availableFrom)}</div>
+                <div className="text-sm font-medium">{fmtDate(dto.availableFrom, locale)}</div>
               </div>
               <div className="p-3 border-l" style={{ borderColor: "var(--line)" }}>
                 <div className="font-mono text-[10px] uppercase tracking-[.08em] mb-1" style={{ color: "var(--navy-3)" }}>
-                  To
+                  {t(dict, "listingDetail.to")}
                 </div>
-                <div className="text-sm font-medium">{fmtDate(dto.availableTo)}</div>
+                <div className="text-sm font-medium">{fmtDate(dto.availableTo, locale)}</div>
               </div>
             </div>
             <p className="font-mono text-[11px] mb-4" style={{ color: "var(--navy-3)" }}>
-              Stays of {dto.minStayDays}–{dto.maxStayDays} days
+              {t(dict, "listingDetail.staysOf", { min: dto.minStayDays, max: dto.maxStayDays })}
             </p>
 
             {isOwner ? (
               <div className="text-sm rounded-xl p-4" style={{ background: "var(--cream-2)" }}>
-                This is your own listing. <Link href={`/listings/${dto.id}/edit`} className="font-medium" style={{ color: "var(--pink)" }}>Edit it</Link>.
+                {t(dict, "listingDetail.ownListing")} <Link href={`/listings/${dto.id}/edit`} className="font-medium" style={{ color: "var(--pink)" }}>{t(dict, "listing.editYours")}</Link>.
               </div>
             ) : (
               cta
             )}
 
             <div className="mt-4 grid grid-cols-3 gap-2 text-[10px] font-mono uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-              <span>◦ €150k cover</span>
-              <span>◦ Trip refund</span>
-              <span>◦ 24/7 line</span>
+              <span>◦ {t(dict, "listingDetail.coverAmount")}</span>
+              <span>◦ {t(dict, "listingDetail.tripRefund")}</span>
+              <span>◦ {t(dict, "listingDetail.support247")}</span>
             </div>
 
             <div className="mt-5 divider-dashed pt-4">
               <div className="flex items-baseline justify-between mb-2">
                 <span className="font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-                  Hosted by
+                  {t(dict, "listing.hostedBy")}
                 </span>
-                {matchScore !== null && <span className="match-badge">{matchScore}% match</span>}
+                {matchScore !== null && <span className="match-badge">{t(dict, "listing.matchBadge", { score: matchScore })}</span>}
               </div>
               <Link href={`/profile/${listing.user?.id ?? ""}`} className="font-display text-xl mb-1 block hover:underline">
-                {listing.user?.name ?? "swapl host"}
+                {listing.user?.name ?? t(dict, "listingDetail.hostFallback")}
               </Link>
               {dto.ownerVerified && (
                 <div className="mb-2">
@@ -385,7 +388,7 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               )}
               {avgRating !== null && (
                 <p className="font-mono text-[11px] mb-2" style={{ color: "var(--navy-3)" }}>
-                  ★ {avgRating} · {reviewCount} review{reviewCount === 1 ? "" : "s"}
+                  ★ {avgRating} · {t(dict, reviewCount === 1 ? "listingDetail.reviewCount.one" : "listingDetail.reviewCount.other", { count: reviewCount })}
                 </p>
               )}
               {listing.user?.bio && (
@@ -395,10 +398,10 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               )}
               <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--pink)" }}>
                 <SwapArrows color="currentColor" size={14} />
-                Trade your home for theirs
+                {t(dict, "listingDetail.tradeYourHome")}
               </div>
               <p className="text-sm mt-2" style={{ color: "var(--navy-2)" }}>
-                Send a swap proposal with your own listing attached. They accept, decline, or counter — never any money.
+                {t(dict, "listing.tradeBlurb")}
               </p>
             </div>
           </div>
@@ -427,11 +430,11 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
           )}
 
           <div className="surface-card p-6 text-sm" style={{ background: "var(--pink-light)" }}>
-            <div className="font-display text-lg mb-1.5">Why this could be a great match</div>
+            <div className="font-display text-lg mb-1.5">{t(dict, "listing.match.title")}</div>
             <p style={{ color: "var(--navy-2)" }}>
               {viewerListing
-                ? `You're offering ${viewerListing.sizeSqm}m² in ${viewerListing.city}. Their place is ${dto.sizeSqm}m² — within the typical ±50% comfort zone.`
-                : `List your home to unlock match scores and propose a direct swap.`}
+                ? t(dict, "listingDetail.whyMatchBody", { yourSize: viewerListing.sizeSqm, yourCity: viewerListing.city, theirSize: dto.sizeSqm })
+                : t(dict, "listingDetail.whyMatchLocked")}
             </p>
           </div>
         </aside>
@@ -444,9 +447,9 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
         style={{ background: "var(--cream)", borderColor: "var(--line)" }}
       >
         <div className="min-w-0">
-          <div className="text-sm font-medium truncate">{formatDateRange(dto.availableFrom, dto.availableTo)}</div>
+          <div className="text-sm font-medium truncate">{formatDateRange(dto.availableFrom, dto.availableTo, locale)}</div>
           <div className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-            {dto.minStayDays}–{dto.maxStayDays} day stays
+            {t(dict, "listingDetail.dayStays", { min: dto.minStayDays, max: dto.maxStayDays })}
           </div>
         </div>
         <div className="ml-auto shrink-0 w-[55%] max-w-[260px]">{cta}</div>

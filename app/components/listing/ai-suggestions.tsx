@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CityIllust } from "@/components/illustrations";
+import { useT } from "@/lib/i18n/client";
 import type { ListingDTO } from "@/lib/listing-utils";
 
 type Item = { listing: ListingDTO; matchScore: number; reason: string; source: "ai" | "fallback" };
 
 export function AISuggestions() {
+  const t = useT();
   const [items, setItems] = useState<Item[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +30,7 @@ export function AISuggestions() {
   if (error)
     return (
       <div className="surface-card p-6 text-sm" style={{ color: "var(--navy-2)" }}>
-        Suggestions unavailable: {error}
+        {t("aiSuggestions.unavailable", { error })}
       </div>
     );
 
@@ -37,7 +39,7 @@ export function AISuggestions() {
   if (items.length === 0)
     return (
       <div className="surface-card p-6 text-sm" style={{ color: "var(--navy-2)" }}>
-        Publish a listing first — your suggestions adapt to your home.
+        {t("aiSuggestions.empty")}
       </div>
     );
 
@@ -47,8 +49,8 @@ export function AISuggestions() {
     <div>
       <div className="flex items-baseline justify-between mb-4">
         <div>
-          <p className="kicker">Picked for you</p>
-          <h2 className="font-display text-2xl tracking-[-0.01em]">Homes you&rsquo;d love</h2>
+          <p className="kicker">{t("aiSuggestions.kicker")}</p>
+          <h2 className="font-display text-2xl tracking-[-0.01em]">{t("aiSuggestions.title")}</h2>
         </div>
         <span
           className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full"
@@ -57,7 +59,7 @@ export function AISuggestions() {
             color: source === "ai" ? "var(--pink)" : "var(--navy-3)",
           }}
         >
-          {source === "ai" ? "AI · personalised" : "Match-score picks"}
+          {source === "ai" ? t("aiSuggestions.badgeAi") : t("aiSuggestions.badgeMatch")}
         </span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -80,7 +82,7 @@ export function AISuggestions() {
                   postcard={it.listing.postcard}
                 />
               )}
-              <span className="absolute top-3 left-3 match-badge">{it.matchScore}% match</span>
+              <span className="absolute top-3 left-3 match-badge">{t("listing.matchBadge", { score: it.matchScore })}</span>
             </div>
             <div className="p-5">
               <div className="font-display text-base tracking-[-0.01em]">
@@ -98,11 +100,12 @@ export function AISuggestions() {
 }
 
 function SkeletonRow() {
+  const t = useT();
   return (
     <div>
       <div className="mb-4">
-        <p className="kicker">Picked for you</p>
-        <h2 className="font-display text-2xl tracking-[-0.01em]">Homes you&rsquo;d love</h2>
+        <p className="kicker">{t("aiSuggestions.kicker")}</p>
+        <h2 className="font-display text-2xl tracking-[-0.01em]">{t("aiSuggestions.title")}</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {[0, 1, 2].map((i) => (

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
+import { getI18n, t } from "@/lib/i18n/server";
 import VerifyResult from "./result";
 
 // Mirror the rest of the auth-adjacent surfaces (forgot/reset-password):
@@ -11,7 +12,8 @@ import VerifyResult from "./result";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Verify · swapl" };
 
-export default function VerifyPage() {
+export default async function VerifyPage() {
+  const { dict } = await getI18n();
   return (
     <I18nProviderShell>
       <Navbar />
@@ -19,7 +21,7 @@ export default function VerifyPage() {
         <Suspense
           fallback={
             <div className="surface-card p-8 max-w-md text-center">
-              <p>Checking your link…</p>
+              <p>{t(dict, "verify.checking")}</p>
             </div>
           }
         >

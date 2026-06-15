@@ -18,6 +18,7 @@ const actionStyle = {
 } as const;
 
 export function ShareListingButton({ title, city }: { title: string; city: string }) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -49,13 +50,13 @@ export function ShareListingButton({ title, city }: { title: string; city: strin
   }
 
   return (
-    <button type="button" onClick={() => void share()} className={actionClass} style={actionStyle} aria-label="Share this listing">
+    <button type="button" onClick={() => void share()} className={actionClass} style={actionStyle} aria-label={t("listingActions.share")}>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <path d="M12 3v12" />
         <path d="M8 7l4-4 4 4" />
         <path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7" />
       </svg>
-      <span aria-live="polite">{copied ? "Link copied" : "Share"}</span>
+      <span aria-live="polite">{copied ? t("listingActions.linkCopied") : t("listingActions.shareShort")}</span>
     </button>
   );
 }

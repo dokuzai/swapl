@@ -9,8 +9,17 @@
 import Link from "next/link";
 import { ChatThread } from "./chat-thread";
 import { PeoplePanel } from "./people-panel";
+import { getI18n, t } from "@/lib/i18n/server";
 
-export function GuestThreadPage({
+const STATUS_LABEL_KEY: Record<string, Parameters<typeof t>[1]> = {
+  PENDING: "swaps.status.pending",
+  COUNTERED: "swaps.status.countered",
+  ACCEPTED: "swaps.status.accepted",
+  DECLINED: "swaps.status.declined",
+  WITHDRAWN: "swaps.status.withdrawn",
+};
+
+export async function GuestThreadPage({
   proposalId,
   status,
   threadTitle,
@@ -23,6 +32,8 @@ export function GuestThreadPage({
   dateRange: string;
   chatName: string;
 }) {
+  const { dict } = await getI18n();
+  const statusLabel = t(dict, STATUS_LABEL_KEY[status] ?? "swaps.status.pending");
   return (
     <div className="wrap py-6 lg:py-10">
       <Link
@@ -30,13 +41,13 @@ export function GuestThreadPage({
         className="font-mono text-xs uppercase tracking-[.08em] mb-6 inline-block"
         style={{ color: "var(--navy-3)" }}
       >
-        ← All swaps
+        {t(dict, "swap.allSwaps")}
       </Link>
 
       <div className="lg:grid lg:gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
         <div className="min-w-0">
           <header className="mb-6">
-            <p className="kicker mb-3">Conversation · {status.toLowerCase()}</p>
+            <p className="kicker mb-3">{t(dict, "swaps.guest.conversation")} · {statusLabel}</p>
             <h1 className="font-display text-3xl lg:text-4xl tracking-[-0.02em] leading-[1.05] font-medium">
               {threadTitle}
             </h1>
@@ -55,7 +66,7 @@ export function GuestThreadPage({
           </div>
         </div>
 
-        <aside className="hidden lg:block lg:sticky lg:top-24" aria-label="People in this conversation">
+        <aside className="hidden lg:block lg:sticky lg:top-24" aria-label={t(dict, "swaps.guest.peopleAside")}>
           <PeoplePanel proposalId={proposalId} isPrincipal={false} />
         </aside>
       </div>

@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CityPhoto } from "@/lib/city-media";
+import { useT } from "@/lib/i18n/client";
 
 export type LightboxPhoto = {
   url: string;
@@ -19,12 +20,13 @@ export type LightboxPhoto = {
 
 /** Photographer / provider credit. Shared by the grid captions and the lightbox. */
 export function Attribution({ photo }: { photo: CityPhoto }) {
+  const t = useT();
   if (photo.provider === "openverse" || photo.provider === "pixabay") {
     // CC-licensed illustrations: credit the creator and link the source page.
     const providerLabel = photo.provider === "openverse" ? "Openverse" : "Pixabay";
     return (
       <span>
-        Illustration: {photo.photographer ? `${photo.photographer} / ` : ""}
+        {t("photo.illustrationCredit")} {photo.photographer ? `${photo.photographer} / ` : ""}
         <a
           href={photo.sourceUrl ?? "https://openverse.org"}
           target="_blank"
@@ -40,7 +42,7 @@ export function Attribution({ photo }: { photo: CityPhoto }) {
     // Pexels requires a visible photographer + Pexels credit.
     return (
       <span>
-        Photo:{" "}
+        {t("photo.photoCredit")}{" "}
         {photo.photographerUrl ? (
           <a href={photo.photographerUrl} target="_blank" rel="noopener noreferrer" className="underline">
             {photo.photographer}
@@ -58,7 +60,7 @@ export function Attribution({ photo }: { photo: CityPhoto }) {
   if (photo.provider === "unsplash" && photo.photographer) {
     return (
       <span>
-        Photo:{" "}
+        {t("photo.photoCredit")}{" "}
         {photo.photographerUrl ? (
           <a href={photo.photographerUrl} target="_blank" rel="noopener noreferrer" className="underline">
             {photo.photographer}
@@ -73,7 +75,7 @@ export function Attribution({ photo }: { photo: CityPhoto }) {
   // Wikimedia: link the file page.
   return (
     <span>
-      {photo.photographer ? `Photo: ${photo.photographer} / ` : "Photo: "}
+      {photo.photographer ? `${t("photo.photoCredit")} ${photo.photographer} / ` : `${t("photo.photoCredit")} `}
       <a href={photo.sourceUrl ?? "https://commons.wikimedia.org"} target="_blank" rel="noopener noreferrer" className="underline">
         Wikimedia
       </a>
@@ -92,6 +94,7 @@ function Lightbox({
   onIndexChange: (i: number) => void;
   onClose: () => void;
 }) {
+  const t = useT();
   const dialogRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
 
@@ -172,7 +175,7 @@ function Lightbox({
       ref={dialogRef}
       role="dialog"
       aria-modal="true"
-      aria-label={`Photo ${index + 1} of ${photos.length}${photo.alt ? `: ${photo.alt}` : ""}`}
+      aria-label={`${t("photo.photoOf", { i: index + 1, n: photos.length })}${photo.alt ? `: ${photo.alt}` : ""}`}
       tabIndex={-1}
       className="fixed inset-0 z-[110] flex flex-col items-center justify-center outline-none"
       style={{ background: "rgba(10,10,9,.92)" }}
@@ -207,7 +210,7 @@ function Lightbox({
       <button
         type="button"
         onClick={onClose}
-        aria-label="Close photo viewer"
+        aria-label={t("photo.closeViewer")}
         className="absolute top-4 right-4 grid place-items-center w-10 h-10 rounded-full text-white text-xl leading-none"
         style={{ background: "rgba(0,0,0,.45)" }}
       >
@@ -222,7 +225,7 @@ function Lightbox({
               e.stopPropagation();
               prev();
             }}
-            aria-label="Previous photo"
+            aria-label={t("photo.prev")}
             className={`${arrowClass} left-3 sm:left-5`}
             style={arrowStyle}
           >
@@ -234,7 +237,7 @@ function Lightbox({
               e.stopPropagation();
               next();
             }}
-            aria-label="Next photo"
+            aria-label={t("photo.next")}
             className={`${arrowClass} right-3 sm:right-5`}
             style={arrowStyle}
           >
@@ -269,7 +272,8 @@ function useLightbox(photos: LightboxPhoto[]) {
  * featured ribbon) on top of both the desktop and mobile frames.
  */
 export function ListingPhotoMosaic({ photos, overlay }: { photos: string[]; overlay?: React.ReactNode }) {
-  const items: LightboxPhoto[] = photos.map((url, i) => ({ url, alt: `Listing photo ${i + 1}` }));
+  const t = useT();
+  const items: LightboxPhoto[] = photos.map((url, i) => ({ url, alt: t("photo.listingPhoto", { i: i + 1 }) }));
   const { open, node } = useLightbox(items);
   const [slide, setSlide] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -311,7 +315,7 @@ export function ListingPhotoMosaic({ photos, overlay }: { photos: string[]; over
             key={`${url}-${i}`}
             type="button"
             onClick={() => open(i)}
-            aria-label={`View photo ${i + 1} of ${n}`}
+            aria-label={t("photo.viewPhotoOf", { i: i + 1, n })}
             className={`${tileClass(i)} block p-0 border-0 bg-transparent cursor-zoom-in focus-visible:outline-2 focus-visible:-outline-offset-2`}
             style={{ outlineColor: "var(--pink)" }}
           >
@@ -326,7 +330,7 @@ export function ListingPhotoMosaic({ photos, overlay }: { photos: string[]; over
             className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-mono text-[11px] uppercase tracking-[.06em] cursor-pointer"
             style={{ background: "rgba(255,252,245,.94)", borderColor: "var(--navy-3)", color: "var(--navy)" }}
           >
-            <span aria-hidden>▦</span> Show all photos ({n})
+            <span aria-hidden>▦</span> {t("photo.showAll", { n })}
           </button>
         )}
         {overlay}
@@ -343,14 +347,14 @@ export function ListingPhotoMosaic({ photos, overlay }: { photos: string[]; over
           className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth"
           style={{ scrollbarWidth: "none" }}
           aria-roledescription="carousel"
-          aria-label={`Listing photos, ${n} total`}
+          aria-label={t("photo.carousel", { n })}
         >
           {photos.map((url, i) => (
             <button
               key={`${url}-m-${i}`}
               type="button"
               onClick={() => open(i)}
-              aria-label={`View photo ${i + 1} of ${n}`}
+              aria-label={t("photo.viewPhotoOf", { i: i + 1, n })}
               className="w-full flex-shrink-0 snap-center block p-0 border-0 bg-transparent cursor-zoom-in"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -381,6 +385,7 @@ export function ListingPhotoMosaic({ photos, overlay }: { photos: string[]; over
  * top. Click opens the same lightbox as the photo grids.
  */
 export function HeroIllustration({ photo }: { photo: CityPhoto }) {
+  const t = useT();
   const { open, node } = useLightbox([{ url: photo.url, alt: photo.alt, attribution: photo }]);
 
   return (
@@ -388,7 +393,7 @@ export function HeroIllustration({ photo }: { photo: CityPhoto }) {
       <button
         type="button"
         onClick={() => open(0)}
-        aria-label={`View illustration: ${photo.alt}`}
+        aria-label={t("photo.viewIllustration", { alt: photo.alt })}
         className="absolute inset-0 block w-full h-full p-0 border-0 bg-transparent cursor-zoom-in"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -401,6 +406,7 @@ export function HeroIllustration({ photo }: { photo: CityPhoto }) {
 
 /** "Discover {city}" gallery grid with attribution captions. Click to zoom. */
 export function DiscoverPhotoGrid({ photos }: { photos: CityPhoto[] }) {
+  const t = useT();
   const items: LightboxPhoto[] = photos.map((p) => ({ url: p.url, alt: p.alt, attribution: p }));
   const { open, node } = useLightbox(items);
 
@@ -411,7 +417,7 @@ export function DiscoverPhotoGrid({ photos }: { photos: CityPhoto[] }) {
           <button
             type="button"
             onClick={() => open(i)}
-            aria-label={`View photo ${i + 1} of ${photos.length}: ${photo.alt}`}
+            aria-label={`${t("photo.viewPhotoOf", { i: i + 1, n: photos.length })}: ${photo.alt}`}
             className="block w-full p-0 border-0 bg-transparent cursor-zoom-in"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

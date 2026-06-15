@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CityIllust } from "@/components/illustrations";
 import { paletteForCity } from "@/lib/cities";
-import { useT } from "@/lib/i18n/client";
+import { useT, useLocale } from "@/lib/i18n/client";
 import type { DictKey } from "@/lib/i18n/dict-en";
 import { statusDotColor } from "./status-pill";
 import type { Conversation } from "./conversations";
@@ -31,11 +31,10 @@ const ROLE_KEY: Record<string, DictKey> = {
   traveling: "swaps.tab.traveling",
 };
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-function shortDate(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
+// Locale-aware "23 ago" style short date — Intl renders the month in the
+// active locale (IT "23 ago", EN "23 Aug). UTC so the day matches the server.
+function shortDate(iso: string, locale: string): string {
+  return new Date(iso).toLocaleDateString(locale, { day: "numeric", month: "short", timeZone: "UTC" });
 }
 
 function isArchivedStatus(status: string): boolean {
@@ -54,6 +53,7 @@ export function ConversationList({
   activeId?: string;
 }) {
   const t = useT();
+  const locale = useLocale();
   const [filter, setFilter] = useState<FilterKey>("all");
   const [query, setQuery] = useState("");
   // Seed from the server render, then keep the list fresh (last message,
@@ -143,7 +143,7 @@ export function ConversationList({
           {conversations.length === 0 ? t("swaps.empty.body") : t("swaps.select.body")}
         </div>
       ) : (
-        <ul className="space-y-2" aria-label="Conversations">
+        <ul className="space-y-2" aria-label={t("swaps.inbox.conversations")}>
           {visible.map((c) => {
             const active = c.id === activeId;
             return (
@@ -180,7 +180,7 @@ export function ConversationList({
                           </span>
                         )}
                         <span className="font-mono text-[10px]" style={{ color: "var(--navy-3)" }}>
-                          {shortDate(c.lastMessageAt ?? c.updatedAt)}
+                          {shortDate(c.lastMessageAt ?? c.updatedAt, locale)}
                         </span>
                       </span>
                     </span>

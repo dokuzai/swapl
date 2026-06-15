@@ -3,7 +3,8 @@
 import { useTransition, useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CITIES } from "@/lib/cities";
-import { PROPERTY_TYPES, propertyLabel } from "@/lib/types";
+import { PROPERTY_TYPES, propertyTypeKey } from "@/lib/types";
+import { useT } from "@/lib/i18n/client";
 import {
   parseFiltersFromSearchParams,
   filtersToQuery,
@@ -16,6 +17,7 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
   const pathname = usePathname();
   const sp = useSearchParams();
   const [pending, start] = useTransition();
+  const t = useT();
 
   const filters = useMemo<ListingFilters>(() => {
     const obj: Record<string, string> = {};
@@ -52,7 +54,7 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
       style={{ background: "var(--cream-2)" }}
     >
       <div className="mb-5 flex items-baseline justify-between">
-        <h2 className="font-display text-lg tracking-[-0.01em] font-medium">Filters</h2>
+        <h2 className="font-display text-lg tracking-[-0.01em] font-medium">{t("filter.heading")}</h2>
         {dirty ? (
           <button
             className="font-mono text-[10px] uppercase tracking-[.08em] underline"
@@ -60,12 +62,12 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
             onClick={() => start(() => router.push(pathname))}
             disabled={pending}
           >
-            Reset
+            {t("filter.reset")}
           </button>
         ) : null}
       </div>
 
-      <Group label="Destination city">
+      <Group label={t("filter.destinationCity")}>
         <div className="flex flex-wrap gap-1.5">
           {CITIES.map((c) => {
             const on = filters.cities.includes(c.name);
@@ -78,20 +80,20 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
         </div>
       </Group>
 
-      <Group label="Property type">
+      <Group label={t("filter.propertyType")}>
         <div className="flex flex-wrap gap-1.5">
-          {PROPERTY_TYPES.map((t) => {
-            const on = filters.propertyTypes.includes(t);
+          {PROPERTY_TYPES.map((pt) => {
+            const on = filters.propertyTypes.includes(pt);
             return (
-              <Chip key={t} on={on} onClick={() => update({ propertyTypes: toggleArr(filters.propertyTypes, t) })}>
-                {propertyLabel(t)}
+              <Chip key={pt} on={on} onClick={() => update({ propertyTypes: toggleArr(filters.propertyTypes, pt) })}>
+                {t(propertyTypeKey(pt))}
               </Chip>
             );
           })}
         </div>
       </Group>
 
-      <Group label={`Minimum size · ${filters.minSqm}m²`}>
+      <Group label={t("filter.minSizeVal", { size: filters.minSqm })}>
         <input
           type="range"
           min={30}
@@ -102,7 +104,7 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
         />
       </Group>
 
-      <Group label={`Sleeps at least · ${filters.minSleeps}`}>
+      <Group label={t("filter.sleepsAtLeastVal", { count: filters.minSleeps })}>
         <input
           type="range"
           min={1}
@@ -113,7 +115,7 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
         />
       </Group>
 
-      <Group label="Available between">
+      <Group label={t("filter.availableBetween")}>
         <div className="flex gap-2">
           <input
             type="date"
@@ -132,14 +134,14 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
         </div>
       </Group>
 
-      <Group label="Must-haves">
-        <ToggleRow label="Pet-friendly" on={filters.petsRequired} onChange={(v) => update({ petsRequired: v })} />
-        <ToggleRow label="Work-from-home setup" on={filters.wfhRequired} onChange={(v) => update({ wfhRequired: v })} />
-        <ToggleRow label="Step-free access" on={filters.stepFreeRequired} onChange={(v) => update({ stepFreeRequired: v })} />
+      <Group label={t("filter.mustHaves")}>
+        <ToggleRow label={t("filter.petFriendly")} on={filters.petsRequired} onChange={(v) => update({ petsRequired: v })} />
+        <ToggleRow label={t("filter.wfh")} on={filters.wfhRequired} onChange={(v) => update({ wfhRequired: v })} />
+        <ToggleRow label={t("filter.stepFree")} on={filters.stepFreeRequired} onChange={(v) => update({ stepFreeRequired: v })} />
         <ToggleRow
           label={
             <>
-              Only <em>mutual</em> swaps
+              {t("filter.mutualOnly")} <em>{t("filter.mutualEm")}</em> {t("filter.mutualSwaps")}
             </>
           }
           on={filters.mutualOnly}
@@ -148,7 +150,7 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
       </Group>
 
       <p className="text-xs mt-2" style={{ color: "var(--navy-3)" }}>
-        {pending ? "Updating…" : `${resultCount.toLocaleString()} matches`}
+        {pending ? t("filter.updating") : t("filter.matchesCount", { count: resultCount.toLocaleString() })}
       </p>
     </aside>
   );

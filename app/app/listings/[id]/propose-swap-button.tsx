@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { ListingDTO } from "@/lib/listing-utils";
 import { CityIllust, SwapArrows } from "@/components/illustrations";
 import { UpgradeRequiredModal } from "@/components/billing/upgrade-required-modal";
+import { useT } from "@/lib/i18n/client";
 
 export default function ProposeSwapButton({
   proposerListing,
@@ -14,6 +15,7 @@ export default function ProposeSwapButton({
   proposerListing: ListingDTO;
   targetListing: ListingDTO;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -72,9 +74,9 @@ export default function ProposeSwapButton({
       const j = await res.json().catch(() => ({} as Record<string, unknown>));
       if (res.status === 402 && (j.upgradeTo === "plus" || j.upgradeTo === "pro")) {
         setOpen(false);
-        setUpgrade({ reason: String(j.error ?? "Plan limit reached"), upgradeTo: j.upgradeTo });
+        setUpgrade({ reason: String(j.error ?? t("propose.planLimit")), upgradeTo: j.upgradeTo });
       } else {
-        setError(String(j.error ?? "Could not send proposal."));
+        setError(String(j.error ?? t("propose.sendError")));
       }
     });
   }
@@ -83,7 +85,7 @@ export default function ProposeSwapButton({
     <>
       <button onClick={() => setOpen(true)} className="pill-primary w-full justify-center">
         <SwapArrows color="currentColor" size={16} />
-        Propose swap
+        {t("listing.proposeSwap")}
       </button>
 
       <UpgradeRequiredModal
@@ -108,26 +110,26 @@ export default function ProposeSwapButton({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-baseline justify-between mb-5">
-              <h2 className="font-display text-2xl tracking-[-0.01em]">Propose a swap</h2>
-              <button onClick={() => setOpen(false)} className="font-mono text-[11px]" aria-label="Close">×</button>
+              <h2 className="font-display text-2xl tracking-[-0.01em]">{t("propose.title")}</h2>
+              <button onClick={() => setOpen(false)} className="font-mono text-[11px]" aria-label={t("propose.close")}>×</button>
             </div>
 
             <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center mb-6">
-              <ThumbCard listing={proposerListing} label="Yours" />
+              <ThumbCard listing={proposerListing} label={t("propose.yours")} />
               <div
                 className="w-10 h-10 rounded-full grid place-items-center text-white"
                 style={{ background: "var(--pink)" }}
               >
                 <SwapArrows color="currentColor" size={20} />
               </div>
-              <ThumbCard listing={targetListing} label="Theirs" />
+              <ThumbCard listing={targetListing} label={t("propose.theirs")} />
             </div>
 
             <form onSubmit={submit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <label className="block text-sm">
                   <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-                    From
+                    {t("listingDetail.from")}
                   </span>
                   <input
                     type="date"
@@ -140,7 +142,7 @@ export default function ProposeSwapButton({
                 </label>
                 <label className="block text-sm">
                   <span className="block mb-1.5 font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-                    To
+                    {t("listingDetail.to")}
                   </span>
                   <input
                     type="date"
@@ -156,7 +158,7 @@ export default function ProposeSwapButton({
               <label className="block text-sm">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="font-mono text-[10px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-                    Message (optional)
+                    {t("propose.messageLabel")}
                   </span>
                   <button
                     type="button"
@@ -177,11 +179,11 @@ export default function ProposeSwapButton({
                           }),
                         });
                         const j = await res.json();
-                        if (!res.ok) throw new Error(j.error ?? "Couldn't draft");
+                        if (!res.ok) throw new Error(j.error ?? t("propose.draftError"));
                         setMessage(j.message);
                         setDraftSource(j.source);
                       } catch (e) {
-                        setError(e instanceof Error ? e.message : "Couldn't draft");
+                        setError(e instanceof Error ? e.message : t("propose.draftError"));
                       } finally {
                         setDraftBusy(false);
                       }
@@ -190,14 +192,14 @@ export default function ProposeSwapButton({
                     className="font-mono text-[10px] uppercase tracking-[.08em] underline"
                     style={{ color: "var(--pink)" }}
                   >
-                    {draftBusy ? "Drafting…" : "✦ Draft with AI"}
+                    {draftBusy ? t("propose.drafting") : t("propose.draftWithAi")}
                   </button>
                 </div>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={5}
-                  placeholder="Who's coming, why this place, anything they should know. Or tap 'Draft with AI' above to start."
+                  placeholder={t("propose.messagePlaceholder")}
                   className="w-full px-3 py-2.5 rounded-lg border outline-none resize-none"
                   style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
                 />
@@ -209,7 +211,7 @@ export default function ProposeSwapButton({
                       color: draftSource === "ai" ? "var(--pink)" : "var(--navy-3)",
                     }}
                   >
-                    {draftSource === "ai" ? "AI draft — feel free to edit" : "Template draft — feel free to edit"}
+                    {draftSource === "ai" ? t("propose.draftAi") : t("propose.draftTemplate")}
                   </span>
                 )}
               </label>
@@ -218,10 +220,10 @@ export default function ProposeSwapButton({
 
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button type="button" onClick={() => setOpen(false)} className="pill-ghost">
-                  Cancel
+                  {t("propose.cancel")}
                 </button>
                 <button type="submit" className="pill-primary" disabled={pending}>
-                  {pending ? "Sending…" : "Send proposal"}
+                  {pending ? t("propose.sending") : t("propose.send")}
                 </button>
               </div>
             </form>

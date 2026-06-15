@@ -72,7 +72,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
         status={proposal.status}
         threadTitle={`${proposal.proposerListing.neighbourhood} · ${proposal.proposerListing.city} ⇄ ${proposal.targetListing.neighbourhood} · ${proposal.targetListing.city}`}
         dateRange={formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString(), locale)}
-        chatName={otherName ?? "swapl host"}
+        chatName={otherName ?? t(dict, "swaps.panel.hostFallback")}
       />
     );
   }
@@ -213,7 +213,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
 
       {/* Three-pane layout (DOK-150): conversations | thread | swap context. */}
       <div className="lg:grid lg:gap-8 lg:grid-cols-[320px_minmax(0,1fr)_340px] lg:items-start">
-        <aside className="hidden lg:block lg:sticky lg:top-24" aria-label="All conversations">
+        <aside className="hidden lg:block lg:sticky lg:top-24" aria-label={t(dict, "swaps.panel.allConversations")}>
           <ConversationList conversations={conversations} activeId={proposal.id} />
         </aside>
 
@@ -226,7 +226,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
               {theirListing.neighbourhood} · {theirListing.city}
             </h1>
             <p className="mt-3" style={{ color: "var(--navy-2)" }}>
-              {t(dict, "swaps.panel.with")} {otherName ?? "swapl host"} · {formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString(), locale)}
+              {t(dict, "swaps.panel.with")} {otherName ?? t(dict, "swaps.panel.hostFallback")} · {formatDateRange(proposal.dateFrom.toISOString(), proposal.dateTo.toISOString(), locale)}
             </p>
           </header>
 
@@ -254,7 +254,7 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
             </summary>
             <div className="p-4 pt-0">
               <p className="text-[15px] leading-[1.6] whitespace-pre-line">
-                {proposal.message ?? <span style={{ color: "var(--navy-3)" }}>(no message)</span>}
+                {proposal.message ?? <span style={{ color: "var(--navy-3)" }}>{t(dict, "swaps.panel.noMessage")}</span>}
               </p>
               {proposal.status === "COUNTERED" && (
                 <div className="mt-4 pt-4" style={{ borderTop: "1px solid var(--line)" }}>
@@ -274,24 +274,24 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
 
           {/* The real chat: bubbles, read ticks, composer with photo, polling. */}
           <div id="chat" className="mb-6">
-            <ChatThread proposalId={proposal.id} otherName={otherName ?? "swapl host"} />
+            <ChatThread proposalId={proposal.id} otherName={otherName ?? t(dict, "swaps.panel.hostFallback")} />
           </div>
 
           {proposal.status === "ACCEPTED" && proposal.agreement && (
             <section className="surface-card p-6 mb-6" style={{ background: "var(--navy)", color: "var(--cream)" }}>
               <h2 className="font-display text-xl mb-2" style={{ color: "var(--cream)" }}>
-                Swap agreed — keys for keys
+                {t(dict, "swaps.agreed.title")}
               </h2>
               <p className="text-sm" style={{ color: "color-mix(in oklab, var(--cream) 75%, transparent)" }}>
-                Key codes and your insurance certificate live in the swap panel
-                <span className="lg:hidden"> above</span>
-                <span className="hidden lg:inline"> on the right</span>.
+                {t(dict, "swaps.agreed.body")}
+                <span className="lg:hidden">{t(dict, "swaps.agreed.bodyAbove")}</span>
+                <span className="hidden lg:inline">{t(dict, "swaps.agreed.bodyRight")}</span>.
               </p>
             </section>
           )}
 
           {canReview && proposal.agreement && (
-            <LeaveReview agreementId={proposal.agreement.id} otherName={otherName ?? "your swap partner"} />
+            <LeaveReview agreementId={proposal.agreement.id} otherName={otherName ?? t(dict, "swaps.panel.partnerFallback")} />
           )}
 
           {proposal.status === "ACCEPTED" && proposal.agreement && (
@@ -316,20 +316,20 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
               />
 
               <section className="mt-10">
-                <p className="kicker mb-3">Plan the basics</p>
-                <h2 className="font-display text-2xl tracking-[-0.01em] mb-4">Travel partners for {theirListing.city}</h2>
+                <p className="kicker mb-3">{t(dict, "swaps.partners.kicker")}</p>
+                <h2 className="font-display text-2xl tracking-[-0.01em] mb-4">{t(dict, "swaps.partners.title", { city: theirListing.city })}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <AffiliateLink partner="skyscanner" city={theirListing.city} agreementId={proposal.agreement.id} campaign="post_swap_flights" variant="card">
-                    <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1" style={{ color: "var(--navy-3)" }}>Flights · Skyscanner</div>
-                    <div className="font-display text-lg tracking-[-0.01em]">Find flights to {theirListing.city}</div>
+                    <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1" style={{ color: "var(--navy-3)" }}>{t(dict, "swaps.partners.flightsLabel")}</div>
+                    <div className="font-display text-lg tracking-[-0.01em]">{t(dict, "swaps.partners.flightsCta", { city: theirListing.city })}</div>
                   </AffiliateLink>
                   <AffiliateLink partner="battleface" city={theirListing.city} agreementId={proposal.agreement.id} campaign="post_swap_insurance_upgrade" variant="card">
-                    <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1" style={{ color: "var(--navy-3)" }}>Premium cover · Battleface</div>
-                    <div className="font-display text-lg tracking-[-0.01em]">Top up your travel insurance</div>
+                    <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1" style={{ color: "var(--navy-3)" }}>{t(dict, "swaps.partners.insuranceLabel")}</div>
+                    <div className="font-display text-lg tracking-[-0.01em]">{t(dict, "swaps.partners.insuranceCta")}</div>
                   </AffiliateLink>
                 </div>
                 <p className="mt-3 text-xs" style={{ color: "var(--navy-3)" }}>
-                  Disclosure: swapl earns a small referral when you book through these partners — never tied to your swap acceptance.
+                  {t(dict, "swaps.partners.disclosure")}
                 </p>
               </section>
 
@@ -338,14 +338,14 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
                   href={marketingUrl(`/guides/${theirListing.city.toLowerCase()}`)}
                   className="pill-ghost"
                 >
-                  Read the {theirListing.city} city guide →
+                  {t(dict, "swaps.partners.cityGuide", { city: theirListing.city })}
                 </a>
               </p>
             </>
           )}
         </div>
 
-        <aside className="hidden lg:block lg:sticky lg:top-24" aria-label="Swap details">
+        <aside className="hidden lg:block lg:sticky lg:top-24" aria-label={t(dict, "swaps.panel.swapDetails")}>
           {contextPanel}
         </aside>
       </div>

@@ -11,6 +11,7 @@
 
 import { getCityMedia } from "@/lib/city-media";
 import { DiscoverPhotoGrid } from "@/components/listing/photo-lightbox";
+import { getI18n, t } from "@/lib/i18n/server";
 
 const CAMPAIGN = "discover_city";
 
@@ -52,13 +53,14 @@ function BookCard({
 
 export async function DiscoverCity({ city, country }: { city: string; country: string }) {
   const photos = (await getCityMedia(city, country)).slice(0, 6);
+  const { dict } = await getI18n();
 
   return (
     // min-w-0: the section sits in the 1.4fr column of the detail grid —
     // without it a wide child (photo grid) can overflow the viewport on
     // mobile instead of shrinking the column.
     <section className="mb-8 pt-6 divider-dashed min-w-0">
-      <h2 className="font-display text-xl tracking-[-0.01em] font-medium mb-4">Discover {city}</h2>
+      <h2 className="font-display text-xl tracking-[-0.01em] font-medium mb-4">{t(dict, "discover.title", { city })}</h2>
 
       {photos.length > 0 && (
         <div className="mb-6">
@@ -67,40 +69,41 @@ export async function DiscoverCity({ city, country }: { city: string; country: s
       )}
 
       <div className="mb-3 font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
-        Book your trip
+        {t(dict, "discover.bookTrip")}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <BookCard
           href={affiliateHref("getyourguide", { city, country, q: city })}
-          kicker="Experiences"
-          title={`Things to do in ${city}`}
-          body="Museums, tours and experiences, hand-picked by GetYourGuide."
+          kicker={t(dict, "discover.experiencesKicker")}
+          title={t(dict, "discover.experiencesTitle", { city })}
+          body={t(dict, "discover.experiencesBody")}
         />
         <BookCard
           href={affiliateHref("skyscanner", { city, country })}
-          kicker="Flights"
-          title={`Fly to ${city}`}
-          body="Compare flights from anywhere on Skyscanner."
+          kicker={t(dict, "discover.flightsKicker")}
+          title={t(dict, "discover.flightsTitle", { city })}
+          body={t(dict, "discover.flightsBody")}
         />
         <BookCard
           href={affiliateHref("airalo", { city, country })}
-          kicker="eSIM"
-          title="Stay connected"
-          body={`Data the moment you land in ${country}, via Airalo.`}
+          kicker={t(dict, "discover.esimKicker")}
+          title={t(dict, "discover.esimTitle")}
+          body={t(dict, "discover.esimBody", { country })}
         />
       </div>
       <p className="mt-3 text-[10px] font-mono" style={{ color: "var(--navy-3)" }}>
-        swapl may earn a commission on bookings made through these partner links.
+        {t(dict, "discover.commission")}
       </p>
     </section>
   );
 }
 
 /** Lightweight skeleton shown while the media fetch resolves. */
-export function DiscoverCitySkeleton({ city }: { city: string }) {
+export async function DiscoverCitySkeleton({ city }: { city: string }) {
+  const { dict } = await getI18n();
   return (
     <section className="mb-8 pt-6 divider-dashed" aria-busy="true">
-      <h2 className="font-display text-xl tracking-[-0.01em] font-medium mb-4">Discover {city}</h2>
+      <h2 className="font-display text-xl tracking-[-0.01em] font-medium mb-4">{t(dict, "discover.title", { city })}</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
         {Array.from({ length: 3 }).map((_, i) => (
           <div

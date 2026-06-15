@@ -6,6 +6,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { ListingDTO } from "@/lib/listing-utils";
+import { useT } from "@/lib/i18n/client";
 
 // Build a small SVG pin once per palette so each city's pin matches its
 // illustration palette — keeps the visual language consistent.
@@ -50,6 +51,7 @@ export default function ListingsMapClient({
 }: {
   listings: Array<Pick<ListingDTO, "id" | "city" | "neighbourhood" | "lat" | "lng" | "palette" | "sizeSqm" | "sleeps" | "title">>;
 }) {
+  const t = useT();
   const points = useMemo(
     () =>
       listings
@@ -81,7 +83,7 @@ export default function ListingsMapClient({
                   {p.neighbourhood} · {p.city}
                 </div>
                 <div style={{ fontSize: 12, color: "#5E63A0", marginTop: 2 }}>
-                  {p.sizeSqm}m² · sleeps {p.sleeps}
+                  {t("listing.sizeSleeps", { size: p.sizeSqm, sleeps: p.sleeps })}
                 </div>
                 <Link
                   href={`/listings/${p.id}`}
@@ -96,7 +98,7 @@ export default function ListingsMapClient({
                     fontWeight: 500,
                   }}
                 >
-                  Open listing →
+                  {t("map.openListing")}
                 </Link>
               </div>
             </Popup>

@@ -2,10 +2,11 @@ import Link from "next/link";
 import { CityIllust, Pin } from "@/components/illustrations";
 import { type ListingDTO, formatDateRange, amenityChips } from "@/lib/listing-utils";
 import type { CityPhoto } from "@/lib/city-media/types";
-import { propertyLabel } from "@/lib/types";
+import { propertyTypeKey } from "@/lib/types";
+import { getI18n, t } from "@/lib/i18n/server";
 import { VerifiedBadge, FeaturedRibbon } from "@/components/listing/badges";
 
-export function ListingCard({
+export async function ListingCard({
   listing,
   matchScore,
   hrefSuffix,
@@ -17,6 +18,7 @@ export function ListingCard({
   /** Cached real city photo — used when the listing has no photos of its own. */
   cityPhoto?: CityPhoto | null;
 }) {
+  const { locale, dict } = await getI18n();
   const chips = amenityChips(listing).slice(0, 3);
   // Cover priority: the listing's own first photo → a real city photo →
   // today's postcard illustration.
@@ -46,15 +48,15 @@ export function ListingCard({
           />
         )}
         {typeof matchScore === "number" && (
-          <span className="absolute top-3 left-3 match-badge">{matchScore}% match</span>
+          <span className="absolute top-3 left-3 match-badge">{t(dict, "listing.matchBadge", { score: matchScore })}</span>
         )}
-        {listing.isFeatured && <FeaturedRibbon />}
+        {listing.isFeatured && <FeaturedRibbon label={t(dict, "listing.featuredRibbon")} />}
       </div>
       <div className="p-5">
         <div className="flex items-baseline justify-between gap-3">
           <div className="font-display text-lg tracking-[-0.01em] font-medium leading-tight inline-flex items-center gap-2">
             <span>{listing.neighbourhood} · {listing.city}</span>
-            {listing.isVerified && <VerifiedBadge size={18} />}
+            {listing.isVerified && <VerifiedBadge size={18} label={t(dict, "listing.verifiedBadge")} />}
           </div>
           <div className="text-xs whitespace-nowrap" style={{ color: "var(--navy-3)" }}>
             <Pin color="var(--pink)" size={10} style={{ display: "inline-block", verticalAlign: "middle", marginRight: 4 }} />
@@ -62,15 +64,15 @@ export function ListingCard({
           </div>
         </div>
         <div className="mt-1 text-[13px]" style={{ color: "var(--navy-3)" }}>
-          {propertyLabel(listing.propertyType)} · {listing.sizeSqm}m² · sleeps {listing.sleeps}
+          {t(dict, propertyTypeKey(listing.propertyType))} · {t(dict, "listing.sizeSleeps", { size: listing.sizeSqm, sleeps: listing.sleeps })}
         </div>
         <div className="mt-3 text-[12px] font-mono" style={{ color: "var(--navy-3)" }}>
-          {formatDateRange(listing.availableFrom, listing.availableTo)}
+          {formatDateRange(listing.availableFrom, listing.availableTo, locale)}
         </div>
         {chips.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5 pt-3 divider-dashed">
             {chips.map((c) => (
-              <span key={c} className="tag-chip">{c}</span>
+              <span key={c.key} className="tag-chip">{t(dict, c.key, c.vars)}</span>
             ))}
           </div>
         )}

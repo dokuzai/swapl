@@ -3,7 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CITIES } from "@/lib/cities";
-import { PROPERTY_TYPES, propertyLabel, type PropertyType } from "@/lib/types";
+import { PROPERTY_TYPES, propertyTypeKey, type PropertyType } from "@/lib/types";
+import { useT } from "@/lib/i18n/client";
 import { CityIllust, type CityMotif } from "@/components/illustrations";
 import type { Palette } from "@/components/illustrations";
 import type { Postcard } from "@/lib/ai/postcard-types";
@@ -575,6 +576,7 @@ function LocationStep({ state, set }: { state: FormState; set: <K extends keyof 
 }
 
 function SpaceStep({ state, set }: { state: FormState; set: <K extends keyof FormState>(k: K, v: FormState[K]) => void }) {
+  const tr = useT();
   return (
     <div className="space-y-5">
       <Field label="Property type">
@@ -591,7 +593,7 @@ function SpaceStep({ state, set }: { state: FormState; set: <K extends keyof For
                   : { borderColor: "var(--line)", background: "var(--card-bg)" }
               }
             >
-              {propertyLabel(t)}
+              {tr(propertyTypeKey(t))}
             </button>
           ))}
         </div>
@@ -955,11 +957,12 @@ function ReviewStep({
   ackAccepted: boolean;
   onAckChange: (v: boolean) => void;
 }) {
+  const tr = useT();
   return (
     <div className="space-y-5">
       <div className="surface-card p-5 space-y-2 text-sm">
         <Row label="Where" value={`${state.neighbourhood} · ${state.city}, ${state.country}`} />
-        <Row label="Type" value={`${propertyLabel(state.propertyType)} · ${state.sizeSqm}m² · sleeps ${state.sleeps}`} />
+        <Row label="Type" value={`${tr(propertyTypeKey(state.propertyType))} · ${state.sizeSqm}m² · sleeps ${state.sleeps}`} />
         <Row label="Bedrooms / bathrooms" value={`${state.bedrooms} / ${state.bathrooms}`} />
         <Row label="Available" value={`${state.availableFrom} → ${state.availableTo} (${state.minStayDays}–${state.maxStayDays} day stays)`} />
         <Row label="Pets" value={state.petsAllowed ? Object.entries(state.petTypes).filter(([, v]) => v).map(([k]) => k).join(", ") || "Yes" : "No"} />

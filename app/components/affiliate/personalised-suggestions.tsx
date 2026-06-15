@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useT } from "@/lib/i18n/client";
 
 type Suggestion = {
   partner: "skyscanner" | "airalo" | "getyourguide" | "battleface";
@@ -28,6 +29,7 @@ export function PersonalisedSuggestions({
   destinationCity: string;
   destinationCountry: string;
 }) {
+  const t = useT();
   const [bundle, setBundle] = useState<Bundle | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,9 +54,9 @@ export function PersonalisedSuggestions({
   if (error) {
     return (
       <section className="mt-10">
-        <p className="kicker mb-3">Picked for your stay</p>
+        <p className="kicker mb-3">{t("affiliate.kicker")}</p>
         <div className="surface-card p-6 text-sm" style={{ color: "var(--navy-2)" }}>
-          Recommendations unavailable: {error}
+          {t("affiliate.unavailable", { error })}
         </div>
       </section>
     );
@@ -63,8 +65,8 @@ export function PersonalisedSuggestions({
   if (!bundle) {
     return (
       <section className="mt-10">
-        <p className="kicker mb-3">Picked for your stay</p>
-        <h2 className="font-display text-2xl tracking-[-0.01em] mb-4">Matching your interests in {destinationCity}…</h2>
+        <p className="kicker mb-3">{t("affiliate.kicker")}</p>
+        <h2 className="font-display text-2xl tracking-[-0.01em] mb-4">{t("affiliate.matching", { city: destinationCity })}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="surface-card overflow-hidden">
@@ -86,8 +88,8 @@ export function PersonalisedSuggestions({
     <section className="mt-10">
       <div className="flex items-baseline justify-between mb-4 flex-wrap gap-2">
         <div>
-          <p className="kicker">Picked for your stay</p>
-          <h2 className="font-display text-2xl tracking-[-0.01em]">Matched to your interests in {destinationCity}</h2>
+          <p className="kicker">{t("affiliate.kicker")}</p>
+          <h2 className="font-display text-2xl tracking-[-0.01em]">{t("affiliate.matched", { city: destinationCity })}</h2>
         </div>
         <span
           className="font-mono text-[10px] uppercase tracking-[.08em] px-2.5 py-1 rounded-full"
@@ -96,7 +98,7 @@ export function PersonalisedSuggestions({
             color: bundle.source === "ai" ? "var(--pink)" : "var(--navy-3)",
           }}
         >
-          {bundle.source === "ai" ? "AI · personalised" : "Interest-keyed picks"}
+          {bundle.source === "ai" ? t("affiliate.badgeAi") : t("affiliate.badgeInterest")}
         </span>
       </div>
 
@@ -113,7 +115,7 @@ export function PersonalisedSuggestions({
               className="surface-card p-5 block hover:no-underline"
             >
               <div className="font-mono text-[10px] uppercase tracking-[.1em] mb-1" style={{ color: "var(--navy-3)" }}>
-                {PARTNER_LABEL[s.partner]} · sponsored
+                {t("affiliate.sponsoredTag", { partner: PARTNER_LABEL[s.partner] })}
               </div>
               <div className="font-display text-lg tracking-[-0.01em]">{s.title}</div>
               <p className="text-sm mt-1" style={{ color: "var(--navy-2)" }}>{s.reason}</p>
@@ -123,11 +125,11 @@ export function PersonalisedSuggestions({
       </div>
 
       <p className="mt-3 text-xs" style={{ color: "var(--navy-3)" }}>
-        Disclosure: swapl earns a small referral when you book through these partners. Your swap acceptance is never tied to a paid booking.{" "}
+        {t("affiliate.disclosure")}{" "}
         <Link href="/account/interests" className="underline" style={{ color: "var(--pink)" }}>
-          Refine your interests
+          {t("affiliate.refineInterests")}
         </Link>{" "}
-        to sharpen the picks.
+        {t("affiliate.toSharpen")}
       </p>
     </section>
   );

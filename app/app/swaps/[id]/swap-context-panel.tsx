@@ -93,7 +93,7 @@ export async function SwapContextPanel({
                 {theirListing.neighbourhood} · {theirListing.city}
               </div>
               <div className="text-xs mt-0.5" style={{ color: "var(--navy-3)" }}>
-                {theirListing.sizeSqm}m² · sleeps {theirListing.sleeps}
+                {t(dict, "listing.sizeSleeps", { size: theirListing.sizeSqm, sleeps: theirListing.sleeps })}
               </div>
             </div>
             <StatusPill status={status} accent={status === "ACCEPTED"} label={statusLabel} />
@@ -152,9 +152,9 @@ function InsurancePanel({ policy, agreementId, dict }: { policy: PanelPolicy | n
   if (policy.status === "pending" && agreementId) {
     return (
       <>
-        <div className="font-display text-lg mb-2">Finalising your cover…</div>
+        <div className="font-display text-lg mb-2">{t(dict, "swaps.cover.finalisingTitle")}</div>
         <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>
-          Your swap is confirmed. We&rsquo;re issuing the policy with our underwriter — this usually takes a moment.
+          {t(dict, "swaps.cover.finalisingBody")}
         </p>
         <RetryCoverButton agreementId={agreementId} />
       </>

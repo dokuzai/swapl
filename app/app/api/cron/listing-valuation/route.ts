@@ -19,7 +19,7 @@ import { createLogger } from "@/lib/log";
 import { composeValuation } from "@/lib/keys/valuation";
 import { resolveLocationTiers, upsertLocationTier } from "@/lib/keys/location-tier";
 import { seedLocationTier, normalizeCityKey } from "@/lib/keys/value";
-import { amenityChips, toDTO } from "@/lib/listing-utils";
+import { amenityLabelsEn, toDTO } from "@/lib/listing-utils";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -86,7 +86,7 @@ export async function GET(req: Request) {
 
       const tier = existingTiers.get(normalizeCityKey(l.city)) ?? seedLocationTier(l.city);
       const review = reviewByHost.get(l.userId);
-      const amenities = amenityChips(toDTO(l));
+      const amenities = amenityLabelsEn(toDTO(l));
       const photoCount = parseJSON<string[]>(l.photos, []).length;
 
       const result = await composeValuation(

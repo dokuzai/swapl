@@ -232,10 +232,10 @@ export default async function AccountPage() {
             {/* ============ Coverage (only when policies exist) ============ */}
             {policies.length > 0 && (
               <section className="mb-12">
-                <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">Your coverage</h2>
+                <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">{t("account.coverage.title")}</h2>
                 <div className="surface-card surface-card--static p-6">
                   <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
-                    Every accepted swap is insured automatically. Your active and past policies live here.
+                    {t("account.coverage.body")}
                   </p>
                   <ul className="space-y-3">
                     {policies.map((p) => (

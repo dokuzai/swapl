@@ -2,11 +2,11 @@
 // Both are pure SVG so they nest cleanly inside link cards without breaking
 // the rounded-2xl card shadow.
 
-export function VerifiedBadge({ size = 22 }: { size?: number }) {
+export function VerifiedBadge({ size = 22, label = "Verified by swapl" }: { size?: number; label?: string }) {
   return (
     <span
-      title="Verified by swapl"
-      aria-label="Verified by swapl"
+      title={label}
+      aria-label={label}
       className="inline-grid place-items-center rounded-full"
       style={{ width: size, height: size, background: "var(--pink)", color: "#fff" }}
     >
@@ -36,13 +36,13 @@ export function OwnerVerifiedBadge({ label, title }: { label: string; title?: st
   );
 }
 
-export function FeaturedRibbon() {
+export function FeaturedRibbon({ label = "Featured" }: { label?: string }) {
   return (
     <span
       className="absolute top-3 right-3 font-mono text-[10px] tracking-[.08em] uppercase px-2.5 py-1 rounded-full"
       style={{ background: "var(--pink-light)", color: "var(--pink)" }}
     >
-      ★ Featured
+      ★ {label}
     </span>
   );
 }

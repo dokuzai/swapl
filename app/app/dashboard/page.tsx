@@ -10,7 +10,7 @@ import {
   type IdentityVerificationStatus,
 } from "@/components/account/identity-verification-card";
 import { toDTO, formatDateRange } from "@/lib/listing-utils";
-import { getDictionary } from "@/lib/i18n/server";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import {
   applyVerificationUpdate,
   diditEnabled,
@@ -31,7 +31,7 @@ export default async function DashboardPage({
   const { verification } = await searchParams;
   const backFromVerification = verification === "done";
 
-  const [user, listings, incoming, outgoing, agreements, dict] = await Promise.all([
+  const [user, listings, incoming, outgoing, agreements, dict, locale] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.userId } }),
     prisma.listing.findMany({
       where: { userId: session.userId },
@@ -51,6 +51,7 @@ export default async function DashboardPage({
       },
     }),
     getDictionary(),
+    getLocale(),
   ]);
 
   // Identity verification (Didit) card: only when configured server-side and
@@ -130,7 +131,7 @@ export default async function DashboardPage({
           {dict["dashboard.signedInAs"]} <span className="font-medium">{session.email}</span>
         </p>
         <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>
-          {dict["account.joined"]} {user?.createdAt && formatDateRange(user.createdAt.toISOString(), user.createdAt.toISOString()).split(" – ")[0]}
+          {dict["account.joined"]} {user?.createdAt && formatDateRange(user.createdAt.toISOString(), user.createdAt.toISOString(), locale).split(" – ")[0]}
         </p>
         <div className="flex gap-3">
           <Link href="/account" className="pill-ghost">{dict["dashboard.accountSettings"]}</Link>
