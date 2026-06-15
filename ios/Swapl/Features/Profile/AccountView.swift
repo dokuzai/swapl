@@ -39,6 +39,8 @@ struct AccountView: View {
                             .buttonStyle(.plain)
                         NavigationLink { SavedSearchesView() } label: { portedMenuRow("Saved searches", "magnifyingglass") }
                             .buttonStyle(.plain)
+                        NavigationLink { TravelWindowsView() } label: { portedMenuRow("Travel windows", "calendar.badge.clock") }
+                            .buttonStyle(.plain)
                         if let userId = auth.session?.id {
                             NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow("View public profile", "person") }
                                 .buttonStyle(.plain)
