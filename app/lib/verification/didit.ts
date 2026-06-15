@@ -243,9 +243,19 @@ export async function applyVerificationUpdate(
     // Mark this user's referral(s) as qualified and credit Keys to BOTH sides
     // exactly once (anti-farm: idempotent, capped). Best-effort — a failure
     // here must not block the verification from completing.
-    await qualifyReferralsForReferee(row.userId).catch((err) =>
-      console.error("[growth:qualify-referrals]", err),
-    );
+    // The result carries the Keys credited to this newly-verified referee and
+    // the referrer's name — the /api/verification/status endpoint reads the
+    // same reward back from persisted state to drive the post-verify toast.
+    await qualifyReferralsForReferee(row.userId)
+      .then((res) => {
+        if (res.refereeKeys > 0) {
+          console.info(
+            `[growth:qualify-referrals] credited ${res.refereeKeys} Keys to ${row.userId}` +
+              (res.referrerName ? ` (invited by ${res.referrerName})` : ""),
+          );
+        }
+      })
+      .catch((err) => console.error("[growth:qualify-referrals]", err));
   }
 
   return { id: row.id, userId: row.userId, status: next, changed: true };

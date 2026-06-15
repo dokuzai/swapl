@@ -337,6 +337,8 @@ export const tr: Partial<Record<DictKey, string>> = {
   "verifyId.expiredBody": "Son doğrulama oturumun tamamlanmadan süresi doldu.",
   "verifyId.approvedLabel": "Doğrulandı",
   "verifyId.approvedBody": "Doğrulandın — rozet artık profilinde görünüyor.",
+  "verifyId.referralToast": "Doğrulandı! Bir davetle katıldığın için {keys} Keys kazandın. 🔑",
+  "verifyId.referralToastNamed": "Doğrulandı! {name} adlı kişinin daveti sana {keys} Keys kazandırdı. 🔑",
   "verifyId.error": "Doğrulama başlatılamadı. Bir dakika sonra tekrar dene.",
 
   // ---- Browse chips: Experiences & Services ----

@@ -8,7 +8,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { REFERRAL_REWARD_KEYS, REFERRAL_REFEREE_KEYS, REFERRAL_DAILY_CAP } from "@/lib/growth/config";
 
-type UserRow = { id: string; keysBalance: number; referralCode: string | null };
+type UserRow = { id: string; keysBalance: number; referralCode: string | null; name?: string | null };
 type ReferralRow = {
   id: string;
   ownerId: string;
@@ -106,9 +106,14 @@ const h = vi.hoisted(() => {
         if (!r) return null;
         return pick(r, select);
       },
-      async findFirst({ where, select }: any) {
+      async findFirst({ where, select, include }: any) {
         const r = store.referrals.find((x) => matchWhere(x, where));
-        return r ? pick(r, select) : null;
+        if (!r) return null;
+        if (include?.owner) {
+          const owner = store.users.get(r.ownerId) ?? null;
+          return { ...r, owner: owner ? pick(owner, include.owner.select) : null };
+        }
+        return pick(r, select);
       },
       async findMany({ where, select }: any) {
         let rows = store.referrals.filter((x) => matchWhere(x, where));
@@ -209,10 +214,11 @@ import {
   linkRefereeByEmail,
   linkRefereeByInviteToken,
   qualifyReferralsForReferee,
+  refereeRewardFor,
 } from "@/lib/growth/referrals";
 
-function addUser(id: string, code: string | null = null): void {
-  h.store.users.set(id, { id, keysBalance: 0, referralCode: code });
+function addUser(id: string, code: string | null = null, name: string | null = null): void {
+  h.store.users.set(id, { id, keysBalance: 0, referralCode: code, name });
 }
 
 beforeEach(() => {
@@ -288,7 +294,12 @@ describe("qualifyReferralsForReferee (anti-farm gate)", () => {
     await attributeSignupByCode("newbie", "OWNERAA");
 
     const first = await qualifyReferralsForReferee("newbie");
-    expect(first).toEqual({ qualified: 1, rewarded: 1 });
+    expect(first).toEqual({
+      qualified: 1,
+      rewarded: 1,
+      refereeKeys: REFERRAL_REFEREE_KEYS,
+      referrerName: null,
+    });
 
     const ownerBonus = h.store.txns.filter((t) => t.kind === "referral_bonus");
     const refereeBonus = h.store.txns.filter((t) => t.kind === "invite_bonus");
@@ -302,8 +313,30 @@ describe("qualifyReferralsForReferee (anti-farm gate)", () => {
 
     // Replay: no further Keys, no status churn.
     const replay = await qualifyReferralsForReferee("newbie");
-    expect(replay).toEqual({ qualified: 0, rewarded: 0 });
+    expect(replay).toEqual({ qualified: 0, rewarded: 0, refereeKeys: 0, referrerName: null });
     expect(h.store.txns.filter((t) => t.kind === "referral_bonus")).toHaveLength(1);
+  });
+
+  it("returns the credited Keys and referrer name, readable back via refereeRewardFor", async () => {
+    addUser("owner", "OWNERAA", "Ada Lovelace");
+    addUser("newbie");
+    await attributeSignupByCode("newbie", "OWNERAA");
+
+    const res = await qualifyReferralsForReferee("newbie");
+    expect(res).toEqual({
+      qualified: 1,
+      rewarded: 1,
+      refereeKeys: REFERRAL_REFEREE_KEYS,
+      referrerName: "Ada Lovelace",
+    });
+
+    // The status endpoint reads the same reward back from persisted state.
+    expect(await refereeRewardFor("newbie")).toEqual({
+      keys: REFERRAL_REFEREE_KEYS,
+      referrerName: "Ada Lovelace",
+    });
+    // No referral → no reward to surface.
+    expect(await refereeRewardFor("owner")).toBeNull();
   });
 
   it("over the referrer's daily cap, marks qualified but pays no Keys", async () => {
@@ -320,7 +353,7 @@ describe("qualifyReferralsForReferee (anti-farm gate)", () => {
     await attributeSignupByCode("newbie", "OWNERAA");
 
     const res = await qualifyReferralsForReferee("newbie");
-    expect(res).toEqual({ qualified: 1, rewarded: 0 });
+    expect(res).toEqual({ qualified: 1, rewarded: 0, refereeKeys: 0, referrerName: null });
     const newRow = h.store.referrals.find((r) => r.refereeId === "newbie")!;
     expect(newRow.status).toBe("qualified"); // moved, but no payout
     expect(newRow.rewardedAt).toBeNull();
@@ -330,6 +363,11 @@ describe("qualifyReferralsForReferee (anti-farm gate)", () => {
 
   it("does nothing when the user has no pending referral", async () => {
     addUser("lonely");
-    expect(await qualifyReferralsForReferee("lonely")).toEqual({ qualified: 0, rewarded: 0 });
+    expect(await qualifyReferralsForReferee("lonely")).toEqual({
+      qualified: 0,
+      rewarded: 0,
+      refereeKeys: 0,
+      referrerName: null,
+    });
   });
 });

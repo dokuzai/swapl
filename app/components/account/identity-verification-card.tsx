@@ -8,17 +8,50 @@
 // sends the user back to /dashboard?verification=done, where the server has
 // already re-polled the status before rendering us.
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
 
 export type IdentityVerificationStatus = "none" | "pending" | "approved" | "declined" | "expired";
+
+type ReferralReward = { keys: number; referrerName: string | null };
 
 export function IdentityVerificationCard({ status }: { status: IdentityVerificationStatus }) {
   const t = useT();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  const [reward, setReward] = useState<ReferralReward | null>(null);
+
+  // Post-verify referral toast (DOK-157): when this user just got verified and
+  // a referral reward paid out, the status endpoint reports it. We show it once
+  // per mount. Best-effort — a failed/empty fetch simply renders no toast.
+  useEffect(() => {
+    if (status !== "approved") return;
+    let cancelled = false;
+    fetch("/api/verification/status")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (!cancelled && j?.referralReward?.keys > 0) setReward(j.referralReward);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
+
+  const rewardToast = reward ? (
+    <div
+      role="status"
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-full text-sm shadow-lg"
+      style={{ background: "var(--navy)", color: "var(--cream)" }}
+      onClick={() => setReward(null)}
+    >
+      {reward.referrerName
+        ? t("verifyId.referralToastNamed", { keys: reward.keys, name: reward.referrerName })
+        : t("verifyId.referralToast", { keys: reward.keys })}
+    </div>
+  ) : null;
 
   function begin() {
     setError(null);
@@ -48,14 +81,17 @@ export function IdentityVerificationCard({ status }: { status: IdentityVerificat
 
   if (status === "approved") {
     return (
-      <section className="surface-card p-6 mb-12">
-        <div className="flex items-center gap-3">
-          {pill(t("verifyId.approvedLabel"), "var(--pink)", "#fff")}
-          <span className="text-sm" style={{ color: "var(--navy-2)" }}>
-            {t("verifyId.approvedBody")}
-          </span>
-        </div>
-      </section>
+      <>
+        {rewardToast}
+        <section className="surface-card p-6 mb-12">
+          <div className="flex items-center gap-3">
+            {pill(t("verifyId.approvedLabel"), "var(--pink)", "#fff")}
+            <span className="text-sm" style={{ color: "var(--navy-2)" }}>
+              {t("verifyId.approvedBody")}
+            </span>
+          </div>
+        </section>
+      </>
     );
   }
 

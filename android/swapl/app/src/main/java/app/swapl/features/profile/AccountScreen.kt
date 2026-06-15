@@ -219,7 +219,10 @@ fun AccountScreen(
         }
 
         // Didit identity verification — env-gated, hidden once verified.
-        IdentityVerificationCard()
+        // A paid referral reward surfaces as a one-time snackbar.
+        IdentityVerificationCard(
+            onReward = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } },
+        )
 
         overview.me?.subscription?.let { sub ->
             SurfaceCard {

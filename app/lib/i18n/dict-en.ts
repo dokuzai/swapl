@@ -218,6 +218,8 @@ export const en = {
   "verifyId.expiredBody": "Your last verification session expired before it finished.",
   "verifyId.approvedLabel": "Verified",
   "verifyId.approvedBody": "You're verified — the badge now shows on your profile.",
+  "verifyId.referralToast": "Verified! You earned {keys} Keys for joining via a referral. 🔑",
+  "verifyId.referralToastNamed": "Verified! {name}'s invite just earned you {keys} Keys. 🔑",
   "verifyId.error": "Couldn't start verification. Try again in a minute.",
 
   // ---- Pricing ----

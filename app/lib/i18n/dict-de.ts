@@ -322,6 +322,8 @@ export const de: Partial<Record<DictKey, string>> = {
   "verifyId.expiredBody": "Deine letzte Verifizierungssitzung ist abgelaufen, bevor sie fertig war.",
   "verifyId.approvedLabel": "Verifiziert",
   "verifyId.approvedBody": "Du bist verifiziert — das Badge erscheint jetzt auf deinem Profil.",
+  "verifyId.referralToast": "Verifiziert! Du hast {keys} Keys erhalten, weil du über eine Empfehlung beigetreten bist. 🔑",
+  "verifyId.referralToastNamed": "Verifiziert! Die Einladung von {name} hat dir gerade {keys} Keys eingebracht. 🔑",
   "verifyId.error": "Verifizierung konnte nicht gestartet werden. Versuch es in einer Minute noch einmal.",
 
   // ---- Browse chips: Experiences & Services ----

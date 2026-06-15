@@ -13,6 +13,17 @@ struct VerificationStatus: Decodable, Sendable {
     let verified: Bool
     let verifiedAt: String?
     let completedAt: String?
+    /// Present only when this now-verified user was referred and the two-sided
+    /// referral Keys reward paid out — drives the post-verify "you earned Keys"
+    /// toast. Derived from persisted state, so it's stable across polls.
+    let referralReward: ReferralReward?
+}
+
+// Referee-side reward surfaced by /api/verification/status after the invitee
+// verifies and the referral qualifies.
+struct ReferralReward: Decodable, Sendable {
+    let keys: Int
+    let referrerName: String?
 }
 
 // POST /api/verification/session — `url` is the hosted Didit page (nil once

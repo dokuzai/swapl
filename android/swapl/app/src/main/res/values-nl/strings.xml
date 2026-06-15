@@ -42,4 +42,6 @@
     <string name="auth_otp_send">Code versturen</string>
     <string name="auth_otp_send_busy">Versturen…</string>
     <string name="auth_otp_back">Terug naar inloggen met wachtwoord</string>
+    <string name="verify_referral_toast">Geverifieerd! Je hebt %1$d Keys verdiend omdat je via een uitnodiging bent gekomen. 🔑</string>
+    <string name="verify_referral_toast_named">Geverifieerd! De uitnodiging van %1$s leverde je zojuist %2$d Keys op. 🔑</string>
 </resources>

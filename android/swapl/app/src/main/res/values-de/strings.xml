@@ -42,4 +42,6 @@
     <string name="auth_otp_send">Code senden</string>
     <string name="auth_otp_send_busy">Senden…</string>
     <string name="auth_otp_back">Zurück zur Passwort-Anmeldung</string>
+    <string name="verify_referral_toast">Verifiziert! Du hast %1$d Keys erhalten, weil du über eine Empfehlung beigetreten bist. 🔑</string>
+    <string name="verify_referral_toast_named">Verifiziert! Die Einladung von %1$s hat dir gerade %2$d Keys eingebracht. 🔑</string>
 </resources>

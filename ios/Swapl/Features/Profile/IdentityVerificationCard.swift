@@ -16,6 +16,7 @@ struct IdentityVerificationCard: View {
     @State private var busy = false
     @State private var error: String?
     @State private var webSession = HostedVerificationSession()
+    @State private var rewardToast: ReferralReward?
 
     var body: some View {
         Group {
@@ -24,6 +25,27 @@ struct IdentityVerificationCard: View {
             }
         }
         .task { await loadStatus() }
+        .overlay(alignment: .bottom) {
+            if let reward = rewardToast {
+                Text(rewardMessage(reward))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.card)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 12)
+                    .background(AirbnbPalette.text, in: Capsule())
+                    .padding(.bottom, 24)
+                    .shadow(radius: 12, y: 4)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .onTapGesture { withAnimation { rewardToast = nil } }
+            }
+        }
+    }
+
+    private func rewardMessage(_ reward: ReferralReward) -> String {
+        if let name = reward.referrerName {
+            return "Verified! \(name)'s invite just earned you \(reward.keys) Keys. 🔑"
+        }
+        return "Verified! You earned \(reward.keys) Keys for joining via a referral. 🔑"
     }
 
     private func card(status: VerificationStatus) -> some View {
@@ -97,7 +119,17 @@ struct IdentityVerificationCard: View {
     }
 
     private func loadStatus() async {
-        status = try? await VerificationRepository.shared.status()
+        let fresh = try? await VerificationRepository.shared.status()
+        status = fresh
+        // Post-verify referral toast: show once when the status carries a paid
+        // reward, then auto-dismiss. Best-effort; nil reward shows nothing.
+        if let reward = fresh?.referralReward, reward.keys > 0, rewardToast == nil {
+            withAnimation { rewardToast = reward }
+            Task {
+                try? await Task.sleep(for: .seconds(5))
+                withAnimation { rewardToast = nil }
+            }
+        }
     }
 
     private func startVerification() {

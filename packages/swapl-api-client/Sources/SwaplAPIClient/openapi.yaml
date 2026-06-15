@@ -1433,6 +1433,23 @@ components:
         verified: { type: boolean }
         verifiedAt: { type: string, format: date-time, nullable: true }
         completedAt: { type: string, format: date-time, nullable: true }
+        referralReward:
+          nullable: true
+          description: >-
+            Present (non-null) only when this now-verified user was referred and
+            the two-sided referral Keys reward paid out. Drives the post-verify
+            "you earned Keys" toast. Derived from persisted state, so it is
+            idempotent across status polls.
+          type: object
+          required: [keys, referrerName]
+          properties:
+            keys:
+              type: integer
+              description: Keys credited to this user (the referee) for the referral.
+            referrerName:
+              type: string
+              nullable: true
+              description: Display name of the referrer, or null if unknown.
 
     DiscoverService:
       type: object

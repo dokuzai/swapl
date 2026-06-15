@@ -42,4 +42,6 @@
     <string name="auth_otp_send">Envoyer le code</string>
     <string name="auth_otp_send_busy">Envoi…</string>
     <string name="auth_otp_back">Retour à la connexion par mot de passe</string>
+    <string name="verify_referral_toast">Vérifié ! Vous avez gagné %1$d Keys en vous inscrivant via un parrainage. 🔑</string>
+    <string name="verify_referral_toast_named">Vérifié ! L’invitation de %1$s vient de vous rapporter %2$d Keys. 🔑</string>
 </resources>

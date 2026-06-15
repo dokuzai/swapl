@@ -42,4 +42,6 @@
     <string name="auth_otp_send">Kod gönder</string>
     <string name="auth_otp_send_busy">Gönderiliyor…</string>
     <string name="auth_otp_back">Şifreyle girişe dön</string>
+    <string name="verify_referral_toast">Doğrulandı! Bir davetle katıldığın için %1$d Keys kazandın. 🔑</string>
+    <string name="verify_referral_toast_named">Doğrulandı! %1$s adlı kişinin daveti sana %2$d Keys kazandırdı. 🔑</string>
 </resources>

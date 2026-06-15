@@ -21,6 +21,20 @@ data class VerificationStatus(
     val verified: Boolean = false,
     val verifiedAt: String? = null,
     val completedAt: String? = null,
+    /**
+     * Present only when this now-verified user was referred and the two-sided
+     * referral Keys reward paid out — drives the post-verify "you earned Keys"
+     * toast. Derived from persisted state, stable across polls.
+     */
+    val referralReward: ReferralReward? = null,
+)
+
+// Referee-side reward surfaced by /api/verification/status after the invitee
+// verifies and the referral qualifies.
+@kotlinx.serialization.Serializable
+data class ReferralReward(
+    val keys: Int = 0,
+    val referrerName: String? = null,
 )
 
 // POST /api/verification/session — `url` is the hosted Didit page (null once

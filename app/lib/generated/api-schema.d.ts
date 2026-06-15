@@ -7543,6 +7543,13 @@ export interface components {
             verifiedAt?: string | null;
             /** Format: date-time */
             completedAt?: string | null;
+            /** @description Present (non-null) only when this now-verified user was referred and the two-sided referral Keys reward paid out. Drives the post-verify "you earned Keys" toast. Derived from persisted state, so it is idempotent across status polls. */
+            referralReward?: {
+                /** @description Keys credited to this user (the referee) for the referral. */
+                keys: number;
+                /** @description Display name of the referrer, or null if unknown. */
+                referrerName: string | null;
+            } | null;
         };
         /** @description One travel-service entry: either a configured affiliate partner (url set, no price) or an active concierge add-on (url null, real catalogue price). Prices are never invented for affiliate items. */
         DiscoverService: {

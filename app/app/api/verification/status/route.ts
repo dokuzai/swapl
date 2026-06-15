@@ -15,6 +15,7 @@ import {
   diditConfig,
   getSessionStatus,
 } from "@/lib/verification/didit";
+import { refereeRewardFor } from "@/lib/growth/referrals";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -63,11 +64,27 @@ export async function GET(req: Request) {
     }
   }
 
+  // Growth (DOK-157): if this now-verified user was referred and the two-sided
+  // Keys reward paid out, surface the credited amount + referrer so clients can
+  // show a one-time "you earned Keys" toast. Derived from persisted Referral
+  // state, so it's correct whether the qualify hook ran via webhook or polling.
+  // Best-effort: never let a lookup failure break the status response.
+  let referralReward: { keys: number; referrerName: string | null } | null = null;
+  if (status === "approved") {
+    try {
+      const reward = await refereeRewardFor(session.userId);
+      if (reward && reward.keys > 0) referralReward = reward;
+    } catch (err) {
+      console.error("[verification:status] referral reward lookup failed", err);
+    }
+  }
+
   return NextResponse.json({
     enabled,
     status,
     verified: user.verified || status === "approved",
     verifiedAt: verifiedAt ? verifiedAt.toISOString() : null,
     completedAt: completedAt ? completedAt.toISOString() : null,
+    referralReward,
   });
 }

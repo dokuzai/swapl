@@ -338,6 +338,8 @@ export const it: Partial<Record<DictKey, string>> = {
   "verifyId.expiredBody": "L'ultima sessione di verifica è scaduta prima di concludersi.",
   "verifyId.approvedLabel": "Verificato",
   "verifyId.approvedBody": "Sei verificato — il badge ora compare sul tuo profilo.",
+  "verifyId.referralToast": "Verificato! Hai guadagnato {keys} Keys per esserti iscritto tramite un invito. 🔑",
+  "verifyId.referralToastNamed": "Verificato! L'invito di {name} ti ha appena fatto guadagnare {keys} Keys. 🔑",
   "verifyId.error": "Impossibile avviare la verifica. Riprova tra un minuto.",
 
   // ---- Browse chips: Experiences & Services ----

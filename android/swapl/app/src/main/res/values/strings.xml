@@ -51,4 +51,6 @@
     <string name="auth_otp_send">Send code</string>
     <string name="auth_otp_send_busy">Sending…</string>
     <string name="auth_otp_back">Back to password sign-in</string>
+    <string name="verify_referral_toast">Verified! You earned %1$d Keys for joining via a referral. 🔑</string>
+    <string name="verify_referral_toast_named">Verified! %1$s’s invite just earned you %2$d Keys. 🔑</string>
 </resources>

@@ -337,6 +337,8 @@ export const nl: Partial<Record<DictKey, string>> = {
   "verifyId.expiredBody": "Je laatste verificatiesessie is verlopen voordat hij klaar was.",
   "verifyId.approvedLabel": "Geverifieerd",
   "verifyId.approvedBody": "Je bent geverifieerd — de badge staat nu op je profiel.",
+  "verifyId.referralToast": "Geverifieerd! Je hebt {keys} Keys verdiend omdat je via een uitnodiging bent gekomen. 🔑",
+  "verifyId.referralToastNamed": "Geverifieerd! De uitnodiging van {name} leverde je zojuist {keys} Keys op. 🔑",
   "verifyId.error": "Kon de verificatie niet starten. Probeer het over een minuut opnieuw.",
 
   // ---- Browse chips: Experiences & Services ----

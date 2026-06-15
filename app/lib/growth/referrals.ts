@@ -211,7 +211,33 @@ const MONTH_MS = 30 * DAY_MS;
 export type QualifyResult = {
   qualified: number; // referrals moved pending -> qualified
   rewarded: number; // referrals that also paid out Keys (within caps)
+  // Keys credited to the REFEREE (the newly-verified user) across the
+  // referrals that paid out — drives the post-verify "you earned Keys" toast.
+  // 0 when nothing qualified or every match was capped.
+  refereeKeys: number;
+  // Display name (or null) of the referrer who invited them, for the toast
+  // copy ("invited by …"). The first rewarded referral wins.
+  referrerName: string | null;
 };
+
+// Read-back of the referee-side reward for a now-verified user, derived purely
+// from persisted state (Referral.status === "rewarded"). Idempotent and safe to
+// call on every status poll, so the toast survives the webhook path (where the
+// qualify hook ran in a different request than the client's status fetch).
+export type RefereeReward = {
+  keys: number;
+  referrerName: string | null;
+};
+
+export async function refereeRewardFor(refereeUserId: string): Promise<RefereeReward | null> {
+  const rewarded = await prisma.referral.findFirst({
+    where: { refereeId: refereeUserId, status: "rewarded" },
+    orderBy: { rewardedAt: "desc" },
+    include: { owner: { select: { name: true } } },
+  });
+  if (!rewarded) return null;
+  return { keys: REFERRAL_REFEREE_KEYS, referrerName: rewarded.owner?.name ?? null };
+}
 
 /**
  * THE QUALIFICATION HOOK. Called when `refereeUserId` performs the qualifying
@@ -233,10 +259,13 @@ export async function qualifyReferralsForReferee(
   const pendings = await prisma.referral.findMany({
     where: { refereeId: refereeUserId, status: "pending" },
   });
-  if (pendings.length === 0) return { qualified: 0, rewarded: 0 };
+  if (pendings.length === 0)
+    return { qualified: 0, rewarded: 0, refereeKeys: 0, referrerName: null };
 
   const now = Date.now();
   let qualified = 0;
+  let refereeKeys = 0;
+  let referrerName: string | null = null;
   let rewarded = 0;
 
   for (const ref of pendings) {
@@ -245,7 +274,8 @@ export async function qualifyReferralsForReferee(
       // Re-read inside the tx and guard on status so concurrent calls can't
       // double-process the same referral.
       const fresh = await tx.referral.findUnique({ where: { id: ref.id } });
-      if (!fresh || fresh.status !== "pending") return { q: false, r: false };
+      if (!fresh || fresh.status !== "pending")
+        return { q: false, r: false, ownerName: null as string | null };
 
       const qualifiedAt = new Date();
 
@@ -281,7 +311,11 @@ export async function qualifyReferralsForReferee(
           where: { id: fresh.id },
           data: { status: "rewarded", qualifiedAt, rewardedAt: qualifiedAt },
         });
-        return { q: true, r: true };
+        const owner = await tx.user.findUnique({
+          where: { id: fresh.ownerId },
+          select: { name: true },
+        });
+        return { q: true, r: true, ownerName: (owner?.name ?? null) as string | null };
       }
 
       // Over cap: qualified (waitlist/leaderboard move) but no Keys.
@@ -289,12 +323,16 @@ export async function qualifyReferralsForReferee(
         where: { id: fresh.id },
         data: { status: "qualified", qualifiedAt },
       });
-      return { q: true, r: false };
+      return { q: true, r: false, ownerName: null as string | null };
     });
 
     if (result.q) qualified++;
-    if (result.r) rewarded++;
+    if (result.r) {
+      rewarded++;
+      refereeKeys += REFERRAL_REFEREE_KEYS;
+      if (referrerName === null) referrerName = result.ownerName;
+    }
   }
 
-  return { qualified, rewarded };
+  return { qualified, rewarded, refereeKeys, referrerName };
 }

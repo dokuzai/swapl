@@ -25,6 +25,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
+import androidx.compose.ui.res.stringResource
+import app.swapl.R
+import app.swapl.core.repository.ReferralReward
 import app.swapl.core.repository.VerificationRepository
 import app.swapl.core.repository.VerificationStatus
 import app.swapl.design.components.SurfaceCard
@@ -52,14 +55,28 @@ class IdentityVerificationViewModel @Inject constructor(
     var error by mutableStateOf<String?>(null)
         private set
 
+    // Post-verify referral reward to surface once via a snackbar. Cleared by
+    // the UI after it's shown so it doesn't re-fire on recomposition.
+    var pendingReward by mutableStateOf<ReferralReward?>(null)
+        private set
+
     // Only re-poll on resume when we actually sent the user out to Didit —
     // otherwise every screen entry would fetch twice.
     private var awaitingReturn = false
 
     fun load() {
         viewModelScope.launch {
-            runCatching { status = repo.status() }
+            runCatching {
+                val fresh = repo.status()
+                status = fresh
+                val reward = fresh.referralReward
+                if (reward != null && reward.keys > 0) pendingReward = reward
+            }
         }
+    }
+
+    fun consumeReward() {
+        pendingReward = null
     }
 
     fun refreshAfterReturn() {
@@ -101,12 +118,28 @@ class IdentityVerificationViewModel @Inject constructor(
 }
 
 @Composable
-fun IdentityVerificationCard(vm: IdentityVerificationViewModel = hiltViewModel()) {
+fun IdentityVerificationCard(
+    vm: IdentityVerificationViewModel = hiltViewModel(),
+    onReward: (String) -> Unit = {},
+) {
     val context = LocalContext.current
     LaunchedEffect(Unit) { vm.load() }
     LifecycleResumeEffect(Unit) {
         vm.refreshAfterReturn()
         onPauseOrDispose { }
+    }
+
+    // Post-verify referral toast: fire once when the status carries a paid
+    // reward, even though the card itself hides on `verified`.
+    val reward = vm.pendingReward
+    val rewardNamed = stringResource(R.string.verify_referral_toast_named)
+    val rewardPlain = stringResource(R.string.verify_referral_toast)
+    LaunchedEffect(reward) {
+        val r = reward ?: return@LaunchedEffect
+        val msg = r.referrerName?.let { name -> rewardNamed.format(name, r.keys) }
+            ?: rewardPlain.format(r.keys)
+        onReward(msg)
+        vm.consumeReward()
     }
 
     val status = vm.status ?: return
