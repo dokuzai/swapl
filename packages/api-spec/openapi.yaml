@@ -4357,3 +4357,66 @@ paths:
                   message: { type: string }
         '404': { description: Listing not found }
         '429': { description: Rate limited }
+
+  /api/referrals/notifications:
+    get:
+      tags: [referrals]
+      summary: My unseen referral credits (referrer real-time toast)
+      description: >-
+        The caller's rewarded-but-unseen referral credits. The already-open app
+        polls this so the REFERRER learns the moment an invitee verifies
+        ("NAME just verified — you earned Keys!") instead of refreshing to find
+        the +Keys. Derived from persisted Referral state; correct whether the
+        qualify hook ran via webhook or polling. Acknowledge with POST so each
+        credit toasts exactly once.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [notifications]
+                properties:
+                  notifications:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, keys]
+                      properties:
+                        id: { type: string }
+                        refereeName: { type: string, nullable: true }
+                        keys: { type: integer }
+                        rewardedAt: { type: string, format: date-time, nullable: true }
+        '401': { description: Unauthenticated }
+    post:
+      tags: [referrals]
+      summary: Acknowledge referral credits the client has shown
+      description: >-
+        Mark the given referral credits as seen by their owner (the caller), so
+        they don't toast again. Scoped to the caller and idempotent.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, seen]
+                properties:
+                  ok: { type: boolean }
+                  seen: { type: integer }
+        '401': { description: Unauthenticated }

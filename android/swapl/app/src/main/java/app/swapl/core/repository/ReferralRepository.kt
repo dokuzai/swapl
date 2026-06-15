@@ -1,8 +1,12 @@
 package app.swapl.core.repository
 
+import app.swapl.core.model.AckReferrerNotificationsRequest
+import app.swapl.core.model.AckReferrerNotificationsResponse
 import app.swapl.core.model.InviteToStayRequest
 import app.swapl.core.model.InviteToStayResponse
 import app.swapl.core.model.ReferralDashboard
+import app.swapl.core.model.ReferrerNotification
+import app.swapl.core.model.ReferrerNotificationsResponse
 import app.swapl.core.network.ApiClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -32,4 +36,19 @@ class ReferralRepository @Inject constructor(private val api: ApiClient) {
             contentType(ContentType.Application.Json)
             setBody(InviteToStayRequest(listingId = listingId, email = email))
         }.body()
+
+    // GET /api/referrals/notifications — the caller's rewarded-but-unseen
+    // referral credits, for the real-time referrer toast (DOK-157).
+    suspend fun notifications(): List<ReferrerNotification> =
+        api.client.get("${api.baseUrl}/api/referrals/notifications")
+            .body<ReferrerNotificationsResponse>()
+            .notifications
+
+    // POST /api/referrals/notifications — ack credits already shown so each
+    // toasts exactly once. Best-effort; the returned count is informational.
+    suspend fun ackNotifications(ids: List<String>): Int =
+        api.client.post("${api.baseUrl}/api/referrals/notifications") {
+            contentType(ContentType.Application.Json)
+            setBody(AckReferrerNotificationsRequest(ids = ids))
+        }.body<AckReferrerNotificationsResponse>().seen
 }

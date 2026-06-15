@@ -44,4 +44,6 @@
     <string name="auth_otp_back">Zurück zur Passwort-Anmeldung</string>
     <string name="verify_referral_toast">Verifiziert! Du hast %1$d Keys erhalten, weil du über eine Empfehlung beigetreten bist. 🔑</string>
     <string name="verify_referral_toast_named">Verifiziert! Die Einladung von %1$s hat dir gerade %2$d Keys eingebracht. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s hat sich gerade verifiziert — du hast %2$d Keys verdient! 🔑</string>
+    <string name="referral_referrer_toast">Jemand, den du eingeladen hast, hat sich gerade verifiziert — du hast %1$d Keys verdient! 🔑</string>
 </resources>

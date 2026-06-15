@@ -44,4 +44,6 @@
     <string name="auth_otp_back">Retour à la connexion par mot de passe</string>
     <string name="verify_referral_toast">Vérifié ! Vous avez gagné %1$d Keys en vous inscrivant via un parrainage. 🔑</string>
     <string name="verify_referral_toast_named">Vérifié ! L’invitation de %1$s vient de vous rapporter %2$d Keys. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s vient de se vérifier — vous avez gagné %2$d Keys ! 🔑</string>
+    <string name="referral_referrer_toast">Une personne que vous avez invitée vient de se vérifier — vous avez gagné %1$d Keys ! 🔑</string>
 </resources>

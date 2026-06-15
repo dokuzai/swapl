@@ -53,7 +53,8 @@ export type PushKind =
   | "keysGiftReceived"
   | "keysStayRequested"
   | "keysStayConfirmed"
-  | "keysStayDeclined";
+  | "keysStayDeclined"
+  | "referralRewarded";
 
 export async function sendPush(userId: string, payload: PushPayload): Promise<void> {
   const devices = await prisma.device.findMany({ where: { userId } });
@@ -344,6 +345,17 @@ export const pushTemplates = {
       title: "Your stay request was declined",
       body: "Your Keys have been returned to your wallet. Tap to browse other homes.",
       data: { kind: "keysStayDeclined", stayId, deepLink: `swapl://keys/stays/${stayId}` },
+    };
+  },
+  // ---- Growth / referrals (DOK-157) ----
+  // Fired at the referrer when an invitee verifies and the reward pays out —
+  // the dopamine hit that the manual-refresh gap was killing.
+  referralRewarded(refereeName: string | null, keys: number): PushPayload {
+    const who = refereeName ?? "Someone you invited";
+    return {
+      title: `${who} just verified 🔑`,
+      body: `You earned ${keys} Keys. Tap to see your wallet.`,
+      data: { kind: "referralRewarded", deepLink: "swapl://keys" },
     };
   },
 };

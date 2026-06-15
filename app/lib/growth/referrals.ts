@@ -239,6 +239,69 @@ export async function refereeRewardFor(refereeUserId: string): Promise<RefereeRe
   return { keys: REFERRAL_REFEREE_KEYS, referrerName: rewarded.owner?.name ?? null };
 }
 
+// ---- Referrer-side real-time notification (DOK-157) ----
+// Closes the dopamine loop: when an invitee verifies and the two-sided reward
+// pays out, the REFERRER must learn immediately ("NAME just verified — you
+// earned 20 Keys!") instead of refreshing to discover the +20. We persist the
+// fact on the Referral (ownerNotifiedAt) and expose an unseen-credits read that
+// a polling endpoint (on the already-open app) drains.
+
+export type ReferrerNotification = {
+  // Referral id — the client echoes it back to mark the credit as seen.
+  id: string;
+  // Display name of the invitee who just verified (the hype hook). Null when
+  // the referee has no name set.
+  refereeName: string | null;
+  // Keys credited to the referrer for this referral.
+  keys: number;
+  // When the reward paid out (ISO 8601), for ordering / "just now" copy.
+  rewardedAt: string | null;
+};
+
+/**
+ * The referrer's rewarded-but-unseen referral credits: rows that paid out Keys
+ * to `ownerUserId` and haven't been acknowledged (ownerNotifiedAt is null).
+ * Read-only — the caller stamps them seen via markReferrerNotificationsSeen
+ * once delivered, so each credit toasts exactly once. Newest first.
+ */
+export async function pendingReferrerNotifications(
+  ownerUserId: string,
+): Promise<ReferrerNotification[]> {
+  const rows = await prisma.referral.findMany({
+    where: { ownerId: ownerUserId, status: "rewarded", ownerNotifiedAt: null },
+    orderBy: { rewardedAt: "desc" },
+    include: { referee: { select: { name: true } } },
+  });
+  return rows.map((r) => ({
+    id: r.id,
+    refereeName: r.referee?.name ?? null,
+    keys: REFERRAL_REWARD_KEYS,
+    rewardedAt: r.rewardedAt ? r.rewardedAt.toISOString() : null,
+  }));
+}
+
+/**
+ * Mark the given referrals as seen by their owner (stamps ownerNotifiedAt),
+ * scoped to `ownerUserId` so a client can only acknowledge its own credits.
+ * Idempotent: only still-unseen rows are touched. Returns the count stamped.
+ */
+export async function markReferrerNotificationsSeen(
+  ownerUserId: string,
+  referralIds: string[],
+): Promise<number> {
+  if (referralIds.length === 0) return 0;
+  const res = await prisma.referral.updateMany({
+    where: {
+      id: { in: referralIds },
+      ownerId: ownerUserId,
+      status: "rewarded",
+      ownerNotifiedAt: null,
+    },
+    data: { ownerNotifiedAt: new Date() },
+  });
+  return res.count;
+}
+
 /**
  * THE QUALIFICATION HOOK. Called when `refereeUserId` performs the qualifying
  * action (identity verification). Marks every pending Referral where they are
@@ -267,6 +330,8 @@ export async function qualifyReferralsForReferee(
   let refereeKeys = 0;
   let referrerName: string | null = null;
   let rewarded = 0;
+  // Owners who got a payout this run — pushed (best-effort) after the loop.
+  const rewardedOwnerIds: string[] = [];
 
   for (const ref of pendings) {
     // Per-referral atomic transition + two-sided payout.
@@ -275,7 +340,7 @@ export async function qualifyReferralsForReferee(
       // double-process the same referral.
       const fresh = await tx.referral.findUnique({ where: { id: ref.id } });
       if (!fresh || fresh.status !== "pending")
-        return { q: false, r: false, ownerName: null as string | null };
+        return { q: false, r: false, ownerName: null as string | null, ownerId: null as string | null };
 
       const qualifiedAt = new Date();
 
@@ -315,7 +380,12 @@ export async function qualifyReferralsForReferee(
           where: { id: fresh.ownerId },
           select: { name: true },
         });
-        return { q: true, r: true, ownerName: (owner?.name ?? null) as string | null };
+        return {
+          q: true,
+          r: true,
+          ownerName: (owner?.name ?? null) as string | null,
+          ownerId: fresh.ownerId as string | null,
+        };
       }
 
       // Over cap: qualified (waitlist/leaderboard move) but no Keys.
@@ -323,7 +393,7 @@ export async function qualifyReferralsForReferee(
         where: { id: fresh.id },
         data: { status: "qualified", qualifiedAt },
       });
-      return { q: true, r: false, ownerName: null as string | null };
+      return { q: true, r: false, ownerName: null as string | null, ownerId: null as string | null };
     });
 
     if (result.q) qualified++;
@@ -331,8 +401,42 @@ export async function qualifyReferralsForReferee(
       rewarded++;
       refereeKeys += REFERRAL_REFEREE_KEYS;
       if (referrerName === null) referrerName = result.ownerName;
+      if (result.ownerId) rewardedOwnerIds.push(result.ownerId);
     }
   }
 
+  // Phase-2 real-time hit (DOK-157): push the referrer the moment their invitee
+  // verifies. Strictly best-effort and fire-and-forget — must never block or
+  // fail the verification flow. The persisted unseen-credit (ownerNotifiedAt
+  // null) remains the source of truth for the polling toast, so push is purely
+  // additive: clients that aren't open still catch up on next poll.
+  if (rewardedOwnerIds.length > 0) {
+    notifyReferrersRewarded(refereeUserId, rewardedOwnerIds).catch((err) =>
+      console.error("[growth:referrer-push]", err),
+    );
+  }
+
   return { qualified, rewarded, refereeKeys, referrerName };
+}
+
+// Best-effort FCM/APNs push to each rewarded referrer. Resolves the invitee's
+// display name once for the hype copy. Lazy-imports the push adapter so the
+// growth lib stays decoupled from push wiring and test mocks aren't forced to
+// stub it. Swallows all errors — callers treat this as fire-and-forget.
+async function notifyReferrersRewarded(
+  refereeUserId: string,
+  ownerIds: string[],
+): Promise<void> {
+  const [{ sendPush, pushTemplates }, referee] = await Promise.all([
+    import("@/lib/push"),
+    prisma.user.findUnique({ where: { id: refereeUserId }, select: { name: true } }),
+  ]);
+  const refereeName = referee?.name ?? null;
+  await Promise.all(
+    ownerIds.map((ownerId) =>
+      sendPush(ownerId, pushTemplates.referralRewarded(refereeName, REFERRAL_REWARD_KEYS)).catch(
+        (err) => console.error("[growth:referrer-push]", err),
+      ),
+    ),
+  );
 }

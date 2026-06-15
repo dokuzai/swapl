@@ -44,4 +44,6 @@
     <string name="auth_otp_back">Terug naar inloggen met wachtwoord</string>
     <string name="verify_referral_toast">Geverifieerd! Je hebt %1$d Keys verdiend omdat je via een uitnodiging bent gekomen. 🔑</string>
     <string name="verify_referral_toast_named">Geverifieerd! De uitnodiging van %1$s leverde je zojuist %2$d Keys op. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s is zojuist geverifieerd — je verdiende %2$d Keys! 🔑</string>
+    <string name="referral_referrer_toast">Iemand die je hebt uitgenodigd is zojuist geverifieerd — je verdiende %1$d Keys! 🔑</string>
 </resources>

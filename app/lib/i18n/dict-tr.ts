@@ -880,6 +880,8 @@ export const tr: Partial<Record<DictKey, string>> = {
   "trips.empty": "Henüz gezin yok. Bir takas öner ya da Keys'lerinle bir konaklama ayırt.",
   "trips.empty.browse": "Ev bul",
   // ---- Davet et ve kazan (DOK-157) ----
+  "referral.referrerToastNamed": "{name} az önce doğrulandı — {keys} Keys kazandın! 🔑",
+  "referral.referrerToast": "Davet ettiğin biri az önce doğrulandı — {keys} Keys kazandın! 🔑",
   "invite.menu": "Davet et ve kazan",
   "invite.kicker": "Arkadaş getir, listede yüksel",
   "invite.title": "Davet et ve kazan",

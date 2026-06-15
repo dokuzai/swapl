@@ -92,6 +92,7 @@
 		DC939F3220AD8395C001D00D /* TripCockpitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827286DDE5C491F6477A36FC /* TripCockpitView.swift */; };
 		DDADDE58A172128569BFAC19 /* SwaplFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */; };
 		E196DAF965703EC0BE8EA230 /* IdentityVerificationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD6F3FA2F047154499EE042 /* IdentityVerificationCard.swift */; };
+		E1ED619555C03A5F0C2325FB /* ReferrerNotificationsToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1382129E24A1E08EAD67A84A /* ReferrerNotificationsToast.swift */; };
 		E2FB54694BF2D5D9EE68F9C9 /* ServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C443E61DB79308D24B4ECB /* ServicesView.swift */; };
 		E5FF16C039C517CC58D7C964 /* MetricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA825882F23D182F31FF514 /* MetricsView.swift */; };
 		EBDDB31A079744568129222E /* HomeGuideEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDF6E34911C3ABCC1788F96 /* HomeGuideEditorView.swift */; };
@@ -124,6 +125,7 @@
 		10FAC49377D43C349AE9CEC3 /* AirbnbStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirbnbStyle.swift; sourceTree = "<group>"; };
 		12CFB58AC5BAA13BBCFEAEC8 /* Fraunces-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fraunces-Variable.ttf"; sourceTree = "<group>"; };
 		1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseListView.swift; sourceTree = "<group>"; };
+		1382129E24A1E08EAD67A84A /* ReferrerNotificationsToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferrerNotificationsToast.swift; sourceTree = "<group>"; };
 		13E87AFF2208189D059454DA /* PublicProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicProfileView.swift; sourceTree = "<group>"; };
 		166B9E5DAD1EE69ADA66080B /* InterestsEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsEditorView.swift; sourceTree = "<group>"; };
 		1682FAF612F802B6DC0C9140 /* ReferralRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralRepository.swift; sourceTree = "<group>"; };
@@ -365,6 +367,7 @@
 			isa = PBXGroup;
 			children = (
 				9A5972F3EEB9E3111A11D8F2 /* InviteAndEarnView.swift */,
+				1382129E24A1E08EAD67A84A /* ReferrerNotificationsToast.swift */,
 			);
 			path = Referrals;
 			sourceTree = "<group>";
@@ -750,6 +753,7 @@
 				6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */,
 				01A23378F38E2AA77EEE9AB2 /* Referral.swift in Sources */,
 				2B64C26032B8BA261A1EE899 /* ReferralRepository.swift in Sources */,
+				E1ED619555C03A5F0C2325FB /* ReferrerNotificationsToast.swift in Sources */,
 				9FB201F3E3C6723A6627AD92 /* ReportSheet.swift in Sources */,
 				F5DED2CA60E13745ECB55392 /* SafariView.swift in Sources */,
 				6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */,

@@ -21,6 +21,7 @@ type ReferralRow = {
   rewardedAt: Date | null;
   createdAt: Date;
   qualifiedAt: Date | null;
+  ownerNotifiedAt: Date | null;
 };
 type TxRow = {
   id: string;
@@ -115,15 +116,21 @@ const h = vi.hoisted(() => {
         }
         return pick(r, select);
       },
-      async findMany({ where, select }: any) {
+      async findMany({ where, select, include, orderBy }: any) {
         let rows = store.referrals.filter((x) => matchWhere(x, where));
-        // attach referee relation if asked
-        if (select?.referee) {
+        if (orderBy?.rewardedAt === "desc") {
+          rows = [...rows].sort(
+            (a, b) => (b.rewardedAt?.getTime() ?? 0) - (a.rewardedAt?.getTime() ?? 0),
+          );
+        }
+        // attach referee relation if asked (select or include)
+        if (select?.referee || include?.referee) {
           rows = rows.map((x) => ({
             ...x,
             referee: x.refereeId ? store.users.get(x.refereeId) ?? null : null,
           })) as any;
         }
+        if (include) return rows.map((x) => ({ ...x }));
         return rows.map((x) => (select ? pick(x, select) : { ...x }));
       },
       async count({ where }: any) {
@@ -147,6 +154,7 @@ const h = vi.hoisted(() => {
           rewardedAt: data.rewardedAt ?? null,
           createdAt: new Date(),
           qualifiedAt: data.qualifiedAt ?? null,
+          ownerNotifiedAt: data.ownerNotifiedAt ?? null,
         };
         store.referrals.push(row);
         return pick(row, select);
@@ -166,7 +174,16 @@ const h = vi.hoisted(() => {
         if (data.status !== undefined) r.status = data.status;
         if (data.qualifiedAt !== undefined) r.qualifiedAt = data.qualifiedAt;
         if (data.rewardedAt !== undefined) r.rewardedAt = data.rewardedAt;
+        if (data.ownerNotifiedAt !== undefined) r.ownerNotifiedAt = data.ownerNotifiedAt;
         return pick(r, select);
+      },
+      async updateMany({ where, data }: any) {
+        const rows = store.referrals.filter((x) => matchWhere(x, where));
+        for (const r of rows) {
+          if (data.ownerNotifiedAt !== undefined) r.ownerNotifiedAt = data.ownerNotifiedAt;
+          if (data.status !== undefined) r.status = data.status;
+        }
+        return { count: rows.length };
       },
     },
     keysTransaction: {
@@ -207,6 +224,12 @@ vi.mock("@/lib/db", () => ({ prisma: h.client }));
 vi.mock("@/lib/auth/tokens", () => ({
   normaliseEmail: (e: string) => e.trim().toLowerCase(),
 }));
+// The qualify hook lazy-imports the push adapter for the best-effort referrer
+// push; stub it so tests don't touch FCM / a device table the fake lacks.
+vi.mock("@/lib/push", () => ({
+  sendPush: vi.fn(async () => {}),
+  pushTemplates: { referralRewarded: () => ({ title: "", body: "", data: {} }) },
+}));
 
 import {
   ensureReferralCode,
@@ -215,6 +238,8 @@ import {
   linkRefereeByInviteToken,
   qualifyReferralsForReferee,
   refereeRewardFor,
+  pendingReferrerNotifications,
+  markReferrerNotificationsSeen,
 } from "@/lib/growth/referrals";
 
 function addUser(id: string, code: string | null = null, name: string | null = null): void {
@@ -265,7 +290,7 @@ describe("invite-to-stay linking", () => {
     h.store.referrals.push({
       id: "r1", ownerId: "host", refereeId: null, refereeEmail: "g@x.com",
       source: "invite_to_stay", listingId: "L1", token: "tok", status: "pending",
-      rewardedAt: null, createdAt: new Date(), qualifiedAt: null,
+      rewardedAt: null, createdAt: new Date(), qualifiedAt: null, ownerNotifiedAt: null,
     });
     const linked = await linkRefereeByEmail("guest", "G@X.com");
     expect(linked).toBe("r1");
@@ -279,7 +304,7 @@ describe("invite-to-stay linking", () => {
     h.store.referrals.push({
       id: "r1", ownerId: "host", refereeId: null, refereeEmail: null,
       source: "invite_to_stay", listingId: "L1", token: "TOK", status: "pending",
-      rewardedAt: null, createdAt: new Date(), qualifiedAt: null,
+      rewardedAt: null, createdAt: new Date(), qualifiedAt: null, ownerNotifiedAt: null,
     });
     expect(await linkRefereeByInviteToken("guest", "TOK")).toBe("r1");
     // already claimed -> other can't link
@@ -347,6 +372,7 @@ describe("qualifyReferralsForReferee (anti-farm gate)", () => {
         id: `seed${i}`, ownerId: "owner", refereeId: `seed_ref${i}`, refereeEmail: null,
         source: "link", listingId: null, token: null, status: "rewarded",
         rewardedAt: new Date(), createdAt: new Date(), qualifiedAt: new Date(),
+        ownerNotifiedAt: null,
       });
     }
     addUser("newbie");
@@ -369,5 +395,66 @@ describe("qualifyReferralsForReferee (anti-farm gate)", () => {
       refereeKeys: 0,
       referrerName: null,
     });
+  });
+});
+
+describe("referrer real-time notifications", () => {
+  it("surfaces a rewarded referral as an unseen credit, then hides it once seen", async () => {
+    addUser("owner", "OWNERAA", "Ada Lovelace");
+    addUser("newbie", null, "Grace Hopper");
+    await attributeSignupByCode("newbie", "OWNERAA");
+    await qualifyReferralsForReferee("newbie");
+
+    // The referrer sees one unseen credit naming the invitee + Keys earned.
+    const unseen = await pendingReferrerNotifications("owner");
+    expect(unseen).toHaveLength(1);
+    expect(unseen[0]).toMatchObject({
+      refereeName: "Grace Hopper",
+      keys: REFERRAL_REWARD_KEYS,
+    });
+    expect(unseen[0].rewardedAt).toBeTruthy();
+
+    // Acknowledge it; it's stamped seen and no longer surfaces.
+    const seen = await markReferrerNotificationsSeen("owner", [unseen[0].id]);
+    expect(seen).toBe(1);
+    expect(await pendingReferrerNotifications("owner")).toHaveLength(0);
+
+    // Idempotent: re-acking the same id stamps nothing further.
+    expect(await markReferrerNotificationsSeen("owner", [unseen[0].id])).toBe(0);
+  });
+
+  it("only the owner can acknowledge their own credits", async () => {
+    addUser("owner", "OWNERAA", "Ada");
+    addUser("newbie");
+    await attributeSignupByCode("newbie", "OWNERAA");
+    await qualifyReferralsForReferee("newbie");
+
+    const unseen = await pendingReferrerNotifications("owner");
+    // A different user can't mark owner's credit seen.
+    expect(await markReferrerNotificationsSeen("intruder", [unseen[0].id])).toBe(0);
+    expect(await pendingReferrerNotifications("owner")).toHaveLength(1);
+  });
+
+  it("never surfaces qualified-but-unrewarded (capped) referrals", async () => {
+    addUser("owner", "OWNERAA");
+    for (let i = 0; i < REFERRAL_DAILY_CAP; i++) {
+      h.store.referrals.push({
+        id: `seed${i}`, ownerId: "owner", refereeId: `seed_ref${i}`, refereeEmail: null,
+        source: "link", listingId: null, token: null, status: "rewarded",
+        rewardedAt: new Date(), createdAt: new Date(), qualifiedAt: new Date(),
+        ownerNotifiedAt: new Date(),
+      });
+    }
+    addUser("newbie");
+    await attributeSignupByCode("newbie", "OWNERAA");
+    await qualifyReferralsForReferee("newbie"); // capped → qualified, no payout
+
+    // The capped referral pays no Keys, so it is not an unseen credit.
+    expect(await pendingReferrerNotifications("owner")).toHaveLength(0);
+  });
+
+  it("markReferrerNotificationsSeen with an empty list is a no-op", async () => {
+    addUser("owner", "OWNERAA");
+    expect(await markReferrerNotificationsSeen("owner", [])).toBe(0);
   });
 });

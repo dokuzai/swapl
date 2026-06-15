@@ -732,6 +732,10 @@ model Referral {
   rewardedAt    DateTime?
   createdAt     DateTime @default(now())
   qualifiedAt   DateTime?
+  // Set once the REFERRER (owner) has seen the "you earned Keys" credit for this
+  // referral — drives the real-time referrer toast (DOK-157). Null while the
+  // credit is still unseen; a polling endpoint reads unseen rows and stamps it.
+  ownerNotifiedAt DateTime?
 
   @@index([ownerId])
   @@index([refereeEmail])

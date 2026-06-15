@@ -6580,6 +6580,99 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/referrals/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My unseen referral credits (referrer real-time toast)
+         * @description The caller's rewarded-but-unseen referral credits. The already-open app polls this so the REFERRER learns the moment an invitee verifies ("NAME just verified — you earned Keys!") instead of refreshing to find the +Keys. Derived from persisted Referral state; correct whether the qualify hook ran via webhook or polling. Acknowledge with POST so each credit toasts exactly once.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            notifications: {
+                                id: string;
+                                refereeName?: string | null;
+                                keys: number;
+                                /** Format: date-time */
+                                rewardedAt?: string | null;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Acknowledge referral credits the client has shown
+         * @description Mark the given referral credits as seen by their owner (the caller), so they don't toast again. Scoped to the caller and idempotent.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        ids: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            seen: number;
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {

@@ -73,6 +73,35 @@ data class ReferralDashboard(
     }
 }
 
+// GET /api/referrals/notifications — the referrer's rewarded-but-unseen referral
+// credits, for the real-time referrer toast (DOK-157). While the app is open the
+// referrer polls this and acks shown credits so each toasts exactly once.
+@Serializable
+data class ReferrerNotification(
+    val id: String,
+    val refereeName: String? = null,
+    val keys: Int = 0,
+    val rewardedAt: String? = null,
+) {
+    val displayName: String get() = refereeName ?: "Someone you invited"
+}
+
+@Serializable
+data class ReferrerNotificationsResponse(
+    val notifications: List<ReferrerNotification> = emptyList(),
+)
+
+@Serializable
+data class AckReferrerNotificationsRequest(
+    val ids: List<String>,
+)
+
+@Serializable
+data class AckReferrerNotificationsResponse(
+    val ok: Boolean = false,
+    val seen: Int = 0,
+)
+
 // POST /api/referrals/invite-to-stay — issue an invite tied to one of the
 // caller's own listings. Returns a shareable link carrying an opaque token.
 @Serializable

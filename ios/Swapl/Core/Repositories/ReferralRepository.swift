@@ -21,4 +21,24 @@ final class ReferralRepository: @unchecked Sendable {
             body: InviteToStayRequest(listingId: listingId, email: email)
         )
     }
+
+    // GET /api/referrals/notifications — the caller's rewarded-but-unseen
+    // referral credits, for the real-time referrer toast (DOK-157).
+    func notifications() async throws -> [ReferrerNotification] {
+        let res: ReferrerNotificationsResponse = try await APIClient.shared.send(
+            "GET", "/api/referrals/notifications"
+        )
+        return res.notifications
+    }
+
+    // POST /api/referrals/notifications — ack credits already shown so each
+    // toasts exactly once. Best-effort; the result count is informational.
+    @discardableResult
+    func ackNotifications(ids: [String]) async throws -> Int {
+        let res: AckReferrerNotificationsResponse = try await APIClient.shared.send(
+            "POST", "/api/referrals/notifications",
+            body: AckReferrerNotificationsRequest(ids: ids)
+        )
+        return res.seen
+    }
 }

@@ -99,6 +99,10 @@ struct AccountView: View {
                         .shadow(color: .black.opacity(0.18), radius: 18, x: 0, y: 10)
                 }
                 .padding(.bottom, 18)
+
+                // Real-time referrer toast (DOK-157): "NAME just verified — you
+                // earned Keys!" while the account screen is open.
+                ReferrerNotificationsToast()
             }
             .toolbar(.hidden, for: .navigationBar)
             .fullScreenCover(isPresented: $isCreatingListing, onDismiss: {

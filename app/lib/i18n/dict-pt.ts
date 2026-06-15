@@ -880,6 +880,8 @@ export const pt: Partial<Record<DictKey, string>> = {
   "trips.empty": "Ainda não tens viagens. Propõe uma troca ou reserva uma estadia com os teus Keys.",
   "trips.empty.browse": "Encontrar uma casa",
   // ---- Convide e ganhe (DOK-157) ----
+  "referral.referrerToastNamed": "{name} acabou de verificar — você ganhou {keys} Keys! 🔑",
+  "referral.referrerToast": "Alguém que você convidou acabou de verificar — você ganhou {keys} Keys! 🔑",
   "invite.menu": "Convide e ganhe",
   "invite.kicker": "Traga amigos, suba na lista",
   "invite.title": "Convide e ganhe",

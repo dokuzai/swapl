@@ -53,4 +53,6 @@
     <string name="auth_otp_back">Back to password sign-in</string>
     <string name="verify_referral_toast">Verified! You earned %1$d Keys for joining via a referral. 🔑</string>
     <string name="verify_referral_toast_named">Verified! %1$s’s invite just earned you %2$d Keys. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s just verified — you earned %2$d Keys! 🔑</string>
+    <string name="referral_referrer_toast">Someone you invited just verified — you earned %1$d Keys! 🔑</string>
 </resources>

@@ -77,6 +77,34 @@ struct ReferralDashboard: Decodable, Sendable {
     }
 }
 
+// MARK: - Referrer real-time notifications (GET /api/referrals/notifications)
+//
+// Closes the dopamine loop (DOK-157): while the app is open, the referrer polls
+// for rewarded-but-unseen referral credits ("NAME just verified — you earned 20
+// Keys!") and acks them so each toasts exactly once. Mirrors the web client.
+
+struct ReferrerNotification: Decodable, Sendable, Identifiable {
+    let id: String
+    let refereeName: String?
+    let keys: Int
+    let rewardedAt: String?
+
+    var displayName: String { refereeName ?? "Someone you invited" }
+}
+
+struct ReferrerNotificationsResponse: Decodable, Sendable {
+    let notifications: [ReferrerNotification]
+}
+
+struct AckReferrerNotificationsRequest: Encodable, Sendable {
+    let ids: [String]
+}
+
+struct AckReferrerNotificationsResponse: Decodable, Sendable {
+    let ok: Bool
+    let seen: Int
+}
+
 // MARK: - Invite to stay (POST /api/referrals/invite-to-stay)
 
 struct InviteToStayRequest: Encodable, Sendable {

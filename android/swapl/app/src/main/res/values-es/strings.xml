@@ -44,4 +44,6 @@
     <string name="auth_otp_back">Volver al inicio de sesión con contraseña</string>
     <string name="verify_referral_toast">¡Verificado! Ganaste %1$d Keys por unirte mediante una invitación. 🔑</string>
     <string name="verify_referral_toast_named">¡Verificado! La invitación de %1$s acaba de darte %2$d Keys. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s acaba de verificarse: ¡ganaste %2$d Keys! 🔑</string>
+    <string name="referral_referrer_toast">Alguien a quien invitaste acaba de verificarse: ¡ganaste %1$d Keys! 🔑</string>
 </resources>

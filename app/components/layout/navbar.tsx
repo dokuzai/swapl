@@ -6,6 +6,7 @@ import type { DictKey } from "@/lib/i18n/dict-en";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { HeaderNav, type HeaderNavLabels } from "@/components/layout/header-nav";
 import { AvatarMenu, type AvatarMenuLabels } from "@/components/layout/avatar-menu";
+import { ReferrerNotifications } from "@/components/growth/referrer-notifications";
 
 const NAV_LINKS: { href: string; key: DictKey }[] = [
   { href: "/listings", key: "nav.homes" },
@@ -103,6 +104,17 @@ export async function Navbar() {
         <div className="md:hidden pb-2">
           <HeaderNav labels={navLabels} variant="mobile" />
         </div>
+      )}
+
+      {/* Real-time referrer toast (DOK-157): "NAME just verified — you earned
+          Keys!" while the app is open. */}
+      {session && (
+        <ReferrerNotifications
+          copy={{
+            named: dict["referral.referrerToastNamed"],
+            anon: dict["referral.referrerToast"],
+          }}
+        />
       )}
     </header>
   );

@@ -283,6 +283,12 @@ fun AccountScreen(
         )
     }
 
+    // Real-time referrer toast (DOK-157): "NAME just verified — you earned
+    // Keys!" while the account screen is open, reusing the same snackbar host.
+    app.swapl.features.referrals.ReferrerNotificationsPoller(
+        showMessage = { msg -> scope.launch { snackbarHostState.showSnackbar(msg) } },
+    )
+
     SnackbarHost(
         hostState = snackbarHostState,
         modifier = Modifier.align(Alignment.BottomCenter),

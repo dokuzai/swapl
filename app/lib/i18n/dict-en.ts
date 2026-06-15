@@ -889,6 +889,8 @@ export const en = {
   "trips.empty.browse": "Find a home",
 
   // ---- Invite & earn (DOK-157) ----
+  "referral.referrerToastNamed": "{name} just verified — you earned {keys} Keys! 🔑",
+  "referral.referrerToast": "Someone you invited just verified — you earned {keys} Keys! 🔑",
   "invite.menu": "Invite & earn",
   "invite.kicker": "Bring friends, climb the list",
   "invite.title": "Invite & earn",

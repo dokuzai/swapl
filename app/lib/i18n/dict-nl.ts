@@ -880,6 +880,8 @@ export const nl: Partial<Record<DictKey, string>> = {
   "trips.empty": "Nog geen trips. Stel een ruil voor of boek een verblijf met je Keys.",
   "trips.empty.browse": "Een woning vinden",
   // ---- Uitnodigen & verdienen (DOK-157) ----
+  "referral.referrerToastNamed": "{name} is zojuist geverifieerd — je verdiende {keys} Keys! 🔑",
+  "referral.referrerToast": "Iemand die je hebt uitgenodigd is zojuist geverifieerd — je verdiende {keys} Keys! 🔑",
   "invite.menu": "Uitnodigen & verdienen",
   "invite.kicker": "Breng vrienden mee, klim in de lijst",
   "invite.title": "Uitnodigen & verdienen",
