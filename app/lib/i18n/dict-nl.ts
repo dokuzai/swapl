@@ -920,6 +920,16 @@ export const nl: Partial<Record<DictKey, string>> = {
   "invite.toStay.empty": "Plaats eerst een woning om gasten uit te nodigen.",
   "invite.toStay.linkReady": "Uitnodigingslink klaar — deel het met één tik.",
   "invite.toStay.error": "Kon de link niet maken — probeer opnieuw.",
+  "invite.share.reward": "Verdien {reward} Keys per vriend",
+  "invite.share.rewardHint": "Jij krijgt {reward} Keys, je vriend {referee} — zodra die zich verifieert.",
+  "invite.share.cta": "Delen & verdienen",
+  "invite.share.sharing": "Bezig met delen…",
+  "invite.share.pick": "Wat wil je delen?",
+  "invite.share.mode.link": "Mijn uitnodigingslink",
+  "invite.share.mode.linkHint": "Iedereen die zich aanmeldt en verifieert",
+  "invite.share.mode.stay": "Uitnodigen om bij mij te logeren",
+  "invite.share.mode.stayHint": "Kies een van je woningen",
+  "invite.share.or": "of kopieer de link",
 
   // ---- Keys-transactielijst (DOK-157) ----
   "keys.tx.menu": "Alle transacties bekijken",

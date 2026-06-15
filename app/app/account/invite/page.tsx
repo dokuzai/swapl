@@ -21,8 +21,7 @@ import {
   REFERRAL_REWARD_KEYS,
   REFERRAL_REFEREE_KEYS,
 } from "@/lib/growth/config";
-import { ShareLink } from "./share-link";
-import { InviteToStay } from "./invite-to-stay";
+import { ShareInvite } from "./share-invite";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Invite & earn · swapl" };
@@ -101,16 +100,16 @@ export default async function InvitePage() {
       <Navbar />
       <main className="flex-1">
         <I18nProviderShell>
-          <div className="wrap py-10 lg:py-14 max-w-3xl">
-            <header className="mb-8">
+          <div className="wrap py-8 lg:py-12 max-w-md">
+            <header className="mb-6">
               <p className="kicker mb-3">{t("invite.kicker")}</p>
-              <h1 className="font-display text-4xl tracking-[-0.02em] font-medium">{t("invite.title")}</h1>
-              <p className="mt-3 text-[16px]" style={{ color: "var(--navy-2)" }}>{t("invite.subtitle")}</p>
+              <h1 className="font-display text-3xl tracking-[-0.02em] font-medium">{t("invite.title")}</h1>
+              <p className="mt-2 text-[15px]" style={{ color: "var(--navy-2)" }}>{t("invite.subtitle")}</p>
             </header>
 
             {/* ---- HYPE banner: scarcity + reward, both sides ---- */}
-            <section className="mb-10">
-              <div className="surface-card surface-card--static p-6" style={{ background: "var(--pink-light)" }}>
+            <section className="mb-6">
+              <div className="surface-card surface-card--static p-5" style={{ background: "var(--pink-light)" }}>
                 <p className="text-[15px] font-medium" style={{ color: "var(--navy)" }}>{t("invite.hype")}</p>
                 <p className="mt-2 text-sm" style={{ color: "var(--navy-2)" }}>
                   {t("invite.reward.body", { reward: REFERRAL_REWARD_KEYS, referee: REFERRAL_REFEREE_KEYS })}
@@ -118,23 +117,29 @@ export default async function InvitePage() {
               </div>
             </section>
 
-            {/* ---- Share link / code ---- */}
-            <section className="mb-10">
-              <div className="surface-card surface-card--static p-6">
-                <ShareLink code={code} url={shareUrl} />
+            {/* ---- Unified share: one CTA + picker (link vs. invite-to-stay) ---- */}
+            <section className="mb-8">
+              <div className="surface-card surface-card--static p-5">
+                <ShareInvite
+                  code={code}
+                  url={shareUrl}
+                  listings={listings}
+                  reward={REFERRAL_REWARD_KEYS}
+                  referee={REFERRAL_REFEREE_KEYS}
+                />
               </div>
             </section>
 
             {/* ---- Stats ---- */}
-            <section className="mb-10 grid grid-cols-3 gap-3">
+            <section className="mb-8 grid grid-cols-3 gap-3">
               {stat(t("invite.stats.invited"), referrals.length)}
               {stat(t("invite.stats.qualified"), qualifiedCount)}
               {stat(t("invite.stats.earned"), keysEarned)}
             </section>
 
             {/* ---- Waitlist position + tier progress ---- */}
-            <section className="mb-10">
-              <div className="surface-card surface-card--static p-6">
+            <section className="mb-8">
+              <div className="surface-card surface-card--static p-5">
                 <div className="flex items-baseline justify-between gap-3">
                   <div className="font-mono text-[10px] uppercase tracking-[.1em]" style={{ color: "var(--navy-3)" }}>
                     {t("invite.waitlist.label")}
@@ -165,9 +170,9 @@ export default async function InvitePage() {
             </section>
 
             {/* ---- Mini leaderboard ---- */}
-            <section className="mb-10">
-              <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">{t("invite.leaderboard.title")}</h2>
-              <div className="surface-card surface-card--static p-6">
+            <section className="mb-8">
+              <h2 className="font-display text-xl tracking-[-0.01em] mb-4">{t("invite.leaderboard.title")}</h2>
+              <div className="surface-card surface-card--static p-5">
                 {leaderboard.length === 0 ? (
                   <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("invite.leaderboard.empty")}</p>
                 ) : (
@@ -195,9 +200,9 @@ export default async function InvitePage() {
             </section>
 
             {/* ---- People you invited ---- */}
-            <section className="mb-10">
-              <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">{t("invite.joined.title")}</h2>
-              <div className="surface-card surface-card--static p-6">
+            <section className="mb-8">
+              <h2 className="font-display text-xl tracking-[-0.01em] mb-4">{t("invite.joined.title")}</h2>
+              <div className="surface-card surface-card--static p-5">
                 {referrals.length === 0 ? (
                   <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("invite.joined.empty")}</p>
                 ) : (
@@ -221,16 +226,7 @@ export default async function InvitePage() {
               </div>
             </section>
 
-            {/* ---- Invite someone to stay at your place ---- */}
-            <section>
-              <h2 className="font-display text-2xl tracking-[-0.01em] mb-1">{t("invite.toStay.title")}</h2>
-              <p className="text-sm mb-5" style={{ color: "var(--navy-2)" }}>{t("invite.toStay.body")}</p>
-              <div className="surface-card surface-card--static p-6">
-                <InviteToStay listings={listings} />
-              </div>
-            </section>
-
-            <p className="mt-10 text-center">
+            <p className="mt-8 text-center">
               <Link href="/account/keys" className="text-sm font-medium" style={{ color: "var(--pink)" }}>
                 ← {t("keys.tx.back")}
               </Link>

@@ -920,6 +920,16 @@ export const tr: Partial<Record<DictKey, string>> = {
   "invite.toStay.empty": "Misafir davet etmek için önce bir ev yayınla.",
   "invite.toStay.linkReady": "Davet bağlantısı hazır — tek dokunuşla paylaş.",
   "invite.toStay.error": "Bağlantı oluşturulamadı — tekrar dene.",
+  "invite.share.reward": "Her arkadaş için {reward} Keys kazan",
+  "invite.share.rewardHint": "Sen {reward} Keys, arkadaşın {referee} alır — kimliğini doğruladığı an.",
+  "invite.share.cta": "Paylaş & kazan",
+  "invite.share.sharing": "Paylaşılıyor…",
+  "invite.share.pick": "Ne paylaşmak istersin?",
+  "invite.share.mode.link": "Davet bağlantım",
+  "invite.share.mode.linkHint": "Katılıp doğrulayan herkes",
+  "invite.share.mode.stay": "Evimde kalmaya davet et",
+  "invite.share.mode.stayHint": "Evlerinden birini seç",
+  "invite.share.or": "veya bağlantıyı kopyala",
 
   // ---- Keys işlem listesi (DOK-157) ----
   "keys.tx.menu": "Tüm işlemleri gör",

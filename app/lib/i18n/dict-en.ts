@@ -929,6 +929,17 @@ export const en = {
   "invite.toStay.empty": "List a home first to invite guests to stay.",
   "invite.toStay.linkReady": "Invite link ready — share it in a tap.",
   "invite.toStay.error": "Couldn't create the link — try again.",
+  // Unified share card (one CTA + picker for link vs. invite-to-stay).
+  "invite.share.reward": "Earn {reward} Keys per friend",
+  "invite.share.rewardHint": "You get {reward} Keys, your friend gets {referee} — the moment they verify.",
+  "invite.share.cta": "Share & earn",
+  "invite.share.sharing": "Sharing…",
+  "invite.share.pick": "What do you want to share?",
+  "invite.share.mode.link": "My invite link",
+  "invite.share.mode.linkHint": "Anyone who joins and verifies",
+  "invite.share.mode.stay": "Invite to stay at my place",
+  "invite.share.mode.stayHint": "Pick one of your homes",
+  "invite.share.or": "or copy the link",
 
   // ---- Keys transactions list (DOK-157) ----
   "keys.tx.menu": "See all transactions",

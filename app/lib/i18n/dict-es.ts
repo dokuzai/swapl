@@ -905,6 +905,16 @@ export const es: Partial<Record<DictKey, string>> = {
   "invite.toStay.empty": "Publica primero una casa para invitar huéspedes.",
   "invite.toStay.linkReady": "Enlace de invitación listo — compártelo en un toque.",
   "invite.toStay.error": "No se pudo crear el enlace — inténtalo de nuevo.",
+  "invite.share.reward": "Gana {reward} Keys por amigo",
+  "invite.share.rewardHint": "Tú recibes {reward} Keys, tu amigo {referee} — en cuanto verifica su identidad.",
+  "invite.share.cta": "Comparte y gana",
+  "invite.share.sharing": "Compartiendo…",
+  "invite.share.pick": "¿Qué quieres compartir?",
+  "invite.share.mode.link": "Mi enlace de invitación",
+  "invite.share.mode.linkHint": "Cualquiera que se une y verifica",
+  "invite.share.mode.stay": "Invitar a quedarse en mi casa",
+  "invite.share.mode.stayHint": "Elige una de tus casas",
+  "invite.share.or": "o copia el enlace",
 
   // ---- Lista de transacciones de Keys (DOK-157) ----
   "keys.tx.menu": "Ver todas las transacciones",
