@@ -23,16 +23,17 @@ final class StayWithKeysViewModel {
         isLoading = true
         error = nil
         defer { isLoading = false }
+        // Availability is the heart of the sheet — it must render on its own.
+        // The wallet balance is a best-effort hint; a hiccup on that parallel
+        // request must NOT blank the whole sheet (it used to show
+        // "Stay unavailable" even when availability had loaded fine).
         do {
-            // Availability + wallet balance in parallel: the cost preview needs
-            // the nightly rate, the "enough points?" hint needs the balance.
-            async let avail = KeysRepository.shared.availability(listingId: listingId)
-            async let wallet = KeysRepository.shared.wallet()
-            self.availability = try await avail
-            self.balance = try await wallet.balance
+            self.availability = try await KeysRepository.shared.availability(listingId: listingId)
         } catch {
             self.error = error.localizedDescription
+            return
         }
+        self.balance = try? await KeysRepository.shared.wallet().balance
     }
 }
 
