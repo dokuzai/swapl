@@ -16,9 +16,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.SavedSearch
 import app.swapl.core.repository.ProfileRepository
 import app.swapl.design.components.KickerLabel
@@ -53,12 +55,12 @@ class SavedSearchesViewModel @Inject constructor(
 fun SavedSearchesScreen(vm: SavedSearchesViewModel = hiltViewModel()) {
     LaunchedEffect(Unit) { vm.load() }
     Column(Modifier.fillMaxSize().padding(SwaplSpacing.s4)) {
-        Text("Saved searches", style = MaterialTheme.typography.displaySmall)
+        Text(stringResource(R.string.saved_searches_title), style = MaterialTheme.typography.displaySmall)
         if (vm.requiresUpgrade) {
             SurfaceCard(modifier = Modifier.padding(top = SwaplSpacing.s3)) {
-                KickerLabel("Plus / Pro")
+                KickerLabel(stringResource(R.string.saved_searches_plus_kicker))
                 Text(
-                    "Saved searches are a Plus member feature.",
+                    stringResource(R.string.saved_searches_plus_body),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

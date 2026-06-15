@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import android.content.Context
 import app.swapl.R
 import app.swapl.core.repository.ProposalRepository
 import app.swapl.design.components.DateField
@@ -32,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -40,6 +42,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProposeSwapViewModel @Inject constructor(
     private val repo: ProposalRepository,
+    @ApplicationContext private val appContext: Context,
 ) : ViewModel() {
     var isSubmitting by mutableStateOf(false); private set
     var error by mutableStateOf<String?>(null); private set
@@ -56,7 +59,7 @@ class ProposeSwapViewModel @Inject constructor(
             try {
                 draftedMessage = repo.draftMessage(proposerListingId, targetListingId, from, to).message
             } catch (t: Throwable) {
-                error = "Couldn't draft a message right now"
+                error = appContext.getString(R.string.propose_draft_failed)
             } finally {
                 isDrafting = false
             }

@@ -23,9 +23,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.InterestsCatalog
 import app.swapl.core.repository.ProfileRepository
 import app.swapl.design.components.KickerLabel
@@ -86,8 +88,8 @@ fun InterestsEditorScreen(
             .padding(SwaplSpacing.s4),
         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4)
     ) {
-        Text("Interests · ${vm.selected.size} / 12", style = MaterialTheme.typography.displaySmall)
-        OutlinedTextField(vm.bioVibe, { vm.bioVibe = it }, label = { Text("Your vibe (optional)") })
+        Text(stringResource(R.string.interests_title, vm.selected.size), style = MaterialTheme.typography.displaySmall)
+        OutlinedTextField(vm.bioVibe, { vm.bioVibe = it }, label = { Text(stringResource(R.string.interests_vibe_label)) })
         if (c != null) {
             c.categories.forEach { cat ->
                 KickerLabel(cat.label)
@@ -104,7 +106,7 @@ fun InterestsEditorScreen(
         }
         vm.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         PrimaryPill(
-            text = if (vm.isSaving) "Saving…" else "Save",
+            text = if (vm.isSaving) stringResource(R.string.interests_saving) else stringResource(R.string.interests_save),
             onClick = { vm.save() },
             enabled = !vm.isSaving,
         )

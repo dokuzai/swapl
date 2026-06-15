@@ -27,7 +27,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.swapl.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.swapl.core.model.ProposalSummary
@@ -67,10 +69,10 @@ class TripsViewModel @Inject constructor(private val repo: TripsRepository) : Vi
 
 // Lifecycle phase derived from agreement dates — ISO strings compare
 // lexicographically, so take(10) against LocalDate.now() is enough.
-internal enum class TripPhase(val label: String) {
-    Active("Active now"),
-    Upcoming("Upcoming"),
-    Past("Past"),
+internal enum class TripPhase(val labelRes: Int) {
+    Active(R.string.trips_phase_active),
+    Upcoming(R.string.trips_phase_upcoming),
+    Past(R.string.trips_phase_past),
 }
 
 internal fun ProposalSummary.phase(today: String = java.time.LocalDate.now().toString()): TripPhase =
@@ -90,7 +92,7 @@ fun TripsScreen(
 
     Column(Modifier.fillMaxSize()) {
         Text(
-            "Trips",
+            stringResource(R.string.trips_title),
             style = MaterialTheme.typography.displaySmall,
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,7 +139,7 @@ fun TripsScreen(
                         }
                         sections.forEach { (phase, list) ->
                             item(key = "header-${phase.name}") {
-                                KickerLabel(phase.label)
+                                KickerLabel(stringResource(phase.labelRes))
                                 Spacer(Modifier.height(SwaplSpacing.s1))
                             }
                             items(list, key = { it.id }) { t ->
@@ -170,20 +172,22 @@ private fun TripRow(t: ProposalSummary, onClick: () -> Unit) {
                 Spacer(Modifier.width(SwaplSpacing.s3))
             }
             Column(Modifier.weight(1f)) {
-                Text("Trip to ${t.theirCity}", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.trips_row_title, t.theirCity), style = MaterialTheme.typography.titleLarge)
+                val from = t.dateFrom.take(10)
+                val to = t.dateTo.take(10)
                 Text(
-                    "${t.dateFrom.take(10)} → ${t.dateTo.take(10)}" +
-                        (t.otherName?.let { " · host $it" } ?: ""),
+                    t.otherName?.let { stringResource(R.string.trips_row_dates_host, from, to, it) }
+                        ?: stringResource(R.string.trips_row_dates, from, to),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    "Guest in ${t.theirNeighbourhood} · You host in ${t.myCity}",
+                    stringResource(R.string.trips_row_roles, t.theirNeighbourhood, t.myCity),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            TagChip(t.phase().label)
+            TagChip(stringResource(t.phase().labelRes))
         }
     }
 }
@@ -195,15 +199,15 @@ private fun ErrorState(onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Trips unavailable", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.trips_error_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "We couldn't load your trips. Pull to refresh or retry.",
+            stringResource(R.string.trips_error_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(SwaplSpacing.s3))
-        TextButton(onClick = onRetry) { Text("Retry") }
+        TextButton(onClick = onRetry) { Text(stringResource(R.string.common_retry)) }
     }
 }
 
@@ -214,10 +218,10 @@ private fun EmptyState() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("No trips yet", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.trips_empty_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "Accepted swaps become trips. Your upcoming stays will show up here.",
+            stringResource(R.string.trips_empty_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

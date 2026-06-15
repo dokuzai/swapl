@@ -37,7 +37,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.swapl.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.swapl.core.model.InboxBuckets
@@ -77,27 +79,28 @@ class SwapsInboxViewModel @Inject constructor(private val repo: ProposalReposito
 }
 
 // Filter chips over the server-side buckets — same mental model as the iOS
-// inbox segments, with Android FilterChip idiom.
-private enum class InboxFilter(val label: String) {
-    All("All"),
-    WaitingOnYou("Waiting on you"),
-    Sent("Sent"),
-    Active("Active"),
-    Archived("Archived"),
+// inbox segments, with Android FilterChip idiom. Labels/section titles resolve
+// to string resources at render time via the @StringRes ids.
+private enum class InboxFilter(val labelRes: Int) {
+    All(R.string.inbox_filter_all),
+    WaitingOnYou(R.string.inbox_filter_waiting),
+    Sent(R.string.inbox_filter_sent),
+    Active(R.string.inbox_filter_active),
+    Archived(R.string.inbox_filter_archived),
 }
 
-private fun InboxBuckets.sections(filter: InboxFilter): List<Pair<String, List<ProposalSummary>>> =
+private fun InboxBuckets.sections(filter: InboxFilter): List<Pair<Int, List<ProposalSummary>>> =
     when (filter) {
         InboxFilter.All -> listOf(
-            "Waiting on you" to waitingOnYou,
-            "Sent — awaiting reply" to sent,
-            "Active swaps" to active,
-            "Archived" to archived,
+            R.string.inbox_section_waiting to waitingOnYou,
+            R.string.inbox_section_sent to sent,
+            R.string.inbox_section_active to active,
+            R.string.inbox_section_archived to archived,
         ).filter { it.second.isNotEmpty() }
-        InboxFilter.WaitingOnYou -> listOf("Waiting on you" to waitingOnYou)
-        InboxFilter.Sent -> listOf("Sent — awaiting reply" to sent)
-        InboxFilter.Active -> listOf("Active swaps" to active)
-        InboxFilter.Archived -> listOf("Archived" to archived)
+        InboxFilter.WaitingOnYou -> listOf(R.string.inbox_section_waiting to waitingOnYou)
+        InboxFilter.Sent -> listOf(R.string.inbox_section_sent to sent)
+        InboxFilter.Active -> listOf(R.string.inbox_section_active to active)
+        InboxFilter.Archived -> listOf(R.string.inbox_section_archived to archived)
     }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,14 +122,14 @@ fun SwapsInboxScreen(
                 .fillMaxWidth()
                 .padding(horizontal = SwaplSpacing.s4, vertical = SwaplSpacing.s3),
         ) {
-            Text("Swap inbox", style = MaterialTheme.typography.displaySmall, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.inbox_title), style = MaterialTheme.typography.displaySmall, modifier = Modifier.weight(1f))
             IconButton(onClick = {
                 searchVisible = !searchVisible
                 if (!searchVisible) search = ""
             }) {
                 Icon(
                     if (searchVisible) Icons.Default.Close else Icons.Default.Search,
-                    contentDescription = if (searchVisible) "Close search" else "Search",
+                    contentDescription = stringResource(if (searchVisible) R.string.inbox_search_close else R.string.inbox_search_open),
                 )
             }
         }
@@ -134,7 +137,7 @@ fun SwapsInboxScreen(
             OutlinedTextField(
                 value = search,
                 onValueChange = { search = it },
-                placeholder = { Text("Search by host or city") },
+                placeholder = { Text(stringResource(R.string.inbox_search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true,
                 modifier = Modifier
@@ -154,7 +157,7 @@ fun SwapsInboxScreen(
                 FilterChip(
                     selected = filter == f,
                     onClick = { filter = f },
-                    label = { Text(f.label) },
+                    label = { Text(stringResource(f.labelRes)) },
                 )
             }
         }
@@ -187,15 +190,15 @@ fun SwapsInboxScreen(
                             verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
                             modifier = Modifier.fillMaxSize(),
                         ) {
-                            sections.forEach { (title, proposals) ->
-                                item(key = "header-$title") {
-                                    KickerLabel(title)
+                            sections.forEach { (titleRes, proposals) ->
+                                item(key = "header-$titleRes") {
+                                    KickerLabel(stringResource(titleRes))
                                     Spacer(Modifier.height(SwaplSpacing.s1))
                                 }
                                 items(proposals, key = { it.id }) { p ->
                                     ProposalRow(p, onClick = { onOpen(p.id) })
                                 }
-                                item(key = "gap-$title") { Spacer(Modifier.height(SwaplSpacing.s3)) }
+                                item(key = "gap-$titleRes") { Spacer(Modifier.height(SwaplSpacing.s3)) }
                             }
                         }
                     }
@@ -221,15 +224,20 @@ private fun ProposalRow(p: ProposalSummary, onClick: () -> Unit) {
                 Spacer(Modifier.width(SwaplSpacing.s3))
             }
             Column(Modifier.weight(1f)) {
-                Text("${p.myCity} ⇄ ${p.theirCity}", style = MaterialTheme.typography.titleLarge)
                 Text(
-                    statusLine(p),
+                    stringResource(R.string.inbox_with, p.myCity, p.theirCity),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Text(
+                    stringResource(statusLineRes(p)),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                val from = p.dateFrom.take(10)
+                val to = p.dateTo.take(10)
                 Text(
-                    "${p.dateFrom.take(10)} → ${p.dateTo.take(10)}" +
-                        (p.otherName?.let { " · with $it" } ?: ""),
+                    p.otherName?.let { stringResource(R.string.inbox_dates_with, from, to, it) }
+                        ?: stringResource(R.string.inbox_dates, from, to),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -239,11 +247,11 @@ private fun ProposalRow(p: ProposalSummary, onClick: () -> Unit) {
     }
 }
 
-private fun statusLine(p: ProposalSummary): String = when (p.status) {
-    "ACCEPTED" -> "Confirmed swap"
-    "COUNTERED" -> "Counter offer received"
-    "DECLINED" -> "Proposal declined"
-    else -> if (p.meSide == "target") "Waiting for your reply" else "Proposal sent"
+private fun statusLineRes(p: ProposalSummary): Int = when (p.status) {
+    "ACCEPTED" -> R.string.inbox_status_confirmed
+    "COUNTERED" -> R.string.inbox_status_countered
+    "DECLINED" -> R.string.inbox_status_declined
+    else -> if (p.meSide == "target") R.string.inbox_status_waiting_reply else R.string.inbox_status_sent
 }
 
 @Composable
@@ -253,15 +261,15 @@ private fun ErrorState(onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Messages unavailable", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.inbox_error_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "We couldn't load your swaps. Pull to refresh or retry.",
+            stringResource(R.string.inbox_error_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(SwaplSpacing.s3))
-        TextButton(onClick = onRetry) { Text("Retry") }
+        TextButton(onClick = onRetry) { Text(stringResource(R.string.common_retry)) }
     }
 }
 
@@ -272,10 +280,10 @@ private fun EmptyState() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("No messages yet", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.inbox_empty_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(
-            "Propose a swap from any listing and it will show up here.",
+            stringResource(R.string.inbox_empty_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

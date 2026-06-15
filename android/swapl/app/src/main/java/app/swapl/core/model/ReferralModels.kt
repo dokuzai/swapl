@@ -1,5 +1,7 @@
 package app.swapl.core.model
 
+import androidx.annotation.StringRes
+import app.swapl.R
 import kotlinx.serialization.Serializable
 
 // Invite & earn — the growth/referral dashboard (DOK-157). These mirror the web
@@ -135,10 +137,10 @@ data class KeysTransactionsResponse(
 // Category partition for the filterable ledger, mirroring iOS
 // KeysTransactionCategory. "All" sends no kind filter; Earned/Spent are derived
 // client-side from the signed delta so a single fetch backs every tab.
-enum class KeysTransactionCategory(val label: String) {
-    ALL("All"),
-    EARNED("Earned"),
-    SPENT("Spent");
+enum class KeysTransactionCategory(@StringRes val labelRes: Int, @StringRes val emptyRes: Int) {
+    ALL(R.string.keys_tx_filter_all, R.string.keys_tx_empty_all),
+    EARNED(R.string.keys_tx_filter_earned, R.string.keys_tx_empty_earned),
+    SPENT(R.string.keys_tx_filter_spent, R.string.keys_tx_empty_spent);
 
     fun matches(tx: KeysTransaction): Boolean = when (this) {
         ALL -> true

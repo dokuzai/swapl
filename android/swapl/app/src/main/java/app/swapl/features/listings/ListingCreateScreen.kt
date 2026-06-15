@@ -53,6 +53,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
@@ -163,12 +164,12 @@ class ListingCreateViewModel @Inject constructor(
                 try {
                     val jpeg = withContext(Dispatchers.IO) { downscaleToJpeg(uri) }
                     if (jpeg == null) {
-                        uploadError = "Couldn't read that image"
+                        uploadError = appContext.getString(R.string.create_read_image_error)
                     } else {
                         photoUrls.add(repo.uploadPhoto(jpeg))
                     }
                 } catch (t: Throwable) {
-                    uploadError = t.message ?: "Upload failed"
+                    uploadError = t.message ?: appContext.getString(R.string.create_upload_failed)
                 } finally {
                     uploadsInFlight -= 1
                 }
@@ -239,7 +240,7 @@ class ListingCreateViewModel @Inject constructor(
                 }
             }
             if (addr == null) {
-                locationError = "Couldn't determine your location — fill it in manually."
+                locationError = appContext.getString(R.string.create_location_error)
             } else {
                 addr.locality?.let { city = it }
                 addr.subLocality?.let { neighbourhood = it }
@@ -281,7 +282,7 @@ class ListingCreateViewModel @Inject constructor(
                 try {
                     prefill(repo.detail(id).listing)
                 } catch (t: Throwable) {
-                    error = t.message ?: "Could not load listing"
+                    error = t.message ?: appContext.getString(R.string.create_load_error)
                 } finally {
                     isLoading = false
                 }
@@ -333,14 +334,14 @@ class ListingCreateViewModel @Inject constructor(
     }
 
     val stepTitles = listOf(
-        "Location",
-        "Space",
-        "Access & pets",
-        "Amenities",
-        "Dates",
-        "Photos",
-        "Description",
-        "Review",
+        R.string.create_step_location,
+        R.string.create_step_space,
+        R.string.create_step_access,
+        R.string.create_step_amenities,
+        R.string.create_step_dates,
+        R.string.create_step_photos,
+        R.string.create_step_description,
+        R.string.create_step_review,
     )
 
     fun canProceed(): Boolean = when (step) {
@@ -452,10 +453,10 @@ fun ListingCreateScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             KickerLabel(
-                if (vm.isEditing) "Edit your home — step ${vm.step + 1} of ${vm.stepTitles.size}"
-                else "Step ${vm.step + 1} of ${vm.stepTitles.size}"
+                if (vm.isEditing) stringResource(R.string.create_kicker_edit, vm.step + 1, vm.stepTitles.size)
+                else stringResource(R.string.create_kicker_new, vm.step + 1, vm.stepTitles.size)
             )
-            Text(vm.stepTitles[vm.step], style = MaterialTheme.typography.displaySmall)
+            Text(stringResource(vm.stepTitles[vm.step]), style = MaterialTheme.typography.displaySmall)
         }
 
         Column(
@@ -489,19 +490,19 @@ fun ListingCreateScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             if (vm.step > 0) {
-                TextButton(onClick = { vm.prev() }) { Text("Back") }
+                TextButton(onClick = { vm.prev() }) { Text(stringResource(R.string.create_back)) }
             } else {
                 Spacer(Modifier)
             }
             if (vm.step < vm.stepTitles.size - 1) {
-                TextButton(onClick = { vm.next() }, enabled = vm.canProceed()) { Text("Next") }
+                TextButton(onClick = { vm.next() }, enabled = vm.canProceed()) { Text(stringResource(R.string.create_next)) }
             } else {
                 PrimaryPill(
                     text = when {
-                        vm.isSubmitting && vm.isEditing -> "Saving…"
-                        vm.isSubmitting -> "Publishing…"
-                        vm.isEditing -> "Save changes"
-                        else -> "Publish listing"
+                        vm.isSubmitting && vm.isEditing -> stringResource(R.string.create_saving)
+                        vm.isSubmitting -> stringResource(R.string.create_publishing)
+                        vm.isEditing -> stringResource(R.string.create_save_changes)
+                        else -> stringResource(R.string.create_publish_listing)
                     },
                     onClick = { vm.submit() },
                     enabled = !vm.isSubmitting && vm.canProceed(),
@@ -524,72 +525,77 @@ private fun LocationStep(vm: ListingCreateViewModel) {
     ) {
         Icon(Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(SwaplSpacing.s2))
-        Text(if (vm.isLocating) "Locating…" else "Use my current location")
+        Text(stringResource(if (vm.isLocating) R.string.create_locating else R.string.create_use_location))
     }
     vm.locationError?.let {
         Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
     }
-    OutlinedTextField(vm.title, { vm.title = it }, label = { Text("Title (e.g. Sunlit canal apartment)") }, modifier = Modifier.fillMaxWidth())
-    OutlinedTextField(vm.city, { vm.city = it }, label = { Text("City") }, modifier = Modifier.fillMaxWidth())
-    OutlinedTextField(vm.neighbourhood, { vm.neighbourhood = it }, label = { Text("Neighbourhood") }, modifier = Modifier.fillMaxWidth())
-    OutlinedTextField(vm.country, { vm.country = it }, label = { Text("Country") }, modifier = Modifier.fillMaxWidth())
-    OutlinedTextField(vm.address, { vm.address = it }, label = { Text("Address (optional)") }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.title, { vm.title = it }, label = { Text(stringResource(R.string.create_title_label)) }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.city, { vm.city = it }, label = { Text(stringResource(R.string.create_city_label)) }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.neighbourhood, { vm.neighbourhood = it }, label = { Text(stringResource(R.string.create_neighbourhood_label)) }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.country, { vm.country = it }, label = { Text(stringResource(R.string.create_country_label)) }, modifier = Modifier.fillMaxWidth())
+    OutlinedTextField(vm.address, { vm.address = it }, label = { Text(stringResource(R.string.create_address_label)) }, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
 private fun SpaceStep(vm: ListingCreateViewModel) {
-    KickerLabel("Property type")
+    KickerLabel(stringResource(R.string.create_property_type))
     Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-        listOf("APARTMENT", "HOUSE", "LOFT", "TOWNHOUSE").forEach { t ->
+        listOf(
+            "APARTMENT" to R.string.create_prop_apartment,
+            "HOUSE" to R.string.create_prop_house,
+            "LOFT" to R.string.create_prop_loft,
+            "TOWNHOUSE" to R.string.create_prop_townhouse,
+        ).forEach { (wire, labelRes) ->
             FilterChip(
-                selected = vm.propertyType == t,
-                onClick = { vm.propertyType = t },
-                label = { Text(t.lowercase().replaceFirstChar { it.uppercase() }) },
+                selected = vm.propertyType == wire,
+                onClick = { vm.propertyType = wire },
+                label = { Text(stringResource(labelRes)) },
             )
         }
     }
-    Stepper("Size: ${vm.sizeSqm} m²", { vm.sizeSqm = (vm.sizeSqm - 5).coerceAtLeast(20) }, { vm.sizeSqm = (vm.sizeSqm + 5).coerceAtMost(800) })
-    Stepper("Sleeps: ${vm.sleeps}", { vm.sleeps = (vm.sleeps - 1).coerceAtLeast(1) }, { vm.sleeps = (vm.sleeps + 1).coerceAtMost(20) })
-    Stepper("Bedrooms: ${vm.bedrooms}", { vm.bedrooms = (vm.bedrooms - 1).coerceAtLeast(0) }, { vm.bedrooms = (vm.bedrooms + 1).coerceAtMost(15) })
-    Stepper("Bathrooms: ${vm.bathrooms}", { vm.bathrooms = (vm.bathrooms - 1).coerceAtLeast(0) }, { vm.bathrooms = (vm.bathrooms + 1).coerceAtMost(10) })
-    Stepper("Floor: ${vm.floor}", { vm.floor = (vm.floor - 1).coerceAtLeast(-2) }, { vm.floor = (vm.floor + 1).coerceAtMost(60) })
+    Stepper(stringResource(R.string.create_size, vm.sizeSqm), { vm.sizeSqm = (vm.sizeSqm - 5).coerceAtLeast(20) }, { vm.sizeSqm = (vm.sizeSqm + 5).coerceAtMost(800) })
+    Stepper(stringResource(R.string.create_sleeps, vm.sleeps), { vm.sleeps = (vm.sleeps - 1).coerceAtLeast(1) }, { vm.sleeps = (vm.sleeps + 1).coerceAtMost(20) })
+    Stepper(stringResource(R.string.create_bedrooms, vm.bedrooms), { vm.bedrooms = (vm.bedrooms - 1).coerceAtLeast(0) }, { vm.bedrooms = (vm.bedrooms + 1).coerceAtMost(15) })
+    Stepper(stringResource(R.string.create_bathrooms, vm.bathrooms), { vm.bathrooms = (vm.bathrooms - 1).coerceAtLeast(0) }, { vm.bathrooms = (vm.bathrooms + 1).coerceAtMost(10) })
+    Stepper(stringResource(R.string.create_floor, vm.floor), { vm.floor = (vm.floor - 1).coerceAtLeast(-2) }, { vm.floor = (vm.floor + 1).coerceAtMost(60) })
 }
 
 @Composable
 private fun AccessStep(vm: ListingCreateViewModel) {
-    SwitchRow("Has elevator", vm.hasElevator) { vm.hasElevator = it }
-    SwitchRow("Step-free access", vm.stepFreeAccess) { vm.stepFreeAccess = it }
-    SwitchRow("Pets allowed", vm.petsAllowed) { vm.petsAllowed = it }
+    SwitchRow(stringResource(R.string.create_has_elevator), vm.hasElevator) { vm.hasElevator = it }
+    SwitchRow(stringResource(R.string.create_step_free), vm.stepFreeAccess) { vm.stepFreeAccess = it }
+    SwitchRow(stringResource(R.string.create_pets_allowed), vm.petsAllowed) { vm.petsAllowed = it }
 }
 
 @Composable
 private fun AmenitiesStep(vm: ListingCreateViewModel) {
-    SwitchRow("WFH setup", vm.wfhSetup) { vm.wfhSetup = it }
+    SwitchRow(stringResource(R.string.create_wfh_setup), vm.wfhSetup) { vm.wfhSetup = it }
     if (vm.wfhSetup) {
-        Stepper("Desks: ${vm.wfhDesks}", { vm.wfhDesks = (vm.wfhDesks - 1).coerceAtLeast(0) }, { vm.wfhDesks = (vm.wfhDesks + 1).coerceAtMost(10) })
+        Stepper(stringResource(R.string.create_desks, vm.wfhDesks), { vm.wfhDesks = (vm.wfhDesks - 1).coerceAtLeast(0) }, { vm.wfhDesks = (vm.wfhDesks + 1).coerceAtMost(10) })
     }
-    SwitchRow("Parking", vm.hasParking) { vm.hasParking = it }
-    SwitchRow("Bike included", vm.bikeIncluded) { vm.bikeIncluded = it }
-    SwitchRow("Balcony", vm.balcony) { vm.balcony = it }
-    SwitchRow("Rooftop", vm.rooftop) { vm.rooftop = it }
-    SwitchRow("Garden", vm.garden) { vm.garden = it }
-    SwitchRow("Courtyard", vm.courtyard) { vm.courtyard = it }
-    SwitchRow("Piano", vm.piano) { vm.piano = it }
-    SwitchRow("Pool", vm.pool) { vm.pool = it }
-    SwitchRow("Gym", vm.gym) { vm.gym = it }
-    SwitchRow("AC", vm.ac) { vm.ac = it }
-    SwitchRow("Dishwasher", vm.dishwasher) { vm.dishwasher = it }
-    SwitchRow("Washer", vm.washer) { vm.washer = it }
-    SwitchRow("Dryer", vm.dryer) { vm.dryer = it }
+    SwitchRow(stringResource(R.string.create_parking), vm.hasParking) { vm.hasParking = it }
+    SwitchRow(stringResource(R.string.create_bike), vm.bikeIncluded) { vm.bikeIncluded = it }
+    SwitchRow(stringResource(R.string.create_balcony), vm.balcony) { vm.balcony = it }
+    SwitchRow(stringResource(R.string.create_rooftop), vm.rooftop) { vm.rooftop = it }
+    SwitchRow(stringResource(R.string.create_garden), vm.garden) { vm.garden = it }
+    SwitchRow(stringResource(R.string.create_courtyard), vm.courtyard) { vm.courtyard = it }
+    SwitchRow(stringResource(R.string.create_piano), vm.piano) { vm.piano = it }
+    SwitchRow(stringResource(R.string.create_pool), vm.pool) { vm.pool = it }
+    SwitchRow(stringResource(R.string.create_gym), vm.gym) { vm.gym = it }
+    SwitchRow(stringResource(R.string.create_ac), vm.ac) { vm.ac = it }
+    SwitchRow(stringResource(R.string.create_dishwasher), vm.dishwasher) { vm.dishwasher = it }
+    SwitchRow(stringResource(R.string.create_washer), vm.washer) { vm.washer = it }
+    SwitchRow(stringResource(R.string.create_dryer), vm.dryer) { vm.dryer = it }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DatesStep(vm: ListingCreateViewModel) {
-    DateField("Available from", vm.availableFrom, { vm.availableFrom = it }, modifier = Modifier.fillMaxWidth())
-    DateField("Available to", vm.availableTo, { vm.availableTo = it }, modifier = Modifier.fillMaxWidth())
-    Stepper("Min stay: ${vm.minStayDays} days", { vm.minStayDays = (vm.minStayDays - 1).coerceAtLeast(1) }, { vm.minStayDays = (vm.minStayDays + 1).coerceAtMost(180) })
-    Stepper("Max stay: ${vm.maxStayDays} days", { vm.maxStayDays = (vm.maxStayDays - 1).coerceAtLeast(1) }, { vm.maxStayDays = (vm.maxStayDays + 1).coerceAtMost(365) })
+    DateField(stringResource(R.string.create_available_from), vm.availableFrom, { vm.availableFrom = it }, modifier = Modifier.fillMaxWidth())
+    DateField(stringResource(R.string.create_available_to), vm.availableTo, { vm.availableTo = it }, modifier = Modifier.fillMaxWidth())
+    Stepper(stringResource(R.string.create_min_stay, vm.minStayDays), { vm.minStayDays = (vm.minStayDays - 1).coerceAtLeast(1) }, { vm.minStayDays = (vm.minStayDays + 1).coerceAtMost(180) })
+    Stepper(stringResource(R.string.create_max_stay, vm.maxStayDays), { vm.maxStayDays = (vm.maxStayDays - 1).coerceAtLeast(1) }, { vm.maxStayDays = (vm.maxStayDays + 1).coerceAtMost(365) })
 }
 
 @Composable
@@ -599,7 +605,7 @@ private fun PhotosStep(vm: ListingCreateViewModel) {
     ) { uris -> if (uris.isNotEmpty()) vm.addPhotos(uris) }
 
     Text(
-        "Add up to 10 photos of your home. We resize them before upload.",
+        stringResource(R.string.create_photos_hint),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -611,14 +617,14 @@ private fun PhotosStep(vm: ListingCreateViewModel) {
     ) {
         Icon(Icons.Default.AddAPhoto, contentDescription = null, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(SwaplSpacing.s2))
-        Text("Choose photos")
+        Text(stringResource(R.string.create_choose_photos))
     }
 
     if (vm.uploadsInFlight > 0) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
             CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
             Text(
-                "Uploading ${vm.uploadsInFlight} photo${if (vm.uploadsInFlight > 1) "s" else ""}…",
+                pluralStringResource(R.plurals.create_uploading_photos, vm.uploadsInFlight, vm.uploadsInFlight),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -632,7 +638,7 @@ private fun PhotosStep(vm: ListingCreateViewModel) {
                 onClick = { vm.removePhoto(url) },
                 modifier = Modifier.align(Alignment.TopEnd),
             ) {
-                Icon(Icons.Default.Close, contentDescription = "Remove photo", tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.chat_remove_photo), tint = MaterialTheme.colorScheme.onPrimary)
             }
         }
     }
@@ -643,12 +649,12 @@ private fun DescriptionStep(vm: ListingCreateViewModel) {
     OutlinedTextField(
         value = vm.description,
         onValueChange = { vm.description = it },
-        label = { Text("Describe your home (min 20 chars)") },
+        label = { Text(stringResource(R.string.create_description_label)) },
         modifier = Modifier.fillMaxWidth(),
         minLines = 6,
     )
     Text(
-        "${vm.description.length} characters",
+        stringResource(R.string.create_characters, vm.description.length),
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -656,10 +662,10 @@ private fun DescriptionStep(vm: ListingCreateViewModel) {
 
 @Composable
 private fun ReviewStep(vm: ListingCreateViewModel) {
-    Text("${vm.title} — ${vm.city}", style = MaterialTheme.typography.titleLarge)
-    Text("${vm.sizeSqm} m² · sleeps ${vm.sleeps} · ${vm.bedrooms} br / ${vm.bathrooms} ba", style = MaterialTheme.typography.bodyMedium)
+    Text(stringResource(R.string.create_review_title, vm.title, vm.city), style = MaterialTheme.typography.titleLarge)
+    Text(stringResource(R.string.create_review_specs, vm.sizeSqm, vm.sleeps, vm.bedrooms, vm.bathrooms), style = MaterialTheme.typography.bodyMedium)
     Text(vm.description, style = MaterialTheme.typography.bodyMedium)
-    Text("Available ${vm.availableFrom} → ${vm.availableTo}", style = MaterialTheme.typography.labelMedium)
+    Text(stringResource(R.string.create_review_available, vm.availableFrom, vm.availableTo), style = MaterialTheme.typography.labelMedium)
 
     // Publish acknowledgment (DOK-162) — create only. Edits already have an ack
     // on file and the body skips it server-side.
@@ -757,7 +763,7 @@ private fun SwitchRow(label: String, value: Boolean, onChange: (Boolean) -> Unit
 private fun Stepper(label: String, onMinus: () -> Unit, onPlus: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Text(label, modifier = Modifier.weight(1f))
-        IconButton(onClick = onMinus, modifier = Modifier.size(36.dp)) { Icon(Icons.Default.Remove, contentDescription = "decrease") }
-        IconButton(onClick = onPlus, modifier = Modifier.size(36.dp)) { Icon(Icons.Default.Add, contentDescription = "increase") }
+        IconButton(onClick = onMinus, modifier = Modifier.size(36.dp)) { Icon(Icons.Default.Remove, contentDescription = stringResource(R.string.create_decrease)) }
+        IconButton(onClick = onPlus, modifier = Modifier.size(36.dp)) { Icon(Icons.Default.Add, contentDescription = stringResource(R.string.create_increase)) }
     }
 }

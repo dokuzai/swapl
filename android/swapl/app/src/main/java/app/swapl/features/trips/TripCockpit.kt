@@ -97,10 +97,10 @@ fun TripCockpit(
 // --- Phase timeline -------------------------------------------------------
 
 private val TIMELINE_STOPS = listOf(
-    "AGREED" to "Agreed",
-    "READY" to "Ready",
-    "IN_PROGRESS" to "Staying",
-    "COMPLETED" to "Done",
+    R.string.cockpit_timeline_agreed,
+    R.string.cockpit_timeline_ready,
+    R.string.cockpit_timeline_staying,
+    R.string.cockpit_timeline_done,
 )
 
 private fun timelineIndex(phase: String): Int = when (phase) {
@@ -115,7 +115,7 @@ private fun timelineIndex(phase: String): Int = when (phase) {
 private fun PhaseTimeline(phase: String) {
     if (phase == PHASE_INTERRUPTED) {
         Text(
-            "This swap was cancelled",
+            stringResource(R.string.cockpit_cancelled_banner),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium,
         )
@@ -123,7 +123,7 @@ private fun PhaseTimeline(phase: String) {
     }
     val current = timelineIndex(phase)
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-        TIMELINE_STOPS.forEachIndexed { index, (_, label) ->
+        TIMELINE_STOPS.forEachIndexed { index, labelRes ->
             val done = index <= current
             val color = if (done) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.outline
@@ -144,7 +144,7 @@ private fun PhaseTimeline(phase: String) {
                     Box(Modifier.size(14.dp).clip(CircleShape).background(color))
                 }
                 Text(
-                    label,
+                    stringResource(labelRes),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = if (done) FontWeight.Medium else FontWeight.Normal,
                     color = if (done) MaterialTheme.colorScheme.onSurface
@@ -168,12 +168,12 @@ private fun CountdownAndInsurance(cockpit: TripCockpit) {
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
-                if (showCountdown) "Starts in" else "Status",
+                stringResource(if (showCountdown) R.string.cockpit_starts_in else R.string.cockpit_status),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                if (showCountdown) countdownText(cockpit.countdown) else phaseLabel(cockpit.phase),
+                if (showCountdown) countdownText(cockpit.countdown) else stringResource(phaseLabelRes(cockpit.phase)),
                 style = MaterialTheme.typography.titleLarge,
             )
         }
@@ -186,23 +186,25 @@ private fun CountdownAndInsurance(cockpit: TripCockpit) {
                 horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s1),
             ) {
                 Icon(Icons.Filled.CheckCircle, contentDescription = null, modifier = Modifier.size(16.dp))
-                Text("Insured", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.cockpit_insured), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium)
             }
         }
     }
 }
 
+@Composable
 private fun countdownText(c: app.swapl.core.model.TripCountdown): String =
-    if (c.days > 0) "${c.days}d ${c.hours}h" else "${c.hours}h"
+    if (c.days > 0) stringResource(R.string.cockpit_countdown_days, c.days, c.hours)
+    else stringResource(R.string.cockpit_countdown_hours, c.hours)
 
-private fun phaseLabel(phase: String): String = when (phase) {
-    "AGREED" -> "Swap agreed"
-    "PREPARING" -> "Preparing"
-    "READY" -> "Ready to go"
-    "IN_PROGRESS" -> "In progress"
-    "COMPLETED" -> "Completed"
-    "INTERRUPTED" -> "Cancelled"
-    else -> "Preparing"
+private fun phaseLabelRes(phase: String): Int = when (phase) {
+    "AGREED" -> R.string.cockpit_phase_agreed
+    "PREPARING" -> R.string.cockpit_phase_preparing
+    "READY" -> R.string.cockpit_phase_ready
+    "IN_PROGRESS" -> R.string.cockpit_phase_in_progress
+    "COMPLETED" -> R.string.cockpit_phase_completed
+    "INTERRUPTED" -> R.string.cockpit_phase_cancelled
+    else -> R.string.cockpit_phase_preparing
 }
 
 // --- Before you go checklist ---------------------------------------------
@@ -210,14 +212,14 @@ private fun phaseLabel(phase: String): String = when (phase) {
 @Composable
 private fun BeforeYouGo(cockpit: TripCockpit, onFinishGuide: () -> Unit) {
     val items = listOf(
-        cockpit.checklist.guideFilled to "Complete your home guide",
-        cockpit.checklist.detailsRead to "Read your host's home details",
-        cockpit.checklist.checkedIn to "Check in when you arrive",
-        cockpit.checklist.checkedOut to "Check out when you leave",
+        cockpit.checklist.guideFilled to stringResource(R.string.cockpit_check_guide_filled),
+        cockpit.checklist.detailsRead to stringResource(R.string.cockpit_check_details_read),
+        cockpit.checklist.checkedIn to stringResource(R.string.cockpit_check_checked_in),
+        cockpit.checklist.checkedOut to stringResource(R.string.cockpit_check_checked_out),
     )
     SurfaceCard {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-            Text("Before you go", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.cockpit_before_you_go), style = MaterialTheme.typography.titleLarge)
             items.forEach { (done, label) ->
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
                     Icon(
@@ -236,7 +238,7 @@ private fun BeforeYouGo(cockpit: TripCockpit, onFinishGuide: () -> Unit) {
             }
             if (cockpit.myGuideCompleteness < 100) {
                 TextButton(onClick = onFinishGuide, contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)) {
-                    Text("Finish your home guide (${cockpit.myGuideCompleteness}%)")
+                    Text(stringResource(R.string.cockpit_finish_guide, cockpit.myGuideCompleteness))
                 }
             }
         }
@@ -251,7 +253,7 @@ private fun KeyAndInsuranceCard(cockpit: TripCockpit) {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4)) {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
                 Text(
-                    "YOUR KEY CODE",
+                    stringResource(R.string.cockpit_your_key_code),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -263,7 +265,7 @@ private fun KeyAndInsuranceCard(cockpit: TripCockpit) {
                     letterSpacing = 3.sp,
                 )
                 Text(
-                    "Keys for keys — share this with your guest so they can get in.",
+                    stringResource(R.string.cockpit_key_code_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -273,10 +275,10 @@ private fun KeyAndInsuranceCard(cockpit: TripCockpit) {
                 Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                         Icon(Icons.Filled.CheckCircle, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Text("Swap protection", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.cockpit_swap_protection), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
                     }
                     Text(
-                        "Policy ${insurance.policyNumber} · cover €${insurance.coverageAmount}",
+                        stringResource(R.string.cockpit_policy_line, insurance.policyNumber, insurance.coverageAmount.toString()),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -363,7 +365,7 @@ private fun VerifiedOnTon(insurance: TripInsurance) {
 private fun WhereYouStay(cockpit: TripCockpit) {
     SurfaceCard {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
-            Text("Where you're staying", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.cockpit_where_you_stay), style = MaterialTheme.typography.titleLarge)
             if (cockpit.addressUnlocked) {
                 cockpit.otherAddress?.takeIf { it.isNotBlank() }?.let { address ->
                     Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
@@ -376,7 +378,7 @@ private fun WhereYouStay(cockpit: TripCockpit) {
                     HomeGuideAccordion(fields)
                 } else {
                     Text(
-                        "Your host hasn't filled in their home guide yet.",
+                        stringResource(R.string.cockpit_guide_not_filled),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -399,15 +401,15 @@ private fun LockedAddress(cockpit: TripCockpit) {
         )
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s1)) {
             Text(
-                cockpit.otherCity?.let { "The exact address in $it unlocks soon" }
-                    ?: "The exact address unlocks soon",
+                cockpit.otherCity?.let { stringResource(R.string.cockpit_address_unlocks_city, it) }
+                    ?: stringResource(R.string.cockpit_address_unlocks),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
             )
             val unlocksAt = cockpit.otherGuide?.unlocksAt
             Text(
-                if (unlocksAt != null) "Unlocks ${unlocksAt.take(10)} — 48h before your stay."
-                else "The address and home guide unlock 48h before your stay.",
+                if (unlocksAt != null) stringResource(R.string.cockpit_unlocks_at, unlocksAt.take(10))
+                else stringResource(R.string.cockpit_unlocks_generic),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -420,7 +422,7 @@ private fun HomeGuideAccordion(fields: HomeGuideFields) {
     val rows = remember(fields) { guideRows(fields) }
     if (rows.isEmpty()) {
         Text(
-            "Your host hasn't filled in their home guide yet.",
+            stringResource(R.string.cockpit_guide_not_filled),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -433,10 +435,10 @@ private fun HomeGuideAccordion(fields: HomeGuideFields) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("Home guide", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
+            Text(stringResource(R.string.cockpit_home_guide), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
             Icon(
                 if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                contentDescription = if (expanded) "Collapse" else "Expand",
+                contentDescription = stringResource(if (expanded) R.string.cockpit_collapse else R.string.cockpit_expand),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -445,10 +447,10 @@ private fun HomeGuideAccordion(fields: HomeGuideFields) {
                 Modifier.padding(top = SwaplSpacing.s3),
                 verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3),
             ) {
-                rows.forEach { (label, value) ->
+                rows.forEach { (labelRes, value) ->
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            label.uppercase(),
+                            stringResource(labelRes).uppercase(),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -460,21 +462,21 @@ private fun HomeGuideAccordion(fields: HomeGuideFields) {
     }
 }
 
-private fun guideRows(f: HomeGuideFields): List<Pair<String, String>> = buildList {
-    fun add(label: String, value: String?) {
-        if (!value.isNullOrBlank()) add(label to value.trim())
+private fun guideRows(f: HomeGuideFields): List<Pair<Int, String>> = buildList {
+    fun add(labelRes: Int, value: String?) {
+        if (!value.isNullOrBlank()) add(labelRes to value.trim())
     }
-    add("Getting in", f.accessInstructions)
-    add("Keys", f.keyPickup)
-    add("Wi-Fi network", f.wifiName)
-    add("Wi-Fi password", f.wifiPassword)
-    add("Heating & cooling", f.heatingCooling)
-    add("Kitchen", f.kitchen)
-    add("Bins & recycling", f.bins)
-    add("Pets & plants", f.petsPlants)
-    add("House rules", f.houseRules)
-    add("Neighbourhood", f.neighbourhood)
-    add("Emergency contact", f.emergencyContact)
+    add(R.string.cockpit_guide_getting_in, f.accessInstructions)
+    add(R.string.cockpit_guide_keys, f.keyPickup)
+    add(R.string.cockpit_guide_wifi_name, f.wifiName)
+    add(R.string.cockpit_guide_wifi_password, f.wifiPassword)
+    add(R.string.cockpit_guide_heating, f.heatingCooling)
+    add(R.string.cockpit_guide_kitchen, f.kitchen)
+    add(R.string.cockpit_guide_bins, f.bins)
+    add(R.string.cockpit_guide_pets_plants, f.petsPlants)
+    add(R.string.cockpit_guide_house_rules, f.houseRules)
+    add(R.string.cockpit_guide_neighbourhood, f.neighbourhood)
+    add(R.string.cockpit_guide_emergency, f.emergencyContact)
 }
 
 // --- Check in / out buttons ----------------------------------------------
@@ -485,9 +487,9 @@ private fun CheckButtons(cockpit: TripCockpit, onCheckIn: () -> Unit, onCheckOut
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
         when {
             !cockpit.checklist.checkedIn ->
-                app.swapl.design.components.PrimaryPill(text = "Check in", onClick = onCheckIn)
+                app.swapl.design.components.PrimaryPill(text = stringResource(R.string.cockpit_check_in), onClick = onCheckIn)
             !cockpit.checklist.checkedOut ->
-                app.swapl.design.components.PrimaryPill(text = "Check out", onClick = onCheckOut)
+                app.swapl.design.components.PrimaryPill(text = stringResource(R.string.cockpit_check_out), onClick = onCheckOut)
             else -> Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -496,7 +498,7 @@ private fun CheckButtons(cockpit: TripCockpit, onCheckIn: () -> Unit, onCheckOut
                 Icon(Icons.Filled.CheckCircle, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(SwaplSpacing.s2))
                 Text(
-                    "Checked in and out — thanks!",
+                    stringResource(R.string.cockpit_checked_in_out),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -512,7 +514,7 @@ private fun CheckButtons(cockpit: TripCockpit, onCheckIn: () -> Unit, onCheckOut
 private fun EventLog(cockpit: TripCockpit, otherName: String?) {
     SurfaceCard {
         Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s4)) {
-            Text("Trip activity", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.cockpit_trip_activity), style = MaterialTheme.typography.titleLarge)
             cockpit.checkEvents.sortedByDescending { it.createdAt }.forEach { event ->
                 EventRow(event, otherName)
             }
@@ -522,8 +524,10 @@ private fun EventLog(cockpit: TripCockpit, otherName: String?) {
 
 @Composable
 private fun EventRow(event: TripCheckEvent, otherName: String?) {
-    val who = if (event.mine) "You" else (otherName ?: "Your swap partner")
-    val title = if (event.type == "checkin") "$who checked in" else "$who checked out"
+    val who = if (event.mine) stringResource(R.string.cockpit_event_you)
+        else (otherName ?: stringResource(R.string.cockpit_event_partner_fallback))
+    val title = if (event.type == "checkin") stringResource(R.string.cockpit_event_checked_in, who)
+        else stringResource(R.string.cockpit_event_checked_out, who)
     Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
         Box(
             Modifier.size(38.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceVariant),

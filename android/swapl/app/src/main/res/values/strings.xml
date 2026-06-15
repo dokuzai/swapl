@@ -408,4 +408,262 @@
     <string name="review_submitting">Submitting…</string>
     <string name="review_card_title">How was your swap?</string>
     <string name="review_card_body">Leave %1$s a review — it shows on their public profile.</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">Swap inbox</string>
+    <string name="inbox_search_open">Search</string>
+    <string name="inbox_search_close">Close search</string>
+    <string name="inbox_search_placeholder">Search by host or city</string>
+    <string name="inbox_filter_all">All</string>
+    <string name="inbox_filter_waiting">Waiting on you</string>
+    <string name="inbox_filter_sent">Sent</string>
+    <string name="inbox_filter_active">Active</string>
+    <string name="inbox_filter_archived">Archived</string>
+    <string name="inbox_section_waiting">Waiting on you</string>
+    <string name="inbox_section_sent">Sent — awaiting reply</string>
+    <string name="inbox_section_active">Active swaps</string>
+    <string name="inbox_section_archived">Archived</string>
+    <string name="inbox_status_confirmed">Confirmed swap</string>
+    <string name="inbox_status_countered">Counter offer received</string>
+    <string name="inbox_status_declined">Proposal declined</string>
+    <string name="inbox_status_waiting_reply">Waiting for your reply</string>
+    <string name="inbox_status_sent">Proposal sent</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s → %2$s · with %3$s</string>
+    <string name="inbox_dates">%1$s → %2$s</string>
+    <string name="inbox_error_title">Messages unavailable</string>
+    <string name="inbox_error_body">We couldn\'t load your swaps. Pull to refresh or retry.</string>
+    <string name="inbox_empty_title">No messages yet</string>
+    <string name="inbox_empty_body">Propose a swap from any listing and it will show up here.</string>
+
+    <!-- Trips -->
+    <string name="trips_title">Trips</string>
+    <string name="trips_phase_active">Active now</string>
+    <string name="trips_phase_upcoming">Upcoming</string>
+    <string name="trips_phase_past">Past</string>
+    <string name="trips_row_title">Trip to %1$s</string>
+    <string name="trips_row_dates_host">%1$s → %2$s · host %3$s</string>
+    <string name="trips_row_dates">%1$s → %2$s</string>
+    <string name="trips_row_roles">Guest in %1$s · You host in %2$s</string>
+    <string name="trips_error_title">Trips unavailable</string>
+    <string name="trips_error_body">We couldn\'t load your trips. Pull to refresh or retry.</string>
+    <string name="trips_empty_title">No trips yet</string>
+    <string name="trips_empty_body">Accepted swaps become trips. Your upcoming stays will show up here.</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">This swap was cancelled</string>
+    <string name="cockpit_timeline_agreed">Agreed</string>
+    <string name="cockpit_timeline_ready">Ready</string>
+    <string name="cockpit_timeline_staying">Staying</string>
+    <string name="cockpit_timeline_done">Done</string>
+    <string name="cockpit_starts_in">Starts in</string>
+    <string name="cockpit_status">Status</string>
+    <string name="cockpit_countdown_days">%1$dd %2$dh</string>
+    <string name="cockpit_countdown_hours">%1$dh</string>
+    <string name="cockpit_phase_agreed">Swap agreed</string>
+    <string name="cockpit_phase_preparing">Preparing</string>
+    <string name="cockpit_phase_ready">Ready to go</string>
+    <string name="cockpit_phase_in_progress">In progress</string>
+    <string name="cockpit_phase_completed">Completed</string>
+    <string name="cockpit_phase_cancelled">Cancelled</string>
+    <string name="cockpit_insured">Insured</string>
+    <string name="cockpit_before_you_go">Before you go</string>
+    <string name="cockpit_check_guide_filled">Complete your home guide</string>
+    <string name="cockpit_check_details_read">Read your host\'s home details</string>
+    <string name="cockpit_check_checked_in">Check in when you arrive</string>
+    <string name="cockpit_check_checked_out">Check out when you leave</string>
+    <string name="cockpit_finish_guide">Finish your home guide (%1$d%%)</string>
+    <string name="cockpit_your_key_code">YOUR KEY CODE</string>
+    <string name="cockpit_key_code_note">Keys for keys — share this with your guest so they can get in.</string>
+    <string name="cockpit_swap_protection">Swap protection</string>
+    <string name="cockpit_policy_line">Policy %1$s · cover €%2$s</string>
+    <string name="cockpit_where_you_stay">Where you\'re staying</string>
+    <string name="cockpit_guide_not_filled">Your host hasn\'t filled in their home guide yet.</string>
+    <string name="cockpit_address_unlocks_city">The exact address in %1$s unlocks soon</string>
+    <string name="cockpit_address_unlocks">The exact address unlocks soon</string>
+    <string name="cockpit_unlocks_at">Unlocks %1$s — 48h before your stay.</string>
+    <string name="cockpit_unlocks_generic">The address and home guide unlock 48h before your stay.</string>
+    <string name="cockpit_home_guide">Home guide</string>
+    <string name="cockpit_collapse">Collapse</string>
+    <string name="cockpit_expand">Expand</string>
+    <string name="cockpit_guide_getting_in">Getting in</string>
+    <string name="cockpit_guide_keys">Keys</string>
+    <string name="cockpit_guide_wifi_name">Wi-Fi network</string>
+    <string name="cockpit_guide_wifi_password">Wi-Fi password</string>
+    <string name="cockpit_guide_heating">Heating &amp; cooling</string>
+    <string name="cockpit_guide_kitchen">Kitchen</string>
+    <string name="cockpit_guide_bins">Bins &amp; recycling</string>
+    <string name="cockpit_guide_pets_plants">Pets &amp; plants</string>
+    <string name="cockpit_guide_house_rules">House rules</string>
+    <string name="cockpit_guide_neighbourhood">Neighbourhood</string>
+    <string name="cockpit_guide_emergency">Emergency contact</string>
+    <string name="cockpit_check_in">Check in</string>
+    <string name="cockpit_check_out">Check out</string>
+    <string name="cockpit_checked_in_out">Checked in and out — thanks!</string>
+    <string name="cockpit_trip_activity">Trip activity</string>
+    <string name="cockpit_event_you">You</string>
+    <string name="cockpit_event_partner_fallback">Your swap partner</string>
+    <string name="cockpit_event_checked_in">%1$s checked in</string>
+    <string name="cockpit_event_checked_out">%1$s checked out</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">Messages unavailable</string>
+    <string name="chat_try_again">Try again</string>
+    <string name="chat_say_hello_title">Say hello</string>
+    <string name="chat_say_hello_body">Start the conversation — ask about dates, the neighbourhood, or anything you\'d like to know.</string>
+    <string name="chat_load_earlier">Load earlier messages</string>
+    <string name="chat_message_placeholder">Message</string>
+    <string name="chat_add_photo">Add photo</string>
+    <string name="chat_remove_photo">Remove photo</string>
+    <string name="chat_send">Send message</string>
+    <string name="chat_receipt_read">Read</string>
+    <string name="chat_receipt_sent">Sent</string>
+    <string name="chat_invite_only_partners">Only the two swap partners can invite people.</string>
+    <string name="chat_invite_not_found">We couldn\'t find that person. Check the email or handle.</string>
+    <string name="chat_invite_failed">Couldn\'t send the invite. Try again.</string>
+    <string name="chat_send_failed">Couldn\'t send. Try again.</string>
+    <string name="chat_read_image_failed">Couldn\'t read that image</string>
+    <string name="chat_upload_photo_failed">Couldn\'t upload a photo. Check your connection and try again.</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">Location</string>
+    <string name="create_step_space">Space</string>
+    <string name="create_step_access">Access &amp; pets</string>
+    <string name="create_step_amenities">Amenities</string>
+    <string name="create_step_dates">Dates</string>
+    <string name="create_step_photos">Photos</string>
+    <string name="create_step_description">Description</string>
+    <string name="create_step_review">Review</string>
+    <string name="create_kicker_edit">Edit your home — step %1$d of %2$d</string>
+    <string name="create_kicker_new">Step %1$d of %2$d</string>
+    <string name="create_back">Back</string>
+    <string name="create_next">Next</string>
+    <string name="create_saving">Saving…</string>
+    <string name="create_publishing">Publishing…</string>
+    <string name="create_save_changes">Save changes</string>
+    <string name="create_publish_listing">Publish listing</string>
+    <string name="create_locating">Locating…</string>
+    <string name="create_use_location">Use my current location</string>
+    <string name="create_location_error">Couldn\'t determine your location — fill it in manually.</string>
+    <string name="create_load_error">Could not load listing</string>
+    <string name="create_read_image_error">Couldn\'t read that image</string>
+    <string name="create_upload_failed">Upload failed</string>
+    <string name="create_title_label">Title (e.g. Sunlit canal apartment)</string>
+    <string name="create_city_label">City</string>
+    <string name="create_neighbourhood_label">Neighbourhood</string>
+    <string name="create_country_label">Country</string>
+    <string name="create_address_label">Address (optional)</string>
+    <string name="create_property_type">Property type</string>
+    <string name="create_prop_apartment">Apartment</string>
+    <string name="create_prop_house">House</string>
+    <string name="create_prop_loft">Loft</string>
+    <string name="create_prop_townhouse">Townhouse</string>
+    <string name="create_size">Size: %1$d m²</string>
+    <string name="create_sleeps">Sleeps: %1$d</string>
+    <string name="create_bedrooms">Bedrooms: %1$d</string>
+    <string name="create_bathrooms">Bathrooms: %1$d</string>
+    <string name="create_floor">Floor: %1$d</string>
+    <string name="create_has_elevator">Has elevator</string>
+    <string name="create_step_free">Step-free access</string>
+    <string name="create_pets_allowed">Pets allowed</string>
+    <string name="create_wfh_setup">WFH setup</string>
+    <string name="create_desks">Desks: %1$d</string>
+    <string name="create_parking">Parking</string>
+    <string name="create_bike">Bike included</string>
+    <string name="create_balcony">Balcony</string>
+    <string name="create_rooftop">Rooftop</string>
+    <string name="create_garden">Garden</string>
+    <string name="create_courtyard">Courtyard</string>
+    <string name="create_piano">Piano</string>
+    <string name="create_pool">Pool</string>
+    <string name="create_gym">Gym</string>
+    <string name="create_ac">AC</string>
+    <string name="create_dishwasher">Dishwasher</string>
+    <string name="create_washer">Washer</string>
+    <string name="create_dryer">Dryer</string>
+    <string name="create_available_from">Available from</string>
+    <string name="create_available_to">Available to</string>
+    <string name="create_min_stay">Min stay: %1$d days</string>
+    <string name="create_max_stay">Max stay: %1$d days</string>
+    <string name="create_photos_hint">Add up to 10 photos of your home. We resize them before upload.</string>
+    <string name="create_choose_photos">Choose photos</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="one">Uploading %1$d photo…</item>
+        <item quantity="other">Uploading %1$d photos…</item>
+    </plurals>
+    <string name="create_description_label">Describe your home (min 20 chars)</string>
+    <string name="create_characters">%1$d characters</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d m² · sleeps %2$d · %3$d br / %4$d ba</string>
+    <string name="create_review_available">Available %1$s → %2$s</string>
+    <string name="create_decrease">decrease</string>
+    <string name="create_increase">increase</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">Stays with points</string>
+    <string name="keys_stay_in">Stay in %1$s</string>
+    <string name="keys_stay_guest_at">Guest at %1$s</string>
+    <string name="keys_stay_dates">%1$s → %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="one">%1$d night · %2$d points</item>
+        <item quantity="other">%1$d nights · %2$d points</item>
+    </plurals>
+    <string name="keys_stay_decline">Decline</string>
+    <string name="keys_stay_confirm">Confirm stay</string>
+    <string name="keys_stay_cancel_request">Cancel request</string>
+    <string name="keys_stay_covered">Confirmed — your stay is covered by a Swapl policy.</string>
+    <string name="keys_stay_status_awaiting_host">Awaiting host</string>
+    <string name="keys_stay_status_action_needed">Action needed</string>
+    <string name="keys_stay_status_confirmed">Confirmed</string>
+    <string name="keys_stay_status_declined">Declined</string>
+    <string name="keys_stay_status_cancelled">Cancelled</string>
+    <string name="keys_stay_status_completed">Completed</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">Stay with points</string>
+    <string name="stay_keys_intro">Book one-way with your points — no need to host them back. Good when your dates or home aren\'t a match for a direct swap.</string>
+    <string name="stay_keys_window">Choose dates inside the home\'s availability (%1$s → %2$s). %3$d–%4$d nights. Booked dates are crossed out.</string>
+    <string name="stay_keys_points_per_night">Points per night</string>
+    <string name="stay_keys_nights">Nights</string>
+    <string name="stay_keys_total">Total</string>
+    <string name="stay_keys_total_points">%1$d points</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="one">You have %1$d points — enough for this stay (about %2$d night at this rate).</item>
+        <item quantity="other">You have %1$d points — enough for this stay (about %2$d nights at this rate).</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="one">You\'re %1$d points short. Host about %2$d night at this rate to unlock this stay — or pick fewer nights. Points can\'t be bought.</item>
+        <item quantity="other">You\'re %1$d points short. Host about %2$d nights at this rate to unlock this stay — or pick fewer nights. Points can\'t be bought.</item>
+    </plurals>
+    <string name="stay_keys_held_note">Your points are held until the host confirms. You\'ll find this stay under Trips.</string>
+    <string name="stay_keys_sending">Sending…</string>
+    <string name="stay_keys_request">Request with points</string>
+    <string name="stay_keys_error_insufficient">You don\'t have enough points for these dates. Try fewer nights, or earn points by hosting. Points can\'t be bought.</string>
+    <string name="stay_keys_error_unavailable">Those dates aren\'t available. Pick dates inside the home\'s window.</string>
+    <string name="stay_keys_error_generic">Couldn\'t request this stay right now.</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">Saved searches</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">Saved searches are a Plus member feature.</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">Interests · %1$d / 12</string>
+    <string name="interests_vibe_label">Your vibe (optional)</string>
+    <string name="interests_save">Save</string>
+    <string name="interests_saving">Saving…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">Points history</string>
+    <string name="keys_tx_filter_all">All</string>
+    <string name="keys_tx_filter_earned">Earned</string>
+    <string name="keys_tx_filter_spent">Spent</string>
+    <string name="keys_tx_empty_all">No points activity yet.</string>
+    <string name="keys_tx_empty_earned">No earned points yet.</string>
+    <string name="keys_tx_empty_spent">No spent points yet.</string>
+    <string name="keys_tx_loading">Loading…</string>
+    <string name="keys_tx_load_more">Load more</string>
+    <string name="keys_tx_balance">%1$d bal</string>
+    <string name="keys_tx_error_title">Points history unavailable</string>
+    <string name="keys_tx_try_again">Try again</string>
 </resources>

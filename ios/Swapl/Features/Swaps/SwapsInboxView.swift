@@ -58,6 +58,18 @@ struct SwapsInboxView: View {
     @FocusState private var searchFieldFocused: Bool
     private let filters = ["All", "Hosting", "Traveling", "Archived"]
 
+    // The filter keys above stay English (they drive bucket selection); only the
+    // displayed chip label is localized.
+    private func filterLabel(_ filter: String) -> String {
+        switch filter {
+        case "All": return String(localized: "All")
+        case "Hosting": return String(localized: "Hosting")
+        case "Traveling": return String(localized: "Traveling")
+        case "Archived": return String(localized: "Archived")
+        default: return filter
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -111,7 +123,7 @@ struct SwapsInboxView: View {
                             Button {
                                 vm.selectedFilter = filter
                             } label: {
-                                AirbnbChip(title: filter, selected: vm.selectedFilter == filter)
+                                AirbnbChip(title: filterLabel(filter), selected: vm.selectedFilter == filter)
                             }
                             .buttonStyle(.plain)
                         }

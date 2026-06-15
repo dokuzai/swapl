@@ -39,9 +39,9 @@ final class BrowseListViewModel {
 
     var sortTitle: String {
         switch filters.sort {
-        case "newest": "Newest"
-        case "size_desc": "Largest"
-        default: "Best match"
+        case "newest": String(localized: "Newest")
+        case "size_desc": String(localized: "Largest")
+        default: String(localized: "Best match")
         }
     }
 }
@@ -57,9 +57,9 @@ enum BrowseCategory: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .homes: "Homes"
-        case .experiences: "Experiences"
-        case .services: "Services"
+        case .homes: String(localized: "Homes")
+        case .experiences: String(localized: "Experiences")
+        case .services: String(localized: "Services")
         }
     }
 
@@ -139,7 +139,7 @@ struct BrowseListView: View {
     private func discoverScaffold<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
-                SwaplPageTitle("Explore")
+                SwaplPageTitle(String(localized: "Explore"))
                 categoryStrip
                 content()
             }
@@ -158,18 +158,18 @@ struct BrowseListView: View {
             } else if let error = vm.error {
                 SwaplEmptyState(
                     systemImage: "wifi.exclamationmark",
-                    title: "Homes unavailable",
+                    title: String(localized: "Homes unavailable"),
                     description: error,
-                    actionTitle: "Try Again",
+                    actionTitle: String(localized: "Try Again"),
                     action: { Task { await vm.load() } }
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if vm.items.isEmpty {
                 SwaplEmptyState(
                     systemImage: "house",
-                    title: "No homes found",
-                    description: "Try a different city, date range, or sort order.",
-                    actionTitle: vm.filters.activeFilterCount > 0 ? "Adjust Filters" : "Refresh",
+                    title: String(localized: "No homes found"),
+                    description: String(localized: "Try a different city, date range, or sort order."),
+                    actionTitle: vm.filters.activeFilterCount > 0 ? String(localized: "Adjust Filters") : String(localized: "Refresh"),
                     action: {
                         if vm.filters.activeFilterCount > 0 {
                             isShowingFilters = true
@@ -224,7 +224,7 @@ struct BrowseListView: View {
             }
         } label: {
             HStack(spacing: 8) {
-                Text(viewMode == .list ? "Map" : "List")
+                Text(viewMode == .list ? String(localized: "Map") : String(localized: "List"))
                 Image(systemName: viewMode == .list ? "map.fill" : "list.bullet")
             }
             .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
@@ -278,14 +278,14 @@ struct BrowseListView: View {
     private var exploreContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
-                SwaplPageTitle("Explore") { inspireButton }
+                SwaplPageTitle(String(localized: "Explore")) { inspireButton }
                 searchHeader
                 categoryStrip
                 if let first = vm.items.first {
                     continueCard(first)
                 }
-                listingSection(title: "Homes guests love", items: Array(vm.items.prefix(6)), compact: true)
-                listingSection(title: "Available for similar dates", items: Array(vm.items.dropFirst(3).prefix(6)), compact: false)
+                listingSection(title: String(localized: "Homes guests love"), items: Array(vm.items.prefix(6)), compact: true)
+                listingSection(title: String(localized: "Available for similar dates"), items: Array(vm.items.dropFirst(3).prefix(6)), compact: false)
             }
             .padding(.bottom, 110)
         }
@@ -345,9 +345,9 @@ struct BrowseListView: View {
                     : "Search and filters"
             )
             Menu {
-                sortButton("Best match", value: "match")
-                sortButton("Newest", value: "newest")
-                sortButton("Largest", value: "size_desc")
+                sortButton(String(localized: "Best match"), value: "match")
+                sortButton(String(localized: "Newest"), value: "newest")
+                sortButton(String(localized: "Largest"), value: "size_desc")
             } label: {
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 17, weight: .semibold))
@@ -363,7 +363,7 @@ struct BrowseListView: View {
     }
 
     private var searchBarTitle: String {
-        if vm.filters.cities.isEmpty { return "Start your search" }
+        if vm.filters.cities.isEmpty { return String(localized: "Start your search") }
         return vm.filters.cities.joined(separator: ", ")
     }
 
@@ -468,9 +468,9 @@ struct BrowseListView: View {
                 .accessibilityLabel("Clear search")
             } else {
                 Menu {
-                    sortButton("Best match", value: "match")
-                    sortButton("Newest", value: "newest")
-                    sortButton("Largest", value: "size_desc")
+                    sortButton(String(localized: "Best match"), value: "match")
+                    sortButton(String(localized: "Newest"), value: "newest")
+                    sortButton(String(localized: "Largest"), value: "size_desc")
                 } label: {
                     Image(systemName: "slider.horizontal.3")
                         .font(.system(size: 17, weight: .semibold))
@@ -731,7 +731,7 @@ struct ListingCardView: View {
                 .padding(compact ? 0 : 2)
 
                 if !compact && (item.band == "featured" || item.matchScore != nil) {
-                    Text(item.matchScore.map { "\($0)% match" } ?? "Guest favorite")
+                    Text(item.matchScore.map { String(localized: "\($0)% match") } ?? String(localized: "Guest favorite"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
                         .foregroundStyle(AirbnbPalette.text)
                         .padding(.horizontal, 12)
@@ -807,7 +807,10 @@ struct BrowseMapView: View {
     @State private var didFocus = false
     @State private var currentRegion: MKCoordinateRegion?
 
-    private var points: [ListingMapPoint] { items.map(ListingMapPoint.init) }
+    // Only listings we can actually place on the map. An unknown city with no
+    // own lat/lng resolves to nil (F3/F23) and is simply not plotted, rather
+    // than being dropped on a hardcoded foreign centroid.
+    private var points: [ListingMapPoint] { items.compactMap(ListingMapPoint.init) }
 
     var body: some View {
         Map(position: $camera) {
@@ -888,29 +891,55 @@ struct MapRecenterTarget: Identifiable {
 
 struct ListingMapPoint: Identifiable {
     let item: ListingWithScore
+    let coordinate: CLLocationCoordinate2D
+
+    // Fails (returns nil) when the listing has neither its own lat/lng nor a
+    // known city centroid, so callers can drop it from the map (F3/F23).
+    init?(_ item: ListingWithScore) {
+        guard let coordinate = ListingGeo.coordinate(for: item.listing) else { return nil }
+        self.item = item
+        self.coordinate = coordinate
+    }
 
     var id: String { item.listing.id }
     var title: String { item.listing.title }
     var matchScore: Int? { item.matchScore }
-    var coordinate: CLLocationCoordinate2D { ListingGeo.coordinate(for: item.listing) }
 }
 
 // Resolves a map coordinate for a listing. Uses the listing's own lat/lng when
 // present; otherwise falls back to a known city centroid plus a small, stable
 // per-listing offset so multiple homes in the same city don't stack exactly.
+// When a city has no known centroid, we DO NOT drop a pin on a hardcoded
+// foreign city — we return nil so the listing simply isn't plotted (F3/F23).
 enum ListingGeo {
-    static func coordinate(for listing: Listing) -> CLLocationCoordinate2D {
+    static func coordinate(for listing: Listing) -> CLLocationCoordinate2D? {
         if let lat = listing.lat, let lng = listing.lng {
             return CLLocationCoordinate2D(latitude: lat, longitude: lng)
         }
-        let base = centroid(for: listing.city)
+        guard let base = centroid(for: listing.city) else { return nil }
         let offset = jitter(for: listing.id)
         return CLLocationCoordinate2D(latitude: base.latitude + offset.lat,
                                       longitude: base.longitude + offset.lng)
     }
 
-    private static func centroid(for city: String) -> CLLocationCoordinate2D {
+    // Returns nil for an unknown city. The Italian launch market is seeded
+    // first, then the existing international cities. There is deliberately no
+    // default fallback to a foreign city — an unknown city yields no pin.
+    private static func centroid(for city: String) -> CLLocationCoordinate2D? {
         switch city {
+        // Italian launch market (F3/F23).
+        case "Roma", "Rome":        return .init(latitude: 41.9028, longitude: 12.4964)
+        case "Milano", "Milan":     return .init(latitude: 45.4642, longitude: 9.1900)
+        case "Firenze", "Florence": return .init(latitude: 43.7696, longitude: 11.2558)
+        case "Napoli", "Naples":    return .init(latitude: 40.8518, longitude: 14.2681)
+        case "Torino", "Turin":     return .init(latitude: 45.0703, longitude: 7.6869)
+        case "Bologna":             return .init(latitude: 44.4949, longitude: 11.3426)
+        case "Venezia", "Venice":   return .init(latitude: 45.4408, longitude: 12.3155)
+        case "Genova", "Genoa":     return .init(latitude: 44.4056, longitude: 8.9463)
+        case "Palermo":             return .init(latitude: 38.1157, longitude: 13.3615)
+        case "Bari":                return .init(latitude: 41.1171, longitude: 16.8719)
+        case "Verona":              return .init(latitude: 45.4384, longitude: 10.9916)
+        // Existing international cities.
         case "Amsterdam": return .init(latitude: 52.3676, longitude: 4.9041)
         case "Berlin":    return .init(latitude: 52.5200, longitude: 13.4050)
         case "Brooklyn":  return .init(latitude: 40.6782, longitude: -73.9442)
@@ -921,7 +950,7 @@ enum ListingGeo {
         case "Paris":     return .init(latitude: 48.8566, longitude: 2.3522)
         case "Seoul":     return .init(latitude: 37.5665, longitude: 126.9780)
         case "Tokyo":     return .init(latitude: 35.6762, longitude: 139.6503)
-        default:          return .init(latitude: 41.0082, longitude: 28.9784)
+        default:          return nil
         }
     }
 

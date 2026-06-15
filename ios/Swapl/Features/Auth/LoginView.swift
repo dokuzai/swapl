@@ -50,8 +50,8 @@ struct LoginView: View {
     // MARK: - Password form (existing email+password flow)
 
     @ViewBuilder private var passwordForm: some View {
-        KickerLabel(text: isRegister ? "Create your account" : "Welcome back")
-        Text(isRegister ? "Join Swapl." : "Keys for keys.")
+        KickerLabel(text: isRegister ? String(localized: "Create your account") : String(localized: "Welcome back"))
+        Text(isRegister ? String(localized: "Join Swapl.") : String(localized: "Keys for keys."))
             .font(.swaplDisplay(SwaplDesignSystem.FontSize.display))
             .foregroundStyle(theme.foreground)
 
@@ -81,15 +81,15 @@ struct LoginView: View {
         }
 
         PrimaryPill(
-            title: isRegister ? "Create account" : "Sign in",
+            title: isRegister ? String(localized: "Create account") : String(localized: "Sign in"),
             action: { submit() },
             isLoading: auth.isAuthenticating,
             isDisabled: email.isEmpty || password.count < 6
         )
 
         Button(action: toggleMode) {
-            Text(isRegister ? "Already have an account? Sign in"
-                            : "New to Swapl? Create an account")
+            Text(isRegister ? String(localized: "Already have an account? Sign in")
+                            : String(localized: "New to Swapl? Create an account"))
                 .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
                 .foregroundStyle(theme.primary)
                 .frame(minHeight: 44)
@@ -139,13 +139,13 @@ struct LoginView: View {
             }
 
             if isGoogleAvailable {
-                ProviderPill(title: "Continue with Google", systemImage: "globe") {
+                ProviderPill(title: String(localized: "Continue with Google"), systemImage: "globe") {
                     startGoogleSignIn()
                 }
             }
 
             if providers.passkey == true {
-                ProviderPill(title: "Sign in with a passkey", systemImage: "person.badge.key") {
+                ProviderPill(title: String(localized: "Sign in with a passkey"), systemImage: "person.badge.key") {
                     guard !auth.isAuthenticating else { return }
                     Task { await auth.signInWithPasskey() }
                 }
@@ -153,12 +153,12 @@ struct LoginView: View {
 
             HStack(spacing: SwaplSpacing.s3) {
                 if providers.emailOtp {
-                    ProviderPill(title: "Email code", systemImage: "envelope") {
+                    ProviderPill(title: String(localized: "Email code"), systemImage: "envelope") {
                         openOtp(.email)
                     }
                 }
                 if providers.phone {
-                    ProviderPill(title: "Phone", systemImage: "iphone") {
+                    ProviderPill(title: String(localized: "Phone"), systemImage: "iphone") {
                         openOtp(.sms)
                     }
                 }
@@ -169,8 +169,8 @@ struct LoginView: View {
     // MARK: - OTP two-step flow
 
     @ViewBuilder private func otpForm(channel: OtpChannel) -> some View {
-        KickerLabel(text: channel == .email ? "Sign in with email code" : "Sign in with phone")
-        Text(otpCodeSent ? "Enter your code." : "Get a code.")
+        KickerLabel(text: channel == .email ? String(localized: "Sign in with email code") : String(localized: "Sign in with phone"))
+        Text(otpCodeSent ? String(localized: "Enter your code.") : String(localized: "Get a code."))
             .font(.swaplDisplay(SwaplDesignSystem.FontSize.display))
             .foregroundStyle(theme.foreground)
 
@@ -212,7 +212,7 @@ struct LoginView: View {
 
         if otpCodeSent {
             PrimaryPill(
-                title: "Verify code",
+                title: String(localized: "Verify code"),
                 action: { verifyOtpCode() },
                 isLoading: auth.isAuthenticating,
                 isDisabled: otpCode.count != 6
@@ -231,7 +231,7 @@ struct LoginView: View {
             .buttonStyle(.plain)
         } else {
             PrimaryPill(
-                title: "Send code",
+                title: String(localized: "Send code"),
                 action: { sendOtpCode(channel: channel) },
                 isLoading: auth.isAuthenticating,
                 isDisabled: !isOtpDestinationPlausible(channel: channel)
@@ -275,7 +275,7 @@ struct LoginView: View {
                   let tokenData = credential.identityToken,
                   let identityToken = String(data: tokenData, encoding: .utf8)
             else {
-                auth.errorMessage = "Apple sign-in failed. Try again."
+                auth.errorMessage = String(localized: "Apple sign-in failed. Try again.")
                 return
             }
             // Apple shares the name only on FIRST authorization — forward it so
@@ -288,7 +288,7 @@ struct LoginView: View {
             Task { await auth.signInWithApple(identityToken: identityToken, fullName: fullName) }
         case .failure(let error):
             if let authError = error as? ASAuthorizationError, authError.code == .canceled { return }
-            auth.errorMessage = "Apple sign-in failed. Try again."
+            auth.errorMessage = String(localized: "Apple sign-in failed. Try again.")
         }
     }
 
@@ -302,7 +302,7 @@ struct LoginView: View {
             } catch GoogleSignInError.canceled {
                 // User dismissed the sheet — not an error.
             } catch {
-                auth.errorMessage = "Google sign-in failed. Try again."
+                auth.errorMessage = String(localized: "Google sign-in failed. Try again.")
             }
         }
     }

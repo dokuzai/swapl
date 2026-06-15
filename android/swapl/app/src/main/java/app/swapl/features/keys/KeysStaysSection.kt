@@ -23,11 +23,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.KeysStay
 import app.swapl.core.repository.KeysRepository
 import app.swapl.design.components.KickerLabel
@@ -77,7 +80,7 @@ fun KeysStaysSection(vm: KeysStaysViewModel = hiltViewModel()) {
     if (stays.isEmpty()) return
 
     Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
-        KickerLabel("Stays with points")
+        KickerLabel(stringResource(R.string.keys_stays_title))
         stays.forEach { stay ->
             KeysStayCard(
                 stay = stay,
@@ -103,16 +106,17 @@ private fun KeysStayCard(
             Row(verticalAlignment = Alignment.Top) {
                 Column(Modifier.weight(1f)) {
                     Text(
-                        if (stay.isGuest) "Stay in ${stay.listing.city}" else "Guest at ${stay.listing.title}",
+                        if (stay.isGuest) stringResource(R.string.keys_stay_in, stay.listing.city)
+                        else stringResource(R.string.keys_stay_guest_at, stay.listing.title),
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Text(
-                        "${stay.dateFrom.take(10)} → ${stay.dateTo.take(10)}",
+                        stringResource(R.string.keys_stay_dates, stay.dateFrom.take(10), stay.dateTo.take(10)),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
-                        "${stay.nights} night${if (stay.nights == 1) "" else "s"} · ${stay.keysCost} points",
+                        pluralStringResource(R.plurals.keys_stay_nights_cost, stay.nights, stay.nights, stay.keysCost),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -127,10 +131,10 @@ private fun KeysStayCard(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     OutlinedButton(onClick = onDecline, enabled = !isBusy, modifier = Modifier.weight(1f)) {
-                        Text("Decline")
+                        Text(stringResource(R.string.keys_stay_decline))
                     }
                     Button(onClick = onConfirm, enabled = !isBusy, modifier = Modifier.weight(1f)) {
-                        Text("Confirm stay")
+                        Text(stringResource(R.string.keys_stay_confirm))
                     }
                 }
                 // Guest can cancel while it's still pending.
@@ -138,7 +142,7 @@ private fun KeysStayCard(
                     onClick = onCancel,
                     enabled = !isBusy,
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Cancel request") }
+                ) { Text(stringResource(R.string.keys_stay_cancel_request)) }
                 // Confirmed guest sees reassurance about the cover policy.
                 stay.status == "confirmed" -> Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -151,7 +155,7 @@ private fun KeysStayCard(
                         modifier = Modifier.padding(end = 2.dp),
                     )
                     Text(
-                        "Confirmed — your stay is covered by a Swapl policy.",
+                        stringResource(R.string.keys_stay_covered),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
@@ -165,11 +169,12 @@ private fun KeysStayCard(
 @Composable
 private fun StatusBadge(stay: KeysStay) {
     val label = when (stay.status) {
-        "pending" -> if (stay.isGuest) "Awaiting host" else "Action needed"
-        "confirmed" -> "Confirmed"
-        "declined" -> "Declined"
-        "cancelled" -> "Cancelled"
-        "completed" -> "Completed"
+        "pending" -> if (stay.isGuest) stringResource(R.string.keys_stay_status_awaiting_host)
+            else stringResource(R.string.keys_stay_status_action_needed)
+        "confirmed" -> stringResource(R.string.keys_stay_status_confirmed)
+        "declined" -> stringResource(R.string.keys_stay_status_declined)
+        "cancelled" -> stringResource(R.string.keys_stay_status_cancelled)
+        "completed" -> stringResource(R.string.keys_stay_status_completed)
         else -> stay.status.replaceFirstChar { it.uppercase() }
     }
     val color = when (stay.status) {

@@ -16,10 +16,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.content.Context
+import app.swapl.R
 import app.swapl.core.model.KeysAvailability
 import app.swapl.core.repository.KeysRepository
 import app.swapl.design.components.AvailabilityCalendar
@@ -27,6 +31,7 @@ import app.swapl.design.components.CalendarUnavailable
 import app.swapl.design.components.parseCalendarDate
 import app.swapl.designtokens.SwaplSpacing
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.plugins.ClientRequestException
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -40,7 +45,10 @@ import javax.inject.Inject
 // offer to buy.
 
 @HiltViewModel
-class StayWithKeysViewModel @Inject constructor(private val repo: KeysRepository) : ViewModel() {
+class StayWithKeysViewModel @Inject constructor(
+    private val repo: KeysRepository,
+    @ApplicationContext private val appContext: Context,
+) : ViewModel() {
     var availability by mutableStateOf<KeysAvailability?>(null); private set
     var balance by mutableStateOf<Int?>(null); private set
     var loadError by mutableStateOf<String?>(null); private set
@@ -68,11 +76,11 @@ class StayWithKeysViewModel @Inject constructor(private val repo: KeysRepository
             } catch (t: ClientRequestException) {
                 requestError = when (t.response.status.value) {
                     // Insufficient points — never an offer to buy; just inform.
-                    422 -> "You don't have enough points for these dates. Try fewer nights, or earn points by hosting. Points can't be bought."
-                    else -> "Those dates aren't available. Pick dates inside the home's window."
+                    422 -> appContext.getString(R.string.stay_keys_error_insufficient)
+                    else -> appContext.getString(R.string.stay_keys_error_unavailable)
                 }
             } catch (t: Throwable) {
-                requestError = t.message ?: "Couldn't request this stay right now."
+                requestError = t.message ?: appContext.getString(R.string.stay_keys_error_generic)
             } finally {
                 isSubmitting = false
             }
@@ -122,18 +130,18 @@ fun StayWithKeysDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Stay with points") },
+        title = { Text(stringResource(R.string.stay_keys_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 // Distinguish this from "Propose swap": one-way, no hosting back.
                 Text(
-                    "Book one-way with your points — no need to host them back. Good when your dates or home aren't a match for a direct swap.",
+                    stringResource(R.string.stay_keys_intro),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 Text(
-                    "Choose dates inside the home's availability (${availableFrom.take(10)} → ${availableTo.take(10)}). $minStayDays–$maxStayDays nights. Booked dates are crossed out.",
+                    stringResource(R.string.stay_keys_window, availableFrom.take(10), availableTo.take(10), minStayDays, maxStayDays),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -166,13 +174,13 @@ fun StayWithKeysDialog(
                     maxNights = maxStayDays,
                 )
 
-                CostRow("Points per night", nightlyKeys.toString())
-                CostRow("Nights", nights.toString())
+                CostRow(stringResource(R.string.stay_keys_points_per_night), nightlyKeys.toString())
+                CostRow(stringResource(R.string.stay_keys_nights), nights.toString())
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Total", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.stay_keys_total), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                     Text(
-                        "$totalKeys points",
+                        stringResource(R.string.stay_keys_total_points, totalKeys),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -185,11 +193,11 @@ fun StayWithKeysDialog(
                     // nights of hosting close it — never an offer to buy.
                     val text = if (canAfford) {
                         val nightsCovered = if (nightlyKeys > 0) b / nightlyKeys else 0
-                        "You have $b points — enough for this stay (about $nightsCovered night${if (nightsCovered == 1) "" else "s"} at this rate)."
+                        pluralStringResource(R.plurals.stay_keys_enough, nightsCovered, b, nightsCovered)
                     } else {
                         val short = totalKeys - b
                         val hostNights = if (nightlyKeys > 0) (short + nightlyKeys - 1) / nightlyKeys else 0
-                        "You're $short points short. Host about $hostNights night${if (hostNights == 1) "" else "s"} at this rate to unlock this stay — or pick fewer nights. Points can't be bought."
+                        pluralStringResource(R.plurals.stay_keys_short, hostNights, short, hostNights)
                     }
                     Text(
                         text,
@@ -202,7 +210,7 @@ fun StayWithKeysDialog(
                 vm.requestError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
                 Text(
-                    "Your points are held until the host confirms. You'll find this stay under Trips.",
+                    stringResource(R.string.stay_keys_held_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -212,9 +220,9 @@ fun StayWithKeysDialog(
             TextButton(
                 enabled = canSubmit && vm.availability != null,
                 onClick = { vm.submit(listingId, from, to) },
-            ) { Text(if (vm.isSubmitting) "Sending…" else "Request with points") }
+            ) { Text(stringResource(if (vm.isSubmitting) R.string.stay_keys_sending else R.string.stay_keys_request)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 

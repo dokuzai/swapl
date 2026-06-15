@@ -510,6 +510,601 @@
       "localizations" : {
         "it" : { "stringUnit" : { "state" : "translated", "value" : "il tuo partner di scambio" } }
       }
+    },
+    "%lld guests" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld ospiti" } }
+      }
+    },
+    "%lld% match" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld%% di affinità" } }
+      }
+    },
+    "%lld%% match" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld%% di affinità" } }
+      }
+    },
+    "%lld%% match for your next swap" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld%% di affinità per il tuo prossimo scambio" } }
+      }
+    },
+    "%lld guests · %lld bedrooms · %lld baths" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%1$lld ospiti · %2$lld camere da letto · %3$lld bagni" } }
+      }
+    },
+    "%lld points / night" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld punti / notte" } }
+      }
+    },
+    "About this home" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Informazioni sulla casa" } }
+      }
+    },
+    "Adjust Filters" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Modifica i filtri" } }
+      }
+    },
+    "Air conditioning" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Aria condizionata" } }
+      }
+    },
+    "Already have an account? Sign in" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Hai già un account? Accedi" } }
+      }
+    },
+    "Anonymous" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Anonimo" } }
+      }
+    },
+    "Apple sign-in failed. Try again." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accesso con Apple non riuscito. Riprova." } }
+      }
+    },
+    "Archived" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Archiviati" } }
+      }
+    },
+    "Available %@" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Disponibile %@" } }
+      }
+    },
+    "Available for similar dates" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Disponibili per date simili" } }
+      }
+    },
+    "Balcony" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Balcone" } }
+      }
+    },
+    "Best match" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Più affini" } }
+      }
+    },
+    "Bike included" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Bici inclusa" } }
+      }
+    },
+    "City" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Città" } }
+      }
+    },
+    "Continue planning your %@ swap" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Continua a pianificare il tuo scambio a %@" } }
+      }
+    },
+    "Continue with Google" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Continua con Google" } }
+      }
+    },
+    "Country" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Paese" } }
+      }
+    },
+    "Courtyard" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Cortile" } }
+      }
+    },
+    "Couldn't draft a message right now. You can still write your own." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Non è stato possibile creare un messaggio ora. Puoi sempre scriverne uno tuo." } }
+      }
+    },
+    "Create a listing to swap" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Crea un annuncio per scambiare" } }
+      }
+    },
+    "Create account" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Crea account" } }
+      }
+    },
+    "Create listing" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Crea annuncio" } }
+      }
+    },
+    "Create your account" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Crea il tuo account" } }
+      }
+    },
+    "Dates" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Date" } }
+      }
+    },
+    "Dishwasher" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Lavastoviglie" } }
+      }
+    },
+    "Draft with AI" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scrivi con l'IA" } }
+      }
+    },
+    "Drafted on-device" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scritto sul dispositivo" } }
+      }
+    },
+    "Drafted with AI" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scritto con l'IA" } }
+      }
+    },
+    "Drafting…" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Sto scrivendo…" } }
+      }
+    },
+    "Dryer" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Asciugatrice" } }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Modifica" } }
+      }
+    },
+    "Email code" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Codice email" } }
+      }
+    },
+    "Elevator" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ascensore" } }
+      }
+    },
+    "End date must be after start." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "La data di fine deve essere successiva a quella di inizio." } }
+      }
+    },
+    "Enter your code." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Inserisci il codice." } }
+      }
+    },
+    "e.g. Italia" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "es. Italia" } }
+      }
+    },
+    "e.g. Roma" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "es. Roma" } }
+      }
+    },
+    "e.g. Trastevere" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "es. Trastevere" } }
+      }
+    },
+    "Experiences" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Esperienze" } }
+      }
+    },
+    "Explore" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Esplora" } }
+      }
+    },
+    "Garden" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Giardino" } }
+      }
+    },
+    "Get a code." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ricevi un codice." } }
+      }
+    },
+    "Get Inspired" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Lasciati ispirare" } }
+      }
+    },
+    "Google sign-in failed. Try again." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accesso con Google non riuscito. Riprova." } }
+      }
+    },
+    "Guest favorite" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scelto dagli ospiti" } }
+      }
+    },
+    "Home" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Casa" } }
+      }
+    },
+    "Home unavailable" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Casa non disponibile" } }
+      }
+    },
+    "Homes guests love" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Case che gli ospiti adorano" } }
+      }
+    },
+    "Homes unavailable" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Case non disponibili" } }
+      }
+    },
+    "Hosted by %@" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ospitato da %@" } }
+      }
+    },
+    "Hosting" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ospiti" } }
+      }
+    },
+    "How it's calculated" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Come si calcola" } }
+      }
+    },
+    "How your nightly Keys are calculated" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Come si calcolano le tue Chiavi a notte" } }
+      }
+    },
+    "Join Swapl." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Unisciti a Swapl." } }
+      }
+    },
+    "Keys for keys." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Chiavi in cambio di chiavi." } }
+      }
+    },
+    "Largest" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Più grandi" } }
+      }
+    },
+    "List" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Elenco" } }
+      }
+    },
+    "Map" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Mappa" } }
+      }
+    },
+    "Message" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Messaggio" } }
+      }
+    },
+    "Neighbourhood" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Quartiere" } }
+      }
+    },
+    "New to Swapl? Create an account" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nuovo su Swapl? Crea un account" } }
+      }
+    },
+    "Newest" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Più recenti" } }
+      }
+    },
+    "No homes found" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nessuna casa trovata" } }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
+      }
+    },
+    "Parking" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Parcheggio" } }
+      }
+    },
+    "Pet friendly" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Animali ammessi" } }
+      }
+    },
+    "Phone" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Telefono" } }
+      }
+    },
+    "Piano" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Pianoforte" } }
+      }
+    },
+    "Pool" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Piscina" } }
+      }
+    },
+    "Private room" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Stanza privata" } }
+      }
+    },
+    "Propose" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Proponi" } }
+      }
+    },
+    "Propose a swap" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Proponi uno scambio" } }
+      }
+    },
+    "Choose dates that fit both homes' availability." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scegli date che vadano bene per la disponibilità di entrambe le case." } }
+      }
+    },
+    "Proposal sent" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Proposta inviata" } }
+      }
+    },
+    "Refresh" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Aggiorna" } }
+      }
+    },
+    "Rooftop" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Terrazza" } }
+      }
+    },
+    "Search a city" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Cerca una città" } }
+      }
+    },
+    "Search or enter your home address" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Cerca o inserisci l'indirizzo di casa" } }
+      }
+    },
+    "Sending" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Invio in corso" } }
+      }
+    },
+    "Send code" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Invia il codice" } }
+      }
+    },
+    "Services" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Servizi" } }
+      }
+    },
+    "Sign in" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accedi" } }
+      }
+    },
+    "Sign in with a passkey" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accedi con una passkey" } }
+      }
+    },
+    "Sign in with email code" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accedi con codice email" } }
+      }
+    },
+    "Sign in with phone" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Accedi con il telefono" } }
+      }
+    },
+    "Start your search" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Inizia la ricerca" } }
+      }
+    },
+    "Stay requested" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Soggiorno richiesto" } }
+      }
+    },
+    "Stay with points" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Soggiorna con i punti" } }
+      }
+    },
+    "Step-free" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Senza gradini" } }
+      }
+    },
+    "Swap or stay with points" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scambia o soggiorna con i punti" } }
+      }
+    },
+    "Swapl host" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Host Swapl" } }
+      }
+    },
+    "This is your home" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Questa è la tua casa" } }
+      }
+    },
+    "Too many drafts — try again in a few minutes." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Troppe bozze — riprova tra qualche minuto." } }
+      }
+    },
+    "Try a different city, date range, or sort order." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Prova una città, un intervallo di date o un ordinamento diverso." } }
+      }
+    },
+    "Update details, photos and dates" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Aggiorna dettagli, foto e date" } }
+      }
+    },
+    "Verified host" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Host verificato" } }
+      }
+    },
+    "Verified owner badge — optional" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Badge proprietario verificato — facoltativo" } }
+      }
+    },
+    "Verify code" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Verifica il codice" } }
+      }
+    },
+    "Washer" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Lavatrice" } }
+      }
+    },
+    "Welcome back" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Bentornato" } }
+      }
+    },
+    "What this place offers" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Cosa offre questo alloggio" } }
+      }
+    },
+    "Workspace" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Spazio di lavoro" } }
+      }
+    },
+    "You can follow the conversation from Messages." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Puoi seguire la conversazione da Messaggi." } }
+      }
+    },
+    "You're a verified owner" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Sei un proprietario verificato" } }
+      }
+    },
+    "Your home carries the Verified owner badge." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "La tua casa ha il badge Proprietario verificato." } }
+      }
+    },
+    "Not ready? Join the waitlist" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Non sei pronto? Iscriviti alla lista d'attesa" } }
+      }
+    },
+    "or continue with" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "oppure continua con" } }
+      }
+    },
+    "Use at least 6 characters. You'll verify your email before publishing a home." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Usa almeno 6 caratteri. Dovrai verificare la tua email prima di pubblicare una casa." } }
+      }
+    },
+    "We sent a 6-digit code to %@. It expires in 10 minutes." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Abbiamo inviato un codice di 6 cifre a %@. Scade tra 10 minuti." } }
+      }
+    },
+    "Use international format, e.g. +39 333 123 4567." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Usa il formato internazionale, es. +39 333 123 4567." } }
+      }
+    },
+    "Didn't get it? Send a new code" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Non l'hai ricevuto? Invia un nuovo codice" } }
+      }
+    },
+    "Back to password sign-in" : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Torna all'accesso con password" } }
+      }
+    },
+    "A trust boost for guests. Never required to publish or swap." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Un segnale di fiducia per gli ospiti. Mai obbligatorio per pubblicare o scambiare." } }
+      }
+    },
+    "Your points are held until the host confirms. Track it under Trips." : {
+      "localizations" : {
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "I tuoi punti restano bloccati finché l'host non conferma. Segui tutto in Viaggi." } }
+      }
     }
   },
   "version" : "1.0"

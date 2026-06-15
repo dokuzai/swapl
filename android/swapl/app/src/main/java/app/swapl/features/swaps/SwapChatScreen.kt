@@ -52,8 +52,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.swapl.R
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -213,11 +215,11 @@ class SwapChatViewModel @Inject constructor(
     private fun inviteMessage(t: Throwable): String =
         (t as? ClientRequestException)?.let {
             when (it.response.status.value) {
-                403 -> "Only the two swap partners can invite people."
-                404 -> "We couldn't find that person. Check the email or handle."
+                403 -> appContext.getString(R.string.chat_invite_only_partners)
+                404 -> appContext.getString(R.string.chat_invite_not_found)
                 else -> null
             }
-        } ?: t.message ?: "Couldn't send the invite. Try again."
+        } ?: t.message ?: appContext.getString(R.string.chat_invite_failed)
 
     // Older history: page backwards from the oldest message we hold. Peeks
     // (markRead=false) so paging history never changes receipts.
@@ -270,7 +272,7 @@ class SwapChatViewModel @Inject constructor(
                 pendingPhotoUrls.clear()
                 merge(listOf(message))
             }
-            .onFailure { sendError = it.message ?: "Couldn't send. Try again." }
+            .onFailure { sendError = it.message ?: appContext.getString(R.string.chat_send_failed) }
         isSending = false
     }
 
@@ -282,11 +284,11 @@ class SwapChatViewModel @Inject constructor(
                 sendError = null
                 runCatching {
                     val jpeg = withContext(Dispatchers.IO) { downscaleToJpeg(uri) }
-                        ?: error("Couldn't read that image")
+                        ?: error(appContext.getString(R.string.chat_read_image_failed))
                     repo.uploadPhoto(jpeg)
                 }
                     .onSuccess { url -> if (url !in pendingPhotoUrls) pendingPhotoUrls.add(url) }
-                    .onFailure { sendError = "Couldn't upload a photo. Check your connection and try again." }
+                    .onFailure { sendError = appContext.getString(R.string.chat_upload_photo_failed) }
                 uploadsInFlight -= 1
             }
         }
@@ -398,15 +400,15 @@ fun SwapChatScreen(
                     }
                 vm.loadError != null && vm.messages.isEmpty() ->
                     ChatEmpty(
-                        title = "Messages unavailable",
+                        title = stringResource(R.string.chat_messages_unavailable),
                         body = vm.loadError ?: "",
-                        actionLabel = "Try again",
+                        actionLabel = stringResource(R.string.chat_try_again),
                         onAction = { vm.load() },
                     )
                 vm.messages.isEmpty() ->
                     ChatEmpty(
-                        title = "Say hello",
-                        body = "Start the conversation — ask about dates, the neighbourhood, or anything you'd like to know.",
+                        title = stringResource(R.string.chat_say_hello_title),
+                        body = stringResource(R.string.chat_say_hello_body),
                     )
                 else ->
                     LazyColumn(
@@ -422,7 +424,7 @@ fun SwapChatScreen(
                                         CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
                                     } else {
                                         TextButton(onClick = { vm.loadMore() }) {
-                                            Text("Load earlier messages")
+                                            Text(stringResource(R.string.chat_load_earlier))
                                         }
                                     }
                                 }
@@ -474,7 +476,7 @@ private fun Composer(vm: SwapChatViewModel) {
                             ) {
                                 Icon(
                                     Icons.Default.Close,
-                                    contentDescription = "Remove photo",
+                                    contentDescription = stringResource(R.string.chat_remove_photo),
                                     tint = Color.White,
                                     modifier = Modifier.size(16.dp),
                                 )
@@ -495,14 +497,14 @@ private fun Composer(vm: SwapChatViewModel) {
                     if (vm.isUploading) {
                         CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
                     } else {
-                        Icon(Icons.Default.PhotoLibrary, contentDescription = "Add photo")
+                        Icon(Icons.Default.PhotoLibrary, contentDescription = stringResource(R.string.chat_add_photo))
                     }
                 }
 
                 OutlinedTextField(
                     value = vm.draft,
                     onValueChange = { vm.draft = it },
-                    placeholder = { Text("Message") },
+                    placeholder = { Text(stringResource(R.string.chat_message_placeholder)) },
                     maxLines = 5,
                     shape = RoundedCornerShape(22.dp),
                     modifier = Modifier.weight(1f),
@@ -517,7 +519,7 @@ private fun Composer(vm: SwapChatViewModel) {
                     } else {
                         Icon(
                             Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Send message",
+                            contentDescription = stringResource(R.string.chat_send),
                             tint = if (vm.canSend) SwaplColors.Pink else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -584,7 +586,7 @@ private fun MessageBubble(m: SwapMessage) {
             if (m.mine) {
                 Icon(
                     if (m.readAt != null) Icons.Default.DoneAll else Icons.Default.Done,
-                    contentDescription = if (m.readAt != null) "Read" else "Sent",
+                    contentDescription = stringResource(if (m.readAt != null) R.string.chat_receipt_read else R.string.chat_receipt_sent),
                     tint = if (m.readAt != null) SwaplColors.Pink else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(14.dp),
                 )

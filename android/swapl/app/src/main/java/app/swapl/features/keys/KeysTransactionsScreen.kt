@@ -45,11 +45,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.R
 import app.swapl.core.model.KeysTransaction
 import app.swapl.core.model.KeysTransactionCategory
 import app.swapl.core.repository.KeysRepository
@@ -117,14 +119,14 @@ fun KeysTransactionsScreen(vm: KeysTransactionsViewModel = hiltViewModel()) {
             CircularProgressIndicator()
         }
         else -> Column(Modifier.fillMaxSize().padding(SwaplSpacing.s4)) {
-            Text("Points history", style = MaterialTheme.typography.displaySmall)
+            Text(stringResource(R.string.keys_tx_title), style = MaterialTheme.typography.displaySmall)
             Spacer(Modifier.height(SwaplSpacing.s3))
             Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
                 KeysTransactionCategory.entries.forEach { category ->
                     FilterChip(
                         selected = filter == category,
                         onClick = { filter = category },
-                        label = { Text(category.label) },
+                        label = { Text(stringResource(category.labelRes)) },
                     )
                 }
             }
@@ -133,8 +135,7 @@ fun KeysTransactionsScreen(vm: KeysTransactionsViewModel = hiltViewModel()) {
             if (filtered.isEmpty()) {
                 SurfaceCard {
                     Text(
-                        if (filter == KeysTransactionCategory.ALL) "No points activity yet."
-                        else "No ${filter.label.lowercase()} points yet.",
+                        stringResource(filter.emptyRes),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -152,7 +153,7 @@ fun KeysTransactionsScreen(vm: KeysTransactionsViewModel = hiltViewModel()) {
                             TextButton(
                                 onClick = { vm.loadMore() },
                                 modifier = Modifier.fillMaxWidth(),
-                            ) { Text(if (vm.isLoading) "Loading…" else "Load more") }
+                            ) { Text(stringResource(if (vm.isLoading) R.string.keys_tx_loading else R.string.keys_tx_load_more)) }
                         }
                     }
                 }
@@ -190,7 +191,7 @@ private fun TransactionRow(tx: KeysTransaction) {
                 color = if (tx.delta >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                "${tx.balanceAfter} bal",
+                stringResource(R.string.keys_tx_balance, tx.balanceAfter),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -223,10 +224,10 @@ private fun ErrorState(message: String, onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Points history unavailable", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.keys_tx_error_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(SwaplSpacing.s2))
         Text(message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(SwaplSpacing.s3))
-        TextButton(onClick = onRetry) { Text("Try again") }
+        TextButton(onClick = onRetry) { Text(stringResource(R.string.keys_tx_try_again)) }
     }
 }

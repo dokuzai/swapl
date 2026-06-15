@@ -631,9 +631,11 @@ struct ListingCreationView: View {
             )
 
             AddressSearchField(text: $draft.address)
-            ListingField(title: "City", text: $draft.city, placeholder: "Istanbul")
-            ListingField(title: "Neighbourhood", text: $draft.neighbourhood, placeholder: "Cihangir")
-            ListingField(title: "Country", text: $draft.country, placeholder: "Turkey")
+            // F23: Italian-market placeholder examples (was Istanbul / Cihangir
+            // / Turkey). These are sample hints only, not stored values.
+            ListingField(title: String(localized: "City"), text: $draft.city, placeholder: String(localized: "e.g. Roma"))
+            ListingField(title: String(localized: "Neighbourhood"), text: $draft.neighbourhood, placeholder: String(localized: "e.g. Trastevere"))
+            ListingField(title: String(localized: "Country"), text: $draft.country, placeholder: String(localized: "e.g. Italia"))
         }
     }
 

@@ -47,9 +47,9 @@ struct ListingDetailView: View {
             } else if let error = vm.error {
                 SwaplEmptyState(
                     systemImage: "exclamationmark.triangle",
-                    title: "Home unavailable",
+                    title: String(localized: "Home unavailable"),
                     description: error,
-                    actionTitle: "Try Again",
+                    actionTitle: String(localized: "Try Again"),
                     action: { Task { await vm.load() } }
                 )
                 .frame(maxWidth: .infinity)
@@ -64,7 +64,7 @@ struct ListingDetailView: View {
         }
         .frame(maxWidth: .infinity)
         .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationTitle(vm.detail?.listing.city ?? "Home")
+        .navigationTitle(vm.detail?.listing.city ?? String(localized: "Home"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             // System share sheet. The link is a universal link, so recipients
@@ -307,13 +307,13 @@ struct ListingDetailView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(detail.listing.ownerVerified == true
-                        ? "You're a verified owner"
-                        : "Verified owner badge — optional")
+                        ? String(localized: "You're a verified owner")
+                        : String(localized: "Verified owner badge — optional"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                     Text(detail.listing.ownerVerified == true
-                        ? "Your home carries the Verified owner badge."
-                        : "A trust boost for guests. Never required to publish or swap.")
+                        ? String(localized: "Your home carries the Verified owner badge.")
+                        : String(localized: "A trust boost for guests. Never required to publish or swap."))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .multilineTextAlignment(.leading)
@@ -346,7 +346,7 @@ struct ListingDetailView: View {
                 Text("Hosted by \(detail.host.name ?? "Anonymous")")
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                Text(detail.host.verified ? "Verified host" : "Swapl host")
+                Text(detail.host.verified ? String(localized: "Verified host") : String(localized: "Swapl host"))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                 // DOK-162: discreet trust badge once an admin approved owner proof.
@@ -384,7 +384,7 @@ struct ListingDetailView: View {
                     HStack(spacing: 10) {
                         Image(systemName: amenityIcon(amenity))
                             .frame(width: 22)
-                        Text(amenity)
+                        Text(amenityLabel(amenity))
                             .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     }
                     .foregroundStyle(AirbnbPalette.text)
@@ -452,7 +452,7 @@ struct ListingDetailView: View {
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Spacer()
-                Text(detail.viewerListingId == nil ? "Create a listing to swap" : "Swap or stay with points")
+                Text(detail.viewerListingId == nil ? String(localized: "Create a listing to swap") : String(localized: "Swap or stay with points"))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
@@ -515,6 +515,30 @@ struct ListingDetailView: View {
         if l.washer { out.append("Washer") }
         if l.dryer { out.append("Dryer") }
         return out
+    }
+
+    // The amenity strings double as icon-mapping keys (English); the displayed
+    // label is localized here without disturbing that mapping.
+    private func amenityLabel(_ amenity: String) -> String {
+        switch amenity {
+        case "Balcony": return String(localized: "Balcony")
+        case "Rooftop": return String(localized: "Rooftop")
+        case "Garden": return String(localized: "Garden")
+        case "Courtyard": return String(localized: "Courtyard")
+        case "Pool": return String(localized: "Pool")
+        case "Piano": return String(localized: "Piano")
+        case "Bike included": return String(localized: "Bike included")
+        case "Parking": return String(localized: "Parking")
+        case "Workspace": return String(localized: "Workspace")
+        case "Pet friendly": return String(localized: "Pet friendly")
+        case "Step-free": return String(localized: "Step-free")
+        case "Elevator": return String(localized: "Elevator")
+        case "Air conditioning": return String(localized: "Air conditioning")
+        case "Dishwasher": return String(localized: "Dishwasher")
+        case "Washer": return String(localized: "Washer")
+        case "Dryer": return String(localized: "Dryer")
+        default: return amenity
+        }
     }
 
     private func amenityIcon(_ amenity: String) -> String {
@@ -592,7 +616,7 @@ struct ProposalSheetView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(isSubmitting ? "Sending" : "Send") {
+                    Button(isSubmitting ? String(localized: "Sending") : String(localized: "Send")) {
                         Task { await submit() }
                     }
                     .disabled(isSubmitting || dateTo <= dateFrom)
@@ -617,7 +641,7 @@ struct ProposalSheetView: View {
                         } else {
                             Image(systemName: "sparkles")
                         }
-                        Text(isDrafting ? "Drafting…" : "Draft with AI")
+                        Text(isDrafting ? String(localized: "Drafting…") : String(localized: "Draft with AI"))
                             .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     }
                     .foregroundStyle(SwaplSemanticLight.primary)
@@ -676,17 +700,17 @@ struct ProposalSheetView: View {
             let existing = message.trimmingCharacters(in: .whitespacesAndNewlines)
             undoText = existing.isEmpty ? nil : message
             message = draft.message
-            draftCaption = draft.onDevice ? "Drafted on-device" : "Drafted with AI"
+            draftCaption = draft.onDevice ? String(localized: "Drafted on-device") : String(localized: "Drafted with AI")
         } catch APIClient.APIError.status(429, _) {
-            draftError = "Too many drafts — try again in a few minutes."
+            draftError = String(localized: "Too many drafts — try again in a few minutes.")
         } catch {
-            draftError = "Couldn't draft a message right now. You can still write your own."
+            draftError = String(localized: "Couldn't draft a message right now. You can still write your own.")
         }
     }
 
     private func submit() async {
         guard dateTo > dateFrom else {
-            error = "End date must be after start."
+            error = String(localized: "End date must be after start.")
             return
         }
         isSubmitting = true
