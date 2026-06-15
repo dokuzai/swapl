@@ -40,8 +40,62 @@ struct KeysTransaction: Decodable, Sendable, Identifiable {
         case "release": return "Hold released"
         case "gift_sent": return "Gift sent"
         case "gift_received": return "Gift received"
+        case "referral_bonus": return "Friend joined & verified"
+        case "invite_bonus": return "Welcome — you were invited"
+        case "refund": return "Refund"
         default: return kind.replacingOccurrences(of: "_", with: " ").capitalized
         }
+    }
+
+    // SF Symbol for the ledger row, so the filterable history reads at a glance.
+    var symbol: String {
+        switch kind {
+        case "welcome", "invite_bonus": return "sparkles"
+        case "spend_stay": return "airplane.departure"
+        case "earn_host": return "house.fill"
+        case "hold": return "lock.fill"
+        case "release": return "lock.open.fill"
+        case "gift_sent": return "gift"
+        case "gift_received": return "gift.fill"
+        case "referral_bonus": return "person.2.fill"
+        case "refund": return "arrow.uturn.backward"
+        default: return "key.horizontal.fill"
+        }
+    }
+
+    // Coarse bucket used by the wallet's segmented filter. Every kind maps to
+    // exactly one segment so the segmented control partitions the ledger cleanly.
+    var category: KeysTransactionCategory {
+        switch kind {
+        case "earn_host", "welcome", "referral_bonus", "invite_bonus", "gift_received", "refund", "release":
+            return .earned
+        case "spend_stay", "hold", "gift_sent":
+            return .spent
+        default:
+            return delta >= 0 ? .earned : .spent
+        }
+    }
+}
+
+// Segments for the filterable Keys history (DOK-157). `all` shows everything;
+// `earned`/`spent` partition by the direction the points moved.
+enum KeysTransactionCategory: String, CaseIterable, Identifiable, Sendable {
+    case all
+    case earned
+    case spent
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .all: return "All"
+        case .earned: return "Earned"
+        case .spent: return "Spent"
+        }
+    }
+
+    func matches(_ tx: KeysTransaction) -> Bool {
+        self == .all || tx.category == self
     }
 }
 

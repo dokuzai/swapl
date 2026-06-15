@@ -100,7 +100,18 @@ struct KeysWalletView: View {
                 }
             }
 
-            section("History") {
+            sectionWithLink(
+                "History",
+                trailing: wallet.recentTransactions.isEmpty ? nil : AnyView(
+                    NavigationLink {
+                        KeysTransactionsView(transactions: wallet.recentTransactions)
+                    } label: {
+                        Text("See all")
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                            .foregroundStyle(SwaplSemanticLight.primary)
+                    }
+                )
+            ) {
                 if wallet.recentTransactions.isEmpty {
                     Text("No points activity yet. Earn points by hosting, or gift some to a friend.")
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
@@ -390,6 +401,24 @@ struct KeysWalletView: View {
             Text(title)
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
+            content()
+        }
+    }
+
+    // Section with an optional trailing accessory (e.g. a "See all" link).
+    private func sectionWithLink<Content: View>(
+        _ title: String,
+        trailing: AnyView?,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Spacer()
+                if let trailing { trailing }
+            }
             content()
         }
     }

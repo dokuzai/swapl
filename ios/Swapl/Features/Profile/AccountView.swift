@@ -27,6 +27,7 @@ struct AccountView: View {
                         IdentityVerificationCard()
                         becomeHostCard
                         keysCard
+                        inviteCard
                         Color.clear.frame(height: 20)
 
                         // Airbnb-style settings jump list (DOK-147), mirroring
@@ -276,6 +277,47 @@ struct AccountView: View {
                         .font(.swaplDisplay(23, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
                     Text("Your points balance, history, and gifting — stay somewhere without a simultaneous swap.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(2)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            .padding(18)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    // Entry to Invite & earn (DOK-157) — the growth/referral dashboard, sitting
+    // right under the wallet since both are part of the points economy. Hype copy:
+    // bringing friends earns travel points and jumps the early-access line.
+    private var inviteCard: some View {
+        NavigationLink {
+            InviteAndEarnView()
+        } label: {
+            HStack(spacing: 18) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                        .fill(SwaplSemanticLight.accent)
+                    Image(systemName: "person.2.badge.gearshape.fill")
+                        .font(.system(size: 30, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                }
+                .frame(width: 86, height: 86)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Invite & earn")
+                        .font(.swaplDisplay(23, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    Text("Bring friends, earn travel points, and jump the early-access line.")
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
