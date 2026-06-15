@@ -20,6 +20,9 @@ import { useState } from "react";
 import { useT } from "@/lib/i18n/client";
 import type { DictKey } from "@/lib/i18n/dict-en";
 import type { ValuationExplanation } from "@/lib/keys/valuation";
+import { FEEDBACK_MIN_REVIEWS, FEEDBACK_STEP_PER_CYCLE } from "@/lib/keys/valuation";
+import { FEEDBACK_BAND } from "@/lib/keys/value";
+import { AI_FEATURE_BONUS_MAX } from "@/lib/ai/listing-valuation";
 
 // Map a factor key to its i18n label so we control wording per locale rather
 // than trusting the English label stored in the explanation JSON.
@@ -105,15 +108,35 @@ export function ValuationExplainer({
               {explanation.factors.map((f) => (
                 <li
                   key={f.key}
-                  className="flex items-center justify-between gap-3 px-4 py-2.5 border-t first:border-t-0 text-sm"
+                  className="px-4 py-2.5 border-t first:border-t-0 text-sm"
                   style={{ borderColor: "var(--cream-2)" }}
                 >
-                  <span style={{ color: "var(--navy-2)" }}>
-                    {FACTOR_LABEL[f.key] ? t(FACTOR_LABEL[f.key]) : f.label}
-                  </span>
-                  <span className="shrink-0 font-mono" style={{ color: "var(--navy-3)" }}>
-                    {fmtPoints(f.points)}
-                  </span>
+                  <div className="flex items-center justify-between gap-3">
+                    <span style={{ color: "var(--navy-2)" }}>
+                      {FACTOR_LABEL[f.key] ? t(FACTOR_LABEL[f.key]) : f.label}
+                    </span>
+                    <span className="shrink-0 font-mono" style={{ color: "var(--navy-3)" }}>
+                      {fmtPoints(f.points)}
+                    </span>
+                  </div>
+
+                  {/* Home appeal (AI): explain what the AI actually reads, that
+                      it doesn't penalise small towns, and give a baseline so the
+                      number is interpretable (most homes score 0, cap +MAX). */}
+                  {f.key === "ai_appeal" && (
+                    <p className="mt-1.5 text-[12px] leading-[1.55]" style={{ color: "var(--navy-3)" }}>
+                      {t("keys.explain.factor.ai_appeal.desc")}{" "}
+                      {t("keys.explain.factor.ai_appeal.context", { max: AI_FEATURE_BONUS_MAX })}
+                    </p>
+                  )}
+
+                  {/* Location appeal at the standard tier (no boost): reassure a
+                      small-town host that +0 is "valued equally", not worthless. */}
+                  {f.key === "location_tier" && f.points === 0 && (
+                    <p className="mt-1.5 text-[12px] leading-[1.55]" style={{ color: "var(--navy-3)" }}>
+                      {t("keys.explain.factor.location_tier.standard")}
+                    </p>
+                  )}
                 </li>
               ))}
             </ul>
@@ -138,21 +161,37 @@ export function ValuationExplainer({
               <span style={{ color: "var(--navy-2)" }}>{t("keys.explain.base")}</span>
               <span className="font-mono" style={{ color: "var(--navy-2)" }}>{explanation.base}</span>
             </div>
-            <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-t text-sm" style={{ borderColor: "var(--cream-2)" }}>
-              <span style={{ color: "var(--navy-2)" }}>
-                {t("keys.explain.feedback")}
-                {explanation.feedback.avgRating != null && (
-                  <span style={{ color: "var(--navy-3)" }}>
-                    {" "}· {t("keys.explain.reviews", {
+            <div className="px-4 py-2.5 border-t text-sm" style={{ borderColor: "var(--cream-2)" }}>
+              <div className="flex items-center justify-between gap-3">
+                <span style={{ color: "var(--navy-2)" }}>
+                  {t("keys.explain.feedback")}
+                  {explanation.feedback.avgRating != null && (
+                    <span style={{ color: "var(--navy-3)" }}>
+                      {" "}· {t("keys.explain.reviews", {
+                        rating: explanation.feedback.avgRating,
+                        count: explanation.feedback.reviewCount,
+                      })}
+                    </span>
+                  )}
+                </span>
+                <span className="font-mono shrink-0" style={{ color: feedbackApplied ? "var(--pink)" : "var(--navy-3)" }}>
+                  {feedbackApplied ? `${adjustmentPct > 0 ? "+" : ""}${adjustmentPct}%` : t("keys.explain.feedbackNone")}
+                </span>
+              </div>
+              {/* Show the host exactly where they sit on the feedback threshold:
+                  below FEEDBACK_MIN_REVIEWS it isn't applied yet; at/above it the
+                  value is moving slowly toward their rating (never all at once). */}
+              <p className="mt-1.5 text-[12px] leading-[1.55]" style={{ color: "var(--navy-3)" }}>
+                {explanation.feedback.applied && explanation.feedback.avgRating != null
+                  ? t("keys.explain.feedbackMoving", {
                       rating: explanation.feedback.avgRating,
                       count: explanation.feedback.reviewCount,
+                    })
+                  : t("keys.explain.feedbackPending", {
+                      min: FEEDBACK_MIN_REVIEWS,
+                      count: explanation.feedback.reviewCount,
                     })}
-                  </span>
-                )}
-              </span>
-              <span className="font-mono shrink-0" style={{ color: feedbackApplied ? "var(--pink)" : "var(--navy-3)" }}>
-                {feedbackApplied ? `${adjustmentPct > 0 ? "+" : ""}${adjustmentPct}%` : t("keys.explain.feedbackNone")}
-              </span>
+              </p>
             </div>
             <div className="flex items-center justify-between gap-3 px-4 py-3 border-t" style={{ borderColor: "var(--line)", background: "var(--pink-light)" }}>
               <span className="font-medium">{t("keys.explain.final")}</span>
@@ -162,7 +201,11 @@ export function ValuationExplainer({
 
           {/* ---- Reassurance: the value is bounded and stable ---- */}
           <p className="text-[13px] leading-[1.6]" style={{ color: "var(--navy-3)" }}>
-            {t("keys.explain.bounded")}
+            {t("keys.explain.bounded", {
+              step: Math.round(FEEDBACK_STEP_PER_CYCLE * 100),
+              min: FEEDBACK_MIN_REVIEWS,
+              band: Math.round(FEEDBACK_BAND * 100),
+            })}
           </p>
         </div>
       )}

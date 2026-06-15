@@ -171,10 +171,14 @@ export async function composeValuation(
     { key: "base", label: "Base", points: BASE_NIGHTLY_KEYS },
     { key: "size", label: "Size", points: sizePoints(input.sizeSqm) },
     { key: "sleeps", label: "Sleeps", points: sleepsPoints(input.sleeps) },
-    { key: "location_tier", label: "Destination tier", points: locationTierPoints(tier) },
+    { key: "location_tier", label: "Location appeal", points: locationTierPoints(tier) },
     { key: "verified", label: "Verified home", points: verifiedBonus(input.isVerified) },
     { key: "ai_appeal", label: "Home appeal (AI)", points: ai.bonus },
-  ].filter((f) => f.points !== 0 || f.key === "base");
+    // Always surface location_tier (even at +0) and the AI appeal factor so the
+    // explainer can show the "standard, valued equally" / "most homes score 0"
+    // reassurance to small-town and average hosts — a 0 here is meaningful, not
+    // noise to hide. Other zero-valued factors stay collapsed.
+  ].filter((f) => f.points !== 0 || f.key === "base" || f.key === "location_tier" || f.key === "ai_appeal");
 
   const explanation: ValuationExplanation = {
     version: 2,
