@@ -113,7 +113,7 @@ export function ConciergeSection({
                   </span>
                 </div>
               ) : (
-                <div className="mt-3 flex items-center justify-between gap-3">
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
                   <span className="font-display text-lg leading-none">€{(a.priceCents / 100).toFixed(2)}</span>
                   {own ? (
                     <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[.06em] h-9 px-3.5 rounded-full whitespace-nowrap shrink-0"

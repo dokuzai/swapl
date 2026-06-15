@@ -233,13 +233,18 @@ function PhaseStepper({
               const active = i === currentIndex;
               return (
                 <li key={p} className="flex-1 min-w-0 flex flex-col items-center gap-1.5">
+                  {/* Always render both connectors (outer ones hidden) so EVERY
+                      dot is centred in its column and lines up with the centred
+                      label below — otherwise the first/last dot sits at the edge
+                      while its label stays centred, and the row reads as skewed. */}
                   <div className="flex items-center w-full">
-                    {i > 0 && (
-                      <span
-                        className="h-0.5 flex-1"
-                        style={{ background: i <= currentIndex ? "var(--pink)" : "var(--line)" }}
-                      />
-                    )}
+                    <span
+                      className="h-0.5 flex-1"
+                      style={{
+                        background: i <= currentIndex ? "var(--pink)" : "var(--line)",
+                        visibility: i === 0 ? "hidden" : "visible",
+                      }}
+                    />
                     <span
                       aria-current={active ? "step" : undefined}
                       className="h-3 w-3 rounded-full shrink-0"
@@ -248,15 +253,16 @@ function PhaseStepper({
                         boxShadow: active ? "0 0 0 3px var(--pink-light)" : undefined,
                       }}
                     />
-                    {i < PHASE_ORDER.length - 1 && (
-                      <span
-                        className="h-0.5 flex-1"
-                        style={{ background: i < currentIndex ? "var(--pink)" : "var(--line)" }}
-                      />
-                    )}
+                    <span
+                      className="h-0.5 flex-1"
+                      style={{
+                        background: i < currentIndex ? "var(--pink)" : "var(--line)",
+                        visibility: i === PHASE_ORDER.length - 1 ? "hidden" : "visible",
+                      }}
+                    />
                   </div>
                   <span
-                    className="block w-full px-0.5 font-mono text-[8px] uppercase tracking-[.02em] text-center leading-[1.15] [overflow-wrap:anywhere] hyphens-auto"
+                    className="block w-full font-mono text-[7px] uppercase tracking-[.01em] text-center leading-[1.2] [overflow-wrap:anywhere]"
                     style={{ color: active ? "var(--pink)" : "var(--navy-3)" }}
                   >
                     {t(`trip.phase.${p}` as const)}
