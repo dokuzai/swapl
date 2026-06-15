@@ -17,6 +17,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import { earn, hold, release, spend } from "@/lib/keys/ledger";
 import { nightlyKeysFor, nightsBetween, keysCostFor } from "@/lib/keys/value";
+import { bookedRangesFor, rangesOverlap } from "@/lib/listing/availability";
 import { insuranceProvider } from "@/lib/insurance";
 
 export class KeysStayError extends Error {
@@ -41,10 +42,6 @@ export class KeysStayError extends Error {
 }
 
 const NIGHT_MS = 24 * 60 * 60 * 1000;
-
-function rangesOverlap(aFrom: Date, aTo: Date, bFrom: Date, bTo: Date): boolean {
-  return aFrom < bTo && bFrom < aTo;
-}
 
 export type AvailabilityResult = {
   listingId: string;
@@ -84,11 +81,9 @@ export async function keysAvailability(listingId: string): Promise<AvailabilityR
     isVerified: listing.isVerified,
   });
 
-  const taken = await prisma.keysStay.findMany({
-    where: { listingId, status: { in: ["pending", "confirmed"] } },
-    select: { dateFrom: true, dateTo: true },
-    orderBy: { dateFrom: "asc" },
-  });
+  // All occupied ranges (agreements + Keys stays + host blocks) via the single
+  // availability helper — no separate "what's taken" rule lives here.
+  const taken = await bookedRangesFor(listing.id);
 
   return {
     listingId: listing.id,
@@ -97,10 +92,13 @@ export async function keysAvailability(listingId: string): Promise<AvailabilityR
     availableTo: listing.availableTo.toISOString(),
     minStayDays: listing.minStayDays,
     maxStayDays: listing.maxStayDays,
-    bookedRanges: taken.map((t) => ({
-      dateFrom: t.dateFrom.toISOString(),
-      dateTo: t.dateTo.toISOString(),
-    })),
+    bookedRanges: taken
+      .slice()
+      .sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime())
+      .map((t) => ({
+        dateFrom: t.dateFrom.toISOString(),
+        dateTo: t.dateTo.toISOString(),
+      })),
   };
 }
 
@@ -161,11 +159,9 @@ export async function createKeysStay(args: {
     throw new KeysStayError("BAD_DATES", `Stay must be between ${listing.minStayDays} and ${listing.maxStayDays} nights`);
   }
 
-  // No overlap with an existing pending/confirmed stay.
-  const conflicts = await prisma.keysStay.findMany({
-    where: { listingId, status: { in: ["pending", "confirmed"] } },
-    select: { dateFrom: true, dateTo: true },
-  });
+  // No overlap with anything that occupies the listing — other Keys stays,
+  // active swap agreements, or host-blocked ranges (single availability helper).
+  const conflicts = await bookedRangesFor(listingId);
   if (conflicts.some((c) => rangesOverlap(dateFrom, dateTo, c.dateFrom, c.dateTo))) {
     throw new KeysStayError("DATES_TAKEN", "Those dates are already booked");
   }

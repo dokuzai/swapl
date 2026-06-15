@@ -401,6 +401,40 @@ components:
               dateFrom: { type: string, format: date-time }
               dateTo: { type: string, format: date-time }
 
+    BookedRange:
+      type: object
+      required: [dateFrom, dateTo, source]
+      properties:
+        dateFrom: { type: string, format: date-time }
+        dateTo: { type: string, format: date-time }
+        source:
+          type: string
+          enum: [agreement, keys_stay, blocked]
+          description: Why the range is unavailable.
+
+    ListingCalendar:
+      type: object
+      required: [listingId, availableFrom, availableTo, minStayDays, maxStayDays, bookedRanges]
+      properties:
+        listingId: { type: string }
+        availableFrom: { type: string, format: date-time }
+        availableTo: { type: string, format: date-time }
+        minStayDays: { type: integer }
+        maxStayDays: { type: integer }
+        bookedRanges:
+          type: array
+          items: { $ref: '#/components/schemas/BookedRange' }
+
+    BlockedRange:
+      type: object
+      required: [id, dateFrom, dateTo, createdAt]
+      properties:
+        id: { type: string }
+        dateFrom: { type: string, format: date-time }
+        dateTo: { type: string, format: date-time }
+        note: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+
     TravelProfile:
       type: object
       required: [summary, traits, sourcesUsed, updatedAt]
@@ -4074,6 +4108,105 @@ paths:
               schema: { $ref: '#/components/schemas/KeysAvailability' }
         '401': { description: Unauthenticated }
         '404': { description: Listing not found }
+
+  /api/listings/{id}/calendar:
+    get:
+      tags: [listings]
+      summary: Listing availability calendar
+      description: >-
+        The listing's published availability window plus every occupied range —
+        active swap agreements, pending/confirmed Keys stays, and host-blocked
+        ranges — for the date-picker. Each range is labelled with its source.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListingCalendar' }
+        '404': { description: Listing not found }
+
+  /api/listings/{id}/blocked-ranges:
+    get:
+      tags: [listings]
+      summary: List host-blocked ranges (owner only)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ranges]
+                properties:
+                  ranges:
+                    type: array
+                    items: { $ref: '#/components/schemas/BlockedRange' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the owner }
+        '404': { description: Listing not found }
+    post:
+      tags: [listings]
+      summary: Block a date range (owner only)
+      description: Marks a date range unavailable for booking on this listing.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dateFrom, dateTo]
+              properties:
+                dateFrom: { type: string, format: date-time }
+                dateTo: { type: string, format: date-time }
+                note: { type: string }
+      responses:
+        '200':
+          description: Blocked
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, range]
+                properties:
+                  ok: { type: boolean }
+                  range: { $ref: '#/components/schemas/BlockedRange' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the owner }
+        '404': { description: Listing not found }
+    delete:
+      tags: [listings]
+      summary: Unblock a date range (owner only)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rangeId]
+              properties:
+                rangeId: { type: string }
+      responses:
+        '200':
+          description: Unblocked
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the owner }
+        '404': { description: Listing or range not found }
 
   /api/keys/stays:
     get:

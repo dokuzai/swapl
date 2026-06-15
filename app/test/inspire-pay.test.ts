@@ -51,7 +51,11 @@ vi.mock("@/lib/db", async (importOriginal) => ({
     user: { findUnique: mocks.userFindUnique },
     addOn: { findUnique: mocks.addOnFindUnique },
     orderAddOn: { findFirst: mocks.orderFindFirst, create: mocks.orderCreate },
-    swapAgreement: { findUnique: mocks.agreementFindUnique },
+    swapAgreement: { findUnique: mocks.agreementFindUnique, findMany: async () => [] },
+    // DOK-159: the accept path checks per-listing availability via
+    // bookedRangesFor() before creating the agreement. No conflicts seeded here.
+    keysStay: { findMany: async () => [] },
+    listingBlockedRange: { findMany: async () => [] },
     $transaction: (fn: (tx: unknown) => unknown) =>
       fn({
         swapProposal: { update: mocks.txProposalUpdate },

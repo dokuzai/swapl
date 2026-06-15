@@ -385,6 +385,7 @@ model Listing {
   favoritedBy          Favorite[]
   homeGuide            ListingHomeGuide?
   keysStays            KeysStay[]
+  blockedRanges        ListingBlockedRange[]
 
   @@index([city])
   @@index([userId])
@@ -698,6 +699,23 @@ model KeysStay {
   @@index([guestId])
   @@index([hostId])
   @@index([status])
+}
+
+// ---------- LISTING BLOCKED RANGE (DOK-159) ----------
+// A host-defined date range during which the listing is unavailable, on top of
+// the implicit blocks from active swap agreements and pending/confirmed Keys
+// stays. Used by lib/listing/availability.ts to subtract manual blocks from the
+// published availability window.
+model ListingBlockedRange {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  dateFrom  DateTime
+  dateTo    DateTime
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
 }
 
 // ---------- GROWTH ENGINE / REFERRALS (DOK-157) ----------

@@ -92,6 +92,18 @@ const h = vi.hoisted(() => {
         return { ...row };
       },
     },
+    // DOK-159: bookedRangesFor() reads these. No agreements/blocks are seeded
+    // in these tests, so empty results keep the existing scenarios intact.
+    swapAgreement: {
+      async findMany() {
+        return [];
+      },
+    },
+    listingBlockedRange: {
+      async findMany() {
+        return [];
+      },
+    },
     // Model Prisma's atomicity: snapshot the store, run the callback, and on
     // throw restore the snapshot so a failed transaction leaves no partial write.
     async $transaction(fn: any) {

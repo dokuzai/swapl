@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { type ListingDTO, toDTO } from "@/lib/listing-utils";
 import { computeMatchScore } from "@/lib/match/score";
+import { rangesOverlap } from "@/lib/listing/availability";
 import type { ListingFilters } from "@/lib/listing-filters";
 
 const PAGE_SIZE = 12;
@@ -40,11 +41,34 @@ export async function queryListings(
   if (filters.petsRequired) where.petsAllowed = true;
   if (filters.wfhRequired) where.wfhSetup = true;
   if (filters.stepFreeRequired) where.stepFreeAccess = true;
-  if (filters.dateFrom) where.availableTo = { gte: new Date(filters.dateFrom) };
-  if (filters.dateTo) where.availableFrom = { lte: new Date(filters.dateTo) };
+  // Date-filtered browse (DOK-159): when both from & to are given, the listing
+  // must (a) publish a window that fully COVERS the requested range and (b) have
+  // no occupied/blocked range overlapping it. (a) is expressed in SQL; (b) needs
+  // the unified availability data, so we resolve the eligible ids in JS below and
+  // constrain the query to them — keeps pagination + count correct in both
+  // query branches. A lone from/to keeps the old loose window-overlap behaviour.
+  const wantFrom = filters.dateFrom ? new Date(filters.dateFrom) : null;
+  const wantTo = filters.dateTo ? new Date(filters.dateTo) : null;
+  const dateFiltered = !!(wantFrom && wantTo);
+  if (dateFiltered) {
+    where.availableFrom = { lte: wantFrom };
+    where.availableTo = { gte: wantTo };
+    const eligibleIds = await availableListingIds(where, wantFrom!, wantTo!);
+    (where as { id?: unknown }).id = { in: eligibleIds };
+  } else {
+    if (filters.dateFrom) where.availableTo = { gte: new Date(filters.dateFrom) };
+    if (filters.dateTo) where.availableFrom = { lte: new Date(filters.dateTo) };
+  }
 
   // Hide the viewer's own listing from results.
-  if (viewerListing) (where as { id?: unknown }).id = { not: viewerListing.id };
+  if (viewerListing) {
+    if (dateFiltered) {
+      const ids = (where as { id?: { in: string[] } }).id?.in ?? [];
+      (where as { id?: unknown }).id = { in: ids.filter((x) => x !== viewerListing.id) };
+    } else {
+      (where as { id?: unknown }).id = { not: viewerListing.id };
+    }
+  }
 
   const skip = (filters.page - 1) * PAGE_SIZE;
 
@@ -146,6 +170,55 @@ function applyFeaturedCap(items: ListingWithScore[]): ListingWithScore[] {
     if (BAND_WEIGHT[a.band] !== BAND_WEIGHT[b.band]) return BAND_WEIGHT[a.band] - BAND_WEIGHT[b.band];
     return (b.matchScore ?? 0) - (a.matchScore ?? 0);
   });
+}
+
+// Resolve the listing ids that are genuinely free for [from, to): start from
+// the candidates whose published window covers the range (the passed `where`
+// already encodes that + the other filters), then drop any with an occupied or
+// host-blocked range overlapping the requested dates. Occupied = ACTIVE swap
+// agreement on either side, or pending/confirmed Keys stay. One batched query
+// per source — no per-listing round-trips.
+async function availableListingIds(
+  where: Record<string, unknown>,
+  from: Date,
+  to: Date,
+): Promise<string[]> {
+  const candidates = await prisma.listing.findMany({ where, select: { id: true } });
+  const ids = candidates.map((c) => c.id);
+  if (ids.length === 0) return [];
+
+  const [agreements, stays, blocks] = await Promise.all([
+    prisma.swapAgreement.findMany({
+      where: {
+        status: "ACTIVE",
+        OR: [{ listing1Id: { in: ids } }, { listing2Id: { in: ids } }],
+      },
+      select: { listing1Id: true, listing2Id: true, dateFrom: true, dateTo: true },
+    }),
+    prisma.keysStay.findMany({
+      where: { listingId: { in: ids }, status: { in: ["pending", "confirmed"] } },
+      select: { listingId: true, dateFrom: true, dateTo: true },
+    }),
+    prisma.listingBlockedRange.findMany({
+      where: { listingId: { in: ids } },
+      select: { listingId: true, dateFrom: true, dateTo: true },
+    }),
+  ]);
+
+  const occupied = new Set<string>();
+  for (const a of agreements) {
+    if (!rangesOverlap(from, to, a.dateFrom, a.dateTo)) continue;
+    occupied.add(a.listing1Id);
+    occupied.add(a.listing2Id);
+  }
+  for (const s of stays) {
+    if (rangesOverlap(from, to, s.dateFrom, s.dateTo)) occupied.add(s.listingId);
+  }
+  for (const b of blocks) {
+    if (rangesOverlap(from, to, b.dateFrom, b.dateTo)) occupied.add(b.listingId);
+  }
+
+  return ids.filter((id) => !occupied.has(id));
 }
 
 export async function getViewerListing(userId: string | undefined | null): Promise<ListingDTO | null> {

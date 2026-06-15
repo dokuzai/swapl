@@ -9,6 +9,7 @@ import { chargeInspirePackageOnAccept, cancelInspirePackagePayment } from "@/lib
 import { toDTO } from "@/lib/listing-utils";
 import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { getTripPhase, guideUnlocked, homeGuideComplete } from "@/lib/trip/phase";
+import { bookedRangesFor, rangesOverlap } from "@/lib/listing/availability";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -211,6 +212,20 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
   if (action === "accept") {
     if (proposal.status !== "PENDING" && proposal.status !== "COUNTERED") {
       return invalidInput("Cannot accept at this stage.");
+    }
+
+    // Integrity gate (DOK-159): neither home may already be occupied for the
+    // agreed window. Goes through the single availability helper so active
+    // agreements, pending/confirmed Keys stays, and host blocks all count.
+    const [occA, occB] = await Promise.all([
+      bookedRangesFor(proposal.proposerListingId),
+      bookedRangesFor(proposal.targetListingId),
+    ]);
+    const taken =
+      occA.some((r) => rangesOverlap(proposal.dateFrom, proposal.dateTo, r.dateFrom, r.dateTo)) ||
+      occB.some((r) => rangesOverlap(proposal.dateFrom, proposal.dateTo, r.dateFrom, r.dateTo));
+    if (taken) {
+      return invalidInput("One of the homes is no longer available for these dates.");
     }
 
     // Pre-issue the policy with the underwriter BEFORE the agreement tx so
