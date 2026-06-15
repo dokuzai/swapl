@@ -12,6 +12,9 @@ import { parseJSON } from "@/lib/db";
 import { parseSettings } from "@/lib/settings";
 import { toDTO } from "@/lib/listing-utils";
 import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
+import { INTEREST_BY_SLUG } from "@/lib/interests";
+import { dictionaryForRequest } from "@/lib/i18n/request-dict";
+import type { DictKey } from "@/lib/i18n/dict-en";
 
 const MIN_MS = 60 * 1000;
 const LIMIT_PER_MIN = 60;
@@ -95,6 +98,16 @@ export async function GET(req: Request, { params }: RouteContext<"/api/profiles/
     visited.push({ city: other.city, country: other.country, year });
   }
 
+  // Resolve stored interest slugs to localized labels (cookie / Accept-Language)
+  // so the mobile public profile shows the same Italian taxonomy as web.
+  const dict = dictionaryForRequest(req);
+  // Resolve known interest slugs to localized labels; pass through any value
+  // not in the catalog unchanged (no data loss / contract stays string[]).
+  const interestLabels = parseJSON<string[]>(user.interests, []).map((s) => {
+    const tag = INTEREST_BY_SLUG.get(s);
+    return tag ? dict[`interest.${tag.slug}` as DictKey] ?? tag.label : s;
+  });
+
   return NextResponse.json({
     user: {
       id: user.id,
@@ -104,7 +117,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/profiles/
       bioVibe: user.bioVibe,
       verified: user.verified,
       memberSince: user.createdAt.toISOString(),
-      interests: parseJSON<string[]>(user.interests, []),
+      interests: interestLabels,
       work: user.work,
       languages: parseJSON<string[]>(user.languages, []),
       // Privacy: the host can hide their home city from the public profile.

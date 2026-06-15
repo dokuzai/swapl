@@ -10,6 +10,7 @@ import io.ktor.client.request.headers
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,6 +31,7 @@ class ApiClient @Inject constructor(private val tokenStore: TokenStore) {
             headers {
                 tokenStore.read()?.let { append(HttpHeaders.Authorization, "Bearer $it") }
                 append(HttpHeaders.Accept, "application/json")
+                append(HttpHeaders.AcceptLanguage, Locale.getDefault().toLanguageTag())
             }
         }
     }

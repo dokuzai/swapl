@@ -220,12 +220,12 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
                   return (
                     <div key={cat.id}>
                       <p className="font-mono text-[10px] uppercase tracking-[.1em] mb-2" style={{ color: "var(--navy-3)" }}>
-                        {cat.label}
+                        {t(`interestCategory.${cat.id}` as DictKey)}
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {items.map((tag) => (
                           <span key={tag.slug} className="tag-chip" style={{ background: "var(--pink-light)", color: "var(--navy)" }}>
-                            {tag.label}
+                            {t(`interest.${tag.slug}` as DictKey)}
                           </span>
                         ))}
                       </div>

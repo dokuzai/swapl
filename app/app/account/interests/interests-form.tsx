@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { INTEREST_CATALOG, INTEREST_CATEGORIES } from "@/lib/interests";
 import { useT } from "@/lib/i18n/client";
+import type { DictKey } from "@/lib/i18n/dict-en";
 
 const MAX_PICKED = 12;
 
@@ -89,17 +90,17 @@ export function InterestsForm({ initial, initialBio }: { initial: string[]; init
             return (
               <div key={cat.id}>
                 <p className="font-mono text-[10px] uppercase tracking-[.12em] mb-2" style={{ color: "var(--navy-3)" }}>
-                  {cat.label}
+                  {t(`interestCategory.${cat.id}` as DictKey)}
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {items.map((t) => {
-                    const on = picked.has(t.slug);
+                  {items.map((tag) => {
+                    const on = picked.has(tag.slug);
                     const disabled = !on && picked.size >= MAX_PICKED;
                     return (
                       <button
-                        key={t.slug}
+                        key={tag.slug}
                         type="button"
-                        onClick={() => toggle(t.slug)}
+                        onClick={() => toggle(tag.slug)}
                         disabled={disabled}
                         className="text-xs px-3 py-1.5 rounded-full border transition-colors disabled:opacity-40"
                         style={
@@ -108,7 +109,7 @@ export function InterestsForm({ initial, initialBio }: { initial: string[]; init
                             : { background: "var(--card-bg)", color: "var(--navy-2)", borderColor: "var(--line)" }
                         }
                       >
-                        {t.label}
+                        {t(`interest.${tag.slug}` as DictKey)}
                       </button>
                     );
                   })}
