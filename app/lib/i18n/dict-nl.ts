@@ -1087,7 +1087,7 @@ export const nl: Partial<Record<DictKey, string>> = {
   "verifyOwnership.needDoc": "Voeg minstens één document toe met een label en link.",
   "verifyOwnership.error": "Indienen mislukt — probeer opnieuw.",
   "verifyOwnership.status.pending": "In beoordeling",
-  "verifyOwnership.status.pendingBody": "We beoordelen je documenten. Dit duurt meestal een paar dagen.",
+  "verifyOwnership.status.pendingBody": "We beoordelen je documenten. De uiteindelijke beslissing wordt altijd door een persoon uit ons team genomen, meestal binnen 2 werkdagen. Was de automatische controle onzeker, dan kan het iets langer duren, maar je blijft niet in het ongewisse: we nemen altijd contact op.",
   "verifyOwnership.status.approved": "Goedgekeurd",
   "verifyOwnership.status.approvedBody": "Je advertentie draagt nu de badge Geverifieerde eigenaar.",
   "verifyOwnership.status.rejected": "Niet goedgekeurd",
@@ -1098,6 +1098,10 @@ export const nl: Partial<Record<DictKey, string>> = {
     "Een AI-assistent controleert het document dat je uploadt om te bevestigen dat het aantoont dat je de woning bezit of huurt.",
   "verifyOwnership.how.docs":
     "Een eigendomsakte of kadastraal uittreksel werkt, of een huurovereenkomst — upload wat je hebt.",
+  "verifyOwnership.how.tenant":
+    "Huren is welkom. Als je huurt en je huurcontract gasten toestaat, ben je volledig geschikt — je hoeft de woning niet te bezitten.",
+  "verifyOwnership.how.privacy":
+    "We bewaren je document niet na de controle. Alleen de AI leest je persoonlijke gegevens, en we bewaren enkel of het een particuliere woning betreft — nooit je ID, je adres of het document zelf.",
   "verifyOwnership.how.privateOnly":
     "Swapl is een ruil tussen particulieren — woningen op naam van een bedrijf komen niet in aanmerking.",
   "verifyOwnership.docType.label": "Documenttype",
@@ -1105,9 +1109,9 @@ export const nl: Partial<Record<DictKey, string>> = {
   "verifyOwnership.docType.lease": "Huurovereenkomst",
   "verifyOwnership.docType.other": "Anders",
   "verifyOwnership.docType.hint": "Zo kunnen we je document sneller lezen.",
-  "verifyOwnership.business.title": "Deze woning lijkt een zakelijk pand",
+  "verifyOwnership.business.title": "Onze controle suggereert dat dit een zakelijk pand kan zijn — we kunnen ons vergissen",
   "verifyOwnership.business.body":
-    "Het document suggereert dat deze woning op naam van een bedrijf staat. Swapl is bedoeld voor ruil tussen particulieren, dus we kunnen het niet verifiëren. Klopt dit niet? Neem contact op en een teamlid bekijkt het persoonlijk.",
+    "Onze automatische controle las deze woning als eigendom van een bedrijf, en Swapl is bedoeld voor ruil tussen particulieren. Maar automatische controles zijn niet perfect, en de uiteindelijke beslissing wordt altijd door een mens genomen — nooit door de AI. Is dit je eigen woning? Neem contact op: een teamlid bekijkt deze gevallen persoonlijk, meestal binnen 2 werkdagen, en een huurcontract, eigendomsakte of belastingaanslag op jouw naam is genoeg om het recht te zetten.",
   "verifyOwnership.business.contact": "Contact met support",
 
   "admin.propVerif.nav": "Eigenaarsverificatie",

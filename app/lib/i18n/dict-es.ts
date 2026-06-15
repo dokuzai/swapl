@@ -1072,7 +1072,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "verifyOwnership.needDoc": "Añade al menos un documento con etiqueta y enlace.",
   "verifyOwnership.error": "No se pudo enviar — inténtalo de nuevo.",
   "verifyOwnership.status.pending": "En revisión",
-  "verifyOwnership.status.pendingBody": "Estamos revisando tus documentos. Suele tardar un par de días.",
+  "verifyOwnership.status.pendingBody": "Estamos revisando tus documentos. La decisión final siempre la toma una persona de nuestro equipo, normalmente en un plazo de 2 días hábiles. Si la comprobación automática tuvo dudas, puede tardar un poco más, pero no te quedas en el limbo: siempre te contactamos.",
   "verifyOwnership.status.approved": "Aprobado",
   "verifyOwnership.status.approvedBody": "Tu anuncio ahora lleva la insignia de Propietario verificado.",
   "verifyOwnership.status.rejected": "No aprobado",
@@ -1083,6 +1083,10 @@ export const es: Partial<Record<DictKey, string>> = {
     "Un asistente de IA revisa el documento que subes para confirmar que demuestra que la vivienda es tuya o que la alquilas.",
   "verifyOwnership.how.docs":
     "Sirve una escritura o nota simple, o un contrato de alquiler: sube el que tengas.",
+  "verifyOwnership.how.tenant":
+    "Alquilar es bienvenido. Si vives de alquiler y tu contrato te permite alojar, eres plenamente elegible: no necesitas ser propietario.",
+  "verifyOwnership.how.privacy":
+    "No guardamos tu documento después de la comprobación. Solo la IA lee tus datos personales y únicamente registramos si corresponde a una vivienda privada — nunca tu DNI, tu dirección ni el documento en sí.",
   "verifyOwnership.how.privateOnly":
     "Swapl es un intercambio entre particulares: las viviendas a nombre de una empresa no se admiten.",
   "verifyOwnership.docType.label": "Tipo de documento",
@@ -1090,9 +1094,9 @@ export const es: Partial<Record<DictKey, string>> = {
   "verifyOwnership.docType.lease": "Contrato de alquiler",
   "verifyOwnership.docType.other": "Otro",
   "verifyOwnership.docType.hint": "Nos ayuda a leer tu documento más rápido.",
-  "verifyOwnership.business.title": "Esta vivienda parece una propiedad de empresa",
+  "verifyOwnership.business.title": "Nuestra comprobación sugiere que podría ser una propiedad comercial — quizá nos equivoquemos",
   "verifyOwnership.business.body":
-    "El documento indica que la vivienda está a nombre de una empresa. Swapl está pensado para intercambios entre particulares, así que no podemos verificarla. Si es un error, escríbenos y un miembro de nuestro equipo lo revisará personalmente.",
+    "Nuestra comprobación automática ha leído esta vivienda como propiedad de una empresa, y Swapl está pensado para intercambios entre particulares. Pero las comprobaciones automáticas no son perfectas, y la decisión final siempre la toma una persona, nunca la IA. Si es tu propia vivienda, escríbenos: un miembro de nuestro equipo revisa estos casos personalmente, normalmente en un plazo de 2 días hábiles, y un contrato de alquiler, una escritura o un recibo de impuestos a tu nombre basta para aclararlo.",
   "verifyOwnership.business.contact": "Contactar con soporte",
 
   "admin.propVerif.nav": "Verif. propietario",

@@ -105,6 +105,8 @@ export default function PropertyVerificationForm({
         <ul className="space-y-2 text-sm" style={{ color: "var(--navy-2)" }}>
           <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.ai")}</span></li>
           <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.docs")}</span></li>
+          <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.tenant")}</span></li>
+          <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.privacy")}</span></li>
           <li className="flex gap-2"><span aria-hidden>·</span><span>{t("verifyOwnership.how.privateOnly")}</span></li>
         </ul>
       </div>

@@ -1076,7 +1076,7 @@ export const it: Partial<Record<DictKey, string>> = {
   "verifyOwnership.heading": "Verifica la proprietà",
   "verifyOwnership.optional": "Facoltativo",
   "verifyOwnership.intro":
-    "È del tutto facoltativo e mai necessario per pubblicare. I documenti approvati danno un discreto badge “Proprietario verificato” che aumenta la fiducia dei potenziali scambiatori.",
+    "È del tutto facoltativo e mai necessario per pubblicare. I documenti approvati danno un discreto badge “Proprietario verificato” che aumenta la fiducia dei potenziali scambiatori. Non conserviamo il tuo documento dopo il controllo: salviamo solo se risulta un'abitazione privata.",
   "verifyOwnership.docLabel": "Documento",
   "verifyOwnership.docLabelPlaceholder": "es. Rogito, Bolletta",
   "verifyOwnership.docUrlPlaceholder": "https://… link al documento",
@@ -1088,7 +1088,7 @@ export const it: Partial<Record<DictKey, string>> = {
   "verifyOwnership.needDoc": "Aggiungi almeno un documento con etichetta e link.",
   "verifyOwnership.error": "Invio non riuscito — riprova.",
   "verifyOwnership.status.pending": "In revisione",
-  "verifyOwnership.status.pendingBody": "Stiamo esaminando i tuoi documenti. Di solito ci vogliono un paio di giorni.",
+  "verifyOwnership.status.pendingBody": "Stiamo esaminando i tuoi documenti. La decisione finale spetta sempre a una persona del nostro team, di solito entro 2 giorni lavorativi. Se il controllo automatico è stato incerto può volerci un po' di più, ma non resti bloccato: ti ricontattiamo sempre.",
   "verifyOwnership.status.approved": "Approvato",
   "verifyOwnership.status.approvedBody": "Il tuo annuncio ora mostra il badge Proprietario verificato.",
   "verifyOwnership.status.rejected": "Non approvato",
@@ -1099,6 +1099,10 @@ export const it: Partial<Record<DictKey, string>> = {
     "Un assistente AI controlla il documento che carichi per confermare che provi la tua proprietà o locazione.",
   "verifyOwnership.how.docs":
     "Va bene un atto di proprietà o una visura, oppure un contratto di locazione: scegli ciò che hai.",
+  "verifyOwnership.how.tenant":
+    "Anche chi è in affitto è il benvenuto. Se sei in affitto e il contratto ti permette di ospitare, sei pienamente idoneo: non serve essere proprietari.",
+  "verifyOwnership.how.privacy":
+    "Non conserviamo il tuo documento dopo il controllo. Solo l'AI legge i tuoi dati personali e noi salviamo soltanto se risulta un'abitazione privata, mai il tuo documento d'identità, l'indirizzo o il documento stesso.",
   "verifyOwnership.how.privateOnly":
     "Swapl è uno scambio tra privati: gli immobili intestati ad aziende non sono ammessi.",
   "verifyOwnership.docType.label": "Tipo di documento",
@@ -1106,9 +1110,9 @@ export const it: Partial<Record<DictKey, string>> = {
   "verifyOwnership.docType.lease": "Contratto di locazione",
   "verifyOwnership.docType.other": "Altro",
   "verifyOwnership.docType.hint": "Ci aiuta a leggere il documento più rapidamente.",
-  "verifyOwnership.business.title": "Questo immobile risulta aziendale",
+  "verifyOwnership.business.title": "Il nostro controllo lo segnala come immobile commerciale — potremmo sbagliarci",
   "verifyOwnership.business.body":
-    "Dal documento sembra che l'immobile sia intestato a un'azienda. Swapl è pensato per lo scambio tra privati, quindi non possiamo verificarlo. Se è un errore, scrivici: un nostro responsabile lo rivedrà personalmente.",
+    "Il nostro controllo automatico ha letto l'immobile come intestato a un'azienda e Swapl è pensato per lo scambio tra privati. Ma i controlli automatici non sono infallibili e la decisione finale spetta sempre a una persona, mai all'AI. Se è la tua abitazione, scrivici: un nostro responsabile esamina questi casi personalmente, di solito entro 2 giorni lavorativi, e un contratto, un atto o una visura a tuo nome basta a chiarire tutto.",
   "verifyOwnership.business.contact": "Contatta il supporto",
 
   "admin.propVerif.nav": "Verifica proprietario",

@@ -1072,7 +1072,7 @@ export const de: Partial<Record<DictKey, string>> = {
   "verifyOwnership.needDoc": "Füge mindestens ein Dokument mit Bezeichnung und Link hinzu.",
   "verifyOwnership.error": "Senden fehlgeschlagen — bitte erneut versuchen.",
   "verifyOwnership.status.pending": "In Prüfung",
-  "verifyOwnership.status.pendingBody": "Wir prüfen deine Dokumente. Das dauert meist ein paar Tage.",
+  "verifyOwnership.status.pendingBody": "Wir prüfen deine Dokumente. Die endgültige Entscheidung trifft immer eine Person aus unserem Team, in der Regel innerhalb von 2 Werktagen. War die automatische Prüfung unsicher, kann es etwas länger dauern, aber du bleibst nicht hängen: Wir melden uns immer.",
   "verifyOwnership.status.approved": "Genehmigt",
   "verifyOwnership.status.approvedBody": "Dein Inserat trägt nun das Abzeichen Verifizierter Eigentümer.",
   "verifyOwnership.status.rejected": "Nicht genehmigt",
@@ -1083,6 +1083,10 @@ export const de: Partial<Record<DictKey, string>> = {
     "Ein KI-Assistent prüft das hochgeladene Dokument, um zu bestätigen, dass es dein Eigentum oder Mietverhältnis an der Wohnung belegt.",
   "verifyOwnership.how.docs":
     "Eine Eigentumsurkunde bzw. ein Grundbuchauszug passt, oder ein Mietvertrag — lade hoch, was du hast.",
+  "verifyOwnership.how.tenant":
+    "Mieten ist willkommen. Wenn du zur Miete wohnst und dein Mietvertrag das Beherbergen erlaubt, bist du voll berechtigt — du musst die Wohnung nicht besitzen.",
+  "verifyOwnership.how.privacy":
+    "Wir speichern dein Dokument nach der Prüfung nicht. Nur die KI liest deine persönlichen Daten, und wir behalten lediglich, ob es eine private Wohnung zeigt — niemals deinen Ausweis, deine Adresse oder das Dokument selbst.",
   "verifyOwnership.how.privateOnly":
     "Swapl ist ein Tausch zwischen Privatpersonen — Wohnungen im Besitz eines Unternehmens sind nicht zugelassen.",
   "verifyOwnership.docType.label": "Dokumentart",
@@ -1090,9 +1094,9 @@ export const de: Partial<Record<DictKey, string>> = {
   "verifyOwnership.docType.lease": "Mietvertrag",
   "verifyOwnership.docType.other": "Sonstiges",
   "verifyOwnership.docType.hint": "Das hilft uns, dein Dokument schneller zu lesen.",
-  "verifyOwnership.business.title": "Diese Wohnung wirkt wie eine Gewerbeimmobilie",
+  "verifyOwnership.business.title": "Unsere Prüfung deutet auf eine Gewerbeimmobilie hin — wir können uns aber irren",
   "verifyOwnership.business.body":
-    "Das Dokument deutet darauf hin, dass die Wohnung einem Unternehmen gehört. Swapl ist für den Tausch zwischen Privatpersonen gedacht, daher können wir sie nicht verifizieren. Falls das ein Fehler ist, melde dich – ein Mitglied unseres Teams prüft es persönlich.",
+    "Unsere automatische Prüfung hat diese Wohnung als einem Unternehmen gehörend gelesen, und Swapl ist für den Tausch zwischen Privatpersonen gedacht. Automatische Prüfungen sind jedoch nicht fehlerfrei, und die endgültige Entscheidung trifft immer ein Mensch — niemals die KI. Wenn das deine eigene Wohnung ist, melde dich: Ein Mitglied unseres Teams prüft solche Fälle persönlich, in der Regel innerhalb von 2 Werktagen, und ein Mietvertrag, eine Urkunde oder ein Steuerbescheid auf deinen Namen genügt, um es richtigzustellen.",
   "verifyOwnership.business.contact": "Support kontaktieren",
 
   "admin.propVerif.nav": "Eigentümer-Prüfung",

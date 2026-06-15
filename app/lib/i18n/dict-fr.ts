@@ -1072,7 +1072,7 @@ export const fr: Partial<Record<DictKey, string>> = {
   "verifyOwnership.needDoc": "Ajoutez au moins un document avec un libellé et un lien.",
   "verifyOwnership.error": "Échec de l'envoi — réessayez.",
   "verifyOwnership.status.pending": "En cours d'examen",
-  "verifyOwnership.status.pendingBody": "Nous examinons vos documents. Cela prend généralement quelques jours.",
+  "verifyOwnership.status.pendingBody": "Nous examinons vos documents. La décision finale revient toujours à une personne de notre équipe, généralement sous 2 jours ouvrés. Si la vérification automatique était incertaine, cela peut prendre un peu plus de temps, mais vous n'êtes pas bloqué : nous revenons toujours vers vous.",
   "verifyOwnership.status.approved": "Approuvé",
   "verifyOwnership.status.approvedBody": "Votre annonce porte désormais le badge Propriétaire vérifié.",
   "verifyOwnership.status.rejected": "Non approuvé",
@@ -1083,6 +1083,10 @@ export const fr: Partial<Record<DictKey, string>> = {
     "Un assistant IA vérifie le document que vous importez pour confirmer qu'il prouve que vous êtes propriétaire ou locataire du logement.",
   "verifyOwnership.how.docs":
     "Un acte de propriété ou un relevé cadastral convient, ou un bail de location — importez ce que vous avez.",
+  "verifyOwnership.how.tenant":
+    "La location est la bienvenue. Si vous êtes locataire et que votre bail vous autorise à héberger, vous êtes pleinement éligible : nul besoin d'être propriétaire.",
+  "verifyOwnership.how.privacy":
+    "Nous ne conservons pas votre document après la vérification. Seule l'IA lit vos données personnelles, et nous n'enregistrons que s'il s'agit d'un logement privé — jamais votre pièce d'identité, votre adresse ou le document lui-même.",
   "verifyOwnership.how.privateOnly":
     "Swapl est un échange entre particuliers : les logements détenus par une société ne sont pas admis.",
   "verifyOwnership.docType.label": "Type de document",
@@ -1090,9 +1094,9 @@ export const fr: Partial<Record<DictKey, string>> = {
   "verifyOwnership.docType.lease": "Bail de location",
   "verifyOwnership.docType.other": "Autre",
   "verifyOwnership.docType.hint": "Cela nous aide à lire votre document plus vite.",
-  "verifyOwnership.business.title": "Ce logement semble être un bien professionnel",
+  "verifyOwnership.business.title": "Notre vérification suggère qu'il pourrait s'agir d'un bien commercial — nous nous trompons peut-être",
   "verifyOwnership.business.body":
-    "Le document indique que ce logement est détenu par une société. Swapl est conçu pour les échanges entre particuliers, nous ne pouvons donc pas le vérifier. Si c'est une erreur, contactez-nous et un membre de notre équipe l'examinera personnellement.",
+    "Notre vérification automatique a lu ce logement comme détenu par une société, et Swapl est conçu pour les échanges entre particuliers. Mais les vérifications automatiques ne sont pas infaillibles, et c'est toujours une personne — jamais l'IA — qui prend la décision finale. Si c'est votre propre logement, contactez-nous : un membre de notre équipe examine ces cas personnellement, généralement sous 2 jours ouvrés, et un bail, un acte ou un avis d'imposition à votre nom suffit à tout régler.",
   "verifyOwnership.business.contact": "Contacter le support",
 
   "admin.propVerif.nav": "Vérif. propriétaire",

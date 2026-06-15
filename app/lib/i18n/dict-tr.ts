@@ -1087,7 +1087,7 @@ export const tr: Partial<Record<DictKey, string>> = {
   "verifyOwnership.needDoc": "Etiket ve bağlantısı olan en az bir belge ekle.",
   "verifyOwnership.error": "Gönderilemedi — tekrar dene.",
   "verifyOwnership.status.pending": "İncelemede",
-  "verifyOwnership.status.pendingBody": "Belgelerini inceliyoruz. Bu genellikle birkaç gün sürer.",
+  "verifyOwnership.status.pendingBody": "Belgelerini inceliyoruz. Nihai kararı her zaman ekibimizden bir kişi verir, genellikle 2 iş günü içinde. Otomatik kontrol emin olamadıysa biraz daha uzun sürebilir, ama yalnız kalmazsın: her zaman geri dönüş yaparız.",
   "verifyOwnership.status.approved": "Onaylandı",
   "verifyOwnership.status.approvedBody": "İlanın artık Doğrulanmış mal sahibi rozetini taşıyor.",
   "verifyOwnership.status.rejected": "Onaylanmadı",
@@ -1098,6 +1098,10 @@ export const tr: Partial<Record<DictKey, string>> = {
     "Bir yapay zeka asistanı, yüklediğin belgeyi inceleyerek evin sahibi veya kiracısı olduğunu kanıtladığını doğrular.",
   "verifyOwnership.how.docs":
     "Tapu ya da tapu kaydı olur, veya bir kira sözleşmesi — elinde hangisi varsa yükle.",
+  "verifyOwnership.how.tenant":
+    "Kiracı olman sorun değil. Kiracıysan ve kira sözleşmen misafir ağırlamana izin veriyorsa tamamen uygunsun — evin sahibi olman gerekmez.",
+  "verifyOwnership.how.privacy":
+    "Kontrolden sonra belgeni saklamayız. Kişisel bilgilerini yalnızca yapay zekâ okur ve biz yalnızca özel bir konut olup olmadığını saklarız — kimliğini, adresini ya da belgenin kendisini asla.",
   "verifyOwnership.how.privateOnly":
     "Swapl bireyler arası bir takastır — bir şirket adına kayıtlı evler uygun değildir.",
   "verifyOwnership.docType.label": "Belge türü",
@@ -1105,9 +1109,9 @@ export const tr: Partial<Record<DictKey, string>> = {
   "verifyOwnership.docType.lease": "Kira sözleşmesi",
   "verifyOwnership.docType.other": "Diğer",
   "verifyOwnership.docType.hint": "Belgeni daha hızlı okumamıza yardımcı olur.",
-  "verifyOwnership.business.title": "Bu ev ticari bir mülk gibi görünüyor",
+  "verifyOwnership.business.title": "Kontrolümüz bunun ticari bir mülk olabileceğini gösteriyor — yanılıyor da olabiliriz",
   "verifyOwnership.business.body":
-    "Belge, bu evin bir şirket adına kayıtlı olduğunu gösteriyor. Swapl bireyler arası takas için tasarlandığından bunu doğrulayamıyoruz. Bu bir hataysa bize ulaş, ekibimizden biri konuyu bizzat inceleyecek.",
+    "Otomatik kontrolümüz bu evi bir şirkete ait olarak okudu ve Swapl bireyler arası takas için tasarlandı. Ancak otomatik kontroller kusursuz değildir ve nihai kararı her zaman bir insan verir — asla yapay zekâ değil. Burası senin kendi evinse bize ulaş: ekibimizden biri bu durumları bizzat inceler, genellikle 2 iş günü içinde ve adına düzenlenmiş bir kira sözleşmesi, tapu ya da vergi belgesi durumu açıklığa kavuşturmaya yeter.",
   "verifyOwnership.business.contact": "Destek ile iletişime geç",
 
   "admin.propVerif.nav": "Mal sahibi doğrulama",

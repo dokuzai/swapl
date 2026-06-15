@@ -1091,7 +1091,7 @@ export const en = {
   "verifyOwnership.heading": "Verify ownership",
   "verifyOwnership.optional": "Optional",
   "verifyOwnership.intro":
-    "This is entirely optional and never required to publish. Approved documents earn a discreet “Verified owner” badge that increases trust with potential swappers.",
+    "This is entirely optional and never required to publish. Approved documents earn a discreet “Verified owner” badge that increases trust with potential swappers. We don’t store your document after the check — only whether it shows a private home.",
   "verifyOwnership.docLabel": "Document",
   "verifyOwnership.docLabelPlaceholder": "e.g. Deed, Utility bill",
   "verifyOwnership.docUrlPlaceholder": "https://… link to the document",
@@ -1103,7 +1103,7 @@ export const en = {
   "verifyOwnership.needDoc": "Add at least one document with a label and link.",
   "verifyOwnership.error": "Couldn't submit — try again.",
   "verifyOwnership.status.pending": "In review",
-  "verifyOwnership.status.pendingBody": "We're reviewing your documents. This usually takes a couple of days.",
+  "verifyOwnership.status.pendingBody": "We're reviewing your documents. A person on our team makes the final call — usually within 2 business days. If our automated check was unsure, this can take a little longer, but you're not stuck: we always follow up.",
   "verifyOwnership.status.approved": "Approved",
   "verifyOwnership.status.approvedBody": "Your listing now carries the Verified owner badge.",
   "verifyOwnership.status.rejected": "Not approved",
@@ -1114,6 +1114,10 @@ export const en = {
     "An AI assistant checks the document you upload to confirm it proves you own or rent the home.",
   "verifyOwnership.how.docs":
     "A title deed or property record works, or a lease agreement — upload whichever you have.",
+  "verifyOwnership.how.tenant":
+    "Renting is welcome. If you rent and your lease lets you host, you're fully eligible — no need to own the home.",
+  "verifyOwnership.how.privacy":
+    "We don't keep your document after the check. Only the AI reads your personal details, and we store just whether it shows a private home — never your ID, address, or the document itself.",
   "verifyOwnership.how.privateOnly":
     "Swapl is a swap between private individuals — homes held by a company aren't eligible.",
   "verifyOwnership.docType.label": "Document type",
@@ -1121,9 +1125,9 @@ export const en = {
   "verifyOwnership.docType.lease": "Lease agreement",
   "verifyOwnership.docType.other": "Other",
   "verifyOwnership.docType.hint": "This helps us read your document faster.",
-  "verifyOwnership.business.title": "This home looks like a business property",
+  "verifyOwnership.business.title": "Our check suggests this may be a commercial property — we may have it wrong",
   "verifyOwnership.business.body":
-    "The document suggests this home is held under a company. Swapl is built for swaps between private individuals, so we can't verify it. If that's a mistake, reach out and a member of our team will review it personally.",
+    "Our automated check read this home as held under a company, and Swapl is built for swaps between private individuals. But automated checks aren't perfect, and a real person always makes the final decision — never the AI. If this is your own home, get in touch: a member of our team reviews these personally, usually within 2 business days, and a lease, deed, or tax record in your name is enough to set it straight.",
   "verifyOwnership.business.contact": "Contact support",
 
   // Admin — property verification queue (DOK-162)
