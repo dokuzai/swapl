@@ -1014,4 +1014,8 @@ export const tr: Partial<Record<DictKey, string>> = {
   "tw.proposals.directSwap": "Takas öner",
   "tw.proposals.keysStay": "Keys ile konakla",
   "tw.proposals.nightlyKeys": "Gece {keys} Keys",
+  "tw.noListing.title": "Takasları açmak için evini yayınla",
+  "tw.noListing.body":
+    "Seyahat dönemlerini şimdi kaydedebilirsin, ancak takasları yalnızca evin yayında olduğunda eşleştirebiliriz. Yayınlamak birkaç dakika sürer.",
+  "tw.noListing.cta": "Evini yayınla",
 };

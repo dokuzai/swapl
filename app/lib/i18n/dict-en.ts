@@ -1026,6 +1026,10 @@ export const en = {
   "tw.proposals.directSwap": "Propose a swap",
   "tw.proposals.keysStay": "Stay with Keys",
   "tw.proposals.nightlyKeys": "{keys} Keys/night",
+  "tw.noListing.title": "Publish your home to unlock swaps",
+  "tw.noListing.body":
+    "You can save travel windows now, but we can only match swaps once your home is listed. Publishing takes a couple of minutes.",
+  "tw.noListing.cta": "Publish your home",
 } as const;
 
 export type DictKey = keyof typeof en;

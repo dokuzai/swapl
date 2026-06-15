@@ -29,11 +29,17 @@ export default async function TravelWindowsPage() {
   const { dict } = await getI18n();
   const t = (key: DictKey, vars?: Record<string, string | number>) => tt(dict, key, vars);
 
-  const plan = await getEffectivePlan(session.userId);
-  const rows = await prisma.travelWindow.findMany({
-    where: { userId: session.userId },
-    orderBy: { dateFrom: "asc" },
-  });
+  const [plan, rows, activeListing] = await Promise.all([
+    getEffectivePlan(session.userId),
+    prisma.travelWindow.findMany({
+      where: { userId: session.userId },
+      orderBy: { dateFrom: "asc" },
+    }),
+    prisma.listing.findFirst({
+      where: { userId: session.userId, isActive: true },
+      select: { id: true },
+    }),
+  ]);
 
   const items: TravelWindowDTO[] = rows.map((w) => ({
     id: w.id,
@@ -59,6 +65,7 @@ export default async function TravelWindowsPage() {
             <TravelWindowsEditor
               initialItems={items}
               maxWindows={plan.maxTravelWindows}
+              hasActiveListing={!!activeListing}
             />
           </div>
         </I18nProviderShell>

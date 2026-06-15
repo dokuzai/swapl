@@ -36,9 +36,11 @@ type WindowProposal = {
 export function TravelWindowsEditor({
   initialItems,
   maxWindows,
+  hasActiveListing,
 }: {
   initialItems: TravelWindowDTO[];
   maxWindows: number; // 0 = unlimited
+  hasActiveListing: boolean;
 }) {
   const t = useT();
 
@@ -60,6 +62,8 @@ export function TravelWindowsEditor({
 
   return (
     <div className="space-y-8">
+      {!hasActiveListing && <NoListingBanner />}
+
       <div className="flex items-center justify-between gap-3">
         <p className="font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
           {unlimited
@@ -213,6 +217,17 @@ function AddWindowForm({
         {pending ? t("tw.form.saving") : t("tw.form.add")}
       </button>
     </form>
+  );
+}
+
+function NoListingBanner() {
+  const t = useT();
+  return (
+    <div className="surface-card surface-card--static p-5" style={{ background: "var(--cream-2)" }}>
+      <h3 className="font-display text-lg tracking-[-0.01em] mb-1.5">{t("tw.noListing.title")}</h3>
+      <p className="text-sm mb-4" style={{ color: "var(--navy-2)" }}>{t("tw.noListing.body")}</p>
+      <Link href="/listings/new" className="pill-primary">{t("tw.noListing.cta")}</Link>
+    </div>
   );
 }
 

@@ -1014,4 +1014,8 @@ export const nl: Partial<Record<DictKey, string>> = {
   "tw.proposals.directSwap": "Swap voorstellen",
   "tw.proposals.keysStay": "Verblijf met Keys",
   "tw.proposals.nightlyKeys": "{keys} Keys/nacht",
+  "tw.noListing.title": "Publiceer je woning om swaps te ontgrendelen",
+  "tw.noListing.body":
+    "Je kunt nu al reisperiodes opslaan, maar we kunnen pas swaps vinden zodra je woning vermeld staat. Publiceren duurt maar een paar minuten.",
+  "tw.noListing.cta": "Publiceer je woning",
 };

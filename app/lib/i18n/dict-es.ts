@@ -999,4 +999,8 @@ export const es: Partial<Record<DictKey, string>> = {
   "tw.proposals.directSwap": "Proponer intercambio",
   "tw.proposals.keysStay": "Quédate con Keys",
   "tw.proposals.nightlyKeys": "{keys} Keys/noche",
+  "tw.noListing.title": "Publica tu casa para desbloquear intercambios",
+  "tw.noListing.body":
+    "Ya puedes guardar periodos de viaje, pero solo podemos encontrar intercambios cuando tu casa esté publicada. Publicarla lleva un par de minutos.",
+  "tw.noListing.cta": "Publicar tu casa",
 };
