@@ -13,8 +13,9 @@ import { I18nProviderShell } from "@/components/i18n/provider-shell";
 import { getI18n, t as tt } from "@/lib/i18n/server";
 import type { DictKey } from "@/lib/i18n/dict-en";
 import { nightlyKeysFor } from "@/lib/keys/value";
-import { GIFT_MAX_PER_TRANSFER, GIFT_DAILY_CAP } from "@/lib/keys/config";
+import { GIFT_MAX_PER_TRANSFER, GIFT_DAILY_CAP, WELCOME_BONUS_KEYS } from "@/lib/keys/config";
 import { GiftKeysForm } from "./gift-form";
+import { EarnPathsCard } from "./earn-paths";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Keys · swapl" };
@@ -97,6 +98,9 @@ export default async function KeysPage() {
               </div>
             </section>
 
+            {/* ---- Earn paths (zero balance only) — never a dead end ---- */}
+            {balance === 0 && <EarnPathsCard welcomeBonus={WELCOME_BONUS_KEYS} />}
+
             {/* ---- Per-night value of your homes ---- */}
             <section className="mb-10">
               <h2 className="font-display text-2xl tracking-[-0.01em] mb-1">{t("keys.value.title")}</h2>
@@ -129,7 +133,7 @@ export default async function KeysPage() {
             </section>
 
             {/* ---- Gift Keys ---- */}
-            <section className="mb-10">
+            <section className="mb-10" id="gift-keys">
               <h2 className="font-display text-2xl tracking-[-0.01em] mb-1">{t("keys.gift.title")}</h2>
               <p className="text-sm mb-5" style={{ color: "var(--navy-2)" }}>{t("keys.gift.body")}</p>
               <div className="surface-card surface-card--static p-6">

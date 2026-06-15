@@ -62,6 +62,7 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
   const nights = nightsBetween(dateFrom, dateTo);
   const cost = avail ? nights * avail.nightlyKeys : 0;
   const insufficient = cost > 0 && cost > balance;
+  const shortBy = insufficient ? cost - balance : 0;
   const outsideMinMax = avail !== null && nights > 0 && (nights < avail.minStayDays || nights > avail.maxStayDays);
 
   function submit(e: React.FormEvent) {
@@ -76,7 +77,7 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
       return;
     }
     if (insufficient) {
-      setError(t("stay.keys.insufficient", { needed: cost, have: balance }));
+      setError(t("stay.keys.insufficient", { short: shortBy }));
       return;
     }
     start(async () => {
@@ -92,7 +93,7 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
         return;
       }
       if (res.status === 422 && /enough/i.test(j.error ?? "")) {
-        setError(t("stay.keys.insufficient", { needed: cost, have: balance }));
+        setError(t("stay.keys.insufficient", { short: Math.max(1, shortBy || cost - balance) }));
       } else if (
         res.status === 422 &&
         (j.code === "DATES_TAKEN" ||
@@ -132,7 +133,12 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("stay.keys.body")}</p>
+      <div>
+        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[.08em]" style={{ color: "var(--pink)" }}>
+          {t("stay.keys.title")} · {t("stay.keys.subtitle")}
+        </div>
+        <p className="text-sm mt-2" style={{ color: "var(--navy-2)" }}>{t("stay.keys.body")}</p>
+      </div>
 
       <div
         className="flex items-baseline justify-between rounded-xl border p-3"
@@ -187,9 +193,12 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
       </p>
 
       {insufficient && (
-        <p className="text-sm rounded-lg p-3" style={{ background: "var(--cream-2)", color: "var(--navy-2)" }}>
-          {t("stay.keys.insufficient", { needed: cost, have: balance })}
-        </p>
+        <div className="text-sm rounded-lg p-3 space-y-2" style={{ background: "var(--cream-2)", color: "var(--navy-2)" }}>
+          <p>{t("stay.keys.insufficient", { short: shortBy })}</p>
+          <a href="/account/keys" className="inline-flex font-medium" style={{ color: "var(--pink)" }}>
+            {t("stay.keys.earnLink")} →
+          </a>
+        </div>
       )}
       {error && !insufficient && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
 
