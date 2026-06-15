@@ -679,8 +679,8 @@ export const tr: Partial<Record<DictKey, string>> = {
 
   // ---- Zincir üstü teminat kanıtı (DOK-156) ----
   "cover.proof.badge": "TON'da doğrulandı",
-  "cover.proof.blurb": "Teminatının kurcalanamaz bir kanıtı — kripto yok, ödeme yok, yalnızca poliçenin gerçek olduğunun kanıtı.",
-  "cover.proof.view": "TON'da görüntüle",
+  "cover.proof.blurb": "Teminatının gerçek olduğunu gösteren, kurcalanamaz bir kayıt — kripto değil, ödeme yok, senin yapman gereken hiçbir şey yok.",
+  "cover.proof.view": "Kanıtı görüntüle",
 
   // ---- Sorun bildir / anlaşmazlık (DOK-153) ----
   "dispute.report.cta": "Hemen yardım al",

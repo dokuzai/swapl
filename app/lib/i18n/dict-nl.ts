@@ -679,8 +679,8 @@ export const nl: Partial<Record<DictKey, string>> = {
 
   // ---- Dekkingsbewijs on-chain (DOK-156) ----
   "cover.proof.badge": "Geverifieerd op TON",
-  "cover.proof.blurb": "Een fraudebestendig bewijs van je dekking — geen crypto, geen betaling, alleen het bewijs dat je polis echt is.",
-  "cover.proof.view": "Bekijk op TON",
+  "cover.proof.blurb": "Een fraudebestendige registratie dat je dekking echt is — geen crypto, geen betaling, niets wat jij hoeft te doen.",
+  "cover.proof.view": "Bewijs bekijken",
 
   // ---- Probleem melden / geschil (DOK-153) ----
   "dispute.report.cta": "Nu hulp krijgen",

@@ -679,8 +679,8 @@ export const pt: Partial<Record<DictKey, string>> = {
 
   // ---- Prova de cobertura on-chain (DOK-156) ----
   "cover.proof.badge": "Verificada na TON",
-  "cover.proof.blurb": "Uma prova da tua cobertura à prova de adulteração — sem cripto, sem pagamento, apenas a prova de que a tua apólice é real.",
-  "cover.proof.view": "Ver na TON",
+  "cover.proof.blurb": "Um registo à prova de adulteração de que a tua cobertura é real — nada de cripto, sem pagamentos, nada que tenhas de fazer.",
+  "cover.proof.view": "Ver a prova",
 
   // ---- Reportar um problema / disputa (DOK-153) ----
   "dispute.report.cta": "Obter ajuda agora",

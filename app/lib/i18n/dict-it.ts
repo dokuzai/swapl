@@ -680,8 +680,8 @@ export const it: Partial<Record<DictKey, string>> = {
 
   // ---- Prova di copertura on-chain (DOK-156) ----
   "cover.proof.badge": "Verificata su TON",
-  "cover.proof.blurb": "Una prova della tua copertura a prova di manomissione — niente crypto, niente pagamenti, solo la prova che la polizza è reale.",
-  "cover.proof.view": "Vedi su TON",
+  "cover.proof.blurb": "Una registrazione non modificabile che conferma la tua copertura — niente crypto, nessun pagamento, niente da fare per te.",
+  "cover.proof.view": "Vedi la prova",
 
   // ---- Segnala un problema / contestazione (DOK-153) ----
   "dispute.report.cta": "Ricevi aiuto ora",

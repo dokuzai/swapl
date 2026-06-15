@@ -677,8 +677,8 @@ export const en = {
 
   // ---- Proof of cover on-chain (DOK-156) ----
   "cover.proof.badge": "Verified on TON",
-  "cover.proof.blurb": "A tamper-proof record of your cover — no crypto, no payment, just proof your policy is real.",
-  "cover.proof.view": "View on TON",
+  "cover.proof.blurb": "A tamper-proof record that your cover is real — not crypto, no payment, nothing for you to do.",
+  "cover.proof.view": "View proof",
 
   // ---- Report a problem / dispute flow (DOK-153) ----
   "dispute.report.cta": "Get help now",

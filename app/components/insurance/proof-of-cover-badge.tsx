@@ -19,7 +19,7 @@ type ProofOfCoverBadgeProps = {
     badge: string;
     /** One-line reassurance for non-technical users. */
     blurb: string;
-    /** Explorer link label, e.g. "View on TON". */
+    /** Explorer link label, e.g. "View proof". */
     view: string;
   };
   /** Visual tone — "light" for navy/cream cards, "dark" for cream-on-navy. */
@@ -63,16 +63,18 @@ export function ProofOfCoverBadge({
         <LockIcon />
         {labels.badge}
       </span>
-      <p className="mt-2 text-xs leading-snug" style={{ color: muted }}>
+      {/* Blurb first and prominent — read before the secondary link on narrow screens. */}
+      <p className="mt-2 text-xs leading-snug" style={{ color: accent }}>
         {labels.blurb}
       </p>
+      {/* Secondary, de-emphasized explorer link below the blurb. */}
       {explorerUrl && (
         <a
           href={explorerUrl}
           target="_blank"
           rel="noreferrer"
-          className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium underline-offset-2 hover:underline"
-          style={{ color: accent }}
+          className="mt-1.5 inline-flex items-center gap-1 text-[11px] underline-offset-2 hover:underline"
+          style={{ color: muted }}
         >
           {labels.view}
           <span aria-hidden>↗</span>

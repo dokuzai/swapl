@@ -664,8 +664,8 @@ export const de: Partial<Record<DictKey, string>> = {
 
   // ---- Versicherungsnachweis on-chain (DOK-156) ----
   "cover.proof.badge": "Auf TON verifiziert",
-  "cover.proof.blurb": "Ein fälschungssicherer Nachweis deiner Deckung — keine Krypto, keine Zahlung, nur der Beleg, dass deine Police echt ist.",
-  "cover.proof.view": "Auf TON ansehen",
+  "cover.proof.blurb": "Ein fälschungssicherer Nachweis, dass deine Deckung echt ist — keine Krypto, keine Zahlung, für dich nichts zu tun.",
+  "cover.proof.view": "Nachweis ansehen",
 
   // ---- Problem melden / Streitfall (DOK-153) ----
   "dispute.report.cta": "Jetzt Hilfe erhalten",
