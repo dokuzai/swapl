@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Piano
 import androidx.compose.material.icons.filled.Pool
 import androidx.compose.material.icons.filled.Roofing
+import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material.icons.filled.Yard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -100,6 +101,8 @@ fun ListingDetailScreen(
     val d = vm.detail
     val favoriteIds by vm.favoriteIds.collectAsStateWithLifecycle()
     var showPropose by remember { mutableStateOf(false) }
+    var showStayWithKeys by remember { mutableStateOf(false) }
+    var keysStayRequested by remember { mutableStateOf(false) }
     var showReport by remember { mutableStateOf(false) }
 
     if (d == null) return
@@ -180,10 +183,58 @@ fun ListingDetailScreen(
         } else {
             ProposeCta(d, onPropose = { showPropose = true })
 
+            // Stay-with-Keys (DOK-155) sits ALONGSIDE the direct swap, never
+            // replacing it. It needs no listing of your own, so it stays
+            // available even when you haven't published a home.
+            androidx.compose.material3.OutlinedButton(
+                onClick = { showStayWithKeys = true },
+                shape = androidx.compose.foundation.shape.CircleShape,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                androidx.compose.material3.Icon(
+                    Icons.Default.VpnKey,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                )
+                androidx.compose.foundation.layout.Spacer(Modifier.size(SwaplSpacing.s2))
+                Text("Stay with points")
+            }
+            Text(
+                "One-directional stay: pay in travel points, the host needn't travel.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
             androidx.compose.material3.TextButton(onClick = { showReport = true }) {
                 Text("Report this listing", color = MaterialTheme.colorScheme.error)
             }
         }
+    }
+
+    if (showStayWithKeys) {
+        app.swapl.features.keys.StayWithKeysDialog(
+            listingId = d.listing.id,
+            availableFrom = d.listing.availableFrom,
+            availableTo = d.listing.availableTo,
+            minStayDays = d.listing.minStayDays,
+            maxStayDays = d.listing.maxStayDays,
+            onDismiss = { showStayWithKeys = false },
+            onRequested = {
+                showStayWithKeys = false
+                keysStayRequested = true
+            },
+        )
+    }
+
+    if (keysStayRequested) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { keysStayRequested = false },
+            title = { Text("Request sent") },
+            text = { Text("Your points are held until the host confirms. You'll find this stay under Trips.") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { keysStayRequested = false }) { Text("OK") }
+            },
+        )
     }
 
     if (showPropose && d.viewerListingId != null) {

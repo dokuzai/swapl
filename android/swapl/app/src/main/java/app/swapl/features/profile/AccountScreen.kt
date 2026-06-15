@@ -90,6 +90,7 @@ class AccountOverviewViewModel @Inject constructor(
 fun AccountScreen(
     onOpenInterests: () -> Unit = {},
     onOpenSavedSearches: () -> Unit = {},
+    onOpenKeys: () -> Unit = {},
     onOpenMetrics: () -> Unit = {},
     onOpenPublicProfile: (String) -> Unit = {},
     onOpenPersonalInfo: () -> Unit = {},
@@ -245,6 +246,8 @@ fun AccountScreen(
         Column {
             KickerLabel("Profile")
             MenuRow(Icons.Default.Person, "View profile") { s?.id?.let(onOpenPublicProfile) }
+            // Keys wallet (DOK-155) — "travel points", never money.
+            MenuRow(Icons.Default.Key, "Travel points", onClick = onOpenKeys)
             MenuRow(Icons.Default.Favorite, "Interests", onClick = onOpenInterests)
             MenuRow(Icons.Default.Search, "Saved searches", onClick = onOpenSavedSearches)
             if (overview.me?.user?.role == "swapl_admin") {

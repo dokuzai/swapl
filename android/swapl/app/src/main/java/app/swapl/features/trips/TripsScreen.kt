@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.swapl.core.model.ProposalSummary
 import app.swapl.core.repository.TripsRepository
+import app.swapl.features.keys.KeysStaysSection
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.SurfaceCard
@@ -107,7 +108,18 @@ fun TripsScreen(
                 trips == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
-                trips.isEmpty() -> EmptyState()
+                trips.isEmpty() -> LazyColumn(
+                    contentPadding = PaddingValues(horizontal = SwaplSpacing.s4, vertical = SwaplSpacing.s3),
+                    verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    // One-directional Keys stays can exist with no swap trips.
+                    item(key = "keys-stays") {
+                        KeysStaysSection()
+                        Spacer(Modifier.height(SwaplSpacing.s3))
+                    }
+                    item(key = "empty") { EmptyState() }
+                }
                 else -> {
                     val sections = listOf(
                         TripPhase.Active to trips.filter { it.phase() == TripPhase.Active }.sortedBy { it.dateTo },
@@ -119,6 +131,10 @@ fun TripsScreen(
                         verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
                         modifier = Modifier.fillMaxSize(),
                     ) {
+                        item(key = "keys-stays") {
+                            KeysStaysSection()
+                            Spacer(Modifier.height(SwaplSpacing.s3))
+                        }
                         sections.forEach { (phase, list) ->
                             item(key = "header-${phase.name}") {
                                 KickerLabel(phase.label)
@@ -194,7 +210,7 @@ private fun ErrorState(onRetry: () -> Unit) {
 @Composable
 private fun EmptyState() {
     Column(
-        Modifier.fillMaxSize().padding(SwaplSpacing.s8),
+        Modifier.fillMaxWidth().padding(SwaplSpacing.s8),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
