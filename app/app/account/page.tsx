@@ -136,6 +136,20 @@ export default async function AccountPage() {
               </div>
             </section>
 
+            {/* ============ Keys (travel points) ============ */}
+            <section className="mb-12">
+              <div className="surface-card surface-card--static p-6 flex items-center justify-between gap-4" style={{ background: "var(--pink-light)" }}>
+                <div className="min-w-0">
+                  <h2 className="font-display text-2xl tracking-[-0.01em] mb-1">{t("keys.account.title")}</h2>
+                  <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("keys.account.body")}</p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <div className="font-display text-4xl leading-none" style={{ color: "var(--pink)" }}>{user.keysBalance}</div>
+                  <Link href="/account/keys" className="pill-ghost mt-3 inline-flex">{t("keys.account.cta")}</Link>
+                </div>
+              </div>
+            </section>
+
             {/* ============ Login & security ============ */}
             <section id="login-security" className="mb-12 scroll-mt-24">
               <h2 className="font-display text-2xl tracking-[-0.01em] mb-5">{t("account.security.title")}</h2>

@@ -14,8 +14,10 @@ import { getSession } from "@/lib/auth/session";
 import { getViewerListing } from "@/lib/listing-query";
 import { computeMatchScore } from "@/lib/match/score";
 import ProposeSwapButton from "./propose-swap-button";
+import { StayWithKeys } from "./stay-with-keys";
 import { VerifiedBadge, FeaturedRibbon } from "@/components/listing/badges";
 import { RecentlyViewedTracker } from "@/components/listing/recently-viewed-tracker";
+import { I18nProviderShell } from "@/components/i18n/provider-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +69,12 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
   const session = await getSession();
   const viewerListing = await getViewerListing(session?.userId);
   const isOwner = session?.userId === listing.userId;
+
+  // Keys balance for the Stay-with-Keys mode (DOK-155). Only signed-in
+  // non-owners can request a Keys stay; the host can't book their own home.
+  const viewer = session && !isOwner
+    ? await prisma.user.findUnique({ where: { id: session.userId }, select: { keysBalance: true } })
+    : null;
 
   let matchScore: number | null = null;
   if (viewerListing && !isOwner) {
@@ -370,6 +378,17 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
               </p>
             </div>
           </div>
+
+          {/* Stay with Keys (DOK-155) — non-simultaneous booking mode that
+              sits ALONGSIDE the direct swap above. Signed-in non-owners only;
+              the host can't book their own home. */}
+          {viewer && (
+            <div className="surface-card surface-card--static p-6">
+              <I18nProviderShell>
+                <StayWithKeys listingId={dto.id} balance={viewer.keysBalance} />
+              </I18nProviderShell>
+            </div>
+          )}
 
           <div className="surface-card p-6 text-sm" style={{ background: "var(--pink-light)" }}>
             <div className="font-display text-lg mb-1.5">Why this could be a great match</div>

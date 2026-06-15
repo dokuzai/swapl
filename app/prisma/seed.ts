@@ -980,7 +980,34 @@ async function main() {
     });
   }
 
-  console.log(`✅ Seeded ${SEEDS.length} listings + 5 proposals (1 active swap agreement) + 2 beta signups + 3 plans + admin + 2 dev subscriptions.`);
+  // Keys welcome bonus (DOK-155) — every verified member is granted a one-off
+  // batch of "travel points" so the demo has a Keys balance to spend on a
+  // Stay-with-Keys. The ledger is the source of truth; we append one
+  // welcome_bonus row AND set the cached User.keysBalance in lockstep, exactly
+  // like lib/keys/ledger.ts does at runtime. Idempotent across re-seeds is not
+  // a concern here because seed wipes the DB first.
+  console.log("Granting Keys welcome bonus to verified members…");
+  const WELCOME_BONUS = 30;
+  const verifiedUsers = await prisma.user.findMany({
+    where: { verified: true },
+    select: { id: true },
+  });
+  for (const u of verifiedUsers) {
+    await prisma.$transaction([
+      prisma.user.update({ where: { id: u.id }, data: { keysBalance: WELCOME_BONUS } }),
+      prisma.keysTransaction.create({
+        data: {
+          userId: u.id,
+          delta: WELCOME_BONUS,
+          kind: "welcome_bonus",
+          balanceAfter: WELCOME_BONUS,
+          note: "Welcome to swapl",
+        },
+      }),
+    ]);
+  }
+
+  console.log(`✅ Seeded ${SEEDS.length} listings + 5 proposals (1 active swap agreement) + 2 beta signups + 3 plans + admin + 2 dev subscriptions + Keys welcome bonus.`);
   console.log(`   Login with any seed email + password "${PASSWORD}" (e.g. asli@demo.swapl, maartje@demo.swapl, gert@dokuz.ai).`);
 }
 

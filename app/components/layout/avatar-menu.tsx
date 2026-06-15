@@ -16,6 +16,7 @@ export type AvatarMenuLabels = {
   open: string;
   wishlists: string;
   trips: string;
+  keys: string;
   messages: string;
   profile: string;
   accountSettings: string;
@@ -148,8 +149,11 @@ export function AvatarMenu({
             <Link role="menuitem" href="/account/saved-searches" className={itemCls} onClick={() => setOpen(false)}>
               {labels.wishlists}
             </Link>
-            <Link role="menuitem" href="/swaps" className={itemCls} onClick={() => setOpen(false)}>
+            <Link role="menuitem" href="/trips" className={itemCls} onClick={() => setOpen(false)}>
               {labels.trips}
+            </Link>
+            <Link role="menuitem" href="/account/keys" className={itemCls} onClick={() => setOpen(false)}>
+              {labels.keys}
             </Link>
             <Link role="menuitem" href="/swaps" className={itemCls} onClick={() => setOpen(false)}>
               <span>{labels.messages}</span>
