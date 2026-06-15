@@ -387,6 +387,7 @@ struct InviteToStaySheet: View {
     @State private var error: String?
     @State private var isLoadingListing = true
     @State private var isSending = false
+    @State private var rewardPerReferral: Int?
 
     var body: some View {
         NavigationStack {
@@ -497,7 +498,7 @@ struct InviteToStaySheet: View {
                         .foregroundStyle(SwaplSemanticLight.destructive)
                 }
 
-                Text("When they join and verify, you both earn travel points. Points are never money.")
+                Text(rewardCopy)
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
@@ -506,9 +507,24 @@ struct InviteToStaySheet: View {
         }
     }
 
+    // Footnote spells out the actual per-referral reward once the dashboard
+    // resolves it; until then it falls back to the generic line. Points are KEYS,
+    // never money — and they only land once the friend verifies (anti-farm).
+    private var rewardCopy: String {
+        if let reward = rewardPerReferral {
+            return "When they join and verify, you both earn \(reward) travel points. Points are never money."
+        }
+        return "When they join and verify, you both earn travel points. Points are never money."
+    }
+
     private func loadListing() async {
         isLoadingListing = true
         defer { isLoadingListing = false }
+        // Best-effort: surface the live per-referral reward without blocking the
+        // listing load. A failure here just keeps the generic copy.
+        if rewardPerReferral == nil {
+            rewardPerReferral = try? await ReferralRepository.shared.dashboard().rewardPerReferral
+        }
         do {
             let search = try await ListingRepository.shared.search(filters: SearchFilters())
             guard let id = search.viewerListingId else {

@@ -459,9 +459,15 @@ class InviteToStayViewModel @Inject constructor(
     var error by mutableStateOf<String?>(null); private set
     var isLoadingListing by mutableStateOf(true); private set
     var isSending by mutableStateOf(false); private set
+    var rewardPerReferral by mutableStateOf<Int?>(null); private set
 
     fun loadListing() = viewModelScope.launch {
         isLoadingListing = true
+        // Best-effort: surface the live per-referral reward without failing the
+        // listing load. A failure here just keeps the generic copy.
+        if (rewardPerReferral == null) {
+            runCatching { rewardPerReferral = referrals.dashboard().rewardPerReferral }
+        }
         runCatching {
             val id = listings.search(app.swapl.core.repository.SearchFilters()).viewerListingId
             listingId = id
@@ -601,7 +607,9 @@ fun InviteToStayScreen(vm: InviteToStayViewModel = hiltViewModel()) {
             vm.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
             Text(
-                "When they join and verify, you both earn travel points. Points are never money.",
+                vm.rewardPerReferral?.let {
+                    "When they join and verify, you both earn $it travel points. Points are never money."
+                } ?: "When they join and verify, you both earn travel points. Points are never money.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
