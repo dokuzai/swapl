@@ -840,4 +840,11 @@ export const it: Partial<Record<DictKey, string>> = {
   "trips.keys.insured": "Assicurato",
   "trips.keys.hostWillConfirm": "In attesa di conferma dell'host.",
   "trips.keys.actionError": "Qualcosa è andato storto — riprova.",
+  "trips.swaps.heading": "Scambi casa",
+  "trips.swaps.empty": "Ancora nessuno scambio casa. Proponi uno scambio da una qualsiasi casa.",
+  "trips.swaps.youStayIn": "Soggiorni a {city}",
+  "trips.swaps.theyStayIn": "Soggiornano a {city}",
+  "trips.swaps.open": "Apri il viaggio",
+  "trips.empty": "Ancora nessun viaggio. Proponi uno scambio o prenota un soggiorno con i tuoi Keys.",
+  "trips.empty.browse": "Trova una casa",
 };

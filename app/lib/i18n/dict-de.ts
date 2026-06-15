@@ -824,4 +824,11 @@ export const de: Partial<Record<DictKey, string>> = {
   "trips.keys.insured": "Versichert",
   "trips.keys.hostWillConfirm": "Warten auf die Bestätigung des Gastgebers.",
   "trips.keys.actionError": "Etwas ist schiefgelaufen — versuch es erneut.",
+  "trips.swaps.heading": "Wohnungstausche",
+  "trips.swaps.empty": "Noch keine Wohnungstausche. Schlag von einer beliebigen Wohnung aus einen Tausch vor.",
+  "trips.swaps.youStayIn": "Du wohnst in {city}",
+  "trips.swaps.theyStayIn": "Sie wohnen in {city}",
+  "trips.swaps.open": "Trip öffnen",
+  "trips.empty": "Noch keine Trips. Schlag einen Tausch vor oder buche einen Aufenthalt mit deinen Keys.",
+  "trips.empty.browse": "Wohnung finden",
 };

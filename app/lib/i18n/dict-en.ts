@@ -841,6 +841,13 @@ export const en = {
   "trips.keys.insured": "Insured",
   "trips.keys.hostWillConfirm": "Waiting for the host to confirm.",
   "trips.keys.actionError": "Something went wrong — try again.",
+  "trips.swaps.heading": "Home swaps",
+  "trips.swaps.empty": "No home swaps yet. Propose a swap from any home to start one.",
+  "trips.swaps.youStayIn": "You stay in {city}",
+  "trips.swaps.theyStayIn": "They stay in {city}",
+  "trips.swaps.open": "Open trip",
+  "trips.empty": "No trips yet. Propose a swap or book a stay with your Keys.",
+  "trips.empty.browse": "Find a home",
 } as const;
 
 export type DictKey = keyof typeof en;

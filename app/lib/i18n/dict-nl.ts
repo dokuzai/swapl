@@ -839,4 +839,11 @@ export const nl: Partial<Record<DictKey, string>> = {
   "trips.keys.insured": "Verzekerd",
   "trips.keys.hostWillConfirm": "Wachten op bevestiging van de gastheer.",
   "trips.keys.actionError": "Er ging iets mis — probeer opnieuw.",
+  "trips.swaps.heading": "Woningruilen",
+  "trips.swaps.empty": "Nog geen woningruilen. Stel vanuit een willekeurige woning een ruil voor.",
+  "trips.swaps.youStayIn": "Jij verblijft in {city}",
+  "trips.swaps.theyStayIn": "Zij verblijven in {city}",
+  "trips.swaps.open": "Trip openen",
+  "trips.empty": "Nog geen trips. Stel een ruil voor of boek een verblijf met je Keys.",
+  "trips.empty.browse": "Een woning vinden",
 };

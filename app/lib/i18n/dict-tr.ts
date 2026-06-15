@@ -839,4 +839,11 @@ export const tr: Partial<Record<DictKey, string>> = {
   "trips.keys.insured": "Sigortalı",
   "trips.keys.hostWillConfirm": "Ev sahibinin onayı bekleniyor.",
   "trips.keys.actionError": "Bir şeyler ters gitti — tekrar dene.",
+  "trips.swaps.heading": "Ev takasları",
+  "trips.swaps.empty": "Henüz ev takasın yok. Herhangi bir evden bir takas öner.",
+  "trips.swaps.youStayIn": "{city} şehrinde kalıyorsun",
+  "trips.swaps.theyStayIn": "{city} şehrinde kalıyorlar",
+  "trips.swaps.open": "Geziyi aç",
+  "trips.empty": "Henüz gezin yok. Bir takas öner ya da Keys'lerinle bir konaklama ayırt.",
+  "trips.empty.browse": "Ev bul",
 };
