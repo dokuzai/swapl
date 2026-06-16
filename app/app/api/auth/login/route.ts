@@ -4,7 +4,7 @@ import { credentialsSchema } from "@/lib/validators";
 import { verifyPassword } from "@/lib/auth/passwords";
 import { setSession } from "@/lib/auth/session";
 import { normaliseEmail } from "@/lib/auth/tokens";
-import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest, resetRateLimitDurable } from "@/lib/rate-limit";
 import { apiError, accountSuspended, invalidInput } from "@/lib/api/errors";
 import { activateInvitedParticipants } from "@/lib/conversation/participants";
 
@@ -37,6 +37,14 @@ export async function POST(req: Request) {
     return accountSuspended();
   }
   await setSession({ userId: user.id, email: user.email, name: user.name });
+
+  // A successful login clears the brute-force counters for this account/IP, so a
+  // legitimate user is never locked out by their own (eventually correct)
+  // attempts — only FAILED attempts accumulate toward the lockout. Best-effort.
+  await Promise.all([
+    resetRateLimitDurable(`login:ip:${ip}`, 5 * MIN_MS),
+    resetRateLimitDurable(`login:email:${email}`, 15 * MIN_MS),
+  ]);
 
   // DOK-187 — materialise any pending swap-conversation invites addressed to
   // this email into active guest seats. Best-effort; login must never fail here.

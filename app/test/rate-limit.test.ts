@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimit, clientIpFromRequest, resetRateLimitDurable } from "@/lib/rate-limit";
 
 describe("clientIpFromRequest", () => {
   it("takes the rightmost (proxy-appended) entry of x-forwarded-for, not the spoofable leftmost", () => {
@@ -59,6 +59,16 @@ describe("checkRateLimit", () => {
     expect(checkRateLimit(a, 1, 1000).ok).toBe(true);
     expect(checkRateLimit(a, 1, 1000).ok).toBe(false);
     expect(checkRateLimit(b, 1, 1000).ok).toBe(true);
+  });
+
+  it("resetRateLimitDurable clears the counter so a blocked key is allowed again (login success)", async () => {
+    // No Upstash configured in tests → reset just clears the in-memory bucket,
+    // mirroring what a successful login does to undo the caller's own attempts.
+    const key = freshKey();
+    expect(checkRateLimit(key, 1, 1000).ok).toBe(true);
+    expect(checkRateLimit(key, 1, 1000).ok).toBe(false); // locked
+    await resetRateLimitDurable(key, 1000);
+    expect(checkRateLimit(key, 1, 1000).ok).toBe(true); // cleared
   });
 });
 

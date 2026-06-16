@@ -105,3 +105,30 @@ export async function checkRateLimitDurable(
     return checkRateLimit(key, limit, windowMs);
   }
 }
+
+// Clear a durable rate-limit counter for the CURRENT window. Used on a
+// successful login so a legitimate user is never locked out by their own
+// (eventually correct) attempts — only FAILED attempts accumulate toward the
+// lockout. Best-effort: never throws, and is a no-op against a backend that's
+// already empty.
+export async function resetRateLimitDurable(key: string, windowMs: number): Promise<void> {
+  buckets.delete(key); // clear any in-memory bucket (dev / fallback path)
+  const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!upstashUrl || !upstashToken) return;
+  const windowIndex = Math.floor(Date.now() / windowMs);
+  const redisKey = `rl:${key}:${windowIndex}`;
+  try {
+    await fetch(`${upstashUrl}/pipeline`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${upstashToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([["DEL", redisKey]]),
+      cache: "no-store",
+    });
+  } catch (err) {
+    console.error("[rate-limit:reset]", err);
+  }
+}
