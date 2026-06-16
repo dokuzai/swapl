@@ -15,6 +15,7 @@ import { parseInterests, INTEREST_CATEGORIES } from "@/lib/interests";
 import { parseSettings } from "@/lib/settings";
 import { parseJSON } from "@/lib/db";
 import { getI18n, t as tt, type Dict } from "@/lib/i18n/server";
+import { I18nProviderShell } from "@/components/i18n/provider-shell";
 import type { DictKey } from "@/lib/i18n/dict-en";
 
 export const dynamic = "force-dynamic";
@@ -102,8 +103,11 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
     grouped.set(tag.category, arr);
   }
 
+  // Root layout doesn't mount <LocaleProvider> (section layouts do); this page
+  // has no section layout but renders the Navbar → AvatarMenu → client
+  // AppRatingDialog (useT). Wrap in the provider shell so it doesn't 500.
   return (
-    <>
+    <I18nProviderShell>
       <Navbar />
       <main className="flex-1">
         <div className="wrap py-10 lg:py-14 max-w-5xl">
@@ -300,7 +304,7 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
         </div>
       </main>
       <Footer />
-    </>
+    </I18nProviderShell>
   );
 }
 
