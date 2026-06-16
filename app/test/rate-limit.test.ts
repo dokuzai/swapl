@@ -2,11 +2,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
 
 describe("clientIpFromRequest", () => {
-  it("takes the first entry of x-forwarded-for", () => {
+  it("takes the rightmost (proxy-appended) entry of x-forwarded-for, not the spoofable leftmost", () => {
     const req = new Request("https://swapl.test", {
       headers: { "x-forwarded-for": "203.0.113.7, 70.41.3.18, 150.172.238.178" },
     });
-    expect(clientIpFromRequest(req)).toBe("203.0.113.7");
+    // The leftmost entry is client-controlled (spoofable); the rightmost is the
+    // one the closest trusted proxy appended.
+    expect(clientIpFromRequest(req)).toBe("150.172.238.178");
+  });
+
+  it("prefers x-real-ip over x-forwarded-for (platform-set, less spoofable)", () => {
+    const req = new Request("https://swapl.test", {
+      headers: { "x-real-ip": "198.51.100.4", "x-forwarded-for": "1.2.3.4" },
+    });
+    expect(clientIpFromRequest(req)).toBe("198.51.100.4");
   });
 
   it("falls back to x-real-ip when no forwarded header is present", () => {

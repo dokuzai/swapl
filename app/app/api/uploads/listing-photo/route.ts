@@ -9,6 +9,16 @@ import { UTApi } from "uploadthing/server";
 import { getSessionFromRequest } from "@/lib/auth/session";
 
 const MAX_BYTES = 8 * 1024 * 1024; // 8 MB, matching the web listingPhoto router
+// Allowlist concrete raster types. Notably EXCLUDES image/svg+xml — SVGs can
+// carry <script>, and "image/*" prefix matching would let them through.
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/heic",
+  "image/heif",
+]);
 
 export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
@@ -23,8 +33,8 @@ export async function POST(req: Request) {
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "Missing file" }, { status: 400 });
   }
-  if (!file.type.startsWith("image/")) {
-    return NextResponse.json({ error: "Only image uploads are allowed." }, { status: 415 });
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    return NextResponse.json({ error: "Only JPEG, PNG, WebP, GIF or HEIC images are allowed." }, { status: 415 });
   }
   if (file.size > MAX_BYTES) {
     return NextResponse.json({ error: "Image too large (max 8MB)." }, { status: 413 });

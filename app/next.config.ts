@@ -25,9 +25,14 @@ const SECURITY_HEADERS = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+  // Lock down powerful features the app doesn't use from third-party contexts.
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self), payment=(self), usb=(), interest-cohort=()" },
 ];
 
 const nextConfig: NextConfig = {
+  // Don't advertise the framework/version.
+  poweredByHeader: false,
+
   // Vercel sets outputFileTracingRoot to /vercel/path0 (the repo root, one
   // level above the app/) and Next requires turbopack.root to match it. We
   // already use relative imports for the generated Prisma client to avoid

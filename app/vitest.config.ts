@@ -13,5 +13,9 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["test/**/*.test.ts"],
+    // Cron job-logic tests invoke the handlers without a bearer; opt into the
+    // insecure-cron path the same way local dev does. The auth gate itself is
+    // still asserted by the "CRON_SECRET set → 403" cases (which override this).
+    env: { ALLOW_INSECURE_CRON: "1" },
   },
 });

@@ -162,11 +162,28 @@ type ImageBlock = {
 const SUPPORTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB per document, Anthropic vision cap territory
 
+// SECURITY (SSRF): these document URLs come from user input. Only fetch from the
+// UploadThing CDN where our own uploads live — never arbitrary hosts (which would
+// allow hitting cloud metadata endpoints / internal services). `z.string().url()`
+// at the route boundary is NOT sufficient on its own.
+function isAllowedDocumentUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "https:") return false;
+    const host = u.hostname.toLowerCase();
+    return host === "utfs.io" || host.endsWith(".ufs.sh") || host.endsWith(".utfs.io");
+  } catch {
+    return false;
+  }
+}
+
 async function buildImageBlocks(urls: string[]): Promise<ImageBlock[]> {
   const blocks: ImageBlock[] = [];
   for (const url of urls) {
+    if (!isAllowedDocumentUrl(url)) continue;
     try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+      // redirect:"error" blocks an allowed host from bouncing us to an internal target.
+      const res = await fetch(url, { signal: AbortSignal.timeout(10_000), redirect: "error" });
       if (!res.ok) continue;
       const contentType = (res.headers.get("content-type") ?? "").split(";")[0].trim();
       if (!(SUPPORTED_IMAGE_TYPES as readonly string[]).includes(contentType)) continue;

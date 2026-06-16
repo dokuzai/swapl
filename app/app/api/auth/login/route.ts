@@ -4,26 +4,31 @@ import { credentialsSchema } from "@/lib/validators";
 import { verifyPassword } from "@/lib/auth/passwords";
 import { setSession } from "@/lib/auth/session";
 import { normaliseEmail } from "@/lib/auth/tokens";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 import { apiError, accountSuspended, invalidInput } from "@/lib/api/errors";
 import { activateInvitedParticipants } from "@/lib/conversation/participants";
 
 const MIN_MS = 60 * 1000;
 
 export async function POST(req: Request) {
-  // Per-IP login throttle — keeps brute force expensive.
-  const ip = clientIpFromRequest(req);
-  const rl = checkRateLimit(`login:${ip}`, 30, 5 * MIN_MS);
-  if (!rl.ok) {
-    return apiError(429, "Too many login attempts. Try again in a few minutes.");
-  }
-
   const body = await req.json().catch(() => null);
   const parsed = credentialsSchema.safeParse(body);
   if (!parsed.success) {
     return invalidInput();
   }
   const email = normaliseEmail(parsed.data.email);
+
+  // Brute-force throttle. The per-IP gate is best-effort (x-forwarded-for is
+  // spoofable), so the real defence is the per-ACCOUNT gate keyed on the email —
+  // it can't be bypassed by rotating source IPs. Both use the durable limiter.
+  const ip = clientIpFromRequest(req);
+  const [ipRl, emailRl] = await Promise.all([
+    checkRateLimitDurable(`login:ip:${ip}`, 30, 5 * MIN_MS),
+    checkRateLimitDurable(`login:email:${email}`, 10, 15 * MIN_MS),
+  ]);
+  if (!ipRl.ok || !emailRl.ok) {
+    return apiError(429, "Too many login attempts. Try again in a few minutes.");
+  }
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
     return apiError(401, "Invalid email or password");

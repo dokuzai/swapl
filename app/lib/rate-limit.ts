@@ -15,10 +15,18 @@ const buckets = new Map<string, { count: number; resetAt: number }>();
 // x-forwarded-for; fall back to remote-addr-style headers; finally to a
 // constant so the bucket still functions in tests.
 export function clientIpFromRequest(req: Request): string {
-  const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0].trim();
+  // Prefer x-real-ip (set by the platform proxy, e.g. Vercel) over the leftmost
+  // x-forwarded-for entry, which is fully client-controlled and trivially spoofed
+  // to dodge per-IP limits. NOTE: per-IP limits are best-effort; account-scoped
+  // limits (see the login route) are the real brute-force defence.
   const real = req.headers.get("x-real-ip");
-  if (real) return real;
+  if (real) return real.trim();
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) {
+    const parts = fwd.split(",").map((p) => p.trim()).filter(Boolean);
+    // The rightmost entry is the one the closest trusted proxy appended.
+    if (parts.length) return parts[parts.length - 1];
+  }
   return "unknown";
 }
 

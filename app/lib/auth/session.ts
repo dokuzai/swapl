@@ -12,8 +12,27 @@ import { prisma } from "@/lib/db";
 import { touchLastActive } from "@/lib/auth/activity";
 
 const COOKIE_NAME = "swapl_session";
-const SECRET = process.env.SESSION_SECRET ?? "dev-secret-please-change-this-to-32-random-bytes-minimum";
 const TOKEN_TTL_DAYS = 30;
+const SESSION_TTL_MS = TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000;
+
+// Resolve the HMAC signing key. SECURITY: fail closed in production — never sign
+// or verify a session with a weak/empty/known key (that would make cookies
+// forgeable → account/admin takeover). The dev fallback is only used outside
+// production and only when no strong secret is configured.
+const DEV_FALLBACK_SECRET = "dev-secret-please-change-this-to-32-random-bytes-minimum";
+let warnedWeakSecret = false;
+function sessionSecret(): string {
+  const s = process.env.SESSION_SECRET;
+  if (s && s.length >= 32) return s;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET must be set to a strong value (>= 32 chars) in production");
+  }
+  if (!warnedWeakSecret) {
+    console.warn("[session] SESSION_SECRET missing or too short — using an INSECURE dev fallback. Never deploy this.");
+    warnedWeakSecret = true;
+  }
+  return DEV_FALLBACK_SECRET;
+}
 
 export type SessionPayload = {
   userId: string;
@@ -21,16 +40,22 @@ export type SessionPayload = {
   name: string | null;
 };
 
+// What is actually serialised into the cookie — the public payload plus a
+// signed expiry so a leaked/forged cookie can't be valid forever.
+type SessionBody = SessionPayload & { exp?: number };
+
 function b64url(input: Buffer | string): string {
   return Buffer.from(input).toString("base64url");
 }
 
 function sign(payload: string): string {
-  return createHmac("sha256", SECRET).update(payload).digest("base64url");
+  return createHmac("sha256", sessionSecret()).update(payload).digest("base64url");
 }
 
 function encode(payload: SessionPayload): string {
-  const body = b64url(JSON.stringify(payload));
+  const body = b64url(
+    JSON.stringify({ ...payload, exp: Date.now() + SESSION_TTL_MS } satisfies SessionBody),
+  );
   const sig = sign(body);
   return `${body}.${sig}`;
 }
@@ -44,7 +69,11 @@ function decode(token: string | undefined): SessionPayload | null {
   const b = Buffer.from(expected);
   if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
   try {
-    return JSON.parse(Buffer.from(body, "base64url").toString("utf8")) as SessionPayload;
+    const parsed = JSON.parse(Buffer.from(body, "base64url").toString("utf8")) as SessionBody;
+    // Reject expired cookies. Legacy cookies without `exp` are grandfathered
+    // (treated as non-expiring) so this change doesn't log everyone out.
+    if (typeof parsed.exp === "number" && parsed.exp < Date.now()) return null;
+    return { userId: parsed.userId, email: parsed.email, name: parsed.name };
   } catch {
     return null;
   }
