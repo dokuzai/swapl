@@ -8,6 +8,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
+import { AppRatingDialog } from "@/components/feedback/app-rating-dialog";
+import { isAppFeedbackResolved, markAppFeedbackResolved } from "@/lib/feedback/app-feedback-guard";
 
 export function LeaveReview({ agreementId, otherName }: { agreementId: string; otherName: string }) {
   const t = useT();
@@ -17,6 +19,9 @@ export function LeaveReview({ agreementId, otherName }: { agreementId: string; o
   const [hovered, setHovered] = useState(0);
   const [text, setText] = useState("");
   const [state, setState] = useState<"idle" | "submitting" | "done" | "error">("idle");
+  // App-feedback prompt (DOK-190): on a successful traveller review, ask the
+  // member to rate the app itself (surface="post-review").
+  const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
 
   const valid = rating >= 1 && text.trim().length >= 20 && text.trim().length <= 1000;
 
@@ -32,6 +37,11 @@ export function LeaveReview({ agreementId, otherName }: { agreementId: string; o
       });
       if (!res.ok) throw new Error();
       setState("done");
+      // Chain into the app-feedback prompt (post-review surface) unless already
+      // resolved on this device.
+      if (!isAppFeedbackResolved("post-review", agreementId)) {
+        setAppFeedbackOpen(true);
+      }
       router.refresh();
     } catch {
       setState("error");
@@ -42,6 +52,14 @@ export function LeaveReview({ agreementId, otherName }: { agreementId: string; o
     return (
       <section className="surface-card surface-card--static p-6 mb-6" style={{ background: "var(--pink-light)" }}>
         <p className="text-sm font-medium">{t("review.thanks")}</p>
+        <AppRatingDialog
+          open={appFeedbackOpen}
+          onClose={() => setAppFeedbackOpen(false)}
+          onResolved={() => markAppFeedbackResolved("post-review", agreementId)}
+          surface="post-review"
+          contextKey={agreementId}
+          contextLabel="trip"
+        />
       </section>
     );
   }

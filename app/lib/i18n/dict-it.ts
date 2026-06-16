@@ -1470,6 +1470,10 @@ export const it: Partial<Record<DictKey, string>> = {
   "appFeedback.context.publish": "Pubblica casa",
   "appFeedback.context.trip": "Viaggio in corso",
   "appFeedback.context.other": "Generale",
+  "appFeedback.storeNudge": "Felici che Swapl ti piaccia. Aiuti un altro host a scoprirci?",
+  "appFeedback.storeCta": "Consiglia Swapl",
+  "appFeedback.lowFollowUp": "Ci dispiace sia andata storta. Vogliamo rimediare.",
+  "appFeedback.lowCta": "Contatta il supporto",
 
   // ---- Publish-a-home wizard (listing-form) ----
   "wizard.step.location": "Posizione",

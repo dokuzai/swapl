@@ -14,6 +14,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,6 +33,7 @@ import app.swapl.core.model.MeResponse
 import app.swapl.core.model.ProposalDetail
 import app.swapl.core.model.SupportContacts
 import app.swapl.core.model.TripCockpit
+import app.swapl.core.feedback.AppFeedbackPrefs
 import app.swapl.core.network.ApiClient
 import app.swapl.core.repository.DisputeRepository
 import app.swapl.core.repository.ListingRepository
@@ -44,6 +46,7 @@ import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.StatusTagChip
 import app.swapl.design.components.SurfaceCard
 import app.swapl.designtokens.SwaplSpacing
+import app.swapl.features.profile.RateAppDialog
 import app.swapl.features.swaps.AgreedPanel
 import app.swapl.features.swaps.LeaveReviewCard
 import app.swapl.features.swaps.LeaveReviewDialog
@@ -58,6 +61,7 @@ class TripDetailViewModel @Inject constructor(
     val listings: ListingRepository,
     private val disputeRepo: DisputeRepository,
     private val supportRepo: SupportContactsRepository,
+    val feedbackPrefs: AppFeedbackPrefs,
     val api: ApiClient,
     savedState: SavedStateHandle,
 ) : ViewModel(), DisputeFlowState {
@@ -71,6 +75,13 @@ class TripDetailViewModel @Inject constructor(
         private set
     var reviewError by mutableStateOf<String?>(null)
         private set
+
+    // DOK-190: one-shot signal carrying the agreementId of a just-submitted
+    // review, so the screen can fire the "post-review" app-feedback prompt.
+    // Cleared once the prompt is shown.
+    var postReviewAgreementId by mutableStateOf<String?>(null)
+        private set
+    fun consumePostReview() { postReviewAgreementId = null }
 
     // Trip cockpit (DOK-152): the derived phase, countdown, gated address/guide,
     // checklist and check events for the agreement attached to this proposal.
@@ -174,6 +185,11 @@ class TripDetailViewModel @Inject constructor(
         runCatching { proposals.submitReview(agreementId, rating, text) }
             .onSuccess {
                 detail = runCatching { repo.detail(proposalId) }.getOrNull() ?: detail
+                // Fire the contextual "post-review" prompt unless already shown
+                // for this agreement (no-re-nag guard).
+                if (!feedbackPrefs.wasPrompted("post-review", agreementId)) {
+                    postReviewAgreementId = agreementId
+                }
                 onDone()
             }
             .onFailure { reviewError = it.message }
@@ -226,6 +242,30 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
     var showReview by remember { mutableStateOf(false) }
     var checkInSheet by remember { mutableStateOf<Boolean?>(null) } // null = closed, true = check-in
     var showGuideEditor by remember { mutableStateOf(false) }
+
+    // DOK-190 contextual app-feedback. A single nullable holder (surface) keeps
+    // "one prompt at a time"; the contextKey is always this agreement's id.
+    var feedbackSurface by remember { mutableStateOf<String?>(null) }
+    val agreementId = a?.id
+    val helpUrl = vm.supportContacts.helpUrl
+
+    // post-review: fired once the review POST succeeds (VM one-shot signal).
+    val postReviewId = vm.postReviewAgreementId
+    LaunchedEffect(postReviewId) {
+        if (postReviewId != null && feedbackSurface == null) {
+            feedbackSurface = "post-review"
+            vm.consumePostReview()
+        }
+    }
+    // post-swap: first time we render a COMPLETED agreement, unless already
+    // prompted for this agreement (no-re-nag guard).
+    LaunchedEffect(a?.status, agreementId) {
+        if (a?.status == "COMPLETED" && agreementId != null && feedbackSurface == null &&
+            !vm.feedbackPrefs.wasPrompted("post-swap", agreementId)
+        ) {
+            feedbackSurface = "post-swap"
+        }
+    }
 
     val guideState = remember(mine.id) { HomeGuideEditorState(mine.id, vm.repo, scope) }
 
@@ -335,5 +375,24 @@ private fun TripDetailBody(d: ProposalDetail, vm: TripDetailViewModel, onOpenPro
                 vm.submitReview(rating, text) { showReview = false }
             },
         )
+    }
+
+    // DOK-190: the contextual rate-app prompt. Showing OR dismissing sets the
+    // persisted guard so the user is never re-nagged for this (surface,
+    // agreement). Keyed by surface so the dialog VM resets between triggers.
+    feedbackSurface?.let { surface ->
+        if (agreementId != null) {
+            key(surface) {
+                RateAppDialog(
+                    surface = surface,
+                    contextKey = agreementId,
+                    helpUrl = helpUrl,
+                    onDismiss = {
+                        vm.feedbackPrefs.markPrompted(surface, agreementId)
+                        feedbackSurface = null
+                    },
+                )
+            }
+        }
     }
 }

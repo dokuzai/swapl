@@ -377,6 +377,9 @@ struct ProposalDetailView: View {
     @State private var vm: ProposalDetailViewModel
     @State private var showCounter = false
     @State private var showReview = false
+    // Contextual app-feedback (DOK-190): set to the agreementId after a review
+    // is submitted to present the rate-app sheet with surface "post-review".
+    @State private var feedbackAfterReview: AppFeedbackContext?
     @State private var isConfirmingDecline = false
     @State private var isConfirmingWithdraw = false
     @State private var isConfirmingAccept = false
@@ -416,9 +419,22 @@ struct ProposalDetailView: View {
                 LeaveReviewSheet(
                     agreementId: agreement.id,
                     otherName: detail.other.name,
-                    onSubmitted: { Task { await vm.load() } }
+                    onSubmitted: {
+                        Task { await vm.load() }
+                        // DOK-190 post-review trigger: right after the traveller
+                        // submits their review, prompt for app feedback once per
+                        // agreement (guarded so it never re-nags).
+                        if !AppFeedbackPrompt.hasSeen(surface: "post-review", contextKey: agreement.id) {
+                            feedbackAfterReview = AppFeedbackContext(agreementId: agreement.id)
+                        }
+                    }
                 )
             }
+        }
+        // One prompt at a time: the post-review sheet replaces the (now
+        // dismissed) review sheet rather than stacking on top of it.
+        .sheet(item: $feedbackAfterReview) { ctx in
+            RateAppSheet(surface: "post-review", contextKey: ctx.agreementId)
         }
         .confirmationDialog("Decline this proposal?", isPresented: $isConfirmingDecline, titleVisibility: .visible) {
             Button(String(localized: "Decline"), role: .destructive) { Task { await vm.act(.decline) } }

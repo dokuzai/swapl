@@ -210,7 +210,11 @@
     <string name="rate_app_comment_label">Vuoi aggiungere qualcosa?</string>
     <string name="rate_app_comment_placeholder">Dicci cosa funziona — o cosa no (facoltativo)</string>
     <string name="rate_app_submit">Invia</string>
+    <string name="rate_app_submit_support">Contatta l\'assistenza</string>
     <string name="rate_app_submitting">Invio…</string>
+    <string name="rate_app_prompt_post_review">Grazie per la recensione! E l\'app Swapl, come ti sembra?</string>
+    <string name="rate_app_prompt_post_swap">Il tuo scambio è completato! Com\'è stata l\'esperienza con Swapl?</string>
+    <string name="rate_app_low_support_hint">Ci dispiace sia andata così. Invia e apriremo l\'assistenza per aiutarti.</string>
 
     <!-- Account -->
     <string name="account_profile_title">Profilo</string>

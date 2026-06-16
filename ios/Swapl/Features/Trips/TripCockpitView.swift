@@ -58,6 +58,9 @@ struct TripCockpitView: View {
 
     @State private var checkSheet: CheckEventKind?
     @State private var showGuideEditor = false
+    // Contextual app-feedback (DOK-190): set when a COMPLETED swap first shows
+    // so we present the rate-app sheet once with surface "post-swap".
+    @State private var feedbackAfterSwap: AppFeedbackContext?
 
     init(agreementId: String, otherName: String?, otherListingId: String, myListingId: String) {
         _vm = State(initialValue: TripCockpitViewModel(agreementId: agreementId))
@@ -86,6 +89,16 @@ struct TripCockpitView: View {
             }
         }
         .task { await vm.load() }
+        // DOK-190 post-swap trigger: when the agreement reaches COMPLETED, prompt
+        // for app feedback once per agreement. Guarded against re-nagging, and
+        // only auto-presents when no other prompt (check-in/out, guide) is up.
+        .onChange(of: vm.cockpit?.phase) { _, phase in
+            maybePromptAfterSwap(phase: phase)
+        }
+        .onAppear { maybePromptAfterSwap(phase: vm.cockpit?.phase) }
+        .sheet(item: $feedbackAfterSwap) { ctx in
+            RateAppSheet(surface: "post-swap", contextKey: ctx.agreementId)
+        }
         .sheet(item: $checkSheet) { kind in
             CheckEventSheet(
                 kind: kind,
@@ -99,6 +112,16 @@ struct TripCockpitView: View {
         .sheet(isPresented: $showGuideEditor) {
             HomeGuideEditorView(listingId: myListingId, onSaved: { Task { await vm.load() } })
         }
+    }
+
+    // Presents the post-swap feedback sheet at most once per agreement, only
+    // when the trip is COMPLETED and nothing else is already showing (one
+    // prompt at a time).
+    private func maybePromptAfterSwap(phase: TripCockpitPhase?) {
+        guard phase == .completed else { return }
+        guard checkSheet == nil, !showGuideEditor, feedbackAfterSwap == nil else { return }
+        guard !AppFeedbackPrompt.hasSeen(surface: "post-swap", contextKey: vm.agreementId) else { return }
+        feedbackAfterSwap = AppFeedbackContext(agreementId: vm.agreementId)
     }
 
     private func cockpitError(_ error: String) -> some View {

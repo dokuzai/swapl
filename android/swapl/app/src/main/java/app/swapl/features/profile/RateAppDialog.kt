@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -51,51 +52,85 @@ class RateAppViewModel @Inject constructor(
     var isSubmitting by mutableStateOf(false); private set
     var error by mutableStateOf<String?>(null); private set
 
-    // Post structured feedback, then (for high scores) ask the Play In-App
-    // Review API to surface the native rating card. The review request never
-    // blocks the feedback submission and fails silently when Play is absent.
-    fun submit(score: Int, comment: String?, activity: Activity?, onDone: () -> Unit) =
-        viewModelScope.launch {
-            isSubmitting = true
-            error = null
-            runCatching { repo.submit(score, comment, surface = "account", contextKey = "") }
-                .onSuccess {
-                    if (score >= 4 && activity != null) {
-                        runCatching {
-                            val manager = ReviewManagerFactory.create(activity)
-                            val info = manager.requestReviewFlow().await()
-                            manager.launchReviewFlow(activity, info).await()
-                        }
+    // Post structured feedback, then route by score:
+    //   >= 4 -> ask the Play In-App Review API to surface the native rating card
+    //   <= 2 -> hand the caller a support deep-link instead of the store
+    // The review request never blocks the feedback submission and fails silently
+    // when Play is absent. `surface`/`contextKey` let the same sheet serve the
+    // Account row ("account") and the contextual triggers ("post-review",
+    // "post-swap" keyed by agreementId) — the backend upserts on the unique
+    // (userId, surface, contextKey).
+    fun submit(
+        score: Int,
+        comment: String?,
+        surface: String,
+        contextKey: String,
+        activity: Activity?,
+        onSupport: () -> Unit,
+        onDone: () -> Unit,
+    ) = viewModelScope.launch {
+        isSubmitting = true
+        error = null
+        runCatching { repo.submit(score, comment, surface = surface, contextKey = contextKey) }
+            .onSuccess {
+                if (score >= 4 && activity != null) {
+                    runCatching {
+                        val manager = ReviewManagerFactory.create(activity)
+                        val info = manager.requestReviewFlow().await()
+                        manager.launchReviewFlow(activity, info).await()
                     }
-                    onDone()
+                } else if (score <= 2) {
+                    onSupport()
                 }
-                .onFailure { error = it.message }
-            isSubmitting = false
-        }
+                onDone()
+            }
+            .onFailure { error = it.message }
+        isSubmitting = false
+    }
 }
 
-// Rate-the-app sheet (M1): 1-5 stars + optional comment, POSTed to
-// /api/app-feedback (source "android", surface "account"). High scores also
-// trigger the Play In-App Review card.
+// Rate-the-app sheet (M1 / DOK-190): 1-5 stars + optional comment, POSTed to
+// /api/app-feedback (source "android"). Reusable across surfaces:
+//   - "account": the Account "Rate the app" row (contextKey "")
+//   - "post-review": after a traveller review (contextKey = agreementId)
+//   - "post-swap": when a swap reaches COMPLETED (contextKey = agreementId)
+// High scores (>=4) trigger the Play In-App Review card; low scores (<=2) open
+// the support help link instead of the store.
 @Composable
 fun RateAppDialog(
     onDismiss: () -> Unit,
+    surface: String = "account",
+    contextKey: String = "",
+    helpUrl: String? = null,
     vm: RateAppViewModel = hiltViewModel(),
 ) {
     var rating by remember { mutableIntStateOf(0) }
     var comment by remember { mutableStateOf("") }
     val activity = LocalContext.current as? Activity
+    val uriHandler = LocalUriHandler.current
 
     AlertDialog(
         onDismissRequest = { if (!vm.isSubmitting) onDismiss() },
         title = { Text(stringResource(R.string.rate_app_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(SwaplSpacing.s3)) {
+                val promptRes = when (surface) {
+                    "post-review" -> R.string.rate_app_prompt_post_review
+                    "post-swap" -> R.string.rate_app_prompt_post_swap
+                    else -> R.string.rate_app_prompt
+                }
                 Text(
-                    stringResource(R.string.rate_app_prompt),
+                    stringResource(promptRes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                if (rating in 1..2) {
+                    Text(
+                        stringResource(R.string.rate_app_low_support_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 KickerLabel(stringResource(R.string.rate_app_score_label))
                 val ratingCd = stringResource(R.string.cd_rating_out_of_5, rating)
                 Row(
@@ -134,12 +169,27 @@ fun RateAppDialog(
             TextButton(
                 enabled = rating in 1..5 && !vm.isSubmitting,
                 onClick = {
-                    vm.submit(rating, comment.trim().ifBlank { null }, activity) { onDismiss() }
+                    vm.submit(
+                        score = rating,
+                        comment = comment.trim().ifBlank { null },
+                        surface = surface,
+                        contextKey = contextKey,
+                        activity = activity,
+                        onSupport = {
+                            helpUrl?.takeIf { it.isNotBlank() }?.let {
+                                runCatching { uriHandler.openUri(it) }
+                            }
+                        },
+                        onDone = { onDismiss() },
+                    )
                 },
             ) {
                 Text(
-                    if (vm.isSubmitting) stringResource(R.string.rate_app_submitting)
-                    else stringResource(R.string.rate_app_submit),
+                    when {
+                        vm.isSubmitting -> stringResource(R.string.rate_app_submitting)
+                        rating in 1..2 && helpUrl != null -> stringResource(R.string.rate_app_submit_support)
+                        else -> stringResource(R.string.rate_app_submit)
+                    },
                 )
             }
         },

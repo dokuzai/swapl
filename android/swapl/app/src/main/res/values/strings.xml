@@ -234,7 +234,11 @@
     <string name="rate_app_comment_label">Anything to add?</string>
     <string name="rate_app_comment_placeholder">Tell us what\'s working — or what isn\'t (optional)</string>
     <string name="rate_app_submit">Send</string>
+    <string name="rate_app_submit_support">Contact support</string>
     <string name="rate_app_submitting">Sending…</string>
+    <string name="rate_app_prompt_post_review">Thanks for your review! How is the Swapl app itself working for you?</string>
+    <string name="rate_app_prompt_post_swap">Your swap is complete! How was Swapl for getting you there?</string>
+    <string name="rate_app_low_support_hint">Sorry it fell short. Send this and we\'ll open support so we can help.</string>
 
     <!-- Account screen -->
     <string name="account_profile_title">Profile</string>

@@ -1469,6 +1469,10 @@ export const tr: Partial<Record<DictKey, string>> = {
   "appFeedback.context.publish": "Ev ilanı ver",
   "appFeedback.context.trip": "Aktif seyahat",
   "appFeedback.context.other": "Genel",
+  "appFeedback.storeNudge": "Swapl'ı sevmene sevindik. Başka bir ev sahibinin bizi bulmasına yardım eder misin?",
+  "appFeedback.storeCta": "Swapl'ı öner",
+  "appFeedback.lowFollowUp": "İstediğin gibi gitmediği için üzgünüz. Bunu düzeltmek isteriz.",
+  "appFeedback.lowCta": "Desteğe ulaş",
 
   // ---- Publish-a-home wizard (listing-form) ----
   "wizard.step.location": "Konum",

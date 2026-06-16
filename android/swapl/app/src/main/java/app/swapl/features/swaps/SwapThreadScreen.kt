@@ -33,9 +33,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.swapl.core.feedback.AppFeedbackPrefs
 import app.swapl.core.model.Listing
 import app.swapl.core.model.ProposalDetail
+import app.swapl.core.model.SupportContacts
 import app.swapl.core.repository.ProposalRepository
+import app.swapl.core.repository.SupportContactsRepository
+import app.swapl.features.profile.RateAppDialog
 import app.swapl.design.components.KickerLabel
 import app.swapl.design.components.ListingPhoto
 import app.swapl.design.components.PrimaryPill
@@ -51,6 +55,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SwapThreadViewModel @Inject constructor(
     private val repo: ProposalRepository,
+    private val supportRepo: SupportContactsRepository,
+    val feedbackPrefs: AppFeedbackPrefs,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val proposalId: String = checkNotNull(savedState["proposalId"])
@@ -60,6 +66,12 @@ class SwapThreadViewModel @Inject constructor(
     var error by mutableStateOf<String?>(null); private set
     var isSubmittingReview by mutableStateOf(false); private set
     var reviewError by mutableStateOf<String?>(null); private set
+    var supportContacts by mutableStateOf(SupportContacts.FALLBACK); private set
+
+    // DOK-190: one-shot agreementId carrying a just-submitted review, so the
+    // screen can fire the "post-review" app-feedback prompt. Cleared once shown.
+    var postReviewAgreementId by mutableStateOf<String?>(null); private set
+    fun consumePostReview() { postReviewAgreementId = null }
 
     // One-shot success signal (string res id) surfaced as a snackbar after a
     // successful accept/decline/withdraw/counter (M4). Cleared once shown.
@@ -71,6 +83,8 @@ class SwapThreadViewModel @Inject constructor(
     fun load() = viewModelScope.launch {
         runCatching { detail = repo.detail(proposalId) }
             .onFailure { error = it.message }
+        // Best-effort: support help URL for the low-score feedback path.
+        runCatching { supportContacts = supportRepo.fetch() }
     }
 
     // POST /api/agreements/{id}/review, then refresh so canReview clears.
@@ -81,6 +95,9 @@ class SwapThreadViewModel @Inject constructor(
         runCatching { repo.submitReview(agreementId, rating, text) }
             .onSuccess {
                 detail = runCatching { repo.detail(proposalId) }.getOrNull() ?: detail
+                if (!feedbackPrefs.wasPrompted("post-review", agreementId)) {
+                    postReviewAgreementId = agreementId
+                }
                 onDone()
             }
             .onFailure { reviewError = it.message }
@@ -116,6 +133,16 @@ fun SwapThreadScreen(
     val d = vm.detail
     var showCounter by remember { mutableStateOf(false) }
     var showReview by remember { mutableStateOf(false) }
+    // DOK-190: post-review app-feedback prompt holder (agreementId), set by the
+    // VM one-shot signal once a review POST succeeds.
+    var feedbackAgreementId by remember { mutableStateOf<String?>(null) }
+    val postReviewId = vm.postReviewAgreementId
+    LaunchedEffect(postReviewId) {
+        if (postReviewId != null && feedbackAgreementId == null) {
+            feedbackAgreementId = postReviewId
+            vm.consumePostReview()
+        }
+    }
     val snackbarHostState = remember { SnackbarHostState() }
     val hostFallback = stringResource(R.string.thread_host_fallback)
     val hostFallbackPossessive = stringResource(R.string.thread_host_fallback_possessive)
@@ -198,6 +225,20 @@ fun SwapThreadScreen(
             onDismiss = { showReview = false },
             onSubmit = { rating, text ->
                 vm.submitReview(rating, text) { showReview = false }
+            },
+        )
+    }
+
+    // DOK-190: contextual "post-review" rate-app prompt. Showing OR dismissing
+    // persists the no-re-nag guard for this (surface, agreement).
+    feedbackAgreementId?.let { agreementId ->
+        RateAppDialog(
+            surface = "post-review",
+            contextKey = agreementId,
+            helpUrl = vm.supportContacts.helpUrl,
+            onDismiss = {
+                vm.feedbackPrefs.markPrompted("post-review", agreementId)
+                feedbackAgreementId = null
             },
         )
     }

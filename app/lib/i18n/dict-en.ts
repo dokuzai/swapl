@@ -1512,6 +1512,12 @@ export const en = {
   "appFeedback.context.publish": "List a home",
   "appFeedback.context.trip": "Active trip",
   "appFeedback.context.other": "General",
+  // Score-based follow-up (DOK-190): happy raters get a recommend nudge,
+  // unhappy raters get support — never a store rating.
+  "appFeedback.storeNudge": "Glad you're enjoying Swapl. Help another host find us?",
+  "appFeedback.storeCta": "Recommend Swapl",
+  "appFeedback.lowFollowUp": "Sorry it fell short. We'd like to make it right.",
+  "appFeedback.lowCta": "Contact support",
 
   // ---- Publish-a-home wizard (listing-form) ----
   "wizard.step.location": "Location",

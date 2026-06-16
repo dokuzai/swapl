@@ -15,9 +15,16 @@ export type FeedbackSurface = "account" | "post-swap" | "post-review";
 export type FeedbackContextLabel =
   | "account" | "negotiation" | "inbox" | "browse" | "publish" | "trip" | "other";
 
+// Outbound "recommend Swapl" target for happy raters (score >= 4) and the
+// support mailto for unhappy raters (score <= 2). We never route an unhappy
+// user to a public store rating.
+const RECOMMEND_URL = "https://swapl.fun";
+const SUPPORT_EMAIL = "hello@swapl.fun";
+
 export function AppRatingDialog({
   open,
   onClose,
+  onResolved,
   surface = "account",
   contextKey = "",
   contextLabel = "account",
@@ -25,6 +32,9 @@ export function AppRatingDialog({
 }: {
   open: boolean;
   onClose: () => void;
+  // Fired once the prompt is "spent" for this surface/context — on a successful
+  // submit OR on dismiss — so contextual triggers can set their no-re-nag guard.
+  onResolved?: () => void;
   surface?: FeedbackSurface;
   contextKey?: string;
   contextLabel?: FeedbackContextLabel;
@@ -44,6 +54,7 @@ export function AppRatingDialog({
   }
 
   function close() {
+    onResolved?.();
     reset();
     onClose();
   }
@@ -98,6 +109,34 @@ export function AppRatingDialog({
             </div>
             <h2 className="font-display text-2xl tracking-[-0.01em]">{t("appFeedback.successTitle")}</h2>
             <p className="mt-2 text-sm" style={{ color: "var(--navy-2)" }}>{t("appFeedback.successBody")}</p>
+
+            {/* Score-based follow-up: send happy raters to recommend Swapl,
+                steer unhappy raters to support — never to a store rating. */}
+            {score != null && score >= 4 && (
+              <div className="mt-4">
+                <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("appFeedback.storeNudge")}</p>
+                <a
+                  href={RECOMMEND_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pill-primary mt-3 inline-block"
+                >
+                  {t("appFeedback.storeCta")}
+                </a>
+              </div>
+            )}
+            {score != null && score <= 2 && (
+              <div className="mt-4">
+                <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("appFeedback.lowFollowUp")}</p>
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}`}
+                  className="pill-ghost mt-3 inline-block"
+                >
+                  {t("appFeedback.lowCta")}
+                </a>
+              </div>
+            )}
+
             <button onClick={close} className="pill-ghost mt-5">{t("appFeedback.dismiss")}</button>
           </div>
         ) : (

@@ -19,6 +19,8 @@ import { ProofOfCoverBadge } from "@/components/insurance/proof-of-cover-badge";
 import { HomeGuideEditor } from "./home-guide-editor";
 import { ReportProblem } from "./report-problem";
 import { useSupportContacts } from "@/lib/support-contacts";
+import { AppRatingDialog } from "@/components/feedback/app-rating-dialog";
+import { isAppFeedbackResolved, markAppFeedbackResolved } from "@/lib/feedback/app-feedback-guard";
 
 type TripPhase = "AGREED" | "PREPARING" | "READY" | "IN_PROGRESS" | "COMPLETED" | "INTERRUPTED";
 
@@ -98,6 +100,9 @@ export function TripCockpit({
   const support = useSupportContacts();
   const [trip, setTrip] = useState<TripPayload | null>(null);
   const [error, setError] = useState(false);
+  // App-feedback prompt (DOK-190): auto-open once when a COMPLETED swap is
+  // first viewed (surface="post-swap"), guarded against re-nag per device.
+  const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -113,6 +118,14 @@ export function TripCockpit({
   useEffect(() => {
     void load();
   }, [load]);
+
+  // First view of a completed trip: auto-open the post-swap feedback prompt,
+  // unless the member already submitted or dismissed it on this device.
+  useEffect(() => {
+    if (trip?.phase === "COMPLETED" && !isAppFeedbackResolved("post-swap", agreementId)) {
+      setAppFeedbackOpen(true);
+    }
+  }, [trip?.phase, agreementId]);
 
   if (error) {
     return (
@@ -182,6 +195,15 @@ export function TripCockpit({
       <HomeGuideEditor listingId={myListingId} collapsible />
 
       <ReportProblem agreementId={agreementId} myUserId={myUserId} />
+
+      <AppRatingDialog
+        open={appFeedbackOpen}
+        onClose={() => setAppFeedbackOpen(false)}
+        onResolved={() => markAppFeedbackResolved("post-swap", agreementId)}
+        surface="post-swap"
+        contextKey={agreementId}
+        contextLabel="trip"
+      />
     </div>
   );
 }

@@ -1469,6 +1469,10 @@ export const nl: Partial<Record<DictKey, string>> = {
   "appFeedback.context.publish": "Woning aanbieden",
   "appFeedback.context.trip": "Actieve reis",
   "appFeedback.context.other": "Algemeen",
+  "appFeedback.storeNudge": "Fijn dat je Swapl waardeert. Help je een andere host ons te vinden?",
+  "appFeedback.storeCta": "Swapl aanbevelen",
+  "appFeedback.lowFollowUp": "Jammer dat het tegenviel. We maken het graag goed.",
+  "appFeedback.lowCta": "Neem contact op met support",
 
   // ---- Publish-a-home wizard (listing-form) ----
   "wizard.step.location": "Locatie",
