@@ -13,6 +13,7 @@
 // If no key is resolvable, callers must use a deterministic fallback.
 
 import Anthropic from "@anthropic-ai/sdk";
+import { decryptSecret } from "@/lib/crypto";
 
 export const PROVIDERS = ["kimi", "openai", "anthropic"] as const;
 export type ProviderId = (typeof PROVIDERS)[number];
@@ -59,7 +60,11 @@ export function resolveAIConfig(opts: ResolveOptions = {}): ResolvedConfig | nul
   const userProvider = (opts.userOverride?.provider ?? "").toLowerCase();
   if ((PROVIDERS as readonly string[]).includes(userProvider)) {
     const provider = userProvider as ProviderId;
-    const apiKey = opts.userOverride?.apiKey || pickProviderKey(provider) || process.env.AI_API_KEY || "";
+    // The user override key is stored encrypted-at-rest (DOK-197); decrypt it
+    // here — the single choke point every provider call funnels through. Legacy
+    // plaintext rows pass through untouched.
+    const userKey = decryptSecret(opts.userOverride?.apiKey);
+    const apiKey = userKey || pickProviderKey(provider) || process.env.AI_API_KEY || "";
     if (!apiKey) return null;
     return {
       provider,

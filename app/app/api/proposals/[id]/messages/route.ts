@@ -47,10 +47,33 @@ function partyOf(
   };
 }
 
+// Per-recipient read receipt (DOK-195). A message is "read" once every PRINCIPAL
+// recipient (the swap counterpart(s) — guests are non-acting observers and don't
+// gate the sender's ✓✓) has a read cursor at or past its createdAt. Returns the
+// moment it became fully read, or null if at least one recipient hasn't caught up.
+function computeReadAt(
+  m: { authorId: string; createdAt: Date },
+  principalIds: string[],
+  cursorByUser: Map<string, Date>
+): Date | null {
+  const recipients = principalIds.filter((id) => id && id !== m.authorId);
+  if (recipients.length === 0) return null;
+  let readAt: Date | null = null;
+  for (const r of recipients) {
+    const c = cursorByUser.get(r);
+    if (!c || c < m.createdAt) return null; // someone hasn't read it yet
+    if (!readAt || c > readAt) readAt = c;
+  }
+  return readAt;
+}
+
 function serialize(
-  m: { id: string; proposalId: string; authorId: string; body: string; photos: string; readAt: Date | null; createdAt: Date },
-  userId: string
+  m: { id: string; proposalId: string; authorId: string; body: string; photos: string; createdAt: Date },
+  userId: string,
+  principalIds: string[],
+  cursorByUser: Map<string, Date>
 ) {
+  const readAt = computeReadAt(m, principalIds, cursorByUser);
   return {
     id: m.id,
     proposalId: m.proposalId,
@@ -58,7 +81,7 @@ function serialize(
     mine: m.authorId === userId,
     body: m.body,
     photos: parseJSON<string[]>(m.photos, []),
-    readAt: m.readAt ? m.readAt.toISOString() : null,
+    readAt: readAt ? readAt.toISOString() : null,
     createdAt: m.createdAt.toISOString(),
   };
 }
@@ -99,19 +122,30 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
   const window = hasMore ? page.slice(0, limit) : page;
   const nextCursor = hasMore ? window[window.length - 1].id : null;
 
-  // Implicit read receipt: mark the caller's inbound (other-party) unread
-  // messages as read. Cheap and idempotent; scoped to the whole thread so a
+  // Implicit read receipt: advance the CALLER's own read cursor (DOK-195).
+  // Per-recipient now — this only clears the caller's unread state and never
+  // touches another participant's. Idempotent; scoped to the whole thread so a
   // catch-up read clears the badge regardless of which page was fetched.
   if (markRead) {
-    await prisma.swapMessage.updateMany({
-      where: { proposalId: id, authorId: { not: session.userId }, readAt: null },
-      data: { readAt: new Date() },
+    const now = new Date();
+    await prisma.conversationRead.upsert({
+      where: { proposalId_userId: { proposalId: id, userId: session.userId } },
+      create: { proposalId: id, userId: session.userId, lastReadAt: now },
+      update: { lastReadAt: now },
     });
   }
 
+  // Read cursors of the two principals drive the per-message ✓✓ receipt.
+  const principalIds = [proposal.proposerId, proposal.targetListing.userId];
+  const cursors = await prisma.conversationRead.findMany({
+    where: { proposalId: id, userId: { in: principalIds } },
+    select: { userId: true, lastReadAt: true },
+  });
+  const cursorByUser = new Map(cursors.map((c) => [c.userId, c.lastReadAt]));
+
   const ordered = window.slice().reverse(); // oldest-first for display
   return NextResponse.json({
-    messages: ordered.map((m) => serialize(m, session.userId)),
+    messages: ordered.map((m) => serialize(m, session.userId, principalIds, cursorByUser)),
     nextCursor,
     hasMore,
   });
@@ -210,8 +244,11 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     }
   }
 
+  // A just-sent message has no recipient reads yet → readAt is null. Pass the
+  // principals + an empty cursor map so the serialized shape stays consistent.
+  const principalIds = [proposal.proposerId, proposal.targetListing.user.id];
   return NextResponse.json(
-    { message: serialize(message, session.userId) },
+    { message: serialize(message, session.userId, principalIds, new Map()) },
     { status: 201 }
   );
 }

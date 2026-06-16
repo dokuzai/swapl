@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { PROVIDERS } from "@/lib/ai/providers";
+import { encryptSecret } from "@/lib/crypto";
 
 const settingsSchema = z.object({
   // empty string == clear (revert to project default)
@@ -35,8 +36,9 @@ export async function POST(req: Request) {
   const data: { aiProvider?: string | null; aiModel?: string | null; aiApiKey?: string | null } = {};
   if (parsed.data.provider !== undefined) data.aiProvider = parsed.data.provider || null;
   if (parsed.data.model !== undefined) data.aiModel = parsed.data.model || null;
+  // Encrypt at rest — the raw provider key must never hit the DB in plaintext.
   if (parsed.data.apiKey !== undefined && parsed.data.apiKey !== "")
-    data.aiApiKey = parsed.data.apiKey;
+    data.aiApiKey = encryptSecret(parsed.data.apiKey);
 
   await prisma.user.update({ where: { id: session.userId }, data });
   return NextResponse.json({ ok: true });

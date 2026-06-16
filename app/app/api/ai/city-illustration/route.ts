@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { generateCityArt } from "@/lib/ai/city-illustration";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimitDurable } from "@/lib/rate-limit";
 import { findCity } from "@/lib/cities-extended";
 
 const schema = z.object({
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
-  const rl = checkRateLimit(`ai:city:${session.userId}`, 30, 60_000);
+  const rl = await checkRateLimitDurable(`ai:city:${session.userId}`, 30, 60_000);
   if (!rl.ok) return NextResponse.json({ error: "Too many AI requests" }, { status: 429 });
 
   const parsed = schema.safeParse(await req.json().catch(() => null));

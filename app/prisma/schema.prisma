@@ -505,10 +505,24 @@ model SwapMessage {
   authorId   String
   body       String
   photos     String       @default("[]")                  // JSON array of upload URLs
-  readAt     DateTime?                                     // set when the *recipient* (non-author) has read it
+  readAt     DateTime?                                     // DEPRECATED (DOK-195): global per-message read flag. Read state is now per-recipient via ConversationRead; kept nullable for back-compat, no longer written.
   createdAt  DateTime     @default(now())
 
   @@index([proposalId, createdAt])
+}
+
+// Per (proposal, user) read cursor (DOK-195). Read state must be PER-RECIPIENT:
+// in a multi-party thread (principals + guests) one participant reading must not
+// clear another's unread state. `lastReadAt` is the high-water mark — a message
+// is unread for this user iff it was authored by someone else and created after
+// lastReadAt. Mirrors SwapMessageEmailThrottle's composite-key, FK-free shape.
+model ConversationRead {
+  proposalId String
+  userId     String
+  lastReadAt DateTime @default(now())
+
+  @@id([proposalId, userId])
+  @@index([userId])
 }
 
 // Per (proposal, recipient) throttle for new-message email notifications:

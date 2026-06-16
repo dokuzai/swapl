@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { draftProposalMessage } from "@/lib/ai/proposal-message";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimitDurable } from "@/lib/rate-limit";
 
 const schema = z.object({
   proposerListingId: z.string().min(1),
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
-  const rl = checkRateLimit(`ai:proposal:${session.userId}`, 20, 10 * 60_000);
+  const rl = await checkRateLimitDurable(`ai:proposal:${session.userId}`, 20, 10 * 60_000);
   if (!rl.ok) return NextResponse.json({ error: "Slow down — try again in a few minutes." }, { status: 429 });
 
   const parsed = schema.safeParse(await req.json().catch(() => null));

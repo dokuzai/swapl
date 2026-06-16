@@ -13,6 +13,10 @@ const mocks = vi.hoisted(() => ({
   createMessage: vi.fn(),
   findManyMessages: vi.fn(),
   updateManyMessages: vi.fn(),
+  countMessages: vi.fn(),
+  crFindMany: vi.fn(),
+  crFindUnique: vi.fn(),
+  crUpsert: vi.fn(),
   findUniqueThrottle: vi.fn(),
   upsertThrottle: vi.fn(),
   cpFindFirst: vi.fn(),
@@ -40,6 +44,12 @@ vi.mock("@/lib/db", async (importOriginal) => {
         create: mocks.createMessage,
         findMany: mocks.findManyMessages,
         updateMany: mocks.updateManyMessages,
+        count: mocks.countMessages,
+      },
+      conversationRead: {
+        findMany: mocks.crFindMany,
+        findUnique: mocks.crFindUnique,
+        upsert: mocks.crUpsert,
       },
       swapMessageEmailThrottle: {
         findUnique: mocks.findUniqueThrottle,
@@ -112,6 +122,10 @@ beforeEach(() => {
   mocks.findUniqueProposal.mockResolvedValue(proposal);
   mocks.findManyMessages.mockResolvedValue([]);
   mocks.updateManyMessages.mockResolvedValue({ count: 0 });
+  mocks.countMessages.mockResolvedValue(0);
+  mocks.crFindMany.mockResolvedValue([]); // no read cursors by default
+  mocks.crFindUnique.mockResolvedValue(null);
+  mocks.crUpsert.mockResolvedValue({});
   mocks.findUniqueThrottle.mockResolvedValue(null);
   mocks.upsertThrottle.mockResolvedValue({});
   mocks.cpFindFirst.mockResolvedValue(null); // no guest seat by default
@@ -319,17 +333,40 @@ describe("GET /api/proposals/[id]/messages", () => {
     );
   });
 
-  it("marks inbound unread messages read by default", async () => {
+  it("advances only the caller's own read cursor by default (DOK-195)", async () => {
     await get();
-    expect(mocks.updateManyMessages).toHaveBeenCalledWith({
-      where: { proposalId: "prop-1", authorId: { not: "u-proposer" }, readAt: null },
-      data: { readAt: expect.any(Date) },
+    expect(mocks.crUpsert).toHaveBeenCalledWith({
+      where: { proposalId_userId: { proposalId: "prop-1", userId: "u-proposer" } },
+      create: { proposalId: "prop-1", userId: "u-proposer", lastReadAt: expect.any(Date) },
+      update: { lastReadAt: expect.any(Date) },
     });
+    // Per-recipient: it must NOT mutate the shared message rows anymore.
+    expect(mocks.updateManyMessages).not.toHaveBeenCalled();
   });
 
   it("skips read-marking when markRead=false", async () => {
     await get("?markRead=false");
-    expect(mocks.updateManyMessages).not.toHaveBeenCalled();
+    expect(mocks.crUpsert).not.toHaveBeenCalled();
+  });
+
+  it("flags ✓✓ only once the recipient principal's cursor passes the message (DOK-195)", async () => {
+    // Viewer (u-proposer) sent m1; recipient principal is u-target.
+    mocks.findManyMessages.mockResolvedValue([
+      row({ id: "m1", authorId: "u-proposer", createdAt: new Date("2026-06-01T00:00:00Z") }),
+    ]);
+    // u-target has read up to a point AFTER m1 → m1 shows as read.
+    mocks.crFindMany.mockResolvedValue([
+      { userId: "u-target", lastReadAt: new Date("2026-06-02T00:00:00Z") },
+    ]);
+    const read1 = await (await get()).json();
+    expect(read1.messages[0].readAt).toBe(new Date("2026-06-02T00:00:00Z").toISOString());
+
+    // u-target's cursor is BEFORE m1 → not read yet.
+    mocks.crFindMany.mockResolvedValue([
+      { userId: "u-target", lastReadAt: new Date("2026-05-30T00:00:00Z") },
+    ]);
+    const read2 = await (await get()).json();
+    expect(read2.messages[0].readAt).toBeNull();
   });
 });
 
@@ -341,14 +378,25 @@ describe("POST /api/proposals/[id]/messages/read", () => {
     expect((await read()).status).toBe(403);
   });
 
-  it("marks inbound unread messages and reports the count", async () => {
-    mocks.updateManyMessages.mockResolvedValue({ count: 3 });
+  it("advances the caller's cursor and reports how many it cleared (DOK-195)", async () => {
+    mocks.crFindUnique.mockResolvedValue({ lastReadAt: new Date("2026-06-01T00:00:00Z") });
+    mocks.countMessages.mockResolvedValue(3);
     const res = await read();
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true, marked: 3 });
-    expect(mocks.updateManyMessages).toHaveBeenCalledWith({
-      where: { proposalId: "prop-1", authorId: { not: "u-proposer" }, readAt: null },
-      data: { readAt: expect.any(Date) },
+    // Counts inbound messages newer than the caller's prior cursor...
+    expect(mocks.countMessages).toHaveBeenCalledWith({
+      where: {
+        proposalId: "prop-1",
+        authorId: { not: "u-proposer" },
+        createdAt: { gt: new Date("2026-06-01T00:00:00Z") },
+      },
+    });
+    // ...then advances only the caller's own cursor.
+    expect(mocks.crUpsert).toHaveBeenCalledWith({
+      where: { proposalId_userId: { proposalId: "prop-1", userId: "u-proposer" } },
+      create: { proposalId: "prop-1", userId: "u-proposer", lastReadAt: expect.any(Date) },
+      update: { lastReadAt: expect.any(Date) },
     });
   });
 });

@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   getSessionFromRequest: vi.fn(),
   findManyProposals: vi.fn(),
   groupByMessages: vi.fn(),
+  crFindMany: vi.fn(),
 }));
 
 vi.mock("@/lib/auth/session", () => ({ getSessionFromRequest: mocks.getSessionFromRequest }));
@@ -16,6 +17,7 @@ vi.mock("@/lib/db", () => ({
   prisma: {
     swapProposal: { findMany: mocks.findManyProposals },
     swapMessage: { groupBy: mocks.groupByMessages },
+    conversationRead: { findMany: mocks.crFindMany },
   },
 }));
 
@@ -45,6 +47,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   mocks.getSessionFromRequest.mockResolvedValue(session);
   mocks.groupByMessages.mockResolvedValue([]);
+  mocks.crFindMany.mockResolvedValue([]);
 });
 
 describe("GET /api/conversations", () => {
@@ -92,6 +95,29 @@ describe("GET /api/conversations", () => {
     expect(json.conversations[0].lastLine).toBe("original");
     expect(json.conversations[0].lastMessageAt).toBeNull();
     expect(json.conversations[0].unreadCount).toBe(0);
+  });
+
+  it("counts unread per-recipient: against THIS viewer's read cursor (DOK-195)", async () => {
+    mocks.findManyProposals.mockResolvedValue([proposalRow({ id: "p1", messages: [] })]);
+    mocks.crFindMany.mockResolvedValue([
+      { proposalId: "p1", lastReadAt: new Date("2026-06-04T00:00:00Z") },
+    ]);
+    await get();
+    // The unread query is keyed off the viewer's own cursor per proposal, so a
+    // co-participant reading the thread can never zero out this viewer's badge.
+    expect(mocks.crFindMany).toHaveBeenCalledWith({
+      where: { userId: "u-me", proposalId: { in: ["p1"] } },
+      select: { proposalId: true, lastReadAt: true },
+    });
+    expect(mocks.groupByMessages).toHaveBeenCalledWith(
+      expect.objectContaining({
+        by: ["proposalId"],
+        where: expect.objectContaining({
+          authorId: { not: "u-me" },
+          OR: [{ proposalId: "p1", createdAt: { gt: new Date("2026-06-04T00:00:00Z") } }],
+        }),
+      })
+    );
   });
 
   it("sorts most recent activity first (last message beats stale proposal)", async () => {

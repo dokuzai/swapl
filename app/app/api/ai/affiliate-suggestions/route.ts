@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
 import { suggestAffiliateActivities } from "@/lib/ai/affiliate-suggestions";
 import { parseInterests } from "@/lib/interests";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimitDurable } from "@/lib/rate-limit";
 
 const schema = z.object({
   agreementId: z.string().min(1),
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
-  const rl = checkRateLimit(`ai:affiliate:${session.userId}`, 10, 10 * 60_000);
+  const rl = await checkRateLimitDurable(`ai:affiliate:${session.userId}`, 10, 10 * 60_000);
   if (!rl.ok) return NextResponse.json({ error: "Slow down — try again in a few minutes." }, { status: 429 });
 
   const parsed = schema.safeParse(await req.json().catch(() => null));

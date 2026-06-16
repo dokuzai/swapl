@@ -44,14 +44,27 @@ export async function getConversations(userId: string): Promise<Conversation[]> 
     orderBy: { updatedAt: "desc" },
   });
 
-  // Unread counts in one grouped query: inbound (other-party) messages with no
-  // readAt, across all the viewer's threads.
+  // Unread counts, per-recipient (DOK-195): inbound (other-party) messages
+  // created after THIS viewer's read cursor for each thread. One grouped query,
+  // keyed off the viewer's own cursors — a co-participant's reads never affect
+  // this count. Threads with no cursor yet count all inbound messages (epoch).
   const ids = proposals.map((p) => p.id);
   const unreadByProposal = new Map<string, number>();
   if (ids.length) {
+    const cursors = await prisma.conversationRead.findMany({
+      where: { userId, proposalId: { in: ids } },
+      select: { proposalId: true, lastReadAt: true },
+    });
+    const cursorByProposal = new Map(cursors.map((c) => [c.proposalId, c.lastReadAt]));
     const grouped = await prisma.swapMessage.groupBy({
       by: ["proposalId"],
-      where: { proposalId: { in: ids }, authorId: { not: userId }, readAt: null },
+      where: {
+        authorId: { not: userId },
+        OR: ids.map((pid) => ({
+          proposalId: pid,
+          createdAt: { gt: cursorByProposal.get(pid) ?? new Date(0) },
+        })),
+      },
       _count: { _all: true },
     });
     for (const g of grouped) unreadByProposal.set(g.proposalId, g._count._all);

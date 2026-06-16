@@ -26,10 +26,26 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { count } = await prisma.swapMessage.updateMany({
-    where: { proposalId: id, authorId: { not: session.userId }, readAt: null },
-    data: { readAt: new Date() },
+  // Advance only the CALLER's read cursor (DOK-195). `marked` reports how many
+  // inbound messages this clears for the caller — computed against their prior
+  // cursor before we move it, so the count stays meaningful and per-recipient.
+  const prev = await prisma.conversationRead.findUnique({
+    where: { proposalId_userId: { proposalId: id, userId: session.userId } },
+    select: { lastReadAt: true },
+  });
+  const marked = await prisma.swapMessage.count({
+    where: {
+      proposalId: id,
+      authorId: { not: session.userId },
+      createdAt: { gt: prev?.lastReadAt ?? new Date(0) },
+    },
+  });
+  const now = new Date();
+  await prisma.conversationRead.upsert({
+    where: { proposalId_userId: { proposalId: id, userId: session.userId } },
+    create: { proposalId: id, userId: session.userId, lastReadAt: now },
+    update: { lastReadAt: now },
   });
 
-  return NextResponse.json({ ok: true, marked: count });
+  return NextResponse.json({ ok: true, marked });
 }

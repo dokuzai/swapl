@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { draftListingCopy } from "@/lib/ai/listing-content";
 import { PROPERTY_TYPES } from "@/lib/types";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimitDurable } from "@/lib/rate-limit";
 
 const schema = z.object({
   city: z.string().min(2),
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
   // 20 generations / 10 minutes is plenty for iterating a draft, low enough
   // to stop a runaway loop from a stuck client.
-  const rl = checkRateLimit(`ai:listing:${session.userId}`, 20, 10 * 60_000);
+  const rl = await checkRateLimitDurable(`ai:listing:${session.userId}`, 20, 10 * 60_000);
   if (!rl.ok) return NextResponse.json({ error: "Slow down — try again in a few minutes." }, { status: 429 });
 
   const parsed = schema.safeParse(await req.json().catch(() => null));
