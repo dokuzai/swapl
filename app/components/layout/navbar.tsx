@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LogoMark } from "@/components/illustrations";
 import { getSession } from "@/lib/auth/session";
 import { getI18n } from "@/lib/i18n/server";
+import { LocaleProvider } from "@/lib/i18n/client";
 import type { DictKey } from "@/lib/i18n/dict-en";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { HeaderNav, type HeaderNavLabels } from "@/components/layout/header-nav";
@@ -50,6 +51,11 @@ export async function Navbar() {
   };
 
   return (
+    // Provide i18n context to the header's client children (AvatarMenu →
+    // AppRatingDialog, etc.) which call useT(). The Navbar renders OUTSIDE the
+    // per-page I18nProviderShell, so it must supply its own LocaleProvider —
+    // otherwise every signed-in page crashes once the avatar menu mounts.
+    <LocaleProvider locale={locale} dict={dict}>
     <header className="sticky top-0 z-50 nav-blurred border-b border-line">
       <nav className="wrap flex items-center justify-between gap-4 py-4">
         <Link href="/" className="flex items-center gap-2 font-display text-[22px] font-medium tracking-tight shrink-0">
@@ -118,5 +124,6 @@ export async function Navbar() {
         />
       )}
     </header>
+    </LocaleProvider>
   );
 }
