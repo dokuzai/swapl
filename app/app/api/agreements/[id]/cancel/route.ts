@@ -5,13 +5,14 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { insuranceProvider } from "@/lib/insurance";
+import { releaseListingOccupancy } from "@/lib/listing/occupancy";
 
-export async function POST(_req: Request, { params }: RouteContext<"/api/agreements/[id]/cancel">) {
-  const session = await getSession();
+export async function POST(req: Request, { params }: RouteContext<"/api/agreements/[id]/cancel">) {
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   const { id } = await params;
 
@@ -50,13 +51,14 @@ export async function POST(_req: Request, { params }: RouteContext<"/api/agreeme
     }
   }
 
-  await prisma.$transaction([
-    prisma.swapAgreement.update({ where: { id }, data: { status: "INTERRUPTED" } }),
-    prisma.insurancePolicy.updateMany({
+  await prisma.$transaction(async (tx) => {
+    await tx.swapAgreement.update({ where: { id }, data: { status: "INTERRUPTED" } });
+    await tx.insurancePolicy.updateMany({
       where: { agreementId: id },
       data: { status: "cancelled" },
-    }),
-  ]);
+    });
+    await releaseListingOccupancy(tx, { source: "swap_agreement", sourceId: id });
+  });
 
   for (const u of [agreement.listing1.user, agreement.listing2.user]) {
     sendEmail({

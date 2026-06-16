@@ -28,6 +28,7 @@ const h = vi.hoisted(() => {
     users: new Map<string, any>(),
     listings: new Map<string, any>(),
     stays: new Map<string, any>(),
+    occupancies: new Map<string, any>(),
     txns: [] as any[],
     seq: 0,
   };
@@ -104,6 +105,24 @@ const h = vi.hoisted(() => {
         return [];
       },
     },
+    listingOccupancy: {
+      async create({ data }: any) {
+        const row = { id: `occ_${++store.seq}`, createdAt: new Date(), ...data };
+        store.occupancies.set(row.id, row);
+        return { ...row };
+      },
+      async deleteMany({ where }: any) {
+        let count = 0;
+        for (const [id, row] of [...store.occupancies]) {
+          if (where?.source && row.source !== where.source) continue;
+          if (where?.sourceId && row.sourceId !== where.sourceId) continue;
+          if (where?.listingId && row.listingId !== where.listingId) continue;
+          store.occupancies.delete(id);
+          count++;
+        }
+        return { count };
+      },
+    },
     // Model Prisma's atomicity: snapshot the store, run the callback, and on
     // throw restore the snapshot so a failed transaction leaves no partial write.
     async $transaction(fn: any) {
@@ -111,6 +130,7 @@ const h = vi.hoisted(() => {
         users: new Map([...store.users].map(([k, v]) => [k, { ...v }])),
         listings: new Map([...store.listings].map(([k, v]) => [k, { ...v }])),
         stays: new Map([...store.stays].map(([k, v]) => [k, { ...v }])),
+        occupancies: new Map([...store.occupancies].map(([k, v]) => [k, { ...v }])),
         txns: store.txns.map((t) => ({ ...t })),
         seq: store.seq,
       };
@@ -120,6 +140,7 @@ const h = vi.hoisted(() => {
         store.users = snap.users;
         store.listings = snap.listings;
         store.stays = snap.stays;
+        store.occupancies = snap.occupancies;
         store.txns = snap.txns;
         store.seq = snap.seq;
         throw err;
@@ -167,6 +188,7 @@ beforeEach(() => {
   store.users.clear();
   store.listings.clear();
   store.stays.clear();
+  store.occupancies.clear();
   store.txns = [];
   store.seq = 0;
   seed();
@@ -184,6 +206,9 @@ describe("createKeysStay", () => {
     expect(store.users.get("guest")!.keysBalance).toBe(16); // 100 - 84 held
     expect(store.txns.filter((t) => t.kind === "hold")).toHaveLength(1);
     expect(store.stays.get(stay.id)!.status).toBe("pending");
+    expect([...store.occupancies.values()]).toEqual([
+      expect.objectContaining({ listingId: "L1", source: "keys_stay", sourceId: stay.id, dateFrom: from, dateTo: to }),
+    ]);
   });
 
   it("rejects booking your own listing", async () => {
@@ -212,6 +237,7 @@ describe("createKeysStay", () => {
     ).rejects.toMatchObject({ code: "NEGATIVE_BALANCE" });
     // No orphan stay left behind.
     expect(store.stays.size).toBe(0);
+    expect(store.occupancies.size).toBe(0);
   });
 });
 
@@ -248,6 +274,7 @@ describe("releaseKeysStay", () => {
     await releaseKeysStay(stay.id, "host", "declined");
     expect(store.users.get("guest")!.keysBalance).toBe(100);
     expect(store.stays.get(stay.id)!.status).toBe("declined");
+    expect(store.occupancies.size).toBe(0);
     expect(store.users.get("host")!.keysBalance).toBe(0); // host never earned
   });
 
@@ -256,6 +283,7 @@ describe("releaseKeysStay", () => {
     await releaseKeysStay(stay.id, "guest", "cancelled");
     expect(store.users.get("guest")!.keysBalance).toBe(100);
     expect(store.stays.get(stay.id)!.status).toBe("cancelled");
+    expect(store.occupancies.size).toBe(0);
   });
 
   it("a guest cannot decline; a host cannot cancel", async () => {

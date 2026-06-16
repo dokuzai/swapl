@@ -91,7 +91,10 @@ export const marketingEventSchema = z.object({
   term: z.string().max(120).optional(),
   content: z.string().max(120).optional(),
   referrer: z.string().max(500).optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional().refine(
+    (value) => !value || JSON.stringify(value).length <= 2000,
+    "Metadata too large",
+  ),
 });
 
 export const credentialsSchema = z.object({

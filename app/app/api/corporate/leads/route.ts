@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 
 const schema = z.object({
   companyName: z.string().min(2),
@@ -13,6 +14,10 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const ip = clientIpFromRequest(req);
+  const rl = await checkRateLimitDurable(`corporate-leads:${ip}`, 5, 60 * 60 * 1000);
+  if (!rl.ok) return NextResponse.json({ error: "RATE_LIMITED" }, { status: 429 });
+
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });
 

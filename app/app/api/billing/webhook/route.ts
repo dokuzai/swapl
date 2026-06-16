@@ -3,9 +3,10 @@
 // Two non-negotiables:
 //   1. Raw body — signature verification fails if Next parses the JSON. We use
 //      `await req.text()` and a "force-dynamic"/"nodejs" runtime.
-//   2. Idempotency — every event id is recorded in BillingEvent and dropped on
-//      replay. Stripe replays freely; we must never double-bill or
-//      double-grant entitlements.
+//   2. Idempotency — every successfully handled event id is recorded in
+//      BillingEvent and dropped on replay. Stripe replays freely; we must never
+//      double-bill or double-grant entitlements, and failed first attempts must
+//      remain retryable.
 //
 // Handlers below are intentionally narrow: they touch only domain rows.
 // All Stripe-side logic (proration, price math, invoice PDFs) stays inside
@@ -52,12 +53,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Idempotency: drop replays after first handle.
+  // Idempotency: reserve the event before handling so simultaneous Stripe
+  // retries cannot double-apply domain side effects. If handling fails, delete
+  // the reservation so Stripe's next retry can reconcile the event.
   const seen = await prisma.billingEvent.findUnique({ where: { stripeId: event.id } });
   if (seen) return NextResponse.json({ ok: true, replay: true });
-  await prisma.billingEvent.create({
-    data: { stripeId: event.id, type: event.type, payload: JSON.stringify(event) },
-  });
+  try {
+    await prisma.billingEvent.create({
+      data: { stripeId: event.id, type: event.type, payload: JSON.stringify(event) },
+    });
+  } catch (err) {
+    if (typeof err === "object" && err !== null && (err as { code?: string }).code === "P2002") {
+      return NextResponse.json({ ok: true, replay: true });
+    }
+    throw err;
+  }
 
   try {
     switch (event.type) {
@@ -95,7 +105,7 @@ export async function POST(req: Request) {
       // Future:
       //   payout.paid → ledger entry
       default:
-        // Unhandled events are still recorded above for replay debugging.
+        // Unhandled events are still recorded for replay debugging.
         break;
     }
     return NextResponse.json({ ok: true });
@@ -105,6 +115,7 @@ export async function POST(req: Request) {
     // transient DB failures — but means handlers MUST be idempotent against
     // their own writes too (Subscription is keyed by stripeSubscriptionId,
     // OrderAddOn by stripePaymentIntentId, etc.).
+    await prisma.billingEvent.delete({ where: { stripeId: event.id } }).catch(() => {});
     return NextResponse.json({ error: "handler failed" }, { status: 500 });
   }
 }

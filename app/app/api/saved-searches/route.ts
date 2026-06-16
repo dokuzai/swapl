@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
-import { requireMembership } from "@/lib/auth/abilities";
+import { requireMembershipForUser } from "@/lib/auth/abilities";
 import { PlanLimitError } from "@/lib/billing/limits";
 
 const schema = z.object({
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   try {
-    await requireMembership("plus");
+    await requireMembershipForUser(session.userId, "plus");
   } catch (err) {
     if (err instanceof PlanLimitError) {
       return NextResponse.json(
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   try {
-    await requireMembership("plus");
+    await requireMembershipForUser(session.userId, "plus");
   } catch (err) {
     if (err instanceof PlanLimitError) {
       return NextResponse.json(

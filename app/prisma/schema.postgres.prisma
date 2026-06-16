@@ -39,10 +39,12 @@ model User {
   lastActiveAt DateTime?
 
   // AI provider preferences (override the env-wide default).
-  // apiKey is stored verbatim for the demo; in prod, encrypt at rest.
+  // apiKey is encrypted at rest for new writes; run scripts/backfill-ai-api-keys.ts
+  // once in deployed envs to rewrite legacy plaintext rows.
   aiProvider String? // "kimi" | "openai" | "anthropic"
   aiModel    String?
   aiApiKey   String?
+  conversationReads ConversationRead[]
 
   // Moderation: a suspended user cannot log in or send proposals.
   // Set/cleared by admins from /admin/users.
@@ -421,6 +423,7 @@ model Listing {
   homeGuide            ListingHomeGuide?
   keysStays            KeysStay[]
   blockedRanges        ListingBlockedRange[]
+  occupancies          ListingOccupancy[]
   propertyVerifications PropertyVerification[]
   publishAcks          ListingPublishAck[]
   shareAttributions    ListingShareAttribution[]
@@ -492,6 +495,7 @@ model SwapProposal {
   agreement         SwapAgreement?
   messages          SwapMessage[]
   participants      ConversationParticipant[]
+  readCursors       ConversationRead[]
 
   @@index([proposerId])
   @@index([targetListingId])
@@ -515,10 +519,12 @@ model SwapMessage {
 // in a multi-party thread (principals + guests) one participant reading must not
 // clear another's unread state. `lastReadAt` is the high-water mark — a message
 // is unread for this user iff it was authored by someone else and created after
-// lastReadAt. Mirrors SwapMessageEmailThrottle's composite-key, FK-free shape.
+// lastReadAt.
 model ConversationRead {
   proposalId String
+  proposal   SwapProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   userId     String
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   lastReadAt DateTime @default(now())
 
   @@id([proposalId, userId])
@@ -836,6 +842,25 @@ model ListingBlockedRange {
   createdAt DateTime @default(now())
 
   @@index([listingId])
+}
+
+// Authoritative occupancy ledger for availability writes. Every active
+// agreement, pending/confirmed Keys stay, and host block writes rows here in
+// the same transaction as its source row. In Postgres, production additionally
+// applies an exclusion constraint over (listingId, date range) via
+// scripts/apply-postgres-availability-constraints.ts.
+model ListingOccupancy {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  source    String   // "swap_agreement" | "keys_stay" | "blocked_range"
+  sourceId  String
+  dateFrom  DateTime
+  dateTo    DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([source, sourceId, listingId])
+  @@index([listingId, dateFrom, dateTo])
 }
 
 // ---------- GROWTH ENGINE / REFERRALS (DOK-157) ----------

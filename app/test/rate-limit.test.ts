@@ -61,3 +61,34 @@ describe("checkRateLimit", () => {
     expect(checkRateLimit(b, 1, 1000).ok).toBe(true);
   });
 });
+
+describe("checkRateLimitDurable production posture", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
+  it("fails closed in production when Upstash is not configured", async () => {
+    vi.resetModules();
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("UPSTASH_REDIS_REST_URL", "");
+    vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "");
+    const { checkRateLimitDurable } = await import("@/lib/rate-limit");
+    const result = await checkRateLimitDurable("ai:test", 20, 60_000);
+    expect(result.ok).toBe(false);
+    expect(result.remaining).toBe(0);
+  });
+
+  it("fails closed in production when Upstash errors", async () => {
+    vi.resetModules();
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("UPSTASH_REDIS_REST_URL", "https://redis.example");
+    vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "token");
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network")));
+    const { checkRateLimitDurable } = await import("@/lib/rate-limit");
+    const result = await checkRateLimitDurable("ai:test", 20, 60_000);
+    expect(result.ok).toBe(false);
+    expect(result.remaining).toBe(0);
+  });
+});

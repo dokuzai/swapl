@@ -7,7 +7,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { startOneTimeCheckout } from "@/lib/billing/checkout";
 import { isStripeConfigured, BillingNotConfigured } from "@/lib/billing/stripe";
 
@@ -23,7 +23,7 @@ const PRICE_ENV = {
 const AMOUNT_CENTS = { 14: 1900, 30: 2900 } as const;
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
   const parsed = schema.safeParse(await req.json().catch(() => null));
@@ -57,7 +57,11 @@ export async function POST(req: Request) {
     }
   }
 
-  // Pre-launch path: activate immediately.
+  if (process.env.ALLOW_PRELAUNCH_BILLING_BYPASS !== "1") {
+    return NextResponse.json({ error: "Featured checkout is not configured." }, { status: 503 });
+  }
+
+  // Explicit pre-launch path: activate immediately.
   const startsAt = new Date();
   const endsAt = new Date(startsAt.getTime() + parsed.data.durationDays * 24 * 60 * 60 * 1000);
   await prisma.$transaction([

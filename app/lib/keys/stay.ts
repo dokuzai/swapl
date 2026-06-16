@@ -13,12 +13,13 @@
 //
 // All Keys movements go through lib/keys/ledger (atomic, no negative balance).
 
-import type { Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import { earn, hold, release, spend } from "@/lib/keys/ledger";
 import { nightlyKeysFor, nightsBetween, keysCostFor } from "@/lib/keys/value";
 import { bookedRangesFor, rangesOverlap } from "@/lib/listing/availability";
 import { insuranceProvider } from "@/lib/insurance";
+import { isListingDateOverlapError, occupyListing, releaseListingOccupancy } from "@/lib/listing/occupancy";
 
 export class KeysStayError extends Error {
   constructor(
@@ -77,6 +78,7 @@ export async function keysAvailability(listingId: string): Promise<AvailabilityR
     },
   });
   if (!listing) throw new KeysStayError("LISTING_NOT_FOUND", "Listing not found");
+  if (!listing.isActive) throw new KeysStayError("LISTING_NOT_FOUND", "Listing not found");
 
   const nightly = nightlyKeysFor(listing);
 
@@ -175,7 +177,28 @@ export async function createKeysStay(args: {
   // Create the stay row and hold the guest's Keys in one transaction. The
   // ledger guard throws NEGATIVE_BALANCE if the guest can't afford it, rolling
   // the whole transaction back (no orphan pending stay).
-  const stay = await prisma.$transaction(async (tx) => {
+  let stay: { id: string; status: string };
+  try {
+    stay = await prisma.$transaction(async (tx) => {
+    const activeAgreements = await tx.swapAgreement.findMany({
+      where: {
+        status: "ACTIVE",
+        OR: [{ listing1Id: listingId }, { listing2Id: listingId }],
+      },
+      select: { dateFrom: true, dateTo: true },
+    });
+    const activeStays = await tx.keysStay.findMany({
+      where: { listingId, status: { in: ["pending", "confirmed"] } },
+      select: { dateFrom: true, dateTo: true },
+    });
+    const hostBlocks = await tx.listingBlockedRange.findMany({
+      where: { listingId },
+      select: { dateFrom: true, dateTo: true },
+    });
+    const txConflicts = [...activeAgreements, ...activeStays, ...hostBlocks];
+    if (txConflicts.some((c) => rangesOverlap(dateFrom, dateTo, c.dateFrom, c.dateTo))) {
+      throw new KeysStayError("DATES_TAKEN", "Those dates are already booked");
+    }
     const created = await tx.keysStay.create({
       data: {
         listingId,
@@ -188,9 +211,22 @@ export async function createKeysStay(args: {
         status: "pending",
       },
     });
+    await occupyListing(tx, {
+      listingId,
+      source: "keys_stay",
+      sourceId: created.id,
+      dateFrom,
+      dateTo,
+    });
     await hold(guestId, keysCost, { stayId: created.id, note: `Hold for stay ${created.id}` }, tx as Prisma.TransactionClient);
     return created;
-  });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  } catch (err) {
+    if (isListingDateOverlapError(err)) {
+      throw new KeysStayError("DATES_TAKEN", "Those dates are already booked");
+    }
+    throw err;
+  }
 
   return { id: stay.id, status: stay.status, nights, keysCost, hostId: listing.userId };
 }
@@ -321,6 +357,7 @@ export async function releaseKeysStay(
     }
     await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: `Hold released (${outcome})` }, t);
     await t.keysStay.update({ where: { id: stay.id }, data: { status: outcome } });
+    await releaseListingOccupancy(t, { source: "keys_stay", sourceId: stay.id });
   });
 
   return { id: stay.id };

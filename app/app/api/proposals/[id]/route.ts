@@ -11,6 +11,8 @@ import { toDTO } from "@/lib/listing-utils";
 import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { getTripPhase, guideUnlocked, homeGuideComplete } from "@/lib/trip/phase";
 import { bookedRangesFor, rangesOverlap } from "@/lib/listing/availability";
+import { Prisma } from "@/generated/prisma/client";
+import { isListingDateOverlapError, occupyListing } from "@/lib/listing/occupancy";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -211,6 +213,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
 
   // accept
   if (action === "accept") {
+    if (!isTarget) return forbidden("Only target can accept.");
     if (proposal.status !== "PENDING" && proposal.status !== "COUNTERED") {
       return invalidInput("Cannot accept at this stage.");
     }
@@ -277,39 +280,101 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     const fallbackPolicyNumber = `SC-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`;
     const fallbackExpiry = new Date(proposal.dateTo.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-    const result = await prisma.$transaction(async (tx) => {
-      const updated = await tx.swapProposal.update({
-        where: { id },
-        data: { status: "ACCEPTED" },
-      });
-      const agreement = await tx.swapAgreement.create({
-        data: {
-          proposalId: updated.id,
-          listing1Id: updated.proposerListingId,
-          listing2Id: updated.targetListingId,
-          dateFrom: updated.dateFrom,
-          dateTo: updated.dateTo,
-          keyCode1: Math.floor(1000 + Math.random() * 9000).toString(),
-          keyCode2: Math.floor(1000 + Math.random() * 9000).toString(),
-          status: "ACTIVE",
-        },
-      });
-      const policy = await tx.insurancePolicy.create({
-        data: {
-          agreementId: agreement.id,
-          provider: provider.name,
-          policyNumber: policyResult?.policyNumber ?? fallbackPolicyNumber,
-          coverageAmount: policyResult?.coverageAmount ?? 150_000,
-          status: policyResult ? "active" : "pending",
-          premiumCents: policyResult?.premiumCents ?? 0,
-          platformShareCents: policyResult?.platformShareCents ?? 0,
-          externalId: policyResult?.externalId ?? null,
-          documentsUrl: policyResult?.documentsUrl ?? null,
-          expiresAt: policyResult?.expiresAt ?? fallbackExpiry,
-        },
-      });
-      return { agreement, policyId: policy.id };
-    });
+    let result: { agreement: { id: string }; policyId: string };
+    try {
+      result = await prisma.$transaction(async (tx) => {
+        const [txOccA, txOccB, txKeysA, txKeysB, txBlocksA, txBlocksB] = await Promise.all([
+          tx.swapAgreement.findMany({
+            where: {
+              status: "ACTIVE",
+              OR: [{ listing1Id: proposal.proposerListingId }, { listing2Id: proposal.proposerListingId }],
+            },
+            select: { dateFrom: true, dateTo: true },
+          }),
+          tx.swapAgreement.findMany({
+            where: {
+              status: "ACTIVE",
+              OR: [{ listing1Id: proposal.targetListingId }, { listing2Id: proposal.targetListingId }],
+            },
+            select: { dateFrom: true, dateTo: true },
+          }),
+          tx.keysStay.findMany({
+            where: { listingId: proposal.proposerListingId, status: { in: ["pending", "confirmed"] } },
+            select: { dateFrom: true, dateTo: true },
+          }),
+          tx.keysStay.findMany({
+            where: { listingId: proposal.targetListingId, status: { in: ["pending", "confirmed"] } },
+            select: { dateFrom: true, dateTo: true },
+          }),
+          tx.listingBlockedRange.findMany({
+            where: { listingId: proposal.proposerListingId },
+            select: { dateFrom: true, dateTo: true },
+          }),
+          tx.listingBlockedRange.findMany({
+            where: { listingId: proposal.targetListingId },
+            select: { dateFrom: true, dateTo: true },
+          }),
+        ]);
+        const allOccA = [...txOccA, ...txKeysA, ...txBlocksA];
+        const allOccB = [...txOccB, ...txKeysB, ...txBlocksB];
+        const txTaken =
+          allOccA.some((r) => rangesOverlap(proposal.dateFrom, proposal.dateTo, r.dateFrom, r.dateTo)) ||
+          allOccB.some((r) => rangesOverlap(proposal.dateFrom, proposal.dateTo, r.dateFrom, r.dateTo));
+        if (txTaken) {
+          throw new Error("DATES_TAKEN");
+        }
+        const updated = await tx.swapProposal.update({
+          where: { id },
+          data: { status: "ACCEPTED" },
+        });
+        const agreement = await tx.swapAgreement.create({
+          data: {
+            proposalId: updated.id,
+            listing1Id: updated.proposerListingId,
+            listing2Id: updated.targetListingId,
+            dateFrom: updated.dateFrom,
+            dateTo: updated.dateTo,
+            keyCode1: Math.floor(1000 + Math.random() * 9000).toString(),
+            keyCode2: Math.floor(1000 + Math.random() * 9000).toString(),
+            status: "ACTIVE",
+          },
+        });
+        await occupyListing(tx, {
+          listingId: agreement.listing1Id,
+          source: "swap_agreement",
+          sourceId: agreement.id,
+          dateFrom: agreement.dateFrom,
+          dateTo: agreement.dateTo,
+        });
+        await occupyListing(tx, {
+          listingId: agreement.listing2Id,
+          source: "swap_agreement",
+          sourceId: agreement.id,
+          dateFrom: agreement.dateFrom,
+          dateTo: agreement.dateTo,
+        });
+        const policy = await tx.insurancePolicy.create({
+          data: {
+            agreementId: agreement.id,
+            provider: provider.name,
+            policyNumber: policyResult?.policyNumber ?? fallbackPolicyNumber,
+            coverageAmount: policyResult?.coverageAmount ?? 150_000,
+            status: policyResult ? "active" : "pending",
+            premiumCents: policyResult?.premiumCents ?? 0,
+            platformShareCents: policyResult?.platformShareCents ?? 0,
+            externalId: policyResult?.externalId ?? null,
+            documentsUrl: policyResult?.documentsUrl ?? null,
+            expiresAt: policyResult?.expiresAt ?? fallbackExpiry,
+          },
+        });
+        return { agreement, policyId: policy.id };
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    } catch (err) {
+      if ((err instanceof Error && err.message === "DATES_TAKEN") || isListingDateOverlapError(err)) {
+        return invalidInput("One of the homes is no longer available for these dates.");
+      }
+      throw err;
+    }
 
     // DOK-156 — env-gated TON proof-of-cover. Fire-and-forget: anchoring the
     // certificate hash on-chain must NEVER block or fail acceptance. When the

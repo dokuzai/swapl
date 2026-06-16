@@ -10,6 +10,7 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { getSessionFromRequest } from "@/lib/auth/session";
+import { checkRateLimitDurable } from "@/lib/rate-limit";
 
 const f = createUploadthing();
 
@@ -22,6 +23,8 @@ export const ourFileRouter = {
     .middleware(async ({ req }) => {
       const session = await getSessionFromRequest(req);
       if (!session) throw new UploadThingError("UNAUTHENTICATED");
+      const rl = await checkRateLimitDurable(`upload:verification-video:${session.userId}`, 5, 24 * 60 * 60 * 1000);
+      if (!rl.ok) throw new UploadThingError("RATE_LIMITED");
       return { userId: session.userId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
@@ -36,6 +39,8 @@ export const ourFileRouter = {
     .middleware(async ({ req }) => {
       const session = await getSessionFromRequest(req);
       if (!session) throw new UploadThingError("UNAUTHENTICATED");
+      const rl = await checkRateLimitDurable(`upload:listing-photo:${session.userId}`, 60, 60 * 60 * 1000);
+      if (!rl.ok) throw new UploadThingError("RATE_LIMITED");
       return { userId: session.userId };
     })
     .onUploadComplete(async ({ metadata, file }) => {

@@ -65,7 +65,14 @@ export async function requireAdminFromRequest(req: Request): Promise<CurrentUser
 
 export async function requireMembership(min: Exclude<PlanId, "free">): Promise<void> {
   const session = await requireSession();
-  const plan = await getEffectivePlan(session.userId);
+  await requireMembershipForUser(session.userId, min);
+}
+
+export async function requireMembershipForUser(
+  userId: string,
+  min: Exclude<PlanId, "free">
+): Promise<void> {
+  const plan = await getEffectivePlan(userId);
   if (plan.id === "free") {
     throw new PlanLimitError({
       currentPlan: "free",

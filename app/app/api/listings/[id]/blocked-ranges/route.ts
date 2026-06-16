@@ -3,6 +3,9 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
+import { Prisma } from "@/generated/prisma/client";
+import { isListingDateOverlapError, occupyListing, releaseListingOccupancy } from "@/lib/listing/occupancy";
+import { rangesOverlap } from "@/lib/listing/availability";
 
 // Host-managed manual blocks for a listing (DOK-159). The owner blocks dates
 // they don't want bookable (renovations, personal use); these subtract from the
@@ -65,14 +68,50 @@ export async function POST(req: Request, { params }: RouteContext<"/api/listings
     return invalidInput("End date must be after start.");
   }
 
-  const created = await prisma.listingBlockedRange.create({
-    data: {
-      listingId: id,
-      dateFrom: parsed.data.dateFrom,
-      dateTo: parsed.data.dateTo,
-      note: parsed.data.note ?? null,
-    },
-  });
+  let created: { id: string; dateFrom: Date; dateTo: Date; note: string | null; createdAt: Date };
+  try {
+    created = await prisma.$transaction(async (tx) => {
+      const [agreements, stays, blocks] = await Promise.all([
+        tx.swapAgreement.findMany({
+          where: { status: "ACTIVE", OR: [{ listing1Id: id }, { listing2Id: id }] },
+          select: { dateFrom: true, dateTo: true },
+        }),
+        tx.keysStay.findMany({
+          where: { listingId: id, status: { in: ["pending", "confirmed"] } },
+          select: { dateFrom: true, dateTo: true },
+        }),
+        tx.listingBlockedRange.findMany({
+          where: { listingId: id },
+          select: { dateFrom: true, dateTo: true },
+        }),
+      ]);
+      const occupied = [...agreements, ...stays, ...blocks];
+      if (occupied.some((r) => rangesOverlap(parsed.data.dateFrom, parsed.data.dateTo, r.dateFrom, r.dateTo))) {
+        throw new Error("DATES_TAKEN");
+      }
+      const row = await tx.listingBlockedRange.create({
+        data: {
+          listingId: id,
+          dateFrom: parsed.data.dateFrom,
+          dateTo: parsed.data.dateTo,
+          note: parsed.data.note ?? null,
+        },
+      });
+      await occupyListing(tx, {
+        listingId: id,
+        source: "blocked_range",
+        sourceId: row.id,
+        dateFrom: row.dateFrom,
+        dateTo: row.dateTo,
+      });
+      return row;
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  } catch (err) {
+    if ((err instanceof Error && err.message === "DATES_TAKEN") || isListingDateOverlapError(err)) {
+      return invalidInput("This blocked range overlaps an existing booking or block.");
+    }
+    throw err;
+  }
   return NextResponse.json({
     ok: true,
     range: {
@@ -104,6 +143,9 @@ export async function DELETE(req: Request, { params }: RouteContext<"/api/listin
   });
   if (!range || range.listingId !== id) return notFound("Blocked range not found");
 
-  await prisma.listingBlockedRange.delete({ where: { id: range.id } });
+  await prisma.$transaction(async (tx) => {
+    await tx.listingBlockedRange.delete({ where: { id: range.id } });
+    await releaseListingOccupancy(tx, { source: "blocked_range", sourceId: range.id, listingId: id });
+  });
   return NextResponse.json({ ok: true });
 }

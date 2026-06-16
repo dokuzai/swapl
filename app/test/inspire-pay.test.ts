@@ -30,6 +30,7 @@ const mocks = vi.hoisted(() => ({
   orderFindFirst: vi.fn(),
   orderCreate: vi.fn(),
   agreementFindUnique: vi.fn(),
+  occupancyCreate: vi.fn(async () => ({})),
   paymentIntentCreate: vi.fn(),
   sendEmail: vi.fn(),
   sendPush: vi.fn(),
@@ -59,7 +60,10 @@ vi.mock("@/lib/db", async (importOriginal) => ({
     $transaction: (fn: (tx: unknown) => unknown) =>
       fn({
         swapProposal: { update: mocks.txProposalUpdate },
-        swapAgreement: { create: mocks.txAgreementCreate },
+        swapAgreement: { create: mocks.txAgreementCreate, findMany: async () => [] },
+        keysStay: { findMany: async () => [] },
+        listingBlockedRange: { findMany: async () => [] },
+        listingOccupancy: { create: mocks.occupancyCreate },
         insurancePolicy: { create: mocks.txPolicyCreate },
       }),
   },

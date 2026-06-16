@@ -5,6 +5,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { encryptSecret, decryptSecret, isEncrypted } from "@/lib/crypto";
 import { resolveAIConfig } from "@/lib/ai/providers";
+import { backfillPlaintextAiKeys } from "@/lib/ai-key-backfill";
 
 beforeAll(() => {
   // Exercise the real env-keyed path rather than the dev fallback.
@@ -55,5 +56,32 @@ describe("resolveAIConfig decrypts the stored user key", () => {
       userOverride: { provider: "anthropic", model: null, apiKey: "sk-legacy" },
     });
     expect(config?.apiKey).toBe("sk-legacy");
+  });
+});
+
+describe("legacy AI key backfill", () => {
+  it("encrypts plaintext rows and leaves encrypted rows alone", async () => {
+    const encrypted = encryptSecret("sk-existing");
+    const rows = [
+      { id: "u-1", aiApiKey: "sk-legacy" },
+      { id: "u-2", aiApiKey: encrypted },
+    ];
+    const updates: Array<{ id: string; aiApiKey: string }> = [];
+    const result = await backfillPlaintextAiKeys({
+      user: {
+        async findMany() {
+          return rows;
+        },
+        async update({ where, data }) {
+          updates.push({ id: where.id, aiApiKey: data.aiApiKey });
+        },
+      },
+    });
+
+    expect(result).toEqual({ scanned: 2, encrypted: 1, skippedEncrypted: 1 });
+    expect(updates).toHaveLength(1);
+    expect(updates[0].id).toBe("u-1");
+    expect(isEncrypted(updates[0].aiApiKey)).toBe(true);
+    expect(decryptSecret(updates[0].aiApiKey)).toBe("sk-legacy");
   });
 });

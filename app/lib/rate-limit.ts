@@ -4,10 +4,9 @@
 // single node, but NOT safe across serverless invocations.
 //
 // `checkRateLimitDurable` is the production path: a fixed-window counter backed
-// by Upstash Redis (via its REST API, so no SDK dependency). It is env-gated —
-// when UPSTASH_REDIS_REST_URL / _TOKEN are unset, or on any Upstash error, it
-// transparently falls back to the in-memory limiter so dev and unconfigured
-// prod still function (best-effort).
+// by Upstash Redis (via its REST API, so no SDK dependency). In production it
+// fails closed when Upstash is missing or unavailable; falling back to memory in
+// serverless would make the control bypassable across instances.
 
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
@@ -51,21 +50,31 @@ export function checkRateLimit(
 
 // ---------- durable limiter (Upstash Redis REST) ----------
 
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
-const upstashEnabled = Boolean(UPSTASH_URL && UPSTASH_TOKEN);
-
 export type RateLimitResult = { ok: boolean; remaining: number; resetAt: number };
 
+function durableUnavailable(windowMs: number): RateLimitResult {
+  return { ok: false, remaining: 0, resetAt: Date.now() + windowMs };
+}
+
+function shouldFailClosed(): boolean {
+  return process.env.NODE_ENV === "production";
+}
+
 // Fixed-window counter shared across all serverless invocations via Upstash.
-// Uses the REST pipeline: INCR the per-window key, then PEXPIRE it. Falls back
-// to the in-memory limiter when Upstash is unconfigured or unreachable.
+// Uses the REST pipeline: INCR the per-window key, then PEXPIRE it. Dev can
+// fall back to memory; production must fail closed when the durable backend is
+// unavailable.
 export async function checkRateLimitDurable(
   key: string,
   limit: number,
   windowMs: number
 ): Promise<RateLimitResult> {
-  if (!upstashEnabled) return checkRateLimit(key, limit, windowMs);
+  const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!upstashUrl || !upstashToken) {
+    if (shouldFailClosed()) return durableUnavailable(windowMs);
+    return checkRateLimit(key, limit, windowMs);
+  }
 
   const now = Date.now();
   const windowIndex = Math.floor(now / windowMs);
@@ -73,10 +82,10 @@ export async function checkRateLimitDurable(
   const resetAt = (windowIndex + 1) * windowMs;
 
   try {
-    const res = await fetch(`${UPSTASH_URL}/pipeline`, {
+    const res = await fetch(`${upstashUrl}/pipeline`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${UPSTASH_TOKEN}`,
+        Authorization: `Bearer ${upstashToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify([
@@ -92,6 +101,7 @@ export async function checkRateLimitDurable(
     return { ok: count <= limit, remaining: Math.max(0, limit - count), resetAt };
   } catch (err) {
     console.error("[rate-limit:upstash]", err);
+    if (shouldFailClosed()) return durableUnavailable(windowMs);
     return checkRateLimit(key, limit, windowMs);
   }
 }

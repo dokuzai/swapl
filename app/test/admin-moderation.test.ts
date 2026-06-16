@@ -379,7 +379,16 @@ describe("POST /api/proposals/[id] while suspended", () => {
     mocks.getSessionFromRequest.mockResolvedValue({ userId: "u-proposer", email: "ana@swapl.test", name: "Ana" });
   });
 
+  it("does not let the proposer accept their own proposal", async () => {
+    mocks.proposalFindUnique.mockResolvedValue(proposalFixture());
+    const res = await postProposalAction(req("/api/proposals/p1", { action: "accept" }), ctx("p1"));
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ error: "Only target can accept." });
+    expect(mocks.proposalUpdate).not.toHaveBeenCalled();
+  });
+
   it("blocks accept with 403 ACCOUNT_SUSPENDED when the counterparty is suspended", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "u-target", email: "ben@swapl.test", name: "Ben" });
     mocks.proposalFindUnique.mockResolvedValue(proposalFixture({ targetSuspendedAt: new Date() }));
     const res = await postProposalAction(req("/api/proposals/p1", { action: "accept" }), ctx("p1"));
     expect(res.status).toBe(403);

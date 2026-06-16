@@ -15,6 +15,8 @@ const mocks = vi.hoisted(() => ({
   blockedFindUnique: vi.fn(),
   blockedCreate: vi.fn(),
   blockedDelete: vi.fn(async () => ({})),
+  occupancyCreate: vi.fn(async () => ({})),
+  occupancyDeleteMany: vi.fn(async () => ({ count: 1 })),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -30,6 +32,24 @@ vi.mock("@/lib/db", () => ({
       create: mocks.blockedCreate,
       delete: mocks.blockedDelete,
     },
+    listingOccupancy: {
+      create: mocks.occupancyCreate,
+      deleteMany: mocks.occupancyDeleteMany,
+    },
+    $transaction: (fn: (tx: unknown) => unknown) =>
+      fn({
+        swapAgreement: { findMany: mocks.agreementFindMany },
+        keysStay: { findMany: mocks.keysStayFindMany },
+        listingBlockedRange: {
+          findMany: mocks.blockedFindMany,
+          create: mocks.blockedCreate,
+          delete: mocks.blockedDelete,
+        },
+        listingOccupancy: {
+          create: mocks.occupancyCreate,
+          deleteMany: mocks.occupancyDeleteMany,
+        },
+      }),
   },
 }));
 
@@ -204,6 +224,28 @@ describe("blocked-ranges routes (owner-gated)", () => {
     const body = await res.json();
     expect(body.ok).toBe(true);
     expect(body.range.id).toBe("blk1");
+    expect(mocks.occupancyCreate).toHaveBeenCalledWith({
+      data: {
+        listingId: "L1",
+        source: "blocked_range",
+        sourceId: "blk1",
+        dateFrom: new Date("2026-07-10"),
+        dateTo: new Date("2026-07-15"),
+      },
+    });
+  });
+
+  it("rejects a block that overlaps an existing occupied range", async () => {
+    const { POST } = await import("@/app/api/listings/[id]/blocked-ranges/route");
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "owner" });
+    mocks.listingFindUnique.mockResolvedValue({ id: "L1", userId: "owner" });
+    mocks.keysStayFindMany.mockResolvedValue([{ dateFrom: new Date("2026-07-12"), dateTo: new Date("2026-07-18") }]);
+
+    const res = (await POST(postReq({ dateFrom: "2026-07-10", dateTo: "2026-07-15" }), ctx))!;
+
+    expect(res.status).toBe(400);
+    expect(mocks.blockedCreate).not.toHaveBeenCalled();
+    expect(mocks.occupancyCreate).not.toHaveBeenCalled();
   });
 
   it("rejects an inverted range", async () => {

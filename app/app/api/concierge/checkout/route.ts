@@ -5,7 +5,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail } from "@/lib/email";
 import { startOneTimeCheckout } from "@/lib/billing/checkout";
 import { isStripeConfigured, BillingNotConfigured } from "@/lib/billing/stripe";
@@ -24,7 +24,7 @@ const PRICE_BY_SLUG: Record<string, string | undefined> = {
 };
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });
@@ -69,7 +69,11 @@ export async function POST(req: Request) {
     }
   }
 
-  // Pre-launch path: record paid order so the UI flips state right away.
+  if (process.env.ALLOW_PRELAUNCH_BILLING_BYPASS !== "1") {
+    return NextResponse.json({ error: "Concierge checkout is not configured." }, { status: 503 });
+  }
+
+  // Explicit pre-launch path: record paid order so the UI flips state right away.
   const order = await prisma.orderAddOn.create({
     data: {
       userId: session.userId,

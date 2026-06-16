@@ -7,8 +7,11 @@
 import { NextResponse } from "next/server";
 import { UTApi } from "uploadthing/server";
 import { getSessionFromRequest } from "@/lib/auth/session";
+import { checkRateLimitDurable } from "@/lib/rate-limit";
 
 const MAX_BYTES = 8 * 1024 * 1024; // 8 MB, matching the web listingPhoto router
+const UPLOAD_LIMIT = 60;
+const UPLOAD_WINDOW_MS = 60 * 60 * 1000;
 // Allowlist concrete raster types. Notably EXCLUDES image/svg+xml — SVGs can
 // carry <script>, and "image/*" prefix matching would let them through.
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -23,6 +26,11 @@ const ALLOWED_IMAGE_TYPES = new Set([
 export async function POST(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+
+  const rl = await checkRateLimitDurable(`upload:listing-photo:${session.userId}`, UPLOAD_LIMIT, UPLOAD_WINDOW_MS);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "RATE_LIMITED" }, { status: 429 });
+  }
 
   if (!process.env.UPLOADTHING_TOKEN) {
     return NextResponse.json({ error: "Uploads are not configured." }, { status: 503 });

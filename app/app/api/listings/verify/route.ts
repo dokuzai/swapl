@@ -13,7 +13,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail } from "@/lib/email";
 import { startOneTimeCheckout } from "@/lib/billing/checkout";
 import { isStripeConfigured, BillingNotConfigured } from "@/lib/billing/stripe";
@@ -26,7 +26,7 @@ const schema = z.object({
 const VERIFY_PRICE_ID = process.env.STRIPE_PRICE_VERIFY_LISTING ?? "";
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
 
   const parsed = schema.safeParse(await req.json().catch(() => null));
@@ -57,7 +57,11 @@ export async function POST(req: Request) {
     }
   }
 
-  // Path 2 — pre-launch: record pending state directly so admins can review
+  if (process.env.ALLOW_PRELAUNCH_BILLING_BYPASS !== "1") {
+    return NextResponse.json({ error: "Listing verification checkout is not configured." }, { status: 503 });
+  }
+
+  // Path 2 — explicit pre-launch: record pending state directly so admins can review
   // immediately. Replace with Path 1 the moment STRIPE_SECRET_KEY ships.
   await prisma.listing.update({
     where: { id: listing.id },
