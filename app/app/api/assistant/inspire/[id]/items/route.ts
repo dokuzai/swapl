@@ -23,7 +23,10 @@ export async function PATCH(req: Request, { params }: RouteContext<"/api/assista
   if (pkg.status !== "draft") {
     return unprocessable("PACKAGE_NOT_DRAFT", { message: `This package is already ${pkg.status}.` });
   }
-  if (pkg.setupIntentId || pkg.paymentStatus !== "none") {
+  // Lock item edits once a payment selection exists. Treat a null/unset
+  // paymentStatus as "none" so drafts predating the field (and fresh drafts
+  // before any checkout) stay editable — only a started checkout locks them.
+  if (pkg.setupIntentId || (pkg.paymentStatus ?? "none") !== "none") {
     return unprocessable("PAYMENT_SELECTION_LOCKED", {
       message: "Payable items are locked after checkout starts.",
     });
