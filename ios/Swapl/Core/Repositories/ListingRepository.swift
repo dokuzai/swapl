@@ -68,6 +68,11 @@ struct ListingCreateDraft: Encodable, Sendable {
     var maxStayDays: Int
     var photos: [String]
     var tags: [String]
+    // Whole-home vs single private room (DOK-160). "entire_place" | "private_room".
+    // When a private room, the server reduces the nightly-Keys value.
+    var spaceType: String
+    // Rooms offered when spaceType == "private_room" (1–15); 1 for a whole place.
+    var roomsOffered: Int
     // Publish acknowledgment (DOK-162). REQUIRED on create: the host self-attests
     // they have the right to host in the chosen mode. Ignored on update — left nil
     // so the edit flow's encoded body omits them entirely.
@@ -83,6 +88,9 @@ struct SearchFilters: Sendable {
     var petsRequired: Bool = false
     var wfhRequired: Bool = false
     var stepFreeRequired: Bool = false
+    // Space-type filter (DOK-160). nil = all; "entire_place" | "private_room"
+    // map to the /api/listings `spaceType` query param.
+    var spaceType: String?
     var dateFrom: String?
     var dateTo: String?
     var sort: String = "match"
@@ -99,6 +107,7 @@ struct SearchFilters: Sendable {
         if petsRequired { count += 1 }
         if wfhRequired { count += 1 }
         if stepFreeRequired { count += 1 }
+        if spaceType != nil { count += 1 }
         if dateFrom != nil || dateTo != nil { count += 1 }
         return count
     }
@@ -112,6 +121,7 @@ struct SearchFilters: Sendable {
         if petsRequired { q.append(URLQueryItem(name: "pets", value: "1")) }
         if wfhRequired { q.append(URLQueryItem(name: "wfh", value: "1")) }
         if stepFreeRequired { q.append(URLQueryItem(name: "stepFree", value: "1")) }
+        if let spaceType { q.append(URLQueryItem(name: "spaceType", value: spaceType)) }
         if let dateFrom { q.append(URLQueryItem(name: "from", value: dateFrom)) }
         if let dateTo { q.append(URLQueryItem(name: "to", value: dateTo)) }
         if sort != "match" { q.append(URLQueryItem(name: "sort", value: sort)) }

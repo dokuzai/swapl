@@ -300,12 +300,17 @@
     <string name="browse_guests_size_type">%1$d guests · %2$d m² · %3$s</string>
     <string name="browse_tag_featured">Featured</string>
     <string name="browse_tag_verified">Verified</string>
+    <string name="browse_tag_private_room">Private room</string>
     <!-- Filters -->
     <string name="filter_title">Filters</string>
     <string name="filter_when">When</string>
     <string name="filter_from">From</string>
     <string name="filter_to">To</string>
     <string name="filter_clear_dates">Clear dates</string>
+    <string name="filter_space_type">Space type</string>
+    <string name="filter_space_all">All</string>
+    <string name="filter_space_entire">Entire place</string>
+    <string name="filter_space_private_room">Private room</string>
     <string name="filter_property_type">Property type</string>
     <string name="filter_min_size">Minimum size: %1$d m²</string>
     <string name="filter_min_sleeps">Sleeps at least: %1$d</string>
@@ -328,6 +333,8 @@
     <string name="detail_available_range">Available %1$s → %2$s · %3$d–%4$d day stays</string>
     <string name="detail_points_per_night">%1$d points / night</string>
     <string name="detail_private_room_note">This is a private room, so the nightly value reflects just the room — not the whole home.</string>
+    <string name="detail_private_room_badge">Private room</string>
+    <string name="detail_private_room_badge_rooms">Private room · %1$d rooms</string>
     <string name="detail_about_home">About this home</string>
     <string name="detail_what_offered">What this place offers</string>
     <string name="detail_hosted_by">Hosted by</string>
@@ -557,6 +564,11 @@
     <string name="create_neighbourhood_label">Neighbourhood</string>
     <string name="create_country_label">Country</string>
     <string name="create_address_label">Address (optional)</string>
+    <string name="create_space_type">Space type</string>
+    <string name="create_space_entire">Entire place</string>
+    <string name="create_space_private_room">Private room</string>
+    <string name="create_private_room_keys_note">A private room is worth fewer Keys than the whole home — the nightly value reflects just the room.</string>
+    <string name="create_rooms_offered">Rooms offered: %1$d</string>
     <string name="create_property_type">Property type</string>
     <string name="create_prop_apartment">Apartment</string>
     <string name="create_prop_house">House</string>

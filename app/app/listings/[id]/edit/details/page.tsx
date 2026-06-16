@@ -29,6 +29,8 @@ export default async function EditDetailsPage(props: PageProps<"/listings/[id]/e
     title: listing.title,
     description: listing.description,
     propertyType: listing.propertyType as PropertyType,
+    spaceType: (listing.spaceType as "entire_place" | "private_room") ?? "entire_place",
+    roomsOffered: listing.roomsOffered ?? null,
     city: listing.city,
     neighbourhood: listing.neighbourhood,
     country: listing.country,

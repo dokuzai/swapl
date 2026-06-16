@@ -37,6 +37,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -115,6 +118,11 @@ class ListingCreateViewModel @Inject constructor(
 
     // Step 2: Space
     var propertyType by mutableStateOf("APARTMENT")
+    // Private-room / single-room swaps (DOK-160). "entire_place" | "private_room".
+    // A private room is worth fewer Keys (server-side reduction). roomsOffered is
+    // only meaningful when spaceType is "private_room" (1–15, default 1).
+    var spaceType by mutableStateOf("entire_place")
+    var roomsOffered by mutableStateOf(1)
     var sizeSqm by mutableStateOf(60)
     var bedrooms by mutableStateOf(1)
     var bathrooms by mutableStateOf(1)
@@ -299,6 +307,8 @@ class ListingCreateViewModel @Inject constructor(
         country = l.country
         address = l.address.orEmpty()
         propertyType = l.propertyType
+        spaceType = l.spaceType
+        roomsOffered = l.roomsOffered ?: 1
         sizeSqm = l.sizeSqm
         bedrooms = l.bedrooms
         bathrooms = l.bathrooms
@@ -366,6 +376,9 @@ class ListingCreateViewModel @Inject constructor(
                 title = title,
                 description = description,
                 propertyType = propertyType,
+                spaceType = spaceType,
+                // Only send a room count for a private room; an entire place omits it.
+                roomsOffered = if (spaceType == "private_room") roomsOffered else null,
                 city = city,
                 neighbourhood = neighbourhood,
                 country = country,
@@ -537,8 +550,38 @@ private fun LocationStep(vm: ListingCreateViewModel) {
     OutlinedTextField(vm.address, { vm.address = it }, label = { Text(stringResource(R.string.create_address_label)) }, modifier = Modifier.fillMaxWidth())
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SpaceStep(vm: ListingCreateViewModel) {
+    // Space type (DOK-160): entire place vs private room. A private room is
+    // worth fewer Keys, so we surface that copy and reveal a rooms stepper.
+    KickerLabel(stringResource(R.string.create_space_type))
+    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+        val options = listOf(
+            "entire_place" to R.string.create_space_entire,
+            "private_room" to R.string.create_space_private_room,
+        )
+        options.forEachIndexed { index, (wire, labelRes) ->
+            SegmentedButton(
+                selected = vm.spaceType == wire,
+                onClick = { vm.spaceType = wire },
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+            ) { Text(stringResource(labelRes)) }
+        }
+    }
+    if (vm.spaceType == "private_room") {
+        Text(
+            stringResource(R.string.create_private_room_keys_note),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Stepper(
+            stringResource(R.string.create_rooms_offered, vm.roomsOffered),
+            { vm.roomsOffered = (vm.roomsOffered - 1).coerceAtLeast(1) },
+            { vm.roomsOffered = (vm.roomsOffered + 1).coerceAtMost(15) },
+        )
+    }
+
     KickerLabel(stringResource(R.string.create_property_type))
     Row(horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2)) {
         listOf(

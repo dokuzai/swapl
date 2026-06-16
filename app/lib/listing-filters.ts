@@ -9,6 +9,7 @@ export type ListingFilters = {
   wfhRequired: boolean;
   stepFreeRequired: boolean;
   mutualOnly: boolean;
+  spaceType: "entire_place" | "private_room" | null;
   dateFrom: string | null;
   dateTo: string | null;
   sort: "match" | "newest" | "size_desc" | "size_asc";
@@ -24,6 +25,7 @@ const DEFAULTS: ListingFilters = {
   wfhRequired: false,
   stepFreeRequired: false,
   mutualOnly: false,
+  spaceType: null,
   dateFrom: null,
   dateTo: null,
   sort: "match",
@@ -42,6 +44,9 @@ export function parseFiltersFromSearchParams(sp: Record<string, string | string[
     if (Array.isArray(v)) return v[0] ?? null;
     return v ?? null;
   }
+  const spaceRaw = str("spaceType");
+  const spaceType: ListingFilters["spaceType"] =
+    spaceRaw === "entire_place" || spaceRaw === "private_room" ? spaceRaw : null;
   const sortRaw = str("sort");
   const sort: ListingFilters["sort"] =
     sortRaw === "newest" || sortRaw === "size_desc" || sortRaw === "size_asc" ? sortRaw : "match";
@@ -55,6 +60,7 @@ export function parseFiltersFromSearchParams(sp: Record<string, string | string[
     wfhRequired: str("wfh") === "1",
     stepFreeRequired: str("stepFree") === "1",
     mutualOnly: str("mutual") === "1",
+    spaceType,
     dateFrom: str("from"),
     dateTo: str("to"),
     sort,
@@ -72,6 +78,7 @@ export function filtersToQuery(f: Partial<ListingFilters>): string {
   if (f.wfhRequired) params.set("wfh", "1");
   if (f.stepFreeRequired) params.set("stepFree", "1");
   if (f.mutualOnly) params.set("mutual", "1");
+  if (f.spaceType) params.set("spaceType", f.spaceType);
   if (f.dateFrom) params.set("from", f.dateFrom);
   if (f.dateTo) params.set("to", f.dateTo);
   if (f.sort && f.sort !== "match") params.set("sort", f.sort);

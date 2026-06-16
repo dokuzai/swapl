@@ -36,6 +36,9 @@ class ListingRepository @Inject constructor(private val api: ApiClient) {
             filters.propertyTypes.takeIf { it.isNotEmpty() }?.let { parameter("type", it.joinToString(",")) }
             if (filters.minSqm > 30) parameter("minSqm", filters.minSqm)
             if (filters.minSleeps > 1) parameter("minSleeps", filters.minSleeps)
+            // Space type (DOK-160): null = all; otherwise "entire_place" |
+            // "private_room" maps straight to the API's spaceType filter.
+            filters.spaceType?.let { parameter("spaceType", it) }
             if (filters.petsRequired) parameter("pets", "1")
             if (filters.wfhRequired) parameter("wfh", "1")
             if (filters.stepFreeRequired) parameter("stepFree", "1")
@@ -110,6 +113,9 @@ class ListingRepository @Inject constructor(private val api: ApiClient) {
 data class SearchFilters(
     val cities: List<String> = emptyList(),
     val propertyTypes: List<String> = emptyList(),
+    // Space-type filter (DOK-160): null = all spaces; otherwise "entire_place"
+    // or "private_room", passed through as the API's spaceType query param.
+    val spaceType: String? = null,
     val minSqm: Int = 30,
     val minSleeps: Int = 1,
     val petsRequired: Boolean = false,

@@ -641,6 +641,7 @@ struct ListingCreationView: View {
 
     private var spaceStep: some View {
         VStack(spacing: 14) {
+            spaceTypeSelector
             ListingField(title: "Title", text: $draft.title, placeholder: "Sunny apartment near the water")
             ListingLongField(title: "Description", text: $draft.description, placeholder: "Describe the home, light, neighbourhood, and what makes the stay easy.")
             ListingPicker(title: "Property type", selection: $draft.propertyType, values: ["APARTMENT", "HOUSE", "ROOM", "STUDIO"])
@@ -648,6 +649,31 @@ struct ListingCreationView: View {
             StepperCard(title: "Guests", value: $draft.sleeps, range: 1...20, suffix: "guests")
             StepperCard(title: "Bedrooms", value: $draft.bedrooms, range: 0...15, suffix: "bedrooms")
             StepperCard(title: "Bathrooms", value: $draft.bathrooms, range: 0...10, suffix: "bathrooms")
+        }
+    }
+
+    // DOK-160: choose whole home vs single private room, and (for a room) how
+    // many rooms are offered. Copy makes clear a room is worth fewer Keys.
+    private var spaceTypeSelector: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 9) {
+                Text("What are you offering?")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Picker("What are you offering?", selection: $draft.spaceType) {
+                    Text("Entire place").tag("entire_place")
+                    Text("Private room").tag("private_room")
+                }
+                .pickerStyle(.segmented)
+            }
+
+            if draft.spaceType == "private_room" {
+                StepperCard(title: String(localized: "Rooms offered"), value: $draft.roomsOffered, range: 1...15, suffix: String(localized: "rooms"))
+                Text("A private room is worth fewer Keys per night than offering the whole home.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 
@@ -1010,6 +1036,11 @@ private struct ListingCreationDraft {
     var title = ""
     var description = ""
     var propertyType = "APARTMENT"
+    // DOK-160: whole home vs single private room. Default whole place; when
+    // "private_room" the host also picks how many rooms (1–15) they offer and
+    // the nightly Keys are reduced server-side.
+    var spaceType = "entire_place"
+    var roomsOffered = 1
     var sizeSqm = 80
     var sleeps = 3
     var bedrooms = 2
@@ -1060,6 +1091,8 @@ private struct ListingCreationDraft {
         title = listing.title
         description = listing.description
         propertyType = listing.propertyType
+        spaceType = listing.spaceType ?? "entire_place"
+        roomsOffered = listing.roomsOffered ?? 1
         sizeSqm = listing.sizeSqm
         sleeps = listing.sleeps
         bedrooms = listing.bedrooms
@@ -1153,7 +1186,10 @@ private struct ListingCreationDraft {
             minStayDays: minStayDays,
             maxStayDays: maxStayDays,
             photos: photos,
-            tags: tags
+            tags: tags,
+            // Whole place always reports 1 room; a private room sends 1–15.
+            spaceType: spaceType,
+            roomsOffered: spaceType == "private_room" ? max(1, min(roomsOffered, 15)) : 1
         )
     }
 }

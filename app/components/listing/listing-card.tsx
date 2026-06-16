@@ -51,6 +51,14 @@ export async function ListingCard({
           <span className="absolute top-3 left-3 match-badge">{t(dict, "listing.matchBadge", { score: matchScore })}</span>
         )}
         {listing.isFeatured && <FeaturedRibbon label={t(dict, "listing.featuredRibbon")} />}
+        {listing.spaceType === "private_room" && (
+          <span
+            className="absolute bottom-3 left-3 text-[11px] font-medium px-2.5 py-1 rounded-full"
+            style={{ background: "var(--navy)", color: "#fff" }}
+          >
+            {t(dict, "listing.spaceType.privateRoomChip")}
+          </span>
+        )}
       </div>
       <div className="p-5">
         <div className="flex items-baseline justify-between gap-3">

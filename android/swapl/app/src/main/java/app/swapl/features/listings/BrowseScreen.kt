@@ -36,6 +36,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -261,6 +264,8 @@ private fun FilterSheet(
     var types by remember { mutableStateOf(current.propertyTypes.toSet()) }
     var minSqm by remember { mutableStateOf(current.minSqm.toFloat()) }
     var minSleeps by remember { mutableStateOf(current.minSleeps.toFloat()) }
+    // Space-type filter (DOK-160): null = all; "entire_place" | "private_room".
+    var spaceType by remember { mutableStateOf(current.spaceType) }
     var pets by remember { mutableStateOf(current.petsRequired) }
     var wfh by remember { mutableStateOf(current.wfhRequired) }
     var stepFree by remember { mutableStateOf(current.stepFreeRequired) }
@@ -284,6 +289,22 @@ private fun FilterSheet(
             }
             if (dateFrom.isNotEmpty() || dateTo.isNotEmpty()) {
                 TextButton(onClick = { dateFrom = ""; dateTo = "" }) { Text(stringResource(R.string.filter_clear_dates)) }
+            }
+
+            KickerLabel(stringResource(R.string.filter_space_type))
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                val spaceOptions = listOf(
+                    null to R.string.filter_space_all,
+                    "entire_place" to R.string.filter_space_entire,
+                    "private_room" to R.string.filter_space_private_room,
+                )
+                spaceOptions.forEachIndexed { index, (wire, labelRes) ->
+                    SegmentedButton(
+                        selected = spaceType == wire,
+                        onClick = { spaceType = wire },
+                        shape = SegmentedButtonDefaults.itemShape(index = index, count = spaceOptions.size),
+                    ) { Text(stringResource(labelRes)) }
+                }
             }
 
             KickerLabel(stringResource(R.string.filter_property_type))
@@ -311,6 +332,7 @@ private fun FilterSheet(
                 TextButton(
                     onClick = {
                         types = emptySet(); minSqm = 30f; minSleeps = 1f
+                        spaceType = null
                         pets = false; wfh = false; stepFree = false
                         dateFrom = ""; dateTo = ""
                     },
@@ -322,6 +344,7 @@ private fun FilterSheet(
                         onApply(
                             current.copy(
                                 propertyTypes = types.toList(),
+                                spaceType = spaceType,
                                 minSqm = minSqm.toInt(),
                                 minSleeps = minSleeps.toInt(),
                                 petsRequired = pets,
@@ -441,8 +464,11 @@ private fun ListingCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+                // Private-room chip (DOK-160) takes priority over band tags so a
+                // room is always flagged; the match badge still wins when present.
                 when {
                     item.matchScore != null -> MatchBadge(item.matchScore)
+                    item.listing.isPrivateRoom -> TagChip(stringResource(R.string.browse_tag_private_room))
                     item.band == "featured" -> TagChip(stringResource(R.string.browse_tag_featured))
                     item.band == "verified" -> TagChip(stringResource(R.string.browse_tag_verified))
                 }

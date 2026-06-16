@@ -24,6 +24,8 @@ type FormState = {
   floor: number;
   // Step 2 — Space
   propertyType: PropertyType;
+  spaceType: "entire_place" | "private_room";
+  roomsOffered: number;
   sizeSqm: number;
   bedrooms: number;
   sleeps: number;
@@ -73,6 +75,8 @@ const INITIAL: FormState = {
   address: "",
   floor: 0,
   propertyType: "APARTMENT",
+  spaceType: "entire_place",
+  roomsOffered: 1,
   sizeSqm: 80,
   bedrooms: 2,
   sleeps: 3,
@@ -129,6 +133,8 @@ export type ListingEditInitial = {
   country: string;
   address: string | null;
   floor: number | null;
+  spaceType: "entire_place" | "private_room";
+  roomsOffered: number | null;
   sizeSqm: number;
   sleeps: number;
   bedrooms: number;
@@ -168,6 +174,8 @@ function stateFromListing(l: ListingEditInitial): FormState {
     address: l.address ?? "",
     floor: l.floor ?? 0,
     propertyType: l.propertyType,
+    spaceType: l.spaceType ?? "entire_place",
+    roomsOffered: l.roomsOffered ?? 1,
     sizeSqm: l.sizeSqm,
     bedrooms: l.bedrooms,
     sleeps: l.sleeps,
@@ -256,6 +264,8 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
       title: state.title,
       description: state.description,
       propertyType: state.propertyType,
+      spaceType: state.spaceType,
+      roomsOffered: state.spaceType === "private_room" ? state.roomsOffered : undefined,
       city: state.city,
       neighbourhood: state.neighbourhood,
       country: state.country,
@@ -603,6 +613,46 @@ function SpaceStep({ state, set, t }: { state: FormState; set: <K extends keyof 
             </button>
           ))}
         </div>
+      </Field>
+      <Field label={t("wizard.space.spaceType")}>
+        <div className="flex flex-wrap gap-2">
+          {(["entire_place", "private_room"] as const).map((st) => (
+            <button
+              key={st}
+              type="button"
+              onClick={() => set("spaceType", st)}
+              className="px-4 py-2 rounded-full border text-sm"
+              style={
+                state.spaceType === st
+                  ? { background: "var(--pink)", color: "#fff", borderColor: "var(--pink)" }
+                  : { borderColor: "var(--line)", background: "var(--card-bg)" }
+              }
+            >
+              {t(st === "entire_place" ? "spaceType.entirePlace" : "spaceType.privateRoom")}
+            </button>
+          ))}
+        </div>
+        {state.spaceType === "private_room" && (
+          <div className="mt-3 space-y-2">
+            <label className="block text-sm" style={{ color: "var(--navy-3)" }}>
+              {t("wizard.space.roomsOffered")}
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={15}
+              value={state.roomsOffered}
+              onChange={(e) =>
+                set("roomsOffered", Math.max(1, Math.min(15, Math.round(+e.target.value) || 1)))
+              }
+              className="w-24 px-3 py-2 rounded border text-sm"
+              style={{ background: "var(--card-bg)", borderColor: "var(--line)" }}
+            />
+            <p className="text-xs" style={{ color: "var(--navy-3)" }}>
+              {t("wizard.space.privateRoomKeysHint")}
+            </p>
+          </div>
+        )}
       </Field>
       <div className="grid grid-cols-2 gap-5">
         <Field label={t("wizard.space.size", { n: state.sizeSqm })}>

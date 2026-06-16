@@ -19,6 +19,8 @@ struct FilterSheetView: View {
     @State private var petsRequired: Bool
     @State private var wfhRequired: Bool
     @State private var stepFreeRequired: Bool
+    // DOK-160: "" = all, "entire_place", "private_room".
+    @State private var spaceType: String
     @State private var filterByDates: Bool
     @State private var dateFrom: Date
     @State private var dateTo: Date
@@ -48,6 +50,7 @@ struct FilterSheetView: View {
         _petsRequired = State(initialValue: initialFilters.petsRequired)
         _wfhRequired = State(initialValue: initialFilters.wfhRequired)
         _stepFreeRequired = State(initialValue: initialFilters.stepFreeRequired)
+        _spaceType = State(initialValue: initialFilters.spaceType ?? "")
         let hasDates = initialFilters.dateFrom != nil || initialFilters.dateTo != nil
         _filterByDates = State(initialValue: hasDates)
         let from = initialFilters.dateFrom.flatMap(SwaplDateText.parse) ?? Date()
@@ -63,6 +66,7 @@ struct FilterSheetView: View {
                 VStack(alignment: .leading, spacing: 30) {
                     destinationSection
                     datesSection
+                    spaceTypeSection
                     propertyTypeSection
                     sizeSection
                     sleepsSection
@@ -247,6 +251,21 @@ struct FilterSheetView: View {
         }
     }
 
+    // MARK: - Space type (DOK-160)
+
+    // All / Entire place / Private room. Empty tag means no spaceType filter.
+    private var spaceTypeSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionTitle("Space type")
+            Picker("Space type", selection: $spaceType) {
+                Text("All").tag("")
+                Text("Entire place").tag("entire_place")
+                Text("Private room").tag("private_room")
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+
     // MARK: - Property type
 
     private var propertyTypeSection: some View {
@@ -385,6 +404,7 @@ struct FilterSheetView: View {
             petsRequired = false
             wfhRequired = false
             stepFreeRequired = false
+            spaceType = ""
             filterByDates = false
             cityQuery = ""
         }
@@ -401,6 +421,7 @@ struct FilterSheetView: View {
         f.petsRequired = petsRequired
         f.wfhRequired = wfhRequired
         f.stepFreeRequired = stepFreeRequired
+        f.spaceType = spaceType.isEmpty ? nil : spaceType
         f.dateFrom = filterByDates ? SwaplDateText.apiString(from: dateFrom) : nil
         f.dateTo = filterByDates ? SwaplDateText.apiString(from: max(dateTo, dateFrom)) : nil
         return f

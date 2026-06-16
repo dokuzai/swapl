@@ -740,6 +740,24 @@ struct ListingCardView: View {
                         .padding(10)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 }
+
+                // DOK-160: small private-room chip so single-room homes read at a
+                // glance in Browse. Anchored bottom-leading to clear the match
+                // pill (top-leading) and the favorite heart (top-trailing).
+                if item.listing.isPrivateRoom {
+                    HStack(spacing: 4) {
+                        Image(systemName: "bed.double.fill")
+                            .font(.system(size: compact ? 9 : 11, weight: .bold))
+                        Text("Private room")
+                            .font(.swaplBody(compact ? SwaplDesignSystem.FontSize.tiny : SwaplDesignSystem.FontSize.small, weight: .bold))
+                    }
+                    .foregroundStyle(AirbnbPalette.text)
+                    .padding(.horizontal, compact ? 7 : 10)
+                    .padding(.vertical, compact ? 4 : 6)
+                    .background(.white, in: Capsule())
+                    .padding(compact ? 6 : 10)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                }
             }
 
             Text(primaryLocation)

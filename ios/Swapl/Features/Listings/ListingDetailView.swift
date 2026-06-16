@@ -211,6 +211,12 @@ struct ListingDetailView: View {
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                     .foregroundStyle(AirbnbPalette.secondaryText)
 
+                // DOK-160: clear private-room badge (with rooms when >1) so guests
+                // immediately see this is a single room, not the whole home.
+                if detail.listing.isPrivateRoom {
+                    privateRoomBadge(detail.listing)
+                }
+
                 if let score = detail.matchScore {
                     HStack(spacing: 8) {
                         Image(systemName: "sparkles")
@@ -237,6 +243,34 @@ struct ListingDetailView: View {
             }
         }
         .padding(.bottom, 110)
+    }
+
+    // DOK-160: private-room badge shown to everyone near the specs. Surfaces the
+    // rooms offered when more than one, and notes the reduced nightly Keys (the
+    // server already discounts the value for a single room).
+    private func privateRoomBadge(_ listing: Listing) -> some View {
+        let rooms = listing.roomsOffered ?? 1
+        return HStack(spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "bed.double")
+                    .font(.system(size: 13, weight: .semibold))
+                Text(rooms > 1
+                    ? String(localized: "Private room · \(rooms) rooms")
+                    : String(localized: "Private room"))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+            }
+            .foregroundStyle(SwaplSemanticLight.primary)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(SwaplSemanticLight.accent, in: Capsule())
+
+            if let nightly = listing.nightlyKeys {
+                Text("\(nightly) points / night")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+        }
+        .padding(.top, 2)
     }
 
     // DOK-163: owner-only "How your nightly Keys are calculated" entry. Shows the

@@ -184,6 +184,21 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
           <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.05] font-medium">
             {dto.title}
           </h1>
+          {dto.spaceType === "private_room" && (
+            <div className="mt-3 inline-flex flex-wrap items-center gap-2">
+              <span
+                className="text-[12px] font-medium px-2.5 py-1 rounded-full"
+                style={{ background: "var(--navy)", color: "#fff" }}
+              >
+                {dto.roomsOffered && dto.roomsOffered > 1
+                  ? t(dict, "listing.spaceType.privateRoomBadgeCount", { count: dto.roomsOffered })
+                  : t(dict, "listing.spaceType.privateRoomBadge")}
+              </span>
+              <span className="text-[12px]" style={{ color: "var(--navy-3)" }}>
+                {t(dict, "listing.spaceType.fewerKeysNote")}
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <ShareListingButton title={dto.title} city={dto.city} />

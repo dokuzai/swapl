@@ -44,6 +44,7 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
     filters.wfhRequired ||
     filters.stepFreeRequired ||
     filters.mutualOnly ||
+    filters.spaceType ||
     filters.dateFrom ||
     filters.dateTo;
 
@@ -90,6 +91,20 @@ export function FilterSidebar({ resultCount }: { resultCount: number }) {
               </Chip>
             );
           })}
+        </div>
+      </Group>
+
+      <Group label={t("filter.spaceType")}>
+        <div className="flex flex-wrap gap-1.5">
+          <Chip on={filters.spaceType === null} onClick={() => update({ spaceType: null })}>
+            {t("filter.spaceTypeAll")}
+          </Chip>
+          <Chip on={filters.spaceType === "entire_place"} onClick={() => update({ spaceType: "entire_place" })}>
+            {t("spaceType.entirePlace")}
+          </Chip>
+          <Chip on={filters.spaceType === "private_room"} onClick={() => update({ spaceType: "private_room" })}>
+            {t("spaceType.privateRoom")}
+          </Chip>
         </div>
       </Group>
 

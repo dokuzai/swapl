@@ -151,6 +151,19 @@ fun ListingDetailScreen(
             ),
             style = MaterialTheme.typography.bodyMedium,
         )
+        // Private-room badge (DOK-160), near the specs row. When more than one
+        // room is offered we say how many. The reduced nightly Keys is shown
+        // below via detail_points_per_night + detail_private_room_note.
+        if (d.listing.isPrivateRoom) {
+            val rooms = d.listing.roomsOffered ?: 1
+            TagChip(
+                if (rooms > 1) {
+                    stringResource(R.string.detail_private_room_badge_rooms, rooms)
+                } else {
+                    stringResource(R.string.detail_private_room_badge)
+                },
+            )
+        }
         Text(
             stringResource(
                 R.string.detail_available_range,

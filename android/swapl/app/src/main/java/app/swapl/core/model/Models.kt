@@ -155,6 +155,13 @@ data class ListingCreateBody(
     val maxStayDays: Int = 30,
     val photos: List<String> = emptyList(),
     val tags: List<String> = emptyList(),
+    // Private-room / single-room swaps (DOK-160). "entire_place" |
+    // "private_room"; on a private room the host offers a subset of the home and
+    // the server reduces the nightly Keys accordingly. Defaults to entire place.
+    val spaceType: String = "entire_place",
+    // Rooms offered when spaceType == "private_room" (1–15). Omitted for an
+    // entire place. Null is fine on the wire — server treats it as the default.
+    val roomsOffered: Int? = null,
     // Publish acknowledgment (DOK-162). REQUIRED on create: the host
     // self-attests they have the right to host in the chosen `mode`. Ignored
     // on update. Missing/false on create -> 400 PUBLISH_ACK_REQUIRED.

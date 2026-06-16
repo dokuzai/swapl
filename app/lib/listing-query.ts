@@ -48,6 +48,9 @@ export async function queryListings(
   if (filters.petsRequired) where.petsAllowed = true;
   if (filters.wfhRequired) where.wfhSetup = true;
   if (filters.stepFreeRequired) where.stepFreeAccess = true;
+  // Private-room / single-room swaps (DOK-160). Shared contract with iOS/Android:
+  // param name `spaceType`, values "entire_place" | "private_room"; null = all.
+  if (filters.spaceType) where.spaceType = filters.spaceType;
   // Date-filtered browse (DOK-159): when both from & to are given, the listing
   // must (a) publish a window that fully COVERS the requested range and (b) have
   // no occupied/blocked range overlapping it. (a) is expressed in SQL; (b) needs
