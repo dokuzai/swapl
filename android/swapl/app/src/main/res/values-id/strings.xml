@@ -1,0 +1,1139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">Selamat datang kembali</string>
+    <string name="auth_kicker_register">Gabung Swapl</string>
+    <string name="auth_kicker_waitlist">Akses awal</string>
+    <string name="auth_headline_signin">Kunci untuk kunci.</string>
+    <string name="auth_headline_register">Tukar rumah,\nbukan hotel.</string>
+    <string name="auth_headline_waitlist">Masuk daftar tunggu.</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Kata sandi</string>
+    <string name="auth_password_register">Kata sandi (min 6 karakter)</string>
+    <string name="auth_signin">Masuk</string>
+    <string name="auth_signin_busy">Sedang masuk…</string>
+    <string name="auth_create_account">Buat akun</string>
+    <string name="auth_create_account_busy">Membuat akun…</string>
+    <string name="auth_join_waitlist">Gabung daftar tunggu</string>
+    <string name="auth_join_waitlist_busy">Bergabung…</string>
+    <string name="auth_continue_with">atau lanjutkan dengan</string>
+    <string name="auth_passkey">Masuk dengan passkey</string>
+    <string name="auth_google">Lanjutkan dengan Google</string>
+    <string name="auth_email_code">Kode email</string>
+    <string name="auth_phone">Telepon</string>
+    <string name="auth_switch_to_register">Baru di Swapl? Buat akun</string>
+    <string name="auth_switch_to_waitlist">Belum siap? Gabung daftar tunggu</string>
+    <string name="auth_switch_register_to_signin">Sudah punya akun? Masuk</string>
+    <string name="auth_switch_waitlist_to_signin">Punya akun? Masuk</string>
+    <string name="auth_google_failed">Masuk dengan Google gagal. Coba lagi.</string>
+    <string name="auth_passkey_unavailable">Masuk dengan passkey tidak tersedia saat ini.</string>
+    <string name="auth_passkey_failed">Masuk dengan passkey gagal. Coba lagi.</string>
+    <string name="auth_passkey_none">Belum ada passkey di perangkat ini. Masuk dengan cara lain, lalu tambahkan satu dari profilmu.</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">Masuk dengan kode email</string>
+    <string name="auth_otp_kicker_phone">Masuk dengan telepon</string>
+    <string name="auth_otp_headline_enter">Masukkan kodemu.</string>
+    <string name="auth_otp_headline_get">Dapatkan kode.</string>
+    <string name="auth_otp_sent">Kami mengirim kode 6 digit ke %1$s. Kode berlaku 10 menit.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Telepon (mis. +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">Gunakan format internasional, mis. +39 333 123 4567.</string>
+    <string name="auth_otp_verify">Verifikasi kode</string>
+    <string name="auth_otp_verify_busy">Memverifikasi…</string>
+    <string name="auth_otp_resend">Belum dapat? Kirim kode baru</string>
+    <string name="auth_otp_send">Kirim kode</string>
+    <string name="auth_otp_send_busy">Mengirim…</string>
+    <string name="auth_otp_back">Kembali ke masuk dengan kata sandi</string>
+    <string name="verify_referral_toast">Terverifikasi! Kamu mendapatkan %1$d Keys karena bergabung lewat rujukan. 🔑</string>
+    <string name="verify_referral_toast_named">Terverifikasi! Undangan %1$s baru saja memberimu %2$d Keys. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s baru saja terverifikasi — kamu mendapatkan %2$d Keys! 🔑</string>
+    <string name="referral_referrer_toast">Seseorang yang kamu undang baru saja terverifikasi — kamu mendapatkan %1$d Keys! 🔑</string>
+
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Cara mendapatkan Keys</string>
+    <string name="keys_earn_ways_subtitle">Tindakan kecil yang menambah poin perjalananmu. Lakukan sekali atau kembali untuk lebih banyak.</string>
+    <string name="keys_earn_way_done">Diperoleh — kerja bagus!</string>
+    <string name="keys_earn_way_locked">Verifikasi identitasmu untuk membuka ini</string>
+    <string name="keys_earn_verify_identity_title">Verifikasi identitasmu</string>
+    <string name="keys_earn_verify_identity_body">Pemeriksaan cepat membuka semua cara lain untuk mendapatkan poin.</string>
+    <string name="keys_earn_verify_property_title">Verifikasi sebuah properti</string>
+    <string name="keys_earn_verify_property_body">Konfirmasikan bahwa kamu memiliki rumah yang kamu daftarkan.</string>
+    <string name="keys_earn_complete_listing_title">Lengkapi listingmu</string>
+    <string name="keys_earn_complete_listing_body">Tambahkan foto dan detail agar tamu bisa membayangkan menginap.</string>
+    <string name="keys_earn_leave_review_title">Tinggalkan ulasan</string>
+    <string name="keys_earn_leave_review_body">Ceritakan kepada komunitas bagaimana sebuah penginapan berlangsung.</string>
+    <string name="keys_earn_share_converted_title">Bagikan rumah yang akhirnya dipesan</string>
+    <string name="keys_earn_share_converted_body">Bagikan sebuah listing dan dapatkan poin saat itu menghasilkan penginapan.</string>
+    <string name="keys_earn_refer_friend_title">Undang teman</string>
+    <string name="keys_earn_refer_friend_body">Kalian berdua mendapatkan poin saat ia bergabung dan terverifikasi.</string>
+    <string name="keys_earn_generic_title">Dapatkan Keys</string>
+    <string name="keys_earn_generic_body">Lakukan tindakan ini untuk mendapatkan poin perjalanan.</string>
+
+    <!-- Owner verification + publish acknowledgment (DOK-162) -->
+    <string name="owner_verified_badge">Pemilik terverifikasi</string>
+
+    <!-- Publish acknowledgment shown on the Review step before create -->
+    <string name="publish_ack_kicker">Sebelum kamu menerbitkan</string>
+    <string name="publish_ack_mode_question">Bagaimana kamu menjadi tuan rumah untuk rumah ini?</string>
+    <string name="publish_ack_mode_entire_home">Seluruh rumah, saat aku pergi</string>
+    <string name="publish_ack_mode_room">Sebuah kamar, atau saat aku ada di rumah</string>
+    <string name="publish_ack_text_entire_home_headline">Aku berhak menawarkan seluruh rumahku untuk pertukaran saat aku pergi — dan jika aku menyewa, kontrakku mengizinkanku menerima tamu saat aku tidak di sana.</string>
+    <string name="publish_ack_text_entire_home_fineprint">Aku bertanggung jawab mematuhi kontrak sewa, aturan gedung, dan hukum setempat.</string>
+    <string name="publish_ack_text_room_headline">Aku berhak menjadi tuan rumah untuk pertukaran ini.</string>
+    <string name="publish_ack_text_room_fineprint">Aku akan mematuhi aturan gedung dan hukum setempat.</string>
+    <string name="publish_ack_required_error">Konfirmasikan pernyataan tuan rumah sebelum menerbitkan.</string>
+    <string name="publish_submit_failed">Tidak dapat menerbitkan listingmu. Coba lagi.</string>
+
+    <!-- Optional "Verify ownership" entry -->
+    <string name="owner_verify_cta">Lencana pemilik terverifikasi — opsional</string>
+    <string name="owner_verify_cta_pending">Lencana pemilik terverifikasi — sedang ditinjau</string>
+    <string name="owner_verify_cta_rejected">Lencana pemilik terverifikasi — coba lagi</string>
+    <string name="owner_verify_optional_note">Penambah kepercayaan untuk tamu. Tidak pernah wajib untuk menerbitkan atau menukar.</string>
+    <string name="owner_verify_title">Verifikasi kepemilikan</string>
+    <string name="owner_verify_explainer">Tambahkan dokumen yang menunjukkan hakmu atas rumah ini — akta atau sertifikat, atau kontrak sewa atas namamu. Admin meninjaunya dan, setelah disetujui, listingmu menampilkan lencana \"Pemilik terverifikasi\".</string>
+    <string name="owner_verify_ai_explainer">Pemeriksaan AI cepat membaca dokumen terlebih dahulu untuk memastikan cocok dengan rumah ini. Keputusan akhir selalu di tangan seseorang dari tim kami.</string>
+    <string name="owner_verify_tenant_note">Penyewa juga disambut. Jika kamu menyewa dan kontrakmu mengizinkan menerima tamu, kamu sepenuhnya memenuhi syarat — kamu tidak perlu memiliki rumah itu.</string>
+    <string name="owner_verify_tenant">Menyewa? Kamu juga disambut di sini — unggah kontrak sewamu, bukan akta. Kamu bisa menjadi tuan rumah di Swapl selama kontrak sewamu mengizinkanmu menerima tamu.</string>
+    <string name="owner_verify_privacy_note">Kami tidak menyimpan dokumenmu setelah pemeriksaan. Hanya AI yang membaca data pribadimu, dan kami hanya menyimpan apakah dokumen menunjukkan rumah pribadi — tidak pernah identitas, alamat, atau dokumen itu sendiri.</string>
+    <string name="owner_verify_privacy">Dokumenmu dibaca sekali untuk memastikan rumah itu milikmu, lalu tidak disimpan — kami hanya menyimpan hasilnya (terverifikasi atau tidak), tidak pernah dokumen atau isinya.</string>
+    <string name="owner_verify_private_only_note">Swapl adalah pertukaran antarindividu, jadi properti perusahaan atau komersial tidak dapat didaftarkan di sini.</string>
+    <string name="owner_verify_doc_type_label">Apa yang kamu unggah? (opsional)</string>
+    <string name="owner_verify_doc_type_deed">Akta / sertifikat</string>
+    <string name="owner_verify_doc_type_lease">Kontrak sewa</string>
+    <string name="owner_verify_status_pending">Kiriman terakhirmu sedang ditinjau. Seseorang dari tim kami membuat keputusan akhir — biasanya dalam 2 hari kerja. Jika pemeriksaan otomatis kami ragu, prosesnya bisa sedikit lebih lama, tetapi kamu tidak terjebak: kami selalu menindaklanjuti.</string>
+    <string name="owner_verify_status_rejected">Kiriman terakhirmu tidak disetujui. Tambahkan dokumen yang lebih jelas dan kirim ulang.</string>
+    <string name="owner_verify_business_title">Pemeriksaan kami menunjukkan ini mungkin properti komersial — kami bisa saja keliru</string>
+    <string name="owner_verify_business_body">Pemeriksaan otomatis kami membaca dokumenmu sebagai properti perusahaan atau komersial, dan Swapl adalah pertukaran antarindividu. Namun pemeriksaan otomatis tidak sempurna, dan orang sungguhan — bukan AI — yang membuat keputusan akhir. Jika ini rumahmu sendiri, hubungi kami: seseorang dari tim kami meninjaunya secara pribadi, biasanya dalam 2 hari kerja, dan kontrak sewa, akta, atau catatan pajak atas namamu sudah cukup untuk meluruskannya.</string>
+    <string name="owner_verify_business_contact">Hubungi dukungan</string>
+    <string name="owner_verify_business_support_email">support@swapl.app</string>
+    <string name="owner_verify_business_support_subject">Permintaan peninjauan verifikasi properti</string>
+    <string name="owner_verify_add_document">Tambahkan dokumen</string>
+    <string name="owner_verify_uploading">Mengunggah…</string>
+    <string name="owner_verify_remove">Hapus</string>
+    <string name="owner_verify_submit">Kirim untuk ditinjau</string>
+    <string name="owner_verify_submitting">Mengirim…</string>
+    <string name="owner_verify_cancel">Batal</string>
+    <string name="owner_verify_doc_label">Dokumen kepemilikan</string>
+    <string name="owner_verify_doc_read_error">Tidak dapat membaca file itu.</string>
+    <string name="owner_verify_upload_failed">Unggahan gagal. Coba lagi.</string>
+    <string name="owner_verify_submit_failed">Tidak dapat mengirim. Coba lagi.</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). -->
+    <string name="valuation_section_title">Cara Keys per malammu dihitung</string>
+    <string name="valuation_per_night">%1$d / malam</string>
+    <string name="valuation_intro">Inilah yang dibelanjakan tamu — dan yang kamu peroleh — untuk setiap malam mereka menginap. Nilainya ditetapkan secara adil dari fitur rumahmu, tidak pernah dinaikkan olehmu atau oleh kami.</string>
+    <string name="valuation_show">Tampilkan rincian</string>
+    <string name="valuation_hide">Sembunyikan rincian</string>
+    <string name="valuation_factors_kicker">Apa yang membentuk nilai</string>
+    <string name="valuation_base_label">Nilai pra-ulasan</string>
+    <string name="valuation_factor_base">Nilai awal</string>
+    <string name="valuation_factor_size">Ukuran</string>
+    <string name="valuation_factor_sleeps">Kapasitas tidur</string>
+    <string name="valuation_factor_location_tier">Daya tarik lokasi</string>
+    <string name="valuation_factor_location_tier_standard">Standar — lokasimu tidak dinaikkan secara artifisial, tetapi dinilai setara. Kota kecil dan desa tidak dirugikan di sini.</string>
+    <string name="valuation_factor_verified">Rumah terverifikasi</string>
+    <string name="valuation_factor_ai_appeal">Daya tarik rumah (AI)</string>
+    <string name="valuation_ai_summary_kicker">Daya tarik rumah (AI)</string>
+    <string name="valuation_ai_what_note">AI kami hanya membaca bagaimana listingmu disajikan — cakupan fotomu, seberapa kaya daftar fasilitasmu, dan seberapa rinci deskripsimu. AI tidak menilai rumahmu dengan keras, dan tidak pernah merugikan kota kecil atau desa — lokasi ditangani secara terpisah.</string>
+    <string name="valuation_ai_baseline_pos">Bonus untuk daya tarik rumah: +%1$s (sebagian besar rumah mendapat 0; maksimal +%2$d).</string>
+    <string name="valuation_ai_baseline_zero">Daya tarik rumah: 0 — sepenuhnya normal, seperti sebagian besar rumah (bonus maksimal +%1$d).</string>
+    <string name="valuation_ai_baseline_neg">Daya tarik rumah: %1$s (sebagian besar rumah mendapat 0 — tambahkan beberapa foto atau detail untuk menaikkannya).</string>
+    <string name="valuation_ai_fallback_note">Dinilai dari foto dan fasilitasmu. Pembacaan daya tarik yang lebih lengkap ditambahkan setelah model daya-tarik-rumah kami melihat listingmu.</string>
+    <string name="valuation_room_kicker">Ini adalah sebuah kamar</string>
+    <string name="valuation_room_note">Karena kamu menawarkan kamar pribadi alih-alih seluruh rumah, nilai per malam hanya mencerminkan kamar itu — sekitar %1$d%% dari tarif seluruh tempat.</string>
+    <string name="valuation_location_note">Tingkat permintaan destinasi %1$d dari 5 — seberapa diminati area-mu untuk menginap.</string>
+    <string name="valuation_review_kicker">Ulasan tamu</string>
+    <string name="valuation_review_applied_up">Ulasanmu (%1$.1f★ dari %2$d) menaikkan nilai sebesar %3$d%%.</string>
+    <string name="valuation_review_applied_down">Ulasanmu (%1$.1f★ dari %2$d) menurunkan nilai sebesar %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">Ulasanmu (%1$.1f★ dari %2$d) mempertahankan nilai apa adanya.</string>
+    <string name="valuation_review_pending">Belum diterapkan — ulasan baru mulai menyesuaikan nilai ini setelah kamu menerima %1$d ulasan. Sejauh ini kamu punya %2$d. Hingga saat itu nilai tetap pada level berbasis fitur.</string>
+    <string name="valuation_review_moving">Kini bergerak perlahan menuju peringkat %1$.1f★ dari %2$d ulasan — sedikit demi sedikit, tidak pernah sekaligus.</string>
+    <string name="valuation_bounded_note">Nilai ini bergerak paling banyak %1$d%% per siklus pembaruan, dan hanya setelah kamu punya %2$d+ ulasan. Bahkan saat itu, mencapai batas ±%3$d%% butuh banyak siklus — batas keras yang tak bisa dilampaui ulasan — sehingga minggu ulasan buruk tidak bisa menjatuhkan penghasilanmu dalam semalam.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">Kisah Swapl-mu</string>
+    <string name="story_counts_heading">Kisahmu sejauh ini</string>
+    <string name="story_passport">Paspormu</string>
+    <string name="story_kind_trip">Perjalanan</string>
+    <string name="story_kind_hosted">Menjadi tuan rumah</string>
+    <string name="story_detail_hosted_by">Dijamu oleh %1$s</string>
+    <string name="story_detail_welcomed">Menyambut %1$s</string>
+    <string name="story_detail_stay">Sebuah penginapan di Swapl</string>
+    <string name="story_detail_guest">Seorang tamu di rumahmu</string>
+    <string name="story_share_heading">Bagikan kisahmu</string>
+    <string name="story_share_button">Bagikan</string>
+    <string name="story_share_note">Kirim kisahmu ke mana saja — Pesan, WhatsApp, email. Kisah ini membawa tautan undanganmu, jadi saat teman mengetuknya dan bergabung, kalian berdua mendapatkan poin perjalanan.</string>
+    <string name="story_share_subject">Kisah Swapl-ku</string>
+    <string name="story_share_chooser">Bagikan kisahmu</string>
+    <string name="story_share_message">Aku sudah menukar rumah di %1$d kota lewat Swapl — bepergian dengan poin, bukan uang tunai. Bergabunglah denganku lewat tautanku dan kita berdua mendapat poin perjalanan saat kamu terverifikasi: %2$s</string>
+    <string name="story_empty_title">Kisahmu dimulai di sini</string>
+    <string name="story_empty_body">Setelah kamu menyelesaikan pertukaran pertama atau penginapan Keys, perjalananmu dan tamu yang kamu sambut muncul di sini sebagai cap paspor — kartu pos dari semua tempat yang Swapl bawa untukmu.</string>
+    <string name="story_empty_share">Undang teman untuk menukar</string>
+    <string name="story_error_title">Kisah tidak tersedia</string>
+    <string name="story_error_body">Kami tidak dapat memuat kisahmu. Tarik untuk menyegarkan atau coba lagi.</string>
+    <string name="story_error_retry">Coba lagi</string>
+    <plurals name="story_count_trips">
+        <item quantity="other">Perjalanan</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="other">Tamu disambut</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="other">Kota</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="other">Negara</item>
+    </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). -->
+    <string name="trip_oncover_badge">Terverifikasi di TON</string>
+    <string name="trip_oncover_view">Lihat bukti</string>
+    <string name="trip_oncover_explainer">Catatan antimanipulasi bahwa perlindunganmu nyata — bukan kripto, tanpa pembayaran, tidak ada yang perlu kamu lakukan.</string>
+
+    <!-- People in a swap conversation (DOK-187). -->
+    <string name="people_title">Orang</string>
+    <string name="people_role_principal">Partner pertukaran</string>
+    <string name="people_role_guest">Tamu di obrolan</string>
+    <string name="people_status_pending">Menunggu</string>
+    <string name="people_invite">Undang</string>
+    <string name="people_add">Tambah</string>
+    <string name="people_add_cotravelers">Tambahkan rekan perjalanan</string>
+    <string name="people_remove">Hapus %1$s</string>
+    <string name="people_invite_title">Undang seseorang ke obrolan</string>
+    <string name="people_invite_reassure">Tambahkan partner atau rekan perjalanan ke percakapan. Mereka bisa mengobrol dengan semua orang di sini, tetapi hanya kedua partner pertukaran yang bisa menerima, mengajukan tawaran balik, atau membatalkan pertukaran — mengundang seseorang tidak pernah memberi mereka kendali atas pertukaran itu.</string>
+    <string name="people_invite_field_label">Email atau handle</string>
+    <string name="people_invite_field_placeholder">nama@email.com atau @handle</string>
+    <string name="people_invite_send">Kirim undangan</string>
+    <string name="people_invite_cancel">Batal</string>
+
+    <!-- Common / shared actions -->
+    <string name="common_cancel">Batal</string>
+    <string name="common_ok">OK</string>
+    <string name="common_retry">Coba lagi</string>
+
+    <!-- Rate the app (M1) -->
+    <string name="account_rate_app">Beri rating aplikasi</string>
+    <string name="rate_app_title">Beri rating aplikasi</string>
+    <string name="rate_app_prompt">Bagaimana Swapl bekerja untukmu? Ratingmu membantu kami meningkatkan diri.</string>
+    <string name="rate_app_score_label">Ratingmu</string>
+    <string name="rate_app_comment_label">Ada yang ingin ditambahkan?</string>
+    <string name="rate_app_comment_placeholder">Beri tahu kami apa yang berfungsi — atau tidak (opsional)</string>
+    <string name="rate_app_submit">Kirim</string>
+    <string name="rate_app_submit_support">Hubungi dukungan</string>
+    <string name="rate_app_submitting">Mengirim…</string>
+    <string name="rate_app_prompt_post_review">Terima kasih atas ulasanmu! Bagaimana aplikasi Swapl sendiri bekerja untukmu?</string>
+    <string name="rate_app_prompt_post_swap">Pertukaranmu selesai! Bagaimana Swapl membawamu ke sana?</string>
+    <string name="rate_app_low_support_hint">Maaf belum sesuai harapan. Kirim ini dan kami akan membuka dukungan untuk membantu.</string>
+
+    <!-- Account screen -->
+    <string name="account_profile_title">Profil</string>
+    <string name="account_member_badge">Anggota Swapl</string>
+    <string name="account_stat_waiting">Menunggu</string>
+    <string name="account_stat_sent">Terkirim</string>
+    <string name="account_stat_active">Aktif</string>
+    <string name="account_stat_homes">Rumah</string>
+    <string name="account_edit_home_title">Edit rumahmu</string>
+    <string name="account_become_host_title">Jadi tuan rumah</string>
+    <string name="account_edit_home_body">Perbarui foto, tanggal, dan detail.</string>
+    <string name="account_become_host_body">Daftarkan rumahmu untuk mulai menukar.</string>
+    <string name="account_section_settings">Pengaturan</string>
+    <string name="account_personal_info">Informasi pribadi</string>
+    <string name="account_change_password">Ubah kata sandi</string>
+    <string name="account_passkeys">Masuk &amp; keamanan — Passkey</string>
+    <string name="account_passkeys_busy">Masuk &amp; keamanan — Passkey…</string>
+    <string name="account_privacy">Privasi</string>
+    <string name="account_notifications">Notifikasi</string>
+    <string name="account_section_profile">Profil</string>
+    <string name="account_view_profile">Lihat profil</string>
+    <string name="account_your_story">Kisah Swapl-mu</string>
+    <string name="account_travel_points">Poin perjalanan</string>
+    <string name="account_invite_earn">Undang &amp; dapatkan</string>
+    <string name="account_interests">Minat</string>
+    <string name="account_saved_searches">Pencarian tersimpan</string>
+    <string name="account_travel_windows">Jendela perjalanan</string>
+    <string name="account_metrics">Metrik</string>
+    <string name="account_section_support">Dukungan</string>
+    <string name="account_get_help">Dapatkan bantuan</string>
+    <string name="account_privacy_policy">Kebijakan privasi</string>
+    <string name="account_terms">Ketentuan layanan</string>
+    <string name="account_log_out">Keluar</string>
+    <string name="account_version">Versi %1$s (%2$d)</string>
+    <string name="account_signout_title">Keluar?</string>
+    <string name="account_signout_body">Kamu perlu masuk lagi untuk melihat pertukaranmu.</string>
+    <string name="account_passkeys_dialog_title">Passkey</string>
+
+    <!-- Browse -->
+    <string name="browse_title">Jelajahi</string>
+    <string name="browse_edit_home">Edit rumahmu</string>
+    <string name="browse_list_home">+ Daftarkan rumah</string>
+    <string name="browse_search_placeholder">Mau ke mana?</string>
+    <string name="browse_clear_search">Hapus pencarian</string>
+    <string name="browse_filters">Filter</string>
+    <string name="browse_tab_homes">Rumah</string>
+    <string name="browse_tab_experiences">Pengalaman</string>
+    <string name="browse_tab_services">Layanan</string>
+    <string name="browse_get_inspired_title">Cari Inspirasi</string>
+    <string name="browse_get_inspired_body">Gambarkan perjalanan impianmu — kami akan menyusun pertukaran untukmu.</string>
+    <string name="browse_sort">Urutkan</string>
+    <string name="browse_sort_match">Paling sesuai</string>
+    <string name="browse_sort_newest">Terbaru</string>
+    <string name="browse_sort_largest">Terbesar</string>
+    <string name="browse_error_title">Rumah tidak tersedia</string>
+    <string name="browse_error_body">Kami tidak dapat menjangkau Swapl. Periksa koneksimu dan coba lagi.</string>
+    <string name="browse_empty_title">Tidak ada rumah ditemukan</string>
+    <string name="browse_empty_body">Rumah baru muncul di sini saat anggota menerbitkannya.</string>
+    <string name="browse_guests_size_type">%1$d tamu · %2$d m² · %3$s</string>
+    <string name="browse_tag_featured">Unggulan</string>
+    <string name="browse_tag_verified">Terverifikasi</string>
+    <string name="browse_tag_private_room">Kamar pribadi</string>
+    <!-- Filters -->
+    <string name="filter_title">Filter</string>
+    <string name="filter_when">Kapan</string>
+    <string name="filter_from">Dari</string>
+    <string name="filter_to">Sampai</string>
+    <string name="filter_clear_dates">Hapus tanggal</string>
+    <string name="filter_space_type">Tipe ruang</string>
+    <string name="filter_space_all">Semua</string>
+    <string name="filter_space_entire">Seluruh tempat</string>
+    <string name="filter_space_private_room">Kamar pribadi</string>
+    <string name="filter_property_type">Tipe properti</string>
+    <string name="filter_min_size">Ukuran minimum: %1$d m²</string>
+    <string name="filter_min_sleeps">Kapasitas tidur minimal: %1$d</string>
+    <string name="filter_pets">Hanya rumah ramah hewan peliharaan</string>
+    <string name="filter_wfh">Hanya rumah dengan ruang kerja</string>
+    <string name="filter_step_free">Hanya rumah tanpa tangga</string>
+    <string name="filter_reset">Atur ulang</string>
+    <string name="filter_show_homes">Tampilkan rumah</string>
+
+    <!-- Listing detail -->
+    <string name="detail_guests_rooms">%1$d tamu · %2$s · %3$s · %4$d m²</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="other">%1$d kamar tidur</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="other">%1$d kamar mandi</item>
+    </plurals>
+    <string name="detail_available_range">Tersedia %1$s → %2$s · menginap %3$d–%4$d hari</string>
+    <string name="detail_points_per_night">%1$d poin / malam</string>
+    <string name="detail_private_room_note">Ini adalah kamar pribadi, jadi nilai per malam hanya mencerminkan kamar — bukan seluruh rumah.</string>
+    <string name="detail_private_room_badge">Kamar pribadi</string>
+    <string name="detail_private_room_badge_rooms">Kamar pribadi · %1$d kamar</string>
+    <string name="detail_about_home">Tentang rumah ini</string>
+    <string name="detail_what_offered">Apa yang ditawarkan tempat ini</string>
+    <string name="detail_where">Di mana kamu akan berada</string>
+    <string name="detail_approx_area">area perkiraan</string>
+    <string name="detail_hosted_by">Dijamu oleh</string>
+    <string name="detail_anonymous">Anonim</string>
+    <string name="detail_verified_host">Tuan rumah terverifikasi</string>
+    <string name="detail_edit_listing">Edit listing</string>
+    <string name="detail_manage_availability">Kelola ketersediaan</string>
+    <string name="detail_propose_swap">Ajukan pertukaran</string>
+    <string name="detail_list_home_first">Daftarkan rumahmu dulu</string>
+    <string name="detail_list_home_first_body">Tambahkan listingmu sendiri sebelum bisa mengajukan pertukaran.</string>
+    <string name="detail_stay_with_points">Menginap dengan poin</string>
+    <string name="detail_stay_with_points_body">Pesan satu arah memakai poin perjalanan yang kamu peroleh sebagai tuan rumah — tanpa perlu pertukaran balik. Gunakan ini saat pertukaran langsung tidak cocok.</string>
+    <string name="detail_report_listing">Laporkan listing ini</string>
+    <string name="detail_no_amenities">Tidak ada fasilitas yang dicantumkan.</string>
+    <string name="detail_request_sent_title">Permintaan terkirim</string>
+    <string name="detail_request_sent_body">Poinmu ditahan hingga tuan rumah mengonfirmasi. Kamu akan menemukan penginapan ini di Perjalanan.</string>
+    <!-- Amenity labels -->
+    <string name="amenity_balcony">Balkon</string>
+    <string name="amenity_rooftop">Atap</string>
+    <string name="amenity_garden">Taman</string>
+    <string name="amenity_courtyard">Halaman dalam</string>
+    <string name="amenity_pool">Kolam renang</string>
+    <string name="amenity_gym">Gym</string>
+    <string name="amenity_piano">Piano</string>
+    <string name="amenity_bike">Sepeda termasuk</string>
+    <string name="amenity_parking">Parkir</string>
+    <string name="amenity_workspace">Ruang kerja</string>
+    <string name="amenity_pets">Ramah hewan peliharaan</string>
+    <string name="amenity_step_free">Tanpa tangga</string>
+    <string name="amenity_elevator">Lift</string>
+    <string name="amenity_ac">AC</string>
+    <string name="amenity_dishwasher">Mesin cuci piring</string>
+    <string name="amenity_washer">Mesin cuci</string>
+    <string name="amenity_dryer">Pengering</string>
+
+    <!-- Propose swap dialog -->
+    <string name="propose_title">Ajukan pertukaran</string>
+    <string name="propose_message_label">Pesan (opsional)</string>
+    <string name="propose_drafting">Menyusun…</string>
+    <string name="propose_write_for_me">Tuliskan untukku</string>
+    <string name="propose_rewrite_ai">Tulis ulang dengan AI</string>
+    <string name="propose_draft_failed">Tidak dapat menyusun pesan saat ini</string>
+    <string name="propose_send">Kirim</string>
+
+    <!-- Swap thread -->
+    <string name="thread_with">dengan %1$s</string>
+    <string name="thread_open_chat">Buka obrolan</string>
+    <string name="thread_open_chat_with">Buka obrolan dengan %1$s</string>
+    <string name="thread_view_profile">Lihat profil %1$s</string>
+    <string name="thread_host_fallback">tuan rumah</string>
+    <string name="thread_host_fallback_possessive">tuan rumahmu</string>
+    <string name="thread_proposal">Proposal</string>
+    <string name="thread_counter">Tawaran balik</string>
+    <string name="thread_size_sleeps">%1$d m² · kapasitas %2$d</string>
+    <string name="thread_accept">Terima pertukaran</string>
+    <string name="thread_counter_offer">Tawaran balik</string>
+    <string name="thread_decline">Tolak</string>
+    <string name="thread_withdraw">Tarik kembali</string>
+    <string name="thread_message_optional">Pesan (opsional)</string>
+    <!-- Accept-consent + action feedback (M4) -->
+    <string name="thread_accept_confirm_title">Terima pertukaran ini?</string>
+    <string name="thread_accept_confirm_body">Menerima akan mengunci tanggal dan menerbitkan asuransi perjalanan untuk penginapan — kedua rumah lalu terlindungi. Kamu masih bisa mengobrol untuk mengoordinasikan serah terima.</string>
+    <string name="thread_accept_confirm_cta">Terima &amp; asuransikan</string>
+    <string name="thread_decline_confirm_title">Tolak pertukaran ini?</string>
+    <string name="thread_decline_confirm_body">Ini menolak proposal. Kamu tidak bisa membatalkannya, tetapi kamu selalu bisa mengirim yang baru nanti.</string>
+    <string name="thread_withdraw_confirm_title">Tarik proposal ini?</string>
+    <string name="thread_withdraw_confirm_body">Ini menarik kembali tawaranmu. Kamu bisa mengirim yang baru nanti.</string>
+    <string name="thread_accepted_toast">Pertukaran diterima — penginapanmu terasuransi.</string>
+    <string name="thread_declined_toast">Proposal ditolak.</string>
+    <string name="thread_withdrawn_toast">Proposal ditarik.</string>
+    <string name="thread_countered_toast">Tawaran balik terkirim.</string>
+
+    <!-- Leave a review -->
+    <string name="review_title">Tinggalkan ulasan</string>
+    <string name="review_prompt">Bagaimana pertukaranmu dengan %1$s?</string>
+    <string name="review_partner_fallback">partner pertukaranmu</string>
+    <string name="review_rating_label">Ratingmu</string>
+    <string name="review_text_label">Ulasanmu</string>
+    <string name="review_text_placeholder">Bagaimana rumahnya, lingkungannya, serah terimanya?</string>
+    <string name="review_min_chars">Minimal 20 karakter — %1$d sejauh ini.</string>
+    <string name="review_submit">Kirim ulasan</string>
+    <string name="review_submitting">Mengirim…</string>
+    <string name="review_card_title">Bagaimana pertukaranmu?</string>
+    <string name="review_card_body">Tinggalkan ulasan untuk %1$s — ulasan tampil di profil publiknya.</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">Kotak masuk pertukaran</string>
+    <string name="inbox_search_open">Cari</string>
+    <string name="inbox_search_close">Tutup pencarian</string>
+    <string name="inbox_search_placeholder">Cari berdasarkan tuan rumah atau kota</string>
+    <string name="inbox_filter_all">Semua</string>
+    <string name="inbox_filter_waiting">Menunggumu</string>
+    <string name="inbox_filter_sent">Terkirim</string>
+    <string name="inbox_filter_active">Aktif</string>
+    <string name="inbox_filter_archived">Diarsipkan</string>
+    <string name="inbox_section_waiting">Menunggumu</string>
+    <string name="inbox_section_sent">Terkirim — menunggu balasan</string>
+    <string name="inbox_section_active">Pertukaran aktif</string>
+    <string name="inbox_section_archived">Diarsipkan</string>
+    <string name="inbox_status_confirmed">Pertukaran terkonfirmasi</string>
+    <string name="inbox_status_countered">Tawaran balik diterima</string>
+    <string name="inbox_status_declined">Proposal ditolak</string>
+    <string name="inbox_status_waiting_reply">Menunggu balasanmu</string>
+    <string name="inbox_status_sent">Proposal terkirim</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s → %2$s · dengan %3$s</string>
+    <string name="inbox_dates">%1$s → %2$s</string>
+    <string name="inbox_error_title">Pesan tidak tersedia</string>
+    <string name="inbox_error_body">Kami tidak dapat memuat pertukaranmu. Tarik untuk menyegarkan atau coba lagi.</string>
+    <string name="inbox_empty_title">Belum ada pesan</string>
+    <string name="inbox_empty_body">Ajukan pertukaran dari listing mana pun dan akan muncul di sini.</string>
+
+    <!-- Trips -->
+    <string name="trips_title">Perjalanan</string>
+    <string name="trips_phase_active">Sedang berlangsung</string>
+    <string name="trips_phase_upcoming">Mendatang</string>
+    <string name="trips_phase_past">Lampau</string>
+    <string name="trips_row_title">Perjalanan ke %1$s</string>
+    <string name="trips_row_dates_host">%1$s → %2$s · tuan rumah %3$s</string>
+    <string name="trips_row_dates">%1$s → %2$s</string>
+    <string name="trips_row_roles">Tamu di %1$s · Kamu menjadi tuan rumah di %2$s</string>
+    <string name="trips_error_title">Perjalanan tidak tersedia</string>
+    <string name="trips_error_body">Kami tidak dapat memuat perjalananmu. Tarik untuk menyegarkan atau coba lagi.</string>
+    <string name="trips_empty_title">Belum ada perjalanan</string>
+    <string name="trips_empty_body">Pertukaran yang diterima menjadi perjalanan. Penginapanmu mendatang akan muncul di sini.</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">Pertukaran ini dibatalkan</string>
+    <string name="cockpit_timeline_agreed">Disepakati</string>
+    <string name="cockpit_timeline_ready">Siap</string>
+    <string name="cockpit_timeline_staying">Menginap</string>
+    <string name="cockpit_timeline_done">Selesai</string>
+    <string name="cockpit_starts_in">Mulai dalam</string>
+    <string name="cockpit_status">Status</string>
+    <string name="cockpit_countdown_days">%1$dh %2$dj</string>
+    <string name="cockpit_countdown_hours">%1$dj</string>
+    <string name="cockpit_phase_agreed">Pertukaran disepakati</string>
+    <string name="cockpit_phase_preparing">Mempersiapkan</string>
+    <string name="cockpit_phase_ready">Siap berangkat</string>
+    <string name="cockpit_phase_in_progress">Sedang berlangsung</string>
+    <string name="cockpit_phase_completed">Selesai</string>
+    <string name="cockpit_phase_cancelled">Dibatalkan</string>
+    <string name="cockpit_insured">Terasuransi</string>
+    <string name="cockpit_before_you_go">Sebelum kamu pergi</string>
+    <string name="cockpit_check_guide_filled">Lengkapi panduan rumahmu</string>
+    <string name="cockpit_check_details_read">Baca detail rumah tuan rumahmu</string>
+    <string name="cockpit_check_checked_in">Check-in saat kamu tiba</string>
+    <string name="cockpit_check_checked_out">Check-out saat kamu pergi</string>
+    <string name="cockpit_finish_guide">Selesaikan panduan rumahmu (%1$d%%)</string>
+    <string name="cockpit_your_key_code">KODE KUNCIMU</string>
+    <string name="cockpit_key_code_note">Kunci untuk kunci — bagikan ini dengan tamumu agar mereka bisa masuk.</string>
+    <string name="cockpit_swap_protection">Perlindungan pertukaran</string>
+    <string name="cockpit_policy_line">Polis %1$s · perlindungan €%2$s</string>
+    <string name="cockpit_where_you_stay">Tempat kamu menginap</string>
+    <string name="cockpit_guide_not_filled">Tuan rumahmu belum mengisi panduan rumah mereka.</string>
+    <string name="cockpit_address_unlocks_city">Alamat tepat di %1$s segera terbuka</string>
+    <string name="cockpit_address_unlocks">Alamat tepat segera terbuka</string>
+    <string name="cockpit_unlocks_at">Terbuka %1$s — 48 jam sebelum penginapanmu.</string>
+    <string name="cockpit_unlocks_generic">Alamat dan panduan rumah terbuka 48 jam sebelum penginapanmu.</string>
+    <string name="cockpit_home_guide">Panduan rumah</string>
+    <string name="cockpit_collapse">Tutup</string>
+    <string name="cockpit_expand">Buka</string>
+    <string name="cockpit_guide_getting_in">Cara masuk</string>
+    <string name="cockpit_guide_keys">Kunci</string>
+    <string name="cockpit_guide_wifi_name">Jaringan Wi-Fi</string>
+    <string name="cockpit_guide_wifi_password">Kata sandi Wi-Fi</string>
+    <string name="cockpit_guide_heating">Pemanas &amp; pendingin</string>
+    <string name="cockpit_guide_kitchen">Dapur</string>
+    <string name="cockpit_guide_bins">Tempat sampah &amp; daur ulang</string>
+    <string name="cockpit_guide_pets_plants">Hewan peliharaan &amp; tanaman</string>
+    <string name="cockpit_guide_house_rules">Aturan rumah</string>
+    <string name="cockpit_guide_neighbourhood">Lingkungan</string>
+    <string name="cockpit_guide_emergency">Kontak darurat</string>
+    <string name="cockpit_check_in">Check-in</string>
+    <string name="cockpit_check_out">Check-out</string>
+    <string name="cockpit_checked_in_out">Sudah check-in dan check-out — terima kasih!</string>
+    <string name="cockpit_trip_activity">Aktivitas perjalanan</string>
+    <string name="cockpit_event_you">Kamu</string>
+    <string name="cockpit_event_partner_fallback">Partner pertukaranmu</string>
+    <string name="cockpit_event_checked_in">%1$s sudah check-in</string>
+    <string name="cockpit_event_checked_out">%1$s sudah check-out</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">Pesan tidak tersedia</string>
+    <string name="chat_try_again">Coba lagi</string>
+    <string name="chat_view_trip">Lihat perjalanan</string>
+    <string name="chat_say_hello_title">Sapa</string>
+    <string name="chat_say_hello_body">Mulai percakapan — tanyakan soal tanggal, lingkungan, atau apa pun yang ingin kamu ketahui.</string>
+    <string name="chat_load_earlier">Muat pesan sebelumnya</string>
+    <string name="chat_message_placeholder">Pesan</string>
+    <string name="chat_add_photo">Tambah foto</string>
+    <string name="chat_remove_photo">Hapus foto</string>
+    <string name="chat_send">Kirim pesan</string>
+    <string name="chat_receipt_read">Dibaca</string>
+    <string name="chat_receipt_sent">Terkirim</string>
+    <string name="chat_invite_only_partners">Hanya kedua partner pertukaran yang bisa mengundang orang.</string>
+    <string name="chat_invite_not_found">Kami tidak dapat menemukan orang itu. Periksa email atau handle-nya.</string>
+    <string name="chat_invite_failed">Tidak dapat mengirim undangan. Coba lagi.</string>
+    <string name="chat_send_failed">Tidak dapat mengirim. Coba lagi.</string>
+    <string name="chat_read_image_failed">Tidak dapat membaca gambar itu</string>
+    <string name="chat_upload_photo_failed">Tidak dapat mengunggah foto. Periksa koneksimu dan coba lagi.</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">Lokasi</string>
+    <string name="create_step_space">Ruang</string>
+    <string name="create_step_access">Akses &amp; hewan peliharaan</string>
+    <string name="create_step_amenities">Fasilitas</string>
+    <string name="create_step_dates">Tanggal</string>
+    <string name="create_step_photos">Foto</string>
+    <string name="create_step_description">Deskripsi</string>
+    <string name="create_step_review">Tinjauan</string>
+    <string name="create_kicker_edit">Edit rumahmu — langkah %1$d dari %2$d</string>
+    <string name="create_kicker_new">Langkah %1$d dari %2$d</string>
+    <string name="create_back">Kembali</string>
+    <string name="create_next">Berikutnya</string>
+    <string name="create_saving">Menyimpan…</string>
+    <string name="create_publishing">Menerbitkan…</string>
+    <string name="create_save_changes">Simpan perubahan</string>
+    <string name="create_publish_listing">Terbitkan listing</string>
+    <string name="create_locating">Mencari lokasi…</string>
+    <string name="create_use_location">Gunakan lokasiku saat ini</string>
+    <string name="create_location_error">Tidak dapat menentukan lokasimu — isi secara manual.</string>
+    <string name="create_load_error">Tidak dapat memuat listing</string>
+    <string name="create_read_image_error">Tidak dapat membaca gambar itu</string>
+    <string name="create_upload_failed">Unggahan gagal</string>
+    <string name="create_title_label">Judul (mis. Apartemen kanal bermandi cahaya)</string>
+    <string name="create_city_label">Kota</string>
+    <string name="create_neighbourhood_label">Lingkungan</string>
+    <string name="create_country_label">Negara</string>
+    <string name="create_address_label">Alamat (opsional)</string>
+    <string name="create_space_type">Tipe ruang</string>
+    <string name="create_space_entire">Seluruh tempat</string>
+    <string name="create_space_private_room">Kamar pribadi</string>
+    <string name="create_private_room_keys_note">Kamar pribadi bernilai Keys lebih sedikit daripada seluruh rumah — nilai per malam hanya mencerminkan kamar.</string>
+    <string name="create_rooms_offered">Kamar yang ditawarkan: %1$d</string>
+    <string name="create_property_type">Tipe properti</string>
+    <string name="create_prop_apartment">Apartemen</string>
+    <string name="create_prop_house">Rumah</string>
+    <string name="create_prop_loft">Loft</string>
+    <string name="create_prop_townhouse">Rumah teres</string>
+    <string name="create_size">Ukuran: %1$d m²</string>
+    <string name="create_sleeps">Kapasitas tidur: %1$d</string>
+    <string name="create_bedrooms">Kamar tidur: %1$d</string>
+    <string name="create_bathrooms">Kamar mandi: %1$d</string>
+    <string name="create_floor">Lantai: %1$d</string>
+    <string name="create_has_elevator">Ada lift</string>
+    <string name="create_step_free">Akses tanpa tangga</string>
+    <string name="create_pets_allowed">Hewan peliharaan diizinkan</string>
+    <string name="create_wfh_setup">Pengaturan WFH</string>
+    <string name="create_desks">Meja kerja: %1$d</string>
+    <string name="create_parking">Parkir</string>
+    <string name="create_bike">Sepeda termasuk</string>
+    <string name="create_balcony">Balkon</string>
+    <string name="create_rooftop">Atap</string>
+    <string name="create_garden">Taman</string>
+    <string name="create_courtyard">Halaman dalam</string>
+    <string name="create_piano">Piano</string>
+    <string name="create_pool">Kolam renang</string>
+    <string name="create_gym">Gym</string>
+    <string name="create_ac">AC</string>
+    <string name="create_dishwasher">Mesin cuci piring</string>
+    <string name="create_washer">Mesin cuci</string>
+    <string name="create_dryer">Pengering</string>
+    <string name="create_available_from">Tersedia dari</string>
+    <string name="create_available_to">Tersedia sampai</string>
+    <string name="create_min_stay">Menginap minimal: %1$d hari</string>
+    <string name="create_max_stay">Menginap maksimal: %1$d hari</string>
+    <string name="create_photos_hint">Tambahkan hingga 10 foto rumahmu. Kami mengubah ukurannya sebelum diunggah.</string>
+    <string name="create_choose_photos">Pilih foto</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="other">Mengunggah %1$d foto…</item>
+    </plurals>
+    <string name="create_description_label">Deskripsikan rumahmu (min 20 karakter)</string>
+    <string name="create_characters">%1$d karakter</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d m² · kapasitas %2$d · %3$d kt / %4$d km</string>
+    <string name="create_review_available">Tersedia %1$s → %2$s</string>
+    <string name="create_decrease">kurangi</string>
+    <string name="create_increase">tambah</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">Menginap dengan poin</string>
+    <string name="keys_stay_in">Menginap di %1$s</string>
+    <string name="keys_stay_guest_at">Tamu di %1$s</string>
+    <string name="keys_stay_dates">%1$s → %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="other">%1$d malam · %2$d poin</item>
+    </plurals>
+    <string name="keys_stay_decline">Tolak</string>
+    <string name="keys_stay_confirm">Konfirmasi penginapan</string>
+    <string name="keys_stay_cancel_request">Batalkan permintaan</string>
+    <string name="keys_stay_covered">Terkonfirmasi — penginapanmu dilindungi polis Swapl.</string>
+    <string name="keys_stay_status_awaiting_host">Menunggu tuan rumah</string>
+    <string name="keys_stay_status_action_needed">Perlu tindakan</string>
+    <string name="keys_stay_status_confirmed">Terkonfirmasi</string>
+    <string name="keys_stay_status_declined">Ditolak</string>
+    <string name="keys_stay_status_cancelled">Dibatalkan</string>
+    <string name="keys_stay_status_completed">Selesai</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">Menginap dengan poin</string>
+    <string name="stay_keys_intro">Pesan satu arah dengan poinmu — tanpa perlu menjamu balik. Cocok saat tanggal atau rumahmu tidak pas untuk pertukaran langsung.</string>
+    <string name="stay_keys_window">Pilih tanggal dalam rentang ketersediaan rumah (%1$s → %2$s). %3$d–%4$d malam. Tanggal yang sudah dipesan dicoret.</string>
+    <string name="stay_keys_points_per_night">Poin per malam</string>
+    <string name="stay_keys_nights">Malam</string>
+    <string name="stay_keys_total">Total</string>
+    <string name="stay_keys_total_points">%1$d poin</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="other">Kamu punya %1$d poin — cukup untuk penginapan ini (sekitar %2$d malam pada tarif ini).</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="other">Kamu kurang %1$d poin. Jadilah tuan rumah sekitar %2$d malam pada tarif ini untuk membuka penginapan ini — atau pilih lebih sedikit malam. Poin tidak bisa dibeli.</item>
+    </plurals>
+    <string name="stay_keys_held_note">Poinmu ditahan hingga tuan rumah mengonfirmasi. Kamu akan menemukan penginapan ini di Perjalanan.</string>
+    <string name="stay_keys_sending">Mengirim…</string>
+    <string name="stay_keys_request">Minta dengan poin</string>
+    <string name="stay_keys_error_insufficient">Poinmu tidak cukup untuk tanggal ini. Coba lebih sedikit malam, atau dapatkan poin dengan menjadi tuan rumah. Poin tidak bisa dibeli.</string>
+    <string name="stay_keys_error_unavailable">Tanggal itu tidak tersedia. Pilih tanggal dalam rentang rumah.</string>
+    <string name="stay_keys_error_generic">Tidak dapat meminta penginapan ini saat ini.</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">Pencarian tersimpan</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">Pencarian tersimpan adalah fitur anggota Plus.</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">Minat · %1$d / 12</string>
+    <string name="interests_vibe_label">Suasanamu (opsional)</string>
+    <string name="interests_save">Simpan</string>
+    <string name="interests_saving">Menyimpan…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">Riwayat poin</string>
+    <string name="keys_tx_filter_all">Semua</string>
+    <string name="keys_tx_filter_earned">Diperoleh</string>
+    <string name="keys_tx_filter_spent">Dibelanjakan</string>
+    <string name="keys_tx_empty_all">Belum ada aktivitas poin.</string>
+    <string name="keys_tx_empty_earned">Belum ada poin yang diperoleh.</string>
+    <string name="keys_tx_empty_spent">Belum ada poin yang dibelanjakan.</string>
+    <string name="keys_tx_loading">Memuat…</string>
+    <string name="keys_tx_load_more">Muat lebih banyak</string>
+    <string name="keys_tx_balance">%1$d saldo</string>
+    <string name="keys_tx_error_title">Riwayat poin tidak tersedia</string>
+    <string name="keys_tx_try_again">Coba lagi</string>
+
+    <!-- ===== UI localization 100% (DOK) ===== -->
+    <!-- Common / shared -->
+    <string name="common_save">Simpan</string>
+    <string name="common_saving">Menyimpan…</string>
+    <string name="common_send">Kirim</string>
+    <string name="common_sending">Mengirim…</string>
+    <string name="common_close">Tutup</string>
+    <string name="common_done">Selesai</string>
+    <string name="common_delete">Hapus</string>
+    <string name="common_try_again">Coba lagi</string>
+    <string name="cd_remove_photo">Hapus foto</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">%1$d dari 5 bintang</string>
+    <plurals name="cd_n_stars">
+        <item quantity="other">%1$d bintang</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="other">%1$d malam</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="other">%1$d tempat tidur</item>
+    </plurals>
+
+    <!-- Status enum chips -->
+    <string name="status_pending">Menunggu</string>
+    <string name="status_accepted">Terkonfirmasi</string>
+    <string name="status_countered">Ditawar balik</string>
+    <string name="status_declined">Ditolak</string>
+    <string name="status_withdrawn">Ditarik</string>
+    <string name="status_active">Aktif</string>
+    <string name="status_upcoming">Mendatang</string>
+    <string name="status_in_progress">Sedang berlangsung</string>
+    <string name="status_completed">Selesai</string>
+    <string name="status_cancelled">Dibatalkan</string>
+    <string name="status_disputed">Disengketakan</string>
+    <string name="status_resolved">Terselesaikan</string>
+    <string name="status_open">Terbuka</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">Paket</string>
+
+    <!-- Trip detail -->
+    <string name="trip_detail_error_title">Perjalanan tidak tersedia</string>
+    <string name="trip_detail_error_body">Kami tidak dapat memuat perjalanan ini.</string>
+    <string name="trip_detail_host_fallback">tuan rumahmu</string>
+    <string name="trip_detail_host_word">tuan rumah</string>
+    <string name="trip_detail_trip_to">Perjalanan ke %1$s</string>
+    <string name="trip_detail_hosted_by">Dijamu oleh %1$s</string>
+    <string name="trip_detail_your_stay">Penginapanmu</string>
+    <string name="trip_detail_guest_at">Tamu di tempat %1$s — %2$s · %3$s</string>
+    <string name="trip_detail_in_return">Sebagai balasannya kamu menjadi tuan rumah di %1$s · %2$s pada tanggal yang sama.</string>
+    <string name="trip_detail_view_profile">Lihat profil %1$s</string>
+
+    <!-- Agreement panel -->
+    <string name="agreement_title">Pertukaran disepakati — kunci untuk kunci</string>
+    <string name="agreement_stay_between">Menginap antara %1$s → %2$s dengan %3$s.</string>
+    <string name="agreement_your_code">Kodemu (gunakan di tempat mereka)</string>
+    <string name="agreement_their_code">Kode mereka (tamu di tempatmu)</string>
+    <string name="agreement_insurance_cover">Asuransi · perlindungan €%1$dk</string>
+    <string name="agreement_auto_issued">Diterbitkan otomatis · saluran 24/7 %1$s</string>
+
+    <!-- Dispute / resolution center -->
+    <string name="dispute_report_problem">Laporkan masalah</string>
+    <string name="dispute_report_new">Laporkan masalah baru</string>
+    <string name="dispute_phone_title">Hubungi saluran 24/7 kami</string>
+    <string name="dispute_phone_body">Jika ada yang tidak aman atau terkunci di luar, hubungi %1$s.</string>
+    <string name="dispute_phone_call">Hubungi %1$s</string>
+    <string name="dispute_urgent_title">Butuh bantuan sekarang?</string>
+    <string name="dispute_urgent_body">Jika ada yang tidak aman atau terkunci di luar, saluran 24/7 kami siap. Ketuk untuk menghubungi dukungan sekarang.</string>
+    <string name="dispute_open_body">Ceritakan apa yang terjadi dengan pertukaranmu. Kami akan melibatkan partner pertukaranmu dan tim dukungan kami.</string>
+    <string name="dispute_open_body_with">Ceritakan apa yang terjadi dengan pertukaranmu dengan %1$s. Kami akan melibatkan partner pertukaranmu dan tim dukungan kami.</string>
+    <string name="dispute_what_happened">APA YANG TERJADI?</string>
+    <string name="dispute_describe_label">Deskripsikan masalahnya</string>
+    <string name="dispute_describe_placeholder">Apa yang terjadi, kapan, dan apa yang kamu butuhkan dari kami.</string>
+    <string name="dispute_send_report">Kirim laporan</string>
+    <string name="dispute_discard_title">Buang perubahan?</string>
+    <string name="dispute_discard_body">Laporanmu belum dikirim. Jika kamu keluar sekarang, apa yang sudah kamu tulis akan hilang.</string>
+    <string name="dispute_discard_confirm">Buang</string>
+    <string name="dispute_discard_keep">Lanjutkan menyunting</string>
+    <string name="dispute_reported_on">Dilaporkan %1$s</string>
+    <string name="dispute_resolution_label">PENYELESAIAN</string>
+    <string name="dispute_conversation_label">PERCAKAPAN</string>
+    <string name="dispute_case_resolved">Kasus ini telah diselesaikan.</string>
+    <string name="dispute_case_closed">Kasus ini ditutup.</string>
+    <string name="dispute_reply_label">BALAS</string>
+    <string name="dispute_reply_placeholder">Tambahkan balasan…</string>
+    <string name="dispute_author_you">Kamu</string>
+    <string name="dispute_author_support">Dukungan</string>
+    <string name="dispute_photos_label">FOTO (OPSIONAL)</string>
+    <string name="dispute_add_photos">Tambah foto</string>
+    <string name="dispute_add_more_photos">Tambah lagi</string>
+    <string name="dispute_photo_read_error">Tidak dapat membaca gambar itu</string>
+    <string name="dispute_photo_upload_error">Tidak dapat mengunggah foto. Periksa koneksimu dan coba lagi.</string>
+    <string name="dispute_cat_access_title">Tidak bisa masuk</string>
+    <string name="dispute_cat_access_subtitle">Terkunci di luar, kode salah, kunci hilang</string>
+    <string name="dispute_cat_damage_title">Kerusakan</string>
+    <string name="dispute_cat_damage_subtitle">Ada yang rusak atau terkena kerusakan</string>
+    <string name="dispute_cat_cleanliness_title">Kebersihan</string>
+    <string name="dispute_cat_cleanliness_subtitle">Rumah belum siap atau tidak bersih</string>
+    <string name="dispute_cat_safety_title">Masalah keamanan</string>
+    <string name="dispute_cat_safety_subtitle">Kamu merasa tidak aman atau ada yang salah</string>
+    <string name="dispute_cat_no_show_title">Tidak hadir</string>
+    <string name="dispute_cat_no_show_subtitle">Partner pertukaranmu tidak menepati</string>
+    <string name="dispute_cat_other_title">Hal lain</string>
+    <string name="dispute_cat_other_subtitle">Hal lain yang kamu butuhkan bantuannya</string>
+    <string name="dispute_status_open">Terbuka</string>
+    <string name="dispute_status_investigating">Kami menanganinya</string>
+    <string name="dispute_status_awaiting">Giliranmu</string>
+    <string name="dispute_status_resolved">Terselesaikan</string>
+    <string name="dispute_status_closed">Ditutup</string>
+
+    <!-- Home guide editor -->
+    <string name="home_guide_title">Panduan rumah</string>
+    <string name="home_guide_complete_pct">%1$d%% selesai</string>
+    <string name="home_guide_intro">Isi hal-hal penting agar tamumu bisa nyaman tanpa harus mengirim pesan kepadamu.</string>
+    <string name="home_guide_section_access">Cara masuk</string>
+    <string name="home_guide_field_access">Petunjuk akses</string>
+    <string name="home_guide_field_key_pickup">Pengambilan kunci</string>
+    <string name="home_guide_section_wifi">Wi-Fi</string>
+    <string name="home_guide_field_wifi_name">Nama jaringan</string>
+    <string name="home_guide_field_wifi_password">Kata sandi</string>
+    <string name="home_guide_section_living">Tinggal di rumah</string>
+    <string name="home_guide_field_heating">Pemanas &amp; pendingin</string>
+    <string name="home_guide_field_kitchen">Dapur</string>
+    <string name="home_guide_field_bins">Tempat sampah &amp; daur ulang</string>
+    <string name="home_guide_field_pets">Hewan peliharaan &amp; tanaman</string>
+    <string name="home_guide_section_good_to_know">Baik untuk diketahui (opsional)</string>
+    <string name="home_guide_field_house_rules">Aturan rumah</string>
+    <string name="home_guide_field_neighbourhood">Tips lingkungan</string>
+    <string name="home_guide_field_emergency">Kontak darurat</string>
+
+    <!-- Check in / out sheet -->
+    <string name="check_event_checkin">Check-in</string>
+    <string name="check_event_checkout">Check-out</string>
+    <string name="check_event_checkin_body">Ambil beberapa foto awal rumah saat kamu tiba — ini melindungi kalian berdua jika ada yang dipertanyakan nanti.</string>
+    <string name="check_event_checkout_body">Ambil beberapa foto saat kamu pergi, agar kondisi rumah tercatat.</string>
+    <string name="check_event_baseline_photos">Foto awal</string>
+    <string name="check_event_note_label">Catatan (opsional)</string>
+    <string name="check_event_note_placeholder">mis. semuanya terlihat bagus, kunci sudah diambil</string>
+
+    <!-- Metrics -->
+    <string name="metrics_title">Metrik</string>
+    <string name="metrics_section_now">Sekarang</string>
+    <string name="metrics_online_now">Online sekarang</string>
+    <string name="metrics_today">Hari ini</string>
+    <string name="metrics_7_days">7 hari</string>
+    <string name="metrics_30_days">30 hari</string>
+    <string name="metrics_section_users">Pengguna</string>
+    <string name="metrics_total">Total</string>
+    <string name="metrics_email_verified">Email terverifikasi</string>
+    <string name="metrics_with_active_listing">Dengan listing aktif</string>
+    <string name="metrics_new_7d">Baru (7 hari)</string>
+    <string name="metrics_new_30d">Baru (30 hari)</string>
+    <string name="metrics_section_listings_per_user">Listing per pengguna</string>
+    <string name="metrics_avg_per_user">Rata-rata per pengguna dengan listing</string>
+    <string name="metrics_top_hosts">Tuan rumah teratas</string>
+    <string name="metrics_online_only">Hanya online</string>
+    <string name="metrics_no_hosts_online">Tidak ada tuan rumah online saat ini.</string>
+    <string name="metrics_online">Online</string>
+    <string name="metrics_offline">Offline</string>
+    <string name="metrics_section_top_cities">Kota teratas</string>
+    <string name="metrics_active_listings">Listing aktif</string>
+    <string name="metrics_section_proposals">Proposal</string>
+    <string name="metrics_accept_rate">Tingkat penerimaan</string>
+    <string name="metrics_section_engagement">Keterlibatan</string>
+    <string name="metrics_active_agreements">Kesepakatan aktif</string>
+    <string name="metrics_completed_agreements">Kesepakatan selesai</string>
+    <string name="metrics_messages_total">Pesan (total)</string>
+    <string name="metrics_messages_7d">Pesan (7 hari)</string>
+    <string name="metrics_favorites_total">Favorit (total)</string>
+    <string name="metrics_favorites_7d">Favorit (7 hari)</string>
+    <string name="metrics_saved_searches">Pencarian tersimpan</string>
+    <string name="metrics_generated_at">Dibuat %1$s UTC</string>
+    <string name="metrics_error_title">Metrik tidak tersedia</string>
+    <string name="metrics_error_body">Kami tidak dapat memuat metrik. Tarik untuk menyegarkan atau coba lagi.</string>
+
+    <!-- Calendar / availability -->
+    <string name="calendar_title">Kalendermu</string>
+    <string name="calendar_intro">Tanggal yang dipesan dari pertukaran terkonfirmasi dan penginapan poin ditampilkan dicoret — tamu tidak bisa memilihnya. Ketuk hari mulai dan hari selesai untuk memblokir tanggal bagimu sendiri (renovasi, penggunaan pribadi).</string>
+    <string name="calendar_block_summary">Blokir %1$s → %2$s (%3$s)</string>
+    <string name="calendar_clear">Hapus</string>
+    <string name="calendar_blocking">Memblokir…</string>
+    <string name="calendar_block_dates">Blokir tanggal ini</string>
+    <string name="calendar_pick_checkout">Sekarang ketuk hari check-out untuk menyelesaikan pemblokiran.</string>
+    <string name="calendar_blocked_label">Tanggal yang kamu blokir</string>
+    <string name="calendar_unblock">Buka blokir</string>
+    <string name="calendar_legend_selected">Dipilih</string>
+    <string name="calendar_legend_booked">Dipesan / diblokir</string>
+
+    <!-- Report dialog -->
+    <string name="report_title">Laporkan</string>
+    <string name="report_reason_label">Alasan</string>
+    <string name="report_details_label">Detail (opsional)</string>
+    <string name="report_reason_inappropriate">Konten tidak pantas</string>
+    <string name="report_reason_scam">Penipuan atau listing palsu</string>
+    <string name="report_reason_harassment">Pelecehan</string>
+    <string name="report_reason_discrimination">Diskriminasi</string>
+    <string name="report_reason_other">Lainnya</string>
+
+    <!-- Wishlists -->
+    <string name="wishlists_title">Daftar keinginan</string>
+    <string name="wishlists_guests_beds">%1$d tamu · %2$s</string>
+    <string name="wishlists_available">Tersedia %1$s → %2$s</string>
+    <string name="wishlists_error_title">Daftar keinginan tidak tersedia</string>
+    <string name="wishlists_error_body">Kami tidak dapat menjangkau Swapl. Periksa koneksimu dan coba lagi.</string>
+    <string name="wishlists_empty_title">Belum ada rumah tersimpan</string>
+    <string name="wishlists_empty_body">Ketuk ikon hati pada rumah mana pun untuk menyimpannya di sini.</string>
+
+    <!-- Travel profile card -->
+    <string name="travel_profile_kicker">Profil perjalananmu</string>
+    <string name="travel_profile_deleted">Profil dihapus. Kami hanya akan membangunnya kembali jika kamu meminta.</string>
+    <string name="travel_profile_built_from">Dibangun hanya dari apa yang kamu lakukan di Swapl. Kamu bisa menyegarkan atau menghapusnya kapan saja.</string>
+    <string name="travel_profile_built_from_sources">Dibangun hanya dari apa yang kamu lakukan di Swapl: %1$s. Kamu bisa menyegarkan atau menghapusnya kapan saja.</string>
+    <string name="travel_profile_loading">Membaca profilmu…</string>
+    <string name="travel_profile_build_again">Bangun lagi</string>
+    <string name="travel_profile_refresh">Segarkan</string>
+    <string name="travel_profile_delete_title">Hapus profil perjalanan?</string>
+    <string name="travel_profile_delete_body">Ini menghapus ringkasan AI tentang seleramu. Tidak akan kembali kecuali kamu membangunnya ulang.</string>
+    <string name="travel_profile_error_429">Profil baru saja disegarkan — coba lagi sebentar lagi.</string>
+    <string name="travel_profile_error_generic">Terjadi kesalahan. Silakan coba lagi.</string>
+
+    <!-- Travel windows -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">Kamu telah mencapai batas jendela perjalanan pada paketmu</string>
+    <string name="tw_add_window">Tambahkan jendela perjalanan</string>
+    <string name="tw_empty_title">Belum ada jendela perjalanan</string>
+    <string name="tw_empty_body">Beri tahu kami kapan kamu ingin bepergian — kami akan membawakan pertukaran siap pakai untuk tanggal tersebut.</string>
+    <string name="tw_header_empty">Kapan kamu ingin pergi?</string>
+    <string name="tw_header_count">%1$d tersimpan</string>
+    <string name="tw_header_body">Simpan tanggal yang kamu impikan. Asisten menyusun pertukaran dari rumah nyata yang kosong tepat saat itu.</string>
+    <string name="tw_new_window">Jendela perjalanan baru</string>
+    <string name="tw_date_from">Dari</string>
+    <string name="tw_date_to">Sampai</string>
+    <string name="tw_end_after_start">Tanggal selesaimu harus setelah tanggal mulai.</string>
+    <string name="tw_flexible_title">Tanggalku fleksibel</string>
+    <string name="tw_flexible_body">Kami akan memperluas pencarian di sekitar hari-hari ini.</string>
+    <string name="tw_where_label">Mau ke mana? (opsional)</string>
+    <string name="tw_where_placeholder">Lisbon, Portugal, Barcelona</string>
+    <string name="tw_where_hint">Kota atau negara dipisahkan koma — biarkan kosong untuk ke mana saja.</string>
+    <string name="tw_notes_label">Catatan (opsional)</string>
+    <string name="tw_notes_placeholder">Perjalanan ulang tahun, ingin tempat yang nyaman dijalani kaki…</string>
+    <string name="tw_save_window">Simpan jendela perjalanan</string>
+    <string name="tw_flexible_chip">Fleksibel</string>
+    <string name="tw_anywhere">Ke mana saja</string>
+    <string name="tw_remove_window">Hapus jendela perjalanan ini</string>
+    <string name="tw_hide_swaps">Sembunyikan pertukaran untuk tanggal ini</string>
+    <string name="tw_show_swaps">Tampilkan pertukaran untuk tanggal ini</string>
+    <string name="tw_proposals_load_error">Tidak dapat memuat pertukaran.</string>
+    <string name="tw_proposals_loading">Mencari rumah yang kosong untuk tanggalmu…</string>
+    <string name="tw_proposals_no_listing">Tambahkan listing aktif dulu — pertukaran butuh dua rumah.</string>
+    <string name="tw_proposals_empty">Belum ada yang kosong untuk tanggal persis ini — kami akan terus memantau dan mengirim email saat kecocokan muncul.</string>
+    <string name="tw_match_pct">%1$d%% cocok</string>
+    <string name="tw_on_wishlist">Di destinasi daftar keinginanmu</string>
+    <string name="tw_mode_direct_swap">Pertukaran langsung</string>
+    <string name="tw_mode_keys_stay">Menginap dengan Keys</string>
+    <string name="tw_mode_keys_stay_nightly">Menginap dengan Keys · %1$d Keys/malam</string>
+
+    <!-- Public profile -->
+    <string name="profile_report_user">Laporkan pengguna ini</string>
+    <string name="profile_anonymous_host">Tuan rumah anonim</string>
+    <string name="profile_id_verified">Identitas terverifikasi</string>
+    <string name="profile_host_avatar">Avatar tuan rumah</string>
+    <string name="profile_work">Pekerjaanku: %1$s</string>
+    <string name="profile_speaks">Berbicara %1$s</string>
+    <string name="profile_lives_in">Tinggal di %1$s</string>
+    <string name="profile_joined_swapl">Bergabung dengan Swapl</string>
+    <string name="profile_a_member">Anggota Swapl</string>
+    <string name="profile_visited_label">Tempat yang pernah kukunjungi</string>
+    <string name="profile_visited_empty">Belum ada pertukaran selesai — cap paspor muncul di sini setelah setiap penginapan.</string>
+    <string name="profile_reviews_label_plain">Ulasan</string>
+    <string name="profile_reviews_label_count">Ulasan (%1$d)</string>
+    <string name="profile_reviews_empty">Belum ada ulasan — tuan rumah saling mengulas setelah pertukaran selesai.</string>
+    <string name="profile_interests_label">Minat</string>
+    <string name="profile_their_homes">Rumah mereka</string>
+    <string name="profile_sqm_sleeps">%1$d m² · kapasitas %2$d</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="other">Pertukaran</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="other">Ulasan</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="other">Tahun di Swapl</item>
+    </plurals>
+
+    <!-- Account settings -->
+    <string name="settings_personal_info_title">Informasi pribadi</string>
+    <string name="settings_display_name">Nama tampilan</string>
+    <string name="settings_about_you">Tentang kamu</string>
+    <string name="settings_about_you_placeholder">Ceritakan sedikit tentang dirimu kepada tuan rumah.</string>
+    <string name="settings_my_work">Pekerjaanku</string>
+    <string name="settings_my_work_placeholder">mis. Arsitek</string>
+    <string name="settings_languages">Bahasa</string>
+    <string name="settings_languages_placeholder">mis. Inggris, Italia</string>
+    <string name="settings_languages_hint">Pisahkan bahasa dengan koma.</string>
+    <string name="settings_home_city">Kota asal</string>
+    <string name="settings_home_city_placeholder">mis. Milan</string>
+    <string name="settings_home_country">Negara asal</string>
+    <string name="settings_home_country_placeholder">mis. Italia</string>
+    <string name="settings_saved_confirm">Tersimpan. Profil publikmu sudah diperbarui.</string>
+    <string name="settings_save_changes">Simpan perubahan</string>
+    <string name="settings_change_password">Ubah kata sandi</string>
+    <string name="pw_current_label">Kata sandi saat ini</string>
+    <string name="pw_current_hint">Biarkan kosong jika kamu mendaftar dengan Google, Telegram, atau kode email.</string>
+    <string name="pw_new_label">Kata sandi baru</string>
+    <string name="pw_new_hint">Minimal 6 karakter. Perangkat lain akan keluar.</string>
+    <string name="pw_confirm_label">Konfirmasi kata sandi baru</string>
+    <string name="pw_error_min6">Gunakan minimal 6 karakter.</string>
+    <string name="pw_error_mismatch">Kata sandi tidak cocok.</string>
+    <string name="pw_error_incorrect">Kata sandi saat ini salah.</string>
+    <string name="pw_error_too_many">Terlalu banyak percobaan — coba lagi dalam satu jam.</string>
+    <string name="pw_error_generic">Tidak dapat mengubah kata sandi. Coba lagi.</string>
+    <string name="settings_privacy_title">Privasi</string>
+    <string name="settings_seo_title">Pengindeksan mesin pencari</string>
+    <string name="settings_seo_subtitle">Izinkan halaman listingmu muncul di mesin pencari seperti Google.</string>
+    <string name="settings_show_home_city_title">Tampilkan kota asalku</string>
+    <string name="settings_show_home_city_subtitle">Tampilkan kota dan negara asalmu di profil publikmu.</string>
+    <string name="settings_notifications_title">Notifikasi</string>
+    <string name="settings_email_notif_title">Notifikasi email</string>
+    <string name="settings_email_notif_subtitle">Proposal, konfirmasi, dan pengingat perjalanan lewat email.</string>
+    <string name="settings_push_notif_title">Notifikasi push</string>
+    <string name="settings_push_notif_subtitle">Peringatan waktu nyata di perangkat ini saat ada yang membutuhkanmu.</string>
+
+    <!-- Keys wallet -->
+    <string name="keys_travel_points">Poin perjalanan</string>
+    <string name="keys_intro">Poin yang kamu peroleh dengan menjadi tuan rumah. Belanjakan untuk menginap — bukan uang, tidak pernah dibeli atau dicairkan.</string>
+    <string name="keys_your_homes_earn">Rumahmu menghasilkan</string>
+    <string name="keys_your_homes_earn_body">Inilah yang kamu peroleh setiap malam seorang tamu menginap — poin yang lalu bisa kamu belanjakan untuk menginap di tempat lain.</string>
+    <string name="keys_history">Riwayat</string>
+    <string name="keys_history_empty">Belum ada aktivitas poin. Dapatkan poin dengan menjadi tuan rumah, atau hadiahkan sebagian kepada teman.</string>
+    <string name="keys_see_all_history">Lihat semua riwayat poin</string>
+    <string name="keys_your_travel_points">Poin perjalananmu</string>
+    <string name="keys_balance_caption">Belanjakan untuk menginap tanpa pertukaran serentak. Poin bukan uang — kamu tidak bisa membelinya atau mencairkannya.</string>
+    <string name="keys_gift_points">Hadiahkan poin</string>
+    <string name="keys_gift_entry_subtitle">Kirim poin ke teman terverifikasi</string>
+    <string name="keys_per_night">%1$d / malam</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="other">Saldomu mencukupi sekitar %1$d malam pada tarif ini.</item>
+    </plurals>
+    <string name="keys_how_it_works">Cara kerja poin</string>
+    <string name="keys_example_host">Jadi tuan rumah 2 malam dengan %1$d poin/malam</string>
+    <string name="keys_example_spend">Belanjakan %1$d poin itu untuk 2 malam di tempat lain</string>
+    <string name="keys_loop_caption">Itulah seluruh siklusnya: jadi tuan rumah → dapat poin → bepergian → ulangi. Tidak ada uang yang berpindah tangan.</string>
+    <string name="keys_get_first">Dapatkan poin pertamamu</string>
+    <string name="keys_earn_verify_title">Verifikasi identitasmu</string>
+    <string name="keys_earn_verify_body">Dapatkan %1$d poin begitu kamu terverifikasi — seketika.</string>
+    <string name="keys_earn_host_title">Jadi tuan rumah penginapan</string>
+    <string name="keys_earn_host_body">Dapatkan poin setiap malam seorang tamu menginap denganmu.</string>
+    <string name="keys_earn_gift_title">Terima hadiah</string>
+    <string name="keys_earn_gift_body">Teman terverifikasi bisa mengirimimu poin — bagikan ID anggotamu.</string>
+    <string name="keys_error_title">Poin tidak tersedia</string>
+    <string name="keys_gift_member_id">ID anggota</string>
+    <string name="keys_gift_member_id_hint">Mintalah ID anggota Swapl temanmu. Ia harus anggota terverifikasi.</string>
+    <string name="keys_gift_caps">Hingga %1$d per hadiah, %2$d per hari. Poin adalah hadiah — tidak bisa dibeli atau dicairkan.</string>
+    <plurals name="keys_points_amount">
+        <item quantity="other">%1$d poin</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="other">Mengirim %1$d poin. Sekarang kamu punya %2$d.</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">Kamu dan temanmu harus menjadi anggota terverifikasi untuk menghadiahkan poin.</string>
+    <string name="keys_gift_error_not_found">Kami tidak dapat menemukan anggota itu. Periksa kembali ID-nya.</string>
+    <string name="keys_gift_error_insufficient">Poinmu tidak cukup untuk hadiah ini.</string>
+    <string name="keys_gift_error_generic">Tidak dapat mengirim poin saat ini.</string>
+
+    <!-- Invite &amp; earn -->
+    <string name="invite_title">Undang &amp; dapatkan</string>
+    <string name="invite_intro">Bawa teman, dapatkan poin perjalanan, naik di antrean akses awal. Poin tidak pernah berupa uang.</string>
+    <string name="invite_share_message">Bergabunglah denganku di Swapl — tukar rumah dan bepergian dengan poin, bukan uang tunai. Pakai tautanku dan kita berdua mendapat %1$d poin perjalanan saat kamu terverifikasi: %2$s</string>
+    <string name="invite_share_subject">Bergabunglah denganku di Swapl</string>
+    <string name="invite_share_chooser">Bagikan undanganmu</string>
+    <string name="invite_hero_kicker">Bawa teman, naik di antrean</string>
+    <string name="invite_hero_points_earned">poin diperoleh</string>
+    <string name="invite_hero_spot_in_line">posisimu di antrean</string>
+    <string name="invite_hero_body">Setiap teman yang bergabung dan terverifikasi memberimu %1$d poin perjalanan — dan menaikkanmu di antrean akses awal. Poin tidak pernah berupa uang.</string>
+    <string name="invite_referral_link_label">Tautan rujukanmu</string>
+    <string name="invite_share_button">Bagikan</string>
+    <string name="invite_share_caption">Bagikan seluruh tautan ini — itulah yang penting. Satu ketukan mengirimnya ke mana saja: Pesan, WhatsApp, email. Temanmu mengetuknya, bergabung, dan begitu terverifikasi kalian berdua mendapat poin.</string>
+    <string name="invite_to_stay_title">Undang seseorang untuk menginap</string>
+    <string name="invite_to_stay_subtitle">Kirim undangan pribadi yang terkait dengan rumahmu</string>
+    <string name="invite_tier_label">Tingkatmu</string>
+    <string name="invite_tier_not_started">Belum dimulai</string>
+    <string name="invite_tier_no_perk">Undang teman pertamamu untuk membuka manfaat.</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="other">%1$d teman terverifikasi lagi untuk mencapai %2$s.</item>
+    </plurals>
+    <string name="invite_tier_top">Tingkat teratas tercapai — kamu seorang pendiri Swapl.</string>
+    <string name="invite_leaderboard_label">Papan peringkat</string>
+    <string name="invite_you_badge">KAMU</string>
+    <string name="invite_your_invites">Undanganmu (%1$d)</string>
+    <string name="invite_antifarm_note">Poin masuk hanya setelah teman memverifikasi identitasnya — itu menjaga antrean tetap adil bagi semua. Poin adalah kredit perjalanan, tidak pernah uang tunai.</string>
+    <string name="invite_error_title">Undangan tidak tersedia</string>
+    <string name="invite_list_home_title">Daftarkan rumahmu dulu</string>
+    <string name="invite_list_home_body">Tautan undang-untuk-menginap terkait dengan listingmu sendiri. Buat rumah di Akun, lalu undang teman untuk datang menginap.</string>
+    <string name="invite_verify_home_title">Verifikasi rumahmu dulu</string>
+    <string name="invite_verify_home_body">Verifikasi listing ini sebelum mengundang tamu untuk menginap — jika tidak, hadiah temanmu tidak bisa dibayarkan. Verifikasi dari Akun → listingmu.</string>
+    <string name="invite_inviting_guest_to">Mengundang tamu ke</string>
+    <string name="invite_your_home">Rumahmu</string>
+    <string name="invite_friend_email_label">Email teman (opsional)</string>
+    <string name="invite_friend_email_placeholder">teman@email.com</string>
+    <string name="invite_friend_email_hint">Tambahkan email untuk mencocokkan undangan secara otomatis saat ia mendaftar, atau biarkan kosong untuk tautan terbuka yang bisa dipakai siapa saja.</string>
+    <string name="invite_ready">Undangan siap</string>
+    <string name="invite_stay_share_message">Aku ingin sekali menjamumu di Swapl — tukar rumah dan bepergian dengan poin, bukan uang tunai. Ini undanganmu untuk menginap di %1$s: %2$s</string>
+    <string name="invite_stay_share_subject">Datang menginap di %1$s</string>
+    <string name="invite_stay_share_chooser">Bagikan tautan undangan</string>
+    <string name="invite_share_link_button">Bagikan tautan undangan</string>
+    <string name="invite_creating">Membuat…</string>
+    <string name="invite_create_link">Buat tautan undangan</string>
+    <string name="invite_stay_reward">Saat ia bergabung dan terverifikasi, kalian berdua mendapatkan %1$d poin perjalanan. Poin tidak pernah berupa uang.</string>
+    <string name="invite_stay_reward_generic">Saat ia bergabung dan terverifikasi, kalian berdua mendapatkan poin perjalanan. Poin tidak pernah berupa uang.</string>
+    <string name="invite_err_not_verified">Verifikasi listing ini sebelum mengundang tamu untuk menginap — jika tidak, hadiah temanmu tidak bisa dibayarkan.</string>
+    <string name="invite_err_not_owner">Kamu hanya bisa mengundang tamu ke listingmu sendiri.</string>
+    <string name="invite_err_cooldown">Kamu sudah mengirim banyak undangan dalam satu jam terakhir — coba lagi sebentar lagi. Ini jeda singkat, bukan pemblokiran.</string>
+    <string name="invite_err_generic">Tidak dapat membuat undangan saat ini.</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">Cari Inspirasi</string>
+    <string name="inspire_intro">Beri tahu kami perjalanan yang kamu impikan — kami akan menyusun pertukaran dari rumah nyata yang cocok dengan rumahmu.</string>
+    <string name="inspire_wish_label">Keinginanmu</string>
+    <string name="inspire_wish_placeholder">Tempat hangat dengan makanan enak, nyaman dijalani kaki, cocok untuk bekerja jarak jauh…</string>
+    <string name="inspire_mic_stop">Berhenti mendengarkan</string>
+    <string name="inspire_mic_start">Diktekan keinginanmu</string>
+    <string name="inspire_listening">Mendengarkan — bicaralah bebas, ketuk mikrofon lagi untuk berhenti.</string>
+    <string name="inspire_mic_denied">Akses mikrofon dimatikan untuk Swapl — aktifkan di Pengaturan untuk mendiktekan keinginanmu.</string>
+    <string name="inspire_dates_in_mind">Aku punya tanggal tertentu</string>
+    <string name="inspire_dates_in_mind_sub">Jika tidak, kami akan memakai ketersediaan rumahmu.</string>
+    <string name="inspire_dream_up">Wujudkan pertukaranku</string>
+    <string name="inspire_loading_1">Mewujudkan pertukaranmu…</string>
+    <string name="inspire_loading_2">Mencocokkan rumah dengan suasanamu…</string>
+    <string name="inspire_loading_3">Mengecek siapa yang kosong saat kamu kosong…</string>
+    <string name="inspire_loading_4">Mengemas tas virtualmu…</string>
+    <string name="inspire_package_title">Paket pertukaranmu</string>
+    <string name="inspire_understood">Dipahami: %1$s</string>
+    <string name="inspire_dates_label">Tanggal</string>
+    <string name="inspire_dates_suggested">Disarankan dari ketersediaan rumahmu — sesuaikan dengan bebas.</string>
+    <string name="inspire_message_label">Pesanmu</string>
+    <string name="inspire_message_ai">Disusun oleh AI dari listingmu dan listing mereka — jadikan milikmu.</string>
+    <string name="inspire_swap_pick">Atau tukar pilihannya</string>
+    <string name="inspire_match_pct">%1$d%% cocok</string>
+    <string name="inspire_while_there">Selama kamu di sana</string>
+    <string name="inspire_experiences_note">Dipesan di situs mitra kami dengan harga mereka — swapl mungkin mendapat komisi, tidak pernah markup.</string>
+    <string name="inspire_travel_essentials">Perlengkapan perjalanan</string>
+    <string name="inspire_concierge_addons">Tambahan concierge swapl</string>
+    <string name="inspire_addons_note">Harga katalog asli. Hapus centang apa pun yang tidak kamu inginkan — kamu hanya akan ditagih jika tuan rumah menerima pertukaranmu.</string>
+    <string name="inspire_payable_if_accepts">Dibayar jika tuan rumah menerima</string>
+    <string name="inspire_nothing_payable">Tidak ada yang dibayar — mengonfirmasi hanya mengirim proposal.</string>
+    <string name="inspire_confirm_send">Konfirmasi &amp; kirim proposal</string>
+    <string name="inspire_charged_note">Kamu hanya akan ditagih jika tuan rumah menerima pertukaranmu.</string>
+    <string name="inspire_dismissing">Menghapus…</string>
+    <string name="inspire_not_feeling">Kurang sreg</string>
+    <string name="inspire_almost_there">Hampir selesai</string>
+    <string name="inspire_payment_title">Pembayaran &amp; reservasi</string>
+    <string name="inspire_your_selection">Pilihanmu</string>
+    <string name="inspire_partner_note">Pengalaman dan layanan mitra dipesan di situs mitra — tidak pernah ditagih oleh swapl dan tidak termasuk dalam total ini.</string>
+    <string name="inspire_save_card">Simpan kartu &amp; kirim proposal</string>
+    <string name="inspire_send_no_card">Kirim tanpa menyimpan kartu</string>
+    <string name="inspire_back_to_package">Kembali ke paket</string>
+    <string name="inspire_book_on">Pesan di %1$s</string>
+    <string name="inspire_err_no_match">Kami butuh satu rumahmu yang aktif — dan setidaknya satu kecocokan kompatibel — untuk menyusun paket.</string>
+    <string name="inspire_err_rate">Kamu bermimpi cepat sekali! Beri waktu beberapa menit dan coba lagi.</string>
+    <string name="inspire_err_limit">Kamu telah mencapai batas proposal pada paketmu. Tingkatkan paket untuk mengirim lebih banyak.</string>
+    <string name="inspire_err_forbidden">Akunmu tidak bisa mengirim proposal saat ini.</string>
+    <string name="inspire_err_generic">Terjadi kesalahan. Silakan coba lagi.</string>
+
+
+    <!-- Bottom navigation -->
+    <string name="nav_browse">Jelajahi</string>
+    <string name="nav_wishlists">Keinginan</string>
+    <string name="nav_trips">Perjalanan</string>
+    <string name="nav_swaps">Pertukaran</string>
+    <string name="nav_account">Akun</string>
+</resources>

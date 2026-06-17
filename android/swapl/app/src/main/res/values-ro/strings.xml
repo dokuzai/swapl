@@ -1,0 +1,1183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">Bine ai revenit</string>
+    <string name="auth_kicker_register">Alătură-te Swapl</string>
+    <string name="auth_kicker_waitlist">Acces anticipat</string>
+    <string name="auth_headline_signin">Chei pentru chei.</string>
+    <string name="auth_headline_register">Schimbă case,\nnu hoteluri.</string>
+    <string name="auth_headline_waitlist">Înscrie-te pe listă.</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Parolă</string>
+    <string name="auth_password_register">Parolă (min. 6 caractere)</string>
+    <string name="auth_signin">Autentificare</string>
+    <string name="auth_signin_busy">Se autentifică…</string>
+    <string name="auth_create_account">Creează cont</string>
+    <string name="auth_create_account_busy">Se creează contul…</string>
+    <string name="auth_join_waitlist">Înscrie-te pe lista de așteptare</string>
+    <string name="auth_join_waitlist_busy">Se înscrie…</string>
+    <string name="auth_continue_with">sau continuă cu</string>
+    <string name="auth_passkey">Autentificare cu o cheie de acces</string>
+    <string name="auth_google">Continuă cu Google</string>
+    <string name="auth_email_code">Cod prin email</string>
+    <string name="auth_phone">Telefon</string>
+    <string name="auth_switch_to_register">Nou pe Swapl? Creează un cont</string>
+    <string name="auth_switch_to_waitlist">Nu ești pregătit? Înscrie-te pe lista de așteptare</string>
+    <string name="auth_switch_register_to_signin">Ai deja un cont? Autentifică-te</string>
+    <string name="auth_switch_waitlist_to_signin">Ai un cont? Autentifică-te</string>
+    <string name="auth_google_failed">Autentificarea cu Google a eșuat. Încearcă din nou.</string>
+    <string name="auth_passkey_unavailable">Autentificarea cu cheie de acces nu este disponibilă momentan.</string>
+    <string name="auth_passkey_failed">Autentificarea cu cheie de acces a eșuat. Încearcă din nou.</string>
+    <string name="auth_passkey_none">Încă nu există nicio cheie de acces pe acest dispozitiv. Autentifică-te în alt mod, apoi adaugă una din profilul tău.</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">Autentificare cu cod prin email</string>
+    <string name="auth_otp_kicker_phone">Autentificare cu telefonul</string>
+    <string name="auth_otp_headline_enter">Introdu codul.</string>
+    <string name="auth_otp_headline_get">Obține un cod.</string>
+    <string name="auth_otp_sent">Am trimis un cod din 6 cifre la %1$s. Expiră în 10 minute.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Telefon (ex. +40 721 123 456)</string>
+    <string name="auth_otp_phone_help">Folosește formatul internațional, ex. +40 721 123 456.</string>
+    <string name="auth_otp_verify">Verifică codul</string>
+    <string name="auth_otp_verify_busy">Se verifică…</string>
+    <string name="auth_otp_resend">Nu l-ai primit? Trimite un cod nou</string>
+    <string name="auth_otp_send">Trimite codul</string>
+    <string name="auth_otp_send_busy">Se trimite…</string>
+    <string name="auth_otp_back">Înapoi la autentificarea cu parolă</string>
+    <string name="verify_referral_toast">Verificat! Ai câștigat %1$d Keys pentru că te-ai înscris printr-o recomandare. 🔑</string>
+    <string name="verify_referral_toast_named">Verificat! Invitația lui %1$s tocmai ți-a adus %2$d Keys. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s tocmai s-a verificat — ai câștigat %2$d Keys! 🔑</string>
+    <string name="referral_referrer_toast">Cineva pe care l-ai invitat tocmai s-a verificat — ai câștigat %1$d Keys! 🔑</string>
+
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Moduri de a câștiga Keys</string>
+    <string name="keys_earn_ways_subtitle">Acțiuni mici care îți completează punctele de călătorie. Fă-le o dată sau revino pentru mai multe.</string>
+    <string name="keys_earn_way_done">Câștigat — bravo!</string>
+    <string name="keys_earn_way_locked">Verifică-ți identitatea pentru a debloca acest lucru</string>
+    <string name="keys_earn_verify_identity_title">Verifică-ți identitatea</string>
+    <string name="keys_earn_verify_identity_body">O verificare rapidă deblochează toate celelalte moduri de a câștiga.</string>
+    <string name="keys_earn_verify_property_title">Verifică o proprietate</string>
+    <string name="keys_earn_verify_property_body">Confirmă că deții o casă pe care o pui în anunț.</string>
+    <string name="keys_earn_complete_listing_title">Completează-ți anunțul</string>
+    <string name="keys_earn_complete_listing_body">Adaugă fotografii și detalii pentru ca oaspeții să își poată imagina șederea.</string>
+    <string name="keys_earn_leave_review_title">Lasă o recenzie</string>
+    <string name="keys_earn_leave_review_body">Spune comunității cum a decurs o ședere.</string>
+    <string name="keys_earn_share_converted_title">Distribuie o casă care se rezervă</string>
+    <string name="keys_earn_share_converted_body">Distribuie un anunț și câștigă când duce la o ședere.</string>
+    <string name="keys_earn_refer_friend_title">Invită un prieten</string>
+    <string name="keys_earn_refer_friend_body">Câștigați amândoi când se înscrie și se verifică.</string>
+    <string name="keys_earn_generic_title">Câștigă Keys</string>
+    <string name="keys_earn_generic_body">Fă această acțiune pentru a câștiga puncte de călătorie.</string>
+
+    <!-- Owner verification + publish acknowledgment (DOK-162) -->
+    <string name="owner_verified_badge">Proprietar verificat</string>
+
+    <!-- Publish acknowledgment shown on the Review step before create -->
+    <string name="publish_ack_kicker">Înainte de a publica</string>
+    <string name="publish_ack_mode_question">Cum găzduiești această casă?</string>
+    <string name="publish_ack_mode_entire_home">Toată casa, cât timp sunt plecat</string>
+    <string name="publish_ack_mode_room">O cameră sau cât timp sunt aici</string>
+    <string name="publish_ack_text_entire_home_headline">Am dreptul să ofer întreaga mea casă pentru un schimb cât timp sunt plecat — iar dacă închiriez, contractul îmi permite să găzduiesc oaspeți când nu sunt acolo.</string>
+    <string name="publish_ack_text_entire_home_fineprint">Sunt responsabil pentru respectarea contractului meu de închiriere, a regulilor clădirii și a legilor locale.</string>
+    <string name="publish_ack_text_room_headline">Am dreptul să găzduiesc acest schimb.</string>
+    <string name="publish_ack_text_room_fineprint">Voi respecta regulile clădirii și legile locale.</string>
+    <string name="publish_ack_required_error">Te rugăm să confirmi declarația de găzduire înainte de a publica.</string>
+    <string name="publish_submit_failed">Nu am putut publica anunțul tău. Încearcă din nou.</string>
+
+    <!-- Optional "Verify ownership" entry -->
+    <string name="owner_verify_cta">Insignă de proprietar verificat — opțional</string>
+    <string name="owner_verify_cta_pending">Insignă de proprietar verificat — în verificare</string>
+    <string name="owner_verify_cta_rejected">Insignă de proprietar verificat — încearcă din nou</string>
+    <string name="owner_verify_optional_note">Un plus de încredere pentru oaspeți. Niciodată obligatoriu pentru a publica sau a schimba.</string>
+    <string name="owner_verify_title">Verifică proprietatea</string>
+    <string name="owner_verify_explainer">Adaugă un document care îți dovedește dreptul asupra acestei case — un act de proprietate sau o vizură, ori un contract de închiriere pe numele tău. Un administrator îl verifică și, odată aprobat, anunțul tău afișează o insignă \"Proprietar verificat\".</string>
+    <string name="owner_verify_ai_explainer">O verificare rapidă cu AI citește mai întâi documentul pentru a confirma că se potrivește cu această casă. O persoană din echipa noastră are întotdeauna ultimul cuvânt.</string>
+    <string name="owner_verify_tenant_note">Și chiriașii sunt bineveniți. Dacă închiriezi și contractul îți permite să găzduiești, ești pe deplin eligibil — nu trebuie să deții casa.</string>
+    <string name="owner_verify_tenant">Închiriezi? Ești binevenit și tu aici — încarcă contractul de închiriere în loc de un act de proprietate. Poți găzdui pe Swapl atâta timp cât contractul tău de închiriere îți permite să ai oaspeți.</string>
+    <string name="owner_verify_privacy_note">Nu stocăm documentul tău după verificare. Doar AI-ul îți citește datele personale și păstrăm doar dacă arată o locuință privată — niciodată actul tău de identitate, adresa sau documentul în sine.</string>
+    <string name="owner_verify_privacy">Documentul tău este citit o singură dată pentru a verifica dacă locuința îți aparține, apoi nu este stocat — păstrăm doar rezultatul (verificat sau nu), niciodată documentul sau conținutul său.</string>
+    <string name="owner_verify_private_only_note">Swapl este un schimb între persoane private, așa că proprietățile comerciale sau ale firmelor nu pot fi listate aici.</string>
+    <string name="owner_verify_doc_type_label">Ce încarci? (opțional)</string>
+    <string name="owner_verify_doc_type_deed">Act de proprietate / vizură</string>
+    <string name="owner_verify_doc_type_lease">Contract de închiriere</string>
+    <string name="owner_verify_status_pending">Ultima ta trimitere este în verificare. O persoană din echipa noastră ia decizia finală — de obicei în 2 zile lucrătoare. Dacă verificarea automată a fost nesigură, poate dura puțin mai mult, dar nu rămâi blocat: revenim întotdeauna cu un răspuns.</string>
+    <string name="owner_verify_status_rejected">Ultima ta trimitere nu a fost aprobată. Adaugă un document mai clar și retrimite.</string>
+    <string name="owner_verify_business_title">Verificarea noastră sugerează că ar putea fi o proprietate comercială — s-ar putea să greșim</string>
+    <string name="owner_verify_business_body">Verificarea noastră automată a interpretat documentul tău ca pe o proprietate a unei firme sau comercială, iar Swapl este un schimb între persoane private. Dar verificările automate nu sunt perfecte, iar o persoană reală — niciodată AI-ul — ia decizia finală. Dacă aceasta este propria ta casă, contactează-ne: o persoană din echipa noastră le verifică personal, de obicei în 2 zile lucrătoare, iar un contract de închiriere, un act de proprietate sau o evidență fiscală pe numele tău este suficient pentru a lămuri lucrurile.</string>
+    <string name="owner_verify_business_contact">Contactează asistența</string>
+    <string name="owner_verify_business_support_email">support@swapl.app</string>
+    <string name="owner_verify_business_support_subject">Cerere de revizuire a verificării proprietății</string>
+    <string name="owner_verify_add_document">Adaugă un document</string>
+    <string name="owner_verify_uploading">Se încarcă…</string>
+    <string name="owner_verify_remove">Elimină</string>
+    <string name="owner_verify_submit">Trimite spre verificare</string>
+    <string name="owner_verify_submitting">Se trimite…</string>
+    <string name="owner_verify_cancel">Anulează</string>
+    <string name="owner_verify_doc_label">Document de proprietate</string>
+    <string name="owner_verify_doc_read_error">Nu am putut citi acel fișier.</string>
+    <string name="owner_verify_upload_failed">Încărcarea a eșuat. Încearcă din nou.</string>
+    <string name="owner_verify_submit_failed">Nu am putut trimite. Încearcă din nou.</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). Owner-only "how your
+         nightly Keys are calculated" breakdown. -->
+    <string name="valuation_section_title">Cum se calculează Keys-urile tale pe noapte</string>
+    <string name="valuation_per_night">%1$d / noapte</string>
+    <string name="valuation_intro">Acesta este ceea ce cheltuiește un oaspete — și ceea ce câștigi tu — pentru fiecare noapte de ședere. Se stabilește corect pe baza caracteristicilor casei tale, niciodată de către tine sau de către noi prin licitarea ei.</string>
+    <string name="valuation_show">Arată detalierea</string>
+    <string name="valuation_hide">Ascunde detalierea</string>
+    <string name="valuation_factors_kicker">Ce construiește valoarea</string>
+    <string name="valuation_base_label">Valoare înainte de recenzii</string>
+    <string name="valuation_factor_base">Valoare de pornire</string>
+    <string name="valuation_factor_size">Dimensiune</string>
+    <string name="valuation_factor_sleeps">Locuri de dormit</string>
+    <string name="valuation_factor_location_tier">Atractivitatea locației</string>
+    <string name="valuation_factor_location_tier_standard">Standard — locația ta nu este avantajată artificial, dar este evaluată în mod egal. Orașele mai mici și satele nu sunt penalizate aici.</string>
+    <string name="valuation_factor_verified">Casă verificată</string>
+    <string name="valuation_factor_ai_appeal">Atractivitatea casei (AI)</string>
+    <string name="valuation_ai_summary_kicker">Atractivitatea casei (AI)</string>
+    <string name="valuation_ai_what_note">AI-ul nostru citește doar modul în care este prezentat anunțul tău — gradul de acoperire al fotografiilor, cât de bogată este lista de facilități și cât de detaliată este descrierea. Nu îți judecă aspru casa și nu penalizează niciodată orașele mici sau satele — locația este tratată separat.</string>
+    <string name="valuation_ai_baseline_pos">Bonus pentru atractivitatea casei: +%1$s (majoritatea caselor au scorul 0; plafonat la +%2$d).</string>
+    <string name="valuation_ai_baseline_zero">Atractivitatea casei: 0 — complet normal, ca majoritatea caselor (bonus plafonat la +%1$d).</string>
+    <string name="valuation_ai_baseline_neg">Atractivitatea casei: %1$s (majoritatea caselor au scorul 0 — adaugă câteva fotografii sau detalii pentru a o ridica).</string>
+    <string name="valuation_ai_fallback_note">Evaluată pe baza fotografiilor și a facilităților tale. O analiză mai bogată a atractivității este adăugată după ce modelul nostru de atractivitate a casei îți examinează anunțul.</string>
+    <string name="valuation_room_kicker">Aceasta este o cameră</string>
+    <string name="valuation_room_note">Deoarece oferi o cameră privată în loc de întreaga casă, valoarea pe noapte reflectă doar acea cameră — aproximativ %1$d%% dintr-un tarif pentru întregul spațiu.</string>
+    <string name="valuation_location_note">Nivel de cerere al destinației %1$d din 5 — cât de căutată este zona ta pentru șederi.</string>
+    <string name="valuation_review_kicker">Recenziile oaspeților</string>
+    <string name="valuation_review_applied_up">Recenziile tale (%1$.1f★ din %2$d) cresc valoarea cu %3$d%%.</string>
+    <string name="valuation_review_applied_down">Recenziile tale (%1$.1f★ din %2$d) scad ușor valoarea cu %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">Recenziile tale (%1$.1f★ din %2$d) păstrează valoarea exact unde este.</string>
+    <string name="valuation_review_pending">Încă neaplicat — recenziile încep să ajusteze această valoare doar după ce ai primit %1$d recenzii. Ai %2$d până acum. Până atunci, rămâne la nivelul bazat pe caracteristici.</string>
+    <string name="valuation_review_moving">Acum se îndreaptă încet spre evaluarea ta de %1$.1f★ din %2$d recenzii — câte puțin de fiecare dată, niciodată tot deodată.</string>
+    <string name="valuation_bounded_note">Această valoare se modifică cu cel mult %1$d%% pe ciclu de actualizare și doar după ce ai %2$d+ recenzii. Chiar și atunci, atingerea limitei de ±%3$d%% necesită multe cicluri — un plafon strict pe care recenziile nu îl pot depăși niciodată — astfel încât o săptămână cu recenzii proaste nu îți poate prăbuși câștigurile peste noapte.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">Povestea ta Swapl</string>
+    <string name="story_counts_heading">Povestea ta de până acum</string>
+    <string name="story_passport">Pașaportul tău</string>
+    <string name="story_kind_trip">Călătorie</string>
+    <string name="story_kind_hosted">Găzduit</string>
+    <string name="story_detail_hosted_by">Găzduit de %1$s</string>
+    <string name="story_detail_welcomed">L-ai primit pe %1$s</string>
+    <string name="story_detail_stay">O ședere pe Swapl</string>
+    <string name="story_detail_guest">Un oaspete în casa ta</string>
+    <string name="story_share_heading">Distribuie povestea ta</string>
+    <string name="story_share_button">Distribuie</string>
+    <string name="story_share_note">Trimite povestea ta oriunde — Mesaje, WhatsApp, email. Conține linkul tău de invitație, așa că atunci când un prieten îl atinge și se înscrie, câștigați amândoi puncte de călătorie.</string>
+    <string name="story_share_subject">Povestea mea Swapl</string>
+    <string name="story_share_chooser">Distribuie povestea ta</string>
+    <string name="story_share_message">Am schimbat case în %1$d orașe pe Swapl — călătoresc pe puncte, nu pe bani. Alătură-te mie cu linkul meu și câștigăm amândoi puncte de călătorie când te verifici: %2$s</string>
+    <string name="story_empty_title">Povestea ta începe aici</string>
+    <string name="story_empty_body">După ce îți finalizezi primul schimb sau prima ședere cu Keys, călătoriile tale și oaspeții pe care îi primești apar aici ca ștampile de pașaport — o vedere a tuturor locurilor în care te duce Swapl.</string>
+    <string name="story_empty_share">Invită un prieten la schimb</string>
+    <string name="story_error_title">Poveste indisponibilă</string>
+    <string name="story_error_body">Nu am putut încărca povestea ta. Trage pentru a reîmprospăta sau reîncearcă.</string>
+    <string name="story_error_retry">Reîncearcă</string>
+    <plurals name="story_count_trips">
+        <item quantity="one">Călătorie</item>
+        <item quantity="few">Călătorii</item>
+        <item quantity="other">de călătorii</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="one">Oaspete primit</item>
+        <item quantity="few">Oaspeți primiți</item>
+        <item quantity="other">de oaspeți primiți</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="one">Oraș</item>
+        <item quantity="few">Orașe</item>
+        <item quantity="other">de orașe</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="one">Țară</item>
+        <item quantity="few">Țări</item>
+        <item quantity="other">de țări</item>
+    </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). Shown only when
+         the policy certificate has been anchored on-chain. Not crypto/payment. -->
+    <string name="trip_oncover_badge">Verificat pe TON</string>
+    <string name="trip_oncover_view">Vezi dovada</string>
+    <string name="trip_oncover_explainer">O înregistrare imposibil de falsificat că acoperirea ta este reală — fără cripto, fără plată, nimic de făcut din partea ta.</string>
+
+    <!-- People in a swap conversation (DOK-187). Anyone in the thread can bring a
+         few extra people along — a partner, a co-traveler, a friend. Guests chat
+         like everyone else but never get any say over the swap itself. -->
+    <string name="people_title">Persoane</string>
+    <string name="people_role_principal">Partener de schimb</string>
+    <string name="people_role_guest">Oaspete în conversație</string>
+    <string name="people_status_pending">În așteptare</string>
+    <string name="people_invite">Invită</string>
+    <string name="people_add">Adaugă</string>
+    <string name="people_add_cotravelers">Adaugă co-călători</string>
+    <string name="people_remove">Elimină pe %1$s</string>
+    <string name="people_invite_title">Invită pe cineva în conversație</string>
+    <string name="people_invite_reassure">Adaugă un partener sau un co-călător la conversație. Pot discuta cu toată lumea de aici, dar doar cei doi parteneri de schimb pot accepta, contraoferta sau anula schimbul — invitarea cuiva nu îi dă niciodată control asupra acestuia.</string>
+    <string name="people_invite_field_label">Email sau nume de utilizator</string>
+    <string name="people_invite_field_placeholder">nume@email.com sau @utilizator</string>
+    <string name="people_invite_send">Trimite invitația</string>
+    <string name="people_invite_cancel">Anulează</string>
+
+    <!-- Common / shared actions -->
+    <string name="common_cancel">Anulează</string>
+    <string name="common_ok">OK</string>
+    <string name="common_retry">Reîncearcă</string>
+
+    <!-- Rate the app (M1) -->
+    <string name="account_rate_app">Evaluează aplicația</string>
+    <string name="rate_app_title">Evaluează aplicația</string>
+    <string name="rate_app_prompt">Cum funcționează Swapl pentru tine? Evaluarea ta ne ajută să ne îmbunătățim.</string>
+    <string name="rate_app_score_label">Evaluarea ta</string>
+    <string name="rate_app_comment_label">Ai ceva de adăugat?</string>
+    <string name="rate_app_comment_placeholder">Spune-ne ce funcționează — sau ce nu (opțional)</string>
+    <string name="rate_app_submit">Trimite</string>
+    <string name="rate_app_submit_support">Contactează asistența</string>
+    <string name="rate_app_submitting">Se trimite…</string>
+    <string name="rate_app_prompt_post_review">Mulțumim pentru recenzie! Cum funcționează aplicația Swapl în sine pentru tine?</string>
+    <string name="rate_app_prompt_post_swap">Schimbul tău este finalizat! Cum a fost Swapl în a te ajuta să ajungi acolo?</string>
+    <string name="rate_app_low_support_hint">Ne pare rău că nu a fost la înălțime. Trimite asta și vom deschide asistența ca să te putem ajuta.</string>
+
+    <!-- Account screen -->
+    <string name="account_profile_title">Profil</string>
+    <string name="account_member_badge">Membru Swapl</string>
+    <string name="account_stat_waiting">În așteptare</string>
+    <string name="account_stat_sent">Trimise</string>
+    <string name="account_stat_active">Active</string>
+    <string name="account_stat_homes">Case</string>
+    <string name="account_edit_home_title">Editează-ți casa</string>
+    <string name="account_become_host_title">Devino gazdă</string>
+    <string name="account_edit_home_body">Actualizează fotografii, date și detalii.</string>
+    <string name="account_become_host_body">Pune-ți casa în anunț pentru a începe să faci schimburi.</string>
+    <string name="account_section_settings">Setări</string>
+    <string name="account_personal_info">Informații personale</string>
+    <string name="account_change_password">Schimbă parola</string>
+    <string name="account_passkeys">Autentificare &amp; securitate — Chei de acces</string>
+    <string name="account_passkeys_busy">Autentificare &amp; securitate — Chei de acces…</string>
+    <string name="account_privacy">Confidențialitate</string>
+    <string name="account_notifications">Notificări</string>
+    <string name="account_section_profile">Profil</string>
+    <string name="account_view_profile">Vezi profilul</string>
+    <string name="account_your_story">Povestea ta Swapl</string>
+    <string name="account_travel_points">Puncte de călătorie</string>
+    <string name="account_invite_earn">Invită &amp; câștigă</string>
+    <string name="account_interests">Interese</string>
+    <string name="account_saved_searches">Căutări salvate</string>
+    <string name="account_travel_windows">Ferestre de călătorie</string>
+    <string name="account_metrics">Statistici</string>
+    <string name="account_section_support">Asistență</string>
+    <string name="account_get_help">Obține ajutor</string>
+    <string name="account_privacy_policy">Politica de confidențialitate</string>
+    <string name="account_terms">Termeni și condiții</string>
+    <string name="account_log_out">Deconectare</string>
+    <string name="account_version">Versiunea %1$s (%2$d)</string>
+    <string name="account_signout_title">Te deconectezi?</string>
+    <string name="account_signout_body">Va trebui să te autentifici din nou pentru a-ți vedea schimburile.</string>
+    <string name="account_passkeys_dialog_title">Chei de acces</string>
+
+    <!-- Browse -->
+    <string name="browse_title">Explorează</string>
+    <string name="browse_edit_home">Editează-ți casa</string>
+    <string name="browse_list_home">+ Adaugă o casă</string>
+    <string name="browse_search_placeholder">Unde mergi?</string>
+    <string name="browse_clear_search">Șterge căutarea</string>
+    <string name="browse_filters">Filtre</string>
+    <string name="browse_tab_homes">Case</string>
+    <string name="browse_tab_experiences">Experiențe</string>
+    <string name="browse_tab_services">Servicii</string>
+    <string name="browse_get_inspired_title">Inspiră-te</string>
+    <string name="browse_get_inspired_body">Descrie călătoria visurilor tale — îți compunem noi un schimb.</string>
+    <string name="browse_sort">Sortează</string>
+    <string name="browse_sort_match">Cea mai bună potrivire</string>
+    <string name="browse_sort_newest">Cele mai noi</string>
+    <string name="browse_sort_largest">Cele mai mari</string>
+    <string name="browse_error_title">Case indisponibile</string>
+    <string name="browse_error_body">Nu am putut contacta Swapl. Verifică-ți conexiunea și încearcă din nou.</string>
+    <string name="browse_empty_title">Nicio casă găsită</string>
+    <string name="browse_empty_body">Case noi apar aici pe măsură ce membrii le publică.</string>
+    <string name="browse_guests_size_type">%1$d oaspeți · %2$d m² · %3$s</string>
+    <string name="browse_tag_featured">Recomandat</string>
+    <string name="browse_tag_verified">Verificat</string>
+    <string name="browse_tag_private_room">Cameră privată</string>
+    <!-- Filters -->
+    <string name="filter_title">Filtre</string>
+    <string name="filter_when">Când</string>
+    <string name="filter_from">De la</string>
+    <string name="filter_to">Până la</string>
+    <string name="filter_clear_dates">Șterge datele</string>
+    <string name="filter_space_type">Tip de spațiu</string>
+    <string name="filter_space_all">Toate</string>
+    <string name="filter_space_entire">Întregul spațiu</string>
+    <string name="filter_space_private_room">Cameră privată</string>
+    <string name="filter_property_type">Tip de proprietate</string>
+    <string name="filter_min_size">Dimensiune minimă: %1$d m²</string>
+    <string name="filter_min_sleeps">Locuri de dormit cel puțin: %1$d</string>
+    <string name="filter_pets">Doar case care acceptă animale</string>
+    <string name="filter_wfh">Doar case cu spațiu de lucru</string>
+    <string name="filter_step_free">Doar case fără trepte</string>
+    <string name="filter_reset">Resetează</string>
+    <string name="filter_show_homes">Arată casele</string>
+
+    <!-- Listing detail -->
+    <string name="detail_guests_rooms">%1$d oaspeți · %2$s · %3$s · %4$d m²</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="one">%1$d dormitor</item>
+        <item quantity="few">%1$d dormitoare</item>
+        <item quantity="other">%1$d de dormitoare</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="one">%1$d baie</item>
+        <item quantity="few">%1$d băi</item>
+        <item quantity="other">%1$d de băi</item>
+    </plurals>
+    <string name="detail_available_range">Disponibil %1$s → %2$s · șederi de %3$d–%4$d zile</string>
+    <string name="detail_points_per_night">%1$d puncte / noapte</string>
+    <string name="detail_private_room_note">Aceasta este o cameră privată, așa că valoarea pe noapte reflectă doar camera — nu întreaga casă.</string>
+    <string name="detail_private_room_badge">Cameră privată</string>
+    <string name="detail_private_room_badge_rooms">Cameră privată · %1$d camere</string>
+    <string name="detail_about_home">Despre această casă</string>
+    <string name="detail_what_offered">Ce oferă acest loc</string>
+    <string name="detail_where">Unde vei fi</string>
+    <string name="detail_approx_area">zonă aproximativă</string>
+    <string name="detail_hosted_by">Găzduit de</string>
+    <string name="detail_anonymous">Anonim</string>
+    <string name="detail_verified_host">Gazdă verificată</string>
+    <string name="detail_edit_listing">Editează anunțul</string>
+    <string name="detail_manage_availability">Gestionează disponibilitatea</string>
+    <string name="detail_propose_swap">Propune un schimb</string>
+    <string name="detail_list_home_first">Pune-ți întâi casa în anunț</string>
+    <string name="detail_list_home_first_body">Adaugă-ți propriul anunț înainte de a putea propune schimburi.</string>
+    <string name="detail_stay_with_points">Cazare cu puncte</string>
+    <string name="detail_stay_with_points_body">Rezervă într-un singur sens folosind punctele de călătorie pe care le-ai câștigat găzduind — fără a fi nevoie de un schimb în retur. Folosește asta când un schimb direct nu se potrivește.</string>
+    <string name="detail_report_listing">Raportează acest anunț</string>
+    <string name="detail_no_amenities">Nicio facilitate listată.</string>
+    <string name="detail_request_sent_title">Cerere trimisă</string>
+    <string name="detail_request_sent_body">Punctele tale sunt reținute până când gazda confirmă. Vei găsi această ședere la Călătorii.</string>
+    <!-- Amenity labels -->
+    <string name="amenity_balcony">Balcon</string>
+    <string name="amenity_rooftop">Terasă pe acoperiș</string>
+    <string name="amenity_garden">Grădină</string>
+    <string name="amenity_courtyard">Curte interioară</string>
+    <string name="amenity_pool">Piscină</string>
+    <string name="amenity_gym">Sală de fitness</string>
+    <string name="amenity_piano">Pian</string>
+    <string name="amenity_bike">Bicicletă inclusă</string>
+    <string name="amenity_parking">Parcare</string>
+    <string name="amenity_workspace">Spațiu de lucru</string>
+    <string name="amenity_pets">Acceptă animale</string>
+    <string name="amenity_step_free">Fără trepte</string>
+    <string name="amenity_elevator">Lift</string>
+    <string name="amenity_ac">Aer condiționat</string>
+    <string name="amenity_dishwasher">Mașină de spălat vase</string>
+    <string name="amenity_washer">Mașină de spălat rufe</string>
+    <string name="amenity_dryer">Uscător</string>
+
+    <!-- Propose swap dialog -->
+    <string name="propose_title">Propune un schimb</string>
+    <string name="propose_message_label">Mesaj (opțional)</string>
+    <string name="propose_drafting">Se redactează…</string>
+    <string name="propose_write_for_me">Scrie-l pentru mine</string>
+    <string name="propose_rewrite_ai">Rescrie cu AI</string>
+    <string name="propose_draft_failed">Nu am putut redacta un mesaj acum</string>
+    <string name="propose_send">Trimite</string>
+
+    <!-- Swap thread -->
+    <string name="thread_with">cu %1$s</string>
+    <string name="thread_open_chat">Deschide conversația</string>
+    <string name="thread_open_chat_with">Deschide conversația cu %1$s</string>
+    <string name="thread_view_profile">Vezi profilul lui %1$s</string>
+    <string name="thread_host_fallback">gazdă</string>
+    <string name="thread_host_fallback_possessive">gazda ta</string>
+    <string name="thread_proposal">Propunere</string>
+    <string name="thread_counter">Contraofertă</string>
+    <string name="thread_size_sleeps">%1$d m² · %2$d locuri de dormit</string>
+    <string name="thread_accept">Acceptă schimbul</string>
+    <string name="thread_counter_offer">Contraofertă</string>
+    <string name="thread_decline">Refuză</string>
+    <string name="thread_withdraw">Retrage</string>
+    <string name="thread_message_optional">Mesaj (opțional)</string>
+    <!-- Accept-consent + action feedback (M4) -->
+    <string name="thread_accept_confirm_title">Accepți acest schimb?</string>
+    <string name="thread_accept_confirm_body">Acceptarea fixează datele și emite asigurarea de călătorie pentru ședere — ambele case sunt apoi acoperite. Poți discuta în continuare pentru a coordona predarea.</string>
+    <string name="thread_accept_confirm_cta">Acceptă &amp; asigură</string>
+    <string name="thread_decline_confirm_title">Refuzi acest schimb?</string>
+    <string name="thread_decline_confirm_body">Aceasta respinge propunerea. Nu o poți anula, dar poți trimite oricând una nouă mai târziu.</string>
+    <string name="thread_withdraw_confirm_title">Retragi această propunere?</string>
+    <string name="thread_withdraw_confirm_body">Aceasta îți retrage oferta. Poți trimite una nouă mai târziu.</string>
+    <string name="thread_accepted_toast">Schimb acceptat — șederea ta este asigurată.</string>
+    <string name="thread_declined_toast">Propunere refuzată.</string>
+    <string name="thread_withdrawn_toast">Propunere retrasă.</string>
+    <string name="thread_countered_toast">Contraofertă trimisă.</string>
+
+    <!-- Leave a review -->
+    <string name="review_title">Lasă o recenzie</string>
+    <string name="review_prompt">Cum a fost schimbul tău cu %1$s?</string>
+    <string name="review_partner_fallback">partenerul tău de schimb</string>
+    <string name="review_rating_label">Evaluarea ta</string>
+    <string name="review_text_label">Recenzia ta</string>
+    <string name="review_text_placeholder">Cum a fost casa, cartierul, predarea?</string>
+    <string name="review_min_chars">Cel puțin 20 de caractere — %1$d până acum.</string>
+    <string name="review_submit">Trimite recenzia</string>
+    <string name="review_submitting">Se trimite…</string>
+    <string name="review_card_title">Cum a fost schimbul tău?</string>
+    <string name="review_card_body">Lasă-i lui %1$s o recenzie — apare pe profilul său public.</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">Mesaje schimburi</string>
+    <string name="inbox_search_open">Caută</string>
+    <string name="inbox_search_close">Închide căutarea</string>
+    <string name="inbox_search_placeholder">Caută după gazdă sau oraș</string>
+    <string name="inbox_filter_all">Toate</string>
+    <string name="inbox_filter_waiting">În așteptarea ta</string>
+    <string name="inbox_filter_sent">Trimise</string>
+    <string name="inbox_filter_active">Active</string>
+    <string name="inbox_filter_archived">Arhivate</string>
+    <string name="inbox_section_waiting">În așteptarea ta</string>
+    <string name="inbox_section_sent">Trimise — în așteptarea răspunsului</string>
+    <string name="inbox_section_active">Schimburi active</string>
+    <string name="inbox_section_archived">Arhivate</string>
+    <string name="inbox_status_confirmed">Schimb confirmat</string>
+    <string name="inbox_status_countered">Contraofertă primită</string>
+    <string name="inbox_status_declined">Propunere refuzată</string>
+    <string name="inbox_status_waiting_reply">În așteptarea răspunsului tău</string>
+    <string name="inbox_status_sent">Propunere trimisă</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s → %2$s · cu %3$s</string>
+    <string name="inbox_dates">%1$s → %2$s</string>
+    <string name="inbox_error_title">Mesaje indisponibile</string>
+    <string name="inbox_error_body">Nu am putut încărca schimburile tale. Trage pentru a reîmprospăta sau reîncearcă.</string>
+    <string name="inbox_empty_title">Niciun mesaj încă</string>
+    <string name="inbox_empty_body">Propune un schimb din orice anunț și va apărea aici.</string>
+
+    <!-- Trips -->
+    <string name="trips_title">Călătorii</string>
+    <string name="trips_phase_active">Active acum</string>
+    <string name="trips_phase_upcoming">Viitoare</string>
+    <string name="trips_phase_past">Trecute</string>
+    <string name="trips_row_title">Călătorie la %1$s</string>
+    <string name="trips_row_dates_host">%1$s → %2$s · gazdă %3$s</string>
+    <string name="trips_row_dates">%1$s → %2$s</string>
+    <string name="trips_row_roles">Oaspete în %1$s · Tu găzduiești în %2$s</string>
+    <string name="trips_error_title">Călătorii indisponibile</string>
+    <string name="trips_error_body">Nu am putut încărca călătoriile tale. Trage pentru a reîmprospăta sau reîncearcă.</string>
+    <string name="trips_empty_title">Nicio călătorie încă</string>
+    <string name="trips_empty_body">Schimburile acceptate devin călătorii. Șederile tale viitoare vor apărea aici.</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">Acest schimb a fost anulat</string>
+    <string name="cockpit_timeline_agreed">Convenit</string>
+    <string name="cockpit_timeline_ready">Pregătit</string>
+    <string name="cockpit_timeline_staying">Ședere</string>
+    <string name="cockpit_timeline_done">Finalizat</string>
+    <string name="cockpit_starts_in">Începe în</string>
+    <string name="cockpit_status">Stare</string>
+    <string name="cockpit_countdown_days">%1$dz %2$dh</string>
+    <string name="cockpit_countdown_hours">%1$dh</string>
+    <string name="cockpit_phase_agreed">Schimb convenit</string>
+    <string name="cockpit_phase_preparing">Se pregătește</string>
+    <string name="cockpit_phase_ready">Gata de plecare</string>
+    <string name="cockpit_phase_in_progress">În desfășurare</string>
+    <string name="cockpit_phase_completed">Finalizat</string>
+    <string name="cockpit_phase_cancelled">Anulat</string>
+    <string name="cockpit_insured">Asigurat</string>
+    <string name="cockpit_before_you_go">Înainte de plecare</string>
+    <string name="cockpit_check_guide_filled">Completează ghidul casei tale</string>
+    <string name="cockpit_check_details_read">Citește detaliile casei gazdei tale</string>
+    <string name="cockpit_check_checked_in">Înregistrează-te la sosire</string>
+    <string name="cockpit_check_checked_out">Înregistrează plecarea când pleci</string>
+    <string name="cockpit_finish_guide">Finalizează ghidul casei tale (%1$d%%)</string>
+    <string name="cockpit_your_key_code">CODUL TĂU DE CHEIE</string>
+    <string name="cockpit_key_code_note">Chei pentru chei — împărtășește-l cu oaspetele tău ca să poată intra.</string>
+    <string name="cockpit_swap_protection">Protecția schimbului</string>
+    <string name="cockpit_policy_line">Poliță %1$s · acoperire €%2$s</string>
+    <string name="cockpit_where_you_stay">Unde vei locui</string>
+    <string name="cockpit_guide_not_filled">Gazda ta nu și-a completat încă ghidul casei.</string>
+    <string name="cockpit_address_unlocks_city">Adresa exactă din %1$s se deblochează în curând</string>
+    <string name="cockpit_address_unlocks">Adresa exactă se deblochează în curând</string>
+    <string name="cockpit_unlocks_at">Se deblochează %1$s — cu 48h înainte de șederea ta.</string>
+    <string name="cockpit_unlocks_generic">Adresa și ghidul casei se deblochează cu 48h înainte de șederea ta.</string>
+    <string name="cockpit_home_guide">Ghidul casei</string>
+    <string name="cockpit_collapse">Restrânge</string>
+    <string name="cockpit_expand">Extinde</string>
+    <string name="cockpit_guide_getting_in">Cum intri</string>
+    <string name="cockpit_guide_keys">Chei</string>
+    <string name="cockpit_guide_wifi_name">Rețea Wi-Fi</string>
+    <string name="cockpit_guide_wifi_password">Parolă Wi-Fi</string>
+    <string name="cockpit_guide_heating">Încălzire &amp; răcire</string>
+    <string name="cockpit_guide_kitchen">Bucătărie</string>
+    <string name="cockpit_guide_bins">Gunoi &amp; reciclare</string>
+    <string name="cockpit_guide_pets_plants">Animale &amp; plante</string>
+    <string name="cockpit_guide_house_rules">Regulile casei</string>
+    <string name="cockpit_guide_neighbourhood">Cartier</string>
+    <string name="cockpit_guide_emergency">Contact de urgență</string>
+    <string name="cockpit_check_in">Înregistrare sosire</string>
+    <string name="cockpit_check_out">Înregistrare plecare</string>
+    <string name="cockpit_checked_in_out">Înregistrare sosire și plecare — mulțumim!</string>
+    <string name="cockpit_trip_activity">Activitatea călătoriei</string>
+    <string name="cockpit_event_you">Tu</string>
+    <string name="cockpit_event_partner_fallback">Partenerul tău de schimb</string>
+    <string name="cockpit_event_checked_in">%1$s și-a înregistrat sosirea</string>
+    <string name="cockpit_event_checked_out">%1$s și-a înregistrat plecarea</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">Mesaje indisponibile</string>
+    <string name="chat_try_again">Încearcă din nou</string>
+    <string name="chat_view_trip">Vezi călătoria</string>
+    <string name="chat_say_hello_title">Salută</string>
+    <string name="chat_say_hello_body">Începe conversația — întreabă despre date, despre cartier sau orice ai vrea să afli.</string>
+    <string name="chat_load_earlier">Încarcă mesajele anterioare</string>
+    <string name="chat_message_placeholder">Mesaj</string>
+    <string name="chat_add_photo">Adaugă fotografie</string>
+    <string name="chat_remove_photo">Elimină fotografia</string>
+    <string name="chat_send">Trimite mesajul</string>
+    <string name="chat_receipt_read">Citit</string>
+    <string name="chat_receipt_sent">Trimis</string>
+    <string name="chat_invite_only_partners">Doar cei doi parteneri de schimb pot invita persoane.</string>
+    <string name="chat_invite_not_found">Nu am putut găsi acea persoană. Verifică emailul sau numele de utilizator.</string>
+    <string name="chat_invite_failed">Nu am putut trimite invitația. Încearcă din nou.</string>
+    <string name="chat_send_failed">Nu am putut trimite. Încearcă din nou.</string>
+    <string name="chat_read_image_failed">Nu am putut citi acea imagine</string>
+    <string name="chat_upload_photo_failed">Nu am putut încărca o fotografie. Verifică-ți conexiunea și încearcă din nou.</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">Locație</string>
+    <string name="create_step_space">Spațiu</string>
+    <string name="create_step_access">Acces &amp; animale</string>
+    <string name="create_step_amenities">Facilități</string>
+    <string name="create_step_dates">Date</string>
+    <string name="create_step_photos">Fotografii</string>
+    <string name="create_step_description">Descriere</string>
+    <string name="create_step_review">Verificare</string>
+    <string name="create_kicker_edit">Editează-ți casa — pasul %1$d din %2$d</string>
+    <string name="create_kicker_new">Pasul %1$d din %2$d</string>
+    <string name="create_back">Înapoi</string>
+    <string name="create_next">Înainte</string>
+    <string name="create_saving">Se salvează…</string>
+    <string name="create_publishing">Se publică…</string>
+    <string name="create_save_changes">Salvează modificările</string>
+    <string name="create_publish_listing">Publică anunțul</string>
+    <string name="create_locating">Se localizează…</string>
+    <string name="create_use_location">Folosește locația mea actuală</string>
+    <string name="create_location_error">Nu am putut determina locația ta — completeaz-o manual.</string>
+    <string name="create_load_error">Nu s-a putut încărca anunțul</string>
+    <string name="create_read_image_error">Nu am putut citi acea imagine</string>
+    <string name="create_upload_failed">Încărcarea a eșuat</string>
+    <string name="create_title_label">Titlu (ex. Apartament însorit pe canal)</string>
+    <string name="create_city_label">Oraș</string>
+    <string name="create_neighbourhood_label">Cartier</string>
+    <string name="create_country_label">Țară</string>
+    <string name="create_address_label">Adresă (opțional)</string>
+    <string name="create_space_type">Tip de spațiu</string>
+    <string name="create_space_entire">Întregul spațiu</string>
+    <string name="create_space_private_room">Cameră privată</string>
+    <string name="create_private_room_keys_note">O cameră privată valorează mai puține Keys decât întreaga casă — valoarea pe noapte reflectă doar camera.</string>
+    <string name="create_rooms_offered">Camere oferite: %1$d</string>
+    <string name="create_property_type">Tip de proprietate</string>
+    <string name="create_prop_apartment">Apartament</string>
+    <string name="create_prop_house">Casă</string>
+    <string name="create_prop_loft">Mansardă</string>
+    <string name="create_prop_townhouse">Casă în șir</string>
+    <string name="create_size">Dimensiune: %1$d m²</string>
+    <string name="create_sleeps">Locuri de dormit: %1$d</string>
+    <string name="create_bedrooms">Dormitoare: %1$d</string>
+    <string name="create_bathrooms">Băi: %1$d</string>
+    <string name="create_floor">Etaj: %1$d</string>
+    <string name="create_has_elevator">Are lift</string>
+    <string name="create_step_free">Acces fără trepte</string>
+    <string name="create_pets_allowed">Se acceptă animale</string>
+    <string name="create_wfh_setup">Configurație pentru muncă de acasă</string>
+    <string name="create_desks">Birouri: %1$d</string>
+    <string name="create_parking">Parcare</string>
+    <string name="create_bike">Bicicletă inclusă</string>
+    <string name="create_balcony">Balcon</string>
+    <string name="create_rooftop">Terasă pe acoperiș</string>
+    <string name="create_garden">Grădină</string>
+    <string name="create_courtyard">Curte interioară</string>
+    <string name="create_piano">Pian</string>
+    <string name="create_pool">Piscină</string>
+    <string name="create_gym">Sală de fitness</string>
+    <string name="create_ac">Aer condiționat</string>
+    <string name="create_dishwasher">Mașină de spălat vase</string>
+    <string name="create_washer">Mașină de spălat rufe</string>
+    <string name="create_dryer">Uscător</string>
+    <string name="create_available_from">Disponibil de la</string>
+    <string name="create_available_to">Disponibil până la</string>
+    <string name="create_min_stay">Ședere minimă: %1$d zile</string>
+    <string name="create_max_stay">Ședere maximă: %1$d zile</string>
+    <string name="create_photos_hint">Adaugă până la 10 fotografii ale casei tale. Le redimensionăm înainte de încărcare.</string>
+    <string name="create_choose_photos">Alege fotografii</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="one">Se încarcă %1$d fotografie…</item>
+        <item quantity="few">Se încarcă %1$d fotografii…</item>
+        <item quantity="other">Se încarcă %1$d de fotografii…</item>
+    </plurals>
+    <string name="create_description_label">Descrie-ți casa (min. 20 de caractere)</string>
+    <string name="create_characters">%1$d caractere</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d m² · %2$d locuri de dormit · %3$d dorm. / %4$d băi</string>
+    <string name="create_review_available">Disponibil %1$s → %2$s</string>
+    <string name="create_decrease">scade</string>
+    <string name="create_increase">crește</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">Șederi cu puncte</string>
+    <string name="keys_stay_in">Ședere în %1$s</string>
+    <string name="keys_stay_guest_at">Oaspete la %1$s</string>
+    <string name="keys_stay_dates">%1$s → %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="one">%1$d noapte · %2$d puncte</item>
+        <item quantity="few">%1$d nopți · %2$d puncte</item>
+        <item quantity="other">%1$d de nopți · %2$d puncte</item>
+    </plurals>
+    <string name="keys_stay_decline">Refuză</string>
+    <string name="keys_stay_confirm">Confirmă șederea</string>
+    <string name="keys_stay_cancel_request">Anulează cererea</string>
+    <string name="keys_stay_covered">Confirmat — șederea ta este acoperită de o poliță Swapl.</string>
+    <string name="keys_stay_status_awaiting_host">În așteptarea gazdei</string>
+    <string name="keys_stay_status_action_needed">Acțiune necesară</string>
+    <string name="keys_stay_status_confirmed">Confirmat</string>
+    <string name="keys_stay_status_declined">Refuzat</string>
+    <string name="keys_stay_status_cancelled">Anulat</string>
+    <string name="keys_stay_status_completed">Finalizat</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">Cazare cu puncte</string>
+    <string name="stay_keys_intro">Rezervă într-un singur sens cu punctele tale — fără a fi nevoie să-i găzduiești în retur. Bine când datele sau casa ta nu se potrivesc pentru un schimb direct.</string>
+    <string name="stay_keys_window">Alege date în intervalul de disponibilitate al casei (%1$s → %2$s). %3$d–%4$d nopți. Datele rezervate sunt tăiate.</string>
+    <string name="stay_keys_points_per_night">Puncte pe noapte</string>
+    <string name="stay_keys_nights">Nopți</string>
+    <string name="stay_keys_total">Total</string>
+    <string name="stay_keys_total_points">%1$d puncte</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="one">Ai %1$d puncte — suficient pentru această ședere (aproximativ %2$d noapte la acest tarif).</item>
+        <item quantity="few">Ai %1$d puncte — suficient pentru această ședere (aproximativ %2$d nopți la acest tarif).</item>
+        <item quantity="other">Ai %1$d puncte — suficient pentru această ședere (aproximativ %2$d de nopți la acest tarif).</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="one">Îți lipsesc %1$d puncte. Găzduiește aproximativ %2$d noapte la acest tarif pentru a debloca această ședere — sau alege mai puține nopți. Punctele nu pot fi cumpărate.</item>
+        <item quantity="few">Îți lipsesc %1$d puncte. Găzduiește aproximativ %2$d nopți la acest tarif pentru a debloca această ședere — sau alege mai puține nopți. Punctele nu pot fi cumpărate.</item>
+        <item quantity="other">Îți lipsesc %1$d puncte. Găzduiește aproximativ %2$d de nopți la acest tarif pentru a debloca această ședere — sau alege mai puține nopți. Punctele nu pot fi cumpărate.</item>
+    </plurals>
+    <string name="stay_keys_held_note">Punctele tale sunt reținute până când gazda confirmă. Vei găsi această ședere la Călătorii.</string>
+    <string name="stay_keys_sending">Se trimite…</string>
+    <string name="stay_keys_request">Solicită cu puncte</string>
+    <string name="stay_keys_error_insufficient">Nu ai suficiente puncte pentru aceste date. Încearcă mai puține nopți sau câștigă puncte găzduind. Punctele nu pot fi cumpărate.</string>
+    <string name="stay_keys_error_unavailable">Acele date nu sunt disponibile. Alege date în intervalul casei.</string>
+    <string name="stay_keys_error_generic">Nu am putut solicita această ședere acum.</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">Căutări salvate</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">Căutările salvate sunt o funcție pentru membrii Plus.</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">Interese · %1$d / 12</string>
+    <string name="interests_vibe_label">Stilul tău (opțional)</string>
+    <string name="interests_save">Salvează</string>
+    <string name="interests_saving">Se salvează…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">Istoric puncte</string>
+    <string name="keys_tx_filter_all">Toate</string>
+    <string name="keys_tx_filter_earned">Câștigate</string>
+    <string name="keys_tx_filter_spent">Cheltuite</string>
+    <string name="keys_tx_empty_all">Nicio activitate cu puncte încă.</string>
+    <string name="keys_tx_empty_earned">Niciun punct câștigat încă.</string>
+    <string name="keys_tx_empty_spent">Niciun punct cheltuit încă.</string>
+    <string name="keys_tx_loading">Se încarcă…</string>
+    <string name="keys_tx_load_more">Încarcă mai multe</string>
+    <string name="keys_tx_balance">%1$d sold</string>
+    <string name="keys_tx_error_title">Istoric puncte indisponibil</string>
+    <string name="keys_tx_try_again">Încearcă din nou</string>
+
+    <!-- ===== UI localization 100% (DOK) ===== -->
+    <!-- Common / shared -->
+    <string name="common_save">Salvează</string>
+    <string name="common_saving">Se salvează…</string>
+    <string name="common_send">Trimite</string>
+    <string name="common_sending">Se trimite…</string>
+    <string name="common_close">Închide</string>
+    <string name="common_done">Gata</string>
+    <string name="common_delete">Șterge</string>
+    <string name="common_try_again">Încearcă din nou</string>
+    <string name="cd_remove_photo">Elimină fotografia</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">%1$d din 5 stele</string>
+    <plurals name="cd_n_stars">
+        <item quantity="one">%1$d stea</item>
+        <item quantity="few">%1$d stele</item>
+        <item quantity="other">%1$d de stele</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="one">%1$d noapte</item>
+        <item quantity="few">%1$d nopți</item>
+        <item quantity="other">%1$d de nopți</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="one">%1$d pat</item>
+        <item quantity="few">%1$d paturi</item>
+        <item quantity="other">%1$d de paturi</item>
+    </plurals>
+
+    <!-- Status enum chips -->
+    <string name="status_pending">În așteptare</string>
+    <string name="status_accepted">Confirmat</string>
+    <string name="status_countered">Contraofertă</string>
+    <string name="status_declined">Refuzat</string>
+    <string name="status_withdrawn">Retras</string>
+    <string name="status_active">Activ</string>
+    <string name="status_upcoming">Viitor</string>
+    <string name="status_in_progress">În desfășurare</string>
+    <string name="status_completed">Finalizat</string>
+    <string name="status_cancelled">Anulat</string>
+    <string name="status_disputed">În dispută</string>
+    <string name="status_resolved">Rezolvat</string>
+    <string name="status_open">Deschis</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">Plan</string>
+
+    <!-- Trip detail -->
+    <string name="trip_detail_error_title">Călătorie indisponibilă</string>
+    <string name="trip_detail_error_body">Nu am putut încărca această călătorie.</string>
+    <string name="trip_detail_host_fallback">gazda ta</string>
+    <string name="trip_detail_host_word">gazdă</string>
+    <string name="trip_detail_trip_to">Călătorie la %1$s</string>
+    <string name="trip_detail_hosted_by">Găzduit de %1$s</string>
+    <string name="trip_detail_your_stay">Șederea ta</string>
+    <string name="trip_detail_guest_at">Oaspete la %1$s — %2$s · %3$s</string>
+    <string name="trip_detail_in_return">În schimb, găzduiești în %1$s · %2$s pentru aceleași date.</string>
+    <string name="trip_detail_view_profile">Vezi profilul lui %1$s</string>
+
+    <!-- Agreement panel -->
+    <string name="agreement_title">Schimb convenit — chei pentru chei</string>
+    <string name="agreement_stay_between">Ședere între %1$s → %2$s cu %3$s.</string>
+    <string name="agreement_your_code">Codul tău (de folosit la locul lor)</string>
+    <string name="agreement_their_code">Codul lor (oaspete la locul tău)</string>
+    <string name="agreement_insurance_cover">Asigurare · acoperire €%1$dk</string>
+    <string name="agreement_auto_issued">Emisă automat · linie 24/7 %1$s</string>
+
+    <!-- Dispute / resolution center -->
+    <string name="dispute_report_problem">Raportează o problemă</string>
+    <string name="dispute_report_new">Raportează o problemă nouă</string>
+    <string name="dispute_phone_title">Contactează linia noastră 24/7</string>
+    <string name="dispute_phone_body">Dacă cineva este în pericol sau blocat afară, sună la %1$s.</string>
+    <string name="dispute_phone_call">Sună la %1$s</string>
+    <string name="dispute_urgent_title">Ai nevoie de ajutor chiar acum?</string>
+    <string name="dispute_urgent_body">Dacă cineva este în pericol sau blocat afară, linia noastră 24/7 este aici. Atinge pentru a contacta asistența acum.</string>
+    <string name="dispute_open_body">Spune-ne ce se întâmplă cu schimbul tău. Îl vom include pe partenerul tău de schimb și echipa noastră de asistență.</string>
+    <string name="dispute_open_body_with">Spune-ne ce se întâmplă cu schimbul tău cu %1$s. Îl vom include pe partenerul tău de schimb și echipa noastră de asistență.</string>
+    <string name="dispute_what_happened">CE S-A ÎNTÂMPLAT?</string>
+    <string name="dispute_describe_label">Descrie problema</string>
+    <string name="dispute_describe_placeholder">Ce s-a întâmplat, când și de ce ai nevoie de la noi.</string>
+    <string name="dispute_send_report">Trimite raportul</string>
+    <string name="dispute_discard_title">Renunți la modificări?</string>
+    <string name="dispute_discard_body">Raportul tău nu a fost încă trimis. Dacă pleci acum, ceea ce ai scris va fi pierdut.</string>
+    <string name="dispute_discard_confirm">Renunță</string>
+    <string name="dispute_discard_keep">Continuă editarea</string>
+    <string name="dispute_reported_on">Raportat %1$s</string>
+    <string name="dispute_resolution_label">REZOLUȚIE</string>
+    <string name="dispute_conversation_label">CONVERSAȚIE</string>
+    <string name="dispute_case_resolved">Acest caz a fost rezolvat.</string>
+    <string name="dispute_case_closed">Acest caz este închis.</string>
+    <string name="dispute_reply_label">RĂSPUNDE</string>
+    <string name="dispute_reply_placeholder">Adaugă un răspuns…</string>
+    <string name="dispute_author_you">Tu</string>
+    <string name="dispute_author_support">Asistență</string>
+    <string name="dispute_photos_label">FOTOGRAFII (OPȚIONAL)</string>
+    <string name="dispute_add_photos">Adaugă fotografii</string>
+    <string name="dispute_add_more_photos">Adaugă mai multe</string>
+    <string name="dispute_photo_read_error">Nu am putut citi acea imagine</string>
+    <string name="dispute_photo_upload_error">Nu am putut încărca o fotografie. Verifică-ți conexiunea și încearcă din nou.</string>
+    <string name="dispute_cat_access_title">Nu pot intra</string>
+    <string name="dispute_cat_access_subtitle">Blocat afară, cod greșit, chei lipsă</string>
+    <string name="dispute_cat_damage_title">Daune</string>
+    <string name="dispute_cat_damage_subtitle">Ceva s-a stricat sau s-a deteriorat</string>
+    <string name="dispute_cat_cleanliness_title">Curățenie</string>
+    <string name="dispute_cat_cleanliness_subtitle">Casa nu era pregătită sau curată</string>
+    <string name="dispute_cat_safety_title">Problemă de siguranță</string>
+    <string name="dispute_cat_safety_subtitle">Te simți în nesiguranță sau ceva nu e în regulă</string>
+    <string name="dispute_cat_no_show_title">Neprezentare</string>
+    <string name="dispute_cat_no_show_subtitle">Partenerul tău de schimb nu și-a respectat angajamentul</string>
+    <string name="dispute_cat_other_title">Altceva</string>
+    <string name="dispute_cat_other_subtitle">Orice altceva cu care ai nevoie de ajutor</string>
+    <string name="dispute_status_open">Deschis</string>
+    <string name="dispute_status_investigating">Ne ocupăm</string>
+    <string name="dispute_status_awaiting">Rândul tău</string>
+    <string name="dispute_status_resolved">Rezolvat</string>
+    <string name="dispute_status_closed">Închis</string>
+
+    <!-- Home guide editor -->
+    <string name="home_guide_title">Ghidul casei</string>
+    <string name="home_guide_complete_pct">%1$d%% complet</string>
+    <string name="home_guide_intro">Completează informațiile esențiale pentru ca oaspetele tău să se poată instala fără să-ți scrie.</string>
+    <string name="home_guide_section_access">Cum intri</string>
+    <string name="home_guide_field_access">Instrucțiuni de acces</string>
+    <string name="home_guide_field_key_pickup">Preluarea cheilor</string>
+    <string name="home_guide_section_wifi">Wi-Fi</string>
+    <string name="home_guide_field_wifi_name">Numele rețelei</string>
+    <string name="home_guide_field_wifi_password">Parolă</string>
+    <string name="home_guide_section_living">Viața în casă</string>
+    <string name="home_guide_field_heating">Încălzire &amp; răcire</string>
+    <string name="home_guide_field_kitchen">Bucătărie</string>
+    <string name="home_guide_field_bins">Gunoi &amp; reciclare</string>
+    <string name="home_guide_field_pets">Animale &amp; plante</string>
+    <string name="home_guide_section_good_to_know">Bine de știut (opțional)</string>
+    <string name="home_guide_field_house_rules">Regulile casei</string>
+    <string name="home_guide_field_neighbourhood">Sfaturi despre cartier</string>
+    <string name="home_guide_field_emergency">Contact de urgență</string>
+
+    <!-- Check in / out sheet -->
+    <string name="check_event_checkin">Înregistrare sosire</string>
+    <string name="check_event_checkout">Înregistrare plecare</string>
+    <string name="check_event_checkin_body">Fă câteva fotografii de referință ale casei la sosire — vă protejează pe amândoi dacă apare vreo nelămurire mai târziu.</string>
+    <string name="check_event_checkout_body">Fă câteva fotografii la plecare, pentru ca starea casei să fie consemnată.</string>
+    <string name="check_event_baseline_photos">Fotografii de referință</string>
+    <string name="check_event_note_label">Notă (opțional)</string>
+    <string name="check_event_note_placeholder">ex. totul arată grozav, cheile preluate</string>
+
+    <!-- Metrics -->
+    <string name="metrics_title">Statistici</string>
+    <string name="metrics_section_now">Acum</string>
+    <string name="metrics_online_now">Online acum</string>
+    <string name="metrics_today">Astăzi</string>
+    <string name="metrics_7_days">7 zile</string>
+    <string name="metrics_30_days">30 de zile</string>
+    <string name="metrics_section_users">Utilizatori</string>
+    <string name="metrics_total">Total</string>
+    <string name="metrics_email_verified">Email verificat</string>
+    <string name="metrics_with_active_listing">Cu anunț activ</string>
+    <string name="metrics_new_7d">Noi (7 zile)</string>
+    <string name="metrics_new_30d">Noi (30 de zile)</string>
+    <string name="metrics_section_listings_per_user">Anunțuri per utilizator</string>
+    <string name="metrics_avg_per_user">Medie per utilizator cu anunț</string>
+    <string name="metrics_top_hosts">Gazde de top</string>
+    <string name="metrics_online_only">Doar online</string>
+    <string name="metrics_no_hosts_online">Nicio gazdă online în acest moment.</string>
+    <string name="metrics_online">Online</string>
+    <string name="metrics_offline">Offline</string>
+    <string name="metrics_section_top_cities">Orașe de top</string>
+    <string name="metrics_active_listings">Anunțuri active</string>
+    <string name="metrics_section_proposals">Propuneri</string>
+    <string name="metrics_accept_rate">Rată de acceptare</string>
+    <string name="metrics_section_engagement">Implicare</string>
+    <string name="metrics_active_agreements">Acorduri active</string>
+    <string name="metrics_completed_agreements">Acorduri finalizate</string>
+    <string name="metrics_messages_total">Mesaje (total)</string>
+    <string name="metrics_messages_7d">Mesaje (7 zile)</string>
+    <string name="metrics_favorites_total">Favorite (total)</string>
+    <string name="metrics_favorites_7d">Favorite (7 zile)</string>
+    <string name="metrics_saved_searches">Căutări salvate</string>
+    <string name="metrics_generated_at">Generat %1$s UTC</string>
+    <string name="metrics_error_title">Statistici indisponibile</string>
+    <string name="metrics_error_body">Nu am putut încărca statisticile. Trage pentru a reîmprospăta sau reîncearcă.</string>
+
+    <!-- Calendar / availability -->
+    <string name="calendar_title">Calendarul tău</string>
+    <string name="calendar_intro">Datele rezervate din schimburi confirmate și șederi cu puncte sunt afișate tăiate — oaspeții nu le pot alege. Atinge o zi de început și una de sfârșit pentru a-ți bloca date pentru tine (renovări, uz personal).</string>
+    <string name="calendar_block_summary">Blochează %1$s → %2$s (%3$s)</string>
+    <string name="calendar_clear">Șterge</string>
+    <string name="calendar_blocking">Se blochează…</string>
+    <string name="calendar_block_dates">Blochează aceste date</string>
+    <string name="calendar_pick_checkout">Acum atinge ziua de plecare pentru a finaliza blocarea.</string>
+    <string name="calendar_blocked_label">Date pe care le-ai blocat</string>
+    <string name="calendar_unblock">Deblochează</string>
+    <string name="calendar_legend_selected">Selectate</string>
+    <string name="calendar_legend_booked">Rezervate / blocate</string>
+
+    <!-- Report dialog -->
+    <string name="report_title">Raportează</string>
+    <string name="report_reason_label">Motiv</string>
+    <string name="report_details_label">Detalii (opțional)</string>
+    <string name="report_reason_inappropriate">Conținut neadecvat</string>
+    <string name="report_reason_scam">Înșelătorie sau anunț fals</string>
+    <string name="report_reason_harassment">Hărțuire</string>
+    <string name="report_reason_discrimination">Discriminare</string>
+    <string name="report_reason_other">Altul</string>
+
+    <!-- Wishlists -->
+    <string name="wishlists_title">Liste de dorințe</string>
+    <string name="wishlists_guests_beds">%1$d oaspeți · %2$s</string>
+    <string name="wishlists_available">Disponibil %1$s → %2$s</string>
+    <string name="wishlists_error_title">Liste de dorințe indisponibile</string>
+    <string name="wishlists_error_body">Nu am putut contacta Swapl. Verifică-ți conexiunea și încearcă din nou.</string>
+    <string name="wishlists_empty_title">Nicio casă salvată încă</string>
+    <string name="wishlists_empty_body">Atinge inima de pe orice casă pentru a o salva aici.</string>
+
+    <!-- Travel profile card -->
+    <string name="travel_profile_kicker">Profilul tău de călătorie</string>
+    <string name="travel_profile_deleted">Profil șters. Îl reconstruim doar dacă ne ceri.</string>
+    <string name="travel_profile_built_from">Construit doar din ceea ce faci pe Swapl. Îl poți reîmprospăta sau șterge oricând.</string>
+    <string name="travel_profile_built_from_sources">Construit doar din ceea ce faci pe Swapl: %1$s. Îl poți reîmprospăta sau șterge oricând.</string>
+    <string name="travel_profile_loading">Se citește profilul tău…</string>
+    <string name="travel_profile_build_again">Construiește-l din nou</string>
+    <string name="travel_profile_refresh">Reîmprospătează</string>
+    <string name="travel_profile_delete_title">Ștergi profilul de călătorie?</string>
+    <string name="travel_profile_delete_body">Aceasta șterge rezumatul AI al preferințelor tale. Nu va reveni decât dacă îl reconstruiești.</string>
+    <string name="travel_profile_error_429">Profilul a fost reîmprospătat prea recent — încearcă din nou peste puțin timp.</string>
+    <string name="travel_profile_error_generic">Ceva nu a mers bine. Te rugăm să încerci din nou.</string>
+
+    <!-- Travel windows -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">Ai atins limita de ferestre de călătorie a planului tău</string>
+    <string name="tw_add_window">Adaugă o fereastră de călătorie</string>
+    <string name="tw_empty_title">Nicio fereastră de călătorie încă</string>
+    <string name="tw_empty_body">Spune-ne când ai vrea să călătorești — îți aducem schimburi gata făcute pentru acele date.</string>
+    <string name="tw_header_empty">Când vrei să mergi?</string>
+    <string name="tw_header_count">%1$d salvate</string>
+    <string name="tw_header_body">Salvează datele la care visezi. Asistentul compune schimburi din case reale care sunt libere exact atunci.</string>
+    <string name="tw_new_window">Fereastră de călătorie nouă</string>
+    <string name="tw_date_from">De la</string>
+    <string name="tw_date_to">Până la</string>
+    <string name="tw_end_after_start">Data de sfârșit trebuie să fie după data de început.</string>
+    <string name="tw_flexible_title">Datele mele sunt flexibile</string>
+    <string name="tw_flexible_body">Vom extinde căutarea în jurul acestor zile.</string>
+    <string name="tw_where_label">Unde mergi? (opțional)</string>
+    <string name="tw_where_placeholder">Lisabona, Portugalia, Barcelona</string>
+    <string name="tw_where_hint">Orașe sau țări separate prin virgulă — lasă gol pentru oriunde.</string>
+    <string name="tw_notes_label">Note (opțional)</string>
+    <string name="tw_notes_placeholder">Călătorie aniversară, vreau undeva pe jos…</string>
+    <string name="tw_save_window">Salvează fereastra de călătorie</string>
+    <string name="tw_flexible_chip">Flexibil</string>
+    <string name="tw_anywhere">Oriunde</string>
+    <string name="tw_remove_window">Elimină această fereastră de călătorie</string>
+    <string name="tw_hide_swaps">Ascunde schimburile pentru aceste date</string>
+    <string name="tw_show_swaps">Arată schimburile pentru aceste date</string>
+    <string name="tw_proposals_load_error">Nu am putut încărca schimburile.</string>
+    <string name="tw_proposals_loading">Se caută case libere pentru datele tale…</string>
+    <string name="tw_proposals_no_listing">Adaugă mai întâi un anunț activ — un schimb are nevoie de două case.</string>
+    <string name="tw_proposals_empty">Nimic liber pentru aceste date exacte încă — vom continua să urmărim și îți vom trimite un email când apare o potrivire.</string>
+    <string name="tw_match_pct">%1$d%% potrivire</string>
+    <string name="tw_on_wishlist">Pe destinațiile din lista ta de dorințe</string>
+    <string name="tw_mode_direct_swap">Schimb direct</string>
+    <string name="tw_mode_keys_stay">Ședere cu Keys</string>
+    <string name="tw_mode_keys_stay_nightly">Ședere cu Keys · %1$d Keys/noapte</string>
+
+    <!-- Public profile -->
+    <string name="profile_report_user">Raportează acest utilizator</string>
+    <string name="profile_anonymous_host">Gazdă anonimă</string>
+    <string name="profile_id_verified">Identitate verificată</string>
+    <string name="profile_host_avatar">Avatarul gazdei</string>
+    <string name="profile_work">Profesia mea: %1$s</string>
+    <string name="profile_speaks">Vorbește %1$s</string>
+    <string name="profile_lives_in">Locuiește în %1$s</string>
+    <string name="profile_joined_swapl">S-a alăturat Swapl</string>
+    <string name="profile_a_member">Un membru Swapl</string>
+    <string name="profile_visited_label">Unde am fost</string>
+    <string name="profile_visited_empty">Niciun schimb finalizat încă — ștampilele de pașaport apar aici după fiecare ședere.</string>
+    <string name="profile_reviews_label_plain">Recenzii</string>
+    <string name="profile_reviews_label_count">Recenzii (%1$d)</string>
+    <string name="profile_reviews_empty">Nicio recenzie încă — gazdele se recenzează reciproc după un schimb finalizat.</string>
+    <string name="profile_interests_label">Interese</string>
+    <string name="profile_their_homes">Casele lor</string>
+    <string name="profile_sqm_sleeps">%1$d m² · %2$d locuri de dormit</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="one">Schimb</item>
+        <item quantity="few">Schimburi</item>
+        <item quantity="other">de schimburi</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="one">Recenzie</item>
+        <item quantity="few">Recenzii</item>
+        <item quantity="other">de recenzii</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="one">An pe Swapl</item>
+        <item quantity="few">Ani pe Swapl</item>
+        <item quantity="other">de ani pe Swapl</item>
+    </plurals>
+
+    <!-- Account settings -->
+    <string name="settings_personal_info_title">Informații personale</string>
+    <string name="settings_display_name">Nume afișat</string>
+    <string name="settings_about_you">Despre tine</string>
+    <string name="settings_about_you_placeholder">Spune-le gazdelor câte ceva despre tine.</string>
+    <string name="settings_my_work">Profesia mea</string>
+    <string name="settings_my_work_placeholder">ex. Arhitect</string>
+    <string name="settings_languages">Limbi</string>
+    <string name="settings_languages_placeholder">ex. Engleză, Italiană</string>
+    <string name="settings_languages_hint">Separă limbile prin virgulă.</string>
+    <string name="settings_home_city">Orașul de domiciliu</string>
+    <string name="settings_home_city_placeholder">ex. Milano</string>
+    <string name="settings_home_country">Țara de domiciliu</string>
+    <string name="settings_home_country_placeholder">ex. Italia</string>
+    <string name="settings_saved_confirm">Salvat. Profilul tău public este actualizat.</string>
+    <string name="settings_save_changes">Salvează modificările</string>
+    <string name="settings_change_password">Schimbă parola</string>
+    <string name="pw_current_label">Parola actuală</string>
+    <string name="pw_current_hint">Lasă gol dacă te-ai înregistrat cu Google, Telegram sau un cod prin email.</string>
+    <string name="pw_new_label">Parolă nouă</string>
+    <string name="pw_new_hint">Cel puțin 6 caractere. Celelalte dispozitive vor fi deconectate.</string>
+    <string name="pw_confirm_label">Confirmă noua parolă</string>
+    <string name="pw_error_min6">Folosește cel puțin 6 caractere.</string>
+    <string name="pw_error_mismatch">Parolele nu se potrivesc.</string>
+    <string name="pw_error_incorrect">Parola actuală este incorectă.</string>
+    <string name="pw_error_too_many">Prea multe încercări — încearcă din nou peste o oră.</string>
+    <string name="pw_error_generic">Nu am putut schimba parola. Încearcă din nou.</string>
+    <string name="settings_privacy_title">Confidențialitate</string>
+    <string name="settings_seo_title">Indexare în motoarele de căutare</string>
+    <string name="settings_seo_subtitle">Permite paginilor anunțului tău să apară în motoare de căutare precum Google.</string>
+    <string name="settings_show_home_city_title">Arată orașul meu de domiciliu</string>
+    <string name="settings_show_home_city_subtitle">Afișează orașul și țara ta de domiciliu pe profilul tău public.</string>
+    <string name="settings_notifications_title">Notificări</string>
+    <string name="settings_email_notif_title">Notificări prin email</string>
+    <string name="settings_email_notif_subtitle">Propuneri, confirmări și memento-uri de călătorie prin email.</string>
+    <string name="settings_push_notif_title">Notificări push</string>
+    <string name="settings_push_notif_subtitle">Alerte în timp real pe acest dispozitiv când ceva are nevoie de tine.</string>
+
+    <!-- Keys wallet -->
+    <string name="keys_travel_points">Puncte de călătorie</string>
+    <string name="keys_intro">Puncte pe care le câștigi găzduind. Cheltuiește-le pe o ședere — niciodată bani, niciodată cumpărate sau încasate.</string>
+    <string name="keys_your_homes_earn">Casele tale câștigă</string>
+    <string name="keys_your_homes_earn_body">Acesta este ceea ce câștigi în fiecare noapte în care stă un oaspete — puncte pe care apoi le poți cheltui pe o ședere în altă parte.</string>
+    <string name="keys_history">Istoric</string>
+    <string name="keys_history_empty">Nicio activitate cu puncte încă. Câștigă puncte găzduind sau dăruiește-i câteva unui prieten.</string>
+    <string name="keys_see_all_history">Vezi tot istoricul de puncte</string>
+    <string name="keys_your_travel_points">Punctele tale de călătorie</string>
+    <string name="keys_balance_caption">Cheltuiește-le pe o ședere fără un schimb simultan. Punctele nu sunt bani — nu le poți cumpăra sau încasa.</string>
+    <string name="keys_gift_points">Dăruiește puncte</string>
+    <string name="keys_gift_entry_subtitle">Trimite puncte unui prieten verificat</string>
+    <string name="keys_per_night">%1$d / noapte</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="one">Soldul tău acoperă aproximativ %1$d noapte la acest tarif.</item>
+        <item quantity="few">Soldul tău acoperă aproximativ %1$d nopți la acest tarif.</item>
+        <item quantity="other">Soldul tău acoperă aproximativ %1$d de nopți la acest tarif.</item>
+    </plurals>
+    <string name="keys_how_it_works">Cum funcționează punctele</string>
+    <string name="keys_example_host">Găzduiește 2 nopți la %1$d puncte/noapte</string>
+    <string name="keys_example_spend">Cheltuiește acele %1$d puncte pe 2 nopți în altă parte</string>
+    <string name="keys_loop_caption">Acesta este întregul ciclu: găzduiește → câștigă puncte → călătorește → repetă. Nu se schimbă niciun ban.</string>
+    <string name="keys_get_first">Obține primele tale puncte</string>
+    <string name="keys_earn_verify_title">Verifică-ți identitatea</string>
+    <string name="keys_earn_verify_body">Primești %1$d puncte în momentul în care ești verificat — instantaneu.</string>
+    <string name="keys_earn_host_title">Găzduiește o ședere</string>
+    <string name="keys_earn_host_body">Câștigă puncte în fiecare noapte în care un oaspete stă la tine.</string>
+    <string name="keys_earn_gift_title">Primește un cadou</string>
+    <string name="keys_earn_gift_body">Un prieten verificat îți poate trimite puncte — distribuie ID-ul tău de membru.</string>
+    <string name="keys_error_title">Puncte indisponibile</string>
+    <string name="keys_gift_member_id">ID de membru</string>
+    <string name="keys_gift_member_id_hint">Cere-i prietenului tău ID-ul său de membru Swapl. Trebuie să fie membru verificat.</string>
+    <string name="keys_gift_caps">Până la %1$d per cadou, %2$d pe zi. Punctele sunt un cadou — nu pot fi cumpărate sau încasate.</string>
+    <plurals name="keys_points_amount">
+        <item quantity="one">%1$d punct</item>
+        <item quantity="few">%1$d puncte</item>
+        <item quantity="other">%1$d de puncte</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="one">Ai trimis %1$d punct. Acum ai %2$d.</item>
+        <item quantity="few">Ai trimis %1$d puncte. Acum ai %2$d.</item>
+        <item quantity="other">Ai trimis %1$d de puncte. Acum ai %2$d.</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">Atât tu, cât și prietenul tău trebuie să fiți membri verificați pentru a dărui puncte.</string>
+    <string name="keys_gift_error_not_found">Nu am putut găsi acel membru. Verifică din nou ID-ul.</string>
+    <string name="keys_gift_error_insufficient">Nu ai suficiente puncte pentru acest cadou.</string>
+    <string name="keys_gift_error_generic">Nu am putut trimite puncte acum.</string>
+
+    <!-- Invite &amp; earn -->
+    <string name="invite_title">Invită &amp; câștigă</string>
+    <string name="invite_intro">Adu prieteni, câștigă puncte de călătorie, urcă în rândul de acces anticipat. Punctele nu sunt niciodată bani.</string>
+    <string name="invite_share_message">Alătură-te mie pe Swapl — schimbă case și călătorește pe puncte, nu pe bani. Folosește linkul meu și câștigăm amândoi %1$d puncte de călătorie când te verifici: %2$s</string>
+    <string name="invite_share_subject">Alătură-te mie pe Swapl</string>
+    <string name="invite_share_chooser">Distribuie invitația ta</string>
+    <string name="invite_hero_kicker">Adu prieteni, urcă în rând</string>
+    <string name="invite_hero_points_earned">puncte câștigate</string>
+    <string name="invite_hero_spot_in_line">locul tău în rând</string>
+    <string name="invite_hero_body">Fiecare prieten care se înscrie și se verifică îți aduce %1$d puncte de călătorie — și te urcă în rândul de acces anticipat. Punctele nu sunt niciodată bani.</string>
+    <string name="invite_referral_link_label">Linkul tău de recomandare</string>
+    <string name="invite_share_button">Distribuie</string>
+    <string name="invite_share_caption">Distribuie acest link întreg — el este cel care contează. O singură atingere îl trimite oriunde: Mesaje, WhatsApp, email. Prietenul tău îl atinge, se înscrie și, odată ce se verifică, primiți amândoi puncte.</string>
+    <string name="invite_to_stay_title">Invită pe cineva la o ședere</string>
+    <string name="invite_to_stay_subtitle">Trimite o invitație personală legată de casa ta</string>
+    <string name="invite_tier_label">Nivelul tău</string>
+    <string name="invite_tier_not_started">Neînceput</string>
+    <string name="invite_tier_no_perk">Invită primul tău prieten pentru a debloca avantaje.</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="one">Încă %1$d prieten verificat pentru a ajunge la %2$s.</item>
+        <item quantity="few">Încă %1$d prieteni verificați pentru a ajunge la %2$s.</item>
+        <item quantity="other">Încă %1$d de prieteni verificați pentru a ajunge la %2$s.</item>
+    </plurals>
+    <string name="invite_tier_top">Ai atins nivelul maxim — ești un fondator Swapl.</string>
+    <string name="invite_leaderboard_label">Clasament</string>
+    <string name="invite_you_badge">TU</string>
+    <string name="invite_your_invites">Invitațiile tale (%1$d)</string>
+    <string name="invite_antifarm_note">Punctele se acordă doar după ce un prieten își verifică identitatea — asta menține rândul corect pentru toată lumea. Punctele sunt credit de călătorie, niciodată bani.</string>
+    <string name="invite_error_title">Invitații indisponibile</string>
+    <string name="invite_list_home_title">Pune-ți întâi casa în anunț</string>
+    <string name="invite_list_home_body">Linkurile de invitație la ședere sunt legate de propriul tău anunț. Creează o casă în Cont, apoi invită un prieten să vină în vizită.</string>
+    <string name="invite_verify_home_title">Verifică-ți întâi casa</string>
+    <string name="invite_verify_home_body">Verifică acest anunț înainte de a invita oaspeți la o ședere — altfel recompensa prietenului tău nu poate fi acordată. Verifică-l din Cont → anunțul tău.</string>
+    <string name="invite_inviting_guest_to">Inviți un oaspete la</string>
+    <string name="invite_your_home">Casa ta</string>
+    <string name="invite_friend_email_label">Emailul prietenului (opțional)</string>
+    <string name="invite_friend_email_placeholder">prieten@email.com</string>
+    <string name="invite_friend_email_hint">Adaugă un email pentru a potrivi automat invitația când se înscrie, sau lasă gol pentru un link deschis pe care îl poate folosi oricine.</string>
+    <string name="invite_ready">Invitație gata</string>
+    <string name="invite_stay_share_message">Mi-ar plăcea să te găzduiesc pe Swapl — schimbă case și călătorește pe puncte, nu pe bani. Iată invitația ta de a sta la %1$s: %2$s</string>
+    <string name="invite_stay_share_subject">Vino în vizită la %1$s</string>
+    <string name="invite_stay_share_chooser">Distribuie linkul de invitație</string>
+    <string name="invite_share_link_button">Distribuie linkul de invitație</string>
+    <string name="invite_creating">Se creează…</string>
+    <string name="invite_create_link">Creează link de invitație</string>
+    <string name="invite_stay_reward">Când se înscrie și se verifică, câștigați amândoi %1$d puncte de călătorie. Punctele nu sunt niciodată bani.</string>
+    <string name="invite_stay_reward_generic">Când se înscrie și se verifică, câștigați amândoi puncte de călătorie. Punctele nu sunt niciodată bani.</string>
+    <string name="invite_err_not_verified">Verifică acest anunț înainte de a invita oaspeți la o ședere — altfel recompensa prietenului tău nu poate fi acordată.</string>
+    <string name="invite_err_not_owner">Poți invita oaspeți doar la propriul tău anunț.</string>
+    <string name="invite_err_cooldown">Ai trimis multe invitații în ultima oră — încearcă din nou peste puțin timp. Este o pauză scurtă, nu o interdicție.</string>
+    <string name="invite_err_generic">Nu am putut crea invitația acum.</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">Inspiră-te</string>
+    <string name="inspire_intro">Spune-ne despre călătoria la care visezi — îți compunem un schimb din case reale care se potrivesc cu a ta.</string>
+    <string name="inspire_wish_label">Dorința ta</string>
+    <string name="inspire_wish_placeholder">Undeva cald, cu mâncare bună, pe jos, bun pentru muncă de la distanță…</string>
+    <string name="inspire_mic_stop">Oprește ascultarea</string>
+    <string name="inspire_mic_start">Dictează-ți dorința</string>
+    <string name="inspire_listening">Ascult — vorbește liber, atinge din nou microfonul pentru a opri.</string>
+    <string name="inspire_mic_denied">Accesul la microfon este dezactivat pentru Swapl — activează-l în Setări pentru a-ți dicta dorința.</string>
+    <string name="inspire_dates_in_mind">Am date în minte</string>
+    <string name="inspire_dates_in_mind_sub">Altfel vom folosi disponibilitatea casei tale.</string>
+    <string name="inspire_dream_up">Creează-mi schimbul</string>
+    <string name="inspire_loading_1">Se creează schimbul tău…</string>
+    <string name="inspire_loading_2">Se potrivesc casele cu stilul tău…</string>
+    <string name="inspire_loading_3">Se verifică cine este liber când ești și tu…</string>
+    <string name="inspire_loading_4">Se fac bagajele virtuale…</string>
+    <string name="inspire_package_title">Pachetul tău de schimb</string>
+    <string name="inspire_understood">Am înțeles: %1$s</string>
+    <string name="inspire_dates_label">Date</string>
+    <string name="inspire_dates_suggested">Sugerate din disponibilitatea casei tale — ajustează liber.</string>
+    <string name="inspire_message_label">Mesajul tău</string>
+    <string name="inspire_message_ai">Redactat de AI din anunțul tău și al lor — fă-l al tău.</string>
+    <string name="inspire_swap_pick">Sau schimbă alegerea</string>
+    <string name="inspire_match_pct">%1$d%% potrivire</string>
+    <string name="inspire_while_there">Cât timp ești acolo</string>
+    <string name="inspire_experiences_note">Rezervate pe site-urile partenerilor noștri la prețurile lor — swapl poate câștiga un comision, niciodată un adaos.</string>
+    <string name="inspire_travel_essentials">Esențiale de călătorie</string>
+    <string name="inspire_concierge_addons">Suplimente concierge swapl</string>
+    <string name="inspire_addons_note">Prețuri reale din catalog. Debifează orice nu dorești — vei fi taxat doar dacă gazda îți acceptă schimbul.</string>
+    <string name="inspire_payable_if_accepts">De plată dacă gazda acceptă</string>
+    <string name="inspire_nothing_payable">Nimic de plată — confirmarea doar trimite propunerea.</string>
+    <string name="inspire_confirm_send">Confirmă &amp; trimite propunerea</string>
+    <string name="inspire_charged_note">Vei fi taxat doar dacă gazda îți acceptă schimbul.</string>
+    <string name="inspire_dismissing">Se respinge…</string>
+    <string name="inspire_not_feeling">Nu mă atrage</string>
+    <string name="inspire_almost_there">Aproape gata</string>
+    <string name="inspire_payment_title">Plată &amp; rezervare</string>
+    <string name="inspire_your_selection">Selecția ta</string>
+    <string name="inspire_partner_note">Experiențele și serviciile partenerilor sunt rezervate pe site-urile partenerilor — niciodată taxate de swapl și nu fac parte din acest total.</string>
+    <string name="inspire_save_card">Salvează cardul &amp; trimite propunerea</string>
+    <string name="inspire_send_no_card">Trimite fără a salva un card</string>
+    <string name="inspire_back_to_package">Înapoi la pachet</string>
+    <string name="inspire_book_on">Rezervă pe %1$s</string>
+    <string name="inspire_err_no_match">Avem nevoie de o casă activă a ta — și de cel puțin o potrivire compatibilă — pentru a compune un pachet.</string>
+    <string name="inspire_err_rate">Visezi prea repede! Mai așteaptă câteva minute și încearcă din nou.</string>
+    <string name="inspire_err_limit">Ai atins limita de propuneri a planului tău. Fă upgrade pentru a trimite mai multe.</string>
+    <string name="inspire_err_forbidden">Contul tău nu poate trimite propuneri momentan.</string>
+    <string name="inspire_err_generic">Ceva nu a mers bine. Te rugăm să încerci din nou.</string>
+
+
+    <!-- Bottom navigation -->
+    <string name="nav_browse">Explorează</string>
+    <string name="nav_wishlists">Dorințe</string>
+    <string name="nav_trips">Călătorii</string>
+    <string name="nav_swaps">Schimburi</string>
+    <string name="nav_account">Cont</string>
+</resources>

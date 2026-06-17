@@ -1,0 +1,1241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">مرحبًا بعودتك</string>
+    <string name="auth_kicker_register">انضم إلى Swapl</string>
+    <string name="auth_kicker_waitlist">وصول مبكر</string>
+    <string name="auth_headline_signin">مفاتيح مقابل مفاتيح.</string>
+    <string name="auth_headline_register">بادل المنازل،\nلا الفنادق.</string>
+    <string name="auth_headline_waitlist">سجّل في القائمة.</string>
+    <string name="auth_email">البريد الإلكتروني</string>
+    <string name="auth_password">كلمة المرور</string>
+    <string name="auth_password_register">كلمة المرور (٦ أحرف على الأقل)</string>
+    <string name="auth_signin">تسجيل الدخول</string>
+    <string name="auth_signin_busy">جارٍ تسجيل الدخول…</string>
+    <string name="auth_create_account">إنشاء حساب</string>
+    <string name="auth_create_account_busy">جارٍ إنشاء الحساب…</string>
+    <string name="auth_join_waitlist">انضم إلى قائمة الانتظار</string>
+    <string name="auth_join_waitlist_busy">جارٍ الانضمام…</string>
+    <string name="auth_continue_with">أو تابع باستخدام</string>
+    <string name="auth_passkey">سجّل الدخول بمفتاح مرور</string>
+    <string name="auth_google">تابع باستخدام Google</string>
+    <string name="auth_email_code">رمز عبر البريد</string>
+    <string name="auth_phone">الهاتف</string>
+    <string name="auth_switch_to_register">جديد على Swapl؟ أنشئ حسابًا</string>
+    <string name="auth_switch_to_waitlist">لست مستعدًا؟ انضم إلى قائمة الانتظار</string>
+    <string name="auth_switch_register_to_signin">لديك حساب بالفعل؟ سجّل الدخول</string>
+    <string name="auth_switch_waitlist_to_signin">لديك حساب؟ سجّل الدخول</string>
+    <string name="auth_google_failed">فشل تسجيل الدخول عبر Google. حاول مجددًا.</string>
+    <string name="auth_passkey_unavailable">تسجيل الدخول بمفتاح المرور غير متاح حاليًا.</string>
+    <string name="auth_passkey_failed">فشل تسجيل الدخول بمفتاح المرور. حاول مجددًا.</string>
+    <string name="auth_passkey_none">لا يوجد مفتاح مرور على هذا الجهاز بعد. سجّل الدخول بطريقة أخرى، ثم أضف مفتاحًا من ملفك الشخصي.</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">سجّل الدخول برمز عبر البريد</string>
+    <string name="auth_otp_kicker_phone">سجّل الدخول عبر الهاتف</string>
+    <string name="auth_otp_headline_enter">أدخل رمزك.</string>
+    <string name="auth_otp_headline_get">احصل على رمز.</string>
+    <string name="auth_otp_sent">أرسلنا رمزًا مكونًا من ٦ أرقام إلى %1$s. تنتهي صلاحيته خلال ١٠ دقائق.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">الهاتف (مثال: ‎+39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">استخدم الصيغة الدولية، مثال: ‎+39 333 123 4567.</string>
+    <string name="auth_otp_verify">تحقق من الرمز</string>
+    <string name="auth_otp_verify_busy">جارٍ التحقق…</string>
+    <string name="auth_otp_resend">لم يصلك؟ أرسل رمزًا جديدًا</string>
+    <string name="auth_otp_send">إرسال الرمز</string>
+    <string name="auth_otp_send_busy">جارٍ الإرسال…</string>
+    <string name="auth_otp_back">العودة إلى تسجيل الدخول بكلمة المرور</string>
+    <string name="verify_referral_toast">تم التحقق! حصلت على %1$d مفتاح للانضمام عبر إحالة. 🔑</string>
+    <string name="verify_referral_toast_named">تم التحقق! دعوة %1$s منحتك للتو %2$d مفتاح. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s تحقق للتو — حصلت على %2$d مفتاح! 🔑</string>
+    <string name="referral_referrer_toast">شخص دعوته تحقق للتو — حصلت على %1$d مفتاح! 🔑</string>
+
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">طرق كسب المفاتيح</string>
+    <string name="keys_earn_ways_subtitle">إجراءات بسيطة تزيد نقاط سفرك. نفّذها مرة واحدة أو عُد للمزيد.</string>
+    <string name="keys_earn_way_done">تم الكسب — أحسنت!</string>
+    <string name="keys_earn_way_locked">تحقق من هويتك لفتح هذا</string>
+    <string name="keys_earn_verify_identity_title">تحقق من هويتك</string>
+    <string name="keys_earn_verify_identity_body">فحص سريع يفتح كل الطرق الأخرى للكسب.</string>
+    <string name="keys_earn_verify_property_title">تحقق من عقار</string>
+    <string name="keys_earn_verify_property_body">أكّد أنك تملك منزلًا تعرضه.</string>
+    <string name="keys_earn_complete_listing_title">أكمل إعلانك</string>
+    <string name="keys_earn_complete_listing_body">أضف صورًا وتفاصيل ليتخيّل الضيوف الإقامة.</string>
+    <string name="keys_earn_leave_review_title">اترك تقييمًا</string>
+    <string name="keys_earn_leave_review_body">أخبر المجتمع كيف كانت الإقامة.</string>
+    <string name="keys_earn_share_converted_title">شارك منزلًا يحصل على حجز</string>
+    <string name="keys_earn_share_converted_body">شارك إعلانًا واكسب عندما يؤدي إلى إقامة.</string>
+    <string name="keys_earn_refer_friend_title">ادعُ صديقًا</string>
+    <string name="keys_earn_refer_friend_body">يكسب كلاكما عند انضمامه وتحققه.</string>
+    <string name="keys_earn_generic_title">اكسب مفاتيح</string>
+    <string name="keys_earn_generic_body">نفّذ هذا الإجراء لكسب نقاط سفر.</string>
+
+    <!-- Owner verification + publish acknowledgment (DOK-162) -->
+    <string name="owner_verified_badge">مالك موثّق</string>
+
+    <!-- Publish acknowledgment shown on the Review step before create -->
+    <string name="publish_ack_kicker">قبل النشر</string>
+    <string name="publish_ack_mode_question">كيف تستضيف هذا المنزل؟</string>
+    <string name="publish_ack_mode_entire_home">المنزل بأكمله، أثناء غيابي</string>
+    <string name="publish_ack_mode_room">غرفة، أو أثناء وجودي</string>
+    <string name="publish_ack_text_entire_home_headline">لديّ الحق في عرض منزلي بأكمله للمبادلة أثناء غيابي — وإن كنت مستأجرًا، فإن عقد إيجاري يسمح لي باستضافة ضيوف عند عدم وجودي.</string>
+    <string name="publish_ack_text_entire_home_fineprint">أنا مسؤول عن الالتزام بعقد إيجاري وقواعد المبنى والقوانين المحلية.</string>
+    <string name="publish_ack_text_room_headline">لديّ الحق في استضافة هذه المبادلة.</string>
+    <string name="publish_ack_text_room_fineprint">سألتزم بقواعد المبنى والقوانين المحلية.</string>
+    <string name="publish_ack_required_error">يرجى تأكيد إقرار الاستضافة قبل النشر.</string>
+    <string name="publish_submit_failed">تعذّر نشر إعلانك. حاول مجددًا.</string>
+
+    <!-- Optional "Verify ownership" entry -->
+    <string name="owner_verify_cta">شارة المالك الموثّق — اختياري</string>
+    <string name="owner_verify_cta_pending">شارة المالك الموثّق — قيد المراجعة</string>
+    <string name="owner_verify_cta_rejected">شارة المالك الموثّق — حاول مجددًا</string>
+    <string name="owner_verify_optional_note">تعزيز للثقة لدى الضيوف. غير مطلوب أبدًا للنشر أو المبادلة.</string>
+    <string name="owner_verify_title">تحقق من الملكية</string>
+    <string name="owner_verify_explainer">أضف مستندًا يثبت حقك في هذا المنزل — سند ملكية أو سجل، أو عقد إيجار باسمك. يراجعه مشرف، وبمجرد الموافقة يظهر على إعلانك شارة \"مالك موثّق\".</string>
+    <string name="owner_verify_ai_explainer">يقرأ فحص ذكاء اصطناعي سريع المستند أولًا للتأكد من مطابقته لهذا المنزل. القرار النهائي يبقى دائمًا لشخص من فريقنا.</string>
+    <string name="owner_verify_tenant_note">الاستئجار مرحّب به. إن كنت مستأجرًا وعقدك يسمح بالاستضافة، فأنت مؤهل تمامًا — لست بحاجة لامتلاك المنزل.</string>
+    <string name="owner_verify_tenant">مستأجر؟ أنت مرحّب بك هنا أيضًا — ارفع عقد إيجارك بدلًا من سند الملكية. يمكنك الاستضافة على Swapl ما دام عقد إيجارك يسمح لك باستقبال ضيوف.</string>
+    <string name="owner_verify_privacy_note">لا نحتفظ بمستندك بعد الفحص. الذكاء الاصطناعي وحده يقرأ بياناتك الشخصية، ونحتفظ فقط بما إذا كان يُظهر منزلًا خاصًا — لا هويتك ولا عنوانك ولا المستند نفسه أبدًا.</string>
+    <string name="owner_verify_privacy">تُقرأ مستندك مرة واحدة للتحقق من أن المنزل ملكك، ثم لا يُخزَّن — نحتفظ فقط بالنتيجة (موثّق أم لا)، لا المستند أو محتوياته أبدًا.</string>
+    <string name="owner_verify_private_only_note">Swapl مبادلة بين أفراد خاصين، لذا لا يمكن إدراج العقارات التجارية أو الخاصة بشركات هنا.</string>
+    <string name="owner_verify_doc_type_label">ماذا ترفع؟ (اختياري)</string>
+    <string name="owner_verify_doc_type_deed">سند ملكية / سجل</string>
+    <string name="owner_verify_doc_type_lease">عقد إيجار</string>
+    <string name="owner_verify_status_pending">آخر إرسال لك قيد المراجعة. يتخذ شخص من فريقنا القرار النهائي — عادةً خلال يومي عمل. إذا كان فحصنا الآلي غير متأكد فقد يستغرق وقتًا أطول قليلًا، لكنك لست عالقًا: نتابع دائمًا.</string>
+    <string name="owner_verify_status_rejected">لم تتم الموافقة على آخر إرسال لك. أضف مستندًا أوضح وأعد الإرسال.</string>
+    <string name="owner_verify_business_title">يشير فحصنا إلى أن هذا قد يكون عقارًا تجاريًا — قد نكون مخطئين</string>
+    <string name="owner_verify_business_body">قرأ فحصنا الآلي مستندك على أنه عقار خاص بشركة أو تجاري، وSwapl مبادلة بين أفراد خاصين. لكن الفحوصات الآلية ليست مثالية، وشخص حقيقي — لا الذكاء الاصطناعي أبدًا — هو من يتخذ القرار النهائي. إن كان هذا منزلك الخاص، تواصل معنا: يراجع شخص من فريقنا هذه الحالات شخصيًا، عادةً خلال يومي عمل، ويكفي عقد إيجار أو سند ملكية أو سجل ضريبي باسمك لتصحيح الأمر.</string>
+    <string name="owner_verify_business_contact">تواصل مع الدعم</string>
+    <string name="owner_verify_business_support_email">support@swapl.app</string>
+    <string name="owner_verify_business_support_subject">طلب مراجعة التحقق من العقار</string>
+    <string name="owner_verify_add_document">أضف مستندًا</string>
+    <string name="owner_verify_uploading">جارٍ الرفع…</string>
+    <string name="owner_verify_remove">إزالة</string>
+    <string name="owner_verify_submit">إرسال للمراجعة</string>
+    <string name="owner_verify_submitting">جارٍ الإرسال…</string>
+    <string name="owner_verify_cancel">إلغاء</string>
+    <string name="owner_verify_doc_label">مستند الملكية</string>
+    <string name="owner_verify_doc_read_error">تعذّر قراءة ذلك الملف.</string>
+    <string name="owner_verify_upload_failed">فشل الرفع. حاول مجددًا.</string>
+    <string name="owner_verify_submit_failed">تعذّر الإرسال. حاول مجددًا.</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). Owner-only "how your
+         nightly Keys are calculated" breakdown. -->
+    <string name="valuation_section_title">كيف تُحتسب مفاتيحك الليلية</string>
+    <string name="valuation_per_night">%1$d / ليلة</string>
+    <string name="valuation_intro">هذا ما ينفقه الضيف — وما تكسبه — عن كل ليلة يقيمها. يُحدَّد بإنصاف من مزايا منزلك، وليس عن طريقك أو عن طريق مزايدتنا عليه.</string>
+    <string name="valuation_show">عرض التفصيل</string>
+    <string name="valuation_hide">إخفاء التفصيل</string>
+    <string name="valuation_factors_kicker">ما الذي يبني القيمة</string>
+    <string name="valuation_base_label">القيمة قبل التقييمات</string>
+    <string name="valuation_factor_base">القيمة الأولية</string>
+    <string name="valuation_factor_size">المساحة</string>
+    <string name="valuation_factor_sleeps">سعة النوم</string>
+    <string name="valuation_factor_location_tier">جاذبية الموقع</string>
+    <string name="valuation_factor_location_tier_standard">قياسي — موقعك ليس معزّزًا بشكل مصطنع، لكنه مُقيَّم بالتساوي. البلدات والقرى الأصغر لا تُعاقَب هنا.</string>
+    <string name="valuation_factor_verified">منزل موثّق</string>
+    <string name="valuation_factor_ai_appeal">جاذبية المنزل (ذكاء اصطناعي)</string>
+    <string name="valuation_ai_summary_kicker">جاذبية المنزل (ذكاء اصطناعي)</string>
+    <string name="valuation_ai_what_note">يقرأ ذكاؤنا الاصطناعي طريقة عرض إعلانك فقط — تغطية صورك، ومدى ثراء قائمة مرافقك، ومدى تفصيل وصفك. لا يحكم على منزلك بقسوة، ولا يعاقب أبدًا البلدات أو القرى الصغيرة — الموقع يُعالَج بشكل منفصل.</string>
+    <string name="valuation_ai_baseline_pos">مكافأة لجاذبية المنزل: ‎+%1$s (معظم المنازل تسجّل 0؛ بحد أقصى ‎+%2$d).</string>
+    <string name="valuation_ai_baseline_zero">جاذبية المنزل: 0 — أمر طبيعي تمامًا، مثل معظم المنازل (المكافأة بحد أقصى ‎+%1$d).</string>
+    <string name="valuation_ai_baseline_neg">جاذبية المنزل: %1$s (معظم المنازل تسجّل 0 — أضف بضع صور أو تفاصيل لرفعها).</string>
+    <string name="valuation_ai_fallback_note">مُقيَّم من صورك ومرافقك. تُضاف قراءة جاذبية أغنى بمجرد أن ينظر نموذج جاذبية المنزل في إعلانك.</string>
+    <string name="valuation_room_kicker">هذه غرفة</string>
+    <string name="valuation_room_note">بما أنك تعرض غرفة خاصة بدلًا من المنزل بأكمله، فإن القيمة الليلية تعكس تلك الغرفة فقط — نحو %1$d%% من سعر المكان الكامل.</string>
+    <string name="valuation_location_note">مستوى الطلب على الوجهة %1$d من 5 — مدى رواج منطقتك للإقامات.</string>
+    <string name="valuation_review_kicker">تقييمات الضيوف</string>
+    <string name="valuation_review_applied_up">تقييماتك (%1$.1f★ من %2$d) ترفع القيمة بنسبة %3$d%%.</string>
+    <string name="valuation_review_applied_down">تقييماتك (%1$.1f★ من %2$d) تخفض القيمة بنسبة %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">تقييماتك (%1$.1f★ من %2$d) تُبقي القيمة كما هي تمامًا.</string>
+    <string name="valuation_review_pending">لم تُطبَّق بعد — تبدأ التقييمات بتعديل هذه القيمة فقط بعد أن تتلقى %1$d تقييمات. لديك %2$d حتى الآن. حتى ذلك الحين تبقى عند مستواها المبني على المزايا.</string>
+    <string name="valuation_review_moving">تتحرك الآن ببطء نحو تقييمك %1$.1f★ من %2$d تقييمات — قليلًا في كل مرة، وليس دفعة واحدة أبدًا.</string>
+    <string name="valuation_bounded_note">تتحرك هذه القيمة بحد أقصى %1$d%% في كل دورة تحديث، وفقط بعد أن يكون لديك %2$d تقييمات أو أكثر. وحتى عندها، يستغرق بلوغ حد ±%3$d%% دورات كثيرة — حد صارم لا يمكن للتقييمات تجاوزه أبدًا — فلا يمكن لأسبوع تقييمات سيئة أن يُسقط أرباحك بين عشية وضحاها.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">قصتك مع Swapl</string>
+    <string name="story_counts_heading">قصتك حتى الآن</string>
+    <string name="story_passport">جواز سفرك</string>
+    <string name="story_kind_trip">رحلة</string>
+    <string name="story_kind_hosted">استضافة</string>
+    <string name="story_detail_hosted_by">استضافك %1$s</string>
+    <string name="story_detail_welcomed">رحّبت بـ %1$s</string>
+    <string name="story_detail_stay">إقامة على Swapl</string>
+    <string name="story_detail_guest">ضيف في منزلك</string>
+    <string name="story_share_heading">شارك قصتك</string>
+    <string name="story_share_button">مشاركة</string>
+    <string name="story_share_note">أرسل قصتك إلى أي مكان — الرسائل، واتساب، البريد. تحمل رابط دعوتك، فعندما ينقر صديق عليه وينضم، يكسب كلاكما نقاط سفر.</string>
+    <string name="story_share_subject">قصتي مع Swapl</string>
+    <string name="story_share_chooser">شارك قصتك</string>
+    <string name="story_share_message">بادلت المنازل عبر %1$d مدينة على Swapl — سافر بالنقاط، لا بالنقود. انضم إليّ برابطي ونكسب كلانا نقاط سفر عند تحققك: %2$s</string>
+    <string name="story_empty_title">قصتك تبدأ هنا</string>
+    <string name="story_empty_body">بمجرد إكمال أول مبادلة أو إقامة بالمفاتيح، تظهر رحلاتك والضيوف الذين ترحّب بهم هنا كأختام جواز سفر — بطاقة بريدية لكل مكان يأخذك إليه Swapl.</string>
+    <string name="story_empty_share">ادعُ صديقًا للمبادلة</string>
+    <string name="story_error_title">القصة غير متاحة</string>
+    <string name="story_error_body">تعذّر تحميل قصتك. اسحب للتحديث أو أعد المحاولة.</string>
+    <string name="story_error_retry">إعادة المحاولة</string>
+    <plurals name="story_count_trips">
+        <item quantity="zero">رحلات</item>
+        <item quantity="one">رحلة</item>
+        <item quantity="two">رحلتان</item>
+        <item quantity="few">رحلات</item>
+        <item quantity="many">رحلة</item>
+        <item quantity="other">رحلات</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="zero">ضيوف مرحَّب بهم</item>
+        <item quantity="one">ضيف مرحَّب به</item>
+        <item quantity="two">ضيفان مرحَّب بهما</item>
+        <item quantity="few">ضيوف مرحَّب بهم</item>
+        <item quantity="many">ضيفًا مرحَّبًا به</item>
+        <item quantity="other">ضيوف مرحَّب بهم</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="zero">مدن</item>
+        <item quantity="one">مدينة</item>
+        <item quantity="two">مدينتان</item>
+        <item quantity="few">مدن</item>
+        <item quantity="many">مدينة</item>
+        <item quantity="other">مدن</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="zero">دول</item>
+        <item quantity="one">دولة</item>
+        <item quantity="two">دولتان</item>
+        <item quantity="few">دول</item>
+        <item quantity="many">دولة</item>
+        <item quantity="other">دول</item>
+    </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). Shown only when
+         the policy certificate has been anchored on-chain. Not crypto/payment. -->
+    <string name="trip_oncover_badge">موثّق على TON</string>
+    <string name="trip_oncover_view">عرض الإثبات</string>
+    <string name="trip_oncover_explainer">سجل غير قابل للتلاعب يثبت أن تغطيتك حقيقية — ليست عملة رقمية، بلا دفع، ولا شيء عليك فعله.</string>
+
+    <!-- People in a swap conversation (DOK-187). -->
+    <string name="people_title">الأشخاص</string>
+    <string name="people_role_principal">شريك المبادلة</string>
+    <string name="people_role_guest">ضيف في المحادثة</string>
+    <string name="people_status_pending">قيد الانتظار</string>
+    <string name="people_invite">دعوة</string>
+    <string name="people_add">إضافة</string>
+    <string name="people_add_cotravelers">أضف رفاق سفر</string>
+    <string name="people_remove">إزالة %1$s</string>
+    <string name="people_invite_title">ادعُ شخصًا إلى المحادثة</string>
+    <string name="people_invite_reassure">أضف شريكًا أو رفيق سفر إلى المحادثة. يمكنهم الدردشة مع الجميع هنا، لكن شريكي المبادلة فقط هما من يمكنهما قبول المبادلة أو تقديم عرض مضاد أو إلغاؤها — دعوة شخص لا تمنحه أي تحكم بها أبدًا.</string>
+    <string name="people_invite_field_label">البريد الإلكتروني أو المعرّف</string>
+    <string name="people_invite_field_placeholder">name@email.com أو ‎@handle</string>
+    <string name="people_invite_send">إرسال الدعوة</string>
+    <string name="people_invite_cancel">إلغاء</string>
+
+    <!-- Common / shared actions -->
+    <string name="common_cancel">إلغاء</string>
+    <string name="common_ok">حسنًا</string>
+    <string name="common_retry">إعادة المحاولة</string>
+
+    <!-- Rate the app (M1) -->
+    <string name="account_rate_app">قيّم التطبيق</string>
+    <string name="rate_app_title">قيّم التطبيق</string>
+    <string name="rate_app_prompt">كيف يعمل Swapl بالنسبة لك؟ تقييمك يساعدنا على التحسّن.</string>
+    <string name="rate_app_score_label">تقييمك</string>
+    <string name="rate_app_comment_label">هل من شيء تضيفه؟</string>
+    <string name="rate_app_comment_placeholder">أخبرنا بما ينجح — أو بما لا ينجح (اختياري)</string>
+    <string name="rate_app_submit">إرسال</string>
+    <string name="rate_app_submit_support">تواصل مع الدعم</string>
+    <string name="rate_app_submitting">جارٍ الإرسال…</string>
+    <string name="rate_app_prompt_post_review">شكرًا على تقييمك! كيف يعمل تطبيق Swapl نفسه بالنسبة لك؟</string>
+    <string name="rate_app_prompt_post_swap">اكتملت مبادلتك! كيف كان Swapl في إيصالك إلى هناك؟</string>
+    <string name="rate_app_low_support_hint">نأسف لأنه لم يكن بالمستوى المنشود. أرسل هذا وسنفتح الدعم لنساعدك.</string>
+
+    <!-- Account screen -->
+    <string name="account_profile_title">الملف الشخصي</string>
+    <string name="account_member_badge">عضو في Swapl</string>
+    <string name="account_stat_waiting">بالانتظار</string>
+    <string name="account_stat_sent">مُرسَل</string>
+    <string name="account_stat_active">نشط</string>
+    <string name="account_stat_homes">المنازل</string>
+    <string name="account_edit_home_title">عدّل منزلك</string>
+    <string name="account_become_host_title">كن مضيفًا</string>
+    <string name="account_edit_home_body">حدّث الصور والتواريخ والتفاصيل.</string>
+    <string name="account_become_host_body">أدرج منزلك لتبدأ المبادلة.</string>
+    <string name="account_section_settings">الإعدادات</string>
+    <string name="account_personal_info">المعلومات الشخصية</string>
+    <string name="account_change_password">تغيير كلمة المرور</string>
+    <string name="account_passkeys">تسجيل الدخول والأمان — مفاتيح المرور</string>
+    <string name="account_passkeys_busy">تسجيل الدخول والأمان — مفاتيح المرور…</string>
+    <string name="account_privacy">الخصوصية</string>
+    <string name="account_notifications">الإشعارات</string>
+    <string name="account_section_profile">الملف الشخصي</string>
+    <string name="account_view_profile">عرض الملف الشخصي</string>
+    <string name="account_your_story">قصتك مع Swapl</string>
+    <string name="account_travel_points">نقاط السفر</string>
+    <string name="account_invite_earn">ادعُ واكسب</string>
+    <string name="account_interests">الاهتمامات</string>
+    <string name="account_saved_searches">عمليات البحث المحفوظة</string>
+    <string name="account_travel_windows">نوافذ السفر</string>
+    <string name="account_metrics">المقاييس</string>
+    <string name="account_section_support">الدعم</string>
+    <string name="account_get_help">احصل على مساعدة</string>
+    <string name="account_privacy_policy">سياسة الخصوصية</string>
+    <string name="account_terms">شروط الخدمة</string>
+    <string name="account_log_out">تسجيل الخروج</string>
+    <string name="account_version">الإصدار %1$s (%2$d)</string>
+    <string name="account_signout_title">تسجيل الخروج؟</string>
+    <string name="account_signout_body">ستحتاج إلى تسجيل الدخول مجددًا لرؤية مبادلاتك.</string>
+    <string name="account_passkeys_dialog_title">مفاتيح المرور</string>
+
+    <!-- Browse -->
+    <string name="browse_title">تصفّح</string>
+    <string name="browse_edit_home">عدّل منزلك</string>
+    <string name="browse_list_home">+ أدرج منزلًا</string>
+    <string name="browse_search_placeholder">إلى أين؟</string>
+    <string name="browse_clear_search">مسح البحث</string>
+    <string name="browse_filters">عوامل التصفية</string>
+    <string name="browse_tab_homes">المنازل</string>
+    <string name="browse_tab_experiences">التجارب</string>
+    <string name="browse_tab_services">الخدمات</string>
+    <string name="browse_get_inspired_title">استلهم</string>
+    <string name="browse_get_inspired_body">صف رحلة أحلامك — وسنؤلّف لك مبادلة.</string>
+    <string name="browse_sort">ترتيب</string>
+    <string name="browse_sort_match">الأنسب</string>
+    <string name="browse_sort_newest">الأحدث</string>
+    <string name="browse_sort_largest">الأكبر</string>
+    <string name="browse_error_title">المنازل غير متاحة</string>
+    <string name="browse_error_body">تعذّر الوصول إلى Swapl. تحقق من اتصالك وحاول مجددًا.</string>
+    <string name="browse_empty_title">لم يُعثر على منازل</string>
+    <string name="browse_empty_body">تظهر منازل جديدة هنا عندما ينشرها الأعضاء.</string>
+    <string name="browse_guests_size_type">%1$d ضيوف · %2$d م² · %3$s</string>
+    <string name="browse_tag_featured">مميّز</string>
+    <string name="browse_tag_verified">موثّق</string>
+    <string name="browse_tag_private_room">غرفة خاصة</string>
+    <!-- Filters -->
+    <string name="filter_title">عوامل التصفية</string>
+    <string name="filter_when">متى</string>
+    <string name="filter_from">من</string>
+    <string name="filter_to">إلى</string>
+    <string name="filter_clear_dates">مسح التواريخ</string>
+    <string name="filter_space_type">نوع المساحة</string>
+    <string name="filter_space_all">الكل</string>
+    <string name="filter_space_entire">المكان بأكمله</string>
+    <string name="filter_space_private_room">غرفة خاصة</string>
+    <string name="filter_property_type">نوع العقار</string>
+    <string name="filter_min_size">الحد الأدنى للمساحة: %1$d م²</string>
+    <string name="filter_min_sleeps">سعة النوم لا تقل عن: %1$d</string>
+    <string name="filter_pets">المنازل المسموح فيها بالحيوانات فقط</string>
+    <string name="filter_wfh">المنازل التي بها مساحة عمل فقط</string>
+    <string name="filter_step_free">المنازل الخالية من الدرجات فقط</string>
+    <string name="filter_reset">إعادة تعيين</string>
+    <string name="filter_show_homes">عرض المنازل</string>
+
+    <!-- Listing detail -->
+    <string name="detail_guests_rooms">%1$d ضيوف · %2$s · %3$s · %4$d م²</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="zero">%1$d غرفة نوم</item>
+        <item quantity="one">غرفة نوم واحدة</item>
+        <item quantity="two">غرفتا نوم</item>
+        <item quantity="few">%1$d غرف نوم</item>
+        <item quantity="many">%1$d غرفة نوم</item>
+        <item quantity="other">%1$d غرفة نوم</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="zero">%1$d حمام</item>
+        <item quantity="one">حمام واحد</item>
+        <item quantity="two">حمامان</item>
+        <item quantity="few">%1$d حمامات</item>
+        <item quantity="many">%1$d حمامًا</item>
+        <item quantity="other">%1$d حمام</item>
+    </plurals>
+    <string name="detail_available_range">متاح %1$s ← %2$s · إقامات %3$d–%4$d يوم</string>
+    <string name="detail_points_per_night">%1$d نقطة / ليلة</string>
+    <string name="detail_private_room_note">هذه غرفة خاصة، لذا تعكس القيمة الليلية الغرفة فقط — لا المنزل بأكمله.</string>
+    <string name="detail_private_room_badge">غرفة خاصة</string>
+    <string name="detail_private_room_badge_rooms">غرفة خاصة · %1$d غرف</string>
+    <string name="detail_about_home">عن هذا المنزل</string>
+    <string name="detail_what_offered">ما يوفّره هذا المكان</string>
+    <string name="detail_where">أين ستقيم</string>
+    <string name="detail_approx_area">منطقة تقريبية</string>
+    <string name="detail_hosted_by">يستضيفه</string>
+    <string name="detail_anonymous">مجهول</string>
+    <string name="detail_verified_host">مضيف موثّق</string>
+    <string name="detail_edit_listing">تعديل الإعلان</string>
+    <string name="detail_manage_availability">إدارة التوفّر</string>
+    <string name="detail_propose_swap">اقترح مبادلة</string>
+    <string name="detail_list_home_first">أدرج منزلك أولًا</string>
+    <string name="detail_list_home_first_body">أضف إعلانك الخاص قبل أن تتمكن من اقتراح مبادلات.</string>
+    <string name="detail_stay_with_points">أقم بالنقاط</string>
+    <string name="detail_stay_with_points_body">احجز في اتجاه واحد باستخدام نقاط السفر التي كسبتها من الاستضافة — دون حاجة لمبادلة مقابلة. استخدم هذا عندما لا تناسبك المبادلة المباشرة.</string>
+    <string name="detail_report_listing">أبلِغ عن هذا الإعلان</string>
+    <string name="detail_no_amenities">لا توجد مرافق مدرجة.</string>
+    <string name="detail_request_sent_title">تم إرسال الطلب</string>
+    <string name="detail_request_sent_body">يتم حجز نقاطك حتى يؤكد المضيف. ستجد هذه الإقامة ضمن الرحلات.</string>
+    <!-- Amenity labels -->
+    <string name="amenity_balcony">شرفة</string>
+    <string name="amenity_rooftop">سطح</string>
+    <string name="amenity_garden">حديقة</string>
+    <string name="amenity_courtyard">فناء</string>
+    <string name="amenity_pool">مسبح</string>
+    <string name="amenity_gym">صالة رياضية</string>
+    <string name="amenity_piano">بيانو</string>
+    <string name="amenity_bike">دراجة مشمولة</string>
+    <string name="amenity_parking">موقف سيارات</string>
+    <string name="amenity_workspace">مساحة عمل</string>
+    <string name="amenity_pets">مسموح بالحيوانات الأليفة</string>
+    <string name="amenity_step_free">خالٍ من الدرجات</string>
+    <string name="amenity_elevator">مصعد</string>
+    <string name="amenity_ac">تكييف</string>
+    <string name="amenity_dishwasher">غسالة صحون</string>
+    <string name="amenity_washer">غسالة ملابس</string>
+    <string name="amenity_dryer">مجفّف</string>
+
+    <!-- Propose swap dialog -->
+    <string name="propose_title">اقترح مبادلة</string>
+    <string name="propose_message_label">رسالة (اختياري)</string>
+    <string name="propose_drafting">جارٍ الصياغة…</string>
+    <string name="propose_write_for_me">اكتبها نيابةً عني</string>
+    <string name="propose_rewrite_ai">أعد الصياغة بالذكاء الاصطناعي</string>
+    <string name="propose_draft_failed">تعذّرت صياغة رسالة الآن</string>
+    <string name="propose_send">إرسال</string>
+
+    <!-- Swap thread -->
+    <string name="thread_with">مع %1$s</string>
+    <string name="thread_open_chat">فتح المحادثة</string>
+    <string name="thread_open_chat_with">فتح محادثة مع %1$s</string>
+    <string name="thread_view_profile">عرض الملف الشخصي لـ %1$s</string>
+    <string name="thread_host_fallback">المضيف</string>
+    <string name="thread_host_fallback_possessive">مضيفك</string>
+    <string name="thread_proposal">اقتراح</string>
+    <string name="thread_counter">عرض مضاد</string>
+    <string name="thread_size_sleeps">%1$d م² · سعة %2$d</string>
+    <string name="thread_accept">قبول المبادلة</string>
+    <string name="thread_counter_offer">عرض مضاد</string>
+    <string name="thread_decline">رفض</string>
+    <string name="thread_withdraw">سحب</string>
+    <string name="thread_message_optional">رسالة (اختياري)</string>
+    <!-- Accept-consent + action feedback (M4) -->
+    <string name="thread_accept_confirm_title">قبول هذه المبادلة؟</string>
+    <string name="thread_accept_confirm_body">القبول يثبّت التواريخ ويُصدر تأمين سفرك للإقامة — عندها يصبح المنزلان مغطَّيين. لا يزال بإمكانك الدردشة لتنسيق التسليم.</string>
+    <string name="thread_accept_confirm_cta">قبول وتأمين</string>
+    <string name="thread_decline_confirm_title">رفض هذه المبادلة؟</string>
+    <string name="thread_decline_confirm_body">هذا يرفض الاقتراح. لا يمكنك التراجع عنه، لكن يمكنك دائمًا إرسال اقتراح جديد لاحقًا.</string>
+    <string name="thread_withdraw_confirm_title">سحب هذا الاقتراح؟</string>
+    <string name="thread_withdraw_confirm_body">هذا يسترد عرضك. يمكنك إرسال عرض جديد لاحقًا.</string>
+    <string name="thread_accepted_toast">تم قبول المبادلة — إقامتك مؤمَّنة.</string>
+    <string name="thread_declined_toast">تم رفض الاقتراح.</string>
+    <string name="thread_withdrawn_toast">تم سحب الاقتراح.</string>
+    <string name="thread_countered_toast">تم إرسال العرض المضاد.</string>
+
+    <!-- Leave a review -->
+    <string name="review_title">اترك تقييمًا</string>
+    <string name="review_prompt">كيف كانت مبادلتك مع %1$s؟</string>
+    <string name="review_partner_fallback">شريك مبادلتك</string>
+    <string name="review_rating_label">تقييمك</string>
+    <string name="review_text_label">مراجعتك</string>
+    <string name="review_text_placeholder">كيف كان المنزل، والحي، والتسليم؟</string>
+    <string name="review_min_chars">٢٠ حرفًا على الأقل — %1$d حتى الآن.</string>
+    <string name="review_submit">إرسال التقييم</string>
+    <string name="review_submitting">جارٍ الإرسال…</string>
+    <string name="review_card_title">كيف كانت مبادلتك؟</string>
+    <string name="review_card_body">اترك لـ %1$s تقييمًا — يظهر على ملفه الشخصي العام.</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">صندوق المبادلات</string>
+    <string name="inbox_search_open">بحث</string>
+    <string name="inbox_search_close">إغلاق البحث</string>
+    <string name="inbox_search_placeholder">ابحث حسب المضيف أو المدينة</string>
+    <string name="inbox_filter_all">الكل</string>
+    <string name="inbox_filter_waiting">بانتظارك</string>
+    <string name="inbox_filter_sent">مُرسَل</string>
+    <string name="inbox_filter_active">نشط</string>
+    <string name="inbox_filter_archived">مؤرشف</string>
+    <string name="inbox_section_waiting">بانتظارك</string>
+    <string name="inbox_section_sent">مُرسَل — بانتظار الرد</string>
+    <string name="inbox_section_active">المبادلات النشطة</string>
+    <string name="inbox_section_archived">مؤرشف</string>
+    <string name="inbox_status_confirmed">مبادلة مؤكَّدة</string>
+    <string name="inbox_status_countered">تم استلام عرض مضاد</string>
+    <string name="inbox_status_declined">تم رفض الاقتراح</string>
+    <string name="inbox_status_waiting_reply">بانتظار ردك</string>
+    <string name="inbox_status_sent">تم إرسال الاقتراح</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s ← %2$s · مع %3$s</string>
+    <string name="inbox_dates">%1$s ← %2$s</string>
+    <string name="inbox_error_title">الرسائل غير متاحة</string>
+    <string name="inbox_error_body">تعذّر تحميل مبادلاتك. اسحب للتحديث أو أعد المحاولة.</string>
+    <string name="inbox_empty_title">لا رسائل بعد</string>
+    <string name="inbox_empty_body">اقترح مبادلة من أي إعلان وستظهر هنا.</string>
+
+    <!-- Trips -->
+    <string name="trips_title">الرحلات</string>
+    <string name="trips_phase_active">نشطة الآن</string>
+    <string name="trips_phase_upcoming">قادمة</string>
+    <string name="trips_phase_past">سابقة</string>
+    <string name="trips_row_title">رحلة إلى %1$s</string>
+    <string name="trips_row_dates_host">%1$s ← %2$s · المضيف %3$s</string>
+    <string name="trips_row_dates">%1$s ← %2$s</string>
+    <string name="trips_row_roles">ضيف في %1$s · تستضيف في %2$s</string>
+    <string name="trips_error_title">الرحلات غير متاحة</string>
+    <string name="trips_error_body">تعذّر تحميل رحلاتك. اسحب للتحديث أو أعد المحاولة.</string>
+    <string name="trips_empty_title">لا رحلات بعد</string>
+    <string name="trips_empty_body">المبادلات المقبولة تصبح رحلات. ستظهر إقاماتك القادمة هنا.</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">أُلغيت هذه المبادلة</string>
+    <string name="cockpit_timeline_agreed">مُتفَّق عليها</string>
+    <string name="cockpit_timeline_ready">جاهزة</string>
+    <string name="cockpit_timeline_staying">إقامة</string>
+    <string name="cockpit_timeline_done">منتهية</string>
+    <string name="cockpit_starts_in">تبدأ خلال</string>
+    <string name="cockpit_status">الحالة</string>
+    <string name="cockpit_countdown_days">%1$dي %2$dس</string>
+    <string name="cockpit_countdown_hours">%1$dس</string>
+    <string name="cockpit_phase_agreed">تم الاتفاق على المبادلة</string>
+    <string name="cockpit_phase_preparing">قيد التحضير</string>
+    <string name="cockpit_phase_ready">جاهز للانطلاق</string>
+    <string name="cockpit_phase_in_progress">قيد التنفيذ</string>
+    <string name="cockpit_phase_completed">مكتملة</string>
+    <string name="cockpit_phase_cancelled">ملغاة</string>
+    <string name="cockpit_insured">مؤمَّنة</string>
+    <string name="cockpit_before_you_go">قبل أن تذهب</string>
+    <string name="cockpit_check_guide_filled">أكمل دليل منزلك</string>
+    <string name="cockpit_check_details_read">اقرأ تفاصيل منزل مضيفك</string>
+    <string name="cockpit_check_checked_in">سجّل الوصول عند قدومك</string>
+    <string name="cockpit_check_checked_out">سجّل المغادرة عند رحيلك</string>
+    <string name="cockpit_finish_guide">أكمل دليل منزلك (%1$d%%)</string>
+    <string name="cockpit_your_key_code">رمز مفتاحك</string>
+    <string name="cockpit_key_code_note">مفاتيح مقابل مفاتيح — شارك هذا مع ضيفك ليتمكن من الدخول.</string>
+    <string name="cockpit_swap_protection">حماية المبادلة</string>
+    <string name="cockpit_policy_line">الوثيقة %1$s · تغطية €%2$s</string>
+    <string name="cockpit_where_you_stay">أين ستقيم</string>
+    <string name="cockpit_guide_not_filled">لم يملأ مضيفك دليل منزله بعد.</string>
+    <string name="cockpit_address_unlocks_city">العنوان الدقيق في %1$s يُفتح قريبًا</string>
+    <string name="cockpit_address_unlocks">العنوان الدقيق يُفتح قريبًا</string>
+    <string name="cockpit_unlocks_at">يُفتح %1$s — قبل ٤٨ ساعة من إقامتك.</string>
+    <string name="cockpit_unlocks_generic">يُفتح العنوان ودليل المنزل قبل ٤٨ ساعة من إقامتك.</string>
+    <string name="cockpit_home_guide">دليل المنزل</string>
+    <string name="cockpit_collapse">طي</string>
+    <string name="cockpit_expand">توسيع</string>
+    <string name="cockpit_guide_getting_in">الدخول</string>
+    <string name="cockpit_guide_keys">المفاتيح</string>
+    <string name="cockpit_guide_wifi_name">شبكة الواي فاي</string>
+    <string name="cockpit_guide_wifi_password">كلمة مرور الواي فاي</string>
+    <string name="cockpit_guide_heating">التدفئة والتبريد</string>
+    <string name="cockpit_guide_kitchen">المطبخ</string>
+    <string name="cockpit_guide_bins">القمامة وإعادة التدوير</string>
+    <string name="cockpit_guide_pets_plants">الحيوانات والنباتات</string>
+    <string name="cockpit_guide_house_rules">قواعد المنزل</string>
+    <string name="cockpit_guide_neighbourhood">الحي</string>
+    <string name="cockpit_guide_emergency">جهة الاتصال في حالات الطوارئ</string>
+    <string name="cockpit_check_in">تسجيل الوصول</string>
+    <string name="cockpit_check_out">تسجيل المغادرة</string>
+    <string name="cockpit_checked_in_out">تم تسجيل الوصول والمغادرة — شكرًا!</string>
+    <string name="cockpit_trip_activity">نشاط الرحلة</string>
+    <string name="cockpit_event_you">أنت</string>
+    <string name="cockpit_event_partner_fallback">شريك مبادلتك</string>
+    <string name="cockpit_event_checked_in">سجّل %1$s الوصول</string>
+    <string name="cockpit_event_checked_out">سجّل %1$s المغادرة</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">الرسائل غير متاحة</string>
+    <string name="chat_try_again">حاول مجددًا</string>
+    <string name="chat_view_trip">عرض الرحلة</string>
+    <string name="chat_say_hello_title">ألقِ التحية</string>
+    <string name="chat_say_hello_body">ابدأ المحادثة — اسأل عن التواريخ، أو الحي، أو أي شيء تود معرفته.</string>
+    <string name="chat_load_earlier">تحميل الرسائل الأقدم</string>
+    <string name="chat_message_placeholder">رسالة</string>
+    <string name="chat_add_photo">إضافة صورة</string>
+    <string name="chat_remove_photo">إزالة الصورة</string>
+    <string name="chat_send">إرسال الرسالة</string>
+    <string name="chat_receipt_read">مقروءة</string>
+    <string name="chat_receipt_sent">مُرسَلة</string>
+    <string name="chat_invite_only_partners">شريكا المبادلة فقط هما من يمكنهما دعوة أشخاص.</string>
+    <string name="chat_invite_not_found">تعذّر العثور على ذلك الشخص. تحقق من البريد أو المعرّف.</string>
+    <string name="chat_invite_failed">تعذّر إرسال الدعوة. حاول مجددًا.</string>
+    <string name="chat_send_failed">تعذّر الإرسال. حاول مجددًا.</string>
+    <string name="chat_read_image_failed">تعذّر قراءة تلك الصورة</string>
+    <string name="chat_upload_photo_failed">تعذّر رفع صورة. تحقق من اتصالك وحاول مجددًا.</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">الموقع</string>
+    <string name="create_step_space">المساحة</string>
+    <string name="create_step_access">الدخول والحيوانات</string>
+    <string name="create_step_amenities">المرافق</string>
+    <string name="create_step_dates">التواريخ</string>
+    <string name="create_step_photos">الصور</string>
+    <string name="create_step_description">الوصف</string>
+    <string name="create_step_review">المراجعة</string>
+    <string name="create_kicker_edit">عدّل منزلك — الخطوة %1$d من %2$d</string>
+    <string name="create_kicker_new">الخطوة %1$d من %2$d</string>
+    <string name="create_back">رجوع</string>
+    <string name="create_next">التالي</string>
+    <string name="create_saving">جارٍ الحفظ…</string>
+    <string name="create_publishing">جارٍ النشر…</string>
+    <string name="create_save_changes">حفظ التغييرات</string>
+    <string name="create_publish_listing">نشر الإعلان</string>
+    <string name="create_locating">جارٍ تحديد الموقع…</string>
+    <string name="create_use_location">استخدم موقعي الحالي</string>
+    <string name="create_location_error">تعذّر تحديد موقعك — أدخله يدويًا.</string>
+    <string name="create_load_error">تعذّر تحميل الإعلان</string>
+    <string name="create_read_image_error">تعذّر قراءة تلك الصورة</string>
+    <string name="create_upload_failed">فشل الرفع</string>
+    <string name="create_title_label">العنوان (مثال: شقة مشمسة على القناة)</string>
+    <string name="create_city_label">المدينة</string>
+    <string name="create_neighbourhood_label">الحي</string>
+    <string name="create_country_label">الدولة</string>
+    <string name="create_address_label">العنوان (اختياري)</string>
+    <string name="create_space_type">نوع المساحة</string>
+    <string name="create_space_entire">المكان بأكمله</string>
+    <string name="create_space_private_room">غرفة خاصة</string>
+    <string name="create_private_room_keys_note">الغرفة الخاصة تساوي مفاتيح أقل من المنزل بأكمله — تعكس القيمة الليلية الغرفة فقط.</string>
+    <string name="create_rooms_offered">الغرف المعروضة: %1$d</string>
+    <string name="create_property_type">نوع العقار</string>
+    <string name="create_prop_apartment">شقة</string>
+    <string name="create_prop_house">منزل</string>
+    <string name="create_prop_loft">لوفت</string>
+    <string name="create_prop_townhouse">منزل متلاصق</string>
+    <string name="create_size">المساحة: %1$d م²</string>
+    <string name="create_sleeps">سعة النوم: %1$d</string>
+    <string name="create_bedrooms">غرف النوم: %1$d</string>
+    <string name="create_bathrooms">الحمامات: %1$d</string>
+    <string name="create_floor">الطابق: %1$d</string>
+    <string name="create_has_elevator">يوجد مصعد</string>
+    <string name="create_step_free">دخول خالٍ من الدرجات</string>
+    <string name="create_pets_allowed">يُسمح بالحيوانات الأليفة</string>
+    <string name="create_wfh_setup">إعداد للعمل من المنزل</string>
+    <string name="create_desks">المكاتب: %1$d</string>
+    <string name="create_parking">موقف سيارات</string>
+    <string name="create_bike">دراجة مشمولة</string>
+    <string name="create_balcony">شرفة</string>
+    <string name="create_rooftop">سطح</string>
+    <string name="create_garden">حديقة</string>
+    <string name="create_courtyard">فناء</string>
+    <string name="create_piano">بيانو</string>
+    <string name="create_pool">مسبح</string>
+    <string name="create_gym">صالة رياضية</string>
+    <string name="create_ac">تكييف</string>
+    <string name="create_dishwasher">غسالة صحون</string>
+    <string name="create_washer">غسالة ملابس</string>
+    <string name="create_dryer">مجفّف</string>
+    <string name="create_available_from">متاح من</string>
+    <string name="create_available_to">متاح حتى</string>
+    <string name="create_min_stay">أدنى إقامة: %1$d أيام</string>
+    <string name="create_max_stay">أقصى إقامة: %1$d أيام</string>
+    <string name="create_photos_hint">أضف حتى ١٠ صور لمنزلك. نغيّر حجمها قبل الرفع.</string>
+    <string name="create_choose_photos">اختر صورًا</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="zero">جارٍ رفع %1$d صورة…</item>
+        <item quantity="one">جارٍ رفع صورة واحدة…</item>
+        <item quantity="two">جارٍ رفع صورتين…</item>
+        <item quantity="few">جارٍ رفع %1$d صور…</item>
+        <item quantity="many">جارٍ رفع %1$d صورة…</item>
+        <item quantity="other">جارٍ رفع %1$d صورة…</item>
+    </plurals>
+    <string name="create_description_label">صف منزلك (٢٠ حرفًا على الأقل)</string>
+    <string name="create_characters">%1$d حرف</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d م² · سعة %2$d · %3$d غرفة / %4$d حمام</string>
+    <string name="create_review_available">متاح %1$s ← %2$s</string>
+    <string name="create_decrease">إنقاص</string>
+    <string name="create_increase">زيادة</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">إقامات بالنقاط</string>
+    <string name="keys_stay_in">أقم في %1$s</string>
+    <string name="keys_stay_guest_at">ضيف لدى %1$s</string>
+    <string name="keys_stay_dates">%1$s ← %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="zero">%1$d ليلة · %2$d نقطة</item>
+        <item quantity="one">ليلة واحدة · %2$d نقطة</item>
+        <item quantity="two">ليلتان · %2$d نقطة</item>
+        <item quantity="few">%1$d ليالٍ · %2$d نقطة</item>
+        <item quantity="many">%1$d ليلة · %2$d نقطة</item>
+        <item quantity="other">%1$d ليلة · %2$d نقطة</item>
+    </plurals>
+    <string name="keys_stay_decline">رفض</string>
+    <string name="keys_stay_confirm">تأكيد الإقامة</string>
+    <string name="keys_stay_cancel_request">إلغاء الطلب</string>
+    <string name="keys_stay_covered">مؤكَّدة — إقامتك مغطاة بوثيقة Swapl.</string>
+    <string name="keys_stay_status_awaiting_host">بانتظار المضيف</string>
+    <string name="keys_stay_status_action_needed">إجراء مطلوب</string>
+    <string name="keys_stay_status_confirmed">مؤكَّدة</string>
+    <string name="keys_stay_status_declined">مرفوضة</string>
+    <string name="keys_stay_status_cancelled">ملغاة</string>
+    <string name="keys_stay_status_completed">مكتملة</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">أقم بالنقاط</string>
+    <string name="stay_keys_intro">احجز في اتجاه واحد بنقاطك — دون حاجة لاستضافتهم مقابل ذلك. مناسب عندما لا تتطابق تواريخك أو منزلك مع مبادلة مباشرة.</string>
+    <string name="stay_keys_window">اختر تواريخ ضمن توفّر المنزل (%1$s ← %2$s). %3$d–%4$d ليالٍ. التواريخ المحجوزة مشطوبة.</string>
+    <string name="stay_keys_points_per_night">نقاط لكل ليلة</string>
+    <string name="stay_keys_nights">الليالي</string>
+    <string name="stay_keys_total">الإجمالي</string>
+    <string name="stay_keys_total_points">%1$d نقطة</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="zero">لديك %1$d نقطة — تكفي لهذه الإقامة (نحو %2$d ليلة بهذا السعر).</item>
+        <item quantity="one">لديك %1$d نقطة — تكفي لهذه الإقامة (نحو ليلة واحدة بهذا السعر).</item>
+        <item quantity="two">لديك %1$d نقطة — تكفي لهذه الإقامة (نحو ليلتين بهذا السعر).</item>
+        <item quantity="few">لديك %1$d نقطة — تكفي لهذه الإقامة (نحو %2$d ليالٍ بهذا السعر).</item>
+        <item quantity="many">لديك %1$d نقطة — تكفي لهذه الإقامة (نحو %2$d ليلة بهذا السعر).</item>
+        <item quantity="other">لديك %1$d نقطة — تكفي لهذه الإقامة (نحو %2$d ليلة بهذا السعر).</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="zero">ينقصك %1$d نقطة. استضِف نحو %2$d ليلة بهذا السعر لفتح هذه الإقامة — أو اختر ليالي أقل. لا يمكن شراء النقاط.</item>
+        <item quantity="one">ينقصك %1$d نقطة. استضِف نحو ليلة واحدة بهذا السعر لفتح هذه الإقامة — أو اختر ليالي أقل. لا يمكن شراء النقاط.</item>
+        <item quantity="two">ينقصك %1$d نقطة. استضِف نحو ليلتين بهذا السعر لفتح هذه الإقامة — أو اختر ليالي أقل. لا يمكن شراء النقاط.</item>
+        <item quantity="few">ينقصك %1$d نقطة. استضِف نحو %2$d ليالٍ بهذا السعر لفتح هذه الإقامة — أو اختر ليالي أقل. لا يمكن شراء النقاط.</item>
+        <item quantity="many">ينقصك %1$d نقطة. استضِف نحو %2$d ليلة بهذا السعر لفتح هذه الإقامة — أو اختر ليالي أقل. لا يمكن شراء النقاط.</item>
+        <item quantity="other">ينقصك %1$d نقطة. استضِف نحو %2$d ليلة بهذا السعر لفتح هذه الإقامة — أو اختر ليالي أقل. لا يمكن شراء النقاط.</item>
+    </plurals>
+    <string name="stay_keys_held_note">يتم حجز نقاطك حتى يؤكد المضيف. ستجد هذه الإقامة ضمن الرحلات.</string>
+    <string name="stay_keys_sending">جارٍ الإرسال…</string>
+    <string name="stay_keys_request">اطلب بالنقاط</string>
+    <string name="stay_keys_error_insufficient">ليس لديك نقاط كافية لهذه التواريخ. جرّب ليالي أقل، أو اكسب نقاطًا بالاستضافة. لا يمكن شراء النقاط.</string>
+    <string name="stay_keys_error_unavailable">تلك التواريخ غير متاحة. اختر تواريخ ضمن نافذة المنزل.</string>
+    <string name="stay_keys_error_generic">تعذّر طلب هذه الإقامة الآن.</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">عمليات البحث المحفوظة</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">عمليات البحث المحفوظة ميزة لأعضاء Plus.</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">الاهتمامات · %1$d / 12</string>
+    <string name="interests_vibe_label">أجواؤك (اختياري)</string>
+    <string name="interests_save">حفظ</string>
+    <string name="interests_saving">جارٍ الحفظ…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">سجل النقاط</string>
+    <string name="keys_tx_filter_all">الكل</string>
+    <string name="keys_tx_filter_earned">مكتسبة</string>
+    <string name="keys_tx_filter_spent">منفقة</string>
+    <string name="keys_tx_empty_all">لا نشاط نقاط بعد.</string>
+    <string name="keys_tx_empty_earned">لا نقاط مكتسبة بعد.</string>
+    <string name="keys_tx_empty_spent">لا نقاط منفقة بعد.</string>
+    <string name="keys_tx_loading">جارٍ التحميل…</string>
+    <string name="keys_tx_load_more">تحميل المزيد</string>
+    <string name="keys_tx_balance">%1$d رصيد</string>
+    <string name="keys_tx_error_title">سجل النقاط غير متاح</string>
+    <string name="keys_tx_try_again">حاول مجددًا</string>
+
+    <!-- ===== UI localization 100% (DOK) ===== -->
+    <!-- Common / shared -->
+    <string name="common_save">حفظ</string>
+    <string name="common_saving">جارٍ الحفظ…</string>
+    <string name="common_send">إرسال</string>
+    <string name="common_sending">جارٍ الإرسال…</string>
+    <string name="common_close">إغلاق</string>
+    <string name="common_done">تم</string>
+    <string name="common_delete">حذف</string>
+    <string name="common_try_again">حاول مجددًا</string>
+    <string name="cd_remove_photo">إزالة الصورة</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">%1$d من 5 نجوم</string>
+    <plurals name="cd_n_stars">
+        <item quantity="zero">%1$d نجمة</item>
+        <item quantity="one">نجمة واحدة</item>
+        <item quantity="two">نجمتان</item>
+        <item quantity="few">%1$d نجوم</item>
+        <item quantity="many">%1$d نجمة</item>
+        <item quantity="other">%1$d نجمة</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="zero">%1$d ليلة</item>
+        <item quantity="one">ليلة واحدة</item>
+        <item quantity="two">ليلتان</item>
+        <item quantity="few">%1$d ليالٍ</item>
+        <item quantity="many">%1$d ليلة</item>
+        <item quantity="other">%1$d ليلة</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="zero">%1$d سرير</item>
+        <item quantity="one">سرير واحد</item>
+        <item quantity="two">سريران</item>
+        <item quantity="few">%1$d أسرّة</item>
+        <item quantity="many">%1$d سريرًا</item>
+        <item quantity="other">%1$d سرير</item>
+    </plurals>
+
+    <!-- Status enum chips -->
+    <string name="status_pending">قيد الانتظار</string>
+    <string name="status_accepted">مؤكَّدة</string>
+    <string name="status_countered">عرض مضاد</string>
+    <string name="status_declined">مرفوضة</string>
+    <string name="status_withdrawn">مسحوبة</string>
+    <string name="status_active">نشطة</string>
+    <string name="status_upcoming">قادمة</string>
+    <string name="status_in_progress">قيد التنفيذ</string>
+    <string name="status_completed">مكتملة</string>
+    <string name="status_cancelled">ملغاة</string>
+    <string name="status_disputed">متنازع عليها</string>
+    <string name="status_resolved">محلولة</string>
+    <string name="status_open">مفتوحة</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">الخطة</string>
+
+    <!-- Trip detail -->
+    <string name="trip_detail_error_title">الرحلة غير متاحة</string>
+    <string name="trip_detail_error_body">تعذّر تحميل هذه الرحلة.</string>
+    <string name="trip_detail_host_fallback">مضيفك</string>
+    <string name="trip_detail_host_word">المضيف</string>
+    <string name="trip_detail_trip_to">رحلة إلى %1$s</string>
+    <string name="trip_detail_hosted_by">يستضيفه %1$s</string>
+    <string name="trip_detail_your_stay">إقامتك</string>
+    <string name="trip_detail_guest_at">ضيف لدى %1$s — %2$s · %3$s</string>
+    <string name="trip_detail_in_return">في المقابل تستضيف في %1$s · %2$s لنفس التواريخ.</string>
+    <string name="trip_detail_view_profile">عرض الملف الشخصي لـ %1$s</string>
+
+    <!-- Agreement panel -->
+    <string name="agreement_title">تم الاتفاق على المبادلة — مفاتيح مقابل مفاتيح</string>
+    <string name="agreement_stay_between">إقامة بين %1$s ← %2$s مع %3$s.</string>
+    <string name="agreement_your_code">رمزك (استخدمه في منزلهم)</string>
+    <string name="agreement_their_code">رمزهم (الضيف في منزلك)</string>
+    <string name="agreement_insurance_cover">تأمين · تغطية €%1$dك</string>
+    <string name="agreement_auto_issued">مُصدَر تلقائيًا · خط ٢٤/٧ %1$s</string>
+
+    <!-- Dispute / resolution center -->
+    <string name="dispute_report_problem">أبلِغ عن مشكلة</string>
+    <string name="dispute_report_new">أبلِغ عن مشكلة جديدة</string>
+    <string name="dispute_phone_title">تواصل مع خطنا على مدار الساعة</string>
+    <string name="dispute_phone_body">إذا كان أحد في خطر أو محتجزًا بالخارج، اتصل بـ %1$s.</string>
+    <string name="dispute_phone_call">اتصل بـ %1$s</string>
+    <string name="dispute_urgent_title">تحتاج مساعدة الآن؟</string>
+    <string name="dispute_urgent_body">إذا كان أحد في خطر أو محتجزًا بالخارج، فخطنا على مدار الساعة هنا. انقر للوصول إلى الدعم الآن.</string>
+    <string name="dispute_open_body">أخبرنا بما يجري في مبادلتك. سنُشرك شريك مبادلتك وفريق الدعم لدينا.</string>
+    <string name="dispute_open_body_with">أخبرنا بما يجري في مبادلتك مع %1$s. سنُشرك شريك مبادلتك وفريق الدعم لدينا.</string>
+    <string name="dispute_what_happened">ماذا حدث؟</string>
+    <string name="dispute_describe_label">صف المشكلة</string>
+    <string name="dispute_describe_placeholder">ماذا حدث، ومتى، وما الذي تحتاجه منا.</string>
+    <string name="dispute_send_report">إرسال البلاغ</string>
+    <string name="dispute_discard_title">تجاهل التغييرات؟</string>
+    <string name="dispute_discard_body">لم يُرسَل بلاغك بعد. إذا غادرت الآن، سيُفقَد ما كتبته.</string>
+    <string name="dispute_discard_confirm">تجاهل</string>
+    <string name="dispute_discard_keep">متابعة التحرير</string>
+    <string name="dispute_reported_on">أُبلِغ عنه %1$s</string>
+    <string name="dispute_resolution_label">الحل</string>
+    <string name="dispute_conversation_label">المحادثة</string>
+    <string name="dispute_case_resolved">تم حل هذه الحالة.</string>
+    <string name="dispute_case_closed">هذه الحالة مغلقة.</string>
+    <string name="dispute_reply_label">رد</string>
+    <string name="dispute_reply_placeholder">أضف ردًا…</string>
+    <string name="dispute_author_you">أنت</string>
+    <string name="dispute_author_support">الدعم</string>
+    <string name="dispute_photos_label">الصور (اختياري)</string>
+    <string name="dispute_add_photos">إضافة صور</string>
+    <string name="dispute_add_more_photos">إضافة المزيد</string>
+    <string name="dispute_photo_read_error">تعذّر قراءة تلك الصورة</string>
+    <string name="dispute_photo_upload_error">تعذّر رفع صورة. تحقق من اتصالك وحاول مجددًا.</string>
+    <string name="dispute_cat_access_title">لا أستطيع الدخول</string>
+    <string name="dispute_cat_access_subtitle">محتجز بالخارج، رمز خاطئ، مفاتيح مفقودة</string>
+    <string name="dispute_cat_damage_title">أضرار</string>
+    <string name="dispute_cat_damage_subtitle">شيء ما انكسر أو تضرر</string>
+    <string name="dispute_cat_cleanliness_title">النظافة</string>
+    <string name="dispute_cat_cleanliness_subtitle">المنزل لم يكن جاهزًا أو نظيفًا</string>
+    <string name="dispute_cat_safety_title">مخاوف تتعلق بالسلامة</string>
+    <string name="dispute_cat_safety_subtitle">تشعر بعدم الأمان أو هناك خطب ما</string>
+    <string name="dispute_cat_no_show_title">عدم الحضور</string>
+    <string name="dispute_cat_no_show_subtitle">لم يلتزم شريك مبادلتك بما اتُّفق عليه</string>
+    <string name="dispute_cat_other_title">شيء آخر</string>
+    <string name="dispute_cat_other_subtitle">أي شيء آخر تحتاج المساعدة فيه</string>
+    <string name="dispute_status_open">مفتوحة</string>
+    <string name="dispute_status_investigating">نحن نعمل عليها</string>
+    <string name="dispute_status_awaiting">دورك</string>
+    <string name="dispute_status_resolved">محلولة</string>
+    <string name="dispute_status_closed">مغلقة</string>
+
+    <!-- Home guide editor -->
+    <string name="home_guide_title">دليل المنزل</string>
+    <string name="home_guide_complete_pct">%1$d%% مكتمل</string>
+    <string name="home_guide_intro">املأ الأساسيات ليتمكن ضيفك من الاستقرار دون مراسلتك.</string>
+    <string name="home_guide_section_access">الدخول</string>
+    <string name="home_guide_field_access">تعليمات الدخول</string>
+    <string name="home_guide_field_key_pickup">استلام المفتاح</string>
+    <string name="home_guide_section_wifi">الواي فاي</string>
+    <string name="home_guide_field_wifi_name">اسم الشبكة</string>
+    <string name="home_guide_field_wifi_password">كلمة المرور</string>
+    <string name="home_guide_section_living">العيش في المنزل</string>
+    <string name="home_guide_field_heating">التدفئة والتبريد</string>
+    <string name="home_guide_field_kitchen">المطبخ</string>
+    <string name="home_guide_field_bins">القمامة وإعادة التدوير</string>
+    <string name="home_guide_field_pets">الحيوانات والنباتات</string>
+    <string name="home_guide_section_good_to_know">من الجيد معرفته (اختياري)</string>
+    <string name="home_guide_field_house_rules">قواعد المنزل</string>
+    <string name="home_guide_field_neighbourhood">نصائح عن الحي</string>
+    <string name="home_guide_field_emergency">جهة الاتصال في حالات الطوارئ</string>
+
+    <!-- Check in / out sheet -->
+    <string name="check_event_checkin">تسجيل الوصول</string>
+    <string name="check_event_checkout">تسجيل المغادرة</string>
+    <string name="check_event_checkin_body">التقط بضع صور أساسية للمنزل عند وصولك — فهي تحمي كليكما إن استُفسِر عن أي شيء لاحقًا.</string>
+    <string name="check_event_checkout_body">التقط بضع صور عند مغادرتك، ليُسجَّل حال المنزل.</string>
+    <string name="check_event_baseline_photos">صور أساسية</string>
+    <string name="check_event_note_label">ملاحظة (اختياري)</string>
+    <string name="check_event_note_placeholder">مثال: كل شيء يبدو رائعًا، تم استلام المفاتيح</string>
+
+    <!-- Metrics -->
+    <string name="metrics_title">المقاييس</string>
+    <string name="metrics_section_now">الآن</string>
+    <string name="metrics_online_now">متصل الآن</string>
+    <string name="metrics_today">اليوم</string>
+    <string name="metrics_7_days">٧ أيام</string>
+    <string name="metrics_30_days">٣٠ يومًا</string>
+    <string name="metrics_section_users">المستخدمون</string>
+    <string name="metrics_total">الإجمالي</string>
+    <string name="metrics_email_verified">البريد موثّق</string>
+    <string name="metrics_with_active_listing">لديهم إعلان نشط</string>
+    <string name="metrics_new_7d">جديد (٧ أيام)</string>
+    <string name="metrics_new_30d">جديد (٣٠ يومًا)</string>
+    <string name="metrics_section_listings_per_user">الإعلانات لكل مستخدم</string>
+    <string name="metrics_avg_per_user">المتوسط لكل مستخدم لديه إعلان</string>
+    <string name="metrics_top_hosts">أبرز المضيفين</string>
+    <string name="metrics_online_only">المتصلون فقط</string>
+    <string name="metrics_no_hosts_online">لا مضيفين متصلين الآن.</string>
+    <string name="metrics_online">متصل</string>
+    <string name="metrics_offline">غير متصل</string>
+    <string name="metrics_section_top_cities">أبرز المدن</string>
+    <string name="metrics_active_listings">الإعلانات النشطة</string>
+    <string name="metrics_section_proposals">الاقتراحات</string>
+    <string name="metrics_accept_rate">معدل القبول</string>
+    <string name="metrics_section_engagement">التفاعل</string>
+    <string name="metrics_active_agreements">الاتفاقات النشطة</string>
+    <string name="metrics_completed_agreements">الاتفاقات المكتملة</string>
+    <string name="metrics_messages_total">الرسائل (الإجمالي)</string>
+    <string name="metrics_messages_7d">الرسائل (٧ أيام)</string>
+    <string name="metrics_favorites_total">المفضلة (الإجمالي)</string>
+    <string name="metrics_favorites_7d">المفضلة (٧ أيام)</string>
+    <string name="metrics_saved_searches">عمليات البحث المحفوظة</string>
+    <string name="metrics_generated_at">أُنشئ %1$s بالتوقيت العالمي</string>
+    <string name="metrics_error_title">المقاييس غير متاحة</string>
+    <string name="metrics_error_body">تعذّر تحميل المقاييس. اسحب للتحديث أو أعد المحاولة.</string>
+
+    <!-- Calendar / availability -->
+    <string name="calendar_title">تقويمك</string>
+    <string name="calendar_intro">التواريخ المحجوزة من المبادلات المؤكَّدة والإقامات بالنقاط تظهر مشطوبة — لا يمكن للضيوف اختيارها. انقر يوم بداية ويوم نهاية لحجب تواريخ لنفسك (تجديدات، استخدام شخصي).</string>
+    <string name="calendar_block_summary">حجب %1$s ← %2$s (%3$s)</string>
+    <string name="calendar_clear">مسح</string>
+    <string name="calendar_blocking">جارٍ الحجب…</string>
+    <string name="calendar_block_dates">احجب هذه التواريخ</string>
+    <string name="calendar_pick_checkout">الآن انقر يوم المغادرة لإنهاء الحجب.</string>
+    <string name="calendar_blocked_label">التواريخ التي حجبتها</string>
+    <string name="calendar_unblock">إلغاء الحجب</string>
+    <string name="calendar_legend_selected">محدّد</string>
+    <string name="calendar_legend_booked">محجوز / محجوب</string>
+
+    <!-- Report dialog -->
+    <string name="report_title">إبلاغ</string>
+    <string name="report_reason_label">السبب</string>
+    <string name="report_details_label">تفاصيل (اختياري)</string>
+    <string name="report_reason_inappropriate">محتوى غير لائق</string>
+    <string name="report_reason_scam">احتيال أو إعلان مزيّف</string>
+    <string name="report_reason_harassment">تحرش</string>
+    <string name="report_reason_discrimination">تمييز</string>
+    <string name="report_reason_other">آخر</string>
+
+    <!-- Wishlists -->
+    <string name="wishlists_title">قوائم الأمنيات</string>
+    <string name="wishlists_guests_beds">%1$d ضيوف · %2$s</string>
+    <string name="wishlists_available">متاح %1$s ← %2$s</string>
+    <string name="wishlists_error_title">قوائم الأمنيات غير متاحة</string>
+    <string name="wishlists_error_body">تعذّر الوصول إلى Swapl. تحقق من اتصالك وحاول مجددًا.</string>
+    <string name="wishlists_empty_title">لا منازل محفوظة بعد</string>
+    <string name="wishlists_empty_body">انقر القلب على أي منزل لحفظه هنا.</string>
+
+    <!-- Travel profile card -->
+    <string name="travel_profile_kicker">ملف سفرك</string>
+    <string name="travel_profile_deleted">تم حذف الملف. لن نعيد بناءه إلا إذا طلبت.</string>
+    <string name="travel_profile_built_from">مبني فقط مما تفعله على Swapl. يمكنك تحديثه أو حذفه في أي وقت.</string>
+    <string name="travel_profile_built_from_sources">مبني فقط مما تفعله على Swapl: %1$s. يمكنك تحديثه أو حذفه في أي وقت.</string>
+    <string name="travel_profile_loading">جارٍ قراءة ملفك…</string>
+    <string name="travel_profile_build_again">أعد بناءه</string>
+    <string name="travel_profile_refresh">تحديث</string>
+    <string name="travel_profile_delete_title">حذف ملف السفر؟</string>
+    <string name="travel_profile_delete_body">هذا يمحو ملخص الذكاء الاصطناعي لأذواقك. لن يعود إلا إذا أعدت بناءه.</string>
+    <string name="travel_profile_error_429">تم تحديث الملف مؤخرًا جدًا — حاول مجددًا بعد قليل.</string>
+    <string name="travel_profile_error_generic">حدث خطأ ما. يرجى المحاولة مجددًا.</string>
+
+    <!-- Travel windows -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">لقد بلغت حد نوافذ السفر في خطتك</string>
+    <string name="tw_add_window">أضف نافذة سفر</string>
+    <string name="tw_empty_title">لا نوافذ سفر بعد</string>
+    <string name="tw_empty_body">أخبرنا متى تود السفر — وسنجلب لك مبادلات جاهزة لتلك التواريخ.</string>
+    <string name="tw_header_empty">متى تريد الذهاب؟</string>
+    <string name="tw_header_count">%1$d محفوظة</string>
+    <string name="tw_header_body">احفظ التواريخ التي تحلم بها. يؤلّف المساعد مبادلات من منازل حقيقية متاحة في تلك الفترة بالضبط.</string>
+    <string name="tw_new_window">نافذة سفر جديدة</string>
+    <string name="tw_date_from">من</string>
+    <string name="tw_date_to">إلى</string>
+    <string name="tw_end_after_start">يجب أن يكون تاريخ النهاية بعد تاريخ البداية.</string>
+    <string name="tw_flexible_title">تواريخي مرنة</string>
+    <string name="tw_flexible_body">سنوسّع البحث حول هذه الأيام.</string>
+    <string name="tw_where_label">إلى أين؟ (اختياري)</string>
+    <string name="tw_where_placeholder">لشبونة، البرتغال، برشلونة</string>
+    <string name="tw_where_hint">مدن أو دول مفصولة بفواصل — اتركه فارغًا لأي مكان.</string>
+    <string name="tw_notes_label">ملاحظات (اختياري)</string>
+    <string name="tw_notes_placeholder">رحلة ذكرى سنوية، أريد مكانًا يسهل التجول فيه…</string>
+    <string name="tw_save_window">احفظ نافذة السفر</string>
+    <string name="tw_flexible_chip">مرنة</string>
+    <string name="tw_anywhere">أي مكان</string>
+    <string name="tw_remove_window">أزل نافذة السفر هذه</string>
+    <string name="tw_hide_swaps">إخفاء المبادلات لهذه التواريخ</string>
+    <string name="tw_show_swaps">عرض المبادلات لهذه التواريخ</string>
+    <string name="tw_proposals_load_error">تعذّر تحميل المبادلات.</string>
+    <string name="tw_proposals_loading">جارٍ إيجاد منازل متاحة لتواريخك…</string>
+    <string name="tw_proposals_no_listing">أضف إعلانًا نشطًا أولًا — تحتاج المبادلة إلى منزلين.</string>
+    <string name="tw_proposals_empty">لا شيء متاح لهذه التواريخ بالضبط بعد — سنواصل المراقبة ونراسلك عبر البريد عند ظهور تطابق.</string>
+    <string name="tw_match_pct">%1$d%% تطابق</string>
+    <string name="tw_on_wishlist">ضمن وجهات قائمة أمنياتك</string>
+    <string name="tw_mode_direct_swap">مبادلة مباشرة</string>
+    <string name="tw_mode_keys_stay">أقم بالمفاتيح</string>
+    <string name="tw_mode_keys_stay_nightly">أقم بالمفاتيح · %1$d مفتاح/ليلة</string>
+
+    <!-- Public profile -->
+    <string name="profile_report_user">أبلِغ عن هذا المستخدم</string>
+    <string name="profile_anonymous_host">مضيف مجهول</string>
+    <string name="profile_id_verified">الهوية موثّقة</string>
+    <string name="profile_host_avatar">صورة المضيف</string>
+    <string name="profile_work">عملي: %1$s</string>
+    <string name="profile_speaks">يتحدث %1$s</string>
+    <string name="profile_lives_in">يعيش في %1$s</string>
+    <string name="profile_joined_swapl">انضم إلى Swapl</string>
+    <string name="profile_a_member">عضو في Swapl</string>
+    <string name="profile_visited_label">أين كنت</string>
+    <string name="profile_visited_empty">لا مبادلات مكتملة بعد — تظهر أختام جواز السفر هنا بعد كل إقامة.</string>
+    <string name="profile_reviews_label_plain">التقييمات</string>
+    <string name="profile_reviews_label_count">التقييمات (%1$d)</string>
+    <string name="profile_reviews_empty">لا تقييمات بعد — يقيّم المضيفون بعضهم بعد مبادلة مكتملة.</string>
+    <string name="profile_interests_label">الاهتمامات</string>
+    <string name="profile_their_homes">منازلهم</string>
+    <string name="profile_sqm_sleeps">%1$d م² · سعة %2$d</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="zero">مبادلات</item>
+        <item quantity="one">مبادلة</item>
+        <item quantity="two">مبادلتان</item>
+        <item quantity="few">مبادلات</item>
+        <item quantity="many">مبادلة</item>
+        <item quantity="other">مبادلات</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="zero">تقييمات</item>
+        <item quantity="one">تقييم</item>
+        <item quantity="two">تقييمان</item>
+        <item quantity="few">تقييمات</item>
+        <item quantity="many">تقييمًا</item>
+        <item quantity="other">تقييمات</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="zero">سنوات على Swapl</item>
+        <item quantity="one">سنة على Swapl</item>
+        <item quantity="two">سنتان على Swapl</item>
+        <item quantity="few">سنوات على Swapl</item>
+        <item quantity="many">سنة على Swapl</item>
+        <item quantity="other">سنوات على Swapl</item>
+    </plurals>
+
+    <!-- Account settings -->
+    <string name="settings_personal_info_title">المعلومات الشخصية</string>
+    <string name="settings_display_name">الاسم المعروض</string>
+    <string name="settings_about_you">نبذة عنك</string>
+    <string name="settings_about_you_placeholder">أخبر المضيفين القليل عن نفسك.</string>
+    <string name="settings_my_work">عملي</string>
+    <string name="settings_my_work_placeholder">مثال: مهندس معماري</string>
+    <string name="settings_languages">اللغات</string>
+    <string name="settings_languages_placeholder">مثال: الإنجليزية، الإيطالية</string>
+    <string name="settings_languages_hint">افصل بين اللغات بفواصل.</string>
+    <string name="settings_home_city">مدينتك</string>
+    <string name="settings_home_city_placeholder">مثال: ميلانو</string>
+    <string name="settings_home_country">دولتك</string>
+    <string name="settings_home_country_placeholder">مثال: إيطاليا</string>
+    <string name="settings_saved_confirm">تم الحفظ. ملفك الشخصي العام محدّث.</string>
+    <string name="settings_save_changes">حفظ التغييرات</string>
+    <string name="settings_change_password">تغيير كلمة المرور</string>
+    <string name="pw_current_label">كلمة المرور الحالية</string>
+    <string name="pw_current_hint">اتركها فارغة إذا سجّلت عبر Google أو Telegram أو رمز بريد.</string>
+    <string name="pw_new_label">كلمة المرور الجديدة</string>
+    <string name="pw_new_hint">٦ أحرف على الأقل. سيتم تسجيل خروج الأجهزة الأخرى.</string>
+    <string name="pw_confirm_label">تأكيد كلمة المرور الجديدة</string>
+    <string name="pw_error_min6">استخدم ٦ أحرف على الأقل.</string>
+    <string name="pw_error_mismatch">كلمتا المرور غير متطابقتين.</string>
+    <string name="pw_error_incorrect">كلمة المرور الحالية غير صحيحة.</string>
+    <string name="pw_error_too_many">محاولات كثيرة جدًا — حاول مجددًا بعد ساعة.</string>
+    <string name="pw_error_generic">تعذّر تغيير كلمة المرور. حاول مجددًا.</string>
+    <string name="settings_privacy_title">الخصوصية</string>
+    <string name="settings_seo_title">فهرسة محركات البحث</string>
+    <string name="settings_seo_subtitle">اسمح بظهور صفحات إعلانك في محركات البحث مثل Google.</string>
+    <string name="settings_show_home_city_title">إظهار مدينتي</string>
+    <string name="settings_show_home_city_subtitle">اعرض مدينتك ودولتك في ملفك الشخصي العام.</string>
+    <string name="settings_notifications_title">الإشعارات</string>
+    <string name="settings_email_notif_title">إشعارات البريد الإلكتروني</string>
+    <string name="settings_email_notif_subtitle">الاقتراحات والتأكيدات وتذكيرات الرحلات عبر البريد.</string>
+    <string name="settings_push_notif_title">الإشعارات الفورية</string>
+    <string name="settings_push_notif_subtitle">تنبيهات فورية على هذا الجهاز عندما يحتاجك شيء ما.</string>
+
+    <!-- Keys wallet -->
+    <string name="keys_travel_points">نقاط السفر</string>
+    <string name="keys_intro">نقاط تكسبها بالاستضافة. أنفقها على إقامة — لا مال أبدًا، ولا تُشترى أو تُصرف نقدًا.</string>
+    <string name="keys_your_homes_earn">منازلك تكسب</string>
+    <string name="keys_your_homes_earn_body">هذا ما تكسبه عن كل ليلة يقيمها ضيف — نقاط يمكنك إنفاقها على إقامة في مكان آخر.</string>
+    <string name="keys_history">السجل</string>
+    <string name="keys_history_empty">لا نشاط نقاط بعد. اكسب نقاطًا بالاستضافة، أو أهدِ بعضها لصديق.</string>
+    <string name="keys_see_all_history">عرض كامل سجل النقاط</string>
+    <string name="keys_your_travel_points">نقاط سفرك</string>
+    <string name="keys_balance_caption">أنفقها على إقامة دون مبادلة متزامنة. النقاط ليست مالًا — لا يمكنك شراؤها أو صرفها نقدًا.</string>
+    <string name="keys_gift_points">أهدِ نقاطًا</string>
+    <string name="keys_gift_entry_subtitle">أرسل نقاطًا لصديق موثّق</string>
+    <string name="keys_per_night">%1$d / ليلة</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="zero">رصيدك يغطي نحو %1$d ليلة بهذا السعر.</item>
+        <item quantity="one">رصيدك يغطي نحو ليلة واحدة بهذا السعر.</item>
+        <item quantity="two">رصيدك يغطي نحو ليلتين بهذا السعر.</item>
+        <item quantity="few">رصيدك يغطي نحو %1$d ليالٍ بهذا السعر.</item>
+        <item quantity="many">رصيدك يغطي نحو %1$d ليلة بهذا السعر.</item>
+        <item quantity="other">رصيدك يغطي نحو %1$d ليلة بهذا السعر.</item>
+    </plurals>
+    <string name="keys_how_it_works">كيف تعمل النقاط</string>
+    <string name="keys_example_host">استضِف ليلتين بـ %1$d نقطة/ليلة</string>
+    <string name="keys_example_spend">أنفق تلك الـ %1$d نقطة على ليلتين في مكان آخر</string>
+    <string name="keys_loop_caption">هذه هي الدورة كاملة: استضِف ← اكسب نقاطًا ← سافر ← كرّر. لا مال يتبادل الأيدي.</string>
+    <string name="keys_get_first">احصل على أول نقاطك</string>
+    <string name="keys_earn_verify_title">تحقق من هويتك</string>
+    <string name="keys_earn_verify_body">احصل على %1$d نقطة لحظة تحققك — فورًا.</string>
+    <string name="keys_earn_host_title">استضِف إقامة</string>
+    <string name="keys_earn_host_body">اكسب نقاطًا عن كل ليلة يقيمها ضيف لديك.</string>
+    <string name="keys_earn_gift_title">استلم هدية</string>
+    <string name="keys_earn_gift_body">يمكن لصديق موثّق أن يرسل لك نقاطًا — شارك معرّف عضويتك.</string>
+    <string name="keys_error_title">النقاط غير متاحة</string>
+    <string name="keys_gift_member_id">معرّف العضو</string>
+    <string name="keys_gift_member_id_hint">اطلب من صديقك معرّف عضويته في Swapl. يجب أن يكون عضوًا موثّقًا.</string>
+    <string name="keys_gift_caps">حتى %1$d لكل هدية، %2$d في اليوم. النقاط هدية — لا يمكن شراؤها أو صرفها نقدًا.</string>
+    <plurals name="keys_points_amount">
+        <item quantity="zero">%1$d نقطة</item>
+        <item quantity="one">نقطة واحدة</item>
+        <item quantity="two">نقطتان</item>
+        <item quantity="few">%1$d نقاط</item>
+        <item quantity="many">%1$d نقطة</item>
+        <item quantity="other">%1$d نقطة</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="zero">أرسلت %1$d نقطة. أصبح لديك الآن %2$d.</item>
+        <item quantity="one">أرسلت نقطة واحدة. أصبح لديك الآن %2$d.</item>
+        <item quantity="two">أرسلت نقطتين. أصبح لديك الآن %2$d.</item>
+        <item quantity="few">أرسلت %1$d نقاط. أصبح لديك الآن %2$d.</item>
+        <item quantity="many">أرسلت %1$d نقطة. أصبح لديك الآن %2$d.</item>
+        <item quantity="other">أرسلت %1$d نقطة. أصبح لديك الآن %2$d.</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">يجب أن تكون أنت وصديقك عضوين موثّقين لإهداء النقاط.</string>
+    <string name="keys_gift_error_not_found">تعذّر العثور على ذلك العضو. تحقق من المعرّف.</string>
+    <string name="keys_gift_error_insufficient">ليس لديك نقاط كافية لهذه الهدية.</string>
+    <string name="keys_gift_error_generic">تعذّر إرسال النقاط الآن.</string>
+
+    <!-- Invite &amp; earn -->
+    <string name="invite_title">ادعُ واكسب</string>
+    <string name="invite_intro">اجلب أصدقاء، اكسب نقاط سفر، تقدّم في طابور الوصول المبكر. النقاط ليست مالًا أبدًا.</string>
+    <string name="invite_share_message">انضم إليّ على Swapl — بادل المنازل وسافر بالنقاط، لا بالنقود. استخدم رابطي ونكسب كلانا %1$d نقطة سفر عند تحققك: %2$s</string>
+    <string name="invite_share_subject">انضم إليّ على Swapl</string>
+    <string name="invite_share_chooser">شارك دعوتك</string>
+    <string name="invite_hero_kicker">اجلب أصدقاء، تقدّم في الطابور</string>
+    <string name="invite_hero_points_earned">النقاط المكتسبة</string>
+    <string name="invite_hero_spot_in_line">موقعك في الطابور</string>
+    <string name="invite_hero_body">كل صديق ينضم ويتحقق يكسبك %1$d نقطة سفر — ويرفعك في طابور الوصول المبكر. النقاط ليست مالًا أبدًا.</string>
+    <string name="invite_referral_link_label">رابط الإحالة الخاص بك</string>
+    <string name="invite_share_button">مشاركة</string>
+    <string name="invite_share_caption">شارك هذا الرابط كاملًا — فهو ما يُحتسب. نقرة واحدة ترسله إلى أي مكان: الرسائل، واتساب، البريد. ينقره صديقك، وينضم، وبمجرد تحققه يحصل كلاكما على نقاط.</string>
+    <string name="invite_to_stay_title">ادعُ شخصًا للإقامة</string>
+    <string name="invite_to_stay_subtitle">أرسل دعوة شخصية مرتبطة بمنزلك</string>
+    <string name="invite_tier_label">مستواك</string>
+    <string name="invite_tier_not_started">لم يبدأ</string>
+    <string name="invite_tier_no_perk">ادعُ أول صديق لك لفتح المزايا.</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="zero">%1$d صديق موثّق إضافي للوصول إلى %2$s.</item>
+        <item quantity="one">صديق موثّق إضافي واحد للوصول إلى %2$s.</item>
+        <item quantity="two">صديقان موثّقان إضافيان للوصول إلى %2$s.</item>
+        <item quantity="few">%1$d أصدقاء موثّقين إضافيين للوصول إلى %2$s.</item>
+        <item quantity="many">%1$d صديقًا موثّقًا إضافيًا للوصول إلى %2$s.</item>
+        <item quantity="other">%1$d صديق موثّق إضافي للوصول إلى %2$s.</item>
+    </plurals>
+    <string name="invite_tier_top">بلغت أعلى مستوى — أنت من مؤسسي Swapl.</string>
+    <string name="invite_leaderboard_label">لوحة الصدارة</string>
+    <string name="invite_you_badge">أنت</string>
+    <string name="invite_your_invites">دعواتك (%1$d)</string>
+    <string name="invite_antifarm_note">تصل النقاط فقط بمجرد أن يتحقق صديق من هويته — وهذا يبقي الطابور عادلًا للجميع. النقاط رصيد سفر، وليست نقدًا أبدًا.</string>
+    <string name="invite_error_title">الدعوات غير متاحة</string>
+    <string name="invite_list_home_title">أدرج منزلك أولًا</string>
+    <string name="invite_list_home_body">روابط الدعوة للإقامة مرتبطة بإعلانك الخاص. أنشئ منزلًا في الحساب، ثم ادعُ صديقًا للإقامة.</string>
+    <string name="invite_verify_home_title">تحقق من منزلك أولًا</string>
+    <string name="invite_verify_home_body">تحقق من هذا الإعلان قبل دعوة ضيوف للإقامة — وإلا فلا يمكن دفع مكافأة صديقك. تحقق منه من الحساب ← إعلانك.</string>
+    <string name="invite_inviting_guest_to">دعوة ضيف إلى</string>
+    <string name="invite_your_home">منزلك</string>
+    <string name="invite_friend_email_label">بريد الصديق (اختياري)</string>
+    <string name="invite_friend_email_placeholder">friend@email.com</string>
+    <string name="invite_friend_email_hint">أضف بريدًا لمطابقة الدعوة تلقائيًا عند تسجيله، أو اتركه فارغًا لرابط مفتوح يمكن لأي شخص استخدامه.</string>
+    <string name="invite_ready">الدعوة جاهزة</string>
+    <string name="invite_stay_share_message">يسعدني أن أستضيفك على Swapl — بادل المنازل وسافر بالنقاط، لا بالنقود. إليك دعوتك للإقامة في %1$s: %2$s</string>
+    <string name="invite_stay_share_subject">تعال أقم في %1$s</string>
+    <string name="invite_stay_share_chooser">شارك رابط الدعوة</string>
+    <string name="invite_share_link_button">شارك رابط الدعوة</string>
+    <string name="invite_creating">جارٍ الإنشاء…</string>
+    <string name="invite_create_link">إنشاء رابط دعوة</string>
+    <string name="invite_stay_reward">عندما ينضم ويتحقق، يكسب كلاكما %1$d نقطة سفر. النقاط ليست مالًا أبدًا.</string>
+    <string name="invite_stay_reward_generic">عندما ينضم ويتحقق، يكسب كلاكما نقاط سفر. النقاط ليست مالًا أبدًا.</string>
+    <string name="invite_err_not_verified">تحقق من هذا الإعلان قبل دعوة ضيوف للإقامة — وإلا فلا يمكن دفع مكافأة صديقك.</string>
+    <string name="invite_err_not_owner">يمكنك دعوة ضيوف إلى إعلانك الخاص فقط.</string>
+    <string name="invite_err_cooldown">أرسلت الكثير من الدعوات في الساعة الماضية — حاول مجددًا بعد قليل. إنها فترة انتظار قصيرة، وليست حظرًا.</string>
+    <string name="invite_err_generic">تعذّر إنشاء الدعوة الآن.</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">استلهم</string>
+    <string name="inspire_intro">أخبرنا بالرحلة التي تحلم بها — وسنؤلّف مبادلة من منازل حقيقية تناسب منزلك.</string>
+    <string name="inspire_wish_label">أمنيتك</string>
+    <string name="inspire_wish_placeholder">مكان دافئ بطعام رائع، يسهل التجول فيه، مناسب للعمل عن بُعد…</string>
+    <string name="inspire_mic_stop">إيقاف الاستماع</string>
+    <string name="inspire_mic_start">أملِ أمنيتك</string>
+    <string name="inspire_listening">يستمع — تحدّث بحرية، انقر الميكروفون مرة أخرى للإيقاف.</string>
+    <string name="inspire_mic_denied">الوصول إلى الميكروفون معطّل لـ Swapl — فعّله في الإعدادات لإملاء أمنيتك.</string>
+    <string name="inspire_dates_in_mind">لديّ تواريخ في ذهني</string>
+    <string name="inspire_dates_in_mind_sub">وإلا سنستخدم توفّر منزلك.</string>
+    <string name="inspire_dream_up">تخيّل مبادلتي</string>
+    <string name="inspire_loading_1">جارٍ تخيّل مبادلتك…</string>
+    <string name="inspire_loading_2">جارٍ مطابقة المنازل مع أجوائك…</string>
+    <string name="inspire_loading_3">جارٍ التحقق ممن هو متاح عندما تكون متاحًا…</string>
+    <string name="inspire_loading_4">جارٍ حزم حقائبك الافتراضية…</string>
+    <string name="inspire_package_title">حزمة مبادلتك</string>
+    <string name="inspire_understood">فُهِم: %1$s</string>
+    <string name="inspire_dates_label">التواريخ</string>
+    <string name="inspire_dates_suggested">مقترحة من توفّر منزلك — عدّلها بحرية.</string>
+    <string name="inspire_message_label">رسالتك</string>
+    <string name="inspire_message_ai">صاغها الذكاء الاصطناعي من إعلانك وإعلانهم — اجعلها تخصّك.</string>
+    <string name="inspire_swap_pick">أو بدّل الاختيار</string>
+    <string name="inspire_match_pct">%1$d%% تطابق</string>
+    <string name="inspire_while_there">أثناء وجودك هناك</string>
+    <string name="inspire_experiences_note">تُحجَز على مواقع شركائنا بأسعارهم — قد يكسب swapl عمولة، لا زيادة سعر أبدًا.</string>
+    <string name="inspire_travel_essentials">أساسيات السفر</string>
+    <string name="inspire_concierge_addons">إضافات خدمة swapl</string>
+    <string name="inspire_addons_note">أسعار الكتالوج الحقيقية. أزل تحديد أي شيء لا تريده — لن تُحاسَب إلا إذا قبل المضيف مبادلتك.</string>
+    <string name="inspire_payable_if_accepts">مستحق الدفع إذا قبل المضيف</string>
+    <string name="inspire_nothing_payable">لا شيء مستحق الدفع — التأكيد يرسل الاقتراح فقط.</string>
+    <string name="inspire_confirm_send">أكّد وأرسل الاقتراح</string>
+    <string name="inspire_charged_note">لن تُحاسَب إلا إذا قبل المضيف مبادلتك.</string>
+    <string name="inspire_dismissing">جارٍ التجاهل…</string>
+    <string name="inspire_not_feeling">لا يعجبني</string>
+    <string name="inspire_almost_there">أوشكت على الانتهاء</string>
+    <string name="inspire_payment_title">الدفع والحجز</string>
+    <string name="inspire_your_selection">اختيارك</string>
+    <string name="inspire_partner_note">تُحجَز تجارب وخدمات الشركاء على مواقع الشركاء — لا يحاسب عليها swapl أبدًا وليست جزءًا من هذا الإجمالي.</string>
+    <string name="inspire_save_card">احفظ البطاقة وأرسل الاقتراح</string>
+    <string name="inspire_send_no_card">أرسل دون حفظ بطاقة</string>
+    <string name="inspire_back_to_package">العودة إلى الحزمة</string>
+    <string name="inspire_book_on">احجز على %1$s</string>
+    <string name="inspire_err_no_match">نحتاج إلى منزل نشط لك — وتطابق واحد متوافق على الأقل — لتأليف حزمة.</string>
+    <string name="inspire_err_rate">أنت تحلم بسرعة! امهلها بضع دقائق وحاول مجددًا.</string>
+    <string name="inspire_err_limit">بلغت حد الاقتراحات في خطتك. قم بالترقية لإرسال المزيد.</string>
+    <string name="inspire_err_forbidden">لا يمكن لحسابك إرسال اقتراحات الآن.</string>
+    <string name="inspire_err_generic">حدث خطأ ما. يرجى المحاولة مجددًا.</string>
+
+
+    <!-- Bottom navigation -->
+    <string name="nav_browse">تصفّح</string>
+    <string name="nav_wishlists">الأمنيات</string>
+    <string name="nav_trips">الرحلات</string>
+    <string name="nav_swaps">المبادلات</string>
+    <string name="nav_account">الحساب</string>
+</resources>

@@ -61,6 +61,7 @@ struct PublicProfileView: View {
         .background(SwaplSemanticLight.background.ignoresSafeArea())
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .task { await vm.load() }
         .sheet(isPresented: $showReport) {
             if let p = vm.profile {

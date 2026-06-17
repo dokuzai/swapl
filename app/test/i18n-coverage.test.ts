@@ -7,6 +7,14 @@ import { de } from "@/lib/i18n/dict-de";
 import { es } from "@/lib/i18n/dict-es";
 import { pt } from "@/lib/i18n/dict-pt";
 import { tr } from "@/lib/i18n/dict-tr";
+import { zh } from "@/lib/i18n/dict-zh";
+import { ar } from "@/lib/i18n/dict-ar";
+import { ja } from "@/lib/i18n/dict-ja";
+import { ro } from "@/lib/i18n/dict-ro";
+import { el } from "@/lib/i18n/dict-el";
+import { fa } from "@/lib/i18n/dict-fa";
+import { th } from "@/lib/i18n/dict-th";
+import { id } from "@/lib/i18n/dict-id";
 
 const locales: Record<string, Partial<Record<DictKey, string>>> = {
   fr,
@@ -16,6 +24,14 @@ const locales: Record<string, Partial<Record<DictKey, string>>> = {
   es,
   pt,
   tr,
+  zh,
+  ar,
+  ja,
+  ro,
+  el,
+  fa,
+  th,
+  id,
 };
 
 // Keys where falling back to the English string is intentional (e.g. strings

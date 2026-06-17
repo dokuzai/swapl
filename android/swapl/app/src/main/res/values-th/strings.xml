@@ -1,0 +1,1139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">ยินดีต้อนรับกลับ</string>
+    <string name="auth_kicker_register">เข้าร่วม Swapl</string>
+    <string name="auth_kicker_waitlist">เข้าใช้งานก่อนใคร</string>
+    <string name="auth_headline_signin">กุญแจแลกกุญแจ</string>
+    <string name="auth_headline_register">แลกบ้านกัน\nไม่ใช่โรงแรม</string>
+    <string name="auth_headline_waitlist">ลงชื่อในรายการรอ</string>
+    <string name="auth_email">อีเมล</string>
+    <string name="auth_password">รหัสผ่าน</string>
+    <string name="auth_password_register">รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</string>
+    <string name="auth_signin">เข้าสู่ระบบ</string>
+    <string name="auth_signin_busy">กำลังเข้าสู่ระบบ…</string>
+    <string name="auth_create_account">สร้างบัญชี</string>
+    <string name="auth_create_account_busy">กำลังสร้างบัญชี…</string>
+    <string name="auth_join_waitlist">เข้าร่วมรายการรอ</string>
+    <string name="auth_join_waitlist_busy">กำลังเข้าร่วม…</string>
+    <string name="auth_continue_with">หรือดำเนินการต่อด้วย</string>
+    <string name="auth_passkey">เข้าสู่ระบบด้วยพาสคีย์</string>
+    <string name="auth_google">ดำเนินการต่อด้วย Google</string>
+    <string name="auth_email_code">รหัสทางอีเมล</string>
+    <string name="auth_phone">โทรศัพท์</string>
+    <string name="auth_switch_to_register">เพิ่งรู้จัก Swapl ใช่ไหม? สร้างบัญชี</string>
+    <string name="auth_switch_to_waitlist">ยังไม่พร้อม? เข้าร่วมรายการรอ</string>
+    <string name="auth_switch_register_to_signin">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</string>
+    <string name="auth_switch_waitlist_to_signin">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</string>
+    <string name="auth_google_failed">เข้าสู่ระบบด้วย Google ไม่สำเร็จ ลองอีกครั้ง</string>
+    <string name="auth_passkey_unavailable">การเข้าสู่ระบบด้วยพาสคีย์ยังไม่พร้อมใช้งานในขณะนี้</string>
+    <string name="auth_passkey_failed">เข้าสู่ระบบด้วยพาสคีย์ไม่สำเร็จ ลองอีกครั้ง</string>
+    <string name="auth_passkey_none">ยังไม่มีพาสคีย์บนอุปกรณ์นี้ เข้าสู่ระบบด้วยวิธีอื่น แล้วเพิ่มพาสคีย์จากโปรไฟล์ของคุณ</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">เข้าสู่ระบบด้วยรหัสทางอีเมล</string>
+    <string name="auth_otp_kicker_phone">เข้าสู่ระบบด้วยโทรศัพท์</string>
+    <string name="auth_otp_headline_enter">กรอกรหัสของคุณ</string>
+    <string name="auth_otp_headline_get">รับรหัส</string>
+    <string name="auth_otp_sent">เราส่งรหัส 6 หลักไปยัง %1$s แล้ว รหัสจะหมดอายุใน 10 นาที</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">โทรศัพท์ (เช่น +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">ใช้รูปแบบสากล เช่น +39 333 123 4567</string>
+    <string name="auth_otp_verify">ยืนยันรหัส</string>
+    <string name="auth_otp_verify_busy">กำลังยืนยัน…</string>
+    <string name="auth_otp_resend">ไม่ได้รับรหัส? ส่งรหัสใหม่</string>
+    <string name="auth_otp_send">ส่งรหัส</string>
+    <string name="auth_otp_send_busy">กำลังส่ง…</string>
+    <string name="auth_otp_back">กลับไปเข้าสู่ระบบด้วยรหัสผ่าน</string>
+    <string name="verify_referral_toast">ยืนยันแล้ว! คุณได้รับ %1$d Keys จากการเข้าร่วมผ่านการแนะนำ 🔑</string>
+    <string name="verify_referral_toast_named">ยืนยันแล้ว! คำเชิญของ %1$s ทำให้คุณได้รับ %2$d Keys 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s เพิ่งยืนยันแล้ว — คุณได้รับ %2$d Keys! 🔑</string>
+    <string name="referral_referrer_toast">คนที่คุณเชิญเพิ่งยืนยันแล้ว — คุณได้รับ %1$d Keys! 🔑</string>
+
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">วิธีรับ Keys</string>
+    <string name="keys_earn_ways_subtitle">การกระทำเล็กๆ ที่เติมแต้มเดินทางให้คุณ ทำครั้งเดียวหรือกลับมาทำอีกเพื่อรับเพิ่ม</string>
+    <string name="keys_earn_way_done">รับแล้ว — เยี่ยมมาก!</string>
+    <string name="keys_earn_way_locked">ยืนยันตัวตนเพื่อปลดล็อกสิ่งนี้</string>
+    <string name="keys_earn_verify_identity_title">ยืนยันตัวตนของคุณ</string>
+    <string name="keys_earn_verify_identity_body">การตรวจสอบอย่างรวดเร็วจะปลดล็อกทุกวิธีในการรับแต้ม</string>
+    <string name="keys_earn_verify_property_title">ยืนยันที่พัก</string>
+    <string name="keys_earn_verify_property_body">ยืนยันว่าคุณเป็นเจ้าของบ้านที่คุณลงประกาศ</string>
+    <string name="keys_earn_complete_listing_title">กรอกประกาศของคุณให้ครบ</string>
+    <string name="keys_earn_complete_listing_body">เพิ่มรูปภาพและรายละเอียดเพื่อให้แขกจินตนาการถึงการเข้าพักได้</string>
+    <string name="keys_earn_leave_review_title">เขียนรีวิว</string>
+    <string name="keys_earn_leave_review_body">บอกชุมชนว่าการเข้าพักเป็นอย่างไร</string>
+    <string name="keys_earn_share_converted_title">แชร์บ้านที่มีคนจอง</string>
+    <string name="keys_earn_share_converted_body">แชร์ประกาศและรับแต้มเมื่อนำไปสู่การเข้าพัก</string>
+    <string name="keys_earn_refer_friend_title">เชิญเพื่อน</string>
+    <string name="keys_earn_refer_friend_body">ทั้งคู่ได้รับแต้มเมื่อเพื่อนเข้าร่วมและยืนยันตัวตน</string>
+    <string name="keys_earn_generic_title">รับ Keys</string>
+    <string name="keys_earn_generic_body">ทำสิ่งนี้เพื่อรับแต้มเดินทาง</string>
+
+    <!-- Owner verification + publish acknowledgment (DOK-162) -->
+    <string name="owner_verified_badge">เจ้าของที่ยืนยันแล้ว</string>
+
+    <!-- Publish acknowledgment shown on the Review step before create -->
+    <string name="publish_ack_kicker">ก่อนเผยแพร่</string>
+    <string name="publish_ack_mode_question">คุณให้เข้าพักบ้านหลังนี้แบบไหน?</string>
+    <string name="publish_ack_mode_entire_home">ทั้งบ้าน ขณะที่ฉันไม่อยู่</string>
+    <string name="publish_ack_mode_room">ห้องเดียว หรือขณะที่ฉันอยู่ที่นี่</string>
+    <string name="publish_ack_text_entire_home_headline">ฉันมีสิทธิ์เสนอทั้งบ้านของฉันสำหรับการแลกขณะที่ฉันไม่อยู่ — และหากเช่าอยู่ สัญญาเช่าอนุญาตให้ฉันรับแขกเข้าพักเมื่อฉันไม่อยู่ได้</string>
+    <string name="publish_ack_text_entire_home_fineprint">ฉันรับผิดชอบในการปฏิบัติตามสัญญาเช่า กฎของอาคาร และกฎหมายท้องถิ่น</string>
+    <string name="publish_ack_text_room_headline">ฉันมีสิทธิ์รับการแลกนี้</string>
+    <string name="publish_ack_text_room_fineprint">ฉันจะปฏิบัติตามกฎของอาคารและกฎหมายท้องถิ่น</string>
+    <string name="publish_ack_required_error">โปรดยืนยันการรับทราบเรื่องการให้เข้าพักก่อนเผยแพร่</string>
+    <string name="publish_submit_failed">ไม่สามารถเผยแพร่ประกาศของคุณได้ ลองอีกครั้ง</string>
+
+    <!-- Optional "Verify ownership" entry -->
+    <string name="owner_verify_cta">ตราเจ้าของที่ยืนยันแล้ว — ไม่บังคับ</string>
+    <string name="owner_verify_cta_pending">ตราเจ้าของที่ยืนยันแล้ว — กำลังตรวจสอบ</string>
+    <string name="owner_verify_cta_rejected">ตราเจ้าของที่ยืนยันแล้ว — ลองอีกครั้ง</string>
+    <string name="owner_verify_optional_note">เพิ่มความน่าเชื่อถือสำหรับแขก ไม่จำเป็นต้องมีในการเผยแพร่หรือแลกเปลี่ยน</string>
+    <string name="owner_verify_title">ยืนยันความเป็นเจ้าของ</string>
+    <string name="owner_verify_explainer">เพิ่มเอกสารที่แสดงสิทธิ์ของคุณในบ้านหลังนี้ — โฉนดหรือเอกสารทะเบียน หรือสัญญาเช่าในชื่อของคุณ ผู้ดูแลจะตรวจสอบ และเมื่อได้รับอนุมัติ ประกาศของคุณจะแสดงตรา \"เจ้าของที่ยืนยันแล้ว\"</string>
+    <string name="owner_verify_ai_explainer">การตรวจสอบด้วย AI อย่างรวดเร็วจะอ่านเอกสารก่อนเพื่อยืนยันว่าตรงกับบ้านหลังนี้ ทีมงานของเราเป็นผู้ตัดสินใจขั้นสุดท้ายเสมอ</string>
+    <string name="owner_verify_tenant_note">ผู้เช่าก็ยินดีต้อนรับ หากคุณเช่าอยู่และสัญญาเช่าอนุญาตให้รับแขก คุณมีสิทธิ์เต็มที่ — ไม่จำเป็นต้องเป็นเจ้าของบ้าน</string>
+    <string name="owner_verify_tenant">เช่าอยู่ใช่ไหม? คุณก็ยินดีต้อนรับเช่นกัน — อัปโหลดสัญญาเช่าแทนโฉนด คุณสามารถให้เข้าพักบน Swapl ได้ตราบใดที่สัญญาเช่าของคุณอนุญาตให้มีแขก</string>
+    <string name="owner_verify_privacy_note">เราไม่เก็บเอกสารของคุณหลังการตรวจสอบ มีเพียง AI ที่อ่านข้อมูลส่วนตัวของคุณ และเราเก็บเพียงว่าเอกสารแสดงบ้านส่วนตัวหรือไม่ — ไม่ใช่บัตรประจำตัว ที่อยู่ หรือตัวเอกสารเอง</string>
+    <string name="owner_verify_privacy">เอกสารของคุณจะถูกอ่านเพียงครั้งเดียวเพื่อตรวจสอบว่าบ้านเป็นของคุณ จากนั้นจะไม่ถูกเก็บไว้ — เราเก็บเพียงผลลัพธ์ (ยืนยันแล้วหรือไม่) ไม่ใช่ตัวเอกสารหรือเนื้อหา</string>
+    <string name="owner_verify_private_only_note">Swapl เป็นการแลกเปลี่ยนระหว่างบุคคล ดังนั้นจึงไม่สามารถลงประกาศที่พักของบริษัทหรือเชิงพาณิชย์ได้ที่นี่</string>
+    <string name="owner_verify_doc_type_label">คุณกำลังอัปโหลดอะไร? (ไม่บังคับ)</string>
+    <string name="owner_verify_doc_type_deed">โฉนด / เอกสารทะเบียน</string>
+    <string name="owner_verify_doc_type_lease">สัญญาเช่า</string>
+    <string name="owner_verify_status_pending">การส่งครั้งล่าสุดของคุณกำลังตรวจสอบอยู่ ทีมงานของเราเป็นผู้ตัดสินใจขั้นสุดท้าย — โดยปกติภายใน 2 วันทำการ หากการตรวจสอบอัตโนมัติของเราไม่แน่ใจ อาจใช้เวลานานขึ้นเล็กน้อย แต่คุณไม่ติดขัด เราจะติดตามผลเสมอ</string>
+    <string name="owner_verify_status_rejected">การส่งครั้งล่าสุดของคุณไม่ได้รับอนุมัติ เพิ่มเอกสารที่ชัดเจนขึ้นแล้วส่งใหม่</string>
+    <string name="owner_verify_business_title">การตรวจสอบของเราชี้ว่านี่อาจเป็นที่พักเชิงพาณิชย์ — เราอาจเข้าใจผิด</string>
+    <string name="owner_verify_business_body">การตรวจสอบอัตโนมัติของเราอ่านเอกสารของคุณว่าเป็นที่พักของบริษัทหรือเชิงพาณิชย์ และ Swapl เป็นการแลกเปลี่ยนระหว่างบุคคล แต่การตรวจสอบอัตโนมัติไม่สมบูรณ์แบบ และคนจริง — ไม่ใช่ AI — เป็นผู้ตัดสินใจขั้นสุดท้าย หากนี่คือบ้านของคุณเอง โปรดติดต่อมา: ทีมงานของเราตรวจสอบกรณีเหล่านี้ด้วยตนเอง โดยปกติภายใน 2 วันทำการ และสัญญาเช่า โฉนด หรือเอกสารภาษีในชื่อของคุณก็เพียงพอที่จะแก้ไขให้ถูกต้อง</string>
+    <string name="owner_verify_business_contact">ติดต่อฝ่ายสนับสนุน</string>
+    <string name="owner_verify_business_support_email">support@swapl.app</string>
+    <string name="owner_verify_business_support_subject">คำขอตรวจสอบการยืนยันที่พัก</string>
+    <string name="owner_verify_add_document">เพิ่มเอกสาร</string>
+    <string name="owner_verify_uploading">กำลังอัปโหลด…</string>
+    <string name="owner_verify_remove">ลบ</string>
+    <string name="owner_verify_submit">ส่งเพื่อตรวจสอบ</string>
+    <string name="owner_verify_submitting">กำลังส่ง…</string>
+    <string name="owner_verify_cancel">ยกเลิก</string>
+    <string name="owner_verify_doc_label">เอกสารแสดงความเป็นเจ้าของ</string>
+    <string name="owner_verify_doc_read_error">ไม่สามารถอ่านไฟล์นั้นได้</string>
+    <string name="owner_verify_upload_failed">อัปโหลดไม่สำเร็จ ลองอีกครั้ง</string>
+    <string name="owner_verify_submit_failed">ส่งไม่สำเร็จ ลองอีกครั้ง</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). -->
+    <string name="valuation_section_title">วิธีคำนวณ Keys ต่อคืนของคุณ</string>
+    <string name="valuation_per_night">%1$d / คืน</string>
+    <string name="valuation_intro">นี่คือสิ่งที่แขกจ่าย — และสิ่งที่คุณได้รับ — สำหรับการเข้าพักแต่ละคืน กำหนดอย่างเป็นธรรมจากคุณสมบัติของบ้านคุณ ไม่ใช่จากคุณหรือเราที่ปั่นราคาขึ้น</string>
+    <string name="valuation_show">แสดงรายละเอียด</string>
+    <string name="valuation_hide">ซ่อนรายละเอียด</string>
+    <string name="valuation_factors_kicker">อะไรที่ประกอบเป็นมูลค่า</string>
+    <string name="valuation_base_label">มูลค่าก่อนรีวิว</string>
+    <string name="valuation_factor_base">มูลค่าเริ่มต้น</string>
+    <string name="valuation_factor_size">ขนาด</string>
+    <string name="valuation_factor_sleeps">จำนวนที่นอน</string>
+    <string name="valuation_factor_location_tier">ความน่าสนใจของทำเล</string>
+    <string name="valuation_factor_location_tier_standard">มาตรฐาน — ทำเลของคุณไม่ได้ถูกเพิ่มมูลค่าเทียม แต่ได้รับการประเมินอย่างเท่าเทียม เมืองเล็กและหมู่บ้านจะไม่ถูกหักคะแนนที่นี่</string>
+    <string name="valuation_factor_verified">บ้านที่ยืนยันแล้ว</string>
+    <string name="valuation_factor_ai_appeal">ความน่าสนใจของบ้าน (AI)</string>
+    <string name="valuation_ai_summary_kicker">ความน่าสนใจของบ้าน (AI)</string>
+    <string name="valuation_ai_what_note">AI ของเราอ่านเฉพาะวิธีการนำเสนอประกาศของคุณ — ความครอบคลุมของรูปภาพ ความหลากหลายของรายการสิ่งอำนวยความสะดวก และความละเอียดของคำอธิบาย ไม่ได้ตัดสินบ้านของคุณอย่างเข้มงวด และไม่เคยหักคะแนนเมืองเล็กหรือหมู่บ้าน — ทำเลถูกจัดการแยกต่างหาก</string>
+    <string name="valuation_ai_baseline_pos">โบนัสสำหรับความน่าสนใจของบ้าน: +%1$s (บ้านส่วนใหญ่ได้ 0; สูงสุด +%2$d)</string>
+    <string name="valuation_ai_baseline_zero">ความน่าสนใจของบ้าน: 0 — ปกติอย่างยิ่ง เหมือนบ้านส่วนใหญ่ (โบนัสสูงสุด +%1$d)</string>
+    <string name="valuation_ai_baseline_neg">ความน่าสนใจของบ้าน: %1$s (บ้านส่วนใหญ่ได้ 0 — เพิ่มรูปภาพหรือรายละเอียดเพื่อยกระดับ)</string>
+    <string name="valuation_ai_fallback_note">คำนวณจากรูปภาพและสิ่งอำนวยความสะดวกของคุณ การประเมินความน่าสนใจที่ละเอียดขึ้นจะถูกเพิ่มเมื่อโมเดลความน่าสนใจของบ้านได้ตรวจสอบประกาศของคุณแล้ว</string>
+    <string name="valuation_room_kicker">นี่คือห้องหนึ่งห้อง</string>
+    <string name="valuation_room_note">เนื่องจากคุณเสนอห้องส่วนตัวแทนที่จะเป็นทั้งบ้าน มูลค่าต่อคืนจึงสะท้อนเฉพาะห้องนั้น — ประมาณ %1$d%% ของอัตราทั้งหลัง</string>
+    <string name="valuation_location_note">ระดับความต้องการของจุดหมาย %1$d จาก 5 — พื้นที่ของคุณเป็นที่ต้องการสำหรับการเข้าพักมากเพียงใด</string>
+    <string name="valuation_review_kicker">รีวิวจากแขก</string>
+    <string name="valuation_review_applied_up">รีวิวของคุณ (%1$.1f★ จาก %2$d) ดันมูลค่าขึ้น %3$d%%</string>
+    <string name="valuation_review_applied_down">รีวิวของคุณ (%1$.1f★ จาก %2$d) ลดมูลค่าลง %3$d%%</string>
+    <string name="valuation_review_applied_neutral">รีวิวของคุณ (%1$.1f★ จาก %2$d) คงมูลค่าไว้เท่าเดิม</string>
+    <string name="valuation_review_pending">ยังไม่นำมาใช้ — รีวิวจะเริ่มปรับมูลค่านี้ก็ต่อเมื่อคุณได้รับรีวิวครบ %1$d รายการ ขณะนี้คุณมี %2$d รายการ จนกว่าจะถึงตอนนั้น มูลค่าจะคงอยู่ที่ระดับตามคุณสมบัติ</string>
+    <string name="valuation_review_moving">ตอนนี้กำลังเคลื่อนเข้าหาคะแนน %1$.1f★ จาก %2$d รีวิวอย่างช้าๆ — ทีละนิด ไม่ใช่ทั้งหมดในคราวเดียว</string>
+    <string name="valuation_bounded_note">มูลค่านี้เปลี่ยนแปลงได้มากที่สุด %1$d%% ต่อรอบการอัปเดต และเฉพาะเมื่อคุณมีรีวิว %2$d ขึ้นไป แม้กระนั้น การไปถึงขีดจำกัด ±%3$d%% ก็ต้องใช้หลายรอบ — เป็นเพดานตายตัวที่รีวิวไม่อาจดันเกินได้ — ดังนั้นสัปดาห์ที่รีวิวแย่จะไม่ทำให้รายได้ของคุณพังในชั่วข้ามคืน</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">เรื่องราว Swapl ของคุณ</string>
+    <string name="story_counts_heading">เรื่องราวของคุณจนถึงตอนนี้</string>
+    <string name="story_passport">พาสปอร์ตของคุณ</string>
+    <string name="story_kind_trip">ทริป</string>
+    <string name="story_kind_hosted">เป็นเจ้าบ้าน</string>
+    <string name="story_detail_hosted_by">รับรองโดย %1$s</string>
+    <string name="story_detail_welcomed">ต้อนรับ %1$s</string>
+    <string name="story_detail_stay">การเข้าพักบน Swapl</string>
+    <string name="story_detail_guest">แขกในบ้านของคุณ</string>
+    <string name="story_share_heading">แชร์เรื่องราวของคุณ</string>
+    <string name="story_share_button">แชร์</string>
+    <string name="story_share_note">ส่งเรื่องราวของคุณได้ทุกที่ — Messages, WhatsApp, อีเมล มาพร้อมลิงก์เชิญของคุณ ดังนั้นเมื่อเพื่อนแตะและเข้าร่วม คุณทั้งคู่จะได้รับแต้มเดินทาง</string>
+    <string name="story_share_subject">เรื่องราว Swapl ของฉัน</string>
+    <string name="story_share_chooser">แชร์เรื่องราวของคุณ</string>
+    <string name="story_share_message">ฉันแลกบ้านมาแล้วใน %1$d เมืองบน Swapl — เดินทางด้วยแต้ม ไม่ใช่เงินสด มาร่วมกับฉันด้วยลิงก์ของฉัน แล้วเราทั้งคู่จะได้แต้มเดินทางเมื่อคุณยืนยันตัวตน: %2$s</string>
+    <string name="story_empty_title">เรื่องราวของคุณเริ่มต้นที่นี่</string>
+    <string name="story_empty_body">เมื่อคุณทำการแลกครั้งแรกหรือเข้าพักด้วย Keys สำเร็จ ทริปและแขกที่คุณต้อนรับจะปรากฏที่นี่เป็นตราประทับพาสปอร์ต — โปสการ์ดของทุกที่ที่ Swapl พาคุณไป</string>
+    <string name="story_empty_share">เชิญเพื่อนมาแลกบ้าน</string>
+    <string name="story_error_title">เรื่องราวไม่พร้อมใช้งาน</string>
+    <string name="story_error_body">เราไม่สามารถโหลดเรื่องราวของคุณได้ ดึงเพื่อรีเฟรชหรือลองใหม่</string>
+    <string name="story_error_retry">ลองอีกครั้ง</string>
+    <plurals name="story_count_trips">
+        <item quantity="other">ทริป</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="other">แขกที่ต้อนรับ</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="other">เมือง</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="other">ประเทศ</item>
+    </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). -->
+    <string name="trip_oncover_badge">ยืนยันบน TON</string>
+    <string name="trip_oncover_view">ดูหลักฐาน</string>
+    <string name="trip_oncover_explainer">บันทึกที่ปลอมแปลงไม่ได้ว่าความคุ้มครองของคุณเป็นจริง — ไม่ใช่คริปโต ไม่มีการชำระเงิน ไม่มีอะไรที่คุณต้องทำ</string>
+
+    <!-- People in a swap conversation (DOK-187). -->
+    <string name="people_title">ผู้คน</string>
+    <string name="people_role_principal">คู่แลกบ้าน</string>
+    <string name="people_role_guest">แขกในแชท</string>
+    <string name="people_status_pending">รอดำเนินการ</string>
+    <string name="people_invite">เชิญ</string>
+    <string name="people_add">เพิ่ม</string>
+    <string name="people_add_cotravelers">เพิ่มเพื่อนร่วมเดินทาง</string>
+    <string name="people_remove">ลบ %1$s</string>
+    <string name="people_invite_title">เชิญใครสักคนเข้าแชท</string>
+    <string name="people_invite_reassure">เพิ่มคู่หูหรือเพื่อนร่วมเดินทางเข้าสู่การสนทนา พวกเขาสามารถแชทกับทุกคนที่นี่ได้ แต่มีเพียงคู่แลกบ้านสองคนเท่านั้นที่สามารถยอมรับ เสนอกลับ หรือยกเลิกการแลกได้ — การเชิญใครสักคนไม่เคยให้สิทธิ์ควบคุมการแลกแก่พวกเขา</string>
+    <string name="people_invite_field_label">อีเมลหรือแฮนเดิล</string>
+    <string name="people_invite_field_placeholder">name@email.com หรือ @handle</string>
+    <string name="people_invite_send">ส่งคำเชิญ</string>
+    <string name="people_invite_cancel">ยกเลิก</string>
+
+    <!-- Common / shared actions -->
+    <string name="common_cancel">ยกเลิก</string>
+    <string name="common_ok">ตกลง</string>
+    <string name="common_retry">ลองอีกครั้ง</string>
+
+    <!-- Rate the app (M1) -->
+    <string name="account_rate_app">ให้คะแนนแอป</string>
+    <string name="rate_app_title">ให้คะแนนแอป</string>
+    <string name="rate_app_prompt">Swapl เป็นอย่างไรสำหรับคุณ? คะแนนของคุณช่วยให้เราพัฒนาได้</string>
+    <string name="rate_app_score_label">คะแนนของคุณ</string>
+    <string name="rate_app_comment_label">มีอะไรอยากเพิ่มเติมไหม?</string>
+    <string name="rate_app_comment_placeholder">บอกเราว่าอะไรใช้ได้ดี — หรือไม่ได้ (ไม่บังคับ)</string>
+    <string name="rate_app_submit">ส่ง</string>
+    <string name="rate_app_submit_support">ติดต่อฝ่ายสนับสนุน</string>
+    <string name="rate_app_submitting">กำลังส่ง…</string>
+    <string name="rate_app_prompt_post_review">ขอบคุณสำหรับรีวิว! แล้วแอป Swapl เองเป็นอย่างไรสำหรับคุณ?</string>
+    <string name="rate_app_prompt_post_swap">การแลกของคุณเสร็จสมบูรณ์แล้ว! Swapl ช่วยพาคุณไปถึงจุดหมายได้เป็นอย่างไร?</string>
+    <string name="rate_app_low_support_hint">ขออภัยที่ยังไม่ดีพอ ส่งสิ่งนี้แล้วเราจะเปิดฝ่ายสนับสนุนเพื่อช่วยเหลือคุณ</string>
+
+    <!-- Account screen -->
+    <string name="account_profile_title">โปรไฟล์</string>
+    <string name="account_member_badge">สมาชิก Swapl</string>
+    <string name="account_stat_waiting">รออยู่</string>
+    <string name="account_stat_sent">ส่งแล้ว</string>
+    <string name="account_stat_active">ใช้งานอยู่</string>
+    <string name="account_stat_homes">บ้าน</string>
+    <string name="account_edit_home_title">แก้ไขบ้านของคุณ</string>
+    <string name="account_become_host_title">เป็นเจ้าบ้าน</string>
+    <string name="account_edit_home_body">อัปเดตรูปภาพ วันที่ และรายละเอียด</string>
+    <string name="account_become_host_body">ลงประกาศบ้านของคุณเพื่อเริ่มแลกเปลี่ยน</string>
+    <string name="account_section_settings">การตั้งค่า</string>
+    <string name="account_personal_info">ข้อมูลส่วนตัว</string>
+    <string name="account_change_password">เปลี่ยนรหัสผ่าน</string>
+    <string name="account_passkeys">เข้าสู่ระบบและความปลอดภัย — พาสคีย์</string>
+    <string name="account_passkeys_busy">เข้าสู่ระบบและความปลอดภัย — พาสคีย์…</string>
+    <string name="account_privacy">ความเป็นส่วนตัว</string>
+    <string name="account_notifications">การแจ้งเตือน</string>
+    <string name="account_section_profile">โปรไฟล์</string>
+    <string name="account_view_profile">ดูโปรไฟล์</string>
+    <string name="account_your_story">เรื่องราว Swapl ของคุณ</string>
+    <string name="account_travel_points">แต้มเดินทาง</string>
+    <string name="account_invite_earn">เชิญและรับแต้ม</string>
+    <string name="account_interests">ความสนใจ</string>
+    <string name="account_saved_searches">การค้นหาที่บันทึกไว้</string>
+    <string name="account_travel_windows">ช่วงเวลาเดินทาง</string>
+    <string name="account_metrics">เมตริก</string>
+    <string name="account_section_support">การสนับสนุน</string>
+    <string name="account_get_help">ขอความช่วยเหลือ</string>
+    <string name="account_privacy_policy">นโยบายความเป็นส่วนตัว</string>
+    <string name="account_terms">ข้อกำหนดการให้บริการ</string>
+    <string name="account_log_out">ออกจากระบบ</string>
+    <string name="account_version">เวอร์ชัน %1$s (%2$d)</string>
+    <string name="account_signout_title">ออกจากระบบ?</string>
+    <string name="account_signout_body">คุณจะต้องเข้าสู่ระบบอีกครั้งเพื่อดูการแลกของคุณ</string>
+    <string name="account_passkeys_dialog_title">พาสคีย์</string>
+
+    <!-- Browse -->
+    <string name="browse_title">เรียกดู</string>
+    <string name="browse_edit_home">แก้ไขบ้านของคุณ</string>
+    <string name="browse_list_home">+ ลงประกาศบ้าน</string>
+    <string name="browse_search_placeholder">จะไปที่ไหน?</string>
+    <string name="browse_clear_search">ล้างการค้นหา</string>
+    <string name="browse_filters">ตัวกรอง</string>
+    <string name="browse_tab_homes">บ้าน</string>
+    <string name="browse_tab_experiences">ประสบการณ์</string>
+    <string name="browse_tab_services">บริการ</string>
+    <string name="browse_get_inspired_title">หาแรงบันดาลใจ</string>
+    <string name="browse_get_inspired_body">อธิบายทริปในฝันของคุณ — เราจะจัดการแลกให้คุณ</string>
+    <string name="browse_sort">เรียงลำดับ</string>
+    <string name="browse_sort_match">ตรงที่สุด</string>
+    <string name="browse_sort_newest">ใหม่ที่สุด</string>
+    <string name="browse_sort_largest">ใหญ่ที่สุด</string>
+    <string name="browse_error_title">บ้านไม่พร้อมใช้งาน</string>
+    <string name="browse_error_body">เราไม่สามารถเชื่อมต่อ Swapl ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
+    <string name="browse_empty_title">ไม่พบบ้าน</string>
+    <string name="browse_empty_body">บ้านใหม่จะปรากฏที่นี่เมื่อสมาชิกเผยแพร่</string>
+    <string name="browse_guests_size_type">%1$d แขก · %2$d ตร.ม. · %3$s</string>
+    <string name="browse_tag_featured">แนะนำ</string>
+    <string name="browse_tag_verified">ยืนยันแล้ว</string>
+    <string name="browse_tag_private_room">ห้องส่วนตัว</string>
+    <!-- Filters -->
+    <string name="filter_title">ตัวกรอง</string>
+    <string name="filter_when">เมื่อใด</string>
+    <string name="filter_from">ตั้งแต่</string>
+    <string name="filter_to">ถึง</string>
+    <string name="filter_clear_dates">ล้างวันที่</string>
+    <string name="filter_space_type">ประเภทพื้นที่</string>
+    <string name="filter_space_all">ทั้งหมด</string>
+    <string name="filter_space_entire">ทั้งหลัง</string>
+    <string name="filter_space_private_room">ห้องส่วนตัว</string>
+    <string name="filter_property_type">ประเภทที่พัก</string>
+    <string name="filter_min_size">ขนาดต่ำสุด: %1$d ตร.ม.</string>
+    <string name="filter_min_sleeps">นอนได้อย่างน้อย: %1$d</string>
+    <string name="filter_pets">เฉพาะบ้านที่อนุญาตสัตว์เลี้ยง</string>
+    <string name="filter_wfh">เฉพาะบ้านที่มีพื้นที่ทำงาน</string>
+    <string name="filter_step_free">เฉพาะบ้านที่ไม่มีขั้นบันได</string>
+    <string name="filter_reset">รีเซ็ต</string>
+    <string name="filter_show_homes">แสดงบ้าน</string>
+
+    <!-- Listing detail -->
+    <string name="detail_guests_rooms">%1$d แขก · %2$s · %3$s · %4$d ตร.ม.</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="other">%1$d ห้องนอน</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="other">%1$d ห้องน้ำ</item>
+    </plurals>
+    <string name="detail_available_range">ว่าง %1$s → %2$s · เข้าพัก %3$d–%4$d วัน</string>
+    <string name="detail_points_per_night">%1$d แต้ม / คืน</string>
+    <string name="detail_private_room_note">นี่คือห้องส่วนตัว ดังนั้นมูลค่าต่อคืนจึงสะท้อนเฉพาะห้อง — ไม่ใช่ทั้งบ้าน</string>
+    <string name="detail_private_room_badge">ห้องส่วนตัว</string>
+    <string name="detail_private_room_badge_rooms">ห้องส่วนตัว · %1$d ห้อง</string>
+    <string name="detail_about_home">เกี่ยวกับบ้านหลังนี้</string>
+    <string name="detail_what_offered">สิ่งที่ที่พักนี้มีให้</string>
+    <string name="detail_where">ที่ที่คุณจะอยู่</string>
+    <string name="detail_approx_area">พื้นที่โดยประมาณ</string>
+    <string name="detail_hosted_by">รับรองโดย</string>
+    <string name="detail_anonymous">ไม่ระบุชื่อ</string>
+    <string name="detail_verified_host">เจ้าบ้านที่ยืนยันแล้ว</string>
+    <string name="detail_edit_listing">แก้ไขประกาศ</string>
+    <string name="detail_manage_availability">จัดการความพร้อมให้บริการ</string>
+    <string name="detail_propose_swap">เสนอการแลก</string>
+    <string name="detail_list_home_first">ลงประกาศบ้านของคุณก่อน</string>
+    <string name="detail_list_home_first_body">เพิ่มประกาศของคุณก่อนจึงจะเสนอการแลกได้</string>
+    <string name="detail_stay_with_points">เข้าพักด้วยแต้ม</string>
+    <string name="detail_stay_with_points_body">จองแบบทางเดียวโดยใช้แต้มเดินทางที่คุณได้รับจากการเป็นเจ้าบ้าน — ไม่ต้องแลกกลับ ใช้เมื่อการแลกโดยตรงไม่เหมาะ</string>
+    <string name="detail_report_listing">รายงานประกาศนี้</string>
+    <string name="detail_no_amenities">ไม่มีรายการสิ่งอำนวยความสะดวก</string>
+    <string name="detail_request_sent_title">ส่งคำขอแล้ว</string>
+    <string name="detail_request_sent_body">แต้มของคุณจะถูกพักไว้จนกว่าเจ้าบ้านจะยืนยัน คุณจะพบการเข้าพักนี้ในเมนูทริป</string>
+    <!-- Amenity labels -->
+    <string name="amenity_balcony">ระเบียง</string>
+    <string name="amenity_rooftop">ดาดฟ้า</string>
+    <string name="amenity_garden">สวน</string>
+    <string name="amenity_courtyard">ลานบ้าน</string>
+    <string name="amenity_pool">สระว่ายน้ำ</string>
+    <string name="amenity_gym">ฟิตเนส</string>
+    <string name="amenity_piano">เปียโน</string>
+    <string name="amenity_bike">รวมจักรยาน</string>
+    <string name="amenity_parking">ที่จอดรถ</string>
+    <string name="amenity_workspace">พื้นที่ทำงาน</string>
+    <string name="amenity_pets">อนุญาตสัตว์เลี้ยง</string>
+    <string name="amenity_step_free">ไม่มีขั้นบันได</string>
+    <string name="amenity_elevator">ลิฟต์</string>
+    <string name="amenity_ac">เครื่องปรับอากาศ</string>
+    <string name="amenity_dishwasher">เครื่องล้างจาน</string>
+    <string name="amenity_washer">เครื่องซักผ้า</string>
+    <string name="amenity_dryer">เครื่องอบผ้า</string>
+
+    <!-- Propose swap dialog -->
+    <string name="propose_title">เสนอการแลก</string>
+    <string name="propose_message_label">ข้อความ (ไม่บังคับ)</string>
+    <string name="propose_drafting">กำลังร่าง…</string>
+    <string name="propose_write_for_me">เขียนให้ฉัน</string>
+    <string name="propose_rewrite_ai">เขียนใหม่ด้วย AI</string>
+    <string name="propose_draft_failed">ไม่สามารถร่างข้อความได้ในตอนนี้</string>
+    <string name="propose_send">ส่ง</string>
+
+    <!-- Swap thread -->
+    <string name="thread_with">กับ %1$s</string>
+    <string name="thread_open_chat">เปิดแชท</string>
+    <string name="thread_open_chat_with">เปิดแชทกับ %1$s</string>
+    <string name="thread_view_profile">ดูโปรไฟล์ของ %1$s</string>
+    <string name="thread_host_fallback">เจ้าบ้าน</string>
+    <string name="thread_host_fallback_possessive">เจ้าบ้านของคุณ</string>
+    <string name="thread_proposal">ข้อเสนอ</string>
+    <string name="thread_counter">เสนอกลับ</string>
+    <string name="thread_size_sleeps">%1$d ตร.ม. · นอนได้ %2$d</string>
+    <string name="thread_accept">ยอมรับการแลก</string>
+    <string name="thread_counter_offer">เสนอกลับ</string>
+    <string name="thread_decline">ปฏิเสธ</string>
+    <string name="thread_withdraw">ถอน</string>
+    <string name="thread_message_optional">ข้อความ (ไม่บังคับ)</string>
+    <!-- Accept-consent + action feedback (M4) -->
+    <string name="thread_accept_confirm_title">ยอมรับการแลกนี้?</string>
+    <string name="thread_accept_confirm_body">การยอมรับจะล็อกวันที่และออกประกันการเดินทางสำหรับการเข้าพัก — บ้านทั้งสองหลังจะได้รับความคุ้มครอง คุณยังสามารถแชทเพื่อประสานงานการส่งมอบได้</string>
+    <string name="thread_accept_confirm_cta">ยอมรับและทำประกัน</string>
+    <string name="thread_decline_confirm_title">ปฏิเสธการแลกนี้?</string>
+    <string name="thread_decline_confirm_body">การกระทำนี้จะปฏิเสธข้อเสนอ คุณไม่สามารถยกเลิกได้ แต่คุณสามารถส่งข้อเสนอใหม่ได้ในภายหลังเสมอ</string>
+    <string name="thread_withdraw_confirm_title">ถอนข้อเสนอนี้?</string>
+    <string name="thread_withdraw_confirm_body">การกระทำนี้จะถอนข้อเสนอของคุณ คุณสามารถส่งข้อเสนอใหม่ได้ในภายหลัง</string>
+    <string name="thread_accepted_toast">ยอมรับการแลกแล้ว — การเข้าพักของคุณได้รับการประกัน</string>
+    <string name="thread_declined_toast">ปฏิเสธข้อเสนอแล้ว</string>
+    <string name="thread_withdrawn_toast">ถอนข้อเสนอแล้ว</string>
+    <string name="thread_countered_toast">ส่งข้อเสนอกลับแล้ว</string>
+
+    <!-- Leave a review -->
+    <string name="review_title">เขียนรีวิว</string>
+    <string name="review_prompt">การแลกกับ %1$s เป็นอย่างไร?</string>
+    <string name="review_partner_fallback">คู่แลกบ้านของคุณ</string>
+    <string name="review_rating_label">คะแนนของคุณ</string>
+    <string name="review_text_label">รีวิวของคุณ</string>
+    <string name="review_text_placeholder">บ้าน ย่าน และการส่งมอบเป็นอย่างไร?</string>
+    <string name="review_min_chars">อย่างน้อย 20 ตัวอักษร — ขณะนี้ %1$d</string>
+    <string name="review_submit">ส่งรีวิว</string>
+    <string name="review_submitting">กำลังส่ง…</string>
+    <string name="review_card_title">การแลกของคุณเป็นอย่างไร?</string>
+    <string name="review_card_body">เขียนรีวิวให้ %1$s — จะแสดงบนโปรไฟล์สาธารณะของพวกเขา</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">กล่องข้อความการแลก</string>
+    <string name="inbox_search_open">ค้นหา</string>
+    <string name="inbox_search_close">ปิดการค้นหา</string>
+    <string name="inbox_search_placeholder">ค้นหาตามเจ้าบ้านหรือเมือง</string>
+    <string name="inbox_filter_all">ทั้งหมด</string>
+    <string name="inbox_filter_waiting">รอคุณอยู่</string>
+    <string name="inbox_filter_sent">ส่งแล้ว</string>
+    <string name="inbox_filter_active">ใช้งานอยู่</string>
+    <string name="inbox_filter_archived">เก็บถาวร</string>
+    <string name="inbox_section_waiting">รอคุณอยู่</string>
+    <string name="inbox_section_sent">ส่งแล้ว — รอการตอบกลับ</string>
+    <string name="inbox_section_active">การแลกที่ใช้งานอยู่</string>
+    <string name="inbox_section_archived">เก็บถาวร</string>
+    <string name="inbox_status_confirmed">การแลกที่ยืนยันแล้ว</string>
+    <string name="inbox_status_countered">ได้รับข้อเสนอกลับ</string>
+    <string name="inbox_status_declined">ปฏิเสธข้อเสนอแล้ว</string>
+    <string name="inbox_status_waiting_reply">รอการตอบกลับของคุณ</string>
+    <string name="inbox_status_sent">ส่งข้อเสนอแล้ว</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s → %2$s · กับ %3$s</string>
+    <string name="inbox_dates">%1$s → %2$s</string>
+    <string name="inbox_error_title">ข้อความไม่พร้อมใช้งาน</string>
+    <string name="inbox_error_body">เราไม่สามารถโหลดการแลกของคุณได้ ดึงเพื่อรีเฟรชหรือลองใหม่</string>
+    <string name="inbox_empty_title">ยังไม่มีข้อความ</string>
+    <string name="inbox_empty_body">เสนอการแลกจากประกาศใดก็ได้ แล้วจะแสดงที่นี่</string>
+
+    <!-- Trips -->
+    <string name="trips_title">ทริป</string>
+    <string name="trips_phase_active">กำลังดำเนินอยู่</string>
+    <string name="trips_phase_upcoming">กำลังจะมาถึง</string>
+    <string name="trips_phase_past">ที่ผ่านมา</string>
+    <string name="trips_row_title">ทริปไป %1$s</string>
+    <string name="trips_row_dates_host">%1$s → %2$s · เจ้าบ้าน %3$s</string>
+    <string name="trips_row_dates">%1$s → %2$s</string>
+    <string name="trips_row_roles">แขกใน %1$s · คุณเป็นเจ้าบ้านใน %2$s</string>
+    <string name="trips_error_title">ทริปไม่พร้อมใช้งาน</string>
+    <string name="trips_error_body">เราไม่สามารถโหลดทริปของคุณได้ ดึงเพื่อรีเฟรชหรือลองใหม่</string>
+    <string name="trips_empty_title">ยังไม่มีทริป</string>
+    <string name="trips_empty_body">การแลกที่ยอมรับแล้วจะกลายเป็นทริป การเข้าพักที่กำลังจะมาถึงของคุณจะแสดงที่นี่</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">การแลกนี้ถูกยกเลิก</string>
+    <string name="cockpit_timeline_agreed">ตกลงแล้ว</string>
+    <string name="cockpit_timeline_ready">พร้อม</string>
+    <string name="cockpit_timeline_staying">กำลังเข้าพัก</string>
+    <string name="cockpit_timeline_done">เสร็จสิ้น</string>
+    <string name="cockpit_starts_in">เริ่มในอีก</string>
+    <string name="cockpit_status">สถานะ</string>
+    <string name="cockpit_countdown_days">%1$d วัน %2$d ชม.</string>
+    <string name="cockpit_countdown_hours">%1$d ชม.</string>
+    <string name="cockpit_phase_agreed">ตกลงการแลกแล้ว</string>
+    <string name="cockpit_phase_preparing">กำลังเตรียมการ</string>
+    <string name="cockpit_phase_ready">พร้อมออกเดินทาง</string>
+    <string name="cockpit_phase_in_progress">กำลังดำเนินการ</string>
+    <string name="cockpit_phase_completed">เสร็จสมบูรณ์</string>
+    <string name="cockpit_phase_cancelled">ยกเลิกแล้ว</string>
+    <string name="cockpit_insured">ทำประกันแล้ว</string>
+    <string name="cockpit_before_you_go">ก่อนคุณออกเดินทาง</string>
+    <string name="cockpit_check_guide_filled">กรอกคู่มือบ้านของคุณให้ครบ</string>
+    <string name="cockpit_check_details_read">อ่านรายละเอียดบ้านของเจ้าบ้าน</string>
+    <string name="cockpit_check_checked_in">เช็คอินเมื่อคุณมาถึง</string>
+    <string name="cockpit_check_checked_out">เช็คเอาท์เมื่อคุณออกเดินทาง</string>
+    <string name="cockpit_finish_guide">กรอกคู่มือบ้านของคุณให้เสร็จ (%1$d%%)</string>
+    <string name="cockpit_your_key_code">รหัสกุญแจของคุณ</string>
+    <string name="cockpit_key_code_note">กุญแจแลกกุญแจ — แชร์รหัสนี้กับแขกของคุณเพื่อให้พวกเขาเข้าได้</string>
+    <string name="cockpit_swap_protection">ความคุ้มครองการแลก</string>
+    <string name="cockpit_policy_line">กรมธรรม์ %1$s · ความคุ้มครอง €%2$s</string>
+    <string name="cockpit_where_you_stay">ที่ที่คุณเข้าพัก</string>
+    <string name="cockpit_guide_not_filled">เจ้าบ้านของคุณยังไม่ได้กรอกคู่มือบ้าน</string>
+    <string name="cockpit_address_unlocks_city">ที่อยู่ที่แน่นอนใน %1$s จะปลดล็อกเร็วๆ นี้</string>
+    <string name="cockpit_address_unlocks">ที่อยู่ที่แน่นอนจะปลดล็อกเร็วๆ นี้</string>
+    <string name="cockpit_unlocks_at">ปลดล็อก %1$s — 48 ชม. ก่อนการเข้าพักของคุณ</string>
+    <string name="cockpit_unlocks_generic">ที่อยู่และคู่มือบ้านจะปลดล็อก 48 ชม. ก่อนการเข้าพักของคุณ</string>
+    <string name="cockpit_home_guide">คู่มือบ้าน</string>
+    <string name="cockpit_collapse">ยุบ</string>
+    <string name="cockpit_expand">ขยาย</string>
+    <string name="cockpit_guide_getting_in">วิธีเข้า</string>
+    <string name="cockpit_guide_keys">กุญแจ</string>
+    <string name="cockpit_guide_wifi_name">เครือข่าย Wi-Fi</string>
+    <string name="cockpit_guide_wifi_password">รหัสผ่าน Wi-Fi</string>
+    <string name="cockpit_guide_heating">เครื่องทำความร้อนและความเย็น</string>
+    <string name="cockpit_guide_kitchen">ครัว</string>
+    <string name="cockpit_guide_bins">ถังขยะและการรีไซเคิล</string>
+    <string name="cockpit_guide_pets_plants">สัตว์เลี้ยงและต้นไม้</string>
+    <string name="cockpit_guide_house_rules">กฎของบ้าน</string>
+    <string name="cockpit_guide_neighbourhood">ย่านใกล้เคียง</string>
+    <string name="cockpit_guide_emergency">ผู้ติดต่อฉุกเฉิน</string>
+    <string name="cockpit_check_in">เช็คอิน</string>
+    <string name="cockpit_check_out">เช็คเอาท์</string>
+    <string name="cockpit_checked_in_out">เช็คอินและเช็คเอาท์แล้ว — ขอบคุณ!</string>
+    <string name="cockpit_trip_activity">กิจกรรมของทริป</string>
+    <string name="cockpit_event_you">คุณ</string>
+    <string name="cockpit_event_partner_fallback">คู่แลกบ้านของคุณ</string>
+    <string name="cockpit_event_checked_in">%1$s เช็คอินแล้ว</string>
+    <string name="cockpit_event_checked_out">%1$s เช็คเอาท์แล้ว</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">ข้อความไม่พร้อมใช้งาน</string>
+    <string name="chat_try_again">ลองอีกครั้ง</string>
+    <string name="chat_view_trip">ดูทริป</string>
+    <string name="chat_say_hello_title">ทักทาย</string>
+    <string name="chat_say_hello_body">เริ่มการสนทนา — ถามเกี่ยวกับวันที่ ย่าน หรืออะไรก็ตามที่คุณอยากรู้</string>
+    <string name="chat_load_earlier">โหลดข้อความก่อนหน้า</string>
+    <string name="chat_message_placeholder">ข้อความ</string>
+    <string name="chat_add_photo">เพิ่มรูปภาพ</string>
+    <string name="chat_remove_photo">ลบรูปภาพ</string>
+    <string name="chat_send">ส่งข้อความ</string>
+    <string name="chat_receipt_read">อ่านแล้ว</string>
+    <string name="chat_receipt_sent">ส่งแล้ว</string>
+    <string name="chat_invite_only_partners">มีเพียงคู่แลกบ้านสองคนเท่านั้นที่สามารถเชิญผู้คนได้</string>
+    <string name="chat_invite_not_found">เราไม่พบบุคคลนั้น ตรวจสอบอีเมลหรือแฮนเดิล</string>
+    <string name="chat_invite_failed">ไม่สามารถส่งคำเชิญได้ ลองอีกครั้ง</string>
+    <string name="chat_send_failed">ส่งไม่สำเร็จ ลองอีกครั้ง</string>
+    <string name="chat_read_image_failed">ไม่สามารถอ่านรูปภาพนั้นได้</string>
+    <string name="chat_upload_photo_failed">ไม่สามารถอัปโหลดรูปภาพได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">ทำเล</string>
+    <string name="create_step_space">พื้นที่</string>
+    <string name="create_step_access">การเข้าถึงและสัตว์เลี้ยง</string>
+    <string name="create_step_amenities">สิ่งอำนวยความสะดวก</string>
+    <string name="create_step_dates">วันที่</string>
+    <string name="create_step_photos">รูปภาพ</string>
+    <string name="create_step_description">คำอธิบาย</string>
+    <string name="create_step_review">ตรวจสอบ</string>
+    <string name="create_kicker_edit">แก้ไขบ้านของคุณ — ขั้นตอนที่ %1$d จาก %2$d</string>
+    <string name="create_kicker_new">ขั้นตอนที่ %1$d จาก %2$d</string>
+    <string name="create_back">ย้อนกลับ</string>
+    <string name="create_next">ถัดไป</string>
+    <string name="create_saving">กำลังบันทึก…</string>
+    <string name="create_publishing">กำลังเผยแพร่…</string>
+    <string name="create_save_changes">บันทึกการเปลี่ยนแปลง</string>
+    <string name="create_publish_listing">เผยแพร่ประกาศ</string>
+    <string name="create_locating">กำลังระบุตำแหน่ง…</string>
+    <string name="create_use_location">ใช้ตำแหน่งปัจจุบันของฉัน</string>
+    <string name="create_location_error">ไม่สามารถระบุตำแหน่งของคุณได้ — กรอกด้วยตนเอง</string>
+    <string name="create_load_error">ไม่สามารถโหลดประกาศได้</string>
+    <string name="create_read_image_error">ไม่สามารถอ่านรูปภาพนั้นได้</string>
+    <string name="create_upload_failed">อัปโหลดไม่สำเร็จ</string>
+    <string name="create_title_label">ชื่อ (เช่น อพาร์ตเมนต์ริมคลองรับแสง)</string>
+    <string name="create_city_label">เมือง</string>
+    <string name="create_neighbourhood_label">ย่าน</string>
+    <string name="create_country_label">ประเทศ</string>
+    <string name="create_address_label">ที่อยู่ (ไม่บังคับ)</string>
+    <string name="create_space_type">ประเภทพื้นที่</string>
+    <string name="create_space_entire">ทั้งหลัง</string>
+    <string name="create_space_private_room">ห้องส่วนตัว</string>
+    <string name="create_private_room_keys_note">ห้องส่วนตัวมีมูลค่า Keys น้อยกว่าทั้งบ้าน — มูลค่าต่อคืนสะท้อนเฉพาะห้อง</string>
+    <string name="create_rooms_offered">ห้องที่เสนอ: %1$d</string>
+    <string name="create_property_type">ประเภทที่พัก</string>
+    <string name="create_prop_apartment">อพาร์ตเมนต์</string>
+    <string name="create_prop_house">บ้าน</string>
+    <string name="create_prop_loft">ลอฟต์</string>
+    <string name="create_prop_townhouse">ทาวน์เฮาส์</string>
+    <string name="create_size">ขนาด: %1$d ตร.ม.</string>
+    <string name="create_sleeps">นอนได้: %1$d</string>
+    <string name="create_bedrooms">ห้องนอน: %1$d</string>
+    <string name="create_bathrooms">ห้องน้ำ: %1$d</string>
+    <string name="create_floor">ชั้น: %1$d</string>
+    <string name="create_has_elevator">มีลิฟต์</string>
+    <string name="create_step_free">เข้าถึงได้โดยไม่มีขั้นบันได</string>
+    <string name="create_pets_allowed">อนุญาตสัตว์เลี้ยง</string>
+    <string name="create_wfh_setup">พร้อมทำงานจากบ้าน</string>
+    <string name="create_desks">โต๊ะทำงาน: %1$d</string>
+    <string name="create_parking">ที่จอดรถ</string>
+    <string name="create_bike">รวมจักรยาน</string>
+    <string name="create_balcony">ระเบียง</string>
+    <string name="create_rooftop">ดาดฟ้า</string>
+    <string name="create_garden">สวน</string>
+    <string name="create_courtyard">ลานบ้าน</string>
+    <string name="create_piano">เปียโน</string>
+    <string name="create_pool">สระว่ายน้ำ</string>
+    <string name="create_gym">ฟิตเนส</string>
+    <string name="create_ac">เครื่องปรับอากาศ</string>
+    <string name="create_dishwasher">เครื่องล้างจาน</string>
+    <string name="create_washer">เครื่องซักผ้า</string>
+    <string name="create_dryer">เครื่องอบผ้า</string>
+    <string name="create_available_from">ว่างตั้งแต่</string>
+    <string name="create_available_to">ว่างถึง</string>
+    <string name="create_min_stay">เข้าพักขั้นต่ำ: %1$d วัน</string>
+    <string name="create_max_stay">เข้าพักสูงสุด: %1$d วัน</string>
+    <string name="create_photos_hint">เพิ่มรูปภาพบ้านของคุณได้สูงสุด 10 รูป เราจะปรับขนาดก่อนอัปโหลด</string>
+    <string name="create_choose_photos">เลือกรูปภาพ</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="other">กำลังอัปโหลดรูปภาพ %1$d รูป…</item>
+    </plurals>
+    <string name="create_description_label">อธิบายบ้านของคุณ (อย่างน้อย 20 ตัวอักษร)</string>
+    <string name="create_characters">%1$d ตัวอักษร</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d ตร.ม. · นอนได้ %2$d · %3$d ห้องนอน / %4$d ห้องน้ำ</string>
+    <string name="create_review_available">ว่าง %1$s → %2$s</string>
+    <string name="create_decrease">ลด</string>
+    <string name="create_increase">เพิ่ม</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">เข้าพักด้วยแต้ม</string>
+    <string name="keys_stay_in">เข้าพักใน %1$s</string>
+    <string name="keys_stay_guest_at">แขกที่ %1$s</string>
+    <string name="keys_stay_dates">%1$s → %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="other">%1$d คืน · %2$d แต้ม</item>
+    </plurals>
+    <string name="keys_stay_decline">ปฏิเสธ</string>
+    <string name="keys_stay_confirm">ยืนยันการเข้าพัก</string>
+    <string name="keys_stay_cancel_request">ยกเลิกคำขอ</string>
+    <string name="keys_stay_covered">ยืนยันแล้ว — การเข้าพักของคุณได้รับความคุ้มครองโดยกรมธรรม์ Swapl</string>
+    <string name="keys_stay_status_awaiting_host">รอเจ้าบ้าน</string>
+    <string name="keys_stay_status_action_needed">ต้องดำเนินการ</string>
+    <string name="keys_stay_status_confirmed">ยืนยันแล้ว</string>
+    <string name="keys_stay_status_declined">ปฏิเสธแล้ว</string>
+    <string name="keys_stay_status_cancelled">ยกเลิกแล้ว</string>
+    <string name="keys_stay_status_completed">เสร็จสมบูรณ์</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">เข้าพักด้วยแต้ม</string>
+    <string name="stay_keys_intro">จองแบบทางเดียวด้วยแต้มของคุณ — ไม่ต้องรับรองพวกเขากลับ ดีเมื่อวันที่หรือบ้านของคุณไม่เหมาะกับการแลกโดยตรง</string>
+    <string name="stay_keys_window">เลือกวันที่ภายในช่วงที่บ้านว่าง (%1$s → %2$s) %3$d–%4$d คืน วันที่ที่จองแล้วจะถูกขีดฆ่า</string>
+    <string name="stay_keys_points_per_night">แต้มต่อคืน</string>
+    <string name="stay_keys_nights">คืน</string>
+    <string name="stay_keys_total">รวม</string>
+    <string name="stay_keys_total_points">%1$d แต้ม</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="other">คุณมี %1$d แต้ม — เพียงพอสำหรับการเข้าพักนี้ (ประมาณ %2$d คืนที่อัตรานี้)</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="other">คุณขาดอีก %1$d แต้ม เป็นเจ้าบ้านประมาณ %2$d คืนที่อัตรานี้เพื่อปลดล็อกการเข้าพักนี้ — หรือเลือกคืนน้อยลง แต้มไม่สามารถซื้อได้</item>
+    </plurals>
+    <string name="stay_keys_held_note">แต้มของคุณจะถูกพักไว้จนกว่าเจ้าบ้านจะยืนยัน คุณจะพบการเข้าพักนี้ในเมนูทริป</string>
+    <string name="stay_keys_sending">กำลังส่ง…</string>
+    <string name="stay_keys_request">ขอด้วยแต้ม</string>
+    <string name="stay_keys_error_insufficient">คุณมีแต้มไม่เพียงพอสำหรับวันที่เหล่านี้ ลองเลือกคืนน้อยลง หรือรับแต้มด้วยการเป็นเจ้าบ้าน แต้มไม่สามารถซื้อได้</string>
+    <string name="stay_keys_error_unavailable">วันที่เหล่านั้นไม่ว่าง เลือกวันที่ภายในช่วงเวลาของบ้าน</string>
+    <string name="stay_keys_error_generic">ไม่สามารถขอการเข้าพักนี้ได้ในตอนนี้</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">การค้นหาที่บันทึกไว้</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">การค้นหาที่บันทึกไว้เป็นฟีเจอร์สำหรับสมาชิก Plus</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">ความสนใจ · %1$d / 12</string>
+    <string name="interests_vibe_label">สไตล์ของคุณ (ไม่บังคับ)</string>
+    <string name="interests_save">บันทึก</string>
+    <string name="interests_saving">กำลังบันทึก…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">ประวัติแต้ม</string>
+    <string name="keys_tx_filter_all">ทั้งหมด</string>
+    <string name="keys_tx_filter_earned">ได้รับ</string>
+    <string name="keys_tx_filter_spent">ใช้ไป</string>
+    <string name="keys_tx_empty_all">ยังไม่มีกิจกรรมเกี่ยวกับแต้ม</string>
+    <string name="keys_tx_empty_earned">ยังไม่มีแต้มที่ได้รับ</string>
+    <string name="keys_tx_empty_spent">ยังไม่มีแต้มที่ใช้ไป</string>
+    <string name="keys_tx_loading">กำลังโหลด…</string>
+    <string name="keys_tx_load_more">โหลดเพิ่มเติม</string>
+    <string name="keys_tx_balance">ยอด %1$d</string>
+    <string name="keys_tx_error_title">ประวัติแต้มไม่พร้อมใช้งาน</string>
+    <string name="keys_tx_try_again">ลองอีกครั้ง</string>
+
+    <!-- ===== UI localization 100% (DOK) ===== -->
+    <!-- Common / shared -->
+    <string name="common_save">บันทึก</string>
+    <string name="common_saving">กำลังบันทึก…</string>
+    <string name="common_send">ส่ง</string>
+    <string name="common_sending">กำลังส่ง…</string>
+    <string name="common_close">ปิด</string>
+    <string name="common_done">เสร็จสิ้น</string>
+    <string name="common_delete">ลบ</string>
+    <string name="common_try_again">ลองอีกครั้ง</string>
+    <string name="cd_remove_photo">ลบรูปภาพ</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">%1$d จาก 5 ดาว</string>
+    <plurals name="cd_n_stars">
+        <item quantity="other">%1$d ดาว</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="other">%1$d คืน</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="other">%1$d เตียง</item>
+    </plurals>
+
+    <!-- Status enum chips -->
+    <string name="status_pending">รอดำเนินการ</string>
+    <string name="status_accepted">ยืนยันแล้ว</string>
+    <string name="status_countered">เสนอกลับแล้ว</string>
+    <string name="status_declined">ปฏิเสธแล้ว</string>
+    <string name="status_withdrawn">ถอนแล้ว</string>
+    <string name="status_active">ใช้งานอยู่</string>
+    <string name="status_upcoming">กำลังจะมาถึง</string>
+    <string name="status_in_progress">กำลังดำเนินการ</string>
+    <string name="status_completed">เสร็จสมบูรณ์</string>
+    <string name="status_cancelled">ยกเลิกแล้ว</string>
+    <string name="status_disputed">มีข้อพิพาท</string>
+    <string name="status_resolved">แก้ไขแล้ว</string>
+    <string name="status_open">เปิดอยู่</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">แผน</string>
+
+    <!-- Trip detail -->
+    <string name="trip_detail_error_title">ทริปไม่พร้อมใช้งาน</string>
+    <string name="trip_detail_error_body">เราไม่สามารถโหลดทริปนี้ได้</string>
+    <string name="trip_detail_host_fallback">เจ้าบ้านของคุณ</string>
+    <string name="trip_detail_host_word">เจ้าบ้าน</string>
+    <string name="trip_detail_trip_to">ทริปไป %1$s</string>
+    <string name="trip_detail_hosted_by">รับรองโดย %1$s</string>
+    <string name="trip_detail_your_stay">การเข้าพักของคุณ</string>
+    <string name="trip_detail_guest_at">แขกที่บ้านของ %1$s — %2$s · %3$s</string>
+    <string name="trip_detail_in_return">เป็นการตอบแทน คุณเป็นเจ้าบ้านใน %1$s · %2$s สำหรับวันที่เดียวกัน</string>
+    <string name="trip_detail_view_profile">ดูโปรไฟล์ของ %1$s</string>
+
+    <!-- Agreement panel -->
+    <string name="agreement_title">ตกลงการแลกแล้ว — กุญแจแลกกุญแจ</string>
+    <string name="agreement_stay_between">เข้าพักระหว่าง %1$s → %2$s กับ %3$s</string>
+    <string name="agreement_your_code">รหัสของคุณ (ใช้ที่บ้านของพวกเขา)</string>
+    <string name="agreement_their_code">รหัสของพวกเขา (แขกที่บ้านของคุณ)</string>
+    <string name="agreement_insurance_cover">ประกัน · ความคุ้มครอง €%1$dk</string>
+    <string name="agreement_auto_issued">ออกอัตโนมัติ · สายด่วน 24/7 %1$s</string>
+
+    <!-- Dispute / resolution center -->
+    <string name="dispute_report_problem">รายงานปัญหา</string>
+    <string name="dispute_report_new">รายงานปัญหาใหม่</string>
+    <string name="dispute_phone_title">ติดต่อสายด่วน 24/7 ของเรา</string>
+    <string name="dispute_phone_body">หากมีใครไม่ปลอดภัยหรือเข้าบ้านไม่ได้ โทร %1$s</string>
+    <string name="dispute_phone_call">โทร %1$s</string>
+    <string name="dispute_urgent_title">ต้องการความช่วยเหลือตอนนี้?</string>
+    <string name="dispute_urgent_body">หากมีใครไม่ปลอดภัยหรือเข้าบ้านไม่ได้ สายด่วน 24/7 ของเราพร้อมช่วยเหลือ แตะเพื่อติดต่อฝ่ายสนับสนุนทันที</string>
+    <string name="dispute_open_body">บอกเราว่าเกิดอะไรขึ้นกับการแลกของคุณ เราจะเชื่อมต่อคู่แลกบ้านและทีมสนับสนุนของเรา</string>
+    <string name="dispute_open_body_with">บอกเราว่าเกิดอะไรขึ้นกับการแลกของคุณกับ %1$s เราจะเชื่อมต่อคู่แลกบ้านและทีมสนับสนุนของเรา</string>
+    <string name="dispute_what_happened">เกิดอะไรขึ้น?</string>
+    <string name="dispute_describe_label">อธิบายปัญหา</string>
+    <string name="dispute_describe_placeholder">เกิดอะไรขึ้น เมื่อไหร่ และคุณต้องการอะไรจากเรา</string>
+    <string name="dispute_send_report">ส่งรายงาน</string>
+    <string name="dispute_discard_title">ละทิ้งการเปลี่ยนแปลง?</string>
+    <string name="dispute_discard_body">รายงานของคุณยังไม่ได้ส่ง หากคุณออกไปตอนนี้ สิ่งที่คุณเขียนจะหายไป</string>
+    <string name="dispute_discard_confirm">ละทิ้ง</string>
+    <string name="dispute_discard_keep">แก้ไขต่อ</string>
+    <string name="dispute_reported_on">รายงานเมื่อ %1$s</string>
+    <string name="dispute_resolution_label">การแก้ไข</string>
+    <string name="dispute_conversation_label">การสนทนา</string>
+    <string name="dispute_case_resolved">กรณีนี้ได้รับการแก้ไขแล้ว</string>
+    <string name="dispute_case_closed">กรณีนี้ปิดแล้ว</string>
+    <string name="dispute_reply_label">ตอบกลับ</string>
+    <string name="dispute_reply_placeholder">เพิ่มการตอบกลับ…</string>
+    <string name="dispute_author_you">คุณ</string>
+    <string name="dispute_author_support">ฝ่ายสนับสนุน</string>
+    <string name="dispute_photos_label">รูปภาพ (ไม่บังคับ)</string>
+    <string name="dispute_add_photos">เพิ่มรูปภาพ</string>
+    <string name="dispute_add_more_photos">เพิ่มอีก</string>
+    <string name="dispute_photo_read_error">ไม่สามารถอ่านรูปภาพนั้นได้</string>
+    <string name="dispute_photo_upload_error">ไม่สามารถอัปโหลดรูปภาพได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
+    <string name="dispute_cat_access_title">เข้าบ้านไม่ได้</string>
+    <string name="dispute_cat_access_subtitle">เข้าไม่ได้ รหัสผิด กุญแจหาย</string>
+    <string name="dispute_cat_damage_title">ความเสียหาย</string>
+    <string name="dispute_cat_damage_subtitle">มีบางอย่างแตกหักหรือเสียหาย</string>
+    <string name="dispute_cat_cleanliness_title">ความสะอาด</string>
+    <string name="dispute_cat_cleanliness_subtitle">บ้านไม่พร้อมหรือไม่สะอาด</string>
+    <string name="dispute_cat_safety_title">ข้อกังวลด้านความปลอดภัย</string>
+    <string name="dispute_cat_safety_subtitle">คุณรู้สึกไม่ปลอดภัยหรือมีบางอย่างผิดปกติ</string>
+    <string name="dispute_cat_no_show_title">ไม่มาตามนัด</string>
+    <string name="dispute_cat_no_show_subtitle">คู่แลกบ้านของคุณไม่ทำตามที่ตกลง</string>
+    <string name="dispute_cat_other_title">อย่างอื่น</string>
+    <string name="dispute_cat_other_subtitle">สิ่งอื่นใดที่คุณต้องการความช่วยเหลือ</string>
+    <string name="dispute_status_open">เปิดอยู่</string>
+    <string name="dispute_status_investigating">เรากำลังดำเนินการ</string>
+    <string name="dispute_status_awaiting">ถึงตาคุณ</string>
+    <string name="dispute_status_resolved">แก้ไขแล้ว</string>
+    <string name="dispute_status_closed">ปิดแล้ว</string>
+
+    <!-- Home guide editor -->
+    <string name="home_guide_title">คู่มือบ้าน</string>
+    <string name="home_guide_complete_pct">เสร็จสมบูรณ์ %1$d%%</string>
+    <string name="home_guide_intro">กรอกสิ่งจำเป็นเพื่อให้แขกของคุณตั้งตัวได้โดยไม่ต้องส่งข้อความถึงคุณ</string>
+    <string name="home_guide_section_access">วิธีเข้า</string>
+    <string name="home_guide_field_access">คำแนะนำการเข้าถึง</string>
+    <string name="home_guide_field_key_pickup">การรับกุญแจ</string>
+    <string name="home_guide_section_wifi">Wi-Fi</string>
+    <string name="home_guide_field_wifi_name">ชื่อเครือข่าย</string>
+    <string name="home_guide_field_wifi_password">รหัสผ่าน</string>
+    <string name="home_guide_section_living">การอยู่อาศัยในบ้าน</string>
+    <string name="home_guide_field_heating">เครื่องทำความร้อนและความเย็น</string>
+    <string name="home_guide_field_kitchen">ครัว</string>
+    <string name="home_guide_field_bins">ถังขยะและการรีไซเคิล</string>
+    <string name="home_guide_field_pets">สัตว์เลี้ยงและต้นไม้</string>
+    <string name="home_guide_section_good_to_know">ควรรู้ (ไม่บังคับ)</string>
+    <string name="home_guide_field_house_rules">กฎของบ้าน</string>
+    <string name="home_guide_field_neighbourhood">เคล็ดลับเกี่ยวกับย่าน</string>
+    <string name="home_guide_field_emergency">ผู้ติดต่อฉุกเฉิน</string>
+
+    <!-- Check in / out sheet -->
+    <string name="check_event_checkin">เช็คอิน</string>
+    <string name="check_event_checkout">เช็คเอาท์</string>
+    <string name="check_event_checkin_body">ถ่ายรูปบ้านไว้สองสามรูปเมื่อคุณมาถึง — ช่วยปกป้องทั้งคู่หากมีข้อสงสัยในภายหลัง</string>
+    <string name="check_event_checkout_body">ถ่ายรูปสองสามรูปเมื่อคุณออกไป เพื่อให้สภาพของบ้านมีการบันทึกไว้</string>
+    <string name="check_event_baseline_photos">รูปภาพอ้างอิง</string>
+    <string name="check_event_note_label">บันทึก (ไม่บังคับ)</string>
+    <string name="check_event_note_placeholder">เช่น ทุกอย่างดูดีมาก รับกุญแจแล้ว</string>
+
+    <!-- Metrics -->
+    <string name="metrics_title">เมตริก</string>
+    <string name="metrics_section_now">ตอนนี้</string>
+    <string name="metrics_online_now">ออนไลน์ตอนนี้</string>
+    <string name="metrics_today">วันนี้</string>
+    <string name="metrics_7_days">7 วัน</string>
+    <string name="metrics_30_days">30 วัน</string>
+    <string name="metrics_section_users">ผู้ใช้</string>
+    <string name="metrics_total">ทั้งหมด</string>
+    <string name="metrics_email_verified">ยืนยันอีเมลแล้ว</string>
+    <string name="metrics_with_active_listing">มีประกาศที่ใช้งานอยู่</string>
+    <string name="metrics_new_7d">ใหม่ (7 วัน)</string>
+    <string name="metrics_new_30d">ใหม่ (30 วัน)</string>
+    <string name="metrics_section_listings_per_user">ประกาศต่อผู้ใช้</string>
+    <string name="metrics_avg_per_user">เฉลี่ยต่อผู้ใช้ที่มีประกาศ</string>
+    <string name="metrics_top_hosts">เจ้าบ้านยอดนิยม</string>
+    <string name="metrics_online_only">เฉพาะออนไลน์</string>
+    <string name="metrics_no_hosts_online">ไม่มีเจ้าบ้านออนไลน์ในขณะนี้</string>
+    <string name="metrics_online">ออนไลน์</string>
+    <string name="metrics_offline">ออฟไลน์</string>
+    <string name="metrics_section_top_cities">เมืองยอดนิยม</string>
+    <string name="metrics_active_listings">ประกาศที่ใช้งานอยู่</string>
+    <string name="metrics_section_proposals">ข้อเสนอ</string>
+    <string name="metrics_accept_rate">อัตราการยอมรับ</string>
+    <string name="metrics_section_engagement">การมีส่วนร่วม</string>
+    <string name="metrics_active_agreements">ข้อตกลงที่ใช้งานอยู่</string>
+    <string name="metrics_completed_agreements">ข้อตกลงที่เสร็จสมบูรณ์</string>
+    <string name="metrics_messages_total">ข้อความ (ทั้งหมด)</string>
+    <string name="metrics_messages_7d">ข้อความ (7 วัน)</string>
+    <string name="metrics_favorites_total">รายการโปรด (ทั้งหมด)</string>
+    <string name="metrics_favorites_7d">รายการโปรด (7 วัน)</string>
+    <string name="metrics_saved_searches">การค้นหาที่บันทึกไว้</string>
+    <string name="metrics_generated_at">สร้างเมื่อ %1$s UTC</string>
+    <string name="metrics_error_title">เมตริกไม่พร้อมใช้งาน</string>
+    <string name="metrics_error_body">เราไม่สามารถโหลดเมตริกได้ ดึงเพื่อรีเฟรชหรือลองใหม่</string>
+
+    <!-- Calendar / availability -->
+    <string name="calendar_title">ปฏิทินของคุณ</string>
+    <string name="calendar_intro">วันที่จองจากการแลกที่ยืนยันแล้วและการเข้าพักด้วยแต้มจะแสดงเป็นขีดฆ่า — แขกไม่สามารถเลือกได้ แตะวันเริ่มต้นและวันสิ้นสุดเพื่อบล็อกวันที่สำหรับตัวคุณเอง (การปรับปรุง การใช้ส่วนตัว)</string>
+    <string name="calendar_block_summary">บล็อก %1$s → %2$s (%3$s)</string>
+    <string name="calendar_clear">ล้าง</string>
+    <string name="calendar_blocking">กำลังบล็อก…</string>
+    <string name="calendar_block_dates">บล็อกวันที่เหล่านี้</string>
+    <string name="calendar_pick_checkout">ตอนนี้แตะวันเช็คเอาท์เพื่อทำการบล็อกให้เสร็จ</string>
+    <string name="calendar_blocked_label">วันที่คุณบล็อกไว้</string>
+    <string name="calendar_unblock">ปลดบล็อก</string>
+    <string name="calendar_legend_selected">เลือกแล้ว</string>
+    <string name="calendar_legend_booked">จองแล้ว / บล็อกแล้ว</string>
+
+    <!-- Report dialog -->
+    <string name="report_title">รายงาน</string>
+    <string name="report_reason_label">เหตุผล</string>
+    <string name="report_details_label">รายละเอียด (ไม่บังคับ)</string>
+    <string name="report_reason_inappropriate">เนื้อหาไม่เหมาะสม</string>
+    <string name="report_reason_scam">การหลอกลวงหรือประกาศปลอม</string>
+    <string name="report_reason_harassment">การคุกคาม</string>
+    <string name="report_reason_discrimination">การเลือกปฏิบัติ</string>
+    <string name="report_reason_other">อื่นๆ</string>
+
+    <!-- Wishlists -->
+    <string name="wishlists_title">รายการที่ถูกใจ</string>
+    <string name="wishlists_guests_beds">%1$d แขก · %2$s</string>
+    <string name="wishlists_available">ว่าง %1$s → %2$s</string>
+    <string name="wishlists_error_title">รายการที่ถูกใจไม่พร้อมใช้งาน</string>
+    <string name="wishlists_error_body">เราไม่สามารถเชื่อมต่อ Swapl ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
+    <string name="wishlists_empty_title">ยังไม่มีบ้านที่บันทึกไว้</string>
+    <string name="wishlists_empty_body">แตะรูปหัวใจบนบ้านใดก็ได้เพื่อบันทึกไว้ที่นี่</string>
+
+    <!-- Travel profile card -->
+    <string name="travel_profile_kicker">โปรไฟล์การเดินทางของคุณ</string>
+    <string name="travel_profile_deleted">ลบโปรไฟล์แล้ว เราจะสร้างใหม่ก็ต่อเมื่อคุณขอเท่านั้น</string>
+    <string name="travel_profile_built_from">สร้างขึ้นจากสิ่งที่คุณทำบน Swapl เท่านั้น คุณสามารถรีเฟรชหรือลบได้ทุกเมื่อ</string>
+    <string name="travel_profile_built_from_sources">สร้างขึ้นจากสิ่งที่คุณทำบน Swapl เท่านั้น: %1$s คุณสามารถรีเฟรชหรือลบได้ทุกเมื่อ</string>
+    <string name="travel_profile_loading">กำลังอ่านโปรไฟล์ของคุณ…</string>
+    <string name="travel_profile_build_again">สร้างอีกครั้ง</string>
+    <string name="travel_profile_refresh">รีเฟรช</string>
+    <string name="travel_profile_delete_title">ลบโปรไฟล์การเดินทาง?</string>
+    <string name="travel_profile_delete_body">การกระทำนี้จะลบสรุปรสนิยมของคุณที่ AI สร้างขึ้น จะไม่กลับมาเว้นแต่คุณจะสร้างใหม่</string>
+    <string name="travel_profile_error_429">รีเฟรชโปรไฟล์เร็วเกินไป — ลองอีกครั้งในอีกสักครู่</string>
+    <string name="travel_profile_error_generic">มีบางอย่างผิดพลาด โปรดลองอีกครั้ง</string>
+
+    <!-- Travel windows -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">คุณถึงขีดจำกัดช่วงเวลาเดินทางของแผนคุณแล้ว</string>
+    <string name="tw_add_window">เพิ่มช่วงเวลาเดินทาง</string>
+    <string name="tw_empty_title">ยังไม่มีช่วงเวลาเดินทาง</string>
+    <string name="tw_empty_body">บอกเราว่าคุณอยากเดินทางเมื่อใด — เราจะนำการแลกสำเร็จรูปมาให้สำหรับวันที่เหล่านั้น</string>
+    <string name="tw_header_empty">คุณอยากไปเมื่อใด?</string>
+    <string name="tw_header_count">บันทึกแล้ว %1$d</string>
+    <string name="tw_header_body">บันทึกวันที่คุณใฝ่ฝัน ผู้ช่วยจะจัดการแลกจากบ้านจริงที่ว่างพอดีในตอนนั้น</string>
+    <string name="tw_new_window">ช่วงเวลาเดินทางใหม่</string>
+    <string name="tw_date_from">ตั้งแต่</string>
+    <string name="tw_date_to">ถึง</string>
+    <string name="tw_end_after_start">วันที่สิ้นสุดต้องอยู่หลังวันที่เริ่มต้น</string>
+    <string name="tw_flexible_title">วันที่ของฉันยืดหยุ่นได้</string>
+    <string name="tw_flexible_body">เราจะขยายการค้นหารอบๆ วันเหล่านี้</string>
+    <string name="tw_where_label">จะไปที่ไหน? (ไม่บังคับ)</string>
+    <string name="tw_where_placeholder">ลิสบอน, โปรตุเกส, บาร์เซโลนา</string>
+    <string name="tw_where_hint">เมืองหรือประเทศคั่นด้วยจุลภาค — เว้นว่างเพื่อไปได้ทุกที่</string>
+    <string name="tw_notes_label">บันทึก (ไม่บังคับ)</string>
+    <string name="tw_notes_placeholder">ทริปครบรอบ อยากได้ที่เดินไปไหนมาไหนสะดวก…</string>
+    <string name="tw_save_window">บันทึกช่วงเวลาเดินทาง</string>
+    <string name="tw_flexible_chip">ยืดหยุ่น</string>
+    <string name="tw_anywhere">ที่ไหนก็ได้</string>
+    <string name="tw_remove_window">ลบช่วงเวลาเดินทางนี้</string>
+    <string name="tw_hide_swaps">ซ่อนการแลกสำหรับวันที่เหล่านี้</string>
+    <string name="tw_show_swaps">แสดงการแลกสำหรับวันที่เหล่านี้</string>
+    <string name="tw_proposals_load_error">ไม่สามารถโหลดการแลกได้</string>
+    <string name="tw_proposals_loading">กำลังค้นหาบ้านที่ว่างสำหรับวันที่ของคุณ…</string>
+    <string name="tw_proposals_no_listing">เพิ่มประกาศที่ใช้งานอยู่ก่อน — การแลกต้องมีบ้านสองหลัง</string>
+    <string name="tw_proposals_empty">ยังไม่มีบ้านว่างสำหรับวันที่เหล่านี้พอดี — เราจะคอยติดตามและส่งอีเมลถึงคุณเมื่อมีบ้านที่ตรงกัน</string>
+    <string name="tw_match_pct">ตรงกัน %1$d%%</string>
+    <string name="tw_on_wishlist">ในจุดหมายที่ถูกใจของคุณ</string>
+    <string name="tw_mode_direct_swap">แลกโดยตรง</string>
+    <string name="tw_mode_keys_stay">เข้าพักด้วย Keys</string>
+    <string name="tw_mode_keys_stay_nightly">เข้าพักด้วย Keys · %1$d Keys/คืน</string>
+
+    <!-- Public profile -->
+    <string name="profile_report_user">รายงานผู้ใช้นี้</string>
+    <string name="profile_anonymous_host">เจ้าบ้านไม่ระบุชื่อ</string>
+    <string name="profile_id_verified">ยืนยันตัวตนแล้ว</string>
+    <string name="profile_host_avatar">รูปโปรไฟล์เจ้าบ้าน</string>
+    <string name="profile_work">งานของฉัน: %1$s</string>
+    <string name="profile_speaks">พูด %1$s</string>
+    <string name="profile_lives_in">อาศัยอยู่ใน %1$s</string>
+    <string name="profile_joined_swapl">เข้าร่วม Swapl</string>
+    <string name="profile_a_member">สมาชิก Swapl คนหนึ่ง</string>
+    <string name="profile_visited_label">ที่ที่ฉันเคยไป</string>
+    <string name="profile_visited_empty">ยังไม่มีการแลกที่เสร็จสมบูรณ์ — ตราประทับพาสปอร์ตจะปรากฏที่นี่หลังการเข้าพักแต่ละครั้ง</string>
+    <string name="profile_reviews_label_plain">รีวิว</string>
+    <string name="profile_reviews_label_count">รีวิว (%1$d)</string>
+    <string name="profile_reviews_empty">ยังไม่มีรีวิว — เจ้าบ้านรีวิวซึ่งกันและกันหลังการแลกที่เสร็จสมบูรณ์</string>
+    <string name="profile_interests_label">ความสนใจ</string>
+    <string name="profile_their_homes">บ้านของพวกเขา</string>
+    <string name="profile_sqm_sleeps">%1$d ตร.ม. · นอนได้ %2$d</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="other">การแลก</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="other">รีวิว</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="other">ปีบน Swapl</item>
+    </plurals>
+
+    <!-- Account settings -->
+    <string name="settings_personal_info_title">ข้อมูลส่วนตัว</string>
+    <string name="settings_display_name">ชื่อที่แสดง</string>
+    <string name="settings_about_you">เกี่ยวกับคุณ</string>
+    <string name="settings_about_you_placeholder">บอกเจ้าบ้านเล็กน้อยเกี่ยวกับตัวคุณ</string>
+    <string name="settings_my_work">งานของฉัน</string>
+    <string name="settings_my_work_placeholder">เช่น สถาปนิก</string>
+    <string name="settings_languages">ภาษา</string>
+    <string name="settings_languages_placeholder">เช่น อังกฤษ, อิตาลี</string>
+    <string name="settings_languages_hint">คั่นภาษาด้วยจุลภาค</string>
+    <string name="settings_home_city">เมืองที่อยู่อาศัย</string>
+    <string name="settings_home_city_placeholder">เช่น มิลาน</string>
+    <string name="settings_home_country">ประเทศที่อยู่อาศัย</string>
+    <string name="settings_home_country_placeholder">เช่น อิตาลี</string>
+    <string name="settings_saved_confirm">บันทึกแล้ว โปรไฟล์สาธารณะของคุณเป็นปัจจุบัน</string>
+    <string name="settings_save_changes">บันทึกการเปลี่ยนแปลง</string>
+    <string name="settings_change_password">เปลี่ยนรหัสผ่าน</string>
+    <string name="pw_current_label">รหัสผ่านปัจจุบัน</string>
+    <string name="pw_current_hint">เว้นว่างหากคุณลงทะเบียนด้วย Google, Telegram หรือรหัสทางอีเมล</string>
+    <string name="pw_new_label">รหัสผ่านใหม่</string>
+    <string name="pw_new_hint">อย่างน้อย 6 ตัวอักษร อุปกรณ์อื่นจะถูกออกจากระบบ</string>
+    <string name="pw_confirm_label">ยืนยันรหัสผ่านใหม่</string>
+    <string name="pw_error_min6">ใช้อย่างน้อย 6 ตัวอักษร</string>
+    <string name="pw_error_mismatch">รหัสผ่านไม่ตรงกัน</string>
+    <string name="pw_error_incorrect">รหัสผ่านปัจจุบันไม่ถูกต้อง</string>
+    <string name="pw_error_too_many">พยายามมากเกินไป — ลองอีกครั้งในอีกหนึ่งชั่วโมง</string>
+    <string name="pw_error_generic">ไม่สามารถเปลี่ยนรหัสผ่านได้ ลองอีกครั้ง</string>
+    <string name="settings_privacy_title">ความเป็นส่วนตัว</string>
+    <string name="settings_seo_title">การจัดทำดัชนีในเครื่องมือค้นหา</string>
+    <string name="settings_seo_subtitle">อนุญาตให้หน้าประกาศของคุณปรากฏในเครื่องมือค้นหาอย่าง Google</string>
+    <string name="settings_show_home_city_title">แสดงเมืองที่อยู่อาศัยของฉัน</string>
+    <string name="settings_show_home_city_subtitle">แสดงเมืองและประเทศที่อยู่อาศัยของคุณบนโปรไฟล์สาธารณะ</string>
+    <string name="settings_notifications_title">การแจ้งเตือน</string>
+    <string name="settings_email_notif_title">การแจ้งเตือนทางอีเมล</string>
+    <string name="settings_email_notif_subtitle">ข้อเสนอ การยืนยัน และการเตือนทริปทางอีเมล</string>
+    <string name="settings_push_notif_title">การแจ้งเตือนแบบพุช</string>
+    <string name="settings_push_notif_subtitle">การแจ้งเตือนแบบเรียลไทม์บนอุปกรณ์นี้เมื่อมีบางอย่างต้องการคุณ</string>
+
+    <!-- Keys wallet -->
+    <string name="keys_travel_points">แต้มเดินทาง</string>
+    <string name="keys_intro">แต้มที่คุณได้รับจากการเป็นเจ้าบ้าน ใช้กับการเข้าพัก — ไม่ใช่เงิน ไม่ใช่การซื้อหรือถอนเป็นเงินสด</string>
+    <string name="keys_your_homes_earn">บ้านของคุณได้รับ</string>
+    <string name="keys_your_homes_earn_body">นี่คือสิ่งที่คุณได้รับในแต่ละคืนที่แขกเข้าพัก — แต้มที่คุณสามารถนำไปใช้กับการเข้าพักที่อื่นได้</string>
+    <string name="keys_history">ประวัติ</string>
+    <string name="keys_history_empty">ยังไม่มีกิจกรรมเกี่ยวกับแต้ม รับแต้มด้วยการเป็นเจ้าบ้าน หรือมอบให้เพื่อน</string>
+    <string name="keys_see_all_history">ดูประวัติแต้มทั้งหมด</string>
+    <string name="keys_your_travel_points">แต้มเดินทางของคุณ</string>
+    <string name="keys_balance_caption">ใช้กับการเข้าพักโดยไม่ต้องแลกพร้อมกัน แต้มไม่ใช่เงิน — คุณไม่สามารถซื้อหรือถอนเป็นเงินสดได้</string>
+    <string name="keys_gift_points">มอบแต้ม</string>
+    <string name="keys_gift_entry_subtitle">ส่งแต้มให้เพื่อนที่ยืนยันตัวตนแล้ว</string>
+    <string name="keys_per_night">%1$d / คืน</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="other">ยอดของคุณครอบคลุมประมาณ %1$d คืนที่อัตรานี้</item>
+    </plurals>
+    <string name="keys_how_it_works">แต้มทำงานอย่างไร</string>
+    <string name="keys_example_host">เป็นเจ้าบ้าน 2 คืนที่ %1$d แต้ม/คืน</string>
+    <string name="keys_example_spend">ใช้ %1$d แต้มนั้นกับ 2 คืนที่อื่น</string>
+    <string name="keys_loop_caption">นี่คือวงจรทั้งหมด: เป็นเจ้าบ้าน → รับแต้ม → เดินทาง → ทำซ้ำ ไม่มีการแลกเงิน</string>
+    <string name="keys_get_first">รับแต้มแรกของคุณ</string>
+    <string name="keys_earn_verify_title">ยืนยันตัวตนของคุณ</string>
+    <string name="keys_earn_verify_body">รับ %1$d แต้มทันทีที่คุณยืนยันตัวตน — ทันใด</string>
+    <string name="keys_earn_host_title">รับรองการเข้าพัก</string>
+    <string name="keys_earn_host_body">รับแต้มทุกคืนที่แขกเข้าพักกับคุณ</string>
+    <string name="keys_earn_gift_title">รับของขวัญ</string>
+    <string name="keys_earn_gift_body">เพื่อนที่ยืนยันตัวตนแล้วสามารถส่งแต้มให้คุณ — แชร์ ID สมาชิกของคุณ</string>
+    <string name="keys_error_title">แต้มไม่พร้อมใช้งาน</string>
+    <string name="keys_gift_member_id">ID สมาชิก</string>
+    <string name="keys_gift_member_id_hint">ขอ ID สมาชิก Swapl จากเพื่อนของคุณ พวกเขาต้องเป็นสมาชิกที่ยืนยันตัวตนแล้ว</string>
+    <string name="keys_gift_caps">สูงสุด %1$d ต่อของขวัญ, %2$d ต่อวัน แต้มเป็นของขวัญ — ไม่สามารถซื้อหรือถอนเป็นเงินสดได้</string>
+    <plurals name="keys_points_amount">
+        <item quantity="other">%1$d แต้ม</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="other">ส่ง %1$d แต้มแล้ว ตอนนี้คุณมี %2$d</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">ทั้งคุณและเพื่อนต้องเป็นสมาชิกที่ยืนยันตัวตนแล้วเพื่อมอบแต้ม</string>
+    <string name="keys_gift_error_not_found">เราไม่พบสมาชิกนั้น ตรวจสอบ ID อีกครั้ง</string>
+    <string name="keys_gift_error_insufficient">คุณมีแต้มไม่เพียงพอสำหรับของขวัญนี้</string>
+    <string name="keys_gift_error_generic">ไม่สามารถส่งแต้มได้ในตอนนี้</string>
+
+    <!-- Invite &amp; earn -->
+    <string name="invite_title">เชิญและรับแต้ม</string>
+    <string name="invite_intro">ชวนเพื่อน รับแต้มเดินทาง เลื่อนอันดับในรายการเข้าใช้งานก่อนใคร แต้มไม่ใช่เงินเสมอ</string>
+    <string name="invite_share_message">มาร่วมกับฉันบน Swapl — แลกบ้านและเดินทางด้วยแต้ม ไม่ใช่เงินสด ใช้ลิงก์ของฉันแล้วเราทั้งคู่จะได้ %1$d แต้มเดินทางเมื่อคุณยืนยันตัวตน: %2$s</string>
+    <string name="invite_share_subject">มาร่วมกับฉันบน Swapl</string>
+    <string name="invite_share_chooser">แชร์คำเชิญของคุณ</string>
+    <string name="invite_hero_kicker">ชวนเพื่อน เลื่อนอันดับ</string>
+    <string name="invite_hero_points_earned">แต้มที่ได้รับ</string>
+    <string name="invite_hero_spot_in_line">อันดับของคุณในรายการ</string>
+    <string name="invite_hero_body">เพื่อนทุกคนที่เข้าร่วมและยืนยันตัวตนทำให้คุณได้รับ %1$d แต้มเดินทาง — และเลื่อนอันดับขึ้นในรายการเข้าใช้งานก่อนใคร แต้มไม่ใช่เงินเสมอ</string>
+    <string name="invite_referral_link_label">ลิงก์แนะนำของคุณ</string>
+    <string name="invite_share_button">แชร์</string>
+    <string name="invite_share_caption">แชร์ลิงก์นี้ทั้งหมด — นั่นคือสิ่งที่สำคัญ แตะครั้งเดียวส่งได้ทุกที่: Messages, WhatsApp, อีเมล เพื่อนของคุณแตะ เข้าร่วม และเมื่อยืนยันตัวตน คุณทั้งคู่จะได้รับแต้ม</string>
+    <string name="invite_to_stay_title">เชิญใครสักคนมาเข้าพัก</string>
+    <string name="invite_to_stay_subtitle">ส่งคำเชิญส่วนตัวที่ผูกกับบ้านของคุณ</string>
+    <string name="invite_tier_label">ระดับของคุณ</string>
+    <string name="invite_tier_not_started">ยังไม่เริ่ม</string>
+    <string name="invite_tier_no_perk">เชิญเพื่อนคนแรกของคุณเพื่อปลดล็อกสิทธิพิเศษ</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="other">ต้องการเพื่อนที่ยืนยันตัวตนแล้วอีก %1$d คนเพื่อไปถึง %2$s</item>
+    </plurals>
+    <string name="invite_tier_top">ถึงระดับสูงสุดแล้ว — คุณคือผู้ก่อตั้ง Swapl</string>
+    <string name="invite_leaderboard_label">ตารางอันดับ</string>
+    <string name="invite_you_badge">คุณ</string>
+    <string name="invite_your_invites">คำเชิญของคุณ (%1$d)</string>
+    <string name="invite_antifarm_note">แต้มจะเข้าก็ต่อเมื่อเพื่อนยืนยันตัวตน — ทำให้รายการยุติธรรมสำหรับทุกคน แต้มเป็นเครดิตเดินทาง ไม่ใช่เงินสด</string>
+    <string name="invite_error_title">คำเชิญไม่พร้อมใช้งาน</string>
+    <string name="invite_list_home_title">ลงประกาศบ้านของคุณก่อน</string>
+    <string name="invite_list_home_body">ลิงก์เชิญมาเข้าพักผูกกับประกาศของคุณเอง สร้างบ้านในเมนูบัญชี แล้วเชิญเพื่อนมาเข้าพัก</string>
+    <string name="invite_verify_home_title">ยืนยันบ้านของคุณก่อน</string>
+    <string name="invite_verify_home_body">ยืนยันประกาศนี้ก่อนเชิญแขกมาเข้าพัก — มิฉะนั้นรางวัลของเพื่อนคุณจะไม่สามารถจ่ายได้ ยืนยันจากเมนูบัญชี → ประกาศของคุณ</string>
+    <string name="invite_inviting_guest_to">กำลังเชิญแขกมาที่</string>
+    <string name="invite_your_home">บ้านของคุณ</string>
+    <string name="invite_friend_email_label">อีเมลของเพื่อน (ไม่บังคับ)</string>
+    <string name="invite_friend_email_placeholder">friend@email.com</string>
+    <string name="invite_friend_email_hint">เพิ่มอีเมลเพื่อจับคู่คำเชิญอัตโนมัติเมื่อพวกเขาลงทะเบียน หรือเว้นว่างไว้สำหรับลิงก์เปิดที่ใครก็ใช้ได้</string>
+    <string name="invite_ready">คำเชิญพร้อมแล้ว</string>
+    <string name="invite_stay_share_message">ฉันอยากต้อนรับคุณบน Swapl — แลกบ้านและเดินทางด้วยแต้ม ไม่ใช่เงินสด นี่คือคำเชิญให้คุณมาเข้าพักที่ %1$s: %2$s</string>
+    <string name="invite_stay_share_subject">มาเข้าพักที่ %1$s</string>
+    <string name="invite_stay_share_chooser">แชร์ลิงก์คำเชิญ</string>
+    <string name="invite_share_link_button">แชร์ลิงก์คำเชิญ</string>
+    <string name="invite_creating">กำลังสร้าง…</string>
+    <string name="invite_create_link">สร้างลิงก์คำเชิญ</string>
+    <string name="invite_stay_reward">เมื่อพวกเขาเข้าร่วมและยืนยันตัวตน คุณทั้งคู่จะได้รับ %1$d แต้มเดินทาง แต้มไม่ใช่เงินเสมอ</string>
+    <string name="invite_stay_reward_generic">เมื่อพวกเขาเข้าร่วมและยืนยันตัวตน คุณทั้งคู่จะได้รับแต้มเดินทาง แต้มไม่ใช่เงินเสมอ</string>
+    <string name="invite_err_not_verified">ยืนยันประกาศนี้ก่อนเชิญแขกมาเข้าพัก — มิฉะนั้นรางวัลของเพื่อนคุณจะไม่สามารถจ่ายได้</string>
+    <string name="invite_err_not_owner">คุณสามารถเชิญแขกได้เฉพาะที่ประกาศของคุณเอง</string>
+    <string name="invite_err_cooldown">คุณส่งคำเชิญจำนวนมากในชั่วโมงที่ผ่านมา — ลองอีกครั้งในอีกสักครู่ เป็นการพักสั้นๆ ไม่ใช่การแบน</string>
+    <string name="invite_err_generic">ไม่สามารถสร้างคำเชิญได้ในตอนนี้</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">หาแรงบันดาลใจ</string>
+    <string name="inspire_intro">บอกเราถึงทริปที่คุณใฝ่ฝัน — เราจะจัดการแลกจากบ้านจริงที่เข้ากับบ้านของคุณ</string>
+    <string name="inspire_wish_label">ความปรารถนาของคุณ</string>
+    <string name="inspire_wish_placeholder">ที่ไหนสักแห่งที่อบอุ่น มีอาหารอร่อย เดินไปไหนมาไหนสะดวก เหมาะกับการทำงานทางไกล…</string>
+    <string name="inspire_mic_stop">หยุดฟัง</string>
+    <string name="inspire_mic_start">พูดความปรารถนาของคุณ</string>
+    <string name="inspire_listening">กำลังฟัง — พูดได้อย่างอิสระ แตะไมโครโฟนอีกครั้งเพื่อหยุด</string>
+    <string name="inspire_mic_denied">การเข้าถึงไมโครโฟนถูกปิดสำหรับ Swapl — เปิดใช้งานในการตั้งค่าเพื่อพูดความปรารถนาของคุณ</string>
+    <string name="inspire_dates_in_mind">ฉันมีวันที่ในใจ</string>
+    <string name="inspire_dates_in_mind_sub">มิฉะนั้นเราจะใช้ช่วงที่บ้านของคุณว่าง</string>
+    <string name="inspire_dream_up">สร้างการแลกของฉัน</string>
+    <string name="inspire_loading_1">กำลังสร้างการแลกของคุณ…</string>
+    <string name="inspire_loading_2">กำลังจับคู่บ้านกับสไตล์ของคุณ…</string>
+    <string name="inspire_loading_3">กำลังตรวจสอบว่าใครว่างตอนที่คุณว่าง…</string>
+    <string name="inspire_loading_4">กำลังเก็บกระเป๋าเสมือนของคุณ…</string>
+    <string name="inspire_package_title">แพ็กเกจการแลกของคุณ</string>
+    <string name="inspire_understood">เข้าใจแล้ว: %1$s</string>
+    <string name="inspire_dates_label">วันที่</string>
+    <string name="inspire_dates_suggested">แนะนำจากช่วงที่บ้านของคุณว่าง — ปรับได้อย่างอิสระ</string>
+    <string name="inspire_message_label">ข้อความของคุณ</string>
+    <string name="inspire_message_ai">ร่างโดย AI จากประกาศของคุณและของพวกเขา — ทำให้เป็นของคุณ</string>
+    <string name="inspire_swap_pick">หรือเปลี่ยนตัวเลือก</string>
+    <string name="inspire_match_pct">ตรงกัน %1$d%%</string>
+    <string name="inspire_while_there">ขณะที่คุณอยู่ที่นั่น</string>
+    <string name="inspire_experiences_note">จองบนเว็บไซต์ของพาร์ตเนอร์ที่ราคาของพวกเขา — swapl อาจได้รับค่าคอมมิชชัน ไม่เคยบวกราคาเพิ่ม</string>
+    <string name="inspire_travel_essentials">สิ่งจำเป็นในการเดินทาง</string>
+    <string name="inspire_concierge_addons">ส่วนเสริมคอนเซียร์จ swapl</string>
+    <string name="inspire_addons_note">ราคาแคตตาล็อกจริง ยกเลิกการเลือกสิ่งที่คุณไม่ต้องการ — คุณจะถูกเรียกเก็บเงินก็ต่อเมื่อเจ้าบ้านยอมรับการแลกของคุณ</string>
+    <string name="inspire_payable_if_accepts">ชำระหากเจ้าบ้านยอมรับ</string>
+    <string name="inspire_nothing_payable">ไม่มีอะไรต้องชำระ — การยืนยันเป็นเพียงการส่งข้อเสนอ</string>
+    <string name="inspire_confirm_send">ยืนยันและส่งข้อเสนอ</string>
+    <string name="inspire_charged_note">คุณจะถูกเรียกเก็บเงินก็ต่อเมื่อเจ้าบ้านยอมรับการแลกของคุณ</string>
+    <string name="inspire_dismissing">กำลังปิด…</string>
+    <string name="inspire_not_feeling">ไม่ค่อยถูกใจ</string>
+    <string name="inspire_almost_there">ใกล้แล้ว</string>
+    <string name="inspire_payment_title">การชำระเงินและการจอง</string>
+    <string name="inspire_your_selection">การเลือกของคุณ</string>
+    <string name="inspire_partner_note">ประสบการณ์และบริการของพาร์ตเนอร์จองบนเว็บไซต์ของพาร์ตเนอร์ — ไม่เคยถูกเรียกเก็บโดย swapl และไม่รวมในยอดรวมนี้</string>
+    <string name="inspire_save_card">บันทึกบัตรและส่งข้อเสนอ</string>
+    <string name="inspire_send_no_card">ส่งโดยไม่บันทึกบัตร</string>
+    <string name="inspire_back_to_package">กลับไปที่แพ็กเกจ</string>
+    <string name="inspire_book_on">จองบน %1$s</string>
+    <string name="inspire_err_no_match">เราต้องการบ้านที่ใช้งานอยู่ของคุณ — และบ้านที่เข้ากันได้อย่างน้อยหนึ่งหลัง — เพื่อจัดแพ็กเกจ</string>
+    <string name="inspire_err_rate">คุณฝันเร็วไป! รอสักสองสามนาทีแล้วลองอีกครั้ง</string>
+    <string name="inspire_err_limit">คุณถึงขีดจำกัดข้อเสนอของแผนคุณแล้ว อัปเกรดเพื่อส่งเพิ่ม</string>
+    <string name="inspire_err_forbidden">บัญชีของคุณไม่สามารถส่งข้อเสนอได้ในตอนนี้</string>
+    <string name="inspire_err_generic">มีบางอย่างผิดพลาด โปรดลองอีกครั้ง</string>
+
+
+    <!-- Bottom navigation -->
+    <string name="nav_browse">เรียกดู</string>
+    <string name="nav_wishlists">รายการที่ถูกใจ</string>
+    <string name="nav_trips">ทริป</string>
+    <string name="nav_swaps">การแลก</string>
+    <string name="nav_account">บัญชี</string>
+</resources>

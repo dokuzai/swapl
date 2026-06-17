@@ -150,6 +150,7 @@ struct SwapChatView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            if let trip = tripSummary { pinnedListingBanner(trip) }
             thread
             composer
         }
@@ -158,17 +159,30 @@ struct SwapChatView: View {
         // flush at the bottom, like other messaging apps (WhatsApp etc.).
         .toolbar(.hidden, for: .tabBar)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         // Telegram-style header: name + trip subtitle (tap → the Trip screen),
-        // with the home thumbnail as a round avatar on the right.
+        // with the counterparty's profile photo as a round avatar on the right
+        // (tap → their public profile).
         .toolbar {
             ToolbarItem(placement: .principal) { chatTitle }
             if let trip = tripSummary {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(value: trip.id) {
-                        ProposalCoverImage(proposal: trip, size: 32)
-                            .clipShape(Circle())
+                    Group {
+                        if let uid = trip.otherUserId {
+                            NavigationLink {
+                                PublicProfileView(userId: uid)
+                            } label: {
+                                CounterpartyAvatar(name: trip.otherName, avatarUrl: trip.otherAvatar, size: 32)
+                            }
+                            .accessibilityLabel(Text("View \(trip.otherName ?? String(localized: "host"))'s profile"))
+                        } else {
+                            // Older deploys without otherUserId: fall back to the trip.
+                            NavigationLink(value: trip.id) {
+                                CounterpartyAvatar(name: trip.otherName, avatarUrl: trip.otherAvatar, size: 32)
+                            }
+                            .accessibilityLabel(Text("Open trip"))
+                        }
                     }
-                    .accessibilityLabel(Text("Open trip"))
                 }
             }
         }
@@ -194,13 +208,55 @@ struct SwapChatView: View {
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(1)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .glassEffect(.regular, in: .capsule)
             }
             .buttonStyle(.plain)
         } else {
             Text(name)
                 .font(.swaplBody(16, weight: .bold))
                 .foregroundStyle(AirbnbPalette.text)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .glassEffect(.regular, in: .capsule)
         }
+    }
+
+    // Telegram-style pinned message: a fixed banner under the header showing the
+    // home being swapped. Tap → the Trip (home & photos).
+    private func pinnedListingBanner(_ trip: ProposalSummary) -> some View {
+        NavigationLink(value: trip.id) {
+            HStack(spacing: 12) {
+                ProposalCoverImage(proposal: trip, size: 40)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(String(localized: "View home & photos"))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+                    Text("\(trip.theirNeighbourhood), \(trip.theirCity)")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 8)
+                Image(systemName: "pin.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 12)
+        .padding(.top, 6)
+        .padding(.bottom, 4)
+        .accessibilityLabel(Text("Pinned: view home and photos"))
     }
 
     private var thread: some View {

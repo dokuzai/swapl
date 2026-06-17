@@ -32,7 +32,11 @@ struct SwaplApp: App {
         let largeTitleFont = UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: baseLargeTitleFont)
 
         let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
+        // Transparent everywhere — no solid/translucent header bar. Floating
+        // glass controls (back / title pill / avatar) sit over the content.
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.shadowColor = .clear
         appearance.titleTextAttributes = [.font: titleFont, .foregroundColor: foreground]
         appearance.largeTitleTextAttributes = [.font: largeTitleFont, .foregroundColor: foreground]
 

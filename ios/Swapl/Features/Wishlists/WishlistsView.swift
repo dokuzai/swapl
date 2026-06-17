@@ -15,6 +15,12 @@ final class WishlistsViewModel {
         case country, city, feedback, availableToday
     }
     var sortBy: SortOption = .country
+
+    // Optional sectioning of the grid by a shared attribute.
+    enum GroupOption: String, CaseIterable {
+        case none, country, city
+    }
+    var groupBy: GroupOption = .none
     var filterStart: Date?
     var filterEnd: Date?
     var hasDateFilter: Bool { filterStart != nil && filterEnd != nil }
@@ -48,14 +54,10 @@ struct WishlistsView: View {
 
     var body: some View {
         NavigationStack {
-            // Title lives outside the state switch so it is visible in the
-            // loading / error / empty states too, matching the other tabs.
-            VStack(spacing: 0) {
-                SwaplPageTitle("Wishlists") {
-                    if !vm.items.isEmpty { titleFilters }
-                }
-                stateContent
-            }
+            // The title scrolls with the grid (it fades away as you scroll, like
+            // Explore) — no fixed header bar. In the non-scrolling states it just
+            // sits at the top.
+            stateContent
             .background(SwaplSemanticLight.background)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
@@ -70,29 +72,44 @@ struct WishlistsView: View {
         }
     }
 
+    private var titleBar: some View {
+        SwaplPageTitle("Wishlists") {
+            if !vm.items.isEmpty { titleFilters }
+        }
+    }
+
     @ViewBuilder
     private var stateContent: some View {
         Group {
             if vm.isLoading && !vm.hasLoaded {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .accessibilityLabel("Loading saved homes")
+                VStack(spacing: 0) {
+                    titleBar
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .accessibilityLabel("Loading saved homes")
+                }
             } else if let error = vm.error {
-                SwaplEmptyState(
-                    systemImage: "wifi.exclamationmark",
-                    title: "Wishlists unavailable",
-                    description: error,
-                    actionTitle: "Try Again",
-                    action: { Task { await vm.load() } }
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                VStack(spacing: 0) {
+                    titleBar
+                    SwaplEmptyState(
+                        systemImage: "wifi.exclamationmark",
+                        title: "Wishlists unavailable",
+                        description: error,
+                        actionTitle: "Try Again",
+                        action: { Task { await vm.load() } }
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             } else if visibleItems.isEmpty {
-                SwaplEmptyState(
-                    systemImage: "heart",
-                    title: "No saved homes yet",
-                    description: "Tap the heart on any home to save it here."
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                VStack(spacing: 0) {
+                    titleBar
+                    SwaplEmptyState(
+                        systemImage: "heart",
+                        title: "No saved homes yet",
+                        description: "Tap the heart on any home to save it here."
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             } else {
                 grid
             }
@@ -142,6 +159,29 @@ struct WishlistsView: View {
         }
     }
 
+    private func groupLabel(_ option: WishlistsViewModel.GroupOption) -> String {
+        switch option {
+        case .none: return String(localized: "No grouping")
+        case .country: return String(localized: "Country")
+        case .city: return String(localized: "City")
+        }
+    }
+
+    // visibleItems already carries the chosen sort; grouping just buckets that
+    // ordered list, preserving order within each section.
+    private var groupedItems: [(key: String, items: [Listing])] {
+        let items = visibleItems
+        guard vm.groupBy != .none else { return [("", items)] }
+        var order: [String] = []
+        var map: [String: [Listing]] = [:]
+        for item in items {
+            let key = vm.groupBy == .country ? item.country : item.city
+            if map[key] == nil { order.append(key) }
+            map[key, default: []].append(item)
+        }
+        return order.map { ($0, map[$0] ?? []) }
+    }
+
     // Compact filters that sit inline with the page title (glass icon buttons,
     // so they always fit the title row regardless of width).
     private var titleFilters: some View {
@@ -160,6 +200,26 @@ struct WishlistsView: View {
                     .glassEffect(.regular.interactive(), in: .circle)
             }
             .accessibilityLabel(Text("Order by"))
+
+            Menu {
+                Picker(String(localized: "Group by"), selection: Bindable(vm).groupBy) {
+                    ForEach(WishlistsViewModel.GroupOption.allCases, id: \.self) { opt in
+                        Text(groupLabel(opt)).tag(opt)
+                    }
+                }
+            } label: {
+                Image(systemName: "square.stack.3d.up")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .frame(width: 40, height: 40)
+                    .glassEffect(.regular.interactive(), in: .circle)
+                    .overlay(alignment: .topTrailing) {
+                        if vm.groupBy != .none {
+                            Circle().fill(SwaplSemanticLight.primary).frame(width: 9, height: 9)
+                        }
+                    }
+            }
+            .accessibilityLabel(Text("Group by"))
 
             Button { showDateFilter = true } label: {
                 Image(systemName: "calendar")
@@ -214,15 +274,27 @@ struct WishlistsView: View {
 
     private var grid: some View {
         ScrollView {
-            LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
-                ForEach(visibleItems) { listing in
-                    NavigationLink(value: listing.id) {
-                        WishlistCardView(listing: listing)
+            LazyVStack(alignment: .leading, spacing: 18) {
+                titleBar
+                ForEach(groupedItems, id: \.key) { group in
+                    if vm.groupBy != .none {
+                        Text(group.key)
+                            .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                            .foregroundStyle(AirbnbPalette.text)
+                            .padding(.horizontal, 22)
+                            .padding(.top, 4)
                     }
-                    .buttonStyle(.plain)
+                    LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
+                        ForEach(group.items) { listing in
+                            NavigationLink(value: listing.id) {
+                                WishlistCardView(listing: listing)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 22)
                 }
             }
-            .padding(.horizontal, 22)
             .padding(.top, 8)
             .padding(.bottom, 32)
         }

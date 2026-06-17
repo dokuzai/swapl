@@ -16,6 +16,14 @@ import { es } from "./dict-es";
 import { pt } from "./dict-pt";
 import { nl } from "./dict-nl";
 import { tr } from "./dict-tr";
+import { zh } from "./dict-zh";
+import { ar } from "./dict-ar";
+import { ja } from "./dict-ja";
+import { ro } from "./dict-ro";
+import { el } from "./dict-el";
+import { fa } from "./dict-fa";
+import { th } from "./dict-th";
+import { id } from "./dict-id";
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
@@ -26,7 +34,7 @@ import {
 
 // Partial registry: any locale missing here falls back to English at runtime.
 // Currently every advertised locale ships a dict.
-const RAW_DICTIONARIES: Partial<Record<Locale, Partial<Record<DictKey, string>>>> = { en, it, fr, de, es, pt, nl, tr };
+const RAW_DICTIONARIES: Partial<Record<Locale, Partial<Record<DictKey, string>>>> = { en, it, fr, de, es, pt, nl, tr, zh, ar, ja, ro, el, fa, th, id };
 
 // Merge each non-English dictionary on top of English so missing or empty
 // translations transparently use the English string.

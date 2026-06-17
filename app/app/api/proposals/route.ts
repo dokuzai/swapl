@@ -23,8 +23,8 @@ export async function GET(req: Request) {
       ],
     },
     include: {
-      proposerListing: { select: { id: true, city: true, neighbourhood: true, paletteHint: true, photos: true } },
-      targetListing: { select: { id: true, city: true, neighbourhood: true, userId: true, paletteHint: true, photos: true } },
+      proposerListing: { select: { id: true, city: true, country: true, neighbourhood: true, paletteHint: true, photos: true } },
+      targetListing: { select: { id: true, city: true, country: true, neighbourhood: true, userId: true, paletteHint: true, photos: true } },
       proposer: { select: { id: true, name: true } },
     },
     orderBy: { updatedAt: "desc" },
@@ -38,9 +38,10 @@ export async function GET(req: Request) {
   });
   const others = await prisma.user.findMany({
     where: { id: { in: Array.from(otherIds) } },
-    select: { id: true, name: true },
+    select: { id: true, name: true, avatar: true },
   });
   const nameById = new Map(others.map((u) => [u.id, u.name]));
+  const avatarById = new Map(others.map((u) => [u.id, u.avatar]));
 
   // First photo of a listing, or null — `photos` is a JSON-encoded string[].
   const coverPhotoUrl = (listing: { photos: string }) =>
@@ -64,9 +65,12 @@ export async function GET(req: Request) {
       myNeighbourhood: myListing.neighbourhood,
       myCoverPhotoUrl: coverPhotoUrl(myListing),
       theirCity: theirListing.city,
+      theirCountry: theirListing.country,
       theirNeighbourhood: theirListing.neighbourhood,
       theirCoverPhotoUrl: coverPhotoUrl(theirListing),
       otherName: nameById.get(otherUserId) ?? null,
+      otherUserId,
+      otherAvatar: avatarById.get(otherUserId) ?? null,
       updatedAt: p.updatedAt.toISOString(),
       archivedAt: myArchivedAt?.toISOString() ?? null,
     };

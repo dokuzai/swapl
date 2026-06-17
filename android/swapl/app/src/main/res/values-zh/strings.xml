@@ -1,0 +1,1143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">欢迎回来</string>
+    <string name="auth_kicker_register">加入 Swapl</string>
+    <string name="auth_kicker_waitlist">抢先体验</string>
+    <string name="auth_headline_signin">以钥匙换钥匙。</string>
+    <string name="auth_headline_register">交换住所，\n而非酒店。</string>
+    <string name="auth_headline_waitlist">加入候补名单。</string>
+    <string name="auth_email">邮箱</string>
+    <string name="auth_password">密码</string>
+    <string name="auth_password_register">密码（至少 6 个字符）</string>
+    <string name="auth_signin">登录</string>
+    <string name="auth_signin_busy">正在登录…</string>
+    <string name="auth_create_account">创建账户</string>
+    <string name="auth_create_account_busy">正在创建账户…</string>
+    <string name="auth_join_waitlist">加入候补名单</string>
+    <string name="auth_join_waitlist_busy">加入中…</string>
+    <string name="auth_continue_with">或继续使用</string>
+    <string name="auth_passkey">使用通行密钥登录</string>
+    <string name="auth_google">使用 Google 继续</string>
+    <string name="auth_email_code">邮箱验证码</string>
+    <string name="auth_phone">手机</string>
+    <string name="auth_switch_to_register">初次使用 Swapl？创建账户</string>
+    <string name="auth_switch_to_waitlist">还没准备好？加入候补名单</string>
+    <string name="auth_switch_register_to_signin">已有账户？登录</string>
+    <string name="auth_switch_waitlist_to_signin">已有账户？登录</string>
+    <string name="auth_google_failed">Google 登录失败，请重试。</string>
+    <string name="auth_passkey_unavailable">通行密钥登录目前不可用。</string>
+    <string name="auth_passkey_failed">通行密钥登录失败，请重试。</string>
+    <string name="auth_passkey_none">此设备上还没有通行密钥。请用其他方式登录，然后在个人资料中添加一个。</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">使用邮箱验证码登录</string>
+    <string name="auth_otp_kicker_phone">使用手机登录</string>
+    <string name="auth_otp_headline_enter">输入验证码。</string>
+    <string name="auth_otp_headline_get">获取验证码。</string>
+    <string name="auth_otp_sent">我们已向 %1$s 发送了一个 6 位验证码，10 分钟后失效。</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">手机（例如 +39 333 123 4567）</string>
+    <string name="auth_otp_phone_help">请使用国际格式，例如 +39 333 123 4567。</string>
+    <string name="auth_otp_verify">验证验证码</string>
+    <string name="auth_otp_verify_busy">正在验证…</string>
+    <string name="auth_otp_resend">没收到？发送新验证码</string>
+    <string name="auth_otp_send">发送验证码</string>
+    <string name="auth_otp_send_busy">正在发送…</string>
+    <string name="auth_otp_back">返回密码登录</string>
+    <string name="verify_referral_toast">已验证！你通过推荐加入，获得了 %1$d 把钥匙。🔑</string>
+    <string name="verify_referral_toast_named">已验证！%1$s 的邀请让你获得了 %2$d 把钥匙。🔑</string>
+    <string name="referral_referrer_toast_named">%1$s 刚刚完成验证——你获得了 %2$d 把钥匙！🔑</string>
+    <string name="referral_referrer_toast">你邀请的人刚刚完成验证——你获得了 %1$d 把钥匙！🔑</string>
+
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">赚取钥匙的方式</string>
+    <string name="keys_earn_ways_subtitle">小小的行动就能补充你的旅行积分。做一次，或多次回来。</string>
+    <string name="keys_earn_way_done">已赚取——做得好！</string>
+    <string name="keys_earn_way_locked">验证身份以解锁此项</string>
+    <string name="keys_earn_verify_identity_title">验证你的身份</string>
+    <string name="keys_earn_verify_identity_body">快速验证即可解锁其他所有赚取方式。</string>
+    <string name="keys_earn_verify_property_title">验证房源</string>
+    <string name="keys_earn_verify_property_body">确认你拥有所发布的住所。</string>
+    <string name="keys_earn_complete_listing_title">完善你的房源</string>
+    <string name="keys_earn_complete_listing_body">添加照片和详情，让客人能想象入住的样子。</string>
+    <string name="keys_earn_leave_review_title">留下评价</string>
+    <string name="keys_earn_leave_review_body">告诉社区一次入住的体验如何。</string>
+    <string name="keys_earn_share_converted_title">分享一个被预订的住所</string>
+    <string name="keys_earn_share_converted_body">分享房源，当它促成入住时即可赚取钥匙。</string>
+    <string name="keys_earn_refer_friend_title">邀请好友</string>
+    <string name="keys_earn_refer_friend_body">好友加入并完成验证后，你们双方都能赚取。</string>
+    <string name="keys_earn_generic_title">赚取钥匙</string>
+    <string name="keys_earn_generic_body">完成此操作即可赚取旅行积分。</string>
+
+    <!-- Owner verification + publish acknowledgment (DOK-162) -->
+    <string name="owner_verified_badge">已验证房主</string>
+
+    <!-- Publish acknowledgment shown on the Review step before create -->
+    <string name="publish_ack_kicker">发布前</string>
+    <string name="publish_ack_mode_question">你将如何接待这套住所的客人？</string>
+    <string name="publish_ack_mode_entire_home">在我外出时，整套住所</string>
+    <string name="publish_ack_mode_room">一个房间，或在我在家时</string>
+    <string name="publish_ack_text_entire_home_headline">我有权在外出时将整套住所用于交换——如果我是租客，我的租约允许我在不在家时接待客人。</string>
+    <string name="publish_ack_text_entire_home_fineprint">我负责遵守我的租约、楼宇规定和当地法律。</string>
+    <string name="publish_ack_text_room_headline">我有权进行这次交换接待。</string>
+    <string name="publish_ack_text_room_fineprint">我会遵守楼宇规定和当地法律。</string>
+    <string name="publish_ack_required_error">请在发布前确认接待声明。</string>
+    <string name="publish_submit_failed">无法发布你的房源，请重试。</string>
+
+    <!-- Optional "Verify ownership" entry -->
+    <string name="owner_verify_cta">已验证房主徽章——可选</string>
+    <string name="owner_verify_cta_pending">已验证房主徽章——审核中</string>
+    <string name="owner_verify_cta_rejected">已验证房主徽章——请重试</string>
+    <string name="owner_verify_optional_note">为客人提升信任度。发布或交换从不强制要求。</string>
+    <string name="owner_verify_title">验证所有权</string>
+    <string name="owner_verify_explainer">添加一份能证明你对这套住所拥有权利的文件——房产证、产权登记，或你名下的租约。管理员会进行审核，通过后你的房源将显示\"已验证房主\"徽章。</string>
+    <string name="owner_verify_ai_explainer">快速的 AI 检查会先读取文件，确认它与这套住所相符。我们团队中的真人始终拥有最终决定权。</string>
+    <string name="owner_verify_tenant_note">欢迎租客。如果你是租客且租约允许你接待客人，你完全符合条件——无需拥有这套住所。</string>
+    <string name="owner_verify_tenant">你是租客？这里也欢迎你——请上传你的租约而非房产证。只要你的租赁合同允许你接待客人，你就可以在 Swapl 上接待。</string>
+    <string name="owner_verify_privacy_note">检查后我们不会保存你的文件。只有 AI 会读取你的个人信息，而我们仅保留它是否显示为私人住所的结果——绝不保存你的身份证、地址或文件本身。</string>
+    <string name="owner_verify_privacy">你的文件只会被读取一次以核实住所属于你，之后便不再保存——我们只保留结果（是否验证通过），绝不保存文件或其内容。</string>
+    <string name="owner_verify_private_only_note">Swapl 是私人之间的交换，因此公司或商业物业无法在此发布。</string>
+    <string name="owner_verify_doc_type_label">你要上传什么？（可选）</string>
+    <string name="owner_verify_doc_type_deed">房产证 / 产权登记</string>
+    <string name="owner_verify_doc_type_lease">租约</string>
+    <string name="owner_verify_status_pending">你上次提交的内容正在审核中。我们团队的真人会做出最终决定——通常在 2 个工作日内。如果我们的自动检查无法确定，可能会稍久一些，但你不会卡住：我们始终会跟进。</string>
+    <string name="owner_verify_status_rejected">你上次的提交未获通过。请添加更清晰的文件后重新提交。</string>
+    <string name="owner_verify_business_title">我们的检查显示这可能是商业物业——我们也许判断有误</string>
+    <string name="owner_verify_business_body">我们的自动检查将你的文件读取为公司或商业物业，而 Swapl 是私人之间的交换。但自动检查并不完美，最终决定始终由真人做出——绝非 AI。如果这是你自己的住所，请联系我们：我们团队的真人会亲自审核，通常在 2 个工作日内，一份你名下的租约、房产证或税务记录就足以澄清。</string>
+    <string name="owner_verify_business_contact">联系客服</string>
+    <string name="owner_verify_business_support_email">support@swapl.app</string>
+    <string name="owner_verify_business_support_subject">房源验证审核请求</string>
+    <string name="owner_verify_add_document">添加文件</string>
+    <string name="owner_verify_uploading">上传中…</string>
+    <string name="owner_verify_remove">移除</string>
+    <string name="owner_verify_submit">提交审核</string>
+    <string name="owner_verify_submitting">提交中…</string>
+    <string name="owner_verify_cancel">取消</string>
+    <string name="owner_verify_doc_label">所有权文件</string>
+    <string name="owner_verify_doc_read_error">无法读取该文件。</string>
+    <string name="owner_verify_upload_failed">上传失败，请重试。</string>
+    <string name="owner_verify_submit_failed">无法提交，请重试。</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). Owner-only "how your
+         nightly Keys are calculated" breakdown. -->
+    <string name="valuation_section_title">你的每晚钥匙是如何计算的</string>
+    <string name="valuation_per_night">%1$d / 晚</string>
+    <string name="valuation_intro">这是客人每入住一晚所花费、也是你所赚取的钥匙数。它根据你住所的特点公平设定，绝不由你或我们抬高。</string>
+    <string name="valuation_show">显示明细</string>
+    <string name="valuation_hide">隐藏明细</string>
+    <string name="valuation_factors_kicker">价值的构成</string>
+    <string name="valuation_base_label">评价前价值</string>
+    <string name="valuation_factor_base">起始价值</string>
+    <string name="valuation_factor_size">面积</string>
+    <string name="valuation_factor_sleeps">可住人数</string>
+    <string name="valuation_factor_location_tier">地段吸引力</string>
+    <string name="valuation_factor_location_tier_standard">标准——你的地段不会被人为抬高，但会被平等对待。小城镇和乡村在这里不会被扣分。</string>
+    <string name="valuation_factor_verified">已验证住所</string>
+    <string name="valuation_factor_ai_appeal">住所吸引力（AI）</string>
+    <string name="valuation_ai_summary_kicker">住所吸引力（AI）</string>
+    <string name="valuation_ai_what_note">我们的 AI 只会读取你房源的呈现方式——照片覆盖度、便利设施列表的丰富程度，以及描述的详细程度。它不会苛刻地评判你的住所，也绝不会给小城镇或乡村扣分——地段会单独处理。</string>
+    <string name="valuation_ai_baseline_pos">住所吸引力加成：+%1$s（大多数住所为 0；上限为 +%2$d）。</string>
+    <string name="valuation_ai_baseline_zero">住所吸引力：0——完全正常，和大多数住所一样（加成上限为 +%1$d）。</string>
+    <string name="valuation_ai_baseline_neg">住所吸引力：%1$s（大多数住所为 0——添加几张照片或细节即可提升）。</string>
+    <string name="valuation_ai_fallback_note">根据你的照片和便利设施评分。当我们的住所吸引力模型查看你的房源后，会加入更丰富的吸引力评估。</string>
+    <string name="valuation_room_kicker">这是一个房间</string>
+    <string name="valuation_room_note">因为你提供的是私人房间而非整套住所，每晚价值仅反映该房间——约为整套住所价格的 %1$d%%。</string>
+    <string name="valuation_location_note">目的地需求等级 %1$d / 5——表示你所在区域作为入住地的受欢迎程度。</string>
+    <string name="valuation_review_kicker">客人评价</string>
+    <string name="valuation_review_applied_up">你的评价（%1$.1f★，来自 %2$d 条）将价值上调 %3$d%%。</string>
+    <string name="valuation_review_applied_down">你的评价（%1$.1f★，来自 %2$d 条）将价值下调 %3$d%%。</string>
+    <string name="valuation_review_applied_neutral">你的评价（%1$.1f★，来自 %2$d 条）使价值保持不变。</string>
+    <string name="valuation_review_pending">尚未应用——只有当你收到 %1$d 条评价后，评价才会开始调整此价值。你目前有 %2$d 条。在此之前，价值保持在基于特征的水平。</string>
+    <string name="valuation_review_moving">现正缓慢向你来自 %2$d 条评价的 %1$.1f★ 评分靠拢——一点一点地，绝不会一次到位。</string>
+    <string name="valuation_bounded_note">此价值每个更新周期最多变动 %1$d%%，且仅在你有 %2$d 条以上评价后。即便如此，要达到 ±%3$d%% 的上限也需要许多周期——这是评价永远无法突破的硬性上限——所以一周糟糕的评价也无法让你的收益一夜暴跌。</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">你的 Swapl 故事</string>
+    <string name="story_counts_heading">你迄今的故事</string>
+    <string name="story_passport">你的护照</string>
+    <string name="story_kind_trip">行程</string>
+    <string name="story_kind_hosted">接待</string>
+    <string name="story_detail_hosted_by">由 %1$s 接待</string>
+    <string name="story_detail_welcomed">接待了 %1$s</string>
+    <string name="story_detail_stay">一次 Swapl 上的入住</string>
+    <string name="story_detail_guest">你家中的一位客人</string>
+    <string name="story_share_heading">分享你的故事</string>
+    <string name="story_share_button">分享</string>
+    <string name="story_share_note">将你的故事分享到任何地方——短信、WhatsApp、邮件。它附带你的邀请链接，当好友点击并加入时，你们双方都能赚取旅行积分。</string>
+    <string name="story_share_subject">我的 Swapl 故事</string>
+    <string name="story_share_chooser">分享你的故事</string>
+    <string name="story_share_message">我已经在 Swapl 上跨越 %1$d 座城市交换住所——用积分而非现金去旅行。用我的链接加入，当你完成验证时我们都能获得旅行积分：%2$s</string>
+    <string name="story_empty_title">你的故事从这里开始</string>
+    <string name="story_empty_body">当你完成第一次交换或钥匙入住后，你的行程和你接待过的客人将以护照印章的形式出现在这里——一张记录 Swapl 带你去过的所有地方的明信片。</string>
+    <string name="story_empty_share">邀请好友交换</string>
+    <string name="story_error_title">故事不可用</string>
+    <string name="story_error_body">我们无法加载你的故事。下拉刷新或重试。</string>
+    <string name="story_error_retry">重试</string>
+    <plurals name="story_count_trips">
+        <item quantity="other">行程</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="other">接待的客人</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="other">城市</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="other">国家</item>
+    </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). Shown only when
+         the policy certificate has been anchored on-chain. Not crypto/payment. -->
+    <string name="trip_oncover_badge">已在 TON 上验证</string>
+    <string name="trip_oncover_view">查看凭证</string>
+    <string name="trip_oncover_explainer">一份证明你的保障真实有效的防篡改记录——不是加密货币，无需付款，你无需做任何事。</string>
+
+    <!-- People in a swap conversation (DOK-187). Anyone in the thread can bring a
+         few extra people along — a partner, a co-traveler, a friend. Guests chat
+         like everyone else but never get any say over the swap itself. -->
+    <string name="people_title">参与者</string>
+    <string name="people_role_principal">交换伙伴</string>
+    <string name="people_role_guest">聊天中的客人</string>
+    <string name="people_status_pending">待处理</string>
+    <string name="people_invite">邀请</string>
+    <string name="people_add">添加</string>
+    <string name="people_add_cotravelers">添加同行者</string>
+    <string name="people_remove">移除 %1$s</string>
+    <string name="people_invite_title">邀请某人加入聊天</string>
+    <string name="people_invite_reassure">将伴侣或同行者加入对话。他们可以和这里的每个人聊天，但只有两位交换伙伴能接受、还价或取消交换——邀请他人绝不会赋予他们对交换的任何控制权。</string>
+    <string name="people_invite_field_label">邮箱或用户名</string>
+    <string name="people_invite_field_placeholder">name@email.com 或 @用户名</string>
+    <string name="people_invite_send">发送邀请</string>
+    <string name="people_invite_cancel">取消</string>
+
+    <!-- Common / shared actions -->
+    <string name="common_cancel">取消</string>
+    <string name="common_ok">好的</string>
+    <string name="common_retry">重试</string>
+
+    <!-- Rate the app (M1) -->
+    <string name="account_rate_app">为应用评分</string>
+    <string name="rate_app_title">为应用评分</string>
+    <string name="rate_app_prompt">Swapl 用起来如何？你的评分有助于我们改进。</string>
+    <string name="rate_app_score_label">你的评分</string>
+    <string name="rate_app_comment_label">还有什么要补充的吗？</string>
+    <string name="rate_app_comment_placeholder">告诉我们哪些好用——或哪些不好用（可选）</string>
+    <string name="rate_app_submit">发送</string>
+    <string name="rate_app_submit_support">联系客服</string>
+    <string name="rate_app_submitting">正在发送…</string>
+    <string name="rate_app_prompt_post_review">感谢你的评价！Swapl 应用本身用起来如何？</string>
+    <string name="rate_app_prompt_post_swap">你的交换已完成！Swapl 在帮你达成这次交换的过程中表现如何？</string>
+    <string name="rate_app_low_support_hint">很抱歉未能让你满意。发送此内容，我们将开启客服支持以提供帮助。</string>
+
+    <!-- Account screen -->
+    <string name="account_profile_title">个人资料</string>
+    <string name="account_member_badge">Swapl 会员</string>
+    <string name="account_stat_waiting">等待中</string>
+    <string name="account_stat_sent">已发送</string>
+    <string name="account_stat_active">进行中</string>
+    <string name="account_stat_homes">住所</string>
+    <string name="account_edit_home_title">编辑你的住所</string>
+    <string name="account_become_host_title">成为房东</string>
+    <string name="account_edit_home_body">更新照片、日期和详情。</string>
+    <string name="account_become_host_body">发布你的住所开始交换。</string>
+    <string name="account_section_settings">设置</string>
+    <string name="account_personal_info">个人信息</string>
+    <string name="account_change_password">修改密码</string>
+    <string name="account_passkeys">登录与安全——通行密钥</string>
+    <string name="account_passkeys_busy">登录与安全——通行密钥…</string>
+    <string name="account_privacy">隐私</string>
+    <string name="account_notifications">通知</string>
+    <string name="account_section_profile">个人资料</string>
+    <string name="account_view_profile">查看个人资料</string>
+    <string name="account_your_story">你的 Swapl 故事</string>
+    <string name="account_travel_points">旅行积分</string>
+    <string name="account_invite_earn">邀请并赚取</string>
+    <string name="account_interests">兴趣</string>
+    <string name="account_saved_searches">已保存的搜索</string>
+    <string name="account_travel_windows">旅行时段</string>
+    <string name="account_metrics">数据指标</string>
+    <string name="account_section_support">支持</string>
+    <string name="account_get_help">获取帮助</string>
+    <string name="account_privacy_policy">隐私政策</string>
+    <string name="account_terms">服务条款</string>
+    <string name="account_log_out">退出登录</string>
+    <string name="account_version">版本 %1$s（%2$d）</string>
+    <string name="account_signout_title">退出登录？</string>
+    <string name="account_signout_body">你需要重新登录才能查看你的交换。</string>
+    <string name="account_passkeys_dialog_title">通行密钥</string>
+
+    <!-- Browse -->
+    <string name="browse_title">浏览</string>
+    <string name="browse_edit_home">编辑你的住所</string>
+    <string name="browse_list_home">+ 发布住所</string>
+    <string name="browse_search_placeholder">想去哪里？</string>
+    <string name="browse_clear_search">清除搜索</string>
+    <string name="browse_filters">筛选</string>
+    <string name="browse_tab_homes">住所</string>
+    <string name="browse_tab_experiences">体验</string>
+    <string name="browse_tab_services">服务</string>
+    <string name="browse_get_inspired_title">获取灵感</string>
+    <string name="browse_get_inspired_body">描述你梦想中的旅行——我们将为你配出一次交换。</string>
+    <string name="browse_sort">排序</string>
+    <string name="browse_sort_match">最佳匹配</string>
+    <string name="browse_sort_newest">最新</string>
+    <string name="browse_sort_largest">最大</string>
+    <string name="browse_error_title">住所不可用</string>
+    <string name="browse_error_body">我们无法连接到 Swapl。请检查你的网络并重试。</string>
+    <string name="browse_empty_title">未找到住所</string>
+    <string name="browse_empty_body">当会员发布新住所时，它们会出现在这里。</string>
+    <string name="browse_guests_size_type">%1$d 位客人 · %2$d 平米 · %3$s</string>
+    <string name="browse_tag_featured">精选</string>
+    <string name="browse_tag_verified">已验证</string>
+    <string name="browse_tag_private_room">私人房间</string>
+    <!-- Filters -->
+    <string name="filter_title">筛选</string>
+    <string name="filter_when">何时</string>
+    <string name="filter_from">从</string>
+    <string name="filter_to">至</string>
+    <string name="filter_clear_dates">清除日期</string>
+    <string name="filter_space_type">空间类型</string>
+    <string name="filter_space_all">全部</string>
+    <string name="filter_space_entire">整套住所</string>
+    <string name="filter_space_private_room">私人房间</string>
+    <string name="filter_property_type">房产类型</string>
+    <string name="filter_min_size">最小面积：%1$d 平米</string>
+    <string name="filter_min_sleeps">至少可住：%1$d 人</string>
+    <string name="filter_pets">仅显示可携带宠物的住所</string>
+    <string name="filter_wfh">仅显示带办公空间的住所</string>
+    <string name="filter_step_free">仅显示无台阶住所</string>
+    <string name="filter_reset">重置</string>
+    <string name="filter_show_homes">显示住所</string>
+
+    <!-- Listing detail -->
+    <string name="detail_guests_rooms">%1$d 位客人 · %2$s · %3$s · %4$d 平米</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="other">%1$d 间卧室</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="other">%1$d 间卫浴</item>
+    </plurals>
+    <string name="detail_available_range">可用日期 %1$s → %2$s · 入住 %3$d–%4$d 天</string>
+    <string name="detail_points_per_night">%1$d 积分 / 晚</string>
+    <string name="detail_private_room_note">这是一个私人房间，因此每晚价值仅反映该房间——而非整套住所。</string>
+    <string name="detail_private_room_badge">私人房间</string>
+    <string name="detail_private_room_badge_rooms">私人房间 · %1$d 个房间</string>
+    <string name="detail_about_home">关于这套住所</string>
+    <string name="detail_what_offered">这套住所提供什么</string>
+    <string name="detail_where">你将住在哪里</string>
+    <string name="detail_approx_area">大致区域</string>
+    <string name="detail_hosted_by">接待人</string>
+    <string name="detail_anonymous">匿名</string>
+    <string name="detail_verified_host">已验证房东</string>
+    <string name="detail_edit_listing">编辑房源</string>
+    <string name="detail_manage_availability">管理可用日期</string>
+    <string name="detail_propose_swap">发起交换</string>
+    <string name="detail_list_home_first">请先发布你的住所</string>
+    <string name="detail_list_home_first_body">在发起交换之前，请先添加你自己的房源。</string>
+    <string name="detail_stay_with_points">用积分入住</string>
+    <string name="detail_stay_with_points_body">用你接待客人赚取的旅行积分单向预订——无需对方回访交换。当直接交换不合适时，可使用此方式。</string>
+    <string name="detail_report_listing">举报此房源</string>
+    <string name="detail_no_amenities">未列出便利设施。</string>
+    <string name="detail_request_sent_title">请求已发送</string>
+    <string name="detail_request_sent_body">在房东确认前，你的积分将被冻结。你可以在\"行程\"中找到这次入住。</string>
+    <!-- Amenity labels -->
+    <string name="amenity_balcony">阳台</string>
+    <string name="amenity_rooftop">屋顶露台</string>
+    <string name="amenity_garden">花园</string>
+    <string name="amenity_courtyard">庭院</string>
+    <string name="amenity_pool">泳池</string>
+    <string name="amenity_gym">健身房</string>
+    <string name="amenity_piano">钢琴</string>
+    <string name="amenity_bike">含自行车</string>
+    <string name="amenity_parking">停车位</string>
+    <string name="amenity_workspace">办公空间</string>
+    <string name="amenity_pets">可携带宠物</string>
+    <string name="amenity_step_free">无台阶</string>
+    <string name="amenity_elevator">电梯</string>
+    <string name="amenity_ac">空调</string>
+    <string name="amenity_dishwasher">洗碗机</string>
+    <string name="amenity_washer">洗衣机</string>
+    <string name="amenity_dryer">烘干机</string>
+
+    <!-- Propose swap dialog -->
+    <string name="propose_title">发起交换</string>
+    <string name="propose_message_label">留言（可选）</string>
+    <string name="propose_drafting">正在草拟…</string>
+    <string name="propose_write_for_me">帮我写</string>
+    <string name="propose_rewrite_ai">用 AI 重写</string>
+    <string name="propose_draft_failed">目前无法草拟留言</string>
+    <string name="propose_send">发送</string>
+
+    <!-- Swap thread -->
+    <string name="thread_with">与 %1$s</string>
+    <string name="thread_open_chat">打开聊天</string>
+    <string name="thread_open_chat_with">与 %1$s 打开聊天</string>
+    <string name="thread_view_profile">查看 %1$s 的个人资料</string>
+    <string name="thread_host_fallback">房东</string>
+    <string name="thread_host_fallback_possessive">你的房东</string>
+    <string name="thread_proposal">提议</string>
+    <string name="thread_counter">还价</string>
+    <string name="thread_size_sleeps">%1$d 平米 · 可住 %2$d 人</string>
+    <string name="thread_accept">接受交换</string>
+    <string name="thread_counter_offer">还价</string>
+    <string name="thread_decline">拒绝</string>
+    <string name="thread_withdraw">撤回</string>
+    <string name="thread_message_optional">留言（可选）</string>
+    <!-- Accept-consent + action feedback (M4) -->
+    <string name="thread_accept_confirm_title">接受这次交换？</string>
+    <string name="thread_accept_confirm_body">接受后将锁定日期，并为此次入住签发旅行保险——两套住所随即都将获得保障。你仍可继续聊天以协调交接。</string>
+    <string name="thread_accept_confirm_cta">接受并投保</string>
+    <string name="thread_decline_confirm_title">拒绝这次交换？</string>
+    <string name="thread_decline_confirm_body">这将拒绝该提议。你无法撤销，但日后可以随时再发一份新的。</string>
+    <string name="thread_withdraw_confirm_title">撤回这份提议？</string>
+    <string name="thread_withdraw_confirm_body">这将收回你的提议。你日后可以再发一份新的。</string>
+    <string name="thread_accepted_toast">交换已接受——你的入住已投保。</string>
+    <string name="thread_declined_toast">提议已拒绝。</string>
+    <string name="thread_withdrawn_toast">提议已撤回。</string>
+    <string name="thread_countered_toast">还价已发送。</string>
+
+    <!-- Leave a review -->
+    <string name="review_title">留下评价</string>
+    <string name="review_prompt">你与 %1$s 的交换体验如何？</string>
+    <string name="review_partner_fallback">你的交换伙伴</string>
+    <string name="review_rating_label">你的评分</string>
+    <string name="review_text_label">你的评价</string>
+    <string name="review_text_placeholder">住所、社区、交接的体验如何？</string>
+    <string name="review_min_chars">至少 20 个字符——目前 %1$d 个。</string>
+    <string name="review_submit">提交评价</string>
+    <string name="review_submitting">提交中…</string>
+    <string name="review_card_title">你的交换体验如何？</string>
+    <string name="review_card_body">给 %1$s 留下评价——它会显示在对方的公开资料上。</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">交换收件箱</string>
+    <string name="inbox_search_open">搜索</string>
+    <string name="inbox_search_close">关闭搜索</string>
+    <string name="inbox_search_placeholder">按房东或城市搜索</string>
+    <string name="inbox_filter_all">全部</string>
+    <string name="inbox_filter_waiting">等你处理</string>
+    <string name="inbox_filter_sent">已发送</string>
+    <string name="inbox_filter_active">进行中</string>
+    <string name="inbox_filter_archived">已归档</string>
+    <string name="inbox_section_waiting">等你处理</string>
+    <string name="inbox_section_sent">已发送——等待回复</string>
+    <string name="inbox_section_active">进行中的交换</string>
+    <string name="inbox_section_archived">已归档</string>
+    <string name="inbox_status_confirmed">已确认的交换</string>
+    <string name="inbox_status_countered">收到还价</string>
+    <string name="inbox_status_declined">提议已拒绝</string>
+    <string name="inbox_status_waiting_reply">等待你回复</string>
+    <string name="inbox_status_sent">提议已发送</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s → %2$s · 与 %3$s</string>
+    <string name="inbox_dates">%1$s → %2$s</string>
+    <string name="inbox_error_title">消息不可用</string>
+    <string name="inbox_error_body">我们无法加载你的交换。下拉刷新或重试。</string>
+    <string name="inbox_empty_title">还没有消息</string>
+    <string name="inbox_empty_body">从任意房源发起交换，它就会显示在这里。</string>
+
+    <!-- Trips -->
+    <string name="trips_title">行程</string>
+    <string name="trips_phase_active">正在进行</string>
+    <string name="trips_phase_upcoming">即将到来</string>
+    <string name="trips_phase_past">过往</string>
+    <string name="trips_row_title">前往 %1$s 的行程</string>
+    <string name="trips_row_dates_host">%1$s → %2$s · 房东 %3$s</string>
+    <string name="trips_row_dates">%1$s → %2$s</string>
+    <string name="trips_row_roles">在 %1$s 做客 · 你在 %2$s 接待</string>
+    <string name="trips_error_title">行程不可用</string>
+    <string name="trips_error_body">我们无法加载你的行程。下拉刷新或重试。</string>
+    <string name="trips_empty_title">还没有行程</string>
+    <string name="trips_empty_body">已接受的交换将成为行程。你即将到来的入住会显示在这里。</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">这次交换已取消</string>
+    <string name="cockpit_timeline_agreed">已达成</string>
+    <string name="cockpit_timeline_ready">准备就绪</string>
+    <string name="cockpit_timeline_staying">入住中</string>
+    <string name="cockpit_timeline_done">已完成</string>
+    <string name="cockpit_starts_in">开始于</string>
+    <string name="cockpit_status">状态</string>
+    <string name="cockpit_countdown_days">%1$d 天 %2$d 小时</string>
+    <string name="cockpit_countdown_hours">%1$d 小时</string>
+    <string name="cockpit_phase_agreed">交换已达成</string>
+    <string name="cockpit_phase_preparing">准备中</string>
+    <string name="cockpit_phase_ready">准备出发</string>
+    <string name="cockpit_phase_in_progress">进行中</string>
+    <string name="cockpit_phase_completed">已完成</string>
+    <string name="cockpit_phase_cancelled">已取消</string>
+    <string name="cockpit_insured">已投保</string>
+    <string name="cockpit_before_you_go">出发前</string>
+    <string name="cockpit_check_guide_filled">完善你的住所指南</string>
+    <string name="cockpit_check_details_read">阅读房东的住所详情</string>
+    <string name="cockpit_check_checked_in">到达时办理入住</string>
+    <string name="cockpit_check_checked_out">离开时办理退房</string>
+    <string name="cockpit_finish_guide">完成你的住所指南（%1$d%%）</string>
+    <string name="cockpit_your_key_code">你的钥匙密码</string>
+    <string name="cockpit_key_code_note">以钥匙换钥匙——把它分享给你的客人，让他们能进门。</string>
+    <string name="cockpit_swap_protection">交换保障</string>
+    <string name="cockpit_policy_line">保单 %1$s · 保额 €%2$s</string>
+    <string name="cockpit_where_you_stay">你将住在哪里</string>
+    <string name="cockpit_guide_not_filled">你的房东还没有填写住所指南。</string>
+    <string name="cockpit_address_unlocks_city">%1$s 的确切地址即将解锁</string>
+    <string name="cockpit_address_unlocks">确切地址即将解锁</string>
+    <string name="cockpit_unlocks_at">于 %1$s 解锁——入住前 48 小时。</string>
+    <string name="cockpit_unlocks_generic">地址和住所指南将在入住前 48 小时解锁。</string>
+    <string name="cockpit_home_guide">住所指南</string>
+    <string name="cockpit_collapse">收起</string>
+    <string name="cockpit_expand">展开</string>
+    <string name="cockpit_guide_getting_in">如何进门</string>
+    <string name="cockpit_guide_keys">钥匙</string>
+    <string name="cockpit_guide_wifi_name">Wi-Fi 网络</string>
+    <string name="cockpit_guide_wifi_password">Wi-Fi 密码</string>
+    <string name="cockpit_guide_heating">供暖与制冷</string>
+    <string name="cockpit_guide_kitchen">厨房</string>
+    <string name="cockpit_guide_bins">垃圾与回收</string>
+    <string name="cockpit_guide_pets_plants">宠物与植物</string>
+    <string name="cockpit_guide_house_rules">住宿规则</string>
+    <string name="cockpit_guide_neighbourhood">周边社区</string>
+    <string name="cockpit_guide_emergency">紧急联系人</string>
+    <string name="cockpit_check_in">办理入住</string>
+    <string name="cockpit_check_out">办理退房</string>
+    <string name="cockpit_checked_in_out">已入住并退房——谢谢！</string>
+    <string name="cockpit_trip_activity">行程动态</string>
+    <string name="cockpit_event_you">你</string>
+    <string name="cockpit_event_partner_fallback">你的交换伙伴</string>
+    <string name="cockpit_event_checked_in">%1$s 已入住</string>
+    <string name="cockpit_event_checked_out">%1$s 已退房</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">消息不可用</string>
+    <string name="chat_try_again">重试</string>
+    <string name="chat_view_trip">查看行程</string>
+    <string name="chat_say_hello_title">打个招呼</string>
+    <string name="chat_say_hello_body">开始对话吧——询问日期、社区或任何你想了解的事情。</string>
+    <string name="chat_load_earlier">加载更早的消息</string>
+    <string name="chat_message_placeholder">消息</string>
+    <string name="chat_add_photo">添加照片</string>
+    <string name="chat_remove_photo">移除照片</string>
+    <string name="chat_send">发送消息</string>
+    <string name="chat_receipt_read">已读</string>
+    <string name="chat_receipt_sent">已发送</string>
+    <string name="chat_invite_only_partners">只有两位交换伙伴可以邀请他人。</string>
+    <string name="chat_invite_not_found">我们找不到那个人。请检查邮箱或用户名。</string>
+    <string name="chat_invite_failed">无法发送邀请，请重试。</string>
+    <string name="chat_send_failed">无法发送，请重试。</string>
+    <string name="chat_read_image_failed">无法读取该图片</string>
+    <string name="chat_upload_photo_failed">无法上传照片。请检查你的网络并重试。</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">位置</string>
+    <string name="create_step_space">空间</string>
+    <string name="create_step_access">出入与宠物</string>
+    <string name="create_step_amenities">便利设施</string>
+    <string name="create_step_dates">日期</string>
+    <string name="create_step_photos">照片</string>
+    <string name="create_step_description">描述</string>
+    <string name="create_step_review">审核</string>
+    <string name="create_kicker_edit">编辑你的住所——第 %1$d 步，共 %2$d 步</string>
+    <string name="create_kicker_new">第 %1$d 步，共 %2$d 步</string>
+    <string name="create_back">返回</string>
+    <string name="create_next">下一步</string>
+    <string name="create_saving">保存中…</string>
+    <string name="create_publishing">发布中…</string>
+    <string name="create_save_changes">保存更改</string>
+    <string name="create_publish_listing">发布房源</string>
+    <string name="create_locating">定位中…</string>
+    <string name="create_use_location">使用我的当前位置</string>
+    <string name="create_location_error">无法确定你的位置——请手动填写。</string>
+    <string name="create_load_error">无法加载房源</string>
+    <string name="create_read_image_error">无法读取该图片</string>
+    <string name="create_upload_failed">上传失败</string>
+    <string name="create_title_label">标题（例如 阳光运河公寓）</string>
+    <string name="create_city_label">城市</string>
+    <string name="create_neighbourhood_label">社区</string>
+    <string name="create_country_label">国家</string>
+    <string name="create_address_label">地址（可选）</string>
+    <string name="create_space_type">空间类型</string>
+    <string name="create_space_entire">整套住所</string>
+    <string name="create_space_private_room">私人房间</string>
+    <string name="create_private_room_keys_note">私人房间的钥匙价值低于整套住所——每晚价值仅反映该房间。</string>
+    <string name="create_rooms_offered">提供的房间数：%1$d</string>
+    <string name="create_property_type">房产类型</string>
+    <string name="create_prop_apartment">公寓</string>
+    <string name="create_prop_house">独栋住宅</string>
+    <string name="create_prop_loft">阁楼</string>
+    <string name="create_prop_townhouse">联排别墅</string>
+    <string name="create_size">面积：%1$d 平米</string>
+    <string name="create_sleeps">可住人数：%1$d</string>
+    <string name="create_bedrooms">卧室：%1$d</string>
+    <string name="create_bathrooms">卫浴：%1$d</string>
+    <string name="create_floor">楼层：%1$d</string>
+    <string name="create_has_elevator">有电梯</string>
+    <string name="create_step_free">无台阶通行</string>
+    <string name="create_pets_allowed">允许携带宠物</string>
+    <string name="create_wfh_setup">居家办公配置</string>
+    <string name="create_desks">书桌：%1$d</string>
+    <string name="create_parking">停车位</string>
+    <string name="create_bike">含自行车</string>
+    <string name="create_balcony">阳台</string>
+    <string name="create_rooftop">屋顶露台</string>
+    <string name="create_garden">花园</string>
+    <string name="create_courtyard">庭院</string>
+    <string name="create_piano">钢琴</string>
+    <string name="create_pool">泳池</string>
+    <string name="create_gym">健身房</string>
+    <string name="create_ac">空调</string>
+    <string name="create_dishwasher">洗碗机</string>
+    <string name="create_washer">洗衣机</string>
+    <string name="create_dryer">烘干机</string>
+    <string name="create_available_from">可用起始日期</string>
+    <string name="create_available_to">可用结束日期</string>
+    <string name="create_min_stay">最短入住：%1$d 天</string>
+    <string name="create_max_stay">最长入住：%1$d 天</string>
+    <string name="create_photos_hint">为你的住所添加最多 10 张照片。我们会在上传前调整尺寸。</string>
+    <string name="create_choose_photos">选择照片</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="other">正在上传 %1$d 张照片…</item>
+    </plurals>
+    <string name="create_description_label">描述你的住所（至少 20 个字符）</string>
+    <string name="create_characters">%1$d 个字符</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d 平米 · 可住 %2$d 人 · %3$d 卧 / %4$d 卫</string>
+    <string name="create_review_available">可用日期 %1$s → %2$s</string>
+    <string name="create_decrease">减少</string>
+    <string name="create_increase">增加</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">用积分入住</string>
+    <string name="keys_stay_in">入住 %1$s</string>
+    <string name="keys_stay_guest_at">在 %1$s 做客</string>
+    <string name="keys_stay_dates">%1$s → %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="other">%1$d 晚 · %2$d 积分</item>
+    </plurals>
+    <string name="keys_stay_decline">拒绝</string>
+    <string name="keys_stay_confirm">确认入住</string>
+    <string name="keys_stay_cancel_request">取消请求</string>
+    <string name="keys_stay_covered">已确认——你的入住已由 Swapl 保单承保。</string>
+    <string name="keys_stay_status_awaiting_host">等待房东</string>
+    <string name="keys_stay_status_action_needed">需要操作</string>
+    <string name="keys_stay_status_confirmed">已确认</string>
+    <string name="keys_stay_status_declined">已拒绝</string>
+    <string name="keys_stay_status_cancelled">已取消</string>
+    <string name="keys_stay_status_completed">已完成</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">用积分入住</string>
+    <string name="stay_keys_intro">用你的积分单向预订——无需回访接待对方。当你的日期或住所不适合直接交换时很合适。</string>
+    <string name="stay_keys_window">在住所的可用范围内选择日期（%1$s → %2$s）。%3$d–%4$d 晚。已被预订的日期会被划掉。</string>
+    <string name="stay_keys_points_per_night">每晚积分</string>
+    <string name="stay_keys_nights">晚数</string>
+    <string name="stay_keys_total">总计</string>
+    <string name="stay_keys_total_points">%1$d 积分</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="other">你有 %1$d 积分——足够这次入住（按此费率约 %2$d 晚）。</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="other">你还差 %1$d 积分。按此费率接待约 %2$d 晚即可解锁这次入住——或选择更少的晚数。积分无法购买。</item>
+    </plurals>
+    <string name="stay_keys_held_note">在房东确认前，你的积分将被冻结。你可以在\"行程\"中找到这次入住。</string>
+    <string name="stay_keys_sending">正在发送…</string>
+    <string name="stay_keys_request">用积分请求</string>
+    <string name="stay_keys_error_insufficient">你的积分不足以预订这些日期。请尝试更少的晚数，或通过接待赚取积分。积分无法购买。</string>
+    <string name="stay_keys_error_unavailable">那些日期不可用。请选择住所可用范围内的日期。</string>
+    <string name="stay_keys_error_generic">目前无法请求这次入住。</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">已保存的搜索</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">已保存的搜索是 Plus 会员功能。</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">兴趣 · %1$d / 12</string>
+    <string name="interests_vibe_label">你的风格（可选）</string>
+    <string name="interests_save">保存</string>
+    <string name="interests_saving">保存中…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">积分记录</string>
+    <string name="keys_tx_filter_all">全部</string>
+    <string name="keys_tx_filter_earned">已赚取</string>
+    <string name="keys_tx_filter_spent">已花费</string>
+    <string name="keys_tx_empty_all">还没有积分活动。</string>
+    <string name="keys_tx_empty_earned">还没有赚取的积分。</string>
+    <string name="keys_tx_empty_spent">还没有花费的积分。</string>
+    <string name="keys_tx_loading">加载中…</string>
+    <string name="keys_tx_load_more">加载更多</string>
+    <string name="keys_tx_balance">%1$d 余额</string>
+    <string name="keys_tx_error_title">积分记录不可用</string>
+    <string name="keys_tx_try_again">重试</string>
+
+    <!-- ===== UI localization 100% (DOK) ===== -->
+    <!-- Common / shared -->
+    <string name="common_save">保存</string>
+    <string name="common_saving">保存中…</string>
+    <string name="common_send">发送</string>
+    <string name="common_sending">正在发送…</string>
+    <string name="common_close">关闭</string>
+    <string name="common_done">完成</string>
+    <string name="common_delete">删除</string>
+    <string name="common_try_again">重试</string>
+    <string name="cd_remove_photo">移除照片</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">5 星中的 %1$d 星</string>
+    <plurals name="cd_n_stars">
+        <item quantity="other">%1$d 星</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="other">%1$d 晚</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="other">%1$d 张床</item>
+    </plurals>
+
+    <!-- Status enum chips -->
+    <string name="status_pending">待处理</string>
+    <string name="status_accepted">已确认</string>
+    <string name="status_countered">已还价</string>
+    <string name="status_declined">已拒绝</string>
+    <string name="status_withdrawn">已撤回</string>
+    <string name="status_active">进行中</string>
+    <string name="status_upcoming">即将到来</string>
+    <string name="status_in_progress">进行中</string>
+    <string name="status_completed">已完成</string>
+    <string name="status_cancelled">已取消</string>
+    <string name="status_disputed">有争议</string>
+    <string name="status_resolved">已解决</string>
+    <string name="status_open">未处理</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">方案</string>
+
+    <!-- Trip detail -->
+    <string name="trip_detail_error_title">行程不可用</string>
+    <string name="trip_detail_error_body">我们无法加载这次行程。</string>
+    <string name="trip_detail_host_fallback">你的房东</string>
+    <string name="trip_detail_host_word">房东</string>
+    <string name="trip_detail_trip_to">前往 %1$s 的行程</string>
+    <string name="trip_detail_hosted_by">由 %1$s 接待</string>
+    <string name="trip_detail_your_stay">你的入住</string>
+    <string name="trip_detail_guest_at">在 %1$s 的住所做客——%2$s · %3$s</string>
+    <string name="trip_detail_in_return">作为回报，你在 %1$s · %2$s 于相同日期接待。</string>
+    <string name="trip_detail_view_profile">查看 %1$s 的个人资料</string>
+
+    <!-- Agreement panel -->
+    <string name="agreement_title">交换已达成——以钥匙换钥匙</string>
+    <string name="agreement_stay_between">于 %1$s → %2$s 与 %3$s 入住。</string>
+    <string name="agreement_your_code">你的密码（在对方住所使用）</string>
+    <string name="agreement_their_code">对方的密码（在你住所做客）</string>
+    <string name="agreement_insurance_cover">保险 · €%1$dk 保额</string>
+    <string name="agreement_auto_issued">自动签发 · 24/7 热线 %1$s</string>
+
+    <!-- Dispute / resolution center -->
+    <string name="dispute_report_problem">报告问题</string>
+    <string name="dispute_report_new">报告新问题</string>
+    <string name="dispute_phone_title">联系我们的 24/7 热线</string>
+    <string name="dispute_phone_body">如果有人处于不安全或被锁在门外的情况，请拨打 %1$s。</string>
+    <string name="dispute_phone_call">拨打 %1$s</string>
+    <string name="dispute_urgent_title">现在需要帮助？</string>
+    <string name="dispute_urgent_body">如果有人处于不安全或被锁在门外的情况，我们的 24/7 热线随时待命。点击立即联系客服。</string>
+    <string name="dispute_open_body">告诉我们你的交换发生了什么。我们会联系你的交换伙伴和我们的客服团队。</string>
+    <string name="dispute_open_body_with">告诉我们你与 %1$s 的交换发生了什么。我们会联系你的交换伙伴和我们的客服团队。</string>
+    <string name="dispute_what_happened">发生了什么？</string>
+    <string name="dispute_describe_label">描述问题</string>
+    <string name="dispute_describe_placeholder">发生了什么、何时发生，以及你需要我们做什么。</string>
+    <string name="dispute_send_report">发送报告</string>
+    <string name="dispute_discard_title">放弃更改？</string>
+    <string name="dispute_discard_body">你的报告尚未发送。如果你现在离开，已写的内容将会丢失。</string>
+    <string name="dispute_discard_confirm">放弃</string>
+    <string name="dispute_discard_keep">继续编辑</string>
+    <string name="dispute_reported_on">报告于 %1$s</string>
+    <string name="dispute_resolution_label">解决方案</string>
+    <string name="dispute_conversation_label">对话</string>
+    <string name="dispute_case_resolved">此案件已解决。</string>
+    <string name="dispute_case_closed">此案件已关闭。</string>
+    <string name="dispute_reply_label">回复</string>
+    <string name="dispute_reply_placeholder">添加回复…</string>
+    <string name="dispute_author_you">你</string>
+    <string name="dispute_author_support">客服</string>
+    <string name="dispute_photos_label">照片（可选）</string>
+    <string name="dispute_add_photos">添加照片</string>
+    <string name="dispute_add_more_photos">添加更多</string>
+    <string name="dispute_photo_read_error">无法读取该图片</string>
+    <string name="dispute_photo_upload_error">无法上传照片。请检查你的网络并重试。</string>
+    <string name="dispute_cat_access_title">无法进门</string>
+    <string name="dispute_cat_access_subtitle">被锁在门外、密码错误、钥匙丢失</string>
+    <string name="dispute_cat_damage_title">损坏</string>
+    <string name="dispute_cat_damage_subtitle">有东西被弄坏或损坏了</string>
+    <string name="dispute_cat_cleanliness_title">清洁问题</string>
+    <string name="dispute_cat_cleanliness_subtitle">住所没有准备好或不干净</string>
+    <string name="dispute_cat_safety_title">安全顾虑</string>
+    <string name="dispute_cat_safety_subtitle">你感到不安全或有什么不对劲</string>
+    <string name="dispute_cat_no_show_title">未出现</string>
+    <string name="dispute_cat_no_show_subtitle">你的交换伙伴没有兑现承诺</string>
+    <string name="dispute_cat_other_title">其他</string>
+    <string name="dispute_cat_other_subtitle">你需要帮助的其他任何事情</string>
+    <string name="dispute_status_open">未处理</string>
+    <string name="dispute_status_investigating">我们正在处理</string>
+    <string name="dispute_status_awaiting">轮到你了</string>
+    <string name="dispute_status_resolved">已解决</string>
+    <string name="dispute_status_closed">已关闭</string>
+
+    <!-- Home guide editor -->
+    <string name="home_guide_title">住所指南</string>
+    <string name="home_guide_complete_pct">已完成 %1$d%%</string>
+    <string name="home_guide_intro">填写要点，让你的客人无需联系你就能安顿下来。</string>
+    <string name="home_guide_section_access">如何进门</string>
+    <string name="home_guide_field_access">进门说明</string>
+    <string name="home_guide_field_key_pickup">取钥匙</string>
+    <string name="home_guide_section_wifi">Wi-Fi</string>
+    <string name="home_guide_field_wifi_name">网络名称</string>
+    <string name="home_guide_field_wifi_password">密码</string>
+    <string name="home_guide_section_living">住在家中</string>
+    <string name="home_guide_field_heating">供暖与制冷</string>
+    <string name="home_guide_field_kitchen">厨房</string>
+    <string name="home_guide_field_bins">垃圾与回收</string>
+    <string name="home_guide_field_pets">宠物与植物</string>
+    <string name="home_guide_section_good_to_know">值得了解（可选）</string>
+    <string name="home_guide_field_house_rules">住宿规则</string>
+    <string name="home_guide_field_neighbourhood">社区贴士</string>
+    <string name="home_guide_field_emergency">紧急联系人</string>
+
+    <!-- Check in / out sheet -->
+    <string name="check_event_checkin">办理入住</string>
+    <string name="check_event_checkout">办理退房</string>
+    <string name="check_event_checkin_body">到达时拍几张住所的基准照片——如果日后有任何疑问，这能保护你们双方。</string>
+    <string name="check_event_checkout_body">离开时拍几张照片，让住所的状态有据可查。</string>
+    <string name="check_event_baseline_photos">基准照片</string>
+    <string name="check_event_note_label">备注（可选）</string>
+    <string name="check_event_note_placeholder">例如 一切看起来都很好，钥匙已收回</string>
+
+    <!-- Metrics -->
+    <string name="metrics_title">数据指标</string>
+    <string name="metrics_section_now">当前</string>
+    <string name="metrics_online_now">当前在线</string>
+    <string name="metrics_today">今天</string>
+    <string name="metrics_7_days">7 天</string>
+    <string name="metrics_30_days">30 天</string>
+    <string name="metrics_section_users">用户</string>
+    <string name="metrics_total">总计</string>
+    <string name="metrics_email_verified">邮箱已验证</string>
+    <string name="metrics_with_active_listing">有活跃房源</string>
+    <string name="metrics_new_7d">新增（7 天）</string>
+    <string name="metrics_new_30d">新增（30 天）</string>
+    <string name="metrics_section_listings_per_user">人均房源</string>
+    <string name="metrics_avg_per_user">有房源用户的人均值</string>
+    <string name="metrics_top_hosts">顶级房东</string>
+    <string name="metrics_online_only">仅在线</string>
+    <string name="metrics_no_hosts_online">目前没有房东在线。</string>
+    <string name="metrics_online">在线</string>
+    <string name="metrics_offline">离线</string>
+    <string name="metrics_section_top_cities">热门城市</string>
+    <string name="metrics_active_listings">活跃房源</string>
+    <string name="metrics_section_proposals">提议</string>
+    <string name="metrics_accept_rate">接受率</string>
+    <string name="metrics_section_engagement">互动</string>
+    <string name="metrics_active_agreements">进行中的协议</string>
+    <string name="metrics_completed_agreements">已完成的协议</string>
+    <string name="metrics_messages_total">消息（总计）</string>
+    <string name="metrics_messages_7d">消息（7 天）</string>
+    <string name="metrics_favorites_total">收藏（总计）</string>
+    <string name="metrics_favorites_7d">收藏（7 天）</string>
+    <string name="metrics_saved_searches">已保存的搜索</string>
+    <string name="metrics_generated_at">生成于 %1$s UTC</string>
+    <string name="metrics_error_title">数据指标不可用</string>
+    <string name="metrics_error_body">我们无法加载数据指标。下拉刷新或重试。</string>
+
+    <!-- Calendar / availability -->
+    <string name="calendar_title">你的日历</string>
+    <string name="calendar_intro">来自已确认交换和积分入住的预订日期会以划掉的形式显示——客人无法选择这些日期。点击起始日和结束日可为自己屏蔽日期（装修、个人使用）。</string>
+    <string name="calendar_block_summary">屏蔽 %1$s → %2$s（%3$s）</string>
+    <string name="calendar_clear">清除</string>
+    <string name="calendar_blocking">屏蔽中…</string>
+    <string name="calendar_block_dates">屏蔽这些日期</string>
+    <string name="calendar_pick_checkout">现在点击退房日以完成屏蔽。</string>
+    <string name="calendar_blocked_label">你已屏蔽的日期</string>
+    <string name="calendar_unblock">取消屏蔽</string>
+    <string name="calendar_legend_selected">已选</string>
+    <string name="calendar_legend_booked">已预订 / 已屏蔽</string>
+
+    <!-- Report dialog -->
+    <string name="report_title">举报</string>
+    <string name="report_reason_label">原因</string>
+    <string name="report_details_label">详情（可选）</string>
+    <string name="report_reason_inappropriate">不当内容</string>
+    <string name="report_reason_scam">诈骗或虚假房源</string>
+    <string name="report_reason_harassment">骚扰</string>
+    <string name="report_reason_discrimination">歧视</string>
+    <string name="report_reason_other">其他</string>
+
+    <!-- Wishlists -->
+    <string name="wishlists_title">心愿单</string>
+    <string name="wishlists_guests_beds">%1$d 位客人 · %2$s</string>
+    <string name="wishlists_available">可用日期 %1$s → %2$s</string>
+    <string name="wishlists_error_title">心愿单不可用</string>
+    <string name="wishlists_error_body">我们无法连接到 Swapl。请检查你的网络并重试。</string>
+    <string name="wishlists_empty_title">还没有收藏的住所</string>
+    <string name="wishlists_empty_body">点击任意住所上的爱心即可保存到这里。</string>
+
+    <!-- Travel profile card -->
+    <string name="travel_profile_kicker">你的旅行画像</string>
+    <string name="travel_profile_deleted">画像已删除。只有在你要求时我们才会重建它。</string>
+    <string name="travel_profile_built_from">仅根据你在 Swapl 上的行为生成。你可以随时刷新或删除它。</string>
+    <string name="travel_profile_built_from_sources">仅根据你在 Swapl 上的行为生成：%1$s。你可以随时刷新或删除它。</string>
+    <string name="travel_profile_loading">正在读取你的画像…</string>
+    <string name="travel_profile_build_again">重新生成</string>
+    <string name="travel_profile_refresh">刷新</string>
+    <string name="travel_profile_delete_title">删除旅行画像？</string>
+    <string name="travel_profile_delete_body">这将抹去 AI 对你喜好的总结。除非你重建，否则它不会回来。</string>
+    <string name="travel_profile_error_429">画像刷新过于频繁——请稍后再试。</string>
+    <string name="travel_profile_error_generic">出了点问题。请重试。</string>
+
+    <!-- Travel windows -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">你已达到方案的旅行时段上限</string>
+    <string name="tw_add_window">添加旅行时段</string>
+    <string name="tw_empty_title">还没有旅行时段</string>
+    <string name="tw_empty_body">告诉我们你想何时出行——我们会为那些日期带来现成的交换。</string>
+    <string name="tw_header_empty">你想什么时候去？</string>
+    <string name="tw_header_count">已保存 %1$d 个</string>
+    <string name="tw_header_body">保存你梦想中的日期。助手会用恰好那时空闲的真实住所配出交换。</string>
+    <string name="tw_new_window">新的旅行时段</string>
+    <string name="tw_date_from">从</string>
+    <string name="tw_date_to">至</string>
+    <string name="tw_end_after_start">结束日期必须晚于起始日期。</string>
+    <string name="tw_flexible_title">我的日期灵活</string>
+    <string name="tw_flexible_body">我们会在这些日子前后扩大搜索范围。</string>
+    <string name="tw_where_label">想去哪里？（可选）</string>
+    <string name="tw_where_placeholder">里斯本、葡萄牙、巴塞罗那</string>
+    <string name="tw_where_hint">用逗号分隔城市或国家——留空表示任意地点。</string>
+    <string name="tw_notes_label">备注（可选）</string>
+    <string name="tw_notes_placeholder">周年纪念之旅，想找个适合步行的地方…</string>
+    <string name="tw_save_window">保存旅行时段</string>
+    <string name="tw_flexible_chip">灵活</string>
+    <string name="tw_anywhere">任意地点</string>
+    <string name="tw_remove_window">移除此旅行时段</string>
+    <string name="tw_hide_swaps">隐藏这些日期的交换</string>
+    <string name="tw_show_swaps">显示这些日期的交换</string>
+    <string name="tw_proposals_load_error">无法加载交换。</string>
+    <string name="tw_proposals_loading">正在寻找你这些日期空闲的住所…</string>
+    <string name="tw_proposals_no_listing">请先添加一个活跃房源——交换需要两套住所。</string>
+    <string name="tw_proposals_empty">这些确切日期还没有空闲的住所——我们会持续关注，一旦出现匹配就会发邮件通知你。</string>
+    <string name="tw_match_pct">%1$d%% 匹配</string>
+    <string name="tw_on_wishlist">在你心愿目的地清单上</string>
+    <string name="tw_mode_direct_swap">直接交换</string>
+    <string name="tw_mode_keys_stay">用钥匙入住</string>
+    <string name="tw_mode_keys_stay_nightly">用钥匙入住 · %1$d 钥匙/晚</string>
+
+    <!-- Public profile -->
+    <string name="profile_report_user">举报此用户</string>
+    <string name="profile_anonymous_host">匿名房东</string>
+    <string name="profile_id_verified">身份已验证</string>
+    <string name="profile_host_avatar">房东头像</string>
+    <string name="profile_work">我的职业：%1$s</string>
+    <string name="profile_speaks">会说 %1$s</string>
+    <string name="profile_lives_in">居住于 %1$s</string>
+    <string name="profile_joined_swapl">加入 Swapl</string>
+    <string name="profile_a_member">一位 Swapl 会员</string>
+    <string name="profile_visited_label">我去过的地方</string>
+    <string name="profile_visited_empty">还没有完成的交换——每次入住后护照印章会出现在这里。</string>
+    <string name="profile_reviews_label_plain">评价</string>
+    <string name="profile_reviews_label_count">评价（%1$d）</string>
+    <string name="profile_reviews_empty">还没有评价——房东会在完成交换后互相评价。</string>
+    <string name="profile_interests_label">兴趣</string>
+    <string name="profile_their_homes">他们的住所</string>
+    <string name="profile_sqm_sleeps">%1$d 平米 · 可住 %2$d 人</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="other">交换</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="other">评价</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="other">在 Swapl 的年数</item>
+    </plurals>
+
+    <!-- Account settings -->
+    <string name="settings_personal_info_title">个人信息</string>
+    <string name="settings_display_name">显示名称</string>
+    <string name="settings_about_you">关于你</string>
+    <string name="settings_about_you_placeholder">向房东简单介绍一下自己。</string>
+    <string name="settings_my_work">我的职业</string>
+    <string name="settings_my_work_placeholder">例如 建筑师</string>
+    <string name="settings_languages">语言</string>
+    <string name="settings_languages_placeholder">例如 英语、意大利语</string>
+    <string name="settings_languages_hint">用逗号分隔多种语言。</string>
+    <string name="settings_home_city">家乡城市</string>
+    <string name="settings_home_city_placeholder">例如 米兰</string>
+    <string name="settings_home_country">家乡国家</string>
+    <string name="settings_home_country_placeholder">例如 意大利</string>
+    <string name="settings_saved_confirm">已保存。你的公开资料已更新。</string>
+    <string name="settings_save_changes">保存更改</string>
+    <string name="settings_change_password">修改密码</string>
+    <string name="pw_current_label">当前密码</string>
+    <string name="pw_current_hint">如果你是通过 Google、Telegram 或邮箱验证码注册的，请留空。</string>
+    <string name="pw_new_label">新密码</string>
+    <string name="pw_new_hint">至少 6 个字符。其他设备将被退出登录。</string>
+    <string name="pw_confirm_label">确认新密码</string>
+    <string name="pw_error_min6">请使用至少 6 个字符。</string>
+    <string name="pw_error_mismatch">两次密码不一致。</string>
+    <string name="pw_error_incorrect">当前密码不正确。</string>
+    <string name="pw_error_too_many">尝试次数过多——请一小时后再试。</string>
+    <string name="pw_error_generic">无法修改密码，请重试。</string>
+    <string name="settings_privacy_title">隐私</string>
+    <string name="settings_seo_title">搜索引擎收录</string>
+    <string name="settings_seo_subtitle">允许你的房源页面出现在 Google 等搜索引擎中。</string>
+    <string name="settings_show_home_city_title">显示我的家乡城市</string>
+    <string name="settings_show_home_city_subtitle">在你的公开资料上显示你的家乡城市和国家。</string>
+    <string name="settings_notifications_title">通知</string>
+    <string name="settings_email_notif_title">邮件通知</string>
+    <string name="settings_email_notif_subtitle">通过邮件接收提议、确认和行程提醒。</string>
+    <string name="settings_push_notif_title">推送通知</string>
+    <string name="settings_push_notif_subtitle">当有事需要你处理时，在此设备上实时提醒。</string>
+
+    <!-- Keys wallet -->
+    <string name="keys_travel_points">旅行积分</string>
+    <string name="keys_intro">你通过接待赚取的积分。把它们花在入住上——绝非金钱，不可购买也不可兑现。</string>
+    <string name="keys_your_homes_earn">你的住所赚取</string>
+    <string name="keys_your_homes_earn_body">这是客人每入住一晚你所赚取的——你随后可以把这些积分花在别处的入住上。</string>
+    <string name="keys_history">记录</string>
+    <string name="keys_history_empty">还没有积分活动。通过接待赚取积分，或赠送一些给好友。</string>
+    <string name="keys_see_all_history">查看全部积分记录</string>
+    <string name="keys_your_travel_points">你的旅行积分</string>
+    <string name="keys_balance_caption">无需同时交换即可花在入住上。积分不是金钱——你无法购买或兑现。</string>
+    <string name="keys_gift_points">赠送积分</string>
+    <string name="keys_gift_entry_subtitle">向已验证的好友赠送积分</string>
+    <string name="keys_per_night">%1$d / 晚</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="other">按此费率，你的余额约可支付 %1$d 晚。</item>
+    </plurals>
+    <string name="keys_how_it_works">积分如何运作</string>
+    <string name="keys_example_host">以 %1$d 积分/晚接待 2 晚</string>
+    <string name="keys_example_spend">把那 %1$d 积分花在别处的 2 晚上</string>
+    <string name="keys_loop_caption">这就是整个循环：接待 → 赚取积分 → 旅行 → 重复。没有金钱易手。</string>
+    <string name="keys_get_first">获取你的第一笔积分</string>
+    <string name="keys_earn_verify_title">验证你的身份</string>
+    <string name="keys_earn_verify_body">验证通过的那一刻立即获得 %1$d 积分。</string>
+    <string name="keys_earn_host_title">接待一次入住</string>
+    <string name="keys_earn_host_body">客人在你这里每入住一晚都能赚取积分。</string>
+    <string name="keys_earn_gift_title">收到赠礼</string>
+    <string name="keys_earn_gift_body">已验证的好友可以向你赠送积分——分享你的会员 ID。</string>
+    <string name="keys_error_title">积分不可用</string>
+    <string name="keys_gift_member_id">会员 ID</string>
+    <string name="keys_gift_member_id_hint">向你的好友索取他们的 Swapl 会员 ID。他们必须是已验证的会员。</string>
+    <string name="keys_gift_caps">每次赠送最多 %1$d，每天最多 %2$d。积分是一份赠礼——无法购买或兑现。</string>
+    <plurals name="keys_points_amount">
+        <item quantity="other">%1$d 积分</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="other">已赠送 %1$d 积分。你现在有 %2$d。</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">你和你的好友都必须是已验证的会员才能赠送积分。</string>
+    <string name="keys_gift_error_not_found">我们找不到那位会员。请仔细核对 ID。</string>
+    <string name="keys_gift_error_insufficient">你的积分不足以完成这次赠送。</string>
+    <string name="keys_gift_error_generic">目前无法赠送积分。</string>
+
+    <!-- Invite &amp; earn -->
+    <string name="invite_title">邀请并赚取</string>
+    <string name="invite_intro">带来好友，赚取旅行积分，在抢先体验队列中前进。积分绝非金钱。</string>
+    <string name="invite_share_message">在 Swapl 上加入我——交换住所，用积分而非现金去旅行。用我的链接，当你完成验证时我们都能获得 %1$d 旅行积分：%2$s</string>
+    <string name="invite_share_subject">在 Swapl 上加入我</string>
+    <string name="invite_share_chooser">分享你的邀请</string>
+    <string name="invite_hero_kicker">带来好友，在队列中前进</string>
+    <string name="invite_hero_points_earned">已赚取积分</string>
+    <string name="invite_hero_spot_in_line">你在队列中的位置</string>
+    <string name="invite_hero_body">每位加入并完成验证的好友都能为你赚取 %1$d 旅行积分——并让你在抢先体验队列中前进。积分绝非金钱。</string>
+    <string name="invite_referral_link_label">你的推荐链接</string>
+    <string name="invite_share_button">分享</string>
+    <string name="invite_share_caption">分享整个链接——这才是关键。一键即可发送到任何地方：短信、WhatsApp、邮件。你的好友点击、加入，一旦他们完成验证，你们双方都能获得积分。</string>
+    <string name="invite_to_stay_title">邀请某人来入住</string>
+    <string name="invite_to_stay_subtitle">发送一份与你住所关联的个人邀请</string>
+    <string name="invite_tier_label">你的等级</string>
+    <string name="invite_tier_not_started">尚未开始</string>
+    <string name="invite_tier_no_perk">邀请你的第一位好友以解锁福利。</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="other">再有 %1$d 位已验证好友即可达到 %2$s。</item>
+    </plurals>
+    <string name="invite_tier_top">已达到最高等级——你是 Swapl 创始成员。</string>
+    <string name="invite_leaderboard_label">排行榜</string>
+    <string name="invite_you_badge">你</string>
+    <string name="invite_your_invites">你的邀请（%1$d）</string>
+    <string name="invite_antifarm_note">只有当好友完成身份验证后积分才会到账——这能让队列对所有人公平。积分是旅行额度，绝非现金。</string>
+    <string name="invite_error_title">邀请不可用</string>
+    <string name="invite_list_home_title">请先发布你的住所</string>
+    <string name="invite_list_home_body">邀请入住链接与你自己的房源关联。请先在\"账户\"中创建住所，然后邀请好友来入住。</string>
+    <string name="invite_verify_home_title">请先验证你的住所</string>
+    <string name="invite_verify_home_body">在邀请客人入住之前请先验证此房源——否则你好友的奖励无法发放。请从\"账户 → 你的房源\"进行验证。</string>
+    <string name="invite_inviting_guest_to">正在邀请客人入住</string>
+    <string name="invite_your_home">你的住所</string>
+    <string name="invite_friend_email_label">好友邮箱（可选）</string>
+    <string name="invite_friend_email_placeholder">friend@email.com</string>
+    <string name="invite_friend_email_hint">添加邮箱以便好友注册时自动匹配邀请，或留空以生成任何人都能使用的开放链接。</string>
+    <string name="invite_ready">邀请已就绪</string>
+    <string name="invite_stay_share_message">我很乐意在 Swapl 上接待你——交换住所，用积分而非现金去旅行。这是你来 %1$s 入住的邀请：%2$s</string>
+    <string name="invite_stay_share_subject">来 %1$s 入住</string>
+    <string name="invite_stay_share_chooser">分享邀请链接</string>
+    <string name="invite_share_link_button">分享邀请链接</string>
+    <string name="invite_creating">创建中…</string>
+    <string name="invite_create_link">创建邀请链接</string>
+    <string name="invite_stay_reward">当他们加入并完成验证后，你们双方都能赚取 %1$d 旅行积分。积分绝非金钱。</string>
+    <string name="invite_stay_reward_generic">当他们加入并完成验证后，你们双方都能赚取旅行积分。积分绝非金钱。</string>
+    <string name="invite_err_not_verified">在邀请客人入住之前请先验证此房源——否则你好友的奖励无法发放。</string>
+    <string name="invite_err_not_owner">你只能邀请客人入住你自己的房源。</string>
+    <string name="invite_err_cooldown">你在过去一小时内发送了大量邀请——请稍后再试。这只是短暂的冷却，并非封禁。</string>
+    <string name="invite_err_generic">目前无法创建邀请。</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">获取灵感</string>
+    <string name="inspire_intro">告诉我们你梦想中的旅行——我们会用与你住所匹配的真实住所配出一次交换。</string>
+    <string name="inspire_wish_label">你的愿望</string>
+    <string name="inspire_wish_placeholder">某个温暖、美食丰富、适合步行、适合远程办公的地方…</string>
+    <string name="inspire_mic_stop">停止聆听</string>
+    <string name="inspire_mic_start">口述你的愿望</string>
+    <string name="inspire_listening">正在聆听——尽情说，再次点击麦克风停止。</string>
+    <string name="inspire_mic_denied">Swapl 的麦克风权限已关闭——在设置中启用它以口述你的愿望。</string>
+    <string name="inspire_dates_in_mind">我已有心仪的日期</string>
+    <string name="inspire_dates_in_mind_sub">否则我们将使用你住所的可用日期。</string>
+    <string name="inspire_dream_up">构想我的交换</string>
+    <string name="inspire_loading_1">正在构想你的交换…</string>
+    <string name="inspire_loading_2">正在匹配符合你风格的住所…</string>
+    <string name="inspire_loading_3">正在查看谁与你同时空闲…</string>
+    <string name="inspire_loading_4">正在打包你的虚拟行李…</string>
+    <string name="inspire_package_title">你的交换套餐</string>
+    <string name="inspire_understood">已理解：%1$s</string>
+    <string name="inspire_dates_label">日期</string>
+    <string name="inspire_dates_suggested">根据你住所的可用日期建议——可自由调整。</string>
+    <string name="inspire_message_label">你的留言</string>
+    <string name="inspire_message_ai">由 AI 根据你和对方的房源草拟——把它变成你自己的话。</string>
+    <string name="inspire_swap_pick">或更换选择</string>
+    <string name="inspire_match_pct">%1$d%% 匹配</string>
+    <string name="inspire_while_there">在那里期间</string>
+    <string name="inspire_experiences_note">在我们合作伙伴的网站上按其价格预订——swapl 可能赚取佣金，绝不加价。</string>
+    <string name="inspire_travel_essentials">旅行必备</string>
+    <string name="inspire_concierge_addons">swapl 礼宾附加服务</string>
+    <string name="inspire_addons_note">真实的目录价格。取消勾选任何你不想要的——只有房东接受你的交换时才会收费。</string>
+    <string name="inspire_payable_if_accepts">房东接受时才付款</string>
+    <string name="inspire_nothing_payable">无需付款——确认只会发送提议。</string>
+    <string name="inspire_confirm_send">确认并发送提议</string>
+    <string name="inspire_charged_note">只有房东接受你的交换时才会收费。</string>
+    <string name="inspire_dismissing">正在忽略…</string>
+    <string name="inspire_not_feeling">不太喜欢</string>
+    <string name="inspire_almost_there">就快好了</string>
+    <string name="inspire_payment_title">付款与预订</string>
+    <string name="inspire_your_selection">你的选择</string>
+    <string name="inspire_partner_note">合作伙伴的体验和服务在合作伙伴网站上预订——绝不由 swapl 收费，也不计入此总额。</string>
+    <string name="inspire_save_card">保存卡片并发送提议</string>
+    <string name="inspire_send_no_card">不保存卡片直接发送</string>
+    <string name="inspire_back_to_package">返回套餐</string>
+    <string name="inspire_book_on">在 %1$s 上预订</string>
+    <string name="inspire_err_no_match">我们需要你有一套活跃的住所——以及至少一个兼容的匹配——才能配出套餐。</string>
+    <string name="inspire_err_rate">你构想得太快了！稍等几分钟再试。</string>
+    <string name="inspire_err_limit">你已达到方案的提议上限。升级以发送更多。</string>
+    <string name="inspire_err_forbidden">你的账户目前无法发送提议。</string>
+    <string name="inspire_err_generic">出了点问题。请重试。</string>
+
+
+    <!-- Bottom navigation -->
+    <string name="nav_browse">浏览</string>
+    <string name="nav_wishlists">心愿单</string>
+    <string name="nav_trips">行程</string>
+    <string name="nav_swaps">交换</string>
+    <string name="nav_account">账户</string>
+</resources>

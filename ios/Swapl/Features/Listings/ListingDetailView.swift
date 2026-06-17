@@ -67,6 +67,7 @@ struct ListingDetailView: View {
         .background(SwaplSemanticLight.background.ignoresSafeArea())
         .navigationTitle(vm.detail?.listing.city ?? String(localized: "Home"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             // System share sheet. The link is a universal link, so recipients
             // with the app installed land straight on this listing.
@@ -506,10 +507,7 @@ struct ListingDetailView: View {
         }
         .padding(.horizontal, 22)
         .padding(.vertical, 14)
-        .background(SwaplSemanticLight.card)
-        .overlay(alignment: .top) {
-            AirbnbPalette.hairline.frame(height: 1)
-        }
+        .glassEffect(.regular, in: .rect)
     }
 
     // Two ways to book this home, side by side (DOK-155): the direct
@@ -560,10 +558,7 @@ struct ListingDetailView: View {
         }
         .padding(.horizontal, 22)
         .padding(.vertical, 14)
-        .background(SwaplSemanticLight.card)
-        .overlay(alignment: .top) {
-            AirbnbPalette.hairline.frame(height: 1)
-        }
+        .glassEffect(.regular, in: .rect)
     }
 
     private func amenityChips(_ l: Listing) -> [String] {

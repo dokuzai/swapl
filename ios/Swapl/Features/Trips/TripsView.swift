@@ -14,6 +14,30 @@ final class TripsViewModel {
     var error: String?
     var isLoading = false
 
+    // Filter by swap status group + order. "Active" = confirmed swaps,
+    // "Potential" = pending/countered, "Cancelled" = declined/withdrawn.
+    enum StatusFilter: String, CaseIterable { case all, active, potential, cancelled }
+    enum SortOption: String, CaseIterable { case soonest, latest }
+    enum GroupOption: String, CaseIterable { case city, country }
+    var statusFilter: StatusFilter = .all
+    var sortBy: SortOption = .soonest
+    var groupBy: GroupOption = .city
+
+    private func isCancelled(_ p: ProposalSummary) -> Bool {
+        p.status == "DECLINED" || p.status == "WITHDRAWN"
+    }
+
+    func matchesFilter(_ p: ProposalSummary) -> Bool {
+        switch statusFilter {
+        // Default hides cancelled trips — they're a dead end. Pick "Cancelled"
+        // to see them.
+        case .all: return !isCancelled(p)
+        case .active: return p.status == "ACCEPTED"
+        case .potential: return p.status == "PENDING" || p.status == "COUNTERED"
+        case .cancelled: return isCancelled(p)
+        }
+    }
+
     func load() async {
         isLoading = true
         error = nil
@@ -87,10 +111,9 @@ struct TripsView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                SwaplPageTitle("Trips")
-                content
-            }
+            // No fixed header bar: the title (and filter bar) scroll with the
+            // content and fade away, like Explore.
+            content
             .background(SwaplSemanticLight.background)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
@@ -100,23 +123,32 @@ struct TripsView: View {
         }
     }
 
+    private var titleBar: some View { SwaplPageTitle("Trips") }
+
     @ViewBuilder
     private var content: some View {
         if vm.isLoading && vm.trips == nil && vm.error == nil {
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .accessibilityLabel("Loading trips")
+            VStack(spacing: 0) {
+                titleBar
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel("Loading trips")
+            }
         } else if let error = vm.error {
-            SwaplEmptyState(
-                systemImage: "wifi.exclamationmark",
-                title: "Trips unavailable",
-                description: error,
-                actionTitle: "Try Again",
-                action: { Task { await vm.load() } }
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            VStack(spacing: 0) {
+                titleBar
+                SwaplEmptyState(
+                    systemImage: "wifi.exclamationmark",
+                    title: "Trips unavailable",
+                    description: error,
+                    actionTitle: "Try Again",
+                    action: { Task { await vm.load() } }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         } else if let trips = vm.trips, trips.isEmpty {
             ScrollView {
+                titleBar
                 // Keys stays show even with no reciprocal swaps yet.
                 KeysStaysSection()
                     .padding(.horizontal, 22)
@@ -133,17 +165,98 @@ struct TripsView: View {
         }
     }
 
-    private func tripsList(_ trips: [ProposalSummary]) -> some View {
+    // Filter + sort as glass icon buttons that sit inline with the title (no
+    // chip bar). Filter = a menu of All / Active / Potential / Cancelled.
+    private var tripsControls: some View {
+        HStack(spacing: 8) {
+            tripsFilterMenu
+            tripsGroupMenu
+            tripsSortMenu
+        }
+    }
+
+    private var tripsGroupMenu: some View {
+        Menu {
+            Picker(String(localized: "Group by"), selection: Bindable(vm).groupBy) {
+                Text(String(localized: "City")).tag(TripsViewModel.GroupOption.city)
+                Text(String(localized: "Country")).tag(TripsViewModel.GroupOption.country)
+            }
+        } label: {
+            Image(systemName: "square.stack.3d.up")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .frame(width: 44, height: 44)
+                .glassEffect(.regular.interactive(), in: .circle)
+                .overlay(alignment: .topTrailing) {
+                    if vm.groupBy != .city {
+                        Circle().fill(SwaplSemanticLight.primary).frame(width: 9, height: 9)
+                    }
+                }
+        }
+        .accessibilityLabel("Group trips")
+    }
+
+    private var tripsFilterMenu: some View {
+        Menu {
+            Picker(String(localized: "Show"), selection: Bindable(vm).statusFilter) {
+                ForEach(TripsViewModel.StatusFilter.allCases, id: \.self) { f in
+                    Text(filterLabel(f)).tag(f)
+                }
+            }
+        } label: {
+            Image(systemName: "line.3.horizontal.decrease")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .frame(width: 44, height: 44)
+                .glassEffect(.regular.interactive(), in: .circle)
+                .overlay(alignment: .topTrailing) {
+                    if vm.statusFilter != .all {
+                        Circle().fill(SwaplSemanticLight.primary).frame(width: 9, height: 9)
+                    }
+                }
+        }
+        .accessibilityLabel("Filter trips")
+    }
+
+    private var tripsSortMenu: some View {
+        Menu {
+            Picker(String(localized: "Order by"), selection: Bindable(vm).sortBy) {
+                Text(String(localized: "Soonest")).tag(TripsViewModel.SortOption.soonest)
+                Text(String(localized: "Latest")).tag(TripsViewModel.SortOption.latest)
+            }
+        } label: {
+            Image(systemName: "arrow.up.arrow.down")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .frame(width: 44, height: 44)
+                .glassEffect(.regular.interactive(), in: .circle)
+        }
+        .accessibilityLabel("Order trips")
+    }
+
+    private func filterLabel(_ f: TripsViewModel.StatusFilter) -> String {
+        switch f {
+        case .all: return String(localized: "All")
+        case .active: return String(localized: "Active")
+        case .potential: return String(localized: "Potential")
+        case .cancelled: return String(localized: "Cancelled")
+        }
+    }
+
+    private func tripsList(_ allTrips: [ProposalSummary]) -> some View {
         let today = TripPhase.todayString()
-        // Upcoming + active, grouped by destination city (Airbnb-style), cities
-        // ordered by the soonest trip. Past trips move to their own timeline.
+        let trips = allTrips.filter { vm.matchesFilter($0) }
+        // Upcoming + active, grouped by destination city (Airbnb-style). Order
+        // by the chosen sort (soonest/latest check-in). Past → own timeline.
         let upcoming = trips.filter { $0.tripPhase(today: today) != .past }
-            .sorted { $0.dateFrom < $1.dateFrom }
+            .sorted { vm.sortBy == .soonest ? $0.dateFrom < $1.dateFrom : $0.dateFrom > $1.dateFrom }
         let past = trips.filter { $0.tripPhase(today: today) == .past }
             .sorted { $0.dateTo > $1.dateTo }
-        let grouped = groupByCity(upcoming)
+        let grouped = groupTrips(upcoming)
 
         return ScrollView {
+          VStack(alignment: .leading, spacing: 0) {
+            SwaplPageTitle("Trips") { tripsControls }
             LazyVStack(alignment: .leading, spacing: 24) {
                 KeysStaysSection()
 
@@ -180,17 +293,20 @@ struct TripsView: View {
             .padding(.horizontal, 22)
             .padding(.top, 8)
             .padding(.bottom, 28)
+          }
         }
         .refreshable { await vm.load() }
     }
 
-    // Preserve first-seen order (already sorted by soonest date), one bucket per city.
-    private func groupByCity(_ trips: [ProposalSummary]) -> [(String, [ProposalSummary])] {
+    // Preserve first-seen order (already sorted by soonest date), one bucket per
+    // city or country depending on the chosen grouping.
+    private func groupTrips(_ trips: [ProposalSummary]) -> [(String, [ProposalSummary])] {
         var order: [String] = []
         var map: [String: [ProposalSummary]] = [:]
         for t in trips {
-            if map[t.theirCity] == nil { order.append(t.theirCity) }
-            map[t.theirCity, default: []].append(t)
+            let key = vm.groupBy == .country ? (t.theirCountry ?? t.theirCity) : t.theirCity
+            if map[key] == nil { order.append(key) }
+            map[key, default: []].append(t)
         }
         return order.map { ($0, map[$0]!) }
     }
@@ -269,8 +385,45 @@ struct TripCard: View {
     }
 }
 
+// Self-loading entry for the Profile "Past trips" card (the Trips tab passes
+// its already-loaded data straight to PastTripsView instead).
+struct PastTripsLoaderView: View {
+    @State private var vm = TripsViewModel()
+
+    var body: some View {
+        Group {
+            if let trips = vm.trips {
+                let past = trips.filter { $0.tripPhase() == .past }.sorted { $0.dateTo > $1.dateTo }
+                if past.isEmpty {
+                    SwaplEmptyState(
+                        systemImage: "suitcase.rolling",
+                        title: String(localized: "No past trips yet"),
+                        description: String(localized: "Your completed swaps will appear here.")
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    PastTripsView(trips: past)
+                }
+            } else if let error = vm.error {
+                SwaplEmptyState(
+                    systemImage: "wifi.exclamationmark",
+                    title: String(localized: "Trips unavailable"),
+                    description: error,
+                    actionTitle: String(localized: "Try Again"),
+                    action: { Task { await vm.load() } }
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        .background(SwaplSemanticLight.background)
+        .task { await vm.load() }
+    }
+}
+
 // Past trips as a year-grouped vertical timeline (DOK-134, Airbnb-inspired).
-// Pushed inside the Trips NavigationStack, so trip.id taps reuse its
+// Pushed inside a NavigationStack that registers
 // `.navigationDestination(for: String.self)` → ProposalDetailView.
 struct PastTripsView: View {
     let trips: [ProposalSummary]

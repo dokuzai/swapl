@@ -1,0 +1,1143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">おかえりなさい</string>
+    <string name="auth_kicker_register">Swapl に参加</string>
+    <string name="auth_kicker_waitlist">先行アクセス</string>
+    <string name="auth_headline_signin">鍵には鍵を。</string>
+    <string name="auth_headline_register">ホテルではなく、\n家を交換しよう。</string>
+    <string name="auth_headline_waitlist">リストに登録しよう。</string>
+    <string name="auth_email">メールアドレス</string>
+    <string name="auth_password">パスワード</string>
+    <string name="auth_password_register">パスワード（6文字以上）</string>
+    <string name="auth_signin">ログイン</string>
+    <string name="auth_signin_busy">ログイン中…</string>
+    <string name="auth_create_account">アカウントを作成</string>
+    <string name="auth_create_account_busy">アカウント作成中…</string>
+    <string name="auth_join_waitlist">ウェイトリストに登録</string>
+    <string name="auth_join_waitlist_busy">登録中…</string>
+    <string name="auth_continue_with">または次で続行</string>
+    <string name="auth_passkey">パスキーでログイン</string>
+    <string name="auth_google">Google で続行</string>
+    <string name="auth_email_code">メールコード</string>
+    <string name="auth_phone">電話</string>
+    <string name="auth_switch_to_register">Swapl は初めてですか？アカウントを作成</string>
+    <string name="auth_switch_to_waitlist">まだ準備ができていませんか？ウェイトリストに登録</string>
+    <string name="auth_switch_register_to_signin">すでにアカウントをお持ちですか？ログイン</string>
+    <string name="auth_switch_waitlist_to_signin">アカウントをお持ちですか？ログイン</string>
+    <string name="auth_google_failed">Google ログインに失敗しました。もう一度お試しください。</string>
+    <string name="auth_passkey_unavailable">現在、パスキーでのログインはご利用いただけません。</string>
+    <string name="auth_passkey_failed">パスキーでのログインに失敗しました。もう一度お試しください。</string>
+    <string name="auth_passkey_none">この端末にはまだパスキーがありません。別の方法でログインし、プロフィールから追加してください。</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">メールコードでログイン</string>
+    <string name="auth_otp_kicker_phone">電話でログイン</string>
+    <string name="auth_otp_headline_enter">コードを入力してください。</string>
+    <string name="auth_otp_headline_get">コードを受け取る。</string>
+    <string name="auth_otp_sent">%1$s に6桁のコードを送信しました。10分で有効期限が切れます。</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">電話（例：+39 333 123 4567）</string>
+    <string name="auth_otp_phone_help">国際形式を使用してください。例：+39 333 123 4567。</string>
+    <string name="auth_otp_verify">コードを確認</string>
+    <string name="auth_otp_verify_busy">確認中…</string>
+    <string name="auth_otp_resend">受け取れませんでしたか？新しいコードを送信</string>
+    <string name="auth_otp_send">コードを送信</string>
+    <string name="auth_otp_send_busy">送信中…</string>
+    <string name="auth_otp_back">パスワードログインに戻る</string>
+    <string name="verify_referral_toast">認証完了！紹介経由での参加で %1$d Keys を獲得しました。🔑</string>
+    <string name="verify_referral_toast_named">認証完了！%1$s さんの招待で %2$d Keys を獲得しました。🔑</string>
+    <string name="referral_referrer_toast_named">%1$s さんが認証されました — %2$d Keys を獲得しました！🔑</string>
+    <string name="referral_referrer_toast">招待した方が認証されました — %1$d Keys を獲得しました！🔑</string>
+
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Keys を獲得する方法</string>
+    <string name="keys_earn_ways_subtitle">トラベルポイントを増やす小さなアクションです。一度だけでも、繰り返してもOKです。</string>
+    <string name="keys_earn_way_done">獲得しました — お見事です！</string>
+    <string name="keys_earn_way_locked">本人確認を行うとロックが解除されます</string>
+    <string name="keys_earn_verify_identity_title">本人確認を行う</string>
+    <string name="keys_earn_verify_identity_body">簡単な確認で、他のすべての獲得方法が解除されます。</string>
+    <string name="keys_earn_verify_property_title">物件を認証する</string>
+    <string name="keys_earn_verify_property_body">掲載する家の所有者であることを確認してください。</string>
+    <string name="keys_earn_complete_listing_title">掲載情報を完成させる</string>
+    <string name="keys_earn_complete_listing_body">写真や詳細を追加して、ゲストが滞在をイメージできるようにしましょう。</string>
+    <string name="keys_earn_leave_review_title">レビューを書く</string>
+    <string name="keys_earn_leave_review_body">滞在がどうだったかをコミュニティに伝えましょう。</string>
+    <string name="keys_earn_share_converted_title">予約につながる家をシェアする</string>
+    <string name="keys_earn_share_converted_body">掲載情報をシェアし、滞在につながると獲得できます。</string>
+    <string name="keys_earn_refer_friend_title">友達を招待する</string>
+    <string name="keys_earn_refer_friend_body">友達が参加して認証すると、お互いに獲得できます。</string>
+    <string name="keys_earn_generic_title">Keys を獲得</string>
+    <string name="keys_earn_generic_body">このアクションでトラベルポイントを獲得しましょう。</string>
+
+    <!-- Owner verification + publish acknowledgment (DOK-162) -->
+    <string name="owner_verified_badge">認証済みオーナー</string>
+
+    <!-- Publish acknowledgment shown on the Review step before create -->
+    <string name="publish_ack_kicker">公開する前に</string>
+    <string name="publish_ack_mode_question">この家をどのように提供しますか？</string>
+    <string name="publish_ack_mode_entire_home">不在の間、家全体を</string>
+    <string name="publish_ack_mode_room">部屋、または滞在中に</string>
+    <string name="publish_ack_text_entire_home_headline">不在の間、家全体を交換に提供する権利があります。賃貸の場合、契約により不在時にゲストを迎えることが認められています。</string>
+    <string name="publish_ack_text_entire_home_fineprint">契約、建物の規則、地域の法律を守る責任は自分にあります。</string>
+    <string name="publish_ack_text_room_headline">この交換を提供する権利があります。</string>
+    <string name="publish_ack_text_room_fineprint">建物の規則と地域の法律を守ります。</string>
+    <string name="publish_ack_required_error">公開する前に、ホスティングの確認に同意してください。</string>
+    <string name="publish_submit_failed">掲載情報を公開できませんでした。もう一度お試しください。</string>
+
+    <!-- Optional "Verify ownership" entry -->
+    <string name="owner_verify_cta">認証済みオーナーバッジ — 任意</string>
+    <string name="owner_verify_cta_pending">認証済みオーナーバッジ — 審査中</string>
+    <string name="owner_verify_cta_rejected">認証済みオーナーバッジ — 再試行</string>
+    <string name="owner_verify_optional_note">ゲストへの信頼の証です。公開や交換に必須ではありません。</string>
+    <string name="owner_verify_title">所有権を認証</string>
+    <string name="owner_verify_explainer">この家に対するあなたの権利を示す書類を追加してください — 権利証や登記簿、またはあなた名義の賃貸契約書です。管理者が確認し、承認されると掲載情報に「認証済みオーナー」バッジが表示されます。</string>
+    <string name="owner_verify_ai_explainer">まず簡単なAIチェックが書類を読み取り、この家と一致するか確認します。最終的な判断は常に当社チームの担当者が行います。</string>
+    <string name="owner_verify_tenant_note">賃貸も歓迎です。賃貸でも契約によりゲストを迎えられる場合は、完全に対象となります — 家を所有している必要はありません。</string>
+    <string name="owner_verify_tenant">賃貸ですか？あなたも歓迎です — 権利証の代わりに賃貸契約書をアップロードしてください。契約でゲストを迎えることが認められていれば、Swapl でホストできます。</string>
+    <string name="owner_verify_privacy_note">確認後、書類は保存しません。AIのみがあなたの個人情報を読み取り、私的な住宅であるかどうかの結果だけを保持します — 身分証、住所、書類そのものは保持しません。</string>
+    <string name="owner_verify_privacy">書類は家があなたのものか確認するために一度だけ読み取られ、その後は保存されません — 結果（認証済みかどうか）のみを保持し、書類やその内容は保持しません。</string>
+    <string name="owner_verify_private_only_note">Swapl は個人同士の交換のため、法人や商業用の物件は掲載できません。</string>
+    <string name="owner_verify_doc_type_label">何をアップロードしますか？（任意）</string>
+    <string name="owner_verify_doc_type_deed">権利証 / 登記簿</string>
+    <string name="owner_verify_doc_type_lease">賃貸契約書</string>
+    <string name="owner_verify_status_pending">前回の提出は審査中です。最終判断は当社チームの担当者が行います — 通常2営業日以内です。自動チェックで不確かな場合は少し時間がかかることがありますが、ご安心ください。必ずフォローアップします。</string>
+    <string name="owner_verify_status_rejected">前回の提出は承認されませんでした。より鮮明な書類を追加して再提出してください。</string>
+    <string name="owner_verify_business_title">この物件は商業用の可能性があるとチェックが判断しました — 誤りかもしれません</string>
+    <string name="owner_verify_business_body">自動チェックがあなたの書類を法人または商業用物件と読み取りましたが、Swapl は個人同士の交換です。ただし自動チェックは完璧ではなく、最終的な判断は AI ではなく必ず担当者が行います。これがあなた自身の家であれば、ご連絡ください。当社チームの担当者が個別に確認します — 通常2営業日以内で、あなた名義の賃貸契約書、権利証、または納税記録があれば解決できます。</string>
+    <string name="owner_verify_business_contact">サポートに連絡</string>
+    <string name="owner_verify_business_support_email">support@swapl.app</string>
+    <string name="owner_verify_business_support_subject">物件認証の再審査リクエスト</string>
+    <string name="owner_verify_add_document">書類を追加</string>
+    <string name="owner_verify_uploading">アップロード中…</string>
+    <string name="owner_verify_remove">削除</string>
+    <string name="owner_verify_submit">審査に提出</string>
+    <string name="owner_verify_submitting">提出中…</string>
+    <string name="owner_verify_cancel">キャンセル</string>
+    <string name="owner_verify_doc_label">所有権書類</string>
+    <string name="owner_verify_doc_read_error">そのファイルを読み取れませんでした。</string>
+    <string name="owner_verify_upload_failed">アップロードに失敗しました。もう一度お試しください。</string>
+    <string name="owner_verify_submit_failed">提出できませんでした。もう一度お試しください。</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). Owner-only "how your
+         nightly Keys are calculated" breakdown. -->
+    <string name="valuation_section_title">1泊あたりの Keys の計算方法</string>
+    <string name="valuation_per_night">%1$d / 泊</string>
+    <string name="valuation_intro">これはゲストが支払い、あなたが獲得する1泊ごとの金額です。あなた自身や当社が引き上げるのではなく、家の特徴から公平に設定されます。</string>
+    <string name="valuation_show">内訳を表示</string>
+    <string name="valuation_hide">内訳を非表示</string>
+    <string name="valuation_factors_kicker">価値を構成する要素</string>
+    <string name="valuation_base_label">レビュー前の価値</string>
+    <string name="valuation_factor_base">開始時の価値</string>
+    <string name="valuation_factor_size">広さ</string>
+    <string name="valuation_factor_sleeps">就寝人数</string>
+    <string name="valuation_factor_location_tier">立地の魅力</string>
+    <string name="valuation_factor_location_tier_standard">標準 — あなたの立地は不当に引き上げられませんが、平等に評価されます。小さな町や村もここで不利になることはありません。</string>
+    <string name="valuation_factor_verified">認証済みの家</string>
+    <string name="valuation_factor_ai_appeal">家の魅力（AI）</string>
+    <string name="valuation_ai_summary_kicker">家の魅力（AI）</string>
+    <string name="valuation_ai_what_note">当社のAIは、写真の充実度、アメニティ一覧の豊富さ、説明の詳しさなど、掲載情報の見せ方だけを読み取ります。家を厳しく評価することはなく、小さな町や村を不利に扱うこともありません — 立地は別途処理されます。</string>
+    <string name="valuation_ai_baseline_pos">家の魅力ボーナス：+%1$s（ほとんどの家は0点。上限は +%2$d）。</string>
+    <string name="valuation_ai_baseline_zero">家の魅力：0 — ほとんどの家と同じく、ごく普通です（ボーナス上限は +%1$d）。</string>
+    <string name="valuation_ai_baseline_neg">家の魅力：%1$s（ほとんどの家は0点 — 写真や詳細を追加して高めましょう）。</string>
+    <string name="valuation_ai_fallback_note">写真とアメニティから算出されています。当社の家の魅力モデルが掲載情報を分析すると、より詳しい魅力の評価が加わります。</string>
+    <string name="valuation_room_kicker">これは部屋です</string>
+    <string name="valuation_room_note">家全体ではなく個室を提供しているため、1泊あたりの価値はその部屋のみを反映します — 家全体の料金の約 %1$d%% です。</string>
+    <string name="valuation_location_note">目的地の需要レベル 5段階中 %1$d — あなたの地域が滞在先としてどれだけ人気かを示します。</string>
+    <string name="valuation_review_kicker">ゲストのレビュー</string>
+    <string name="valuation_review_applied_up">あなたのレビュー（%2$d 件で %1$.1f★）が価値を %3$d%% 引き上げています。</string>
+    <string name="valuation_review_applied_down">あなたのレビュー（%2$d 件で %1$.1f★）が価値を %3$d%% 引き下げています。</string>
+    <string name="valuation_review_applied_neutral">あなたのレビュー（%2$d 件で %1$.1f★）は価値を現状のまま保っています。</string>
+    <string name="valuation_review_pending">まだ適用されていません — レビューは %1$d 件受け取って初めてこの価値を調整し始めます。現在は %2$d 件です。それまでは特徴に基づく水準のままです。</string>
+    <string name="valuation_review_moving">%2$d 件のレビューによる %1$.1f★ の評価に向けて、いまゆっくりと近づいています — 少しずつ、一度にではありません。</string>
+    <string name="valuation_bounded_note">この価値は更新サイクルごとに最大 %1$d%% だけ変動し、それも %2$d 件以上のレビューがある場合のみです。それでも ±%3$d%% の上限に達するには多くのサイクルが必要で — レビューが超えられない確固たる上限のため — 悪いレビューが続いた週でも収入が一夜で崩れることはありません。</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">あなたの Swapl ストーリー</string>
+    <string name="story_counts_heading">これまでのストーリー</string>
+    <string name="story_passport">あなたのパスポート</string>
+    <string name="story_kind_trip">旅行</string>
+    <string name="story_kind_hosted">ホスト</string>
+    <string name="story_detail_hosted_by">%1$s がホスト</string>
+    <string name="story_detail_welcomed">%1$s を迎えました</string>
+    <string name="story_detail_stay">Swapl での滞在</string>
+    <string name="story_detail_guest">あなたの家のゲスト</string>
+    <string name="story_share_heading">ストーリーをシェア</string>
+    <string name="story_share_button">シェア</string>
+    <string name="story_share_note">ストーリーをどこへでも送れます — メッセージ、WhatsApp、メール。招待リンクが付いているので、友達がタップして参加すると、お互いにトラベルポイントを獲得できます。</string>
+    <string name="story_share_subject">私の Swapl ストーリー</string>
+    <string name="story_share_chooser">ストーリーをシェア</string>
+    <string name="story_share_message">Swapl で %1$d 都市の家を交換してきました — 現金ではなくポイントで旅をしています。私のリンクから参加して認証すると、お互いにトラベルポイントを獲得できます：%2$s</string>
+    <string name="story_empty_title">ここからストーリーが始まります</string>
+    <string name="story_empty_body">最初の交換または Keys での滞在を完了すると、あなたの旅行と迎えたゲストがパスポートのスタンプとしてここに表示されます — Swapl が連れて行くすべての場所の絵はがきです。</string>
+    <string name="story_empty_share">友達を交換に招待</string>
+    <string name="story_error_title">ストーリーを利用できません</string>
+    <string name="story_error_body">ストーリーを読み込めませんでした。引っ張って更新するか、再試行してください。</string>
+    <string name="story_error_retry">再試行</string>
+    <plurals name="story_count_trips">
+        <item quantity="other">旅行</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="other">迎えたゲスト</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="other">都市</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="other">国</item>
+    </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). Shown only when
+         the policy certificate has been anchored on-chain. Not crypto/payment. -->
+    <string name="trip_oncover_badge">TON で認証済み</string>
+    <string name="trip_oncover_view">証明を見る</string>
+    <string name="trip_oncover_explainer">補償が本物であることを示す改ざん防止の記録です — 暗号資産ではなく、支払いもなく、あなたがすることは何もありません。</string>
+
+    <!-- People in a swap conversation (DOK-187). Anyone in the thread can bring a
+         few extra people along — a partner, a co-traveler, a friend. Guests chat
+         like everyone else but never get any say over the swap itself. -->
+    <string name="people_title">参加者</string>
+    <string name="people_role_principal">交換のパートナー</string>
+    <string name="people_role_guest">チャットのゲスト</string>
+    <string name="people_status_pending">保留中</string>
+    <string name="people_invite">招待</string>
+    <string name="people_add">追加</string>
+    <string name="people_add_cotravelers">同行者を追加</string>
+    <string name="people_remove">%1$s を削除</string>
+    <string name="people_invite_title">チャットに招待</string>
+    <string name="people_invite_reassure">会話にパートナーや同行者を追加できます。ここにいる全員とチャットできますが、交換を承諾、変更、キャンセルできるのは2人の交換パートナーだけです — 誰かを招待しても、その人に交換の権限が与わることはありません。</string>
+    <string name="people_invite_field_label">メールまたはハンドル</string>
+    <string name="people_invite_field_placeholder">name@email.com または @handle</string>
+    <string name="people_invite_send">招待を送信</string>
+    <string name="people_invite_cancel">キャンセル</string>
+
+    <!-- Common / shared actions -->
+    <string name="common_cancel">キャンセル</string>
+    <string name="common_ok">OK</string>
+    <string name="common_retry">再試行</string>
+
+    <!-- Rate the app (M1) -->
+    <string name="account_rate_app">アプリを評価</string>
+    <string name="rate_app_title">アプリを評価</string>
+    <string name="rate_app_prompt">Swapl の使い心地はいかがですか？あなたの評価が改善に役立ちます。</string>
+    <string name="rate_app_score_label">あなたの評価</string>
+    <string name="rate_app_comment_label">何か追加することはありますか？</string>
+    <string name="rate_app_comment_placeholder">良い点 — または改善点を教えてください（任意）</string>
+    <string name="rate_app_submit">送信</string>
+    <string name="rate_app_submit_support">サポートに連絡</string>
+    <string name="rate_app_submitting">送信中…</string>
+    <string name="rate_app_prompt_post_review">レビューありがとうございます！Swapl アプリ自体の使い心地はいかがですか？</string>
+    <string name="rate_app_prompt_post_swap">交換が完了しました！Swapl はそこまでの道のりでいかがでしたか？</string>
+    <string name="rate_app_low_support_hint">ご期待に添えず申し訳ありません。これを送信するとサポートが開き、お手伝いできます。</string>
+
+    <!-- Account screen -->
+    <string name="account_profile_title">プロフィール</string>
+    <string name="account_member_badge">Swapl メンバー</string>
+    <string name="account_stat_waiting">待機中</string>
+    <string name="account_stat_sent">送信済み</string>
+    <string name="account_stat_active">アクティブ</string>
+    <string name="account_stat_homes">家</string>
+    <string name="account_edit_home_title">あなたの家を編集</string>
+    <string name="account_become_host_title">ホストになる</string>
+    <string name="account_edit_home_body">写真、日程、詳細を更新します。</string>
+    <string name="account_become_host_body">あなたの家を掲載して交換を始めましょう。</string>
+    <string name="account_section_settings">設定</string>
+    <string name="account_personal_info">個人情報</string>
+    <string name="account_change_password">パスワードを変更</string>
+    <string name="account_passkeys">ログインとセキュリティ — パスキー</string>
+    <string name="account_passkeys_busy">ログインとセキュリティ — パスキー…</string>
+    <string name="account_privacy">プライバシー</string>
+    <string name="account_notifications">通知</string>
+    <string name="account_section_profile">プロフィール</string>
+    <string name="account_view_profile">プロフィールを見る</string>
+    <string name="account_your_story">あなたの Swapl ストーリー</string>
+    <string name="account_travel_points">トラベルポイント</string>
+    <string name="account_invite_earn">招待して獲得</string>
+    <string name="account_interests">興味</string>
+    <string name="account_saved_searches">保存した検索</string>
+    <string name="account_travel_windows">旅行期間</string>
+    <string name="account_metrics">指標</string>
+    <string name="account_section_support">サポート</string>
+    <string name="account_get_help">ヘルプを見る</string>
+    <string name="account_privacy_policy">プライバシーポリシー</string>
+    <string name="account_terms">利用規約</string>
+    <string name="account_log_out">ログアウト</string>
+    <string name="account_version">バージョン %1$s (%2$d)</string>
+    <string name="account_signout_title">ログアウトしますか？</string>
+    <string name="account_signout_body">交換を見るには、もう一度ログインする必要があります。</string>
+    <string name="account_passkeys_dialog_title">パスキー</string>
+
+    <!-- Browse -->
+    <string name="browse_title">さがす</string>
+    <string name="browse_edit_home">あなたの家を編集</string>
+    <string name="browse_list_home">+ 家を掲載</string>
+    <string name="browse_search_placeholder">どこへ？</string>
+    <string name="browse_clear_search">検索をクリア</string>
+    <string name="browse_filters">フィルター</string>
+    <string name="browse_tab_homes">家</string>
+    <string name="browse_tab_experiences">体験</string>
+    <string name="browse_tab_services">サービス</string>
+    <string name="browse_get_inspired_title">インスピレーション</string>
+    <string name="browse_get_inspired_body">夢の旅を教えてください — あなたのための交換を組み立てます。</string>
+    <string name="browse_sort">並べ替え</string>
+    <string name="browse_sort_match">おすすめ順</string>
+    <string name="browse_sort_newest">新着順</string>
+    <string name="browse_sort_largest">広い順</string>
+    <string name="browse_error_title">家を利用できません</string>
+    <string name="browse_error_body">Swapl に接続できませんでした。接続を確認してもう一度お試しください。</string>
+    <string name="browse_empty_title">家が見つかりません</string>
+    <string name="browse_empty_body">メンバーが公開すると、新しい家がここに表示されます。</string>
+    <string name="browse_guests_size_type">%1$d 名 · %2$d m² · %3$s</string>
+    <string name="browse_tag_featured">注目</string>
+    <string name="browse_tag_verified">認証済み</string>
+    <string name="browse_tag_private_room">個室</string>
+    <!-- Filters -->
+    <string name="filter_title">フィルター</string>
+    <string name="filter_when">いつ</string>
+    <string name="filter_from">から</string>
+    <string name="filter_to">まで</string>
+    <string name="filter_clear_dates">日程をクリア</string>
+    <string name="filter_space_type">スペースの種類</string>
+    <string name="filter_space_all">すべて</string>
+    <string name="filter_space_entire">家全体</string>
+    <string name="filter_space_private_room">個室</string>
+    <string name="filter_property_type">物件の種類</string>
+    <string name="filter_min_size">最小の広さ：%1$d m²</string>
+    <string name="filter_min_sleeps">就寝人数：%1$d 名以上</string>
+    <string name="filter_pets">ペット可の家のみ</string>
+    <string name="filter_wfh">ワークスペースのある家のみ</string>
+    <string name="filter_step_free">段差のない家のみ</string>
+    <string name="filter_reset">リセット</string>
+    <string name="filter_show_homes">家を表示</string>
+
+    <!-- Listing detail -->
+    <string name="detail_guests_rooms">%1$d 名 · %2$s · %3$s · %4$d m²</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="other">寝室 %1$d 室</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="other">バスルーム %1$d 室</item>
+    </plurals>
+    <string name="detail_available_range">利用可能 %1$s → %2$s · %3$d〜%4$d 泊の滞在</string>
+    <string name="detail_points_per_night">%1$d ポイント / 泊</string>
+    <string name="detail_private_room_note">これは個室のため、1泊あたりの価値は部屋のみを反映します — 家全体ではありません。</string>
+    <string name="detail_private_room_badge">個室</string>
+    <string name="detail_private_room_badge_rooms">個室 · %1$d 室</string>
+    <string name="detail_about_home">この家について</string>
+    <string name="detail_what_offered">この物件が提供するもの</string>
+    <string name="detail_where">滞在する場所</string>
+    <string name="detail_approx_area">おおよその地域</string>
+    <string name="detail_hosted_by">ホスト</string>
+    <string name="detail_anonymous">匿名</string>
+    <string name="detail_verified_host">認証済みホスト</string>
+    <string name="detail_edit_listing">掲載情報を編集</string>
+    <string name="detail_manage_availability">空き状況を管理</string>
+    <string name="detail_propose_swap">交換を提案</string>
+    <string name="detail_list_home_first">まず家を掲載してください</string>
+    <string name="detail_list_home_first_body">交換を提案する前に、自分の掲載情報を追加してください。</string>
+    <string name="detail_stay_with_points">ポイントで滞在</string>
+    <string name="detail_stay_with_points_body">ホストして獲得したトラベルポイントで片道予約できます — 交換のお返しは不要です。直接の交換が合わないときに使えます。</string>
+    <string name="detail_report_listing">この掲載情報を報告</string>
+    <string name="detail_no_amenities">アメニティの記載はありません。</string>
+    <string name="detail_request_sent_title">リクエストを送信しました</string>
+    <string name="detail_request_sent_body">ホストが確認するまでポイントは保留されます。この滞在は「旅行」に表示されます。</string>
+    <!-- Amenity labels -->
+    <string name="amenity_balcony">バルコニー</string>
+    <string name="amenity_rooftop">屋上</string>
+    <string name="amenity_garden">庭</string>
+    <string name="amenity_courtyard">中庭</string>
+    <string name="amenity_pool">プール</string>
+    <string name="amenity_gym">ジム</string>
+    <string name="amenity_piano">ピアノ</string>
+    <string name="amenity_bike">自転車付き</string>
+    <string name="amenity_parking">駐車場</string>
+    <string name="amenity_workspace">ワークスペース</string>
+    <string name="amenity_pets">ペット可</string>
+    <string name="amenity_step_free">段差なし</string>
+    <string name="amenity_elevator">エレベーター</string>
+    <string name="amenity_ac">エアコン</string>
+    <string name="amenity_dishwasher">食洗機</string>
+    <string name="amenity_washer">洗濯機</string>
+    <string name="amenity_dryer">乾燥機</string>
+
+    <!-- Propose swap dialog -->
+    <string name="propose_title">交換を提案</string>
+    <string name="propose_message_label">メッセージ（任意）</string>
+    <string name="propose_drafting">作成中…</string>
+    <string name="propose_write_for_me">代わりに書いてもらう</string>
+    <string name="propose_rewrite_ai">AI で書き直す</string>
+    <string name="propose_draft_failed">今はメッセージを作成できませんでした</string>
+    <string name="propose_send">送信</string>
+
+    <!-- Swap thread -->
+    <string name="thread_with">%1$s と</string>
+    <string name="thread_open_chat">チャットを開く</string>
+    <string name="thread_open_chat_with">%1$s とのチャットを開く</string>
+    <string name="thread_view_profile">%1$s のプロフィールを見る</string>
+    <string name="thread_host_fallback">ホスト</string>
+    <string name="thread_host_fallback_possessive">あなたのホスト</string>
+    <string name="thread_proposal">提案</string>
+    <string name="thread_counter">変更提案</string>
+    <string name="thread_size_sleeps">%1$d m² · 就寝 %2$d 名</string>
+    <string name="thread_accept">交換を承諾</string>
+    <string name="thread_counter_offer">変更提案</string>
+    <string name="thread_decline">辞退</string>
+    <string name="thread_withdraw">取り下げ</string>
+    <string name="thread_message_optional">メッセージ（任意）</string>
+    <!-- Accept-consent + action feedback (M4) -->
+    <string name="thread_accept_confirm_title">この交換を承諾しますか？</string>
+    <string name="thread_accept_confirm_body">承諾すると日程が確定し、滞在の旅行保険が発行されます — 両方の家が補償されます。引き渡しの調整のために引き続きチャットできます。</string>
+    <string name="thread_accept_confirm_cta">承諾して保険を付ける</string>
+    <string name="thread_decline_confirm_title">この交換を辞退しますか？</string>
+    <string name="thread_decline_confirm_body">これで提案を断ります。取り消すことはできませんが、後で新しい提案をいつでも送れます。</string>
+    <string name="thread_withdraw_confirm_title">この提案を取り下げますか？</string>
+    <string name="thread_withdraw_confirm_body">これでオファーを取り下げます。後で新しい提案を送れます。</string>
+    <string name="thread_accepted_toast">交換が承諾されました — 滞在は保険で守られています。</string>
+    <string name="thread_declined_toast">提案を辞退しました。</string>
+    <string name="thread_withdrawn_toast">提案を取り下げました。</string>
+    <string name="thread_countered_toast">変更提案を送信しました。</string>
+
+    <!-- Leave a review -->
+    <string name="review_title">レビューを書く</string>
+    <string name="review_prompt">%1$s との交換はいかがでしたか？</string>
+    <string name="review_partner_fallback">交換パートナー</string>
+    <string name="review_rating_label">あなたの評価</string>
+    <string name="review_text_label">あなたのレビュー</string>
+    <string name="review_text_placeholder">家、周辺地域、引き渡しはいかがでしたか？</string>
+    <string name="review_min_chars">20文字以上 — 現在 %1$d 文字。</string>
+    <string name="review_submit">レビューを送信</string>
+    <string name="review_submitting">送信中…</string>
+    <string name="review_card_title">交換はいかがでしたか？</string>
+    <string name="review_card_body">%1$s にレビューを残しましょう — 相手の公開プロフィールに表示されます。</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">交換の受信箱</string>
+    <string name="inbox_search_open">検索</string>
+    <string name="inbox_search_close">検索を閉じる</string>
+    <string name="inbox_search_placeholder">ホストまたは都市で検索</string>
+    <string name="inbox_filter_all">すべて</string>
+    <string name="inbox_filter_waiting">あなた待ち</string>
+    <string name="inbox_filter_sent">送信済み</string>
+    <string name="inbox_filter_active">アクティブ</string>
+    <string name="inbox_filter_archived">アーカイブ済み</string>
+    <string name="inbox_section_waiting">あなた待ち</string>
+    <string name="inbox_section_sent">送信済み — 返信待ち</string>
+    <string name="inbox_section_active">アクティブな交換</string>
+    <string name="inbox_section_archived">アーカイブ済み</string>
+    <string name="inbox_status_confirmed">交換確定</string>
+    <string name="inbox_status_countered">変更提案を受信</string>
+    <string name="inbox_status_declined">提案を辞退</string>
+    <string name="inbox_status_waiting_reply">あなたの返信待ち</string>
+    <string name="inbox_status_sent">提案を送信</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s → %2$s · %3$s と</string>
+    <string name="inbox_dates">%1$s → %2$s</string>
+    <string name="inbox_error_title">メッセージを利用できません</string>
+    <string name="inbox_error_body">交換を読み込めませんでした。引っ張って更新するか、再試行してください。</string>
+    <string name="inbox_empty_title">まだメッセージはありません</string>
+    <string name="inbox_empty_body">どの掲載情報からでも交換を提案すると、ここに表示されます。</string>
+
+    <!-- Trips -->
+    <string name="trips_title">旅行</string>
+    <string name="trips_phase_active">進行中</string>
+    <string name="trips_phase_upcoming">今後</string>
+    <string name="trips_phase_past">過去</string>
+    <string name="trips_row_title">%1$s への旅行</string>
+    <string name="trips_row_dates_host">%1$s → %2$s · ホスト %3$s</string>
+    <string name="trips_row_dates">%1$s → %2$s</string>
+    <string name="trips_row_roles">%1$s でゲスト · %2$s でホスト</string>
+    <string name="trips_error_title">旅行を利用できません</string>
+    <string name="trips_error_body">旅行を読み込めませんでした。引っ張って更新するか、再試行してください。</string>
+    <string name="trips_empty_title">まだ旅行はありません</string>
+    <string name="trips_empty_body">承諾された交換は旅行になります。今後の滞在がここに表示されます。</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">この交換はキャンセルされました</string>
+    <string name="cockpit_timeline_agreed">合意</string>
+    <string name="cockpit_timeline_ready">準備完了</string>
+    <string name="cockpit_timeline_staying">滞在中</string>
+    <string name="cockpit_timeline_done">完了</string>
+    <string name="cockpit_starts_in">開始まで</string>
+    <string name="cockpit_status">ステータス</string>
+    <string name="cockpit_countdown_days">%1$d日 %2$d時間</string>
+    <string name="cockpit_countdown_hours">%1$d時間</string>
+    <string name="cockpit_phase_agreed">交換合意</string>
+    <string name="cockpit_phase_preparing">準備中</string>
+    <string name="cockpit_phase_ready">出発準備完了</string>
+    <string name="cockpit_phase_in_progress">進行中</string>
+    <string name="cockpit_phase_completed">完了</string>
+    <string name="cockpit_phase_cancelled">キャンセル済み</string>
+    <string name="cockpit_insured">保険適用</string>
+    <string name="cockpit_before_you_go">出発する前に</string>
+    <string name="cockpit_check_guide_filled">ホームガイドを完成させる</string>
+    <string name="cockpit_check_details_read">ホストの家の詳細を読む</string>
+    <string name="cockpit_check_checked_in">到着したらチェックイン</string>
+    <string name="cockpit_check_checked_out">出発するときにチェックアウト</string>
+    <string name="cockpit_finish_guide">ホームガイドを完成させる（%1$d%%）</string>
+    <string name="cockpit_your_key_code">あなたのキーコード</string>
+    <string name="cockpit_key_code_note">鍵には鍵を — これをゲストと共有すると、入室できます。</string>
+    <string name="cockpit_swap_protection">交換の保護</string>
+    <string name="cockpit_policy_line">証券 %1$s · 補償 €%2$s</string>
+    <string name="cockpit_where_you_stay">滞在する場所</string>
+    <string name="cockpit_guide_not_filled">ホストはまだホームガイドを記入していません。</string>
+    <string name="cockpit_address_unlocks_city">%1$s の正確な住所はまもなく公開されます</string>
+    <string name="cockpit_address_unlocks">正確な住所はまもなく公開されます</string>
+    <string name="cockpit_unlocks_at">%1$s に公開 — 滞在の48時間前。</string>
+    <string name="cockpit_unlocks_generic">住所とホームガイドは滞在の48時間前に公開されます。</string>
+    <string name="cockpit_home_guide">ホームガイド</string>
+    <string name="cockpit_collapse">折りたたむ</string>
+    <string name="cockpit_expand">展開</string>
+    <string name="cockpit_guide_getting_in">入室方法</string>
+    <string name="cockpit_guide_keys">鍵</string>
+    <string name="cockpit_guide_wifi_name">Wi-Fi ネットワーク</string>
+    <string name="cockpit_guide_wifi_password">Wi-Fi パスワード</string>
+    <string name="cockpit_guide_heating">冷暖房</string>
+    <string name="cockpit_guide_kitchen">キッチン</string>
+    <string name="cockpit_guide_bins">ゴミとリサイクル</string>
+    <string name="cockpit_guide_pets_plants">ペットと植物</string>
+    <string name="cockpit_guide_house_rules">ハウスルール</string>
+    <string name="cockpit_guide_neighbourhood">周辺地域</string>
+    <string name="cockpit_guide_emergency">緊急連絡先</string>
+    <string name="cockpit_check_in">チェックイン</string>
+    <string name="cockpit_check_out">チェックアウト</string>
+    <string name="cockpit_checked_in_out">チェックインとチェックアウトが完了しました — ありがとうございます！</string>
+    <string name="cockpit_trip_activity">旅行のアクティビティ</string>
+    <string name="cockpit_event_you">あなた</string>
+    <string name="cockpit_event_partner_fallback">交換パートナー</string>
+    <string name="cockpit_event_checked_in">%1$s がチェックインしました</string>
+    <string name="cockpit_event_checked_out">%1$s がチェックアウトしました</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">メッセージを利用できません</string>
+    <string name="chat_try_again">もう一度試す</string>
+    <string name="chat_view_trip">旅行を見る</string>
+    <string name="chat_say_hello_title">あいさつしましょう</string>
+    <string name="chat_say_hello_body">会話を始めましょう — 日程、周辺地域、知りたいことを何でも聞いてください。</string>
+    <string name="chat_load_earlier">以前のメッセージを読み込む</string>
+    <string name="chat_message_placeholder">メッセージ</string>
+    <string name="chat_add_photo">写真を追加</string>
+    <string name="chat_remove_photo">写真を削除</string>
+    <string name="chat_send">メッセージを送信</string>
+    <string name="chat_receipt_read">既読</string>
+    <string name="chat_receipt_sent">送信済み</string>
+    <string name="chat_invite_only_partners">人を招待できるのは2人の交換パートナーだけです。</string>
+    <string name="chat_invite_not_found">その人が見つかりませんでした。メールまたはハンドルを確認してください。</string>
+    <string name="chat_invite_failed">招待を送信できませんでした。もう一度お試しください。</string>
+    <string name="chat_send_failed">送信できませんでした。もう一度お試しください。</string>
+    <string name="chat_read_image_failed">その画像を読み取れませんでした</string>
+    <string name="chat_upload_photo_failed">写真をアップロードできませんでした。接続を確認してもう一度お試しください。</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">場所</string>
+    <string name="create_step_space">スペース</string>
+    <string name="create_step_access">アクセスとペット</string>
+    <string name="create_step_amenities">アメニティ</string>
+    <string name="create_step_dates">日程</string>
+    <string name="create_step_photos">写真</string>
+    <string name="create_step_description">説明</string>
+    <string name="create_step_review">確認</string>
+    <string name="create_kicker_edit">あなたの家を編集 — ステップ %1$d / %2$d</string>
+    <string name="create_kicker_new">ステップ %1$d / %2$d</string>
+    <string name="create_back">戻る</string>
+    <string name="create_next">次へ</string>
+    <string name="create_saving">保存中…</string>
+    <string name="create_publishing">公開中…</string>
+    <string name="create_save_changes">変更を保存</string>
+    <string name="create_publish_listing">掲載情報を公開</string>
+    <string name="create_locating">位置を特定中…</string>
+    <string name="create_use_location">現在地を使用</string>
+    <string name="create_location_error">位置を特定できませんでした — 手動で入力してください。</string>
+    <string name="create_load_error">掲載情報を読み込めませんでした</string>
+    <string name="create_read_image_error">その画像を読み取れませんでした</string>
+    <string name="create_upload_failed">アップロードに失敗しました</string>
+    <string name="create_title_label">タイトル（例：陽光あふれる運河沿いのアパート）</string>
+    <string name="create_city_label">都市</string>
+    <string name="create_neighbourhood_label">周辺地域</string>
+    <string name="create_country_label">国</string>
+    <string name="create_address_label">住所（任意）</string>
+    <string name="create_space_type">スペースの種類</string>
+    <string name="create_space_entire">家全体</string>
+    <string name="create_space_private_room">個室</string>
+    <string name="create_private_room_keys_note">個室は家全体より Keys の価値が低くなります — 1泊あたりの価値は部屋のみを反映します。</string>
+    <string name="create_rooms_offered">提供する部屋数：%1$d</string>
+    <string name="create_property_type">物件の種類</string>
+    <string name="create_prop_apartment">アパート</string>
+    <string name="create_prop_house">一戸建て</string>
+    <string name="create_prop_loft">ロフト</string>
+    <string name="create_prop_townhouse">タウンハウス</string>
+    <string name="create_size">広さ：%1$d m²</string>
+    <string name="create_sleeps">就寝人数：%1$d</string>
+    <string name="create_bedrooms">寝室：%1$d</string>
+    <string name="create_bathrooms">バスルーム：%1$d</string>
+    <string name="create_floor">階：%1$d</string>
+    <string name="create_has_elevator">エレベーターあり</string>
+    <string name="create_step_free">段差のないアクセス</string>
+    <string name="create_pets_allowed">ペット可</string>
+    <string name="create_wfh_setup">在宅勤務環境</string>
+    <string name="create_desks">デスク：%1$d</string>
+    <string name="create_parking">駐車場</string>
+    <string name="create_bike">自転車付き</string>
+    <string name="create_balcony">バルコニー</string>
+    <string name="create_rooftop">屋上</string>
+    <string name="create_garden">庭</string>
+    <string name="create_courtyard">中庭</string>
+    <string name="create_piano">ピアノ</string>
+    <string name="create_pool">プール</string>
+    <string name="create_gym">ジム</string>
+    <string name="create_ac">エアコン</string>
+    <string name="create_dishwasher">食洗機</string>
+    <string name="create_washer">洗濯機</string>
+    <string name="create_dryer">乾燥機</string>
+    <string name="create_available_from">利用可能開始日</string>
+    <string name="create_available_to">利用可能終了日</string>
+    <string name="create_min_stay">最短滞在：%1$d 日</string>
+    <string name="create_max_stay">最長滞在：%1$d 日</string>
+    <string name="create_photos_hint">家の写真を最大10枚追加できます。アップロード前にサイズを調整します。</string>
+    <string name="create_choose_photos">写真を選択</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="other">%1$d 枚の写真をアップロード中…</item>
+    </plurals>
+    <string name="create_description_label">家を説明してください（20文字以上）</string>
+    <string name="create_characters">%1$d 文字</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d m² · 就寝 %2$d 名 · 寝室 %3$d / バス %4$d</string>
+    <string name="create_review_available">利用可能 %1$s → %2$s</string>
+    <string name="create_decrease">減らす</string>
+    <string name="create_increase">増やす</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">ポイントでの滞在</string>
+    <string name="keys_stay_in">%1$s での滞在</string>
+    <string name="keys_stay_guest_at">%1$s のゲスト</string>
+    <string name="keys_stay_dates">%1$s → %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="other">%1$d 泊 · %2$d ポイント</item>
+    </plurals>
+    <string name="keys_stay_decline">辞退</string>
+    <string name="keys_stay_confirm">滞在を確定</string>
+    <string name="keys_stay_cancel_request">リクエストをキャンセル</string>
+    <string name="keys_stay_covered">確定 — あなたの滞在は Swapl の保険で補償されています。</string>
+    <string name="keys_stay_status_awaiting_host">ホスト待ち</string>
+    <string name="keys_stay_status_action_needed">対応が必要</string>
+    <string name="keys_stay_status_confirmed">確定済み</string>
+    <string name="keys_stay_status_declined">辞退済み</string>
+    <string name="keys_stay_status_cancelled">キャンセル済み</string>
+    <string name="keys_stay_status_completed">完了</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">ポイントで滞在</string>
+    <string name="stay_keys_intro">ポイントで片道予約できます — お返しのホストは不要です。日程や家が直接の交換に合わないときに便利です。</string>
+    <string name="stay_keys_window">家の空き状況（%1$s → %2$s）の範囲内で日程を選択してください。%3$d〜%4$d 泊。予約済みの日付には取り消し線が付いています。</string>
+    <string name="stay_keys_points_per_night">1泊あたりのポイント</string>
+    <string name="stay_keys_nights">泊数</string>
+    <string name="stay_keys_total">合計</string>
+    <string name="stay_keys_total_points">%1$d ポイント</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="other">%1$d ポイントお持ちです — この滞在に十分です（このレートで約 %2$d 泊分）。</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="other">%1$d ポイント不足しています。このレートで約 %2$d 泊ホストするとこの滞在が解除されます — または泊数を減らしてください。ポイントは購入できません。</item>
+    </plurals>
+    <string name="stay_keys_held_note">ホストが確認するまでポイントは保留されます。この滞在は「旅行」に表示されます。</string>
+    <string name="stay_keys_sending">送信中…</string>
+    <string name="stay_keys_request">ポイントでリクエスト</string>
+    <string name="stay_keys_error_insufficient">これらの日程に十分なポイントがありません。泊数を減らすか、ホストしてポイントを獲得してください。ポイントは購入できません。</string>
+    <string name="stay_keys_error_unavailable">それらの日程は利用できません。家の期間内の日程を選択してください。</string>
+    <string name="stay_keys_error_generic">今はこの滞在をリクエストできませんでした。</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">保存した検索</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">保存した検索は Plus メンバー向けの機能です。</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">興味 · %1$d / 12</string>
+    <string name="interests_vibe_label">あなたの雰囲気（任意）</string>
+    <string name="interests_save">保存</string>
+    <string name="interests_saving">保存中…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">ポイント履歴</string>
+    <string name="keys_tx_filter_all">すべて</string>
+    <string name="keys_tx_filter_earned">獲得</string>
+    <string name="keys_tx_filter_spent">使用</string>
+    <string name="keys_tx_empty_all">まだポイントのアクティビティはありません。</string>
+    <string name="keys_tx_empty_earned">まだ獲得したポイントはありません。</string>
+    <string name="keys_tx_empty_spent">まだ使用したポイントはありません。</string>
+    <string name="keys_tx_loading">読み込み中…</string>
+    <string name="keys_tx_load_more">さらに読み込む</string>
+    <string name="keys_tx_balance">残高 %1$d</string>
+    <string name="keys_tx_error_title">ポイント履歴を利用できません</string>
+    <string name="keys_tx_try_again">もう一度試す</string>
+
+    <!-- ===== UI localization 100% (DOK) ===== -->
+    <!-- Common / shared -->
+    <string name="common_save">保存</string>
+    <string name="common_saving">保存中…</string>
+    <string name="common_send">送信</string>
+    <string name="common_sending">送信中…</string>
+    <string name="common_close">閉じる</string>
+    <string name="common_done">完了</string>
+    <string name="common_delete">削除</string>
+    <string name="common_try_again">もう一度試す</string>
+    <string name="cd_remove_photo">写真を削除</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">5つ星中 %1$d つ星</string>
+    <plurals name="cd_n_stars">
+        <item quantity="other">%1$d つ星</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="other">%1$d 泊</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="other">ベッド %1$d 台</item>
+    </plurals>
+
+    <!-- Status enum chips -->
+    <string name="status_pending">保留中</string>
+    <string name="status_accepted">確定済み</string>
+    <string name="status_countered">変更提案済み</string>
+    <string name="status_declined">辞退済み</string>
+    <string name="status_withdrawn">取り下げ済み</string>
+    <string name="status_active">アクティブ</string>
+    <string name="status_upcoming">今後</string>
+    <string name="status_in_progress">進行中</string>
+    <string name="status_completed">完了</string>
+    <string name="status_cancelled">キャンセル済み</string>
+    <string name="status_disputed">係争中</string>
+    <string name="status_resolved">解決済み</string>
+    <string name="status_open">対応中</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">プラン</string>
+
+    <!-- Trip detail -->
+    <string name="trip_detail_error_title">旅行を利用できません</string>
+    <string name="trip_detail_error_body">この旅行を読み込めませんでした。</string>
+    <string name="trip_detail_host_fallback">あなたのホスト</string>
+    <string name="trip_detail_host_word">ホスト</string>
+    <string name="trip_detail_trip_to">%1$s への旅行</string>
+    <string name="trip_detail_hosted_by">%1$s がホスト</string>
+    <string name="trip_detail_your_stay">あなたの滞在</string>
+    <string name="trip_detail_guest_at">%1$s の家のゲスト — %2$s · %3$s</string>
+    <string name="trip_detail_in_return">お返しに同じ日程で %1$s · %2$s をホストします。</string>
+    <string name="trip_detail_view_profile">%1$s のプロフィールを見る</string>
+
+    <!-- Agreement panel -->
+    <string name="agreement_title">交換成立 — 鍵には鍵を</string>
+    <string name="agreement_stay_between">%3$s と %1$s → %2$s の滞在。</string>
+    <string name="agreement_your_code">あなたのコード（相手の家で使用）</string>
+    <string name="agreement_their_code">相手のコード（あなたの家のゲスト）</string>
+    <string name="agreement_insurance_cover">保険 · €%1$dk 補償</string>
+    <string name="agreement_auto_issued">自動発行 · 24時間対応 %1$s</string>
+
+    <!-- Dispute / resolution center -->
+    <string name="dispute_report_problem">問題を報告</string>
+    <string name="dispute_report_new">新しい問題を報告</string>
+    <string name="dispute_phone_title">24時間対応の窓口に連絡</string>
+    <string name="dispute_phone_body">安全でない、または締め出された場合は %1$s に電話してください。</string>
+    <string name="dispute_phone_call">%1$s に電話</string>
+    <string name="dispute_urgent_title">今すぐ助けが必要ですか？</string>
+    <string name="dispute_urgent_body">安全でない、または締め出された場合、24時間対応の窓口があります。タップして今すぐサポートに連絡してください。</string>
+    <string name="dispute_open_body">交換で起きていることを教えてください。交換パートナーとサポートチームに連携します。</string>
+    <string name="dispute_open_body_with">%1$s との交換で起きていることを教えてください。交換パートナーとサポートチームに連携します。</string>
+    <string name="dispute_what_happened">何が起きましたか？</string>
+    <string name="dispute_describe_label">問題を説明してください</string>
+    <string name="dispute_describe_placeholder">何が、いつ起きたか、そして私たちに何を求めるか。</string>
+    <string name="dispute_send_report">報告を送信</string>
+    <string name="dispute_discard_title">変更を破棄しますか？</string>
+    <string name="dispute_discard_body">報告はまだ送信されていません。今ここを離れると、書いた内容は失われます。</string>
+    <string name="dispute_discard_confirm">破棄</string>
+    <string name="dispute_discard_keep">編集を続ける</string>
+    <string name="dispute_reported_on">%1$s に報告</string>
+    <string name="dispute_resolution_label">解決</string>
+    <string name="dispute_conversation_label">会話</string>
+    <string name="dispute_case_resolved">この件は解決しました。</string>
+    <string name="dispute_case_closed">この件はクローズされました。</string>
+    <string name="dispute_reply_label">返信</string>
+    <string name="dispute_reply_placeholder">返信を追加…</string>
+    <string name="dispute_author_you">あなた</string>
+    <string name="dispute_author_support">サポート</string>
+    <string name="dispute_photos_label">写真（任意）</string>
+    <string name="dispute_add_photos">写真を追加</string>
+    <string name="dispute_add_more_photos">さらに追加</string>
+    <string name="dispute_photo_read_error">その画像を読み取れませんでした</string>
+    <string name="dispute_photo_upload_error">写真をアップロードできませんでした。接続を確認してもう一度お試しください。</string>
+    <string name="dispute_cat_access_title">入れない</string>
+    <string name="dispute_cat_access_subtitle">締め出された、コードが違う、鍵がない</string>
+    <string name="dispute_cat_damage_title">破損</string>
+    <string name="dispute_cat_damage_subtitle">何かが壊れた、または損傷した</string>
+    <string name="dispute_cat_cleanliness_title">清潔さ</string>
+    <string name="dispute_cat_cleanliness_subtitle">家が準備されていない、または清潔でなかった</string>
+    <string name="dispute_cat_safety_title">安全上の懸念</string>
+    <string name="dispute_cat_safety_subtitle">安全でないと感じる、または何かおかしい</string>
+    <string name="dispute_cat_no_show_title">不参加</string>
+    <string name="dispute_cat_no_show_subtitle">交換パートナーが約束を守らなかった</string>
+    <string name="dispute_cat_other_title">その他</string>
+    <string name="dispute_cat_other_subtitle">その他、助けが必要なこと</string>
+    <string name="dispute_status_open">対応中</string>
+    <string name="dispute_status_investigating">対応しています</string>
+    <string name="dispute_status_awaiting">あなたの番</string>
+    <string name="dispute_status_resolved">解決済み</string>
+    <string name="dispute_status_closed">クローズ済み</string>
+
+    <!-- Home guide editor -->
+    <string name="home_guide_title">ホームガイド</string>
+    <string name="home_guide_complete_pct">%1$d%% 完了</string>
+    <string name="home_guide_intro">基本事項を記入して、ゲストがあなたに連絡せずに落ち着けるようにしましょう。</string>
+    <string name="home_guide_section_access">入室方法</string>
+    <string name="home_guide_field_access">アクセス手順</string>
+    <string name="home_guide_field_key_pickup">鍵の受け取り</string>
+    <string name="home_guide_section_wifi">Wi-Fi</string>
+    <string name="home_guide_field_wifi_name">ネットワーク名</string>
+    <string name="home_guide_field_wifi_password">パスワード</string>
+    <string name="home_guide_section_living">家での暮らし</string>
+    <string name="home_guide_field_heating">冷暖房</string>
+    <string name="home_guide_field_kitchen">キッチン</string>
+    <string name="home_guide_field_bins">ゴミとリサイクル</string>
+    <string name="home_guide_field_pets">ペットと植物</string>
+    <string name="home_guide_section_good_to_know">知っておくと便利（任意）</string>
+    <string name="home_guide_field_house_rules">ハウスルール</string>
+    <string name="home_guide_field_neighbourhood">周辺地域のヒント</string>
+    <string name="home_guide_field_emergency">緊急連絡先</string>
+
+    <!-- Check in / out sheet -->
+    <string name="check_event_checkin">チェックイン</string>
+    <string name="check_event_checkout">チェックアウト</string>
+    <string name="check_event_checkin_body">到着時に家の基準となる写真を数枚撮りましょう — 後で問い合わせがあった場合、双方を守ります。</string>
+    <string name="check_event_checkout_body">出発時に写真を数枚撮り、家の状態を記録に残しましょう。</string>
+    <string name="check_event_baseline_photos">基準写真</string>
+    <string name="check_event_note_label">メモ（任意）</string>
+    <string name="check_event_note_placeholder">例：すべて問題なし、鍵を回収しました</string>
+
+    <!-- Metrics -->
+    <string name="metrics_title">指標</string>
+    <string name="metrics_section_now">現在</string>
+    <string name="metrics_online_now">オンライン中</string>
+    <string name="metrics_today">今日</string>
+    <string name="metrics_7_days">7日間</string>
+    <string name="metrics_30_days">30日間</string>
+    <string name="metrics_section_users">ユーザー</string>
+    <string name="metrics_total">合計</string>
+    <string name="metrics_email_verified">メール認証済み</string>
+    <string name="metrics_with_active_listing">アクティブな掲載あり</string>
+    <string name="metrics_new_7d">新規（7日間）</string>
+    <string name="metrics_new_30d">新規（30日間）</string>
+    <string name="metrics_section_listings_per_user">ユーザーあたりの掲載数</string>
+    <string name="metrics_avg_per_user">掲載ありユーザーの平均</string>
+    <string name="metrics_top_hosts">トップホスト</string>
+    <string name="metrics_online_only">オンラインのみ</string>
+    <string name="metrics_no_hosts_online">現在オンラインのホストはいません。</string>
+    <string name="metrics_online">オンライン</string>
+    <string name="metrics_offline">オフライン</string>
+    <string name="metrics_section_top_cities">トップ都市</string>
+    <string name="metrics_active_listings">アクティブな掲載</string>
+    <string name="metrics_section_proposals">提案</string>
+    <string name="metrics_accept_rate">承諾率</string>
+    <string name="metrics_section_engagement">エンゲージメント</string>
+    <string name="metrics_active_agreements">アクティブな合意</string>
+    <string name="metrics_completed_agreements">完了した合意</string>
+    <string name="metrics_messages_total">メッセージ（合計）</string>
+    <string name="metrics_messages_7d">メッセージ（7日間）</string>
+    <string name="metrics_favorites_total">お気に入り（合計）</string>
+    <string name="metrics_favorites_7d">お気に入り（7日間）</string>
+    <string name="metrics_saved_searches">保存した検索</string>
+    <string name="metrics_generated_at">%1$s UTC に生成</string>
+    <string name="metrics_error_title">指標を利用できません</string>
+    <string name="metrics_error_body">指標を読み込めませんでした。引っ張って更新するか、再試行してください。</string>
+
+    <!-- Calendar / availability -->
+    <string name="calendar_title">あなたのカレンダー</string>
+    <string name="calendar_intro">確定した交換とポイント滞在の予約日には取り消し線が表示され、ゲストは選択できません。開始日と終了日をタップすると、自分用に日程をブロックできます（改装、個人利用など）。</string>
+    <string name="calendar_block_summary">%1$s → %2$s（%3$s）をブロック</string>
+    <string name="calendar_clear">クリア</string>
+    <string name="calendar_blocking">ブロック中…</string>
+    <string name="calendar_block_dates">これらの日程をブロック</string>
+    <string name="calendar_pick_checkout">チェックアウト日をタップしてブロックを完了してください。</string>
+    <string name="calendar_blocked_label">ブロックした日程</string>
+    <string name="calendar_unblock">ブロック解除</string>
+    <string name="calendar_legend_selected">選択中</string>
+    <string name="calendar_legend_booked">予約済み / ブロック済み</string>
+
+    <!-- Report dialog -->
+    <string name="report_title">報告</string>
+    <string name="report_reason_label">理由</string>
+    <string name="report_details_label">詳細（任意）</string>
+    <string name="report_reason_inappropriate">不適切なコンテンツ</string>
+    <string name="report_reason_scam">詐欺または偽の掲載</string>
+    <string name="report_reason_harassment">ハラスメント</string>
+    <string name="report_reason_discrimination">差別</string>
+    <string name="report_reason_other">その他</string>
+
+    <!-- Wishlists -->
+    <string name="wishlists_title">ウィッシュリスト</string>
+    <string name="wishlists_guests_beds">%1$d 名 · %2$s</string>
+    <string name="wishlists_available">利用可能 %1$s → %2$s</string>
+    <string name="wishlists_error_title">ウィッシュリストを利用できません</string>
+    <string name="wishlists_error_body">Swapl に接続できませんでした。接続を確認してもう一度お試しください。</string>
+    <string name="wishlists_empty_title">まだ保存した家はありません</string>
+    <string name="wishlists_empty_body">どの家でもハートをタップすると、ここに保存されます。</string>
+
+    <!-- Travel profile card -->
+    <string name="travel_profile_kicker">あなたの旅行プロフィール</string>
+    <string name="travel_profile_deleted">プロフィールを削除しました。ご希望の場合のみ再構築します。</string>
+    <string name="travel_profile_built_from">Swapl での行動のみから構築されます。いつでも更新または削除できます。</string>
+    <string name="travel_profile_built_from_sources">Swapl での行動のみから構築されます：%1$s。いつでも更新または削除できます。</string>
+    <string name="travel_profile_loading">プロフィールを読み込み中…</string>
+    <string name="travel_profile_build_again">もう一度構築</string>
+    <string name="travel_profile_refresh">更新</string>
+    <string name="travel_profile_delete_title">旅行プロフィールを削除しますか？</string>
+    <string name="travel_profile_delete_body">これにより、あなたの好みに関する AI の要約が消去されます。再構築しない限り戻りません。</string>
+    <string name="travel_profile_error_429">プロフィールを更新したばかりです — 少し時間をおいてもう一度お試しください。</string>
+    <string name="travel_profile_error_generic">問題が発生しました。もう一度お試しください。</string>
+
+    <!-- Travel windows -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">プランの旅行期間の上限に達しました</string>
+    <string name="tw_add_window">旅行期間を追加</string>
+    <string name="tw_empty_title">まだ旅行期間はありません</string>
+    <string name="tw_empty_body">いつ旅行したいか教えてください — その日程に合わせた交換をお届けします。</string>
+    <string name="tw_header_empty">いつ行きたいですか？</string>
+    <string name="tw_header_count">%1$d 件保存</string>
+    <string name="tw_header_body">夢見ている日程を保存しましょう。アシスタントがちょうどその時期に空いている実際の家から交換を組み立てます。</string>
+    <string name="tw_new_window">新しい旅行期間</string>
+    <string name="tw_date_from">から</string>
+    <string name="tw_date_to">まで</string>
+    <string name="tw_end_after_start">終了日は開始日より後にする必要があります。</string>
+    <string name="tw_flexible_title">日程は柔軟です</string>
+    <string name="tw_flexible_body">これらの日付の前後に検索を広げます。</string>
+    <string name="tw_where_label">どこへ？（任意）</string>
+    <string name="tw_where_placeholder">リスボン、ポルトガル、バルセロナ</string>
+    <string name="tw_where_hint">カンマ区切りの都市または国 — どこでもよい場合は空欄にしてください。</string>
+    <string name="tw_notes_label">メモ（任意）</string>
+    <string name="tw_notes_placeholder">記念日の旅行、歩いて回れる場所がいい…</string>
+    <string name="tw_save_window">旅行期間を保存</string>
+    <string name="tw_flexible_chip">柔軟</string>
+    <string name="tw_anywhere">どこでも</string>
+    <string name="tw_remove_window">この旅行期間を削除</string>
+    <string name="tw_hide_swaps">これらの日程の交換を非表示</string>
+    <string name="tw_show_swaps">これらの日程の交換を表示</string>
+    <string name="tw_proposals_load_error">交換を読み込めませんでした。</string>
+    <string name="tw_proposals_loading">あなたの日程に空いている家を探しています…</string>
+    <string name="tw_proposals_no_listing">まずアクティブな掲載を追加してください — 交換には2つの家が必要です。</string>
+    <string name="tw_proposals_empty">この正確な日程に空いている家はまだありません — 引き続き探し、一致が見つかったらメールでお知らせします。</string>
+    <string name="tw_match_pct">%1$d%% 一致</string>
+    <string name="tw_on_wishlist">ウィッシュリストの目的地</string>
+    <string name="tw_mode_direct_swap">直接交換</string>
+    <string name="tw_mode_keys_stay">Keys で滞在</string>
+    <string name="tw_mode_keys_stay_nightly">Keys で滞在 · %1$d Keys/泊</string>
+
+    <!-- Public profile -->
+    <string name="profile_report_user">このユーザーを報告</string>
+    <string name="profile_anonymous_host">匿名ホスト</string>
+    <string name="profile_id_verified">本人確認済み</string>
+    <string name="profile_host_avatar">ホストのアバター</string>
+    <string name="profile_work">私の仕事：%1$s</string>
+    <string name="profile_speaks">%1$s を話します</string>
+    <string name="profile_lives_in">%1$s 在住</string>
+    <string name="profile_joined_swapl">Swapl に参加</string>
+    <string name="profile_a_member">Swapl メンバー</string>
+    <string name="profile_visited_label">訪れた場所</string>
+    <string name="profile_visited_empty">まだ完了した交換はありません — 各滞在の後にパスポートのスタンプがここに表示されます。</string>
+    <string name="profile_reviews_label_plain">レビュー</string>
+    <string name="profile_reviews_label_count">レビュー（%1$d）</string>
+    <string name="profile_reviews_empty">まだレビューはありません — ホストは交換完了後にお互いをレビューします。</string>
+    <string name="profile_interests_label">興味</string>
+    <string name="profile_their_homes">この人の家</string>
+    <string name="profile_sqm_sleeps">%1$d m² · 就寝 %2$d 名</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="other">交換</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="other">レビュー</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="other">Swapl 歴（年）</item>
+    </plurals>
+
+    <!-- Account settings -->
+    <string name="settings_personal_info_title">個人情報</string>
+    <string name="settings_display_name">表示名</string>
+    <string name="settings_about_you">あなたについて</string>
+    <string name="settings_about_you_placeholder">ホストにあなたのことを少し教えてください。</string>
+    <string name="settings_my_work">私の仕事</string>
+    <string name="settings_my_work_placeholder">例：建築家</string>
+    <string name="settings_languages">言語</string>
+    <string name="settings_languages_placeholder">例：英語、イタリア語</string>
+    <string name="settings_languages_hint">言語はカンマで区切ってください。</string>
+    <string name="settings_home_city">居住都市</string>
+    <string name="settings_home_city_placeholder">例：ミラノ</string>
+    <string name="settings_home_country">居住国</string>
+    <string name="settings_home_country_placeholder">例：イタリア</string>
+    <string name="settings_saved_confirm">保存しました。公開プロフィールは最新です。</string>
+    <string name="settings_save_changes">変更を保存</string>
+    <string name="settings_change_password">パスワードを変更</string>
+    <string name="pw_current_label">現在のパスワード</string>
+    <string name="pw_current_hint">Google、Telegram、またはメールコードで登録した場合は空欄にしてください。</string>
+    <string name="pw_new_label">新しいパスワード</string>
+    <string name="pw_new_hint">6文字以上。他の端末はログアウトされます。</string>
+    <string name="pw_confirm_label">新しいパスワードを確認</string>
+    <string name="pw_error_min6">6文字以上を使用してください。</string>
+    <string name="pw_error_mismatch">パスワードが一致しません。</string>
+    <string name="pw_error_incorrect">現在のパスワードが正しくありません。</string>
+    <string name="pw_error_too_many">試行回数が多すぎます — 1時間後にもう一度お試しください。</string>
+    <string name="pw_error_generic">パスワードを変更できませんでした。もう一度お試しください。</string>
+    <string name="settings_privacy_title">プライバシー</string>
+    <string name="settings_seo_title">検索エンジンへのインデックス</string>
+    <string name="settings_seo_subtitle">あなたの掲載ページが Google などの検索エンジンに表示されることを許可します。</string>
+    <string name="settings_show_home_city_title">居住都市を表示</string>
+    <string name="settings_show_home_city_subtitle">公開プロフィールに居住都市と国を表示します。</string>
+    <string name="settings_notifications_title">通知</string>
+    <string name="settings_email_notif_title">メール通知</string>
+    <string name="settings_email_notif_subtitle">提案、確認、旅行のリマインダーをメールで。</string>
+    <string name="settings_push_notif_title">プッシュ通知</string>
+    <string name="settings_push_notif_subtitle">対応が必要なときに、この端末でリアルタイムに通知します。</string>
+
+    <!-- Keys wallet -->
+    <string name="keys_travel_points">トラベルポイント</string>
+    <string name="keys_intro">ホストして獲得するポイントです。滞在に使えます — 現金ではなく、購入も換金もできません。</string>
+    <string name="keys_your_homes_earn">あなたの家の獲得</string>
+    <string name="keys_your_homes_earn_body">これはゲストが滞在する1泊ごとに獲得する分です — 別の場所での滞在に使えるポイントです。</string>
+    <string name="keys_history">履歴</string>
+    <string name="keys_history_empty">まだポイントのアクティビティはありません。ホストして獲得するか、友達に贈りましょう。</string>
+    <string name="keys_see_all_history">すべてのポイント履歴を見る</string>
+    <string name="keys_your_travel_points">あなたのトラベルポイント</string>
+    <string name="keys_balance_caption">同時の交換なしで滞在に使えます。ポイントは現金ではなく、購入も換金もできません。</string>
+    <string name="keys_gift_points">ポイントを贈る</string>
+    <string name="keys_gift_entry_subtitle">認証済みの友達にポイントを送る</string>
+    <string name="keys_per_night">%1$d / 泊</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="other">残高はこのレートで約 %1$d 泊分です。</item>
+    </plurals>
+    <string name="keys_how_it_works">ポイントの仕組み</string>
+    <string name="keys_example_host">1泊 %1$d ポイントで2泊ホスト</string>
+    <string name="keys_example_spend">その %1$d ポイントを別の場所での2泊に使う</string>
+    <string name="keys_loop_caption">これがすべての循環です：ホスト → ポイント獲得 → 旅行 → 繰り返し。お金のやり取りはありません。</string>
+    <string name="keys_get_first">最初のポイントを獲得</string>
+    <string name="keys_earn_verify_title">本人確認を行う</string>
+    <string name="keys_earn_verify_body">認証された瞬間に %1$d ポイント獲得 — 即座に。</string>
+    <string name="keys_earn_host_title">滞在をホストする</string>
+    <string name="keys_earn_host_body">ゲストが滞在する毎晩ポイントを獲得します。</string>
+    <string name="keys_earn_gift_title">贈り物を受け取る</string>
+    <string name="keys_earn_gift_body">認証済みの友達があなたにポイントを送れます — メンバーIDを共有しましょう。</string>
+    <string name="keys_error_title">ポイントを利用できません</string>
+    <string name="keys_gift_member_id">メンバーID</string>
+    <string name="keys_gift_member_id_hint">友達に Swapl のメンバーIDを聞いてください。認証済みのメンバーである必要があります。</string>
+    <string name="keys_gift_caps">1回の贈り物につき最大 %1$d、1日あたり %2$d。ポイントは贈り物です — 購入も換金もできません。</string>
+    <plurals name="keys_points_amount">
+        <item quantity="other">%1$d ポイント</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="other">%1$d ポイントを送りました。現在の残高は %2$d です。</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">ポイントを贈るには、あなたと友達の両方が認証済みのメンバーである必要があります。</string>
+    <string name="keys_gift_error_not_found">そのメンバーが見つかりませんでした。IDをもう一度確認してください。</string>
+    <string name="keys_gift_error_insufficient">この贈り物に十分なポイントがありません。</string>
+    <string name="keys_gift_error_generic">今はポイントを送れませんでした。</string>
+
+    <!-- Invite &amp; earn -->
+    <string name="invite_title">招待して獲得</string>
+    <string name="invite_intro">友達を呼んで、トラベルポイントを獲得し、先行アクセスの順番を上げましょう。ポイントは決して現金ではありません。</string>
+    <string name="invite_share_message">Swapl に参加しよう — 現金ではなくポイントで家を交換して旅をしよう。私のリンクを使って認証すると、お互いに %1$d トラベルポイントを獲得できます：%2$s</string>
+    <string name="invite_share_subject">Swapl に参加しよう</string>
+    <string name="invite_share_chooser">招待をシェア</string>
+    <string name="invite_hero_kicker">友達を呼んで順番を上げよう</string>
+    <string name="invite_hero_points_earned">獲得ポイント</string>
+    <string name="invite_hero_spot_in_line">あなたの順番</string>
+    <string name="invite_hero_body">参加して認証した友達ごとに %1$d トラベルポイントを獲得 — そして先行アクセスの順番が上がります。ポイントは決して現金ではありません。</string>
+    <string name="invite_referral_link_label">あなたの紹介リンク</string>
+    <string name="invite_share_button">シェア</string>
+    <string name="invite_share_caption">このリンク全体をシェアしてください — それが重要です。ワンタップでどこへでも送れます：メッセージ、WhatsApp、メール。友達がタップして参加し、認証するとお互いにポイントを獲得します。</string>
+    <string name="invite_to_stay_title">滞在に招待</string>
+    <string name="invite_to_stay_subtitle">あなたの家に紐づく個人的な招待を送る</string>
+    <string name="invite_tier_label">あなたのティア</string>
+    <string name="invite_tier_not_started">未開始</string>
+    <string name="invite_tier_no_perk">最初の友達を招待して特典を解除しましょう。</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="other">%2$s に到達するにはあと %1$d 人の認証済みの友達が必要です。</item>
+    </plurals>
+    <string name="invite_tier_top">最上位ティアに到達 — あなたは Swapl の創設者です。</string>
+    <string name="invite_leaderboard_label">ランキング</string>
+    <string name="invite_you_badge">あなた</string>
+    <string name="invite_your_invites">あなたの招待（%1$d）</string>
+    <string name="invite_antifarm_note">ポイントは友達が本人確認を完了して初めて付与されます — これが全員にとって公平な順番を保ちます。ポイントは旅行クレジットであり、決して現金ではありません。</string>
+    <string name="invite_error_title">招待を利用できません</string>
+    <string name="invite_list_home_title">まず家を掲載してください</string>
+    <string name="invite_list_home_body">滞在招待リンクは自分の掲載に紐づいています。アカウントで家を作成してから、友達を滞在に招待してください。</string>
+    <string name="invite_verify_home_title">まず家を認証してください</string>
+    <string name="invite_verify_home_body">ゲストを滞在に招待する前にこの掲載を認証してください — そうでないと友達の報酬が支払われません。アカウント → あなたの掲載から認証してください。</string>
+    <string name="invite_inviting_guest_to">ゲストを招待中</string>
+    <string name="invite_your_home">あなたの家</string>
+    <string name="invite_friend_email_label">友達のメール（任意）</string>
+    <string name="invite_friend_email_placeholder">friend@email.com</string>
+    <string name="invite_friend_email_hint">メールを追加すると登録時に招待が自動的に紐づきます。空欄にすると誰でも使えるオープンなリンクになります。</string>
+    <string name="invite_ready">招待の準備完了</string>
+    <string name="invite_stay_share_message">Swapl であなたをお迎えしたいです — 現金ではなくポイントで家を交換して旅をしよう。%1$s に滞在する招待はこちら：%2$s</string>
+    <string name="invite_stay_share_subject">%1$s に滞在しに来てください</string>
+    <string name="invite_stay_share_chooser">招待リンクをシェア</string>
+    <string name="invite_share_link_button">招待リンクをシェア</string>
+    <string name="invite_creating">作成中…</string>
+    <string name="invite_create_link">招待リンクを作成</string>
+    <string name="invite_stay_reward">参加して認証すると、お互いに %1$d トラベルポイントを獲得します。ポイントは決して現金ではありません。</string>
+    <string name="invite_stay_reward_generic">参加して認証すると、お互いにトラベルポイントを獲得します。ポイントは決して現金ではありません。</string>
+    <string name="invite_err_not_verified">ゲストを滞在に招待する前にこの掲載を認証してください — そうでないと友達の報酬が支払われません。</string>
+    <string name="invite_err_not_owner">ゲストを招待できるのは自分の掲載だけです。</string>
+    <string name="invite_err_cooldown">この1時間で多くの招待を送りました — 少し時間をおいてもう一度お試しください。短いクールダウンであり、利用停止ではありません。</string>
+    <string name="invite_err_generic">今は招待を作成できませんでした。</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">インスピレーション</string>
+    <string name="inspire_intro">夢見ている旅を教えてください — あなたの家に合う実際の家から交換を組み立てます。</string>
+    <string name="inspire_wish_label">あなたの願い</string>
+    <string name="inspire_wish_placeholder">食事がおいしくて暖かく、歩いて回れて、リモートワークに向いた場所…</string>
+    <string name="inspire_mic_stop">聞き取りを停止</string>
+    <string name="inspire_mic_start">願いを口述する</string>
+    <string name="inspire_listening">聞き取り中 — 自由に話してください。マイクをもう一度タップすると停止します。</string>
+    <string name="inspire_mic_denied">Swapl のマイクへのアクセスがオフになっています — 設定で有効にして願いを口述してください。</string>
+    <string name="inspire_dates_in_mind">日程の希望があります</string>
+    <string name="inspire_dates_in_mind_sub">それ以外の場合は、あなたの家の空き状況を使用します。</string>
+    <string name="inspire_dream_up">交換を思い描く</string>
+    <string name="inspire_loading_1">交換を思い描いています…</string>
+    <string name="inspire_loading_2">あなたの雰囲気に合う家をマッチング中…</string>
+    <string name="inspire_loading_3">あなたと同じ時期に空いている人を確認中…</string>
+    <string name="inspire_loading_4">仮想の荷物を詰めています…</string>
+    <string name="inspire_package_title">あなたの交換パッケージ</string>
+    <string name="inspire_understood">理解しました：%1$s</string>
+    <string name="inspire_dates_label">日程</string>
+    <string name="inspire_dates_suggested">あなたの家の空き状況からの提案 — 自由に調整してください。</string>
+    <string name="inspire_message_label">あなたのメッセージ</string>
+    <string name="inspire_message_ai">あなたと相手の掲載から AI が作成しました — 自分らしくしてください。</string>
+    <string name="inspire_swap_pick">または選択を入れ替える</string>
+    <string name="inspire_match_pct">%1$d%% 一致</string>
+    <string name="inspire_while_there">滞在中に</string>
+    <string name="inspire_experiences_note">パートナーのサイトでその価格で予約されます — swapl は手数料を得ることがありますが、上乗せはしません。</string>
+    <string name="inspire_travel_essentials">旅行の必需品</string>
+    <string name="inspire_concierge_addons">swapl コンシェルジュの追加サービス</string>
+    <string name="inspire_addons_note">実際のカタログ価格です。不要なものはチェックを外してください — ホストが交換を承諾した場合のみ請求されます。</string>
+    <string name="inspire_payable_if_accepts">ホストが承諾した場合に支払い</string>
+    <string name="inspire_nothing_payable">支払いはありません — 確定すると提案が送信されるだけです。</string>
+    <string name="inspire_confirm_send">確定して提案を送信</string>
+    <string name="inspire_charged_note">ホストが交換を承諾した場合のみ請求されます。</string>
+    <string name="inspire_dismissing">解除中…</string>
+    <string name="inspire_not_feeling">しっくりこない</string>
+    <string name="inspire_almost_there">あと少しです</string>
+    <string name="inspire_payment_title">支払いと予約</string>
+    <string name="inspire_your_selection">あなたの選択</string>
+    <string name="inspire_partner_note">パートナーの体験とサービスはパートナーのサイトで予約されます — swapl が請求することはなく、この合計には含まれません。</string>
+    <string name="inspire_save_card">カードを保存して提案を送信</string>
+    <string name="inspire_send_no_card">カードを保存せずに送信</string>
+    <string name="inspire_back_to_package">パッケージに戻る</string>
+    <string name="inspire_book_on">%1$s で予約</string>
+    <string name="inspire_err_no_match">パッケージを組み立てるには、あなたのアクティブな家と、少なくとも1つの互換性のあるマッチが必要です。</string>
+    <string name="inspire_err_rate">思い描くのが早いですね！数分おいてもう一度お試しください。</string>
+    <string name="inspire_err_limit">プランの提案上限に達しました。アップグレードするともっと送れます。</string>
+    <string name="inspire_err_forbidden">あなたのアカウントは現在提案を送れません。</string>
+    <string name="inspire_err_generic">問題が発生しました。もう一度お試しください。</string>
+
+
+    <!-- Bottom navigation -->
+    <string name="nav_browse">さがす</string>
+    <string name="nav_wishlists">リスト</string>
+    <string name="nav_trips">旅行</string>
+    <string name="nav_swaps">交換</string>
+    <string name="nav_account">アカウント</string>
+</resources>

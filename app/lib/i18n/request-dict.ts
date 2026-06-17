@@ -13,6 +13,14 @@ import { es } from "./dict-es";
 import { pt } from "./dict-pt";
 import { nl } from "./dict-nl";
 import { tr } from "./dict-tr";
+import { zh } from "./dict-zh";
+import { ar } from "./dict-ar";
+import { ja } from "./dict-ja";
+import { ro } from "./dict-ro";
+import { el } from "./dict-el";
+import { fa } from "./dict-fa";
+import { th } from "./dict-th";
+import { id } from "./dict-id";
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
@@ -25,7 +33,7 @@ type Dict = Record<DictKey, string>;
 
 // Merge each locale on top of English so missing keys fall back to English —
 // mirrors lib/i18n/server.ts.
-const RAW: Record<Locale, Partial<Record<DictKey, string>>> = { en, it, fr, de, es, pt, nl, tr };
+const RAW: Record<Locale, Partial<Record<DictKey, string>>> = { en, it, fr, de, es, pt, nl, tr, zh, ar, ja, ro, el, fa, th, id };
 const DICTIONARIES: Record<Locale, Dict> = Object.fromEntries(
   Object.entries(RAW).map(([locale, dict]) => {
     const merged = { ...en } as Dict;

@@ -1,0 +1,1163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">Καλώς ήρθατε ξανά</string>
+    <string name="auth_kicker_register">Γίνετε μέλος του Swapl</string>
+    <string name="auth_kicker_waitlist">Πρώιμη πρόσβαση</string>
+    <string name="auth_headline_signin">Κλειδιά για κλειδιά.</string>
+    <string name="auth_headline_register">Ανταλλάξτε σπίτια,\nόχι ξενοδοχεία.</string>
+    <string name="auth_headline_waitlist">Μπείτε στη λίστα.</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Κωδικός</string>
+    <string name="auth_password_register">Κωδικός (τουλάχιστον 6 χαρακτήρες)</string>
+    <string name="auth_signin">Σύνδεση</string>
+    <string name="auth_signin_busy">Σύνδεση…</string>
+    <string name="auth_create_account">Δημιουργία λογαριασμού</string>
+    <string name="auth_create_account_busy">Δημιουργία λογαριασμού…</string>
+    <string name="auth_join_waitlist">Εγγραφή στη λίστα αναμονής</string>
+    <string name="auth_join_waitlist_busy">Εγγραφή…</string>
+    <string name="auth_continue_with">ή συνεχίστε με</string>
+    <string name="auth_passkey">Σύνδεση με κλειδί πρόσβασης</string>
+    <string name="auth_google">Συνέχεια με Google</string>
+    <string name="auth_email_code">Κωδικός email</string>
+    <string name="auth_phone">Τηλέφωνο</string>
+    <string name="auth_switch_to_register">Νέοι στο Swapl; Δημιουργήστε λογαριασμό</string>
+    <string name="auth_switch_to_waitlist">Δεν είστε έτοιμοι; Εγγραφείτε στη λίστα αναμονής</string>
+    <string name="auth_switch_register_to_signin">Έχετε ήδη λογαριασμό; Συνδεθείτε</string>
+    <string name="auth_switch_waitlist_to_signin">Έχετε λογαριασμό; Συνδεθείτε</string>
+    <string name="auth_google_failed">Η σύνδεση με Google απέτυχε. Δοκιμάστε ξανά.</string>
+    <string name="auth_passkey_unavailable">Η σύνδεση με κλειδί πρόσβασης δεν είναι διαθέσιμη αυτή τη στιγμή.</string>
+    <string name="auth_passkey_failed">Η σύνδεση με κλειδί πρόσβασης απέτυχε. Δοκιμάστε ξανά.</string>
+    <string name="auth_passkey_none">Δεν υπάρχει ακόμη κλειδί πρόσβασης σε αυτή τη συσκευή. Συνδεθείτε με άλλον τρόπο και προσθέστε ένα από το προφίλ σας.</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">Σύνδεση με κωδικό email</string>
+    <string name="auth_otp_kicker_phone">Σύνδεση με τηλέφωνο</string>
+    <string name="auth_otp_headline_enter">Εισαγάγετε τον κωδικό σας.</string>
+    <string name="auth_otp_headline_get">Λάβετε έναν κωδικό.</string>
+    <string name="auth_otp_sent">Στείλαμε έναν 6ψήφιο κωδικό στο %1$s. Λήγει σε 10 λεπτά.</string>
+    <string name="auth_otp_code_hint">123456</string>
+    <string name="auth_otp_phone_label">Τηλέφωνο (π.χ. +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">Χρησιμοποιήστε διεθνή μορφή, π.χ. +39 333 123 4567.</string>
+    <string name="auth_otp_verify">Επαλήθευση κωδικού</string>
+    <string name="auth_otp_verify_busy">Επαλήθευση…</string>
+    <string name="auth_otp_resend">Δεν τον λάβατε; Στείλτε νέο κωδικό</string>
+    <string name="auth_otp_send">Αποστολή κωδικού</string>
+    <string name="auth_otp_send_busy">Αποστολή…</string>
+    <string name="auth_otp_back">Επιστροφή στη σύνδεση με κωδικό</string>
+    <string name="verify_referral_toast">Επαληθεύτηκε! Κερδίσατε %1$d Κλειδιά επειδή εγγραφήκατε μέσω παραπομπής. 🔑</string>
+    <string name="verify_referral_toast_named">Επαληθεύτηκε! Η πρόσκληση του/της %1$s σας απέφερε %2$d Κλειδιά. 🔑</string>
+    <string name="referral_referrer_toast_named">Ο/Η %1$s μόλις επαληθεύτηκε — κερδίσατε %2$d Κλειδιά! 🔑</string>
+    <string name="referral_referrer_toast">Κάποιος που προσκαλέσατε μόλις επαληθεύτηκε — κερδίσατε %1$d Κλειδιά! 🔑</string>
+
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">Τρόποι να κερδίσετε Κλειδιά</string>
+    <string name="keys_earn_ways_subtitle">Μικρές ενέργειες που γεμίζουν τους ταξιδιωτικούς σας πόντους. Κάντε τις μία φορά ή επιστρέψτε για περισσότερα.</string>
+    <string name="keys_earn_way_done">Κερδίσατε — μπράβο!</string>
+    <string name="keys_earn_way_locked">Επαληθεύστε την ταυτότητά σας για να το ξεκλειδώσετε</string>
+    <string name="keys_earn_verify_identity_title">Επαληθεύστε την ταυτότητά σας</string>
+    <string name="keys_earn_verify_identity_body">Ένας γρήγορος έλεγχος ξεκλειδώνει κάθε άλλον τρόπο να κερδίσετε.</string>
+    <string name="keys_earn_verify_property_title">Επαληθεύστε ένα ακίνητο</string>
+    <string name="keys_earn_verify_property_body">Επιβεβαιώστε ότι σας ανήκει ένα σπίτι που καταχωρείτε.</string>
+    <string name="keys_earn_complete_listing_title">Ολοκληρώστε την καταχώρισή σας</string>
+    <string name="keys_earn_complete_listing_body">Προσθέστε φωτογραφίες και λεπτομέρειες ώστε οι επισκέπτες να φανταστούν τη διαμονή.</string>
+    <string name="keys_earn_leave_review_title">Αφήστε μια κριτική</string>
+    <string name="keys_earn_leave_review_body">Πείτε στην κοινότητα πώς πήγε μια διαμονή.</string>
+    <string name="keys_earn_share_converted_title">Μοιραστείτε ένα σπίτι που κλείνεται</string>
+    <string name="keys_earn_share_converted_body">Μοιραστείτε μια καταχώριση και κερδίστε όταν οδηγεί σε διαμονή.</string>
+    <string name="keys_earn_refer_friend_title">Προσκαλέστε έναν φίλο</string>
+    <string name="keys_earn_refer_friend_body">Κερδίζετε και οι δύο όταν εγγραφεί και επαληθευτεί.</string>
+    <string name="keys_earn_generic_title">Κερδίστε Κλειδιά</string>
+    <string name="keys_earn_generic_body">Κάντε αυτή την ενέργεια για να κερδίσετε ταξιδιωτικούς πόντους.</string>
+
+    <!-- Owner verification + publish acknowledgment (DOK-162) -->
+    <string name="owner_verified_badge">Επαληθευμένος ιδιοκτήτης</string>
+
+    <!-- Publish acknowledgment shown on the Review step before create -->
+    <string name="publish_ack_kicker">Πριν δημοσιεύσετε</string>
+    <string name="publish_ack_mode_question">Πώς φιλοξενείτε αυτό το σπίτι;</string>
+    <string name="publish_ack_mode_entire_home">Ολόκληρο το σπίτι, όσο λείπω</string>
+    <string name="publish_ack_mode_room">Ένα δωμάτιο, ή όσο είμαι εδώ</string>
+    <string name="publish_ack_text_entire_home_headline">Έχω το δικαίωμα να προσφέρω ολόκληρο το σπίτι μου για ανταλλαγή όσο λείπω — και αν νοικιάζω, το μισθωτήριό μου μου επιτρέπει να φιλοξενώ επισκέπτες όταν δεν είμαι εκεί.</string>
+    <string name="publish_ack_text_entire_home_fineprint">Είμαι υπεύθυνος/η να τηρώ το μισθωτήριό μου, τους κανόνες του κτιρίου και τους τοπικούς νόμους.</string>
+    <string name="publish_ack_text_room_headline">Έχω το δικαίωμα να φιλοξενήσω αυτή την ανταλλαγή.</string>
+    <string name="publish_ack_text_room_fineprint">Θα τηρώ τους κανόνες του κτιρίου μου και τους τοπικούς νόμους.</string>
+    <string name="publish_ack_required_error">Παρακαλώ επιβεβαιώστε τη δήλωση φιλοξενίας πριν τη δημοσίευση.</string>
+    <string name="publish_submit_failed">Δεν ήταν δυνατή η δημοσίευση της καταχώρισής σας. Δοκιμάστε ξανά.</string>
+
+    <!-- Optional "Verify ownership" entry -->
+    <string name="owner_verify_cta">Σήμα επαληθευμένου ιδιοκτήτη — προαιρετικό</string>
+    <string name="owner_verify_cta_pending">Σήμα επαληθευμένου ιδιοκτήτη — υπό έλεγχο</string>
+    <string name="owner_verify_cta_rejected">Σήμα επαληθευμένου ιδιοκτήτη — δοκιμάστε ξανά</string>
+    <string name="owner_verify_optional_note">Μια ενίσχυση εμπιστοσύνης για τους επισκέπτες. Ποτέ απαραίτητη για δημοσίευση ή ανταλλαγή.</string>
+    <string name="owner_verify_title">Επαλήθευση ιδιοκτησίας</string>
+    <string name="owner_verify_explainer">Προσθέστε ένα έγγραφο που αποδεικνύει το δικαίωμά σας σε αυτό το σπίτι — έναν τίτλο ιδιοκτησίας ή visura, ή ένα μισθωτήριο στο όνομά σας. Ένας διαχειριστής το ελέγχει και, μόλις εγκριθεί, η καταχώρισή σας εμφανίζει ένα σήμα \"Επαληθευμένος ιδιοκτήτης\".</string>
+    <string name="owner_verify_ai_explainer">Ένας γρήγορος έλεγχος AI διαβάζει πρώτα το έγγραφο για να επιβεβαιώσει ότι ταιριάζει με αυτό το σπίτι. Ένα άτομο από την ομάδα μας έχει πάντα τον τελικό λόγο.</string>
+    <string name="owner_verify_tenant_note">Η ενοικίαση είναι ευπρόσδεκτη. Αν νοικιάζετε και το μισθωτήριό σας σας επιτρέπει να φιλοξενείτε, είστε πλήρως επιλέξιμοι — δεν χρειάζεται να είστε ιδιοκτήτης του σπιτιού.</string>
+    <string name="owner_verify_tenant">Νοικιάζετε; Είστε κι εσείς ευπρόσδεκτοι εδώ — ανεβάστε το μισθωτήριό σας αντί για τίτλο ιδιοκτησίας. Μπορείτε να φιλοξενείτε στο Swapl όσο το συμβόλαιο ενοικίασής σας σας επιτρέπει να έχετε επισκέπτες.</string>
+    <string name="owner_verify_privacy_note">Δεν αποθηκεύουμε το έγγραφό σας μετά τον έλεγχο. Μόνο το AI διαβάζει τα προσωπικά σας στοιχεία, και κρατάμε μόνο το αν δείχνει ιδιωτική κατοικία — ποτέ την ταυτότητα, τη διεύθυνση ή το ίδιο το έγγραφο.</string>
+    <string name="owner_verify_privacy">Το έγγραφό σας διαβάζεται μία φορά για να ελεγχθεί ότι το σπίτι είναι δικό σας, και μετά δεν αποθηκεύεται — κρατάμε μόνο το αποτέλεσμα (επαληθευμένο ή όχι), ποτέ το έγγραφο ή το περιεχόμενό του.</string>
+    <string name="owner_verify_private_only_note">Το Swapl είναι μια ανταλλαγή μεταξύ ιδιωτών, οπότε εταιρικά ή εμπορικά ακίνητα δεν μπορούν να καταχωρηθούν εδώ.</string>
+    <string name="owner_verify_doc_type_label">Τι ανεβάζετε; (προαιρετικό)</string>
+    <string name="owner_verify_doc_type_deed">Τίτλος ιδιοκτησίας / visura</string>
+    <string name="owner_verify_doc_type_lease">Μισθωτήριο</string>
+    <string name="owner_verify_status_pending">Η τελευταία υποβολή σας είναι υπό έλεγχο. Ένα άτομο από την ομάδα μας παίρνει την τελική απόφαση — συνήθως εντός 2 εργάσιμων ημερών. Αν ο αυτόματος έλεγχός μας ήταν αβέβαιος μπορεί να πάρει λίγο περισσότερο, αλλά δεν μένετε μετέωροι: επικοινωνούμε πάντα μαζί σας.</string>
+    <string name="owner_verify_status_rejected">Η τελευταία υποβολή σας δεν εγκρίθηκε. Προσθέστε ένα πιο ευκρινές έγγραφο και υποβάλετε ξανά.</string>
+    <string name="owner_verify_business_title">Ο έλεγχός μας υποδεικνύει ότι μπορεί να είναι εμπορικό ακίνητο — ίσως κάνουμε λάθος</string>
+    <string name="owner_verify_business_body">Ο αυτόματος έλεγχός μας διάβασε το έγγραφό σας ως εταιρικό ή εμπορικό ακίνητο, και το Swapl είναι μια ανταλλαγή μεταξύ ιδιωτών. Όμως οι αυτόματοι έλεγχοι δεν είναι τέλειοι, και ένα πραγματικό άτομο — ποτέ το AI — παίρνει την τελική απόφαση. Αν αυτό είναι το δικό σας σπίτι, επικοινωνήστε: ένα άτομο από την ομάδα μας τα ελέγχει προσωπικά, συνήθως εντός 2 εργάσιμων ημερών, και ένα μισθωτήριο, τίτλος ιδιοκτησίας ή φορολογικό έγγραφο στο όνομά σας αρκεί για να διορθωθεί.</string>
+    <string name="owner_verify_business_contact">Επικοινωνία με την υποστήριξη</string>
+    <string name="owner_verify_business_support_email">support@swapl.app</string>
+    <string name="owner_verify_business_support_subject">Αίτημα ελέγχου επαλήθευσης ακινήτου</string>
+    <string name="owner_verify_add_document">Προσθήκη εγγράφου</string>
+    <string name="owner_verify_uploading">Μεταφόρτωση…</string>
+    <string name="owner_verify_remove">Αφαίρεση</string>
+    <string name="owner_verify_submit">Υποβολή για έλεγχο</string>
+    <string name="owner_verify_submitting">Υποβολή…</string>
+    <string name="owner_verify_cancel">Ακύρωση</string>
+    <string name="owner_verify_doc_label">Έγγραφο ιδιοκτησίας</string>
+    <string name="owner_verify_doc_read_error">Δεν ήταν δυνατή η ανάγνωση αυτού του αρχείου.</string>
+    <string name="owner_verify_upload_failed">Η μεταφόρτωση απέτυχε. Δοκιμάστε ξανά.</string>
+    <string name="owner_verify_submit_failed">Δεν ήταν δυνατή η υποβολή. Δοκιμάστε ξανά.</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). Owner-only "how your
+         nightly Keys are calculated" breakdown. -->
+    <string name="valuation_section_title">Πώς υπολογίζονται τα νυχτερινά σας Κλειδιά</string>
+    <string name="valuation_per_night">%1$d / νύχτα</string>
+    <string name="valuation_intro">Αυτό είναι που ξοδεύει ένας επισκέπτης — και που κερδίζετε εσείς — για κάθε νύχτα διαμονής. Ορίζεται δίκαια από τα χαρακτηριστικά του σπιτιού σας, ποτέ από εσάς ή από εμάς που το ανεβάζουμε.</string>
+    <string name="valuation_show">Εμφάνιση ανάλυσης</string>
+    <string name="valuation_hide">Απόκρυψη ανάλυσης</string>
+    <string name="valuation_factors_kicker">Τι χτίζει την αξία</string>
+    <string name="valuation_base_label">Αξία πριν τις κριτικές</string>
+    <string name="valuation_factor_base">Αρχική αξία</string>
+    <string name="valuation_factor_size">Μέγεθος</string>
+    <string name="valuation_factor_sleeps">Κοιμάται</string>
+    <string name="valuation_factor_location_tier">Ελκυστικότητα τοποθεσίας</string>
+    <string name="valuation_factor_location_tier_standard">Τυπική — η τοποθεσία σας δεν ενισχύεται τεχνητά, αλλά αξιολογείται ισότιμα. Οι μικρότερες πόλεις και τα χωριά δεν τιμωρούνται εδώ.</string>
+    <string name="valuation_factor_verified">Επαληθευμένο σπίτι</string>
+    <string name="valuation_factor_ai_appeal">Ελκυστικότητα σπιτιού (AI)</string>
+    <string name="valuation_ai_summary_kicker">Ελκυστικότητα σπιτιού (AI)</string>
+    <string name="valuation_ai_what_note">Το AI μας διαβάζει μόνο πώς παρουσιάζεται η καταχώρισή σας — την κάλυψη των φωτογραφιών σας, πόσο πλούσια είναι η λίστα παροχών σας και πόσο λεπτομερής είναι η περιγραφή σας. Δεν κρίνει το σπίτι σας αυστηρά, και ποτέ δεν τιμωρεί μικρές πόλεις ή χωριά — η τοποθεσία αντιμετωπίζεται ξεχωριστά.</string>
+    <string name="valuation_ai_baseline_pos">Μπόνους για ελκυστικότητα σπιτιού: +%1$s (τα περισσότερα σπίτια βαθμολογούνται 0· με ανώτατο όριο +%2$d).</string>
+    <string name="valuation_ai_baseline_zero">Ελκυστικότητα σπιτιού: 0 — απολύτως φυσιολογικό, όπως τα περισσότερα σπίτια (μπόνους με ανώτατο όριο +%1$d).</string>
+    <string name="valuation_ai_baseline_neg">Ελκυστικότητα σπιτιού: %1$s (τα περισσότερα σπίτια βαθμολογούνται 0 — προσθέστε μερικές φωτογραφίες ή λεπτομέρειες για να την ανεβάσετε).</string>
+    <string name="valuation_ai_fallback_note">Βαθμολογήθηκε από τις φωτογραφίες και τις παροχές σας. Μια πιο πλούσια ανάγνωση ελκυστικότητας προστίθεται μόλις το μοντέλο ελκυστικότητας μας εξετάσει την καταχώρισή σας.</string>
+    <string name="valuation_room_kicker">Αυτό είναι δωμάτιο</string>
+    <string name="valuation_room_note">Επειδή προσφέρετε ιδιωτικό δωμάτιο αντί για ολόκληρο το σπίτι, η νυχτερινή αξία αντικατοπτρίζει μόνο αυτό το δωμάτιο — περίπου %1$d%% της τιμής ολόκληρου του χώρου.</string>
+    <string name="valuation_location_note">Επίπεδο ζήτησης προορισμού %1$d από 5 — πόσο περιζήτητη είναι η περιοχή σας για διαμονές.</string>
+    <string name="valuation_review_kicker">Κριτικές επισκεπτών</string>
+    <string name="valuation_review_applied_up">Οι κριτικές σας (%1$.1f★ από %2$d) ανεβάζουν την αξία κατά %3$d%%.</string>
+    <string name="valuation_review_applied_down">Οι κριτικές σας (%1$.1f★ από %2$d) χαμηλώνουν ελαφρώς την αξία κατά %3$d%%.</string>
+    <string name="valuation_review_applied_neutral">Οι κριτικές σας (%1$.1f★ από %2$d) κρατούν την αξία ακριβώς εκεί που είναι.</string>
+    <string name="valuation_review_pending">Δεν εφαρμόστηκε ακόμη — οι κριτικές αρχίζουν να προσαρμόζουν αυτή την αξία μόνο αφού λάβετε %1$d κριτικές. Έχετε %2$d μέχρι στιγμής. Μέχρι τότε παραμένει στο επίπεδο που βασίζεται στα χαρακτηριστικά.</string>
+    <string name="valuation_review_moving">Τώρα κινείται αργά προς τη βαθμολογία %1$.1f★ από %2$d κριτικές — λίγο κάθε φορά, ποτέ όλη μαζί.</string>
+    <string name="valuation_bounded_note">Αυτή η αξία κινείται το πολύ %1$d%% ανά κύκλο ενημέρωσης, και μόνο όταν έχετε %2$d+ κριτικές. Ακόμη και τότε, το να φτάσετε το όριο ±%3$d%% παίρνει πολλούς κύκλους — ένα αυστηρό όριο που οι κριτικές δεν μπορούν ποτέ να ξεπεράσουν — οπότε μια κακή εβδομάδα κριτικών δεν μπορεί να γκρεμίσει τα κέρδη σας μέσα σε μια νύχτα.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">Η ιστορία σας στο Swapl</string>
+    <string name="story_counts_heading">Η ιστορία σας μέχρι τώρα</string>
+    <string name="story_passport">Το διαβατήριό σας</string>
+    <string name="story_kind_trip">Ταξίδι</string>
+    <string name="story_kind_hosted">Φιλοξενία</string>
+    <string name="story_detail_hosted_by">Φιλοξενία από %1$s</string>
+    <string name="story_detail_welcomed">Υποδεχτήκατε τον/την %1$s</string>
+    <string name="story_detail_stay">Μια διαμονή στο Swapl</string>
+    <string name="story_detail_guest">Ένας επισκέπτης στο σπίτι σας</string>
+    <string name="story_share_heading">Μοιραστείτε την ιστορία σας</string>
+    <string name="story_share_button">Κοινοποίηση</string>
+    <string name="story_share_note">Στείλτε την ιστορία σας οπουδήποτε — Μηνύματα, WhatsApp, email. Φέρει τον σύνδεσμο πρόσκλησής σας, οπότε όταν ένας φίλος τον πατήσει και εγγραφεί, κερδίζετε και οι δύο ταξιδιωτικούς πόντους.</string>
+    <string name="story_share_subject">Η ιστορία μου στο Swapl</string>
+    <string name="story_share_chooser">Μοιραστείτε την ιστορία σας</string>
+    <string name="story_share_message">Έχω ανταλλάξει σπίτια σε %1$d πόλεις στο Swapl — ταξιδέψτε με πόντους, όχι με μετρητά. Γίνετε μέλος με τον σύνδεσμό μου και κερδίζουμε και οι δύο ταξιδιωτικούς πόντους όταν επαληθευτείτε: %2$s</string>
+    <string name="story_empty_title">Η ιστορία σας ξεκινά εδώ</string>
+    <string name="story_empty_body">Μόλις ολοκληρώσετε την πρώτη σας ανταλλαγή ή διαμονή με Κλειδιά, τα ταξίδια σας και οι επισκέπτες που υποδέχεστε εμφανίζονται εδώ ως σφραγίδες διαβατηρίου — μια καρτ ποστάλ από παντού όπου σας πάει το Swapl.</string>
+    <string name="story_empty_share">Προσκαλέστε έναν φίλο για ανταλλαγή</string>
+    <string name="story_error_title">Η ιστορία δεν είναι διαθέσιμη</string>
+    <string name="story_error_body">Δεν ήταν δυνατή η φόρτωση της ιστορίας σας. Τραβήξτε για ανανέωση ή δοκιμάστε ξανά.</string>
+    <string name="story_error_retry">Δοκιμάστε ξανά</string>
+    <plurals name="story_count_trips">
+        <item quantity="one">Ταξίδι</item>
+        <item quantity="other">Ταξίδια</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="one">Επισκέπτης που υποδεχτήκατε</item>
+        <item quantity="other">Επισκέπτες που υποδεχτήκατε</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="one">Πόλη</item>
+        <item quantity="other">Πόλεις</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="one">Χώρα</item>
+        <item quantity="other">Χώρες</item>
+    </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). Shown only when
+         the policy certificate has been anchored on-chain. Not crypto/payment. -->
+    <string name="trip_oncover_badge">Επαληθευμένο στο TON</string>
+    <string name="trip_oncover_view">Προβολή απόδειξης</string>
+    <string name="trip_oncover_explainer">Μια μη παραποιήσιμη εγγραφή ότι η κάλυψή σας είναι πραγματική — όχι κρυπτονομίσματα, χωρίς πληρωμή, τίποτα να κάνετε.</string>
+
+    <!-- People in a swap conversation (DOK-187). Anyone in the thread can bring a
+         few extra people along — a partner, a co-traveler, a friend. Guests chat
+         like everyone else but never get any say over the swap itself. -->
+    <string name="people_title">Άτομα</string>
+    <string name="people_role_principal">Συνεργάτης ανταλλαγής</string>
+    <string name="people_role_guest">Επισκέπτης στη συνομιλία</string>
+    <string name="people_status_pending">Σε εκκρεμότητα</string>
+    <string name="people_invite">Πρόσκληση</string>
+    <string name="people_add">Προσθήκη</string>
+    <string name="people_add_cotravelers">Προσθήκη συνταξιδιωτών</string>
+    <string name="people_remove">Αφαίρεση %1$s</string>
+    <string name="people_invite_title">Προσκαλέστε κάποιον στη συνομιλία</string>
+    <string name="people_invite_reassure">Προσθέστε έναν σύντροφο ή συνταξιδιώτη στη συνομιλία. Μπορούν να συνομιλούν με όλους εδώ, αλλά μόνο οι δύο συνεργάτες ανταλλαγής μπορούν να αποδεχτούν, να αντιπροτείνουν ή να ακυρώσουν την ανταλλαγή — η πρόσκληση κάποιου ποτέ δεν του δίνει έλεγχο πάνω σε αυτή.</string>
+    <string name="people_invite_field_label">Email ή όνομα χρήστη</string>
+    <string name="people_invite_field_placeholder">name@email.com ή @handle</string>
+    <string name="people_invite_send">Αποστολή πρόσκλησης</string>
+    <string name="people_invite_cancel">Ακύρωση</string>
+
+    <!-- Common / shared actions -->
+    <string name="common_cancel">Ακύρωση</string>
+    <string name="common_ok">OK</string>
+    <string name="common_retry">Δοκιμάστε ξανά</string>
+
+    <!-- Rate the app (M1) -->
+    <string name="account_rate_app">Βαθμολογήστε την εφαρμογή</string>
+    <string name="rate_app_title">Βαθμολογήστε την εφαρμογή</string>
+    <string name="rate_app_prompt">Πώς σας φαίνεται το Swapl; Η βαθμολογία σας μας βοηθά να βελτιωθούμε.</string>
+    <string name="rate_app_score_label">Η βαθμολογία σας</string>
+    <string name="rate_app_comment_label">Θέλετε να προσθέσετε κάτι;</string>
+    <string name="rate_app_comment_placeholder">Πείτε μας τι λειτουργεί — ή τι όχι (προαιρετικό)</string>
+    <string name="rate_app_submit">Αποστολή</string>
+    <string name="rate_app_submit_support">Επικοινωνία με την υποστήριξη</string>
+    <string name="rate_app_submitting">Αποστολή…</string>
+    <string name="rate_app_prompt_post_review">Ευχαριστούμε για την κριτική σας! Πώς λειτουργεί η ίδια η εφαρμογή Swapl για εσάς;</string>
+    <string name="rate_app_prompt_post_swap">Η ανταλλαγή σας ολοκληρώθηκε! Πώς σας βοήθησε το Swapl να φτάσετε εκεί;</string>
+    <string name="rate_app_low_support_hint">Λυπούμαστε που δεν ανταποκρίθηκε. Στείλτε το και θα ανοίξουμε την υποστήριξη για να βοηθήσουμε.</string>
+
+    <!-- Account screen -->
+    <string name="account_profile_title">Προφίλ</string>
+    <string name="account_member_badge">Μέλος Swapl</string>
+    <string name="account_stat_waiting">Σε αναμονή</string>
+    <string name="account_stat_sent">Απεσταλμένα</string>
+    <string name="account_stat_active">Ενεργά</string>
+    <string name="account_stat_homes">Σπίτια</string>
+    <string name="account_edit_home_title">Επεξεργαστείτε το σπίτι σας</string>
+    <string name="account_become_host_title">Γίνετε οικοδεσπότης</string>
+    <string name="account_edit_home_body">Ενημερώστε φωτογραφίες, ημερομηνίες και λεπτομέρειες.</string>
+    <string name="account_become_host_body">Καταχωρίστε το σπίτι σας για να ξεκινήσετε ανταλλαγές.</string>
+    <string name="account_section_settings">Ρυθμίσεις</string>
+    <string name="account_personal_info">Προσωπικά στοιχεία</string>
+    <string name="account_change_password">Αλλαγή κωδικού</string>
+    <string name="account_passkeys">Σύνδεση &amp; ασφάλεια — Κλειδιά πρόσβασης</string>
+    <string name="account_passkeys_busy">Σύνδεση &amp; ασφάλεια — Κλειδιά πρόσβασης…</string>
+    <string name="account_privacy">Απόρρητο</string>
+    <string name="account_notifications">Ειδοποιήσεις</string>
+    <string name="account_section_profile">Προφίλ</string>
+    <string name="account_view_profile">Προβολή προφίλ</string>
+    <string name="account_your_story">Η ιστορία σας στο Swapl</string>
+    <string name="account_travel_points">Ταξιδιωτικοί πόντοι</string>
+    <string name="account_invite_earn">Προσκαλέστε &amp; κερδίστε</string>
+    <string name="account_interests">Ενδιαφέροντα</string>
+    <string name="account_saved_searches">Αποθηκευμένες αναζητήσεις</string>
+    <string name="account_travel_windows">Ταξιδιωτικά διαστήματα</string>
+    <string name="account_metrics">Μετρήσεις</string>
+    <string name="account_section_support">Υποστήριξη</string>
+    <string name="account_get_help">Λάβετε βοήθεια</string>
+    <string name="account_privacy_policy">Πολιτική απορρήτου</string>
+    <string name="account_terms">Όροι χρήσης</string>
+    <string name="account_log_out">Αποσύνδεση</string>
+    <string name="account_version">Έκδοση %1$s (%2$d)</string>
+    <string name="account_signout_title">Αποσύνδεση;</string>
+    <string name="account_signout_body">Θα χρειαστεί να συνδεθείτε ξανά για να δείτε τις ανταλλαγές σας.</string>
+    <string name="account_passkeys_dialog_title">Κλειδιά πρόσβασης</string>
+
+    <!-- Browse -->
+    <string name="browse_title">Περιήγηση</string>
+    <string name="browse_edit_home">Επεξεργαστείτε το σπίτι σας</string>
+    <string name="browse_list_home">+ Καταχωρίστε ένα σπίτι</string>
+    <string name="browse_search_placeholder">Πού πάμε;</string>
+    <string name="browse_clear_search">Καθαρισμός αναζήτησης</string>
+    <string name="browse_filters">Φίλτρα</string>
+    <string name="browse_tab_homes">Σπίτια</string>
+    <string name="browse_tab_experiences">Εμπειρίες</string>
+    <string name="browse_tab_services">Υπηρεσίες</string>
+    <string name="browse_get_inspired_title">Εμπνευστείτε</string>
+    <string name="browse_get_inspired_body">Περιγράψτε το ονειρεμένο σας ταξίδι — θα συνθέσουμε μια ανταλλαγή για εσάς.</string>
+    <string name="browse_sort">Ταξινόμηση</string>
+    <string name="browse_sort_match">Καλύτερη αντιστοίχιση</string>
+    <string name="browse_sort_newest">Νεότερα</string>
+    <string name="browse_sort_largest">Μεγαλύτερα</string>
+    <string name="browse_error_title">Τα σπίτια δεν είναι διαθέσιμα</string>
+    <string name="browse_error_body">Δεν μπορέσαμε να συνδεθούμε στο Swapl. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</string>
+    <string name="browse_empty_title">Δεν βρέθηκαν σπίτια</string>
+    <string name="browse_empty_body">Νέα σπίτια εμφανίζονται εδώ καθώς τα μέλη τα δημοσιεύουν.</string>
+    <string name="browse_guests_size_type">%1$d επισκέπτες · %2$d m² · %3$s</string>
+    <string name="browse_tag_featured">Προτεινόμενο</string>
+    <string name="browse_tag_verified">Επαληθευμένο</string>
+    <string name="browse_tag_private_room">Ιδιωτικό δωμάτιο</string>
+    <!-- Filters -->
+    <string name="filter_title">Φίλτρα</string>
+    <string name="filter_when">Πότε</string>
+    <string name="filter_from">Από</string>
+    <string name="filter_to">Έως</string>
+    <string name="filter_clear_dates">Καθαρισμός ημερομηνιών</string>
+    <string name="filter_space_type">Τύπος χώρου</string>
+    <string name="filter_space_all">Όλα</string>
+    <string name="filter_space_entire">Ολόκληρος χώρος</string>
+    <string name="filter_space_private_room">Ιδιωτικό δωμάτιο</string>
+    <string name="filter_property_type">Τύπος ακινήτου</string>
+    <string name="filter_min_size">Ελάχιστο μέγεθος: %1$d m²</string>
+    <string name="filter_min_sleeps">Κοιμάται τουλάχιστον: %1$d</string>
+    <string name="filter_pets">Μόνο σπίτια φιλικά προς κατοικίδια</string>
+    <string name="filter_wfh">Μόνο σπίτια με χώρο εργασίας</string>
+    <string name="filter_step_free">Μόνο σπίτια χωρίς σκαλιά</string>
+    <string name="filter_reset">Επαναφορά</string>
+    <string name="filter_show_homes">Εμφάνιση σπιτιών</string>
+
+    <!-- Listing detail -->
+    <string name="detail_guests_rooms">%1$d επισκέπτες · %2$s · %3$s · %4$d m²</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="one">%1$d υπνοδωμάτιο</item>
+        <item quantity="other">%1$d υπνοδωμάτια</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="one">%1$d μπάνιο</item>
+        <item quantity="other">%1$d μπάνια</item>
+    </plurals>
+    <string name="detail_available_range">Διαθέσιμο %1$s → %2$s · διαμονές %3$d–%4$d ημερών</string>
+    <string name="detail_points_per_night">%1$d πόντοι / νύχτα</string>
+    <string name="detail_private_room_note">Αυτό είναι ιδιωτικό δωμάτιο, οπότε η νυχτερινή αξία αντικατοπτρίζει μόνο το δωμάτιο — όχι ολόκληρο το σπίτι.</string>
+    <string name="detail_private_room_badge">Ιδιωτικό δωμάτιο</string>
+    <string name="detail_private_room_badge_rooms">Ιδιωτικό δωμάτιο · %1$d δωμάτια</string>
+    <string name="detail_about_home">Σχετικά με αυτό το σπίτι</string>
+    <string name="detail_what_offered">Τι προσφέρει αυτός ο χώρος</string>
+    <string name="detail_where">Πού θα μείνετε</string>
+    <string name="detail_approx_area">κατά προσέγγιση περιοχή</string>
+    <string name="detail_hosted_by">Φιλοξενία από</string>
+    <string name="detail_anonymous">Ανώνυμος</string>
+    <string name="detail_verified_host">Επαληθευμένος οικοδεσπότης</string>
+    <string name="detail_edit_listing">Επεξεργασία καταχώρισης</string>
+    <string name="detail_manage_availability">Διαχείριση διαθεσιμότητας</string>
+    <string name="detail_propose_swap">Προτείνετε ανταλλαγή</string>
+    <string name="detail_list_home_first">Καταχωρίστε πρώτα το σπίτι σας</string>
+    <string name="detail_list_home_first_body">Προσθέστε τη δική σας καταχώριση πριν μπορέσετε να προτείνετε ανταλλαγές.</string>
+    <string name="detail_stay_with_points">Μείνετε με πόντους</string>
+    <string name="detail_stay_with_points_body">Κλείστε μονόδρομη διαμονή με τους ταξιδιωτικούς πόντους που κερδίσατε ως οικοδεσπότης — χωρίς ανάγκη για ανταλλαγή επιστροφής. Χρησιμοποιήστε το όταν μια άμεση ανταλλαγή δεν ταιριάζει.</string>
+    <string name="detail_report_listing">Αναφορά αυτής της καταχώρισης</string>
+    <string name="detail_no_amenities">Δεν έχουν καταχωρηθεί παροχές.</string>
+    <string name="detail_request_sent_title">Το αίτημα στάλθηκε</string>
+    <string name="detail_request_sent_body">Οι πόντοι σας κρατούνται μέχρι ο οικοδεσπότης να επιβεβαιώσει. Θα βρείτε αυτή τη διαμονή στα Ταξίδια.</string>
+    <!-- Amenity labels -->
+    <string name="amenity_balcony">Μπαλκόνι</string>
+    <string name="amenity_rooftop">Ταράτσα</string>
+    <string name="amenity_garden">Κήπος</string>
+    <string name="amenity_courtyard">Αυλή</string>
+    <string name="amenity_pool">Πισίνα</string>
+    <string name="amenity_gym">Γυμναστήριο</string>
+    <string name="amenity_piano">Πιάνο</string>
+    <string name="amenity_bike">Συμπεριλαμβάνεται ποδήλατο</string>
+    <string name="amenity_parking">Στάθμευση</string>
+    <string name="amenity_workspace">Χώρος εργασίας</string>
+    <string name="amenity_pets">Φιλικό προς κατοικίδια</string>
+    <string name="amenity_step_free">Χωρίς σκαλιά</string>
+    <string name="amenity_elevator">Ασανσέρ</string>
+    <string name="amenity_ac">Κλιματισμός</string>
+    <string name="amenity_dishwasher">Πλυντήριο πιάτων</string>
+    <string name="amenity_washer">Πλυντήριο ρούχων</string>
+    <string name="amenity_dryer">Στεγνωτήριο</string>
+
+    <!-- Propose swap dialog -->
+    <string name="propose_title">Προτείνετε ανταλλαγή</string>
+    <string name="propose_message_label">Μήνυμα (προαιρετικό)</string>
+    <string name="propose_drafting">Σύνταξη…</string>
+    <string name="propose_write_for_me">Γράψτε το για μένα</string>
+    <string name="propose_rewrite_ai">Επανεγγραφή με AI</string>
+    <string name="propose_draft_failed">Δεν ήταν δυνατή η σύνταξη μηνύματος αυτή τη στιγμή</string>
+    <string name="propose_send">Αποστολή</string>
+
+    <!-- Swap thread -->
+    <string name="thread_with">με %1$s</string>
+    <string name="thread_open_chat">Άνοιγμα συνομιλίας</string>
+    <string name="thread_open_chat_with">Άνοιγμα συνομιλίας με %1$s</string>
+    <string name="thread_view_profile">Προβολή προφίλ του/της %1$s</string>
+    <string name="thread_host_fallback">οικοδεσπότης</string>
+    <string name="thread_host_fallback_possessive">ο οικοδεσπότης σας</string>
+    <string name="thread_proposal">Πρόταση</string>
+    <string name="thread_counter">Αντιπρόταση</string>
+    <string name="thread_size_sleeps">%1$d m² · κοιμάται %2$d</string>
+    <string name="thread_accept">Αποδοχή ανταλλαγής</string>
+    <string name="thread_counter_offer">Αντιπρόταση</string>
+    <string name="thread_decline">Απόρριψη</string>
+    <string name="thread_withdraw">Απόσυρση</string>
+    <string name="thread_message_optional">Μήνυμα (προαιρετικό)</string>
+    <!-- Accept-consent + action feedback (M4) -->
+    <string name="thread_accept_confirm_title">Αποδοχή αυτής της ανταλλαγής;</string>
+    <string name="thread_accept_confirm_body">Η αποδοχή κλειδώνει τις ημερομηνίες και εκδίδει την ταξιδιωτική σας ασφάλεια για τη διαμονή — και τα δύο σπίτια καλύπτονται τότε. Μπορείτε ακόμη να συνομιλείτε για να συντονίσετε την παράδοση.</string>
+    <string name="thread_accept_confirm_cta">Αποδοχή &amp; ασφάλιση</string>
+    <string name="thread_decline_confirm_title">Απόρριψη αυτής της ανταλλαγής;</string>
+    <string name="thread_decline_confirm_body">Αυτό απορρίπτει την πρόταση. Δεν μπορείτε να το αναιρέσετε, αλλά μπορείτε πάντα να στείλετε μια νέα αργότερα.</string>
+    <string name="thread_withdraw_confirm_title">Απόσυρση αυτής της πρότασης;</string>
+    <string name="thread_withdraw_confirm_body">Αυτό αποσύρει την προσφορά σας. Μπορείτε να στείλετε μια νέα αργότερα.</string>
+    <string name="thread_accepted_toast">Η ανταλλαγή έγινε αποδεκτή — η διαμονή σας είναι ασφαλισμένη.</string>
+    <string name="thread_declined_toast">Η πρόταση απορρίφθηκε.</string>
+    <string name="thread_withdrawn_toast">Η πρόταση αποσύρθηκε.</string>
+    <string name="thread_countered_toast">Η αντιπρόταση στάλθηκε.</string>
+
+    <!-- Leave a review -->
+    <string name="review_title">Αφήστε μια κριτική</string>
+    <string name="review_prompt">Πώς ήταν η ανταλλαγή σας με τον/την %1$s;</string>
+    <string name="review_partner_fallback">ο συνεργάτης ανταλλαγής σας</string>
+    <string name="review_rating_label">Η βαθμολογία σας</string>
+    <string name="review_text_label">Η κριτική σας</string>
+    <string name="review_text_placeholder">Πώς ήταν το σπίτι, η γειτονιά, η παράδοση;</string>
+    <string name="review_min_chars">Τουλάχιστον 20 χαρακτήρες — %1$d μέχρι τώρα.</string>
+    <string name="review_submit">Υποβολή κριτικής</string>
+    <string name="review_submitting">Υποβολή…</string>
+    <string name="review_card_title">Πώς ήταν η ανταλλαγή σας;</string>
+    <string name="review_card_body">Αφήστε στον/στην %1$s μια κριτική — εμφανίζεται στο δημόσιο προφίλ του/της.</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">Εισερχόμενα ανταλλαγών</string>
+    <string name="inbox_search_open">Αναζήτηση</string>
+    <string name="inbox_search_close">Κλείσιμο αναζήτησης</string>
+    <string name="inbox_search_placeholder">Αναζήτηση κατά οικοδεσπότη ή πόλη</string>
+    <string name="inbox_filter_all">Όλα</string>
+    <string name="inbox_filter_waiting">Περιμένουν εσάς</string>
+    <string name="inbox_filter_sent">Απεσταλμένα</string>
+    <string name="inbox_filter_active">Ενεργά</string>
+    <string name="inbox_filter_archived">Αρχειοθετημένα</string>
+    <string name="inbox_section_waiting">Περιμένουν εσάς</string>
+    <string name="inbox_section_sent">Απεσταλμένα — αναμένουν απάντηση</string>
+    <string name="inbox_section_active">Ενεργές ανταλλαγές</string>
+    <string name="inbox_section_archived">Αρχειοθετημένα</string>
+    <string name="inbox_status_confirmed">Επιβεβαιωμένη ανταλλαγή</string>
+    <string name="inbox_status_countered">Ελήφθη αντιπρόταση</string>
+    <string name="inbox_status_declined">Η πρόταση απορρίφθηκε</string>
+    <string name="inbox_status_waiting_reply">Αναμονή της απάντησής σας</string>
+    <string name="inbox_status_sent">Η πρόταση στάλθηκε</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s → %2$s · με %3$s</string>
+    <string name="inbox_dates">%1$s → %2$s</string>
+    <string name="inbox_error_title">Τα μηνύματα δεν είναι διαθέσιμα</string>
+    <string name="inbox_error_body">Δεν ήταν δυνατή η φόρτωση των ανταλλαγών σας. Τραβήξτε για ανανέωση ή δοκιμάστε ξανά.</string>
+    <string name="inbox_empty_title">Δεν υπάρχουν μηνύματα ακόμη</string>
+    <string name="inbox_empty_body">Προτείνετε μια ανταλλαγή από οποιαδήποτε καταχώριση και θα εμφανιστεί εδώ.</string>
+
+    <!-- Trips -->
+    <string name="trips_title">Ταξίδια</string>
+    <string name="trips_phase_active">Ενεργά τώρα</string>
+    <string name="trips_phase_upcoming">Επερχόμενα</string>
+    <string name="trips_phase_past">Παρελθόντα</string>
+    <string name="trips_row_title">Ταξίδι στο %1$s</string>
+    <string name="trips_row_dates_host">%1$s → %2$s · οικοδεσπότης %3$s</string>
+    <string name="trips_row_dates">%1$s → %2$s</string>
+    <string name="trips_row_roles">Επισκέπτης στο %1$s · Εσείς φιλοξενείτε στο %2$s</string>
+    <string name="trips_error_title">Τα ταξίδια δεν είναι διαθέσιμα</string>
+    <string name="trips_error_body">Δεν ήταν δυνατή η φόρτωση των ταξιδιών σας. Τραβήξτε για ανανέωση ή δοκιμάστε ξανά.</string>
+    <string name="trips_empty_title">Δεν υπάρχουν ταξίδια ακόμη</string>
+    <string name="trips_empty_body">Οι αποδεκτές ανταλλαγές γίνονται ταξίδια. Οι επερχόμενες διαμονές σας θα εμφανιστούν εδώ.</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">Αυτή η ανταλλαγή ακυρώθηκε</string>
+    <string name="cockpit_timeline_agreed">Συμφωνήθηκε</string>
+    <string name="cockpit_timeline_ready">Έτοιμο</string>
+    <string name="cockpit_timeline_staying">Διαμονή</string>
+    <string name="cockpit_timeline_done">Ολοκληρώθηκε</string>
+    <string name="cockpit_starts_in">Ξεκινά σε</string>
+    <string name="cockpit_status">Κατάσταση</string>
+    <string name="cockpit_countdown_days">%1$dη %2$dω</string>
+    <string name="cockpit_countdown_hours">%1$dω</string>
+    <string name="cockpit_phase_agreed">Η ανταλλαγή συμφωνήθηκε</string>
+    <string name="cockpit_phase_preparing">Προετοιμασία</string>
+    <string name="cockpit_phase_ready">Έτοιμο για αναχώρηση</string>
+    <string name="cockpit_phase_in_progress">Σε εξέλιξη</string>
+    <string name="cockpit_phase_completed">Ολοκληρώθηκε</string>
+    <string name="cockpit_phase_cancelled">Ακυρώθηκε</string>
+    <string name="cockpit_insured">Ασφαλισμένο</string>
+    <string name="cockpit_before_you_go">Πριν φύγετε</string>
+    <string name="cockpit_check_guide_filled">Ολοκληρώστε τον οδηγό του σπιτιού σας</string>
+    <string name="cockpit_check_details_read">Διαβάστε τις λεπτομέρειες του σπιτιού του οικοδεσπότη σας</string>
+    <string name="cockpit_check_checked_in">Κάντε check in όταν φτάσετε</string>
+    <string name="cockpit_check_checked_out">Κάντε check out όταν φύγετε</string>
+    <string name="cockpit_finish_guide">Ολοκληρώστε τον οδηγό του σπιτιού σας (%1$d%%)</string>
+    <string name="cockpit_your_key_code">Ο ΚΩΔΙΚΟΣ ΚΛΕΙΔΙΟΥ ΣΑΣ</string>
+    <string name="cockpit_key_code_note">Κλειδιά για κλειδιά — μοιραστείτε το με τον επισκέπτη σας για να μπει.</string>
+    <string name="cockpit_swap_protection">Προστασία ανταλλαγής</string>
+    <string name="cockpit_policy_line">Συμβόλαιο %1$s · κάλυψη €%2$s</string>
+    <string name="cockpit_where_you_stay">Πού μένετε</string>
+    <string name="cockpit_guide_not_filled">Ο οικοδεσπότης σας δεν έχει συμπληρώσει ακόμη τον οδηγό του σπιτιού του.</string>
+    <string name="cockpit_address_unlocks_city">Η ακριβής διεύθυνση στο %1$s ξεκλειδώνει σύντομα</string>
+    <string name="cockpit_address_unlocks">Η ακριβής διεύθυνση ξεκλειδώνει σύντομα</string>
+    <string name="cockpit_unlocks_at">Ξεκλειδώνει %1$s — 48 ώρες πριν τη διαμονή σας.</string>
+    <string name="cockpit_unlocks_generic">Η διεύθυνση και ο οδηγός του σπιτιού ξεκλειδώνουν 48 ώρες πριν τη διαμονή σας.</string>
+    <string name="cockpit_home_guide">Οδηγός σπιτιού</string>
+    <string name="cockpit_collapse">Σύμπτυξη</string>
+    <string name="cockpit_expand">Ανάπτυξη</string>
+    <string name="cockpit_guide_getting_in">Πώς θα μπείτε</string>
+    <string name="cockpit_guide_keys">Κλειδιά</string>
+    <string name="cockpit_guide_wifi_name">Δίκτυο Wi-Fi</string>
+    <string name="cockpit_guide_wifi_password">Κωδικός Wi-Fi</string>
+    <string name="cockpit_guide_heating">Θέρμανση &amp; ψύξη</string>
+    <string name="cockpit_guide_kitchen">Κουζίνα</string>
+    <string name="cockpit_guide_bins">Κάδοι &amp; ανακύκλωση</string>
+    <string name="cockpit_guide_pets_plants">Κατοικίδια &amp; φυτά</string>
+    <string name="cockpit_guide_house_rules">Κανόνες σπιτιού</string>
+    <string name="cockpit_guide_neighbourhood">Γειτονιά</string>
+    <string name="cockpit_guide_emergency">Επαφή έκτακτης ανάγκης</string>
+    <string name="cockpit_check_in">Check in</string>
+    <string name="cockpit_check_out">Check out</string>
+    <string name="cockpit_checked_in_out">Κάνατε check in και check out — ευχαριστούμε!</string>
+    <string name="cockpit_trip_activity">Δραστηριότητα ταξιδιού</string>
+    <string name="cockpit_event_you">Εσείς</string>
+    <string name="cockpit_event_partner_fallback">Ο συνεργάτης ανταλλαγής σας</string>
+    <string name="cockpit_event_checked_in">Ο/Η %1$s έκανε check in</string>
+    <string name="cockpit_event_checked_out">Ο/Η %1$s έκανε check out</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">Τα μηνύματα δεν είναι διαθέσιμα</string>
+    <string name="chat_try_again">Δοκιμάστε ξανά</string>
+    <string name="chat_view_trip">Προβολή ταξιδιού</string>
+    <string name="chat_say_hello_title">Πείτε ένα γεια</string>
+    <string name="chat_say_hello_body">Ξεκινήστε τη συνομιλία — ρωτήστε για ημερομηνίες, τη γειτονιά ή οτιδήποτε θέλετε να μάθετε.</string>
+    <string name="chat_load_earlier">Φόρτωση παλαιότερων μηνυμάτων</string>
+    <string name="chat_message_placeholder">Μήνυμα</string>
+    <string name="chat_add_photo">Προσθήκη φωτογραφίας</string>
+    <string name="chat_remove_photo">Αφαίρεση φωτογραφίας</string>
+    <string name="chat_send">Αποστολή μηνύματος</string>
+    <string name="chat_receipt_read">Αναγνώστηκε</string>
+    <string name="chat_receipt_sent">Στάλθηκε</string>
+    <string name="chat_invite_only_partners">Μόνο οι δύο συνεργάτες ανταλλαγής μπορούν να προσκαλούν άτομα.</string>
+    <string name="chat_invite_not_found">Δεν μπορέσαμε να βρούμε αυτό το άτομο. Ελέγξτε το email ή το όνομα χρήστη.</string>
+    <string name="chat_invite_failed">Δεν ήταν δυνατή η αποστολή της πρόσκλησης. Δοκιμάστε ξανά.</string>
+    <string name="chat_send_failed">Δεν ήταν δυνατή η αποστολή. Δοκιμάστε ξανά.</string>
+    <string name="chat_read_image_failed">Δεν ήταν δυνατή η ανάγνωση αυτής της εικόνας</string>
+    <string name="chat_upload_photo_failed">Δεν ήταν δυνατή η μεταφόρτωση φωτογραφίας. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">Τοποθεσία</string>
+    <string name="create_step_space">Χώρος</string>
+    <string name="create_step_access">Πρόσβαση &amp; κατοικίδια</string>
+    <string name="create_step_amenities">Παροχές</string>
+    <string name="create_step_dates">Ημερομηνίες</string>
+    <string name="create_step_photos">Φωτογραφίες</string>
+    <string name="create_step_description">Περιγραφή</string>
+    <string name="create_step_review">Επισκόπηση</string>
+    <string name="create_kicker_edit">Επεξεργαστείτε το σπίτι σας — βήμα %1$d από %2$d</string>
+    <string name="create_kicker_new">Βήμα %1$d από %2$d</string>
+    <string name="create_back">Πίσω</string>
+    <string name="create_next">Επόμενο</string>
+    <string name="create_saving">Αποθήκευση…</string>
+    <string name="create_publishing">Δημοσίευση…</string>
+    <string name="create_save_changes">Αποθήκευση αλλαγών</string>
+    <string name="create_publish_listing">Δημοσίευση καταχώρισης</string>
+    <string name="create_locating">Εντοπισμός…</string>
+    <string name="create_use_location">Χρήση της τρέχουσας τοποθεσίας μου</string>
+    <string name="create_location_error">Δεν ήταν δυνατός ο προσδιορισμός της τοποθεσίας σας — συμπληρώστε τη χειροκίνητα.</string>
+    <string name="create_load_error">Δεν ήταν δυνατή η φόρτωση της καταχώρισης</string>
+    <string name="create_read_image_error">Δεν ήταν δυνατή η ανάγνωση αυτής της εικόνας</string>
+    <string name="create_upload_failed">Η μεταφόρτωση απέτυχε</string>
+    <string name="create_title_label">Τίτλος (π.χ. Ηλιόλουστο διαμέρισμα στο κανάλι)</string>
+    <string name="create_city_label">Πόλη</string>
+    <string name="create_neighbourhood_label">Γειτονιά</string>
+    <string name="create_country_label">Χώρα</string>
+    <string name="create_address_label">Διεύθυνση (προαιρετικό)</string>
+    <string name="create_space_type">Τύπος χώρου</string>
+    <string name="create_space_entire">Ολόκληρος χώρος</string>
+    <string name="create_space_private_room">Ιδιωτικό δωμάτιο</string>
+    <string name="create_private_room_keys_note">Ένα ιδιωτικό δωμάτιο αξίζει λιγότερα Κλειδιά από ολόκληρο το σπίτι — η νυχτερινή αξία αντικατοπτρίζει μόνο το δωμάτιο.</string>
+    <string name="create_rooms_offered">Προσφερόμενα δωμάτια: %1$d</string>
+    <string name="create_property_type">Τύπος ακινήτου</string>
+    <string name="create_prop_apartment">Διαμέρισμα</string>
+    <string name="create_prop_house">Μονοκατοικία</string>
+    <string name="create_prop_loft">Loft</string>
+    <string name="create_prop_townhouse">Μεζονέτα</string>
+    <string name="create_size">Μέγεθος: %1$d m²</string>
+    <string name="create_sleeps">Κοιμάται: %1$d</string>
+    <string name="create_bedrooms">Υπνοδωμάτια: %1$d</string>
+    <string name="create_bathrooms">Μπάνια: %1$d</string>
+    <string name="create_floor">Όροφος: %1$d</string>
+    <string name="create_has_elevator">Έχει ασανσέρ</string>
+    <string name="create_step_free">Πρόσβαση χωρίς σκαλιά</string>
+    <string name="create_pets_allowed">Επιτρέπονται κατοικίδια</string>
+    <string name="create_wfh_setup">Εξοπλισμός τηλεργασίας</string>
+    <string name="create_desks">Γραφεία: %1$d</string>
+    <string name="create_parking">Στάθμευση</string>
+    <string name="create_bike">Συμπεριλαμβάνεται ποδήλατο</string>
+    <string name="create_balcony">Μπαλκόνι</string>
+    <string name="create_rooftop">Ταράτσα</string>
+    <string name="create_garden">Κήπος</string>
+    <string name="create_courtyard">Αυλή</string>
+    <string name="create_piano">Πιάνο</string>
+    <string name="create_pool">Πισίνα</string>
+    <string name="create_gym">Γυμναστήριο</string>
+    <string name="create_ac">Κλιματισμός</string>
+    <string name="create_dishwasher">Πλυντήριο πιάτων</string>
+    <string name="create_washer">Πλυντήριο ρούχων</string>
+    <string name="create_dryer">Στεγνωτήριο</string>
+    <string name="create_available_from">Διαθέσιμο από</string>
+    <string name="create_available_to">Διαθέσιμο έως</string>
+    <string name="create_min_stay">Ελάχιστη διαμονή: %1$d ημέρες</string>
+    <string name="create_max_stay">Μέγιστη διαμονή: %1$d ημέρες</string>
+    <string name="create_photos_hint">Προσθέστε έως 10 φωτογραφίες του σπιτιού σας. Τις αλλάζουμε σε μέγεθος πριν τη μεταφόρτωση.</string>
+    <string name="create_choose_photos">Επιλογή φωτογραφιών</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="one">Μεταφόρτωση %1$d φωτογραφίας…</item>
+        <item quantity="other">Μεταφόρτωση %1$d φωτογραφιών…</item>
+    </plurals>
+    <string name="create_description_label">Περιγράψτε το σπίτι σας (τουλάχιστον 20 χαρακτήρες)</string>
+    <string name="create_characters">%1$d χαρακτήρες</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d m² · κοιμάται %2$d · %3$d υπν / %4$d μπ</string>
+    <string name="create_review_available">Διαθέσιμο %1$s → %2$s</string>
+    <string name="create_decrease">μείωση</string>
+    <string name="create_increase">αύξηση</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">Διαμονές με πόντους</string>
+    <string name="keys_stay_in">Διαμονή στο %1$s</string>
+    <string name="keys_stay_guest_at">Επισκέπτης στο %1$s</string>
+    <string name="keys_stay_dates">%1$s → %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="one">%1$d νύχτα · %2$d πόντοι</item>
+        <item quantity="other">%1$d νύχτες · %2$d πόντοι</item>
+    </plurals>
+    <string name="keys_stay_decline">Απόρριψη</string>
+    <string name="keys_stay_confirm">Επιβεβαίωση διαμονής</string>
+    <string name="keys_stay_cancel_request">Ακύρωση αιτήματος</string>
+    <string name="keys_stay_covered">Επιβεβαιώθηκε — η διαμονή σας καλύπτεται από ένα συμβόλαιο Swapl.</string>
+    <string name="keys_stay_status_awaiting_host">Αναμονή οικοδεσπότη</string>
+    <string name="keys_stay_status_action_needed">Απαιτείται ενέργεια</string>
+    <string name="keys_stay_status_confirmed">Επιβεβαιώθηκε</string>
+    <string name="keys_stay_status_declined">Απορρίφθηκε</string>
+    <string name="keys_stay_status_cancelled">Ακυρώθηκε</string>
+    <string name="keys_stay_status_completed">Ολοκληρώθηκε</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">Μείνετε με πόντους</string>
+    <string name="stay_keys_intro">Κλείστε μονόδρομη διαμονή με τους πόντους σας — χωρίς ανάγκη να τους φιλοξενήσετε πίσω. Καλό όταν οι ημερομηνίες ή το σπίτι σας δεν ταιριάζουν για άμεση ανταλλαγή.</string>
+    <string name="stay_keys_window">Επιλέξτε ημερομηνίες εντός της διαθεσιμότητας του σπιτιού (%1$s → %2$s). %3$d–%4$d νύχτες. Οι κλεισμένες ημερομηνίες είναι διαγραμμένες.</string>
+    <string name="stay_keys_points_per_night">Πόντοι ανά νύχτα</string>
+    <string name="stay_keys_nights">Νύχτες</string>
+    <string name="stay_keys_total">Σύνολο</string>
+    <string name="stay_keys_total_points">%1$d πόντοι</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="one">Έχετε %1$d πόντους — αρκετούς για αυτή τη διαμονή (περίπου %2$d νύχτα σε αυτή την τιμή).</item>
+        <item quantity="other">Έχετε %1$d πόντους — αρκετούς για αυτή τη διαμονή (περίπου %2$d νύχτες σε αυτή την τιμή).</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="one">Σας λείπουν %1$d πόντοι. Φιλοξενήστε περίπου %2$d νύχτα σε αυτή την τιμή για να ξεκλειδώσετε αυτή τη διαμονή — ή επιλέξτε λιγότερες νύχτες. Οι πόντοι δεν αγοράζονται.</item>
+        <item quantity="other">Σας λείπουν %1$d πόντοι. Φιλοξενήστε περίπου %2$d νύχτες σε αυτή την τιμή για να ξεκλειδώσετε αυτή τη διαμονή — ή επιλέξτε λιγότερες νύχτες. Οι πόντοι δεν αγοράζονται.</item>
+    </plurals>
+    <string name="stay_keys_held_note">Οι πόντοι σας κρατούνται μέχρι ο οικοδεσπότης να επιβεβαιώσει. Θα βρείτε αυτή τη διαμονή στα Ταξίδια.</string>
+    <string name="stay_keys_sending">Αποστολή…</string>
+    <string name="stay_keys_request">Αίτημα με πόντους</string>
+    <string name="stay_keys_error_insufficient">Δεν έχετε αρκετούς πόντους για αυτές τις ημερομηνίες. Δοκιμάστε λιγότερες νύχτες, ή κερδίστε πόντους φιλοξενώντας. Οι πόντοι δεν αγοράζονται.</string>
+    <string name="stay_keys_error_unavailable">Αυτές οι ημερομηνίες δεν είναι διαθέσιμες. Επιλέξτε ημερομηνίες εντός του διαστήματος του σπιτιού.</string>
+    <string name="stay_keys_error_generic">Δεν ήταν δυνατό το αίτημα αυτής της διαμονής αυτή τη στιγμή.</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">Αποθηκευμένες αναζητήσεις</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">Οι αποθηκευμένες αναζητήσεις είναι λειτουργία για μέλη Plus.</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">Ενδιαφέροντα · %1$d / 12</string>
+    <string name="interests_vibe_label">Το ύφος σας (προαιρετικό)</string>
+    <string name="interests_save">Αποθήκευση</string>
+    <string name="interests_saving">Αποθήκευση…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">Ιστορικό πόντων</string>
+    <string name="keys_tx_filter_all">Όλα</string>
+    <string name="keys_tx_filter_earned">Κερδισμένα</string>
+    <string name="keys_tx_filter_spent">Ξοδεμένα</string>
+    <string name="keys_tx_empty_all">Δεν υπάρχει δραστηριότητα πόντων ακόμη.</string>
+    <string name="keys_tx_empty_earned">Δεν υπάρχουν κερδισμένοι πόντοι ακόμη.</string>
+    <string name="keys_tx_empty_spent">Δεν υπάρχουν ξοδεμένοι πόντοι ακόμη.</string>
+    <string name="keys_tx_loading">Φόρτωση…</string>
+    <string name="keys_tx_load_more">Φόρτωση περισσότερων</string>
+    <string name="keys_tx_balance">%1$d υπόλ</string>
+    <string name="keys_tx_error_title">Το ιστορικό πόντων δεν είναι διαθέσιμο</string>
+    <string name="keys_tx_try_again">Δοκιμάστε ξανά</string>
+
+    <!-- ===== UI localization 100% (DOK) ===== -->
+    <!-- Common / shared -->
+    <string name="common_save">Αποθήκευση</string>
+    <string name="common_saving">Αποθήκευση…</string>
+    <string name="common_send">Αποστολή</string>
+    <string name="common_sending">Αποστολή…</string>
+    <string name="common_close">Κλείσιμο</string>
+    <string name="common_done">Ολοκληρώθηκε</string>
+    <string name="common_delete">Διαγραφή</string>
+    <string name="common_try_again">Δοκιμάστε ξανά</string>
+    <string name="cd_remove_photo">Αφαίρεση φωτογραφίας</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">%1$d από 5 αστέρια</string>
+    <plurals name="cd_n_stars">
+        <item quantity="one">%1$d αστέρι</item>
+        <item quantity="other">%1$d αστέρια</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="one">%1$d νύχτα</item>
+        <item quantity="other">%1$d νύχτες</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="one">%1$d κρεβάτι</item>
+        <item quantity="other">%1$d κρεβάτια</item>
+    </plurals>
+
+    <!-- Status enum chips -->
+    <string name="status_pending">Σε εκκρεμότητα</string>
+    <string name="status_accepted">Επιβεβαιώθηκε</string>
+    <string name="status_countered">Αντιπροτάθηκε</string>
+    <string name="status_declined">Απορρίφθηκε</string>
+    <string name="status_withdrawn">Αποσύρθηκε</string>
+    <string name="status_active">Ενεργό</string>
+    <string name="status_upcoming">Επερχόμενο</string>
+    <string name="status_in_progress">Σε εξέλιξη</string>
+    <string name="status_completed">Ολοκληρώθηκε</string>
+    <string name="status_cancelled">Ακυρώθηκε</string>
+    <string name="status_disputed">Σε διαφωνία</string>
+    <string name="status_resolved">Επιλύθηκε</string>
+    <string name="status_open">Ανοιχτό</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">Πρόγραμμα</string>
+
+    <!-- Trip detail -->
+    <string name="trip_detail_error_title">Το ταξίδι δεν είναι διαθέσιμο</string>
+    <string name="trip_detail_error_body">Δεν ήταν δυνατή η φόρτωση αυτού του ταξιδιού.</string>
+    <string name="trip_detail_host_fallback">ο οικοδεσπότης σας</string>
+    <string name="trip_detail_host_word">οικοδεσπότης</string>
+    <string name="trip_detail_trip_to">Ταξίδι στο %1$s</string>
+    <string name="trip_detail_hosted_by">Φιλοξενία από %1$s</string>
+    <string name="trip_detail_your_stay">Η διαμονή σας</string>
+    <string name="trip_detail_guest_at">Επισκέπτης στο σπίτι του/της %1$s — %2$s · %3$s</string>
+    <string name="trip_detail_in_return">Σε αντάλλαγμα φιλοξενείτε στο %1$s · %2$s για τις ίδιες ημερομηνίες.</string>
+    <string name="trip_detail_view_profile">Προβολή προφίλ του/της %1$s</string>
+
+    <!-- Agreement panel -->
+    <string name="agreement_title">Η ανταλλαγή συμφωνήθηκε — κλειδιά για κλειδιά</string>
+    <string name="agreement_stay_between">Διαμονή μεταξύ %1$s → %2$s με %3$s.</string>
+    <string name="agreement_your_code">Ο κωδικός σας (χρησιμοποιήστε στο σπίτι τους)</string>
+    <string name="agreement_their_code">Ο κωδικός τους (επισκέπτης στο σπίτι σας)</string>
+    <string name="agreement_insurance_cover">Ασφάλιση · κάλυψη €%1$dk</string>
+    <string name="agreement_auto_issued">Εκδόθηκε αυτόματα · γραμμή 24/7 %1$s</string>
+
+    <!-- Dispute / resolution center -->
+    <string name="dispute_report_problem">Αναφορά προβλήματος</string>
+    <string name="dispute_report_new">Αναφορά νέου προβλήματος</string>
+    <string name="dispute_phone_title">Επικοινωνήστε με τη γραμμή 24/7</string>
+    <string name="dispute_phone_body">Αν κάποιος κινδυνεύει ή έχει κλειδωθεί έξω, καλέστε %1$s.</string>
+    <string name="dispute_phone_call">Καλέστε %1$s</string>
+    <string name="dispute_urgent_title">Χρειάζεστε βοήθεια τώρα;</string>
+    <string name="dispute_urgent_body">Αν κάποιος κινδυνεύει ή έχει κλειδωθεί έξω, η γραμμή μας 24/7 είναι εδώ. Πατήστε για να επικοινωνήσετε με την υποστήριξη τώρα.</string>
+    <string name="dispute_open_body">Πείτε μας τι συμβαίνει με την ανταλλαγή σας. Θα ενημερώσουμε τον συνεργάτη ανταλλαγής σας και την ομάδα υποστήριξής μας.</string>
+    <string name="dispute_open_body_with">Πείτε μας τι συμβαίνει με την ανταλλαγή σας με τον/την %1$s. Θα ενημερώσουμε τον συνεργάτη ανταλλαγής σας και την ομάδα υποστήριξής μας.</string>
+    <string name="dispute_what_happened">ΤΙ ΣΥΝΕΒΗ;</string>
+    <string name="dispute_describe_label">Περιγράψτε το πρόβλημα</string>
+    <string name="dispute_describe_placeholder">Τι συνέβη, πότε, και τι χρειάζεστε από εμάς.</string>
+    <string name="dispute_send_report">Αποστολή αναφοράς</string>
+    <string name="dispute_discard_title">Απόρριψη αλλαγών;</string>
+    <string name="dispute_discard_body">Η αναφορά σας δεν έχει σταλεί ακόμη. Αν φύγετε τώρα, ό,τι έχετε γράψει θα χαθεί.</string>
+    <string name="dispute_discard_confirm">Απόρριψη</string>
+    <string name="dispute_discard_keep">Συνέχιση επεξεργασίας</string>
+    <string name="dispute_reported_on">Αναφέρθηκε %1$s</string>
+    <string name="dispute_resolution_label">ΕΠΙΛΥΣΗ</string>
+    <string name="dispute_conversation_label">ΣΥΝΟΜΙΛΙΑ</string>
+    <string name="dispute_case_resolved">Αυτή η υπόθεση έχει επιλυθεί.</string>
+    <string name="dispute_case_closed">Αυτή η υπόθεση έχει κλείσει.</string>
+    <string name="dispute_reply_label">ΑΠΑΝΤΗΣΗ</string>
+    <string name="dispute_reply_placeholder">Προσθέστε μια απάντηση…</string>
+    <string name="dispute_author_you">Εσείς</string>
+    <string name="dispute_author_support">Υποστήριξη</string>
+    <string name="dispute_photos_label">ΦΩΤΟΓΡΑΦΙΕΣ (ΠΡΟΑΙΡΕΤΙΚΟ)</string>
+    <string name="dispute_add_photos">Προσθήκη φωτογραφιών</string>
+    <string name="dispute_add_more_photos">Προσθήκη περισσότερων</string>
+    <string name="dispute_photo_read_error">Δεν ήταν δυνατή η ανάγνωση αυτής της εικόνας</string>
+    <string name="dispute_photo_upload_error">Δεν ήταν δυνατή η μεταφόρτωση φωτογραφίας. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</string>
+    <string name="dispute_cat_access_title">Δεν μπορώ να μπω</string>
+    <string name="dispute_cat_access_subtitle">Κλειδωμένος έξω, λάθος κωδικός, λείπουν κλειδιά</string>
+    <string name="dispute_cat_damage_title">Ζημιά</string>
+    <string name="dispute_cat_damage_subtitle">Κάτι έσπασε ή υπέστη ζημιά</string>
+    <string name="dispute_cat_cleanliness_title">Καθαριότητα</string>
+    <string name="dispute_cat_cleanliness_subtitle">Το σπίτι δεν ήταν έτοιμο ή καθαρό</string>
+    <string name="dispute_cat_safety_title">Ανησυχία για την ασφάλεια</string>
+    <string name="dispute_cat_safety_subtitle">Νιώθετε ανασφάλεια ή κάτι δεν πάει καλά</string>
+    <string name="dispute_cat_no_show_title">Δεν εμφανίστηκε</string>
+    <string name="dispute_cat_no_show_subtitle">Ο συνεργάτης ανταλλαγής σας δεν τήρησε τη συμφωνία</string>
+    <string name="dispute_cat_other_title">Κάτι άλλο</string>
+    <string name="dispute_cat_other_subtitle">Οτιδήποτε άλλο για το οποίο χρειάζεστε βοήθεια</string>
+    <string name="dispute_status_open">Ανοιχτό</string>
+    <string name="dispute_status_investigating">Το διερευνούμε</string>
+    <string name="dispute_status_awaiting">Σειρά σας</string>
+    <string name="dispute_status_resolved">Επιλύθηκε</string>
+    <string name="dispute_status_closed">Έκλεισε</string>
+
+    <!-- Home guide editor -->
+    <string name="home_guide_title">Οδηγός σπιτιού</string>
+    <string name="home_guide_complete_pct">%1$d%% ολοκληρωμένο</string>
+    <string name="home_guide_intro">Συμπληρώστε τα βασικά ώστε ο επισκέπτης σας να εγκατασταθεί χωρίς να σας στείλει μήνυμα.</string>
+    <string name="home_guide_section_access">Πώς θα μπείτε</string>
+    <string name="home_guide_field_access">Οδηγίες πρόσβασης</string>
+    <string name="home_guide_field_key_pickup">Παραλαβή κλειδιών</string>
+    <string name="home_guide_section_wifi">Wi-Fi</string>
+    <string name="home_guide_field_wifi_name">Όνομα δικτύου</string>
+    <string name="home_guide_field_wifi_password">Κωδικός</string>
+    <string name="home_guide_section_living">Διαμονή στο σπίτι</string>
+    <string name="home_guide_field_heating">Θέρμανση &amp; ψύξη</string>
+    <string name="home_guide_field_kitchen">Κουζίνα</string>
+    <string name="home_guide_field_bins">Κάδοι &amp; ανακύκλωση</string>
+    <string name="home_guide_field_pets">Κατοικίδια &amp; φυτά</string>
+    <string name="home_guide_section_good_to_know">Καλό να γνωρίζετε (προαιρετικό)</string>
+    <string name="home_guide_field_house_rules">Κανόνες σπιτιού</string>
+    <string name="home_guide_field_neighbourhood">Συμβουλές γειτονιάς</string>
+    <string name="home_guide_field_emergency">Επαφή έκτακτης ανάγκης</string>
+
+    <!-- Check in / out sheet -->
+    <string name="check_event_checkin">Check in</string>
+    <string name="check_event_checkout">Check out</string>
+    <string name="check_event_checkin_body">Τραβήξτε μερικές αρχικές φωτογραφίες του σπιτιού καθώς φτάνετε — προστατεύει και τους δύο σας αν προκύψει κάποια ερώτηση αργότερα.</string>
+    <string name="check_event_checkout_body">Τραβήξτε μερικές φωτογραφίες καθώς φεύγετε, ώστε η κατάσταση του σπιτιού να καταγραφεί.</string>
+    <string name="check_event_baseline_photos">Αρχικές φωτογραφίες</string>
+    <string name="check_event_note_label">Σημείωση (προαιρετικό)</string>
+    <string name="check_event_note_placeholder">π.χ. όλα φαίνονται τέλεια, παρέλαβα τα κλειδιά</string>
+
+    <!-- Metrics -->
+    <string name="metrics_title">Μετρήσεις</string>
+    <string name="metrics_section_now">Τώρα</string>
+    <string name="metrics_online_now">Συνδεδεμένοι τώρα</string>
+    <string name="metrics_today">Σήμερα</string>
+    <string name="metrics_7_days">7 ημέρες</string>
+    <string name="metrics_30_days">30 ημέρες</string>
+    <string name="metrics_section_users">Χρήστες</string>
+    <string name="metrics_total">Σύνολο</string>
+    <string name="metrics_email_verified">Επαληθευμένο email</string>
+    <string name="metrics_with_active_listing">Με ενεργή καταχώριση</string>
+    <string name="metrics_new_7d">Νέοι (7 ημέρες)</string>
+    <string name="metrics_new_30d">Νέοι (30 ημέρες)</string>
+    <string name="metrics_section_listings_per_user">Καταχωρίσεις ανά χρήστη</string>
+    <string name="metrics_avg_per_user">Μ.ό. ανά χρήστη με καταχώριση</string>
+    <string name="metrics_top_hosts">Κορυφαίοι οικοδεσπότες</string>
+    <string name="metrics_online_only">Μόνο συνδεδεμένοι</string>
+    <string name="metrics_no_hosts_online">Κανένας οικοδεσπότης συνδεδεμένος αυτή τη στιγμή.</string>
+    <string name="metrics_online">Συνδεδεμένος</string>
+    <string name="metrics_offline">Αποσυνδεδεμένος</string>
+    <string name="metrics_section_top_cities">Κορυφαίες πόλεις</string>
+    <string name="metrics_active_listings">Ενεργές καταχωρίσεις</string>
+    <string name="metrics_section_proposals">Προτάσεις</string>
+    <string name="metrics_accept_rate">Ποσοστό αποδοχής</string>
+    <string name="metrics_section_engagement">Αλληλεπίδραση</string>
+    <string name="metrics_active_agreements">Ενεργές συμφωνίες</string>
+    <string name="metrics_completed_agreements">Ολοκληρωμένες συμφωνίες</string>
+    <string name="metrics_messages_total">Μηνύματα (σύνολο)</string>
+    <string name="metrics_messages_7d">Μηνύματα (7 ημέρες)</string>
+    <string name="metrics_favorites_total">Αγαπημένα (σύνολο)</string>
+    <string name="metrics_favorites_7d">Αγαπημένα (7 ημέρες)</string>
+    <string name="metrics_saved_searches">Αποθηκευμένες αναζητήσεις</string>
+    <string name="metrics_generated_at">Δημιουργήθηκε %1$s UTC</string>
+    <string name="metrics_error_title">Οι μετρήσεις δεν είναι διαθέσιμες</string>
+    <string name="metrics_error_body">Δεν ήταν δυνατή η φόρτωση των μετρήσεων. Τραβήξτε για ανανέωση ή δοκιμάστε ξανά.</string>
+
+    <!-- Calendar / availability -->
+    <string name="calendar_title">Το ημερολόγιό σας</string>
+    <string name="calendar_intro">Οι κλεισμένες ημερομηνίες από επιβεβαιωμένες ανταλλαγές και διαμονές με πόντους εμφανίζονται διαγραμμένες — οι επισκέπτες δεν μπορούν να τις επιλέξουν. Πατήστε μια ημέρα έναρξης και λήξης για να μπλοκάρετε ημερομηνίες για εσάς (ανακαινίσεις, προσωπική χρήση).</string>
+    <string name="calendar_block_summary">Μπλοκάρισμα %1$s → %2$s (%3$s)</string>
+    <string name="calendar_clear">Καθαρισμός</string>
+    <string name="calendar_blocking">Μπλοκάρισμα…</string>
+    <string name="calendar_block_dates">Μπλοκάρετε αυτές τις ημερομηνίες</string>
+    <string name="calendar_pick_checkout">Τώρα πατήστε την ημέρα αναχώρησης για να ολοκληρώσετε το μπλοκάρισμα.</string>
+    <string name="calendar_blocked_label">Ημερομηνίες που έχετε μπλοκάρει</string>
+    <string name="calendar_unblock">Ξεμπλοκάρισμα</string>
+    <string name="calendar_legend_selected">Επιλεγμένο</string>
+    <string name="calendar_legend_booked">Κλεισμένο / μπλοκαρισμένο</string>
+
+    <!-- Report dialog -->
+    <string name="report_title">Αναφορά</string>
+    <string name="report_reason_label">Λόγος</string>
+    <string name="report_details_label">Λεπτομέρειες (προαιρετικό)</string>
+    <string name="report_reason_inappropriate">Ακατάλληλο περιεχόμενο</string>
+    <string name="report_reason_scam">Απάτη ή ψεύτικη καταχώριση</string>
+    <string name="report_reason_harassment">Παρενόχληση</string>
+    <string name="report_reason_discrimination">Διάκριση</string>
+    <string name="report_reason_other">Άλλο</string>
+
+    <!-- Wishlists -->
+    <string name="wishlists_title">Λίστες επιθυμιών</string>
+    <string name="wishlists_guests_beds">%1$d επισκέπτες · %2$s</string>
+    <string name="wishlists_available">Διαθέσιμο %1$s → %2$s</string>
+    <string name="wishlists_error_title">Οι λίστες επιθυμιών δεν είναι διαθέσιμες</string>
+    <string name="wishlists_error_body">Δεν μπορέσαμε να συνδεθούμε στο Swapl. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</string>
+    <string name="wishlists_empty_title">Δεν υπάρχουν αποθηκευμένα σπίτια ακόμη</string>
+    <string name="wishlists_empty_body">Πατήστε την καρδιά σε οποιοδήποτε σπίτι για να το αποθηκεύσετε εδώ.</string>
+
+    <!-- Travel profile card -->
+    <string name="travel_profile_kicker">Το ταξιδιωτικό σας προφίλ</string>
+    <string name="travel_profile_deleted">Το προφίλ διαγράφηκε. Θα το ξαναφτιάξουμε μόνο αν το ζητήσετε.</string>
+    <string name="travel_profile_built_from">Δημιουργήθηκε μόνο από ό,τι κάνετε στο Swapl. Μπορείτε να το ανανεώσετε ή να το διαγράψετε ανά πάσα στιγμή.</string>
+    <string name="travel_profile_built_from_sources">Δημιουργήθηκε μόνο από ό,τι κάνετε στο Swapl: %1$s. Μπορείτε να το ανανεώσετε ή να το διαγράψετε ανά πάσα στιγμή.</string>
+    <string name="travel_profile_loading">Ανάγνωση του προφίλ σας…</string>
+    <string name="travel_profile_build_again">Δημιουργήστε το ξανά</string>
+    <string name="travel_profile_refresh">Ανανέωση</string>
+    <string name="travel_profile_delete_title">Διαγραφή ταξιδιωτικού προφίλ;</string>
+    <string name="travel_profile_delete_body">Αυτό διαγράφει τη σύνοψη του AI για τα γούστα σας. Δεν θα επανέλθει εκτός αν το ξαναφτιάξετε.</string>
+    <string name="travel_profile_error_429">Το προφίλ ανανεώθηκε πολύ πρόσφατα — δοκιμάστε ξανά σε λίγο.</string>
+    <string name="travel_profile_error_generic">Κάτι πήγε στραβά. Παρακαλώ δοκιμάστε ξανά.</string>
+
+    <!-- Travel windows -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">Φτάσατε το όριο ταξιδιωτικών διαστημάτων του προγράμματός σας</string>
+    <string name="tw_add_window">Προσθέστε ένα ταξιδιωτικό διάστημα</string>
+    <string name="tw_empty_title">Δεν υπάρχουν ταξιδιωτικά διαστήματα ακόμη</string>
+    <string name="tw_empty_body">Πείτε μας πότε θα θέλατε να ταξιδέψετε — θα σας φέρουμε έτοιμες ανταλλαγές για αυτές τις ημερομηνίες.</string>
+    <string name="tw_header_empty">Πότε θέλετε να πάτε;</string>
+    <string name="tw_header_count">%1$d αποθηκευμένα</string>
+    <string name="tw_header_body">Αποθηκεύστε τις ημερομηνίες που ονειρεύεστε. Ο βοηθός συνθέτει ανταλλαγές από πραγματικά σπίτια που είναι ελεύθερα ακριβώς τότε.</string>
+    <string name="tw_new_window">Νέο ταξιδιωτικό διάστημα</string>
+    <string name="tw_date_from">Από</string>
+    <string name="tw_date_to">Έως</string>
+    <string name="tw_end_after_start">Η ημερομηνία λήξης πρέπει να είναι μετά την ημερομηνία έναρξης.</string>
+    <string name="tw_flexible_title">Οι ημερομηνίες μου είναι ευέλικτες</string>
+    <string name="tw_flexible_body">Θα διευρύνουμε την αναζήτηση γύρω από αυτές τις ημέρες.</string>
+    <string name="tw_where_label">Πού πάμε; (προαιρετικό)</string>
+    <string name="tw_where_placeholder">Λισαβόνα, Πορτογαλία, Βαρκελώνη</string>
+    <string name="tw_where_hint">Πόλεις ή χώρες χωρισμένες με κόμμα — αφήστε κενό για οπουδήποτε.</string>
+    <string name="tw_notes_label">Σημειώσεις (προαιρετικό)</string>
+    <string name="tw_notes_placeholder">Ταξίδι επετείου, θέλω κάπου με τα πόδια…</string>
+    <string name="tw_save_window">Αποθήκευση ταξιδιωτικού διαστήματος</string>
+    <string name="tw_flexible_chip">Ευέλικτο</string>
+    <string name="tw_anywhere">Οπουδήποτε</string>
+    <string name="tw_remove_window">Αφαίρεση αυτού του ταξιδιωτικού διαστήματος</string>
+    <string name="tw_hide_swaps">Απόκρυψη ανταλλαγών για αυτές τις ημερομηνίες</string>
+    <string name="tw_show_swaps">Εμφάνιση ανταλλαγών για αυτές τις ημερομηνίες</string>
+    <string name="tw_proposals_load_error">Δεν ήταν δυνατή η φόρτωση ανταλλαγών.</string>
+    <string name="tw_proposals_loading">Αναζήτηση σπιτιών ελεύθερων για τις ημερομηνίες σας…</string>
+    <string name="tw_proposals_no_listing">Προσθέστε πρώτα μια ενεργή καταχώριση — μια ανταλλαγή χρειάζεται δύο σπίτια.</string>
+    <string name="tw_proposals_empty">Τίποτα ελεύθερο για αυτές τις ακριβείς ημερομηνίες ακόμη — θα συνεχίσουμε να παρακολουθούμε και θα σας στείλουμε email όταν εμφανιστεί μια αντιστοίχιση.</string>
+    <string name="tw_match_pct">%1$d%% αντιστοίχιση</string>
+    <string name="tw_on_wishlist">Στους προορισμούς της λίστας επιθυμιών σας</string>
+    <string name="tw_mode_direct_swap">Άμεση ανταλλαγή</string>
+    <string name="tw_mode_keys_stay">Μείνετε με Κλειδιά</string>
+    <string name="tw_mode_keys_stay_nightly">Μείνετε με Κλειδιά · %1$d Κλειδιά/νύχτα</string>
+
+    <!-- Public profile -->
+    <string name="profile_report_user">Αναφορά αυτού του χρήστη</string>
+    <string name="profile_anonymous_host">Ανώνυμος οικοδεσπότης</string>
+    <string name="profile_id_verified">Επαληθευμένη ταυτότητα</string>
+    <string name="profile_host_avatar">Άβαταρ οικοδεσπότη</string>
+    <string name="profile_work">Η δουλειά μου: %1$s</string>
+    <string name="profile_speaks">Μιλάει %1$s</string>
+    <string name="profile_lives_in">Ζει στο %1$s</string>
+    <string name="profile_joined_swapl">Εγγράφηκε στο Swapl</string>
+    <string name="profile_a_member">Ένα μέλος Swapl</string>
+    <string name="profile_visited_label">Πού έχω πάει</string>
+    <string name="profile_visited_empty">Δεν υπάρχουν ολοκληρωμένες ανταλλαγές ακόμη — οι σφραγίδες διαβατηρίου εμφανίζονται εδώ μετά από κάθε διαμονή.</string>
+    <string name="profile_reviews_label_plain">Κριτικές</string>
+    <string name="profile_reviews_label_count">Κριτικές (%1$d)</string>
+    <string name="profile_reviews_empty">Δεν υπάρχουν κριτικές ακόμη — οι οικοδεσπότες αξιολογούν ο ένας τον άλλον μετά από μια ολοκληρωμένη ανταλλαγή.</string>
+    <string name="profile_interests_label">Ενδιαφέροντα</string>
+    <string name="profile_their_homes">Τα σπίτια τους</string>
+    <string name="profile_sqm_sleeps">%1$d m² · κοιμάται %2$d</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="one">Ανταλλαγή</item>
+        <item quantity="other">Ανταλλαγές</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="one">Κριτική</item>
+        <item quantity="other">Κριτικές</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="one">Χρόνος στο Swapl</item>
+        <item quantity="other">Χρόνια στο Swapl</item>
+    </plurals>
+
+    <!-- Account settings -->
+    <string name="settings_personal_info_title">Προσωπικά στοιχεία</string>
+    <string name="settings_display_name">Εμφανιζόμενο όνομα</string>
+    <string name="settings_about_you">Σχετικά με εσάς</string>
+    <string name="settings_about_you_placeholder">Πείτε στους οικοδεσπότες λίγα για εσάς.</string>
+    <string name="settings_my_work">Η δουλειά μου</string>
+    <string name="settings_my_work_placeholder">π.χ. Αρχιτέκτονας</string>
+    <string name="settings_languages">Γλώσσες</string>
+    <string name="settings_languages_placeholder">π.χ. Αγγλικά, Ιταλικά</string>
+    <string name="settings_languages_hint">Διαχωρίστε τις γλώσσες με κόμμα.</string>
+    <string name="settings_home_city">Πόλη κατοικίας</string>
+    <string name="settings_home_city_placeholder">π.χ. Μιλάνο</string>
+    <string name="settings_home_country">Χώρα κατοικίας</string>
+    <string name="settings_home_country_placeholder">π.χ. Ιταλία</string>
+    <string name="settings_saved_confirm">Αποθηκεύτηκε. Το δημόσιο προφίλ σας είναι ενημερωμένο.</string>
+    <string name="settings_save_changes">Αποθήκευση αλλαγών</string>
+    <string name="settings_change_password">Αλλαγή κωδικού</string>
+    <string name="pw_current_label">Τρέχων κωδικός</string>
+    <string name="pw_current_hint">Αφήστε κενό αν εγγραφήκατε με Google, Telegram ή κωδικό email.</string>
+    <string name="pw_new_label">Νέος κωδικός</string>
+    <string name="pw_new_hint">Τουλάχιστον 6 χαρακτήρες. Οι άλλες συσκευές αποσυνδέονται.</string>
+    <string name="pw_confirm_label">Επιβεβαίωση νέου κωδικού</string>
+    <string name="pw_error_min6">Χρησιμοποιήστε τουλάχιστον 6 χαρακτήρες.</string>
+    <string name="pw_error_mismatch">Οι κωδικοί δεν ταιριάζουν.</string>
+    <string name="pw_error_incorrect">Ο τρέχων κωδικός είναι λάθος.</string>
+    <string name="pw_error_too_many">Πάρα πολλές προσπάθειες — δοκιμάστε ξανά σε μία ώρα.</string>
+    <string name="pw_error_generic">Δεν ήταν δυνατή η αλλαγή του κωδικού. Δοκιμάστε ξανά.</string>
+    <string name="settings_privacy_title">Απόρρητο</string>
+    <string name="settings_seo_title">Ευρετηρίαση μηχανών αναζήτησης</string>
+    <string name="settings_seo_subtitle">Επιτρέψτε στις σελίδες των καταχωρίσεών σας να εμφανίζονται σε μηχανές αναζήτησης όπως η Google.</string>
+    <string name="settings_show_home_city_title">Εμφάνιση της πόλης κατοικίας μου</string>
+    <string name="settings_show_home_city_subtitle">Εμφανίστε την πόλη και τη χώρα κατοικίας σας στο δημόσιο προφίλ σας.</string>
+    <string name="settings_notifications_title">Ειδοποιήσεις</string>
+    <string name="settings_email_notif_title">Ειδοποιήσεις email</string>
+    <string name="settings_email_notif_subtitle">Προτάσεις, επιβεβαιώσεις και υπενθυμίσεις ταξιδιών μέσω email.</string>
+    <string name="settings_push_notif_title">Ειδοποιήσεις push</string>
+    <string name="settings_push_notif_subtitle">Ειδοποιήσεις σε πραγματικό χρόνο σε αυτή τη συσκευή όταν κάτι σας χρειάζεται.</string>
+
+    <!-- Keys wallet -->
+    <string name="keys_travel_points">Ταξιδιωτικοί πόντοι</string>
+    <string name="keys_intro">Πόντοι που κερδίζετε φιλοξενώντας. Ξοδέψτε τους σε μια διαμονή — ποτέ χρήματα, ποτέ αγορασμένοι ή εξαργυρωμένοι.</string>
+    <string name="keys_your_homes_earn">Τα σπίτια σας κερδίζουν</string>
+    <string name="keys_your_homes_earn_body">Αυτό είναι που κερδίζετε κάθε νύχτα που μένει ένας επισκέπτης — πόντοι που μπορείτε μετά να ξοδέψετε σε μια διαμονή αλλού.</string>
+    <string name="keys_history">Ιστορικό</string>
+    <string name="keys_history_empty">Δεν υπάρχει δραστηριότητα πόντων ακόμη. Κερδίστε πόντους φιλοξενώντας, ή χαρίστε μερικούς σε έναν φίλο.</string>
+    <string name="keys_see_all_history">Δείτε όλο το ιστορικό πόντων</string>
+    <string name="keys_your_travel_points">Οι ταξιδιωτικοί σας πόντοι</string>
+    <string name="keys_balance_caption">Ξοδέψτε τους σε μια διαμονή χωρίς ταυτόχρονη ανταλλαγή. Οι πόντοι δεν είναι χρήματα — δεν μπορείτε να τους αγοράσετε ή να τους εξαργυρώσετε.</string>
+    <string name="keys_gift_points">Χαρίστε πόντους</string>
+    <string name="keys_gift_entry_subtitle">Στείλτε πόντους σε έναν επαληθευμένο φίλο</string>
+    <string name="keys_per_night">%1$d / νύχτα</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="one">Το υπόλοιπό σας καλύπτει περίπου %1$d νύχτα σε αυτή την τιμή.</item>
+        <item quantity="other">Το υπόλοιπό σας καλύπτει περίπου %1$d νύχτες σε αυτή την τιμή.</item>
+    </plurals>
+    <string name="keys_how_it_works">Πώς λειτουργούν οι πόντοι</string>
+    <string name="keys_example_host">Φιλοξενήστε 2 νύχτες στους %1$d πόντους/νύχτα</string>
+    <string name="keys_example_spend">Ξοδέψτε αυτούς τους %1$d πόντους σε 2 νύχτες κάπου αλλού</string>
+    <string name="keys_loop_caption">Αυτός είναι όλος ο κύκλος: φιλοξενία → κέρδος πόντων → ταξίδι → επανάληψη. Δεν ανταλλάσσονται χρήματα.</string>
+    <string name="keys_get_first">Λάβετε τους πρώτους σας πόντους</string>
+    <string name="keys_earn_verify_title">Επαληθεύστε την ταυτότητά σας</string>
+    <string name="keys_earn_verify_body">Λάβετε %1$d πόντους τη στιγμή που επαληθεύεστε — άμεσα.</string>
+    <string name="keys_earn_host_title">Φιλοξενήστε μια διαμονή</string>
+    <string name="keys_earn_host_body">Κερδίστε πόντους κάθε νύχτα που μένει ένας επισκέπτης μαζί σας.</string>
+    <string name="keys_earn_gift_title">Λάβετε ένα δώρο</string>
+    <string name="keys_earn_gift_body">Ένας επαληθευμένος φίλος μπορεί να σας στείλει πόντους — μοιραστείτε το ID μέλους σας.</string>
+    <string name="keys_error_title">Οι πόντοι δεν είναι διαθέσιμοι</string>
+    <string name="keys_gift_member_id">ID μέλους</string>
+    <string name="keys_gift_member_id_hint">Ζητήστε από τον φίλο σας το ID μέλους Swapl του. Πρέπει να είναι επαληθευμένο μέλος.</string>
+    <string name="keys_gift_caps">Έως %1$d ανά δώρο, %2$d ανά ημέρα. Οι πόντοι είναι δώρο — δεν μπορούν να αγοραστούν ή να εξαργυρωθούν.</string>
+    <plurals name="keys_points_amount">
+        <item quantity="one">%1$d πόντος</item>
+        <item quantity="other">%1$d πόντοι</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="one">Στείλατε %1$d πόντο. Τώρα έχετε %2$d.</item>
+        <item quantity="other">Στείλατε %1$d πόντους. Τώρα έχετε %2$d.</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">Και εσείς και ο φίλος σας πρέπει να είστε επαληθευμένα μέλη για να χαρίσετε πόντους.</string>
+    <string name="keys_gift_error_not_found">Δεν μπορέσαμε να βρούμε αυτό το μέλος. Ελέγξτε ξανά το ID.</string>
+    <string name="keys_gift_error_insufficient">Δεν έχετε αρκετούς πόντους για αυτό το δώρο.</string>
+    <string name="keys_gift_error_generic">Δεν ήταν δυνατή η αποστολή πόντων αυτή τη στιγμή.</string>
+
+    <!-- Invite &amp; earn -->
+    <string name="invite_title">Προσκαλέστε &amp; κερδίστε</string>
+    <string name="invite_intro">Φέρτε φίλους, κερδίστε ταξιδιωτικούς πόντους, ανεβείτε στη σειρά πρώιμης πρόσβασης. Οι πόντοι δεν είναι ποτέ χρήματα.</string>
+    <string name="invite_share_message">Γίνετε μέλος μαζί μου στο Swapl — ανταλλάξτε σπίτια και ταξιδέψτε με πόντους, όχι μετρητά. Χρησιμοποιήστε τον σύνδεσμό μου και κερδίζουμε και οι δύο %1$d ταξιδιωτικούς πόντους όταν επαληθευτείτε: %2$s</string>
+    <string name="invite_share_subject">Γίνετε μέλος μαζί μου στο Swapl</string>
+    <string name="invite_share_chooser">Μοιραστείτε την πρόσκλησή σας</string>
+    <string name="invite_hero_kicker">Φέρτε φίλους, ανεβείτε στη σειρά</string>
+    <string name="invite_hero_points_earned">πόντοι που κερδίσατε</string>
+    <string name="invite_hero_spot_in_line">η θέση σας στη σειρά</string>
+    <string name="invite_hero_body">Κάθε φίλος που εγγράφεται και επαληθεύεται σας κερδίζει %1$d ταξιδιωτικούς πόντους — και σας ανεβάζει στη σειρά πρώιμης πρόσβασης. Οι πόντοι δεν είναι ποτέ χρήματα.</string>
+    <string name="invite_referral_link_label">Ο σύνδεσμος παραπομπής σας</string>
+    <string name="invite_share_button">Κοινοποίηση</string>
+    <string name="invite_share_caption">Μοιραστείτε ολόκληρο αυτόν τον σύνδεσμο — αυτός μετράει. Με ένα πάτημα τον στέλνετε οπουδήποτε: Μηνύματα, WhatsApp, email. Ο φίλος σας τον πατάει, εγγράφεται, και μόλις επαληθευτεί κερδίζετε και οι δύο πόντους.</string>
+    <string name="invite_to_stay_title">Προσκαλέστε κάποιον να μείνει</string>
+    <string name="invite_to_stay_subtitle">Στείλτε μια προσωπική πρόσκληση συνδεδεμένη με το σπίτι σας</string>
+    <string name="invite_tier_label">Το επίπεδό σας</string>
+    <string name="invite_tier_not_started">Δεν ξεκίνησε</string>
+    <string name="invite_tier_no_perk">Προσκαλέστε τον πρώτο σας φίλο για να ξεκλειδώσετε προνόμια.</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="one">%1$d ακόμη επαληθευμένος φίλος για να φτάσετε το %2$s.</item>
+        <item quantity="other">%1$d ακόμη επαληθευμένοι φίλοι για να φτάσετε το %2$s.</item>
+    </plurals>
+    <string name="invite_tier_top">Φτάσατε το ανώτατο επίπεδο — είστε ιδρυτής του Swapl.</string>
+    <string name="invite_leaderboard_label">Πίνακας κατάταξης</string>
+    <string name="invite_you_badge">ΕΣΕΙΣ</string>
+    <string name="invite_your_invites">Οι προσκλήσεις σας (%1$d)</string>
+    <string name="invite_antifarm_note">Οι πόντοι αποδίδονται μόνο μόλις ένας φίλος επαληθεύσει την ταυτότητά του — αυτό κρατά τη σειρά δίκαιη για όλους. Οι πόντοι είναι ταξιδιωτική πίστωση, ποτέ μετρητά.</string>
+    <string name="invite_error_title">Οι προσκλήσεις δεν είναι διαθέσιμες</string>
+    <string name="invite_list_home_title">Καταχωρίστε πρώτα το σπίτι σας</string>
+    <string name="invite_list_home_body">Οι σύνδεσμοι πρόσκλησης για διαμονή είναι συνδεδεμένοι με τη δική σας καταχώριση. Δημιουργήστε ένα σπίτι στον Λογαριασμό, και μετά προσκαλέστε έναν φίλο να έρθει να μείνει.</string>
+    <string name="invite_verify_home_title">Επαληθεύστε πρώτα το σπίτι σας</string>
+    <string name="invite_verify_home_body">Επαληθεύστε αυτή την καταχώριση πριν προσκαλέσετε επισκέπτες να μείνουν — αλλιώς η ανταμοιβή του φίλου σας δεν μπορεί να αποδοθεί. Επαληθεύστε την από Λογαριασμός → η καταχώρισή σας.</string>
+    <string name="invite_inviting_guest_to">Πρόσκληση επισκέπτη στο</string>
+    <string name="invite_your_home">Το σπίτι σας</string>
+    <string name="invite_friend_email_label">Email φίλου (προαιρετικό)</string>
+    <string name="invite_friend_email_placeholder">friend@email.com</string>
+    <string name="invite_friend_email_hint">Προσθέστε ένα email για αυτόματη αντιστοίχιση της πρόσκλησης όταν εγγραφεί, ή αφήστε το κενό για έναν ανοιχτό σύνδεσμο που μπορεί να χρησιμοποιήσει οποιοσδήποτε.</string>
+    <string name="invite_ready">Η πρόσκληση είναι έτοιμη</string>
+    <string name="invite_stay_share_message">Θα ήθελα πολύ να σας φιλοξενήσω στο Swapl — ανταλλάξτε σπίτια και ταξιδέψτε με πόντους, όχι μετρητά. Ορίστε η πρόσκλησή σας να μείνετε στο %1$s: %2$s</string>
+    <string name="invite_stay_share_subject">Ελάτε να μείνετε στο %1$s</string>
+    <string name="invite_stay_share_chooser">Μοιραστείτε τον σύνδεσμο πρόσκλησης</string>
+    <string name="invite_share_link_button">Μοιραστείτε τον σύνδεσμο πρόσκλησης</string>
+    <string name="invite_creating">Δημιουργία…</string>
+    <string name="invite_create_link">Δημιουργία συνδέσμου πρόσκλησης</string>
+    <string name="invite_stay_reward">Όταν εγγραφεί και επαληθευτεί, κερδίζετε και οι δύο %1$d ταξιδιωτικούς πόντους. Οι πόντοι δεν είναι ποτέ χρήματα.</string>
+    <string name="invite_stay_reward_generic">Όταν εγγραφεί και επαληθευτεί, κερδίζετε και οι δύο ταξιδιωτικούς πόντους. Οι πόντοι δεν είναι ποτέ χρήματα.</string>
+    <string name="invite_err_not_verified">Επαληθεύστε αυτή την καταχώριση πριν προσκαλέσετε επισκέπτες να μείνουν — αλλιώς η ανταμοιβή του φίλου σας δεν μπορεί να αποδοθεί.</string>
+    <string name="invite_err_not_owner">Μπορείτε να προσκαλέσετε επισκέπτες μόνο στη δική σας καταχώριση.</string>
+    <string name="invite_err_cooldown">Στείλατε πολλές προσκλήσεις την τελευταία ώρα — δοκιμάστε ξανά σε λίγο. Είναι μια σύντομη αναμονή, όχι αποκλεισμός.</string>
+    <string name="invite_err_generic">Δεν ήταν δυνατή η δημιουργία της πρόσκλησης αυτή τη στιγμή.</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">Εμπνευστείτε</string>
+    <string name="inspire_intro">Πείτε μας το ταξίδι που ονειρεύεστε — θα συνθέσουμε μια ανταλλαγή από πραγματικά σπίτια που ταιριάζουν με το δικό σας.</string>
+    <string name="inspire_wish_label">Η επιθυμία σας</string>
+    <string name="inspire_wish_placeholder">Κάπου ζεστά με υπέροχο φαγητό, με τα πόδια, καλό για τηλεργασία…</string>
+    <string name="inspire_mic_stop">Διακοπή ακρόασης</string>
+    <string name="inspire_mic_start">Υπαγορεύστε την επιθυμία σας</string>
+    <string name="inspire_listening">Ακούω — μιλήστε ελεύθερα, πατήστε ξανά το μικρόφωνο για διακοπή.</string>
+    <string name="inspire_mic_denied">Η πρόσβαση στο μικρόφωνο είναι απενεργοποιημένη για το Swapl — ενεργοποιήστε την στις Ρυθμίσεις για να υπαγορεύσετε την επιθυμία σας.</string>
+    <string name="inspire_dates_in_mind">Έχω ημερομηνίες στο μυαλό μου</string>
+    <string name="inspire_dates_in_mind_sub">Αλλιώς θα χρησιμοποιήσουμε τη διαθεσιμότητα του σπιτιού σας.</string>
+    <string name="inspire_dream_up">Ονειρευτείτε την ανταλλαγή μου</string>
+    <string name="inspire_loading_1">Ονειρευόμαστε την ανταλλαγή σας…</string>
+    <string name="inspire_loading_2">Αντιστοιχίζουμε σπίτια στο ύφος σας…</string>
+    <string name="inspire_loading_3">Ελέγχουμε ποιος είναι ελεύθερος όταν είστε εσείς…</string>
+    <string name="inspire_loading_4">Ετοιμάζουμε τις εικονικές σας βαλίτσες…</string>
+    <string name="inspire_package_title">Το πακέτο ανταλλαγής σας</string>
+    <string name="inspire_understood">Κατανοητό: %1$s</string>
+    <string name="inspire_dates_label">Ημερομηνίες</string>
+    <string name="inspire_dates_suggested">Προτεινόμενες από τη διαθεσιμότητα του σπιτιού σας — προσαρμόστε ελεύθερα.</string>
+    <string name="inspire_message_label">Το μήνυμά σας</string>
+    <string name="inspire_message_ai">Συντάχθηκε από το AI από τη δική σας καταχώριση και τη δική τους — κάντε το δικό σας.</string>
+    <string name="inspire_swap_pick">Ή αλλάξτε την επιλογή</string>
+    <string name="inspire_match_pct">%1$d%% αντιστοίχιση</string>
+    <string name="inspire_while_there">Όσο είστε εκεί</string>
+    <string name="inspire_experiences_note">Κλείνονται στους ιστότοπους των συνεργατών μας στις δικές τους τιμές — το swapl μπορεί να κερδίσει προμήθεια, ποτέ προσαύξηση.</string>
+    <string name="inspire_travel_essentials">Ταξιδιωτικά απαραίτητα</string>
+    <string name="inspire_concierge_addons">Πρόσθετα concierge του swapl</string>
+    <string name="inspire_addons_note">Πραγματικές τιμές καταλόγου. Ξετσεκάρετε ό,τι δεν θέλετε — θα χρεωθείτε μόνο αν ο οικοδεσπότης αποδεχτεί την ανταλλαγή σας.</string>
+    <string name="inspire_payable_if_accepts">Πληρωτέο αν ο οικοδεσπότης αποδεχτεί</string>
+    <string name="inspire_nothing_payable">Τίποτα πληρωτέο — η επιβεβαίωση απλώς στέλνει την πρόταση.</string>
+    <string name="inspire_confirm_send">Επιβεβαίωση &amp; αποστολή πρότασης</string>
+    <string name="inspire_charged_note">Θα χρεωθείτε μόνο αν ο οικοδεσπότης αποδεχτεί την ανταλλαγή σας.</string>
+    <string name="inspire_dismissing">Απόρριψη…</string>
+    <string name="inspire_not_feeling">Δεν μου ταιριάζει</string>
+    <string name="inspire_almost_there">Σχεδόν φτάσαμε</string>
+    <string name="inspire_payment_title">Πληρωμή &amp; κράτηση</string>
+    <string name="inspire_your_selection">Η επιλογή σας</string>
+    <string name="inspire_partner_note">Οι εμπειρίες και οι υπηρεσίες συνεργατών κλείνονται στους ιστότοπους των συνεργατών — ποτέ δεν χρεώνονται από το swapl και δεν αποτελούν μέρος αυτού του συνόλου.</string>
+    <string name="inspire_save_card">Αποθήκευση κάρτας &amp; αποστολή πρότασης</string>
+    <string name="inspire_send_no_card">Αποστολή χωρίς αποθήκευση κάρτας</string>
+    <string name="inspire_back_to_package">Επιστροφή στο πακέτο</string>
+    <string name="inspire_book_on">Κλείστε στο %1$s</string>
+    <string name="inspire_err_no_match">Χρειαζόμαστε ένα ενεργό σπίτι σας — και τουλάχιστον μία συμβατή αντιστοίχιση — για να συνθέσουμε ένα πακέτο.</string>
+    <string name="inspire_err_rate">Ονειρεύεστε γρήγορα! Δώστε του λίγα λεπτά και δοκιμάστε ξανά.</string>
+    <string name="inspire_err_limit">Φτάσατε το όριο προτάσεων του προγράμματός σας. Αναβαθμίστε για να στείλετε περισσότερες.</string>
+    <string name="inspire_err_forbidden">Ο λογαριασμός σας δεν μπορεί να στείλει προτάσεις αυτή τη στιγμή.</string>
+    <string name="inspire_err_generic">Κάτι πήγε στραβά. Παρακαλώ δοκιμάστε ξανά.</string>
+
+
+    <!-- Bottom navigation -->
+    <string name="nav_browse">Περιήγηση</string>
+    <string name="nav_wishlists">Λίστες επιθυμιών</string>
+    <string name="nav_trips">Ταξίδια</string>
+    <string name="nav_swaps">Ανταλλαγές</string>
+    <string name="nav_account">Λογαριασμός</string>
+</resources>

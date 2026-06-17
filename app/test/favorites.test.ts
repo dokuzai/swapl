@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   favoriteUpsert: vi.fn(),
   favoriteDeleteMany: vi.fn(),
   listingFindUnique: vi.fn(),
+  swapReviewGroupBy: vi.fn(),
   toDTO: vi.fn((l: { id: string; userId: string; city: string }) => ({
     id: l.id,
     userId: l.userId,
@@ -28,6 +29,7 @@ vi.mock("@/lib/db", () => ({
       deleteMany: mocks.favoriteDeleteMany,
     },
     listing: { findUnique: mocks.listingFindUnique },
+    swapReview: { groupBy: mocks.swapReviewGroupBy },
   },
 }));
 vi.mock("@/lib/listing-utils", () => ({ toDTO: mocks.toDTO }));
@@ -55,6 +57,7 @@ beforeEach(() => {
   mocks.favoriteUpsert.mockResolvedValue({ id: "fav-1" });
   mocks.favoriteDeleteMany.mockResolvedValue({ count: 1 });
   mocks.listingFindUnique.mockResolvedValue({ id: "l-1", isActive: true });
+  mocks.swapReviewGroupBy.mockResolvedValue([]);
 });
 
 describe("GET /api/favorites", () => {

@@ -11,9 +11,14 @@ struct ProposalSummary: Identifiable, Codable, Hashable, Sendable {
     let myNeighbourhood: String
     let myCoverPhotoUrl: String?
     let theirCity: String
+    var theirCountry: String? = nil
     let theirNeighbourhood: String
     let theirCoverPhotoUrl: String?
     let otherName: String?
+    // The counterparty's user id + avatar — used to deep-link the chat header
+    // to their public profile. Optional: older deploys omit them.
+    var otherUserId: String? = nil
+    var otherAvatar: String? = nil
     let updatedAt: String
     // My own archive flag (per-party). Null/absent = not archived by me.
     var archivedAt: String? = nil

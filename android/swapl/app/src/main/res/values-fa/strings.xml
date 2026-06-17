@@ -1,0 +1,1161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth / login -->
+    <string name="auth_kicker_signin">خوش آمدید</string>
+    <string name="auth_kicker_register">به Swapl بپیوندید</string>
+    <string name="auth_kicker_waitlist">دسترسی زودهنگام</string>
+    <string name="auth_headline_signin">کلید در برابر کلید.</string>
+    <string name="auth_headline_register">خانه‌ها را عوض کنید،\nنه هتل‌ها.</string>
+    <string name="auth_headline_waitlist">در لیست ثبت‌نام کنید.</string>
+    <string name="auth_email">ایمیل</string>
+    <string name="auth_password">رمز عبور</string>
+    <string name="auth_password_register">رمز عبور (حداقل ۶ کاراکتر)</string>
+    <string name="auth_signin">ورود</string>
+    <string name="auth_signin_busy">در حال ورود…</string>
+    <string name="auth_create_account">ایجاد حساب</string>
+    <string name="auth_create_account_busy">در حال ایجاد حساب…</string>
+    <string name="auth_join_waitlist">پیوستن به لیست انتظار</string>
+    <string name="auth_join_waitlist_busy">در حال پیوستن…</string>
+    <string name="auth_continue_with">یا ادامه با</string>
+    <string name="auth_passkey">ورود با کلید عبور</string>
+    <string name="auth_google">ادامه با Google</string>
+    <string name="auth_email_code">کد ایمیل</string>
+    <string name="auth_phone">تلفن</string>
+    <string name="auth_switch_to_register">تازه‌وارد Swapl هستید؟ حساب بسازید</string>
+    <string name="auth_switch_to_waitlist">آماده نیستید؟ به لیست انتظار بپیوندید</string>
+    <string name="auth_switch_register_to_signin">از قبل حساب دارید؟ وارد شوید</string>
+    <string name="auth_switch_waitlist_to_signin">حساب دارید؟ وارد شوید</string>
+    <string name="auth_google_failed">ورود با Google ناموفق بود. دوباره تلاش کنید.</string>
+    <string name="auth_passkey_unavailable">ورود با کلید عبور در حال حاضر در دسترس نیست.</string>
+    <string name="auth_passkey_failed">ورود با کلید عبور ناموفق بود. دوباره تلاش کنید.</string>
+    <string name="auth_passkey_none">هنوز کلید عبوری روی این دستگاه نیست. به روش دیگری وارد شوید، سپس یکی را از نمایه خود اضافه کنید.</string>
+    <!-- OTP two-step flow -->
+    <string name="auth_otp_kicker_email">ورود با کد ایمیل</string>
+    <string name="auth_otp_kicker_phone">ورود با تلفن</string>
+    <string name="auth_otp_headline_enter">کد خود را وارد کنید.</string>
+    <string name="auth_otp_headline_get">یک کد دریافت کنید.</string>
+    <string name="auth_otp_sent">یک کد ۶ رقمی به %1$s فرستادیم. تا ۱۰ دقیقه دیگر منقضی می‌شود.</string>
+    <string name="auth_otp_code_hint">۱۲۳۴۵۶</string>
+    <string name="auth_otp_phone_label">تلفن (مثلاً +39 333 123 4567)</string>
+    <string name="auth_otp_phone_help">از قالب بین‌المللی استفاده کنید، مثلاً +39 333 123 4567.</string>
+    <string name="auth_otp_verify">تأیید کد</string>
+    <string name="auth_otp_verify_busy">در حال تأیید…</string>
+    <string name="auth_otp_resend">دریافتش نکردید؟ کد جدیدی بفرستید</string>
+    <string name="auth_otp_send">ارسال کد</string>
+    <string name="auth_otp_send_busy">در حال ارسال…</string>
+    <string name="auth_otp_back">بازگشت به ورود با رمز عبور</string>
+    <string name="verify_referral_toast">تأیید شد! با پیوستن از طریق یک معرفی، %1$d Keys کسب کردید. 🔑</string>
+    <string name="verify_referral_toast_named">تأیید شد! دعوت %1$s همین حالا %2$d Keys برایتان آورد. 🔑</string>
+    <string name="referral_referrer_toast_named">%1$s همین حالا تأیید شد — شما %2$d Keys کسب کردید! 🔑</string>
+    <string name="referral_referrer_toast">فردی که دعوت کردید همین حالا تأیید شد — شما %1$d Keys کسب کردید! 🔑</string>
+
+    <!-- Ways to earn Keys (DOK-164) -->
+    <string name="keys_earn_ways_title">راه‌های کسب Keys</string>
+    <string name="keys_earn_ways_subtitle">اقدامات کوچکی که امتیاز سفر شما را شارژ می‌کنند. یک‌بار انجامشان دهید یا برای کسب بیشتر بازگردید.</string>
+    <string name="keys_earn_way_done">کسب شد — آفرین!</string>
+    <string name="keys_earn_way_locked">برای باز کردن این، هویت خود را تأیید کنید</string>
+    <string name="keys_earn_verify_identity_title">هویت خود را تأیید کنید</string>
+    <string name="keys_earn_verify_identity_body">یک بررسی سریع همه راه‌های دیگر کسب امتیاز را باز می‌کند.</string>
+    <string name="keys_earn_verify_property_title">یک ملک را تأیید کنید</string>
+    <string name="keys_earn_verify_property_body">تأیید کنید که مالک خانه‌ای هستید که آگهی می‌کنید.</string>
+    <string name="keys_earn_complete_listing_title">آگهی خود را کامل کنید</string>
+    <string name="keys_earn_complete_listing_body">عکس و جزئیات اضافه کنید تا مهمانان بتوانند اقامت را تصور کنند.</string>
+    <string name="keys_earn_leave_review_title">یک نظر بنویسید</string>
+    <string name="keys_earn_leave_review_body">به جامعه بگویید اقامت چطور بود.</string>
+    <string name="keys_earn_share_converted_title">خانه‌ای را به اشتراک بگذارید که رزرو می‌شود</string>
+    <string name="keys_earn_share_converted_body">یک آگهی را به اشتراک بگذارید و وقتی به یک اقامت منجر شد، کسب کنید.</string>
+    <string name="keys_earn_refer_friend_title">یک دوست دعوت کنید</string>
+    <string name="keys_earn_refer_friend_body">وقتی او بپیوندد و تأیید شود، هر دویتان کسب می‌کنید.</string>
+    <string name="keys_earn_generic_title">کسب Keys</string>
+    <string name="keys_earn_generic_body">این اقدام را انجام دهید تا امتیاز سفر کسب کنید.</string>
+
+    <!-- Owner verification + publish acknowledgment (DOK-162) -->
+    <string name="owner_verified_badge">مالک تأییدشده</string>
+
+    <!-- Publish acknowledgment shown on the Review step before create -->
+    <string name="publish_ack_kicker">پیش از انتشار</string>
+    <string name="publish_ack_mode_question">این خانه را چگونه میزبانی می‌کنید؟</string>
+    <string name="publish_ack_mode_entire_home">کل خانه، وقتی من نیستم</string>
+    <string name="publish_ack_mode_room">یک اتاق، یا وقتی من اینجا هستم</string>
+    <string name="publish_ack_text_entire_home_headline">من حق دارم کل خانه‌ام را برای تبادل ارائه دهم وقتی که نیستم — و اگر اجاره‌نشین باشم، قرارداد اجاره‌ام به من اجازه می‌دهد در غیابم میزبان مهمان باشم.</string>
+    <string name="publish_ack_text_entire_home_fineprint">من مسئول رعایت قرارداد اجاره، قوانین ساختمان و قوانین محلی خود هستم.</string>
+    <string name="publish_ack_text_room_headline">من حق میزبانی این تبادل را دارم.</string>
+    <string name="publish_ack_text_room_fineprint">من قوانین ساختمان و قوانین محلی خود را رعایت خواهم کرد.</string>
+    <string name="publish_ack_required_error">لطفاً پیش از انتشار، تأییدیه میزبانی را بپذیرید.</string>
+    <string name="publish_submit_failed">انتشار آگهی شما ممکن نشد. دوباره تلاش کنید.</string>
+
+    <!-- Optional "Verify ownership" entry -->
+    <string name="owner_verify_cta">نشان مالک تأییدشده — اختیاری</string>
+    <string name="owner_verify_cta_pending">نشان مالک تأییدشده — در حال بررسی</string>
+    <string name="owner_verify_cta_rejected">نشان مالک تأییدشده — دوباره تلاش کنید</string>
+    <string name="owner_verify_optional_note">افزایش اعتماد برای مهمانان. هرگز برای انتشار یا تبادل لازم نیست.</string>
+    <string name="owner_verify_title">تأیید مالکیت</string>
+    <string name="owner_verify_explainer">سندی اضافه کنید که حق شما نسبت به این خانه را نشان دهد — یک سند مالکیت یا ویزورا، یا قراردادی اجاره به نام شما. یک مدیر آن را بررسی می‌کند و پس از تأیید، آگهی شما نشان \"مالک تأییدشده\" نمایش می‌دهد.</string>
+    <string name="owner_verify_ai_explainer">یک بررسی سریع هوش مصنوعی ابتدا سند را می‌خواند تا مطابقت آن با این خانه را تأیید کند. تصمیم نهایی همیشه با فردی از تیم ما است.</string>
+    <string name="owner_verify_tenant_note">اجاره‌نشینی پذیرفته است. اگر اجاره‌نشین هستید و قرارداد اجاره‌تان اجازه میزبانی می‌دهد، کاملاً واجد شرایط هستید — لازم نیست مالک خانه باشید.</string>
+    <string name="owner_verify_tenant">اجاره‌نشین هستید؟ شما هم اینجا پذیرفته هستید — به جای سند مالکیت، قرارداد اجاره‌تان را بارگذاری کنید. تا زمانی که قرارداد اجاره‌تان اجازه داشتن مهمان بدهد، می‌توانید در Swapl میزبان باشید.</string>
+    <string name="owner_verify_privacy_note">ما سند شما را پس از بررسی ذخیره نمی‌کنیم. فقط هوش مصنوعی جزئیات شخصی شما را می‌خواند و ما تنها این را نگه می‌داریم که آیا خانه‌ای خصوصی را نشان می‌دهد — هرگز شناسه، نشانی یا خود سند را نه.</string>
+    <string name="owner_verify_privacy">سند شما یک‌بار خوانده می‌شود تا تأیید شود خانه از آنِ شماست، سپس ذخیره نمی‌شود — ما فقط نتیجه را نگه می‌داریم (تأییدشده یا نه)، هرگز سند یا محتوای آن را نه.</string>
+    <string name="owner_verify_private_only_note">Swapl تبادلی میان افراد خصوصی است، بنابراین املاک شرکتی یا تجاری اینجا قابل آگهی نیستند.</string>
+    <string name="owner_verify_doc_type_label">چه چیزی بارگذاری می‌کنید؟ (اختیاری)</string>
+    <string name="owner_verify_doc_type_deed">سند مالکیت / ویزورا</string>
+    <string name="owner_verify_doc_type_lease">قرارداد اجاره</string>
+    <string name="owner_verify_status_pending">آخرین ارسال شما در حال بررسی است. تصمیم نهایی با فردی از تیم ما است — معمولاً ظرف ۲ روز کاری. اگر بررسی خودکار ما مطمئن نبود، ممکن است کمی بیشتر طول بکشد، اما شما معطل نمی‌مانید: ما همیشه پیگیری می‌کنیم.</string>
+    <string name="owner_verify_status_rejected">آخرین ارسال شما تأیید نشد. سندی واضح‌تر اضافه کنید و دوباره ارسال کنید.</string>
+    <string name="owner_verify_business_title">بررسی ما نشان می‌دهد این ممکن است یک ملک تجاری باشد — شاید اشتباه کرده باشیم</string>
+    <string name="owner_verify_business_body">بررسی خودکار ما سند شما را به عنوان یک ملک شرکتی یا تجاری خواند، و Swapl تبادلی میان افراد خصوصی است. اما بررسی‌های خودکار بی‌نقص نیستند، و یک فرد واقعی — هرگز هوش مصنوعی — تصمیم نهایی را می‌گیرد. اگر این خانه خودتان است، تماس بگیرید: فردی از تیم ما این موارد را شخصاً بررسی می‌کند، معمولاً ظرف ۲ روز کاری، و یک قرارداد اجاره، سند مالکیت یا سند مالیاتی به نام شما برای رفع آن کافی است.</string>
+    <string name="owner_verify_business_contact">تماس با پشتیبانی</string>
+    <string name="owner_verify_business_support_email">support@swapl.app</string>
+    <string name="owner_verify_business_support_subject">درخواست بررسی تأیید ملک</string>
+    <string name="owner_verify_add_document">افزودن سند</string>
+    <string name="owner_verify_uploading">در حال بارگذاری…</string>
+    <string name="owner_verify_remove">حذف</string>
+    <string name="owner_verify_submit">ارسال برای بررسی</string>
+    <string name="owner_verify_submitting">در حال ارسال…</string>
+    <string name="owner_verify_cancel">لغو</string>
+    <string name="owner_verify_doc_label">سند مالکیت</string>
+    <string name="owner_verify_doc_read_error">خواندن آن فایل ممکن نشد.</string>
+    <string name="owner_verify_upload_failed">بارگذاری ناموفق بود. دوباره تلاش کنید.</string>
+    <string name="owner_verify_submit_failed">ارسال ممکن نشد. دوباره تلاش کنید.</string>
+
+    <!-- Nightly-Keys valuation explanation (DOK-163). Owner-only "how your
+         nightly Keys are calculated" breakdown. -->
+    <string name="valuation_section_title">چگونه Keys شبانه شما محاسبه می‌شود</string>
+    <string name="valuation_per_night">%1$d / هر شب</string>
+    <string name="valuation_intro">این همان چیزی است که یک مهمان خرج می‌کند — و شما به ازای هر شب اقامت کسب می‌کنید. این به‌طور منصفانه از ویژگی‌های خانه شما تعیین می‌شود، نه توسط شما و نه با بالا بردن آن توسط ما.</string>
+    <string name="valuation_show">نمایش جزئیات</string>
+    <string name="valuation_hide">پنهان کردن جزئیات</string>
+    <string name="valuation_factors_kicker">چه چیزی ارزش را می‌سازد</string>
+    <string name="valuation_base_label">ارزش پیش از نظرات</string>
+    <string name="valuation_factor_base">ارزش پایه</string>
+    <string name="valuation_factor_size">اندازه</string>
+    <string name="valuation_factor_sleeps">ظرفیت خواب</string>
+    <string name="valuation_factor_location_tier">جذابیت موقعیت</string>
+    <string name="valuation_factor_location_tier_standard">استاندارد — موقعیت شما به‌طور مصنوعی بالا برده نمی‌شود، اما به‌طور برابر ارزش‌گذاری می‌شود. شهرها و روستاهای کوچک‌تر اینجا جریمه نمی‌شوند.</string>
+    <string name="valuation_factor_verified">خانه تأییدشده</string>
+    <string name="valuation_factor_ai_appeal">جذابیت خانه (هوش مصنوعی)</string>
+    <string name="valuation_ai_summary_kicker">جذابیت خانه (هوش مصنوعی)</string>
+    <string name="valuation_ai_what_note">هوش مصنوعی ما فقط می‌خواند که آگهی شما چگونه ارائه شده است — پوشش عکس‌هایتان، غنای فهرست امکانات و میزان جزئیات توضیحاتتان. خانه شما را سخت‌گیرانه قضاوت نمی‌کند، و هرگز شهرها یا روستاهای کوچک را جریمه نمی‌کند — موقعیت جداگانه بررسی می‌شود.</string>
+    <string name="valuation_ai_baseline_pos">پاداش برای جذابیت خانه: +%1$s (بیشتر خانه‌ها امتیاز ۰ می‌گیرند؛ حداکثر تا +%2$d).</string>
+    <string name="valuation_ai_baseline_zero">جذابیت خانه: ۰ — کاملاً عادی، مانند بیشتر خانه‌ها (پاداش حداکثر تا +%1$d).</string>
+    <string name="valuation_ai_baseline_neg">جذابیت خانه: %1$s (بیشتر خانه‌ها امتیاز ۰ می‌گیرند — چند عکس یا جزئیات اضافه کنید تا بالا برود).</string>
+    <string name="valuation_ai_fallback_note">از روی عکس‌ها و امکانات شما امتیازدهی شده است. پس از آنکه مدل جذابیت خانه ما آگهی شما را بررسی کرد، خوانش غنی‌تری از جذابیت اضافه می‌شود.</string>
+    <string name="valuation_room_kicker">این یک اتاق است</string>
+    <string name="valuation_room_note">چون شما یک اتاق خصوصی ارائه می‌دهید نه کل خانه را، ارزش شبانه فقط همان اتاق را بازتاب می‌دهد — حدود %1$d%% نرخ یک خانه کامل.</string>
+    <string name="valuation_location_note">رده تقاضای مقصد %1$d از ۵ — اینکه منطقه شما چقدر برای اقامت مورد توجه است.</string>
+    <string name="valuation_review_kicker">نظرات مهمانان</string>
+    <string name="valuation_review_applied_up">نظرات شما (%1$.1f★ از %2$d) ارزش را %3$d%% بالا می‌برند.</string>
+    <string name="valuation_review_applied_down">نظرات شما (%1$.1f★ از %2$d) ارزش را %3$d%% پایین می‌آورند.</string>
+    <string name="valuation_review_applied_neutral">نظرات شما (%1$.1f★ از %2$d) ارزش را دقیقاً در جای خود نگه می‌دارند.</string>
+    <string name="valuation_review_pending">هنوز اعمال نشده — نظرات تنها پس از آنکه %1$d نظر دریافت کردید، شروع به تنظیم این ارزش می‌کنند. شما تاکنون %2$d نظر دارید. تا آن زمان در سطح مبتنی بر ویژگی‌ها باقی می‌ماند.</string>
+    <string name="valuation_review_moving">اکنون به‌آرامی به سمت امتیاز %1$.1f★ شما از %2$d نظر حرکت می‌کند — کم‌کم، نه همه یک‌باره.</string>
+    <string name="valuation_bounded_note">این ارزش در هر دوره به‌روزرسانی حداکثر %1$d%% جابجا می‌شود، و فقط زمانی که %2$d نظر یا بیشتر داشته باشید. حتی آن‌گاه، رسیدن به حد ±%3$d%% چندین دوره طول می‌کشد — سقفی سفت که نظرات هرگز نمی‌توانند از آن فراتر بروند — بنابراین یک هفته نظرات بد نمی‌تواند درآمد شما را یک‌شبه سقوط دهد.</string>
+
+    <!-- Your Swapl story (DOK-158) -->
+    <string name="story_title">داستان Swapl شما</string>
+    <string name="story_counts_heading">داستان شما تا اینجا</string>
+    <string name="story_passport">پاسپورت شما</string>
+    <string name="story_kind_trip">سفر</string>
+    <string name="story_kind_hosted">میزبانی شده</string>
+    <string name="story_detail_hosted_by">میزبانی توسط %1$s</string>
+    <string name="story_detail_welcomed">از %1$s استقبال شد</string>
+    <string name="story_detail_stay">اقامتی در Swapl</string>
+    <string name="story_detail_guest">یک مهمان در خانه شما</string>
+    <string name="story_share_heading">داستان خود را به اشتراک بگذارید</string>
+    <string name="story_share_button">اشتراک‌گذاری</string>
+    <string name="story_share_note">داستان خود را هرجا بفرستید — پیام‌ها، واتساپ، ایمیل. این لینک دعوت شما را همراه دارد، پس وقتی دوستی روی آن بزند و بپیوندد، هر دویتان امتیاز سفر کسب می‌کنید.</string>
+    <string name="story_share_subject">داستان Swapl من</string>
+    <string name="story_share_chooser">داستان خود را به اشتراک بگذارید</string>
+    <string name="story_share_message">من در %1$d شهر خانه‌ام را در Swapl عوض کرده‌ام — با امتیاز سفر کنید، نه پول نقد. با لینک من بپیوندید و وقتی تأیید شدید هر دویمان امتیاز سفر می‌گیریم: %2$s</string>
+    <string name="story_empty_title">داستان شما از اینجا شروع می‌شود</string>
+    <string name="story_empty_body">پس از تکمیل نخستین تبادل یا اقامت با Keys، سفرها و مهمانانی که از آن‌ها استقبال می‌کنید اینجا به‌صورت مهرهای پاسپورت ظاهر می‌شوند — کارت‌پستالی از هر جایی که Swapl شما را می‌برد.</string>
+    <string name="story_empty_share">یک دوست را برای تبادل دعوت کنید</string>
+    <string name="story_error_title">داستان در دسترس نیست</string>
+    <string name="story_error_body">نتوانستیم داستان شما را بارگذاری کنیم. برای تازه‌سازی بکشید یا دوباره تلاش کنید.</string>
+    <string name="story_error_retry">تلاش دوباره</string>
+    <plurals name="story_count_trips">
+        <item quantity="one">سفر</item>
+        <item quantity="other">سفر</item>
+    </plurals>
+    <plurals name="story_count_guests">
+        <item quantity="one">مهمان استقبال‌شده</item>
+        <item quantity="other">مهمان استقبال‌شده</item>
+    </plurals>
+    <plurals name="story_count_cities">
+        <item quantity="one">شهر</item>
+        <item quantity="other">شهر</item>
+    </plurals>
+    <plurals name="story_count_countries">
+        <item quantity="one">کشور</item>
+        <item quantity="other">کشور</item>
+    </plurals>
+
+    <!-- Trip cockpit · proof-of-cover anchored on TON (DOK-156). Shown only when
+         the policy certificate has been anchored on-chain. Not crypto/payment. -->
+    <string name="trip_oncover_badge">تأییدشده روی TON</string>
+    <string name="trip_oncover_view">مشاهده گواهی</string>
+    <string name="trip_oncover_explainer">سندی دستکاری‌ناپذیر که نشان می‌دهد پوشش شما واقعی است — نه ارز دیجیتال، نه پرداختی، و کاری برای انجام دادن ندارید.</string>
+
+    <!-- People in a swap conversation (DOK-187). -->
+    <string name="people_title">افراد</string>
+    <string name="people_role_principal">شریک تبادل</string>
+    <string name="people_role_guest">مهمان در گفتگو</string>
+    <string name="people_status_pending">در انتظار</string>
+    <string name="people_invite">دعوت</string>
+    <string name="people_add">افزودن</string>
+    <string name="people_add_cotravelers">افزودن همسفران</string>
+    <string name="people_remove">حذف %1$s</string>
+    <string name="people_invite_title">کسی را به گفتگو دعوت کنید</string>
+    <string name="people_invite_reassure">یک شریک یا همسفر را به گفتگو اضافه کنید. آن‌ها می‌توانند با همه اینجا گفتگو کنند، اما فقط دو شریک تبادل می‌توانند تبادل را بپذیرند، پیشنهاد متقابل دهند یا لغو کنند — دعوت کردن کسی هرگز به او کنترلی بر آن نمی‌دهد.</string>
+    <string name="people_invite_field_label">ایمیل یا شناسه</string>
+    <string name="people_invite_field_placeholder">name@email.com یا @handle</string>
+    <string name="people_invite_send">ارسال دعوت</string>
+    <string name="people_invite_cancel">لغو</string>
+
+    <!-- Common / shared actions -->
+    <string name="common_cancel">لغو</string>
+    <string name="common_ok">باشه</string>
+    <string name="common_retry">تلاش دوباره</string>
+
+    <!-- Rate the app (M1) -->
+    <string name="account_rate_app">امتیاز به برنامه</string>
+    <string name="rate_app_title">امتیاز به برنامه</string>
+    <string name="rate_app_prompt">Swapl چطور برای شما کار می‌کند؟ امتیاز شما به بهبود ما کمک می‌کند.</string>
+    <string name="rate_app_score_label">امتیاز شما</string>
+    <string name="rate_app_comment_label">چیزی برای افزودن دارید؟</string>
+    <string name="rate_app_comment_placeholder">به ما بگویید چه چیزی خوب کار می‌کند — یا چه چیزی نه (اختیاری)</string>
+    <string name="rate_app_submit">ارسال</string>
+    <string name="rate_app_submit_support">تماس با پشتیبانی</string>
+    <string name="rate_app_submitting">در حال ارسال…</string>
+    <string name="rate_app_prompt_post_review">از نظر شما ممنونیم! خودِ برنامه Swapl چطور برای شما کار می‌کند؟</string>
+    <string name="rate_app_prompt_post_swap">تبادل شما کامل شد! Swapl در رساندن شما به این نقطه چطور بود؟</string>
+    <string name="rate_app_low_support_hint">متأسفیم که انتظار را برآورده نکرد. این را بفرستید تا پشتیبانی را باز کنیم و بتوانیم کمک کنیم.</string>
+
+    <!-- Account screen -->
+    <string name="account_profile_title">نمایه</string>
+    <string name="account_member_badge">عضو Swapl</string>
+    <string name="account_stat_waiting">در انتظار</string>
+    <string name="account_stat_sent">ارسال‌شده</string>
+    <string name="account_stat_active">فعال</string>
+    <string name="account_stat_homes">خانه‌ها</string>
+    <string name="account_edit_home_title">ویرایش خانه شما</string>
+    <string name="account_become_host_title">میزبان شوید</string>
+    <string name="account_edit_home_body">عکس‌ها، تاریخ‌ها و جزئیات را به‌روز کنید.</string>
+    <string name="account_become_host_body">خانه خود را آگهی کنید تا تبادل را آغاز کنید.</string>
+    <string name="account_section_settings">تنظیمات</string>
+    <string name="account_personal_info">اطلاعات شخصی</string>
+    <string name="account_change_password">تغییر رمز عبور</string>
+    <string name="account_passkeys">ورود و امنیت — کلیدهای عبور</string>
+    <string name="account_passkeys_busy">ورود و امنیت — کلیدهای عبور…</string>
+    <string name="account_privacy">حریم خصوصی</string>
+    <string name="account_notifications">اعلان‌ها</string>
+    <string name="account_section_profile">نمایه</string>
+    <string name="account_view_profile">مشاهده نمایه</string>
+    <string name="account_your_story">داستان Swapl شما</string>
+    <string name="account_travel_points">امتیاز سفر</string>
+    <string name="account_invite_earn">دعوت و کسب</string>
+    <string name="account_interests">علاقه‌مندی‌ها</string>
+    <string name="account_saved_searches">جستجوهای ذخیره‌شده</string>
+    <string name="account_travel_windows">بازه‌های سفر</string>
+    <string name="account_metrics">آمار</string>
+    <string name="account_section_support">پشتیبانی</string>
+    <string name="account_get_help">دریافت کمک</string>
+    <string name="account_privacy_policy">سیاست حریم خصوصی</string>
+    <string name="account_terms">شرایط خدمات</string>
+    <string name="account_log_out">خروج</string>
+    <string name="account_version">نسخه %1$s (%2$d)</string>
+    <string name="account_signout_title">خروج از حساب؟</string>
+    <string name="account_signout_body">برای دیدن تبادل‌هایتان باید دوباره وارد شوید.</string>
+    <string name="account_passkeys_dialog_title">کلیدهای عبور</string>
+
+    <!-- Browse -->
+    <string name="browse_title">مرور</string>
+    <string name="browse_edit_home">ویرایش خانه شما</string>
+    <string name="browse_list_home">+ آگهی یک خانه</string>
+    <string name="browse_search_placeholder">به کجا؟</string>
+    <string name="browse_clear_search">پاک کردن جستجو</string>
+    <string name="browse_filters">فیلترها</string>
+    <string name="browse_tab_homes">خانه‌ها</string>
+    <string name="browse_tab_experiences">تجربه‌ها</string>
+    <string name="browse_tab_services">خدمات</string>
+    <string name="browse_get_inspired_title">الهام بگیرید</string>
+    <string name="browse_get_inspired_body">سفر رؤیایی خود را توصیف کنید — ما تبادلی برایتان می‌چینیم.</string>
+    <string name="browse_sort">مرتب‌سازی</string>
+    <string name="browse_sort_match">بهترین تطابق</string>
+    <string name="browse_sort_newest">جدیدترین</string>
+    <string name="browse_sort_largest">بزرگ‌ترین</string>
+    <string name="browse_error_title">خانه‌ها در دسترس نیستند</string>
+    <string name="browse_error_body">نتوانستیم به Swapl دسترسی پیدا کنیم. اتصال خود را بررسی کنید و دوباره تلاش کنید.</string>
+    <string name="browse_empty_title">خانه‌ای یافت نشد</string>
+    <string name="browse_empty_body">خانه‌های جدید همان‌طور که اعضا منتشر می‌کنند، اینجا ظاهر می‌شوند.</string>
+    <string name="browse_guests_size_type">%1$d مهمان · %2$d متر مربع · %3$s</string>
+    <string name="browse_tag_featured">ویژه</string>
+    <string name="browse_tag_verified">تأییدشده</string>
+    <string name="browse_tag_private_room">اتاق خصوصی</string>
+    <!-- Filters -->
+    <string name="filter_title">فیلترها</string>
+    <string name="filter_when">چه زمانی</string>
+    <string name="filter_from">از</string>
+    <string name="filter_to">تا</string>
+    <string name="filter_clear_dates">پاک کردن تاریخ‌ها</string>
+    <string name="filter_space_type">نوع فضا</string>
+    <string name="filter_space_all">همه</string>
+    <string name="filter_space_entire">کل مکان</string>
+    <string name="filter_space_private_room">اتاق خصوصی</string>
+    <string name="filter_property_type">نوع ملک</string>
+    <string name="filter_min_size">حداقل اندازه: %1$d متر مربع</string>
+    <string name="filter_min_sleeps">حداقل ظرفیت خواب: %1$d</string>
+    <string name="filter_pets">فقط خانه‌های پذیرای حیوان خانگی</string>
+    <string name="filter_wfh">فقط خانه‌های دارای فضای کار</string>
+    <string name="filter_step_free">فقط خانه‌های بدون پله</string>
+    <string name="filter_reset">بازنشانی</string>
+    <string name="filter_show_homes">نمایش خانه‌ها</string>
+
+    <!-- Listing detail -->
+    <string name="detail_guests_rooms">%1$d مهمان · %2$s · %3$s · %4$d متر مربع</string>
+    <plurals name="detail_bedrooms">
+        <item quantity="one">%1$d اتاق خواب</item>
+        <item quantity="other">%1$d اتاق خواب</item>
+    </plurals>
+    <plurals name="detail_baths">
+        <item quantity="one">%1$d حمام</item>
+        <item quantity="other">%1$d حمام</item>
+    </plurals>
+    <string name="detail_available_range">موجود از %1$s → %2$s · اقامت %3$d تا %4$d روزه</string>
+    <string name="detail_points_per_night">%1$d امتیاز / هر شب</string>
+    <string name="detail_private_room_note">این یک اتاق خصوصی است، پس ارزش شبانه فقط همان اتاق را بازتاب می‌دهد — نه کل خانه را.</string>
+    <string name="detail_private_room_badge">اتاق خصوصی</string>
+    <string name="detail_private_room_badge_rooms">اتاق خصوصی · %1$d اتاق</string>
+    <string name="detail_about_home">درباره این خانه</string>
+    <string name="detail_what_offered">این مکان چه چیزی ارائه می‌دهد</string>
+    <string name="detail_where">جایی که خواهید بود</string>
+    <string name="detail_approx_area">منطقه تقریبی</string>
+    <string name="detail_hosted_by">میزبانی توسط</string>
+    <string name="detail_anonymous">ناشناس</string>
+    <string name="detail_verified_host">میزبان تأییدشده</string>
+    <string name="detail_edit_listing">ویرایش آگهی</string>
+    <string name="detail_manage_availability">مدیریت در دسترس بودن</string>
+    <string name="detail_propose_swap">پیشنهاد تبادل</string>
+    <string name="detail_list_home_first">ابتدا خانه خود را آگهی کنید</string>
+    <string name="detail_list_home_first_body">پیش از آنکه بتوانید تبادل پیشنهاد دهید، آگهی خود را اضافه کنید.</string>
+    <string name="detail_stay_with_points">اقامت با امتیاز</string>
+    <string name="detail_stay_with_points_body">با امتیاز سفری که از میزبانی کسب کرده‌اید یک‌طرفه رزرو کنید — نیازی به تبادل متقابل نیست. وقتی تبادل مستقیم مناسب نیست از این استفاده کنید.</string>
+    <string name="detail_report_listing">گزارش این آگهی</string>
+    <string name="detail_no_amenities">امکاناتی فهرست نشده است.</string>
+    <string name="detail_request_sent_title">درخواست ارسال شد</string>
+    <string name="detail_request_sent_body">امتیازهای شما تا تأیید میزبان نگه داشته می‌شوند. این اقامت را در بخش سفرها خواهید یافت.</string>
+    <!-- Amenity labels -->
+    <string name="amenity_balcony">بالکن</string>
+    <string name="amenity_rooftop">پشت‌بام</string>
+    <string name="amenity_garden">باغ</string>
+    <string name="amenity_courtyard">حیاط</string>
+    <string name="amenity_pool">استخر</string>
+    <string name="amenity_gym">باشگاه</string>
+    <string name="amenity_piano">پیانو</string>
+    <string name="amenity_bike">دوچرخه همراه</string>
+    <string name="amenity_parking">پارکینگ</string>
+    <string name="amenity_workspace">فضای کار</string>
+    <string name="amenity_pets">پذیرای حیوان خانگی</string>
+    <string name="amenity_step_free">بدون پله</string>
+    <string name="amenity_elevator">آسانسور</string>
+    <string name="amenity_ac">کولر</string>
+    <string name="amenity_dishwasher">ماشین ظرفشویی</string>
+    <string name="amenity_washer">ماشین لباسشویی</string>
+    <string name="amenity_dryer">خشک‌کن</string>
+
+    <!-- Propose swap dialog -->
+    <string name="propose_title">پیشنهاد تبادل</string>
+    <string name="propose_message_label">پیام (اختیاری)</string>
+    <string name="propose_drafting">در حال نوشتن…</string>
+    <string name="propose_write_for_me">برایم بنویس</string>
+    <string name="propose_rewrite_ai">بازنویسی با هوش مصنوعی</string>
+    <string name="propose_draft_failed">در حال حاضر نوشتن پیام ممکن نشد</string>
+    <string name="propose_send">ارسال</string>
+
+    <!-- Swap thread -->
+    <string name="thread_with">با %1$s</string>
+    <string name="thread_open_chat">باز کردن گفتگو</string>
+    <string name="thread_open_chat_with">باز کردن گفتگو با %1$s</string>
+    <string name="thread_view_profile">مشاهده نمایه %1$s</string>
+    <string name="thread_host_fallback">میزبان</string>
+    <string name="thread_host_fallback_possessive">میزبان شما</string>
+    <string name="thread_proposal">پیشنهاد</string>
+    <string name="thread_counter">پیشنهاد متقابل</string>
+    <string name="thread_size_sleeps">%1$d متر مربع · ظرفیت خواب %2$d</string>
+    <string name="thread_accept">پذیرش تبادل</string>
+    <string name="thread_counter_offer">پیشنهاد متقابل</string>
+    <string name="thread_decline">رد</string>
+    <string name="thread_withdraw">پس گرفتن</string>
+    <string name="thread_message_optional">پیام (اختیاری)</string>
+    <!-- Accept-consent + action feedback (M4) -->
+    <string name="thread_accept_confirm_title">این تبادل را بپذیرید؟</string>
+    <string name="thread_accept_confirm_body">پذیرفتن، تاریخ‌ها را قطعی می‌کند و بیمه سفر را برای اقامت صادر می‌کند — آن‌گاه هر دو خانه تحت پوشش قرار می‌گیرند. همچنان می‌توانید برای هماهنگی تحویل گفتگو کنید.</string>
+    <string name="thread_accept_confirm_cta">پذیرش و بیمه</string>
+    <string name="thread_decline_confirm_title">این تبادل را رد کنید؟</string>
+    <string name="thread_decline_confirm_body">این پیشنهاد را رد می‌کند. نمی‌توانید آن را برگردانید، اما همیشه می‌توانید بعداً پیشنهاد جدیدی بفرستید.</string>
+    <string name="thread_withdraw_confirm_title">این پیشنهاد را پس بگیرید؟</string>
+    <string name="thread_withdraw_confirm_body">این پیشنهاد شما را پس می‌گیرد. می‌توانید بعداً پیشنهاد جدیدی بفرستید.</string>
+    <string name="thread_accepted_toast">تبادل پذیرفته شد — اقامت شما بیمه است.</string>
+    <string name="thread_declined_toast">پیشنهاد رد شد.</string>
+    <string name="thread_withdrawn_toast">پیشنهاد پس گرفته شد.</string>
+    <string name="thread_countered_toast">پیشنهاد متقابل ارسال شد.</string>
+
+    <!-- Leave a review -->
+    <string name="review_title">یک نظر بنویسید</string>
+    <string name="review_prompt">تبادل شما با %1$s چطور بود؟</string>
+    <string name="review_partner_fallback">شریک تبادل شما</string>
+    <string name="review_rating_label">امتیاز شما</string>
+    <string name="review_text_label">نظر شما</string>
+    <string name="review_text_placeholder">خانه، محله و تحویل چطور بود؟</string>
+    <string name="review_min_chars">حداقل ۲۰ کاراکتر — تاکنون %1$d.</string>
+    <string name="review_submit">ثبت نظر</string>
+    <string name="review_submitting">در حال ثبت…</string>
+    <string name="review_card_title">تبادل شما چطور بود؟</string>
+    <string name="review_card_body">برای %1$s نظری بنویسید — روی نمایه عمومی او نمایش داده می‌شود.</string>
+
+    <!-- Swap inbox -->
+    <string name="inbox_title">صندوق تبادل</string>
+    <string name="inbox_search_open">جستجو</string>
+    <string name="inbox_search_close">بستن جستجو</string>
+    <string name="inbox_search_placeholder">جستجو بر اساس میزبان یا شهر</string>
+    <string name="inbox_filter_all">همه</string>
+    <string name="inbox_filter_waiting">در انتظار شما</string>
+    <string name="inbox_filter_sent">ارسال‌شده</string>
+    <string name="inbox_filter_active">فعال</string>
+    <string name="inbox_filter_archived">بایگانی‌شده</string>
+    <string name="inbox_section_waiting">در انتظار شما</string>
+    <string name="inbox_section_sent">ارسال‌شده — در انتظار پاسخ</string>
+    <string name="inbox_section_active">تبادل‌های فعال</string>
+    <string name="inbox_section_archived">بایگانی‌شده</string>
+    <string name="inbox_status_confirmed">تبادل تأییدشده</string>
+    <string name="inbox_status_countered">پیشنهاد متقابل دریافت شد</string>
+    <string name="inbox_status_declined">پیشنهاد رد شد</string>
+    <string name="inbox_status_waiting_reply">در انتظار پاسخ شما</string>
+    <string name="inbox_status_sent">پیشنهاد ارسال شد</string>
+    <string name="inbox_with">%1$s ⇄ %2$s</string>
+    <string name="inbox_dates_with">%1$s → %2$s · با %3$s</string>
+    <string name="inbox_dates">%1$s → %2$s</string>
+    <string name="inbox_error_title">پیام‌ها در دسترس نیستند</string>
+    <string name="inbox_error_body">نتوانستیم تبادل‌های شما را بارگذاری کنیم. برای تازه‌سازی بکشید یا دوباره تلاش کنید.</string>
+    <string name="inbox_empty_title">هنوز پیامی نیست</string>
+    <string name="inbox_empty_body">از هر آگهی یک تبادل پیشنهاد دهید تا اینجا نمایش داده شود.</string>
+
+    <!-- Trips -->
+    <string name="trips_title">سفرها</string>
+    <string name="trips_phase_active">اکنون فعال</string>
+    <string name="trips_phase_upcoming">پیش رو</string>
+    <string name="trips_phase_past">گذشته</string>
+    <string name="trips_row_title">سفر به %1$s</string>
+    <string name="trips_row_dates_host">%1$s → %2$s · میزبان %3$s</string>
+    <string name="trips_row_dates">%1$s → %2$s</string>
+    <string name="trips_row_roles">مهمان در %1$s · شما در %2$s میزبانید</string>
+    <string name="trips_error_title">سفرها در دسترس نیستند</string>
+    <string name="trips_error_body">نتوانستیم سفرهای شما را بارگذاری کنیم. برای تازه‌سازی بکشید یا دوباره تلاش کنید.</string>
+    <string name="trips_empty_title">هنوز سفری نیست</string>
+    <string name="trips_empty_body">تبادل‌های پذیرفته‌شده به سفر تبدیل می‌شوند. اقامت‌های پیش روی شما اینجا نمایش داده می‌شوند.</string>
+
+    <!-- Trip cockpit -->
+    <string name="cockpit_cancelled_banner">این تبادل لغو شد</string>
+    <string name="cockpit_timeline_agreed">توافق‌شده</string>
+    <string name="cockpit_timeline_ready">آماده</string>
+    <string name="cockpit_timeline_staying">در حال اقامت</string>
+    <string name="cockpit_timeline_done">انجام‌شده</string>
+    <string name="cockpit_starts_in">شروع تا</string>
+    <string name="cockpit_status">وضعیت</string>
+    <string name="cockpit_countdown_days">%1$d روز %2$d ساعت</string>
+    <string name="cockpit_countdown_hours">%1$d ساعت</string>
+    <string name="cockpit_phase_agreed">تبادل توافق شد</string>
+    <string name="cockpit_phase_preparing">در حال آماده‌سازی</string>
+    <string name="cockpit_phase_ready">آماده حرکت</string>
+    <string name="cockpit_phase_in_progress">در حال انجام</string>
+    <string name="cockpit_phase_completed">تکمیل‌شده</string>
+    <string name="cockpit_phase_cancelled">لغوشده</string>
+    <string name="cockpit_insured">بیمه‌شده</string>
+    <string name="cockpit_before_you_go">پیش از رفتن</string>
+    <string name="cockpit_check_guide_filled">راهنمای خانه خود را کامل کنید</string>
+    <string name="cockpit_check_details_read">جزئیات خانه میزبانتان را بخوانید</string>
+    <string name="cockpit_check_checked_in">هنگام رسیدن ورود را ثبت کنید</string>
+    <string name="cockpit_check_checked_out">هنگام رفتن خروج را ثبت کنید</string>
+    <string name="cockpit_finish_guide">راهنمای خانه خود را تمام کنید (%1$d%%)</string>
+    <string name="cockpit_your_key_code">کد کلید شما</string>
+    <string name="cockpit_key_code_note">کلید در برابر کلید — این را با مهمان خود به اشتراک بگذارید تا بتواند وارد شود.</string>
+    <string name="cockpit_swap_protection">حفاظت تبادل</string>
+    <string name="cockpit_policy_line">بیمه‌نامه %1$s · پوشش €%2$s</string>
+    <string name="cockpit_where_you_stay">جایی که اقامت می‌کنید</string>
+    <string name="cockpit_guide_not_filled">میزبان شما هنوز راهنمای خانه‌اش را پر نکرده است.</string>
+    <string name="cockpit_address_unlocks_city">نشانی دقیق در %1$s به‌زودی باز می‌شود</string>
+    <string name="cockpit_address_unlocks">نشانی دقیق به‌زودی باز می‌شود</string>
+    <string name="cockpit_unlocks_at">%1$s باز می‌شود — ۴۸ ساعت پیش از اقامت شما.</string>
+    <string name="cockpit_unlocks_generic">نشانی و راهنمای خانه ۴۸ ساعت پیش از اقامت شما باز می‌شوند.</string>
+    <string name="cockpit_home_guide">راهنمای خانه</string>
+    <string name="cockpit_collapse">جمع کردن</string>
+    <string name="cockpit_expand">باز کردن</string>
+    <string name="cockpit_guide_getting_in">ورود به خانه</string>
+    <string name="cockpit_guide_keys">کلیدها</string>
+    <string name="cockpit_guide_wifi_name">نام شبکه وای‌فای</string>
+    <string name="cockpit_guide_wifi_password">رمز وای‌فای</string>
+    <string name="cockpit_guide_heating">گرمایش و سرمایش</string>
+    <string name="cockpit_guide_kitchen">آشپزخانه</string>
+    <string name="cockpit_guide_bins">سطل‌ها و بازیافت</string>
+    <string name="cockpit_guide_pets_plants">حیوانات و گیاهان</string>
+    <string name="cockpit_guide_house_rules">قوانین خانه</string>
+    <string name="cockpit_guide_neighbourhood">محله</string>
+    <string name="cockpit_guide_emergency">تماس اضطراری</string>
+    <string name="cockpit_check_in">ثبت ورود</string>
+    <string name="cockpit_check_out">ثبت خروج</string>
+    <string name="cockpit_checked_in_out">ورود و خروج ثبت شد — ممنون!</string>
+    <string name="cockpit_trip_activity">فعالیت سفر</string>
+    <string name="cockpit_event_you">شما</string>
+    <string name="cockpit_event_partner_fallback">شریک تبادل شما</string>
+    <string name="cockpit_event_checked_in">%1$s ورود را ثبت کرد</string>
+    <string name="cockpit_event_checked_out">%1$s خروج را ثبت کرد</string>
+
+    <!-- Swap chat -->
+    <string name="chat_messages_unavailable">پیام‌ها در دسترس نیستند</string>
+    <string name="chat_try_again">دوباره تلاش کنید</string>
+    <string name="chat_view_trip">مشاهده سفر</string>
+    <string name="chat_say_hello_title">سلام کنید</string>
+    <string name="chat_say_hello_body">گفتگو را آغاز کنید — درباره تاریخ‌ها، محله یا هر چیزی که می‌خواهید بدانید بپرسید.</string>
+    <string name="chat_load_earlier">بارگذاری پیام‌های قبلی</string>
+    <string name="chat_message_placeholder">پیام</string>
+    <string name="chat_add_photo">افزودن عکس</string>
+    <string name="chat_remove_photo">حذف عکس</string>
+    <string name="chat_send">ارسال پیام</string>
+    <string name="chat_receipt_read">خوانده‌شد</string>
+    <string name="chat_receipt_sent">ارسال‌شد</string>
+    <string name="chat_invite_only_partners">فقط دو شریک تبادل می‌توانند افراد را دعوت کنند.</string>
+    <string name="chat_invite_not_found">آن فرد را پیدا نکردیم. ایمیل یا شناسه را بررسی کنید.</string>
+    <string name="chat_invite_failed">ارسال دعوت ممکن نشد. دوباره تلاش کنید.</string>
+    <string name="chat_send_failed">ارسال ممکن نشد. دوباره تلاش کنید.</string>
+    <string name="chat_read_image_failed">خواندن آن تصویر ممکن نشد</string>
+    <string name="chat_upload_photo_failed">بارگذاری عکس ممکن نشد. اتصال خود را بررسی کنید و دوباره تلاش کنید.</string>
+
+    <!-- Listing create / edit wizard -->
+    <string name="create_step_location">موقعیت</string>
+    <string name="create_step_space">فضا</string>
+    <string name="create_step_access">دسترسی و حیوانات</string>
+    <string name="create_step_amenities">امکانات</string>
+    <string name="create_step_dates">تاریخ‌ها</string>
+    <string name="create_step_photos">عکس‌ها</string>
+    <string name="create_step_description">توضیحات</string>
+    <string name="create_step_review">بازبینی</string>
+    <string name="create_kicker_edit">ویرایش خانه شما — گام %1$d از %2$d</string>
+    <string name="create_kicker_new">گام %1$d از %2$d</string>
+    <string name="create_back">بازگشت</string>
+    <string name="create_next">بعدی</string>
+    <string name="create_saving">در حال ذخیره…</string>
+    <string name="create_publishing">در حال انتشار…</string>
+    <string name="create_save_changes">ذخیره تغییرات</string>
+    <string name="create_publish_listing">انتشار آگهی</string>
+    <string name="create_locating">در حال مکان‌یابی…</string>
+    <string name="create_use_location">استفاده از موقعیت فعلی من</string>
+    <string name="create_location_error">نتوانستیم موقعیت شما را تعیین کنیم — آن را دستی پر کنید.</string>
+    <string name="create_load_error">آگهی بارگذاری نشد</string>
+    <string name="create_read_image_error">خواندن آن تصویر ممکن نشد</string>
+    <string name="create_upload_failed">بارگذاری ناموفق بود</string>
+    <string name="create_title_label">عنوان (مثلاً آپارتمان آفتاب‌گیر کنار کانال)</string>
+    <string name="create_city_label">شهر</string>
+    <string name="create_neighbourhood_label">محله</string>
+    <string name="create_country_label">کشور</string>
+    <string name="create_address_label">نشانی (اختیاری)</string>
+    <string name="create_space_type">نوع فضا</string>
+    <string name="create_space_entire">کل مکان</string>
+    <string name="create_space_private_room">اتاق خصوصی</string>
+    <string name="create_private_room_keys_note">یک اتاق خصوصی Keys کمتری از کل خانه دارد — ارزش شبانه فقط همان اتاق را بازتاب می‌دهد.</string>
+    <string name="create_rooms_offered">اتاق‌های ارائه‌شده: %1$d</string>
+    <string name="create_property_type">نوع ملک</string>
+    <string name="create_prop_apartment">آپارتمان</string>
+    <string name="create_prop_house">خانه</string>
+    <string name="create_prop_loft">لافت</string>
+    <string name="create_prop_townhouse">خانه ردیفی</string>
+    <string name="create_size">اندازه: %1$d متر مربع</string>
+    <string name="create_sleeps">ظرفیت خواب: %1$d</string>
+    <string name="create_bedrooms">اتاق خواب: %1$d</string>
+    <string name="create_bathrooms">حمام: %1$d</string>
+    <string name="create_floor">طبقه: %1$d</string>
+    <string name="create_has_elevator">دارای آسانسور</string>
+    <string name="create_step_free">دسترسی بدون پله</string>
+    <string name="create_pets_allowed">حیوانات مجاز</string>
+    <string name="create_wfh_setup">امکانات کار از خانه</string>
+    <string name="create_desks">میز کار: %1$d</string>
+    <string name="create_parking">پارکینگ</string>
+    <string name="create_bike">دوچرخه همراه</string>
+    <string name="create_balcony">بالکن</string>
+    <string name="create_rooftop">پشت‌بام</string>
+    <string name="create_garden">باغ</string>
+    <string name="create_courtyard">حیاط</string>
+    <string name="create_piano">پیانو</string>
+    <string name="create_pool">استخر</string>
+    <string name="create_gym">باشگاه</string>
+    <string name="create_ac">کولر</string>
+    <string name="create_dishwasher">ماشین ظرفشویی</string>
+    <string name="create_washer">ماشین لباسشویی</string>
+    <string name="create_dryer">خشک‌کن</string>
+    <string name="create_available_from">موجود از</string>
+    <string name="create_available_to">موجود تا</string>
+    <string name="create_min_stay">حداقل اقامت: %1$d روز</string>
+    <string name="create_max_stay">حداکثر اقامت: %1$d روز</string>
+    <string name="create_photos_hint">تا ۱۰ عکس از خانه خود اضافه کنید. ما پیش از بارگذاری اندازه آن‌ها را تغییر می‌دهیم.</string>
+    <string name="create_choose_photos">انتخاب عکس‌ها</string>
+    <plurals name="create_uploading_photos">
+        <item quantity="one">در حال بارگذاری %1$d عکس…</item>
+        <item quantity="other">در حال بارگذاری %1$d عکس…</item>
+    </plurals>
+    <string name="create_description_label">خانه خود را توصیف کنید (حداقل ۲۰ کاراکتر)</string>
+    <string name="create_characters">%1$d کاراکتر</string>
+    <string name="create_review_title">%1$s — %2$s</string>
+    <string name="create_review_specs">%1$d متر مربع · ظرفیت خواب %2$d · %3$d اتاق خواب / %4$d حمام</string>
+    <string name="create_review_available">موجود از %1$s → %2$s</string>
+    <string name="create_decrease">کاهش</string>
+    <string name="create_increase">افزایش</string>
+
+    <!-- Keys stays section (in Trips) -->
+    <string name="keys_stays_title">اقامت‌ها با امتیاز</string>
+    <string name="keys_stay_in">اقامت در %1$s</string>
+    <string name="keys_stay_guest_at">مهمان در %1$s</string>
+    <string name="keys_stay_dates">%1$s → %2$s</string>
+    <plurals name="keys_stay_nights_cost">
+        <item quantity="one">%1$d شب · %2$d امتیاز</item>
+        <item quantity="other">%1$d شب · %2$d امتیاز</item>
+    </plurals>
+    <string name="keys_stay_decline">رد</string>
+    <string name="keys_stay_confirm">تأیید اقامت</string>
+    <string name="keys_stay_cancel_request">لغو درخواست</string>
+    <string name="keys_stay_covered">تأیید شد — اقامت شما تحت پوشش بیمه‌نامه Swapl است.</string>
+    <string name="keys_stay_status_awaiting_host">در انتظار میزبان</string>
+    <string name="keys_stay_status_action_needed">نیازمند اقدام</string>
+    <string name="keys_stay_status_confirmed">تأییدشده</string>
+    <string name="keys_stay_status_declined">ردشده</string>
+    <string name="keys_stay_status_cancelled">لغوشده</string>
+    <string name="keys_stay_status_completed">تکمیل‌شده</string>
+
+    <!-- Stay-with-points dialog -->
+    <string name="stay_keys_title">اقامت با امتیاز</string>
+    <string name="stay_keys_intro">با امتیازهای خود یک‌طرفه رزرو کنید — نیازی به میزبانی متقابل نیست. وقتی تاریخ‌ها یا خانه‌تان برای تبادل مستقیم مناسب نیست خوب است.</string>
+    <string name="stay_keys_window">تاریخ‌هایی را در بازه در دسترس بودن خانه انتخاب کنید (%1$s → %2$s). %3$d تا %4$d شب. تاریخ‌های رزروشده خط‌خورده‌اند.</string>
+    <string name="stay_keys_points_per_night">امتیاز در هر شب</string>
+    <string name="stay_keys_nights">شب‌ها</string>
+    <string name="stay_keys_total">مجموع</string>
+    <string name="stay_keys_total_points">%1$d امتیاز</string>
+    <plurals name="stay_keys_enough">
+        <item quantity="one">شما %1$d امتیاز دارید — برای این اقامت کافی است (حدود %2$d شب با این نرخ).</item>
+        <item quantity="other">شما %1$d امتیاز دارید — برای این اقامت کافی است (حدود %2$d شب با این نرخ).</item>
+    </plurals>
+    <plurals name="stay_keys_short">
+        <item quantity="one">شما %1$d امتیاز کم دارید. حدود %2$d شب با این نرخ میزبانی کنید تا این اقامت باز شود — یا شب‌های کمتری انتخاب کنید. امتیازها قابل خریداری نیستند.</item>
+        <item quantity="other">شما %1$d امتیاز کم دارید. حدود %2$d شب با این نرخ میزبانی کنید تا این اقامت باز شود — یا شب‌های کمتری انتخاب کنید. امتیازها قابل خریداری نیستند.</item>
+    </plurals>
+    <string name="stay_keys_held_note">امتیازهای شما تا تأیید میزبان نگه داشته می‌شوند. این اقامت را در بخش سفرها خواهید یافت.</string>
+    <string name="stay_keys_sending">در حال ارسال…</string>
+    <string name="stay_keys_request">درخواست با امتیاز</string>
+    <string name="stay_keys_error_insufficient">شما برای این تاریخ‌ها امتیاز کافی ندارید. شب‌های کمتری امتحان کنید، یا با میزبانی امتیاز کسب کنید. امتیازها قابل خریداری نیستند.</string>
+    <string name="stay_keys_error_unavailable">آن تاریخ‌ها در دسترس نیستند. تاریخ‌هایی را در بازه خانه انتخاب کنید.</string>
+    <string name="stay_keys_error_generic">در حال حاضر درخواست این اقامت ممکن نشد.</string>
+
+    <!-- Saved searches -->
+    <string name="saved_searches_title">جستجوهای ذخیره‌شده</string>
+    <string name="saved_searches_plus_kicker">Plus / Pro</string>
+    <string name="saved_searches_plus_body">جستجوهای ذخیره‌شده ویژگی اعضای Plus است.</string>
+
+    <!-- Interests editor -->
+    <string name="interests_title">علاقه‌مندی‌ها · %1$d / 12</string>
+    <string name="interests_vibe_label">حال‌وهوای شما (اختیاری)</string>
+    <string name="interests_save">ذخیره</string>
+    <string name="interests_saving">در حال ذخیره…</string>
+
+    <!-- Keys transactions / points history -->
+    <string name="keys_tx_title">تاریخچه امتیازها</string>
+    <string name="keys_tx_filter_all">همه</string>
+    <string name="keys_tx_filter_earned">کسب‌شده</string>
+    <string name="keys_tx_filter_spent">خرج‌شده</string>
+    <string name="keys_tx_empty_all">هنوز فعالیتی با امتیاز نیست.</string>
+    <string name="keys_tx_empty_earned">هنوز امتیاز کسب‌شده‌ای نیست.</string>
+    <string name="keys_tx_empty_spent">هنوز امتیاز خرج‌شده‌ای نیست.</string>
+    <string name="keys_tx_loading">در حال بارگذاری…</string>
+    <string name="keys_tx_load_more">بارگذاری بیشتر</string>
+    <string name="keys_tx_balance">%1$d موجودی</string>
+    <string name="keys_tx_error_title">تاریخچه امتیازها در دسترس نیست</string>
+    <string name="keys_tx_try_again">دوباره تلاش کنید</string>
+
+    <!-- ===== UI localization 100% (DOK) ===== -->
+    <!-- Common / shared -->
+    <string name="common_save">ذخیره</string>
+    <string name="common_saving">در حال ذخیره…</string>
+    <string name="common_send">ارسال</string>
+    <string name="common_sending">در حال ارسال…</string>
+    <string name="common_close">بستن</string>
+    <string name="common_done">انجام شد</string>
+    <string name="common_delete">حذف</string>
+    <string name="common_try_again">دوباره تلاش کنید</string>
+    <string name="cd_remove_photo">حذف عکس</string>
+    <string name="cd_rating_out_of_5">%1$d / 5</string>
+    <string name="cd_rating_out_of_5_stars">%1$d از ۵ ستاره</string>
+    <plurals name="cd_n_stars">
+        <item quantity="one">%1$d ستاره</item>
+        <item quantity="other">%1$d ستاره</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="one">%1$d شب</item>
+        <item quantity="other">%1$d شب</item>
+    </plurals>
+    <plurals name="beds_count">
+        <item quantity="one">%1$d تخت</item>
+        <item quantity="other">%1$d تخت</item>
+    </plurals>
+
+    <!-- Status enum chips -->
+    <string name="status_pending">در انتظار</string>
+    <string name="status_accepted">تأییدشده</string>
+    <string name="status_countered">پیشنهاد متقابل</string>
+    <string name="status_declined">ردشده</string>
+    <string name="status_withdrawn">پس‌گرفته‌شده</string>
+    <string name="status_active">فعال</string>
+    <string name="status_upcoming">پیش رو</string>
+    <string name="status_in_progress">در حال انجام</string>
+    <string name="status_completed">تکمیل‌شده</string>
+    <string name="status_cancelled">لغوشده</string>
+    <string name="status_disputed">مورد اختلاف</string>
+    <string name="status_resolved">حل‌شده</string>
+    <string name="status_open">باز</string>
+
+    <!-- Account -->
+    <string name="account_plan_kicker">اشتراک</string>
+
+    <!-- Trip detail -->
+    <string name="trip_detail_error_title">سفر در دسترس نیست</string>
+    <string name="trip_detail_error_body">نتوانستیم این سفر را بارگذاری کنیم.</string>
+    <string name="trip_detail_host_fallback">میزبان شما</string>
+    <string name="trip_detail_host_word">میزبان</string>
+    <string name="trip_detail_trip_to">سفر به %1$s</string>
+    <string name="trip_detail_hosted_by">میزبانی توسط %1$s</string>
+    <string name="trip_detail_your_stay">اقامت شما</string>
+    <string name="trip_detail_guest_at">مهمان در خانه %1$s — %2$s · %3$s</string>
+    <string name="trip_detail_in_return">در مقابل، شما در %1$s · %2$s برای همان تاریخ‌ها میزبانی می‌کنید.</string>
+    <string name="trip_detail_view_profile">مشاهده نمایه %1$s</string>
+
+    <!-- Agreement panel -->
+    <string name="agreement_title">تبادل توافق شد — کلید در برابر کلید</string>
+    <string name="agreement_stay_between">اقامت بین %1$s → %2$s با %3$s.</string>
+    <string name="agreement_your_code">کد شما (در خانه آن‌ها استفاده کنید)</string>
+    <string name="agreement_their_code">کد آن‌ها (مهمان در خانه شما)</string>
+    <string name="agreement_insurance_cover">بیمه · پوشش €%1$dk</string>
+    <string name="agreement_auto_issued">به‌صورت خودکار صادر شد · خط ۲۴ ساعته %1$s</string>
+
+    <!-- Dispute / resolution center -->
+    <string name="dispute_report_problem">گزارش یک مشکل</string>
+    <string name="dispute_report_new">گزارش یک مشکل جدید</string>
+    <string name="dispute_phone_title">با خط ۲۴ ساعته ما تماس بگیرید</string>
+    <string name="dispute_phone_body">اگر کسی در خطر است یا پشت در مانده، با %1$s تماس بگیرید.</string>
+    <string name="dispute_phone_call">تماس با %1$s</string>
+    <string name="dispute_urgent_title">همین حالا به کمک نیاز دارید؟</string>
+    <string name="dispute_urgent_body">اگر کسی در خطر است یا پشت در مانده، خط ۲۴ ساعته ما اینجاست. برای رسیدن به پشتیبانی همین حالا بزنید.</string>
+    <string name="dispute_open_body">به ما بگویید با تبادلتان چه می‌گذرد. ما شریک تبادل و تیم پشتیبانیمان را وارد می‌کنیم.</string>
+    <string name="dispute_open_body_with">به ما بگویید با تبادلتان با %1$s چه می‌گذرد. ما شریک تبادل و تیم پشتیبانیمان را وارد می‌کنیم.</string>
+    <string name="dispute_what_happened">چه اتفاقی افتاد؟</string>
+    <string name="dispute_describe_label">مشکل را توصیف کنید</string>
+    <string name="dispute_describe_placeholder">چه شد، چه زمانی، و از ما چه می‌خواهید.</string>
+    <string name="dispute_send_report">ارسال گزارش</string>
+    <string name="dispute_discard_title">تغییرات را دور بریزید؟</string>
+    <string name="dispute_discard_body">گزارش شما هنوز ارسال نشده است. اگر اکنون خارج شوید، آنچه نوشته‌اید از بین می‌رود.</string>
+    <string name="dispute_discard_confirm">دور انداختن</string>
+    <string name="dispute_discard_keep">ادامه ویرایش</string>
+    <string name="dispute_reported_on">گزارش‌شده در %1$s</string>
+    <string name="dispute_resolution_label">راه‌حل</string>
+    <string name="dispute_conversation_label">گفتگو</string>
+    <string name="dispute_case_resolved">این پرونده حل شده است.</string>
+    <string name="dispute_case_closed">این پرونده بسته شده است.</string>
+    <string name="dispute_reply_label">پاسخ</string>
+    <string name="dispute_reply_placeholder">یک پاسخ اضافه کنید…</string>
+    <string name="dispute_author_you">شما</string>
+    <string name="dispute_author_support">پشتیبانی</string>
+    <string name="dispute_photos_label">عکس‌ها (اختیاری)</string>
+    <string name="dispute_add_photos">افزودن عکس‌ها</string>
+    <string name="dispute_add_more_photos">افزودن بیشتر</string>
+    <string name="dispute_photo_read_error">خواندن آن تصویر ممکن نشد</string>
+    <string name="dispute_photo_upload_error">بارگذاری عکس ممکن نشد. اتصال خود را بررسی کنید و دوباره تلاش کنید.</string>
+    <string name="dispute_cat_access_title">نمی‌توانم وارد شوم</string>
+    <string name="dispute_cat_access_subtitle">پشت در مانده، کد اشتباه، کلیدها گم‌شده</string>
+    <string name="dispute_cat_damage_title">خسارت</string>
+    <string name="dispute_cat_damage_subtitle">چیزی شکسته یا آسیب دیده است</string>
+    <string name="dispute_cat_cleanliness_title">نظافت</string>
+    <string name="dispute_cat_cleanliness_subtitle">خانه آماده یا تمیز نبود</string>
+    <string name="dispute_cat_safety_title">نگرانی ایمنی</string>
+    <string name="dispute_cat_safety_subtitle">احساس ناامنی می‌کنید یا چیزی درست نیست</string>
+    <string name="dispute_cat_no_show_title">عدم حضور</string>
+    <string name="dispute_cat_no_show_subtitle">شریک تبادل شما به تعهدش عمل نکرد</string>
+    <string name="dispute_cat_other_title">چیز دیگری</string>
+    <string name="dispute_cat_other_subtitle">هر چیز دیگری که به کمک نیاز دارید</string>
+    <string name="dispute_status_open">باز</string>
+    <string name="dispute_status_investigating">در حال رسیدگی</string>
+    <string name="dispute_status_awaiting">نوبت شما</string>
+    <string name="dispute_status_resolved">حل‌شده</string>
+    <string name="dispute_status_closed">بسته‌شده</string>
+
+    <!-- Home guide editor -->
+    <string name="home_guide_title">راهنمای خانه</string>
+    <string name="home_guide_complete_pct">%1$d%% کامل</string>
+    <string name="home_guide_intro">موارد ضروری را پر کنید تا مهمان شما بتواند بدون پیام دادن به شما مستقر شود.</string>
+    <string name="home_guide_section_access">ورود به خانه</string>
+    <string name="home_guide_field_access">دستورالعمل‌های دسترسی</string>
+    <string name="home_guide_field_key_pickup">دریافت کلید</string>
+    <string name="home_guide_section_wifi">وای‌فای</string>
+    <string name="home_guide_field_wifi_name">نام شبکه</string>
+    <string name="home_guide_field_wifi_password">رمز عبور</string>
+    <string name="home_guide_section_living">زندگی در خانه</string>
+    <string name="home_guide_field_heating">گرمایش و سرمایش</string>
+    <string name="home_guide_field_kitchen">آشپزخانه</string>
+    <string name="home_guide_field_bins">سطل‌ها و بازیافت</string>
+    <string name="home_guide_field_pets">حیوانات و گیاهان</string>
+    <string name="home_guide_section_good_to_know">خوب است بدانید (اختیاری)</string>
+    <string name="home_guide_field_house_rules">قوانین خانه</string>
+    <string name="home_guide_field_neighbourhood">نکات محله</string>
+    <string name="home_guide_field_emergency">تماس اضطراری</string>
+
+    <!-- Check in / out sheet -->
+    <string name="check_event_checkin">ثبت ورود</string>
+    <string name="check_event_checkout">ثبت خروج</string>
+    <string name="check_event_checkin_body">هنگام رسیدن چند عکس مبنا از خانه بگیرید — اگر بعداً چیزی پرسیده شد، از هر دوی شما محافظت می‌کند.</string>
+    <string name="check_event_checkout_body">هنگام رفتن چند عکس بگیرید تا وضعیت خانه ثبت شود.</string>
+    <string name="check_event_baseline_photos">عکس‌های مبنا</string>
+    <string name="check_event_note_label">یادداشت (اختیاری)</string>
+    <string name="check_event_note_placeholder">مثلاً همه‌چیز عالی به نظر می‌رسد، کلیدها تحویل گرفته شد</string>
+
+    <!-- Metrics -->
+    <string name="metrics_title">آمار</string>
+    <string name="metrics_section_now">اکنون</string>
+    <string name="metrics_online_now">اکنون آنلاین</string>
+    <string name="metrics_today">امروز</string>
+    <string name="metrics_7_days">۷ روز</string>
+    <string name="metrics_30_days">۳۰ روز</string>
+    <string name="metrics_section_users">کاربران</string>
+    <string name="metrics_total">مجموع</string>
+    <string name="metrics_email_verified">ایمیل تأییدشده</string>
+    <string name="metrics_with_active_listing">با آگهی فعال</string>
+    <string name="metrics_new_7d">جدید (۷ روز)</string>
+    <string name="metrics_new_30d">جدید (۳۰ روز)</string>
+    <string name="metrics_section_listings_per_user">آگهی به ازای هر کاربر</string>
+    <string name="metrics_avg_per_user">میانگین به ازای هر کاربر دارای آگهی</string>
+    <string name="metrics_top_hosts">میزبانان برتر</string>
+    <string name="metrics_online_only">فقط آنلاین</string>
+    <string name="metrics_no_hosts_online">در حال حاضر میزبانی آنلاین نیست.</string>
+    <string name="metrics_online">آنلاین</string>
+    <string name="metrics_offline">آفلاین</string>
+    <string name="metrics_section_top_cities">شهرهای برتر</string>
+    <string name="metrics_active_listings">آگهی‌های فعال</string>
+    <string name="metrics_section_proposals">پیشنهادها</string>
+    <string name="metrics_accept_rate">نرخ پذیرش</string>
+    <string name="metrics_section_engagement">تعامل</string>
+    <string name="metrics_active_agreements">توافق‌های فعال</string>
+    <string name="metrics_completed_agreements">توافق‌های تکمیل‌شده</string>
+    <string name="metrics_messages_total">پیام‌ها (مجموع)</string>
+    <string name="metrics_messages_7d">پیام‌ها (۷ روز)</string>
+    <string name="metrics_favorites_total">علاقه‌مندی‌ها (مجموع)</string>
+    <string name="metrics_favorites_7d">علاقه‌مندی‌ها (۷ روز)</string>
+    <string name="metrics_saved_searches">جستجوهای ذخیره‌شده</string>
+    <string name="metrics_generated_at">تولیدشده در %1$s به وقت UTC</string>
+    <string name="metrics_error_title">آمار در دسترس نیست</string>
+    <string name="metrics_error_body">نتوانستیم آمار را بارگذاری کنیم. برای تازه‌سازی بکشید یا دوباره تلاش کنید.</string>
+
+    <!-- Calendar / availability -->
+    <string name="calendar_title">تقویم شما</string>
+    <string name="calendar_intro">تاریخ‌های رزروشده از تبادل‌های تأییدشده و اقامت‌های با امتیاز خط‌خورده نمایش داده می‌شوند — مهمانان نمی‌توانند آن‌ها را انتخاب کنند. روی یک روز شروع و پایان بزنید تا تاریخ‌ها را برای خودتان مسدود کنید (بازسازی، استفاده شخصی).</string>
+    <string name="calendar_block_summary">مسدودسازی %1$s → %2$s (%3$s)</string>
+    <string name="calendar_clear">پاک کردن</string>
+    <string name="calendar_blocking">در حال مسدودسازی…</string>
+    <string name="calendar_block_dates">این تاریخ‌ها را مسدود کنید</string>
+    <string name="calendar_pick_checkout">حالا روی روز خروج بزنید تا مسدودسازی تمام شود.</string>
+    <string name="calendar_blocked_label">تاریخ‌هایی که مسدود کرده‌اید</string>
+    <string name="calendar_unblock">رفع مسدودی</string>
+    <string name="calendar_legend_selected">انتخاب‌شده</string>
+    <string name="calendar_legend_booked">رزروشده / مسدودشده</string>
+
+    <!-- Report dialog -->
+    <string name="report_title">گزارش</string>
+    <string name="report_reason_label">دلیل</string>
+    <string name="report_details_label">جزئیات (اختیاری)</string>
+    <string name="report_reason_inappropriate">محتوای نامناسب</string>
+    <string name="report_reason_scam">کلاهبرداری یا آگهی جعلی</string>
+    <string name="report_reason_harassment">آزار و اذیت</string>
+    <string name="report_reason_discrimination">تبعیض</string>
+    <string name="report_reason_other">سایر</string>
+
+    <!-- Wishlists -->
+    <string name="wishlists_title">فهرست علاقه‌مندی‌ها</string>
+    <string name="wishlists_guests_beds">%1$d مهمان · %2$s</string>
+    <string name="wishlists_available">موجود از %1$s → %2$s</string>
+    <string name="wishlists_error_title">فهرست علاقه‌مندی‌ها در دسترس نیست</string>
+    <string name="wishlists_error_body">نتوانستیم به Swapl دسترسی پیدا کنیم. اتصال خود را بررسی کنید و دوباره تلاش کنید.</string>
+    <string name="wishlists_empty_title">هنوز خانه ذخیره‌شده‌ای نیست</string>
+    <string name="wishlists_empty_body">روی قلب هر خانه‌ای بزنید تا اینجا ذخیره شود.</string>
+
+    <!-- Travel profile card -->
+    <string name="travel_profile_kicker">نمایه سفر شما</string>
+    <string name="travel_profile_deleted">نمایه حذف شد. فقط در صورت درخواست شما آن را بازسازی می‌کنیم.</string>
+    <string name="travel_profile_built_from">فقط از روی کارهایی که در Swapl انجام می‌دهید ساخته شده است. می‌توانید هر زمان آن را تازه کنید یا حذف کنید.</string>
+    <string name="travel_profile_built_from_sources">فقط از روی کارهایی که در Swapl انجام می‌دهید ساخته شده است: %1$s. می‌توانید هر زمان آن را تازه کنید یا حذف کنید.</string>
+    <string name="travel_profile_loading">در حال خواندن نمایه شما…</string>
+    <string name="travel_profile_build_again">دوباره بساز</string>
+    <string name="travel_profile_refresh">تازه‌سازی</string>
+    <string name="travel_profile_delete_title">نمایه سفر حذف شود؟</string>
+    <string name="travel_profile_delete_body">این خلاصه‌ای را که هوش مصنوعی از سلیقه‌های شما ساخته پاک می‌کند. تا زمانی که آن را بازسازی نکنید برنمی‌گردد.</string>
+    <string name="travel_profile_error_429">نمایه به‌تازگی تازه شده است — کمی بعد دوباره تلاش کنید.</string>
+    <string name="travel_profile_error_generic">مشکلی پیش آمد. لطفاً دوباره تلاش کنید.</string>
+
+    <!-- Travel windows -->
+    <string name="tw_plus_pro">Plus / Pro</string>
+    <string name="tw_limit_reached">شما به سقف بازه‌های سفر اشتراکتان رسیده‌اید</string>
+    <string name="tw_add_window">افزودن یک بازه سفر</string>
+    <string name="tw_empty_title">هنوز بازه سفری نیست</string>
+    <string name="tw_empty_body">به ما بگویید چه زمانی می‌خواهید سفر کنید — ما تبادل‌های آماده‌ای برای آن تاریخ‌ها برایتان می‌آوریم.</string>
+    <string name="tw_header_empty">کِی می‌خواهید بروید؟</string>
+    <string name="tw_header_count">%1$d ذخیره‌شده</string>
+    <string name="tw_header_body">تاریخ‌هایی را که در رؤیایشان هستید ذخیره کنید. دستیار از خانه‌های واقعی که دقیقاً آن زمان آزادند تبادل می‌چیند.</string>
+    <string name="tw_new_window">بازه سفر جدید</string>
+    <string name="tw_date_from">از</string>
+    <string name="tw_date_to">تا</string>
+    <string name="tw_end_after_start">تاریخ پایان شما باید پس از تاریخ شروع باشد.</string>
+    <string name="tw_flexible_title">تاریخ‌های من انعطاف‌پذیر است</string>
+    <string name="tw_flexible_body">جستجو را در اطراف این روزها گسترده‌تر می‌کنیم.</string>
+    <string name="tw_where_label">به کجا؟ (اختیاری)</string>
+    <string name="tw_where_placeholder">لیسبون، پرتغال، بارسلونا</string>
+    <string name="tw_where_hint">شهرها یا کشورها با کاما جدا شوند — برای هر جایی خالی بگذارید.</string>
+    <string name="tw_notes_label">یادداشت‌ها (اختیاری)</string>
+    <string name="tw_notes_placeholder">سفر سالگرد، جایی پیاده‌رو می‌خواهم…</string>
+    <string name="tw_save_window">ذخیره بازه سفر</string>
+    <string name="tw_flexible_chip">انعطاف‌پذیر</string>
+    <string name="tw_anywhere">هر جایی</string>
+    <string name="tw_remove_window">حذف این بازه سفر</string>
+    <string name="tw_hide_swaps">پنهان کردن تبادل‌ها برای این تاریخ‌ها</string>
+    <string name="tw_show_swaps">نمایش تبادل‌ها برای این تاریخ‌ها</string>
+    <string name="tw_proposals_load_error">بارگذاری تبادل‌ها ممکن نشد.</string>
+    <string name="tw_proposals_loading">در حال یافتن خانه‌های آزاد برای تاریخ‌های شما…</string>
+    <string name="tw_proposals_no_listing">ابتدا یک آگهی فعال اضافه کنید — یک تبادل به دو خانه نیاز دارد.</string>
+    <string name="tw_proposals_empty">هنوز چیزی برای این تاریخ‌های دقیق آزاد نیست — ما به نظارت ادامه می‌دهیم و وقتی تطابقی پیدا شد به شما ایمیل می‌زنیم.</string>
+    <string name="tw_match_pct">%1$d%% تطابق</string>
+    <string name="tw_on_wishlist">در مقاصد فهرست علاقه‌مندی‌های شما</string>
+    <string name="tw_mode_direct_swap">تبادل مستقیم</string>
+    <string name="tw_mode_keys_stay">اقامت با Keys</string>
+    <string name="tw_mode_keys_stay_nightly">اقامت با Keys · %1$d Keys/شب</string>
+
+    <!-- Public profile -->
+    <string name="profile_report_user">گزارش این کاربر</string>
+    <string name="profile_anonymous_host">میزبان ناشناس</string>
+    <string name="profile_id_verified">هویت تأییدشده</string>
+    <string name="profile_host_avatar">آواتار میزبان</string>
+    <string name="profile_work">شغل من: %1$s</string>
+    <string name="profile_speaks">به %1$s صحبت می‌کند</string>
+    <string name="profile_lives_in">ساکن %1$s</string>
+    <string name="profile_joined_swapl">به Swapl پیوست</string>
+    <string name="profile_a_member">یک عضو Swapl</string>
+    <string name="profile_visited_label">جاهایی که بوده‌ام</string>
+    <string name="profile_visited_empty">هنوز تبادل تکمیل‌شده‌ای نیست — مهرهای پاسپورت پس از هر اقامت اینجا ظاهر می‌شوند.</string>
+    <string name="profile_reviews_label_plain">نظرات</string>
+    <string name="profile_reviews_label_count">نظرات (%1$d)</string>
+    <string name="profile_reviews_empty">هنوز نظری نیست — میزبانان پس از یک تبادل تکمیل‌شده درباره یکدیگر نظر می‌نویسند.</string>
+    <string name="profile_interests_label">علاقه‌مندی‌ها</string>
+    <string name="profile_their_homes">خانه‌های آن‌ها</string>
+    <string name="profile_sqm_sleeps">%1$d متر مربع · ظرفیت خواب %2$d</string>
+    <plurals name="profile_swaps_label">
+        <item quantity="one">تبادل</item>
+        <item quantity="other">تبادل</item>
+    </plurals>
+    <plurals name="profile_reviews_label">
+        <item quantity="one">نظر</item>
+        <item quantity="other">نظر</item>
+    </plurals>
+    <plurals name="profile_years_on_swapl">
+        <item quantity="one">سال در Swapl</item>
+        <item quantity="other">سال در Swapl</item>
+    </plurals>
+
+    <!-- Account settings -->
+    <string name="settings_personal_info_title">اطلاعات شخصی</string>
+    <string name="settings_display_name">نام نمایشی</string>
+    <string name="settings_about_you">درباره شما</string>
+    <string name="settings_about_you_placeholder">کمی درباره خودتان به میزبانان بگویید.</string>
+    <string name="settings_my_work">شغل من</string>
+    <string name="settings_my_work_placeholder">مثلاً معمار</string>
+    <string name="settings_languages">زبان‌ها</string>
+    <string name="settings_languages_placeholder">مثلاً انگلیسی، ایتالیایی</string>
+    <string name="settings_languages_hint">زبان‌ها را با کاما جدا کنید.</string>
+    <string name="settings_home_city">شهر اصلی</string>
+    <string name="settings_home_city_placeholder">مثلاً میلان</string>
+    <string name="settings_home_country">کشور اصلی</string>
+    <string name="settings_home_country_placeholder">مثلاً ایتالیا</string>
+    <string name="settings_saved_confirm">ذخیره شد. نمایه عمومی شما به‌روز است.</string>
+    <string name="settings_save_changes">ذخیره تغییرات</string>
+    <string name="settings_change_password">تغییر رمز عبور</string>
+    <string name="pw_current_label">رمز عبور فعلی</string>
+    <string name="pw_current_hint">اگر با Google، Telegram یا کد ایمیل ثبت‌نام کرده‌اید خالی بگذارید.</string>
+    <string name="pw_new_label">رمز عبور جدید</string>
+    <string name="pw_new_hint">حداقل ۶ کاراکتر. سایر دستگاه‌ها از حساب خارج می‌شوند.</string>
+    <string name="pw_confirm_label">تأیید رمز عبور جدید</string>
+    <string name="pw_error_min6">حداقل ۶ کاراکتر استفاده کنید.</string>
+    <string name="pw_error_mismatch">رمزهای عبور مطابقت ندارند.</string>
+    <string name="pw_error_incorrect">رمز عبور فعلی نادرست است.</string>
+    <string name="pw_error_too_many">تلاش‌های بسیار زیاد — یک ساعت دیگر دوباره تلاش کنید.</string>
+    <string name="pw_error_generic">تغییر رمز عبور ممکن نشد. دوباره تلاش کنید.</string>
+    <string name="settings_privacy_title">حریم خصوصی</string>
+    <string name="settings_seo_title">نمایه‌سازی در موتورهای جستجو</string>
+    <string name="settings_seo_subtitle">به صفحات آگهی شما اجازه دهید در موتورهای جستجو مانند Google ظاهر شوند.</string>
+    <string name="settings_show_home_city_title">نمایش شهر اصلی من</string>
+    <string name="settings_show_home_city_subtitle">شهر و کشور اصلی شما را در نمایه عمومی نمایش دهید.</string>
+    <string name="settings_notifications_title">اعلان‌ها</string>
+    <string name="settings_email_notif_title">اعلان‌های ایمیلی</string>
+    <string name="settings_email_notif_subtitle">پیشنهادها، تأییدها و یادآوری‌های سفر از طریق ایمیل.</string>
+    <string name="settings_push_notif_title">اعلان‌های فوری</string>
+    <string name="settings_push_notif_subtitle">هشدارهای آنی روی این دستگاه وقتی چیزی به شما نیاز دارد.</string>
+
+    <!-- Keys wallet -->
+    <string name="keys_travel_points">امتیاز سفر</string>
+    <string name="keys_intro">امتیازهایی که با میزبانی کسب می‌کنید. آن‌ها را برای یک اقامت خرج کنید — هرگز پول نیست، هرگز خریداری یا نقد نمی‌شود.</string>
+    <string name="keys_your_homes_earn">خانه‌های شما کسب می‌کنند</string>
+    <string name="keys_your_homes_earn_body">این چیزی است که به ازای هر شب اقامت یک مهمان کسب می‌کنید — امتیازهایی که می‌توانید برای اقامتی در جای دیگر خرج کنید.</string>
+    <string name="keys_history">تاریخچه</string>
+    <string name="keys_history_empty">هنوز فعالیتی با امتیاز نیست. با میزبانی امتیاز کسب کنید، یا کمی به یک دوست هدیه دهید.</string>
+    <string name="keys_see_all_history">مشاهده کل تاریخچه امتیازها</string>
+    <string name="keys_your_travel_points">امتیاز سفر شما</string>
+    <string name="keys_balance_caption">آن‌ها را برای اقامتی بدون تبادل همزمان خرج کنید. امتیازها پول نیستند — نمی‌توانید آن‌ها را بخرید یا نقد کنید.</string>
+    <string name="keys_gift_points">هدیه دادن امتیاز</string>
+    <string name="keys_gift_entry_subtitle">به یک دوست تأییدشده امتیاز بفرستید</string>
+    <string name="keys_per_night">%1$d / هر شب</string>
+    <plurals name="keys_balance_covers">
+        <item quantity="one">موجودی شما حدود %1$d شب با این نرخ را پوشش می‌دهد.</item>
+        <item quantity="other">موجودی شما حدود %1$d شب با این نرخ را پوشش می‌دهد.</item>
+    </plurals>
+    <string name="keys_how_it_works">امتیازها چگونه کار می‌کنند</string>
+    <string name="keys_example_host">۲ شب با %1$d امتیاز/شب میزبانی کنید</string>
+    <string name="keys_example_spend">آن %1$d امتیاز را برای ۲ شب در جای دیگر خرج کنید</string>
+    <string name="keys_loop_caption">این کل چرخه است: میزبانی ← کسب امتیاز ← سفر ← تکرار. هیچ پولی رد و بدل نمی‌شود.</string>
+    <string name="keys_get_first">نخستین امتیازهای خود را بگیرید</string>
+    <string name="keys_earn_verify_title">هویت خود را تأیید کنید</string>
+    <string name="keys_earn_verify_body">به‌محض تأیید شدن %1$d امتیاز بگیرید — فوری.</string>
+    <string name="keys_earn_host_title">میزبان یک اقامت شوید</string>
+    <string name="keys_earn_host_body">به ازای هر شب اقامت یک مهمان نزد شما امتیاز کسب کنید.</string>
+    <string name="keys_earn_gift_title">یک هدیه دریافت کنید</string>
+    <string name="keys_earn_gift_body">یک دوست تأییدشده می‌تواند به شما امتیاز بفرستد — شناسه عضویت خود را به اشتراک بگذارید.</string>
+    <string name="keys_error_title">امتیازها در دسترس نیستند</string>
+    <string name="keys_gift_member_id">شناسه عضویت</string>
+    <string name="keys_gift_member_id_hint">شناسه عضویت Swapl دوستتان را از او بخواهید. او باید عضوی تأییدشده باشد.</string>
+    <string name="keys_gift_caps">تا %1$d در هر هدیه، %2$d در روز. امتیازها یک هدیه‌اند — قابل خریداری یا نقد شدن نیستند.</string>
+    <plurals name="keys_points_amount">
+        <item quantity="one">%1$d امتیاز</item>
+        <item quantity="other">%1$d امتیاز</item>
+    </plurals>
+    <plurals name="keys_gift_sent">
+        <item quantity="one">%1$d امتیاز فرستاده شد. اکنون %2$d امتیاز دارید.</item>
+        <item quantity="other">%1$d امتیاز فرستاده شد. اکنون %2$d امتیاز دارید.</item>
+    </plurals>
+    <string name="keys_gift_error_unverified">برای هدیه دادن امتیاز، هم شما و هم دوستتان باید اعضای تأییدشده باشید.</string>
+    <string name="keys_gift_error_not_found">آن عضو را پیدا نکردیم. شناسه را دوباره بررسی کنید.</string>
+    <string name="keys_gift_error_insufficient">شما برای این هدیه امتیاز کافی ندارید.</string>
+    <string name="keys_gift_error_generic">در حال حاضر ارسال امتیاز ممکن نشد.</string>
+
+    <!-- Invite &amp; earn -->
+    <string name="invite_title">دعوت و کسب</string>
+    <string name="invite_intro">دوستان را بیاورید، امتیاز سفر کسب کنید، در صف دسترسی زودهنگام بالا بروید. امتیازها هرگز پول نیستند.</string>
+    <string name="invite_share_message">به من در Swapl بپیوندید — خانه‌ها را عوض کنید و با امتیاز سفر کنید، نه پول نقد. از لینک من استفاده کنید و وقتی تأیید شدید هر دویمان %1$d امتیاز سفر می‌گیریم: %2$s</string>
+    <string name="invite_share_subject">به من در Swapl بپیوندید</string>
+    <string name="invite_share_chooser">دعوت خود را به اشتراک بگذارید</string>
+    <string name="invite_hero_kicker">دوستان را بیاورید، در صف بالا بروید</string>
+    <string name="invite_hero_points_earned">امتیاز کسب‌شده</string>
+    <string name="invite_hero_spot_in_line">جایگاه شما در صف</string>
+    <string name="invite_hero_body">هر دوستی که بپیوندد و تأیید شود، %1$d امتیاز سفر برایتان می‌آورد — و شما را در صف دسترسی زودهنگام بالا می‌برد. امتیازها هرگز پول نیستند.</string>
+    <string name="invite_referral_link_label">لینک معرفی شما</string>
+    <string name="invite_share_button">اشتراک‌گذاری</string>
+    <string name="invite_share_caption">کل این لینک را به اشتراک بگذارید — همین مهم است. با یک ضربه هرجا فرستاده می‌شود: پیام‌ها، واتساپ، ایمیل. دوست شما روی آن می‌زند، می‌پیوندد، و به‌محض تأیید شدنش هر دویتان امتیاز می‌گیرید.</string>
+    <string name="invite_to_stay_title">کسی را برای اقامت دعوت کنید</string>
+    <string name="invite_to_stay_subtitle">یک دعوت شخصی مرتبط با خانه خود بفرستید</string>
+    <string name="invite_tier_label">رده شما</string>
+    <string name="invite_tier_not_started">شروع‌نشده</string>
+    <string name="invite_tier_no_perk">نخستین دوست خود را دعوت کنید تا مزایا باز شوند.</string>
+    <plurals name="invite_tier_remaining">
+        <item quantity="one">%1$d دوست تأییدشده دیگر برای رسیدن به %2$s.</item>
+        <item quantity="other">%1$d دوست تأییدشده دیگر برای رسیدن به %2$s.</item>
+    </plurals>
+    <string name="invite_tier_top">به بالاترین رده رسیدید — شما یکی از بنیان‌گذاران Swapl هستید.</string>
+    <string name="invite_leaderboard_label">جدول رده‌بندی</string>
+    <string name="invite_you_badge">شما</string>
+    <string name="invite_your_invites">دعوت‌های شما (%1$d)</string>
+    <string name="invite_antifarm_note">امتیازها فقط زمانی فرود می‌آیند که دوستی هویت خود را تأیید کند — این صف را برای همه منصفانه نگه می‌دارد. امتیازها اعتبار سفرند، هرگز پول نقد.</string>
+    <string name="invite_error_title">دعوت‌ها در دسترس نیستند</string>
+    <string name="invite_list_home_title">ابتدا خانه خود را آگهی کنید</string>
+    <string name="invite_list_home_body">لینک‌های دعوت‌به‌اقامت به آگهی خودتان مرتبط‌اند. در حساب یک خانه بسازید، سپس دوستی را برای اقامت دعوت کنید.</string>
+    <string name="invite_verify_home_title">ابتدا خانه خود را تأیید کنید</string>
+    <string name="invite_verify_home_body">پیش از دعوت مهمانان برای اقامت، این آگهی را تأیید کنید — وگرنه پاداش دوستتان قابل پرداخت نیست. آن را از حساب ← آگهی خود تأیید کنید.</string>
+    <string name="invite_inviting_guest_to">دعوت یک مهمان به</string>
+    <string name="invite_your_home">خانه شما</string>
+    <string name="invite_friend_email_label">ایمیل دوست (اختیاری)</string>
+    <string name="invite_friend_email_placeholder">friend@email.com</string>
+    <string name="invite_friend_email_hint">یک ایمیل اضافه کنید تا دعوت هنگام ثبت‌نام او خودکار تطبیق یابد، یا برای یک لینک باز که هر کسی می‌تواند استفاده کند خالی بگذارید.</string>
+    <string name="invite_ready">دعوت آماده است</string>
+    <string name="invite_stay_share_message">خوشحال می‌شوم در Swapl میزبانتان باشم — خانه‌ها را عوض کنید و با امتیاز سفر کنید، نه پول نقد. این دعوت شما برای اقامت در %1$s است: %2$s</string>
+    <string name="invite_stay_share_subject">بیایید در %1$s اقامت کنید</string>
+    <string name="invite_stay_share_chooser">اشتراک‌گذاری لینک دعوت</string>
+    <string name="invite_share_link_button">اشتراک‌گذاری لینک دعوت</string>
+    <string name="invite_creating">در حال ایجاد…</string>
+    <string name="invite_create_link">ایجاد لینک دعوت</string>
+    <string name="invite_stay_reward">وقتی او بپیوندد و تأیید شود، هر دویتان %1$d امتیاز سفر کسب می‌کنید. امتیازها هرگز پول نیستند.</string>
+    <string name="invite_stay_reward_generic">وقتی او بپیوندد و تأیید شود، هر دویتان امتیاز سفر کسب می‌کنید. امتیازها هرگز پول نیستند.</string>
+    <string name="invite_err_not_verified">پیش از دعوت مهمانان برای اقامت، این آگهی را تأیید کنید — وگرنه پاداش دوستتان قابل پرداخت نیست.</string>
+    <string name="invite_err_not_owner">شما فقط می‌توانید مهمانان را به آگهی خودتان دعوت کنید.</string>
+    <string name="invite_err_cooldown">شما در یک ساعت گذشته دعوت‌های زیادی فرستاده‌اید — کمی بعد دوباره تلاش کنید. این یک وقفه کوتاه است، نه مسدودسازی.</string>
+    <string name="invite_err_generic">در حال حاضر ایجاد دعوت ممکن نشد.</string>
+
+    <!-- Get Inspired -->
+    <string name="inspire_title">الهام بگیرید</string>
+    <string name="inspire_intro">سفری را که در رؤیایش هستید به ما بگویید — ما تبادلی از خانه‌های واقعی که با خانه شما تطابق دارند می‌چینیم.</string>
+    <string name="inspire_wish_label">آرزوی شما</string>
+    <string name="inspire_wish_placeholder">جایی گرم با غذای عالی، پیاده‌رو، مناسب کار از راه دور…</string>
+    <string name="inspire_mic_stop">توقف شنیدن</string>
+    <string name="inspire_mic_start">آرزوی خود را دیکته کنید</string>
+    <string name="inspire_listening">در حال شنیدن — آزادانه صحبت کنید، برای توقف دوباره روی میکروفون بزنید.</string>
+    <string name="inspire_mic_denied">دسترسی به میکروفون برای Swapl خاموش است — برای دیکته کردن آرزوی خود آن را در تنظیمات فعال کنید.</string>
+    <string name="inspire_dates_in_mind">تاریخ‌هایی در ذهن دارم</string>
+    <string name="inspire_dates_in_mind_sub">در غیر این صورت از در دسترس بودن خانه شما استفاده می‌کنیم.</string>
+    <string name="inspire_dream_up">تبادلم را بساز</string>
+    <string name="inspire_loading_1">در حال ساختن تبادل شما…</string>
+    <string name="inspire_loading_2">در حال تطبیق خانه‌ها با حال‌وهوای شما…</string>
+    <string name="inspire_loading_3">در حال بررسی اینکه چه کسی هم‌زمان با شما آزاد است…</string>
+    <string name="inspire_loading_4">در حال بستن چمدان‌های مجازی شما…</string>
+    <string name="inspire_package_title">بسته تبادل شما</string>
+    <string name="inspire_understood">فهمیده شد: %1$s</string>
+    <string name="inspire_dates_label">تاریخ‌ها</string>
+    <string name="inspire_dates_suggested">پیشنهادشده از روی در دسترس بودن خانه شما — آزادانه تنظیم کنید.</string>
+    <string name="inspire_message_label">پیام شما</string>
+    <string name="inspire_message_ai">توسط هوش مصنوعی از روی آگهی شما و آن‌ها نوشته شده — آن را از آنِ خود کنید.</string>
+    <string name="inspire_swap_pick">یا انتخاب را عوض کنید</string>
+    <string name="inspire_match_pct">%1$d%% تطابق</string>
+    <string name="inspire_while_there">وقتی آنجا هستید</string>
+    <string name="inspire_experiences_note">در سایت‌های شرکای ما با قیمت‌های خودشان رزرو می‌شود — ممکن است swapl کمیسیون بگیرد، هرگز افزایش قیمت نه.</string>
+    <string name="inspire_travel_essentials">ملزومات سفر</string>
+    <string name="inspire_concierge_addons">افزودنی‌های دربان swapl</string>
+    <string name="inspire_addons_note">قیمت‌های واقعی کاتالوگ. تیک هر چیزی را که نمی‌خواهید بردارید — فقط در صورت پذیرش تبادلتان توسط میزبان از شما هزینه گرفته می‌شود.</string>
+    <string name="inspire_payable_if_accepts">قابل پرداخت در صورت پذیرش میزبان</string>
+    <string name="inspire_nothing_payable">چیزی برای پرداخت نیست — تأیید فقط پیشنهاد را می‌فرستد.</string>
+    <string name="inspire_confirm_send">تأیید و ارسال پیشنهاد</string>
+    <string name="inspire_charged_note">فقط در صورت پذیرش تبادلتان توسط میزبان از شما هزینه گرفته می‌شود.</string>
+    <string name="inspire_dismissing">در حال رد کردن…</string>
+    <string name="inspire_not_feeling">مناسب نیست</string>
+    <string name="inspire_almost_there">تقریباً تمام شد</string>
+    <string name="inspire_payment_title">پرداخت و رزرو</string>
+    <string name="inspire_your_selection">انتخاب شما</string>
+    <string name="inspire_partner_note">تجربه‌ها و خدمات شرکا در سایت‌های شرکا رزرو می‌شوند — هرگز توسط swapl هزینه نمی‌شوند و بخشی از این مجموع نیستند.</string>
+    <string name="inspire_save_card">ذخیره کارت و ارسال پیشنهاد</string>
+    <string name="inspire_send_no_card">ارسال بدون ذخیره کارت</string>
+    <string name="inspire_back_to_package">بازگشت به بسته</string>
+    <string name="inspire_book_on">رزرو در %1$s</string>
+    <string name="inspire_err_no_match">ما به یک خانه فعال از شما — و دست‌کم یک تطابق سازگار — نیاز داریم تا بسته‌ای بچینیم.</string>
+    <string name="inspire_err_rate">شما تند رؤیا می‌بینید! چند دقیقه صبر کنید و دوباره تلاش کنید.</string>
+    <string name="inspire_err_limit">شما به سقف پیشنهاد اشتراکتان رسیده‌اید. برای ارسال بیشتر ارتقا دهید.</string>
+    <string name="inspire_err_forbidden">حساب شما در حال حاضر نمی‌تواند پیشنهاد بفرستد.</string>
+    <string name="inspire_err_generic">مشکلی پیش آمد. لطفاً دوباره تلاش کنید.</string>
+
+
+    <!-- Bottom navigation -->
+    <string name="nav_browse">مرور</string>
+    <string name="nav_wishlists">علاقه‌مندی‌ها</string>
+    <string name="nav_trips">سفرها</string>
+    <string name="nav_swaps">تبادل‌ها</string>
+    <string name="nav_account">حساب</string>
+</resources>

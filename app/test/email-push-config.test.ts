@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   resendSend: vi.fn().mockResolvedValue({ id: "email-1" }),
   deviceFindMany: vi.fn(),
   deviceDelete: vi.fn(),
+  userFindUnique: vi.fn(),
 }));
 
 vi.mock("resend", () => ({
@@ -21,6 +22,9 @@ vi.mock("resend", () => ({
 vi.mock("@/lib/db", () => ({
   prisma: {
     device: { findMany: mocks.deviceFindMany, delete: mocks.deviceDelete },
+    // Notification-preference lookup in sendPush/sendEmail — null settings
+    // means "all defaults", i.e. everything is allowed.
+    user: { findUnique: mocks.userFindUnique },
   },
 }));
 
@@ -38,6 +42,7 @@ let logSpy: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   vi.clearAllMocks();
   vi.unstubAllEnvs();
+  mocks.userFindUnique.mockResolvedValue({ settings: null });
   errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 });

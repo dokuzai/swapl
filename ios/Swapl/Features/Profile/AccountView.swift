@@ -120,6 +120,10 @@ struct AccountView: View {
                 ReferrerNotificationsToast()
             }
             .toolbar(.hidden, for: .navigationBar)
+            // Tapping a past trip (from the Past trips card) opens its detail.
+            .navigationDestination(for: String.self) { id in
+                ProposalDetailView(proposalId: id)
+            }
             .fullScreenCover(isPresented: $isCreatingListing, onDismiss: {
                 Task { await loadMyListings() }
             }) {
@@ -237,7 +241,10 @@ struct AccountView: View {
 
     private var quickCards: some View {
         HStack(spacing: 14) {
-            ProfileFeatureCard(title: String(localized: "Past trips"), subtitle: String(localized: "Your completed swaps"), systemImage: "suitcase.rolling")
+            NavigationLink { PastTripsLoaderView() } label: {
+                ProfileFeatureCard(title: String(localized: "Past trips"), subtitle: String(localized: "Your completed swaps"), systemImage: "suitcase.rolling")
+            }
+            .buttonStyle(.plain)
             ProfileFeatureCard(title: String(localized: "Connections"), subtitle: String(localized: "Hosts you know"), systemImage: "person.2")
         }
     }
@@ -249,7 +256,10 @@ struct AccountView: View {
         if myListings.isEmpty {
             becomeHostCard
         } else {
-            VStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(myListings.count == 1 ? String(localized: "Your property") : String(localized: "Your properties"))
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
                 ForEach(myListings) { listing in
                     Button { editingListing = listing } label: { listingRow(listing) }
                         .buttonStyle(.plain)

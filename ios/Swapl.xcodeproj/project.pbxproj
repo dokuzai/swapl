@@ -726,6 +726,17 @@
 				Base,
 				en,
 				it,
+				fr,
+				es,
+				tr,
+				zh,
+				ar,
+				ja,
+				ro,
+				el,
+				fa,
+				th,
+				id,
 			);
 			mainGroup = 0EA051C9F1519EEF833938DB;
 			minimizedProjectReferenceProxies = 1;

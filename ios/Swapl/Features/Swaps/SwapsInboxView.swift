@@ -11,8 +11,9 @@ final class SwapsInboxViewModel {
     var hasLoaded = false
     var selectedFilter = "All"
     var searchText = ""
-    // Default: soonest check-in first (per product). Toggleable to recent activity.
-    var sortBy: SortOption = .checkIn
+    // Default: most recent message first — the natural order for an inbox.
+    // Toggleable to soonest check-in.
+    var sortBy: SortOption = .recent
 
     enum SortOption: String, CaseIterable { case checkIn, recent }
 
@@ -163,7 +164,6 @@ struct SwapsInboxView: View {
             Section {
                 messagesHeader
                 if isSearching { searchField }
-                filterAndSortBar
             }
             .listRowSeparator(.hidden)
             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 4, trailing: 0))
@@ -217,25 +217,6 @@ struct SwapsInboxView: View {
         .environment(\.defaultMinListRowHeight, 0)
     }
 
-    private var filterAndSortBar: some View {
-        HStack(spacing: 10) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(filters, id: \.self) { filter in
-                        Button { vm.selectedFilter = filter } label: {
-                            glassFilterChip(filter)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .padding(.leading, 22)
-            }
-            sortMenu
-                .padding(.trailing, 22)
-        }
-        .padding(.top, 8)
-    }
-
     // Archive / Unarchive swipe button (none for terminal threads already in
     // Archived). Shared by both swipe edges so a swipe either way archives.
     @ViewBuilder
@@ -253,21 +234,6 @@ struct SwapsInboxView: View {
         }
     }
 
-    // Liquid Glass filter chip (iOS 26): selected = pink fill, otherwise glass.
-    @ViewBuilder
-    private func glassFilterChip(_ filter: String) -> some View {
-        let selected = vm.selectedFilter == filter
-        let label = Text(filterLabel(filter))
-            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-            .foregroundStyle(selected ? SwaplSemanticLight.primaryForeground : AirbnbPalette.text)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-        if selected {
-            label.background(SwaplSemanticLight.primary, in: Capsule())
-        } else {
-            label.glassEffect(.regular.interactive(), in: .capsule)
-        }
-    }
 
     private func replySwipeButton(_ proposal: ProposalSummary) -> some View {
         Button { navPath.append(proposal) } label: {
@@ -291,17 +257,39 @@ struct SwapsInboxView: View {
         }
     }
 
+    private var filterMenu: some View {
+        Menu {
+            Picker(String(localized: "Show"), selection: Bindable(vm).selectedFilter) {
+                ForEach(filters, id: \.self) { f in
+                    Text(filterLabel(f)).tag(f)
+                }
+            }
+        } label: {
+            Image(systemName: "line.3.horizontal.decrease")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .frame(width: 48, height: 48)
+                .glassEffect(.regular.interactive(), in: .circle)
+                .overlay(alignment: .topTrailing) {
+                    if vm.selectedFilter != "All" {
+                        Circle().fill(SwaplSemanticLight.primary).frame(width: 9, height: 9)
+                    }
+                }
+        }
+        .accessibilityLabel("Filter messages")
+    }
+
     private var sortMenu: some View {
         Menu {
             Picker(String(localized: "Sort by"), selection: Bindable(vm).sortBy) {
+                Text(String(localized: "Last message")).tag(SwapsInboxViewModel.SortOption.recent)
                 Text(String(localized: "Check-in date")).tag(SwapsInboxViewModel.SortOption.checkIn)
-                Text(String(localized: "Recent activity")).tag(SwapsInboxViewModel.SortOption.recent)
             }
         } label: {
             Image(systemName: "arrow.up.arrow.down")
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
-                .frame(width: 44, height: 44)
+                .frame(width: 48, height: 48)
                 .glassEffect(.regular.interactive(), in: .circle)
         }
         .accessibilityLabel("Sort messages")
@@ -338,23 +326,27 @@ struct SwapsInboxView: View {
 
     private var messagesHeader: some View {
         SwaplPageTitle(String(localized: "Messages")) {
-            Button {
-                withAnimation(.snappy) {
-                    isSearching.toggle()
-                    if isSearching {
-                        searchFieldFocused = true
-                    } else {
-                        vm.searchText = ""
+            HStack(spacing: 8) {
+                filterMenu
+                sortMenu
+                Button {
+                    withAnimation(.snappy) {
+                        isSearching.toggle()
+                        if isSearching {
+                            searchFieldFocused = true
+                        } else {
+                            vm.searchText = ""
+                        }
                     }
+                } label: {
+                    Image(systemName: isSearching ? "xmark" : "magnifyingglass")
+                        .font(.system(size: 19, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .frame(width: 48, height: 48)
+                        .glassEffect(.regular.interactive(), in: .circle)
                 }
-            } label: {
-                Image(systemName: isSearching ? "xmark" : "magnifyingglass")
-                    .font(.system(size: 19, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .frame(width: 48, height: 48)
-                    .glassEffect(.regular.interactive(), in: .circle)
+                .accessibilityLabel(isSearching ? "Close search" : "Search messages")
             }
-            .accessibilityLabel(isSearching ? "Close search" : "Search messages")
         }
     }
 }
@@ -364,44 +356,46 @@ struct MessageRow: View {
     var onOpen: () -> Void = {}
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            Button(action: onOpen) {
+        // The whole row opens the conversation. Wrapping in a single Button (no
+        // inner buttons) means the leading-edge photo no longer swallows the
+        // left→right swipe gesture.
+        Button(action: onOpen) {
+            HStack(alignment: .top, spacing: 16) {
                 ProposalCoverImage(proposal: proposal)
                     .frame(width: 72, height: 72)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text(proposal.otherName ?? proposal.theirCity))
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .center, spacing: 8) {
-                    Circle()
-                        .fill(proposal.statusColor)
-                        .frame(width: 9, height: 9)
-                        .accessibilityLabel(proposal.statusLabel)
-                    Button(action: onOpen) {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(alignment: .center, spacing: 8) {
+                        Circle()
+                            .fill(proposal.statusColor)
+                            .frame(width: 9, height: 9)
+                            .accessibilityLabel(proposal.statusLabel)
                         Text(proposal.otherName ?? proposal.theirCity)
                             .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                             .foregroundStyle(AirbnbPalette.text)
                             .lineLimit(1)
+                        Spacer()
+                        Text(shortDate(proposal.updatedAt))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
                     }
-                    .buttonStyle(.plain)
-                    Spacer()
-                    Text(shortDate(proposal.updatedAt))
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+
+                    Text(statusLine)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+
+                    Text("\(SwaplDateText.range(from: proposal.dateFrom, to: proposal.dateTo)) · \(proposal.theirCity)")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                         .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(1)
                 }
-
-                Text(statusLine)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .lineLimit(1)
-
-                Text("\(SwaplDateText.range(from: proposal.dateFrom, to: proposal.dateTo)) · \(proposal.theirCity)")
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.body))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-                    .lineLimit(1)
             }
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
     }
 
     private var statusLine: String {
@@ -483,6 +477,42 @@ struct ProposalAvatar: View {
     }
 }
 
+// Round profile photo for the trip header — the counterparty's avatar with an
+// initials fallback (no photo / bad URL / load error).
+struct CounterpartyAvatar: View {
+    let name: String?
+    let avatarUrl: String?
+    var size: CGFloat = 32
+
+    var body: some View {
+        Group {
+            if let urlString = avatarUrl, let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image.resizable().scaledToFill()
+                    } else {
+                        initials
+                    }
+                }
+            } else {
+                initials
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+        .overlay(Circle().stroke(AirbnbPalette.hairline, lineWidth: 0.5))
+    }
+
+    private var initials: some View {
+        ZStack {
+            Circle().fill(SwaplSemanticLight.primary)
+            Text(String((name ?? "·").prefix(1)).uppercased())
+                .font(.swaplBody(size * 0.42, weight: .bold))
+                .foregroundStyle(SwaplSemanticLight.primaryForeground)
+        }
+    }
+}
+
 @MainActor
 @Observable
 final class ProposalDetailViewModel {
@@ -547,6 +577,10 @@ struct ProposalDetailView: View {
     @State private var isConfirmingDecline = false
     @State private var isConfirmingWithdraw = false
     @State private var isConfirmingAccept = false
+    // The status dot next to the city name fades in progressively as the photo's
+    // status badge scrolls away (0 = hidden, 1 = fully shown). Its slot is always
+    // reserved so the title pill never resizes.
+    @State private var statusDotOpacity: Double = 0
 
     init(proposalId: String) {
         _vm = State(initialValue: ProposalDetailViewModel(proposalId: proposalId))
@@ -573,9 +607,58 @@ struct ProposalDetailView: View {
             }
         }
         .frame(maxWidth: .infinity)
+        // Reveal the title-pill status dot only after the photo badge (~top of
+        // the hero) has scrolled under the header.
+        .onScrollGeometryChange(for: CGFloat.self) { geo in
+            geo.contentOffset.y + geo.contentInsets.top
+        } action: { _, y in
+            // Fade the dot in across the last stretch of the hero photo, so it's
+            // fully shown by the time the photo's status badge is gone.
+            let start: CGFloat = 170, end: CGFloat = 250
+            statusDotOpacity = Double(min(max((y - start) / (end - start), 0), 1))
+        }
         .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationTitle(String(localized: "Trip"))
         .navigationBarTitleDisplayMode(.inline)
+        // No solid header bar anywhere — the nav bar is transparent and the
+        // title sits in its own Liquid Glass pill (Telegram-style): destination
+        // city + date range, counterparty photo on the right (→ their profile).
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            if let detail = vm.detail {
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 1) {
+                        HStack(spacing: 6) {
+                            Text(detail.tripListing.city)
+                                .font(.swaplBody(16, weight: .bold))
+                                .foregroundStyle(AirbnbPalette.text)
+                                .lineLimit(1)
+                            // Status dot beside the city name — slot always
+                            // reserved (opacity-only), so the pill never resizes.
+                            Circle()
+                                .fill(statusColor(detail.proposal.status))
+                                .frame(width: 7, height: 7)
+                                .opacity(statusDotOpacity)
+                                .accessibilityHidden(true)
+                        }
+                        Text(SwaplDateText.range(from: detail.proposal.dateFrom, to: detail.proposal.dateTo))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                            .lineLimit(1)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 6)
+                    .glassEffect(.regular, in: .capsule)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        PublicProfileView(userId: detail.other.id)
+                    } label: {
+                        CounterpartyAvatar(name: detail.other.name, avatarUrl: detail.other.avatar, size: 32)
+                    }
+                    .accessibilityLabel(Text("View \(detail.other.name ?? String(localized: "host"))'s profile"))
+                }
+            }
+        }
         .task { await vm.load() }
         .sheet(isPresented: $showCounter) { counterSheet }
         .sheet(isPresented: $showReview) {
@@ -631,54 +714,44 @@ struct ProposalDetailView: View {
         let homeListing = detail.homeListing
 
         return VStack(alignment: .leading, spacing: 26) {
-            VStack(alignment: .leading, spacing: 14) {
-                statusBadge(detail.proposal.status)
-                Text(String(localized: "\(tripListing.city) swap"))
-                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.86)
-                Text(SwaplDateText.range(from: detail.proposal.dateFrom, to: detail.proposal.dateTo))
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.h3))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-                    .lineLimit(1)
+            // Full-bleed hero — the first scroll item, so it sits under the
+            // floating glass header (no cream strip / "nav bar" behind it).
+            // Tapping opens the full listing (swipeable gallery + lightbox).
+            NavigationLink {
+                ListingDetailView(listingId: tripListing.id)
+            } label: {
+                Color.clear
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 300)
+                    .overlay {
+                        ListingPhotoView(listing: tripListing, cornerRadius: 0)
+                    }
+                    .clipped()
+                    // Status badge at the BOTTOM of the photo, clear of the
+                    // floating header; once it scrolls away the title-pill dot
+                    // fades in.
+                    .overlay(alignment: .bottomLeading) {
+                        statusBadge(detail.proposal.status)
+                            .padding(14)
+                    }
+                    .overlay(alignment: .bottomTrailing) {
+                        HStack(spacing: 6) {
+                            Text(String(localized: "View home & photos"))
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .foregroundStyle(AirbnbPalette.text)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 9)
+                        .background(.white.opacity(0.92), in: Capsule())
+                        .padding(14)
+                    }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 22)
-            .padding(.top, 20)
+            .buttonStyle(.plain)
+            .accessibilityLabel("View \(tripListing.city) home and all photos")
 
             VStack(alignment: .leading, spacing: 18) {
-                // Tapping the trip photo opens the full listing — that's where
-                // the swipeable photo gallery and lightbox live.
-                NavigationLink {
-                    ListingDetailView(listingId: tripListing.id)
-                } label: {
-                    Color.clear
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 270)
-                        .overlay {
-                            ListingPhotoView(listing: tripListing, cornerRadius: SwaplDesignSystem.CornerRadius.large)
-                        }
-                        .clipped()
-                        // Status lives once, in the header badge above — no
-                        // duplicate on the photo.
-                        .overlay(alignment: .bottomTrailing) {
-                            HStack(spacing: 6) {
-                                Text(String(localized: "View home & photos"))
-                                    .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 11, weight: .semibold))
-                            }
-                            .foregroundStyle(AirbnbPalette.text)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 9)
-                            .background(.white.opacity(0.92), in: Capsule())
-                            .padding(14)
-                        }
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("View \(tripListing.city) home and all photos")
-
                 VStack(alignment: .leading, spacing: 8) {
                     Text(String(localized: "\(tripListing.propertyType.capitalized) in \(tripListing.city)"))
                         .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1, weight: .semibold))
@@ -768,15 +841,6 @@ struct ProposalDetailView: View {
                         .stroke(AirbnbPalette.hairline)
                 )
                 .padding(.horizontal, 22)
-            }
-            .buttonStyle(.plain)
-
-            NavigationLink { PublicProfileView(userId: detail.other.id) } label: {
-                Text(String(localized: "View \(detail.other.name ?? String(localized: "host"))'s profile"))
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 22)
             }
             .buttonStyle(.plain)
 
@@ -880,14 +944,16 @@ struct ProposalDetailView: View {
         .presentationDetents([.medium])
     }
 
+    private func statusColor(_ status: String) -> Color {
+        switch status {
+        case "ACCEPTED": return .green
+        case "DECLINED", "WITHDRAWN": return .red
+        default: return .orange
+        }
+    }
+
     private func statusBadge(_ status: String) -> some View {
-        let color: Color = {
-            switch status {
-            case "ACCEPTED": return .green
-            case "DECLINED", "WITHDRAWN": return .red
-            default: return .orange
-            }
-        }()
+        let color = statusColor(status)
         return HStack(spacing: 7) {
             Circle().fill(color).frame(width: 8, height: 8)
             Text(status.capitalized)
