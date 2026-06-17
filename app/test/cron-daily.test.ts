@@ -28,6 +28,9 @@ vi.mock("@/app/api/cron/pre-trip-reminders/route", () => ({
 vi.mock("@/app/api/cron/review-reminders/route", () => ({
   GET: vi.fn(async () => Response.json({ ok: true, due: 0, reminded: 0 })),
 }));
+vi.mock("@/app/api/cron/location-sweep/route", () => ({
+  GET: vi.fn(async () => Response.json({ ok: true, carried: 0 })),
+}));
 
 import { GET } from "@/app/api/cron/daily/route";
 import { GET as preTripReminders } from "@/app/api/cron/pre-trip-reminders/route";

@@ -129,6 +129,31 @@ model User {
   // Share-attribution (DOK-164): listings I shared / share-conversions I made.
   shareAttributionsAsSharer    ListingShareAttribution[] @relation("ShareAttributionSharer")
   shareAttributionsAsConverter ListingShareAttribution[] @relation("ShareAttributionConverter")
+
+  // Daily location tracking (Swapalitics "days abroad"). Coarse only.
+  lastSeenCountry String?
+  lastSeenRegion  String?
+  lastSeenCity    String?
+  lastSeenAt      DateTime?
+  locationDays    UserLocationDay[] @relation("UserLocationDays")
+}
+
+// One coarse location fix per user per day — the basis for "days abroad" stats.
+// Filled from the device (gps, with permission) or the request IP (ip), and
+// carried forward by the daily cron (carry) so a quiet day still counts.
+model UserLocationDay {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserLocationDays", fields: [userId], references: [id], onDelete: Cascade)
+  day         DateTime
+  countryCode String?
+  region      String?
+  city        String?
+  source      String   @default("ip") // gps | ip | carry
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, day])
+  @@index([userId])
 }
 
 // ---------- AI ASSISTANT (DOK-146) ----------

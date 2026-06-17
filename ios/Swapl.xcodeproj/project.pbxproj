@@ -54,6 +54,7 @@
 		6BE10CCFE888C0BCED3C7A12 /* SwaplStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C77A2589550B9F463387094 /* SwaplStoryView.swift */; };
 		6E368BC8D789B8BD18C4690B /* PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEEE99CFDC981E6B91926F5 /* PushService.swift */; };
 		6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */; };
+		5057A11C5005A11C5005A11C /* SwapaliticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5057F11E5005F11E5005F11E /* SwapaliticsView.swift */; };
 		6FBB7E9F562680E39B84E3FE /* CityStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD0A0CB13B5D117AC603E41 /* CityStamp.swift */; };
 		6FD9E408F7CFD3F2D3F0E862 /* Listing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CCC5F71B34111A6A25719F4 /* Listing.swift */; };
 		705A9936CCB76AF924721665 /* VerifiedOwnerBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A49EDCB228216A26B9EA31C /* VerifiedOwnerBadge.swift */; };
@@ -91,9 +92,11 @@
 		ACD9753C612C2870B11AE400 /* TravelWindowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F55E6580093FF8311EB4091 /* TravelWindowsView.swift */; };
 		B22399321C05438FA41249DB /* DeepLinkRoutingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD57A2AA63115467E0C218C /* DeepLinkRoutingTests.swift */; };
 		B2EC2A048FC10FF33AE343D2 /* LocationSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28819C43CFF4F1CECF89818 /* LocationSearchService.swift */; };
+		5057A33C5005A33C5005A33C /* LocationPingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5057F33E5005F33E5005F33E /* LocationPingService.swift */; };
 		B3BE098B95DBDDC8FE174FDF /* PasskeysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B943B148842E2CAEA5E64F /* PasskeysView.swift */; };
 		B3EE938B553972B8AA20A5D7 /* SwapChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76A41CFCED4F4593E5317DD /* SwapChatView.swift */; };
 		C37E5D582DD9EF9D58172533 /* FavoritesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D471415D3273EA410BB0599 /* FavoritesRepository.swift */; };
+		5057A22C5005A22C5005A22C /* SwapaliticsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5057F22E5005F22E5005F22E /* SwapaliticsRepository.swift */; };
 		C3E296FCE8CA05711DC8BF33 /* MetricsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8574BE693D92BD6FA207B6 /* MetricsRepository.swift */; };
 		C4380034F6D9B20966B25C07 /* InspireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78065E6D3BA14EC22992A812 /* InspireView.swift */; };
 		C50E6EC4B47A130774948455 /* FilterSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880076B1A21E1999A8C9F405 /* FilterSheetView.swift */; };
@@ -158,6 +161,7 @@
 		1C77A2589550B9F463387094 /* SwaplStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplStoryView.swift; sourceTree = "<group>"; };
 		1CD770B97A9384AAECAFF4F3 /* WishlistsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistsView.swift; sourceTree = "<group>"; };
 		1D471415D3273EA410BB0599 /* FavoritesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesRepository.swift; sourceTree = "<group>"; };
+		5057F22E5005F22E5005F22E /* SwapaliticsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapaliticsRepository.swift; sourceTree = "<group>"; };
 		1E7A43C69DAF904F0AB4E9AB /* AIDraftProposalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftProposalTests.swift; sourceTree = "<group>"; };
 		1F7B4163FD122E68FB389640 /* Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Availability.swift; sourceTree = "<group>"; };
 		21B7E1278A2EF72789A9AE78 /* KeysTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeysTransactionsView.swift; sourceTree = "<group>"; };
@@ -230,6 +234,7 @@
 		A14FDEA84A230FABDE69D564 /* ListingCalendarEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingCalendarEditorView.swift; sourceTree = "<group>"; };
 		A1E4A3420C9FC28FE105C9A4 /* Swapl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swapl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A28819C43CFF4F1CECF89818 /* LocationSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchService.swift; sourceTree = "<group>"; };
+		5057F33E5005F33E5005F33E /* LocationPingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPingService.swift; sourceTree = "<group>"; };
 		A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTokenStore.swift; sourceTree = "<group>"; };
 		A688EA805E6089C0F4C00878 /* ConversationPeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationPeopleView.swift; sourceTree = "<group>"; };
 		A76A41CFCED4F4593E5317DD /* SwapChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapChatView.swift; sourceTree = "<group>"; };
@@ -237,6 +242,7 @@
 		B0C16E51E119668C1E262BDB /* ListingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingRepository.swift; sourceTree = "<group>"; };
 		B2ECF15F803E263DBFEB14FC /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = "../packages/design-tokens/build/swift"; sourceTree = SOURCE_ROOT; };
 		B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
+		5057F11E5005F11E5005F11E /* SwapaliticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapaliticsView.swift; sourceTree = "<group>"; };
 		B5E8D113F3B8A4A14DCC8140 /* RateAppSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateAppSheet.swift; sourceTree = "<group>"; };
 		B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplFonts.swift; sourceTree = "<group>"; };
 		B6477E2C6B0E83939EAA03A8 /* AssistantRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantRepository.swift; sourceTree = "<group>"; };
@@ -375,6 +381,7 @@
 				6E8E82AC515E1376E1A1FB30 /* DiscoverRepository.swift */,
 				35F239592EDA9459EB5ABA1E /* DisputeRepository.swift */,
 				1D471415D3273EA410BB0599 /* FavoritesRepository.swift */,
+				5057F22E5005F22E5005F22E /* SwapaliticsRepository.swift */,
 				FE31B7FB667BE216C5111617 /* KeysRepository.swift */,
 				B0C16E51E119668C1E262BDB /* ListingRepository.swift */,
 				FA8574BE693D92BD6FA207B6 /* MetricsRepository.swift */,
@@ -500,6 +507,7 @@
 				B5E8D113F3B8A4A14DCC8140 /* RateAppSheet.swift */,
 				781B69502AE21A819387C19F /* ReportSheet.swift */,
 				B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */,
+				5057F11E5005F11E5005F11E /* SwapaliticsView.swift */,
 				1C77A2589550B9F463387094 /* SwaplStoryView.swift */,
 				63D199358A62C764FFD50BD6 /* TravelProfileView.swift */,
 				8F55E6580093FF8311EB4091 /* TravelWindowsView.swift */,
@@ -539,6 +547,7 @@
 			isa = PBXGroup;
 			children = (
 				A28819C43CFF4F1CECF89818 /* LocationSearchService.swift */,
+				5057F33E5005F33E5005F33E /* LocationPingService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -816,6 +825,7 @@
 				A2AB77A934125CF752B5C710 /* DisputeRepository.swift in Sources */,
 				9ED412C1C16C1698D5295CA4 /* ExperiencesView.swift in Sources */,
 				C37E5D582DD9EF9D58172533 /* FavoritesRepository.swift in Sources */,
+				5057A22C5005A22C5005A22C /* SwapaliticsRepository.swift in Sources */,
 				9DF14AADB94ED9B3F7C76737 /* FavoritesStore.swift in Sources */,
 				C50E6EC4B47A130774948455 /* FilterSheetView.swift in Sources */,
 				004110AF6E2282A8C4857526 /* GoogleSignInCoordinator.swift in Sources */,
@@ -837,6 +847,7 @@
 				8A08CC9325DE689FE2E1D202 /* ListingPhotoGalleryView.swift in Sources */,
 				8D8068B081DC6B1C476999EA /* ListingRepository.swift in Sources */,
 				B2EC2A048FC10FF33AE343D2 /* LocationSearchService.swift in Sources */,
+				5057A33C5005A33C5005A33C /* LocationPingService.swift in Sources */,
 				12A73281C203C687F50C0A01 /* LoginView.swift in Sources */,
 				C3E296FCE8CA05711DC8BF33 /* MetricsRepository.swift in Sources */,
 				E5FF16C039C517CC58D7C964 /* MetricsView.swift in Sources */,
@@ -865,6 +876,7 @@
 				9FB201F3E3C6723A6627AD92 /* ReportSheet.swift in Sources */,
 				F5DED2CA60E13745ECB55392 /* SafariView.swift in Sources */,
 				6EDC2851AC6699DABF5CDD63 /* SavedSearchesView.swift in Sources */,
+				5057A11C5005A11C5005A11C /* SwapaliticsView.swift in Sources */,
 				E2FB54694BF2D5D9EE68F9C9 /* ServicesView.swift in Sources */,
 				38FFAA04AD5C5FD4661D8B53 /* SpeechRecorder.swift in Sources */,
 				F12C3AA109E59CDD8B01485E /* StayWithKeysSheet.swift in Sources */,

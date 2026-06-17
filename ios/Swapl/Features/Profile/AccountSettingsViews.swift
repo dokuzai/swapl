@@ -12,6 +12,7 @@ final class AccountSettingsViewModel {
     var showHomeCity = true
     var emailNotifications = true
     var pushNotifications = true
+    var countDaysAbroad = false
 
     var isLoading = true
     var error: String?
@@ -38,6 +39,7 @@ final class AccountSettingsViewModel {
         showHomeCity = s.showHomeCity
         emailNotifications = s.emailNotifications
         pushNotifications = s.pushNotifications
+        countDaysAbroad = s.countDaysAbroad ?? false
     }
 
     func update(_ patch: ProfileRepository.SettingsPatch) async {
@@ -47,7 +49,8 @@ final class AccountSettingsViewModel {
             (patch.searchEngineIndexing.map { $0 != synced.searchEngineIndexing } ?? false) ||
             (patch.showHomeCity.map { $0 != synced.showHomeCity } ?? false) ||
             (patch.emailNotifications.map { $0 != synced.emailNotifications } ?? false) ||
-            (patch.pushNotifications.map { $0 != synced.pushNotifications } ?? false)
+            (patch.pushNotifications.map { $0 != synced.pushNotifications } ?? false) ||
+            (patch.countDaysAbroad.map { $0 != (synced.countDaysAbroad ?? false) } ?? false)
         guard changed else { return }
 
         error = nil
@@ -89,6 +92,19 @@ struct PrivacySettingsView: View {
                         isOn: Bindable(vm).showHomeCity,
                         onChange: { value in
                             Task { await vm.update(.init(showHomeCity: value)) }
+                        }
+                    )
+                    SettingToggleRow(
+                        title: "Count my days abroad",
+                        subtitle: "Track your approximate location (country/city only) once a day to power Swapalitics. Off by default; nothing is stored until you turn this on.",
+                        systemImage: "globe.europe.africa",
+                        isOn: Bindable(vm).countDaysAbroad,
+                        onChange: { value in
+                            Task {
+                                await vm.update(.init(countDaysAbroad: value))
+                                // Start collecting right away when turned on.
+                                if value { await LocationPingService.shared.pingNow() }
+                            }
                         }
                     )
 

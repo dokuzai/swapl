@@ -20,6 +20,9 @@ export type UserSettings = {
   notifyReviews: boolean;
   notifyKeys: boolean;
   notifyRecommendations: boolean;
+  /** Opt-in: track coarse daily location to count "days abroad" (Swapalitics).
+   *  Off by default — no location is stored until the user turns this on. */
+  countDaysAbroad: boolean;
 };
 
 export const DEFAULT_SETTINGS: UserSettings = {
@@ -33,6 +36,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   notifyReviews: true,
   notifyKeys: true,
   notifyRecommendations: true,
+  countDaysAbroad: false,
 };
 
 const KEYS = Object.keys(DEFAULT_SETTINGS) as (keyof UserSettings)[];

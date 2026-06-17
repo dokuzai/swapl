@@ -825,36 +825,153 @@ struct BrowseMapView: View {
     @State private var didFocus = false
     @State private var currentRegion: MKCoordinateRegion?
 
+    // Draw-to-search: when on, dragging traces a freeform lasso (map panning is
+    // disabled). On release the screen path is converted to coordinates and the
+    // pins are filtered to those inside it.
+    @State private var drawMode = false
+    @State private var dragScreenPoints: [CGPoint] = []
+    @State private var drawnArea: [CLLocationCoordinate2D] = []
+
     // Only listings we can actually place on the map. An unknown city with no
     // own lat/lng resolves to nil (F3/F23) and is simply not plotted, rather
     // than being dropped on a hardcoded foreign centroid.
     private var points: [ListingMapPoint] { items.compactMap(ListingMapPoint.init) }
 
+    // Pins, narrowed to the drawn lasso when one exists.
+    private var displayedPoints: [ListingMapPoint] {
+        guard drawnArea.count >= 3 else { return points }
+        return points.filter { isInside($0.coordinate, polygon: drawnArea) }
+    }
+
     var body: some View {
-        Map(position: $camera) {
-            ForEach(points) { point in
-                Annotation(point.title, coordinate: point.coordinate) {
-                    MapListingPin(point: point, selected: selectedId == point.id) {
-                        withAnimation(.snappy) { selectedId = point.id }
+        MapReader { proxy in
+            Map(position: $camera, interactionModes: drawMode ? [] : .all) {
+                ForEach(displayedPoints) { point in
+                    Annotation(point.title, coordinate: point.coordinate) {
+                        MapListingPin(point: point, selected: selectedId == point.id) {
+                            withAnimation(.snappy) { selectedId = point.id }
+                        }
                     }
                 }
+                .annotationTitles(.hidden)
+
+                if drawnArea.count >= 3 {
+                    MapPolygon(coordinates: drawnArea)
+                        .foregroundStyle(SwaplSemanticLight.primary.opacity(0.12))
+                        .stroke(SwaplSemanticLight.primary, lineWidth: 2)
+                }
             }
-            .annotationTitles(.hidden)
-        }
-        .mapStyle(.standard(pointsOfInterest: .excludingAll))
-        .mapControls { MapUserLocationButton() }
-        .ignoresSafeArea()
-        .onAppear(perform: focusInitial)
-        .onMapCameraChange { context in
-            currentRegion = context.region
-        }
-        .onChange(of: searchRegion?.id) { _, _ in
-            guard let region = searchRegion?.region else { return }
-            withAnimation(.easeInOut(duration: 0.5)) {
-                camera = .region(region)
-                currentRegion = region
+            .mapStyle(.standard(pointsOfInterest: .excludingAll))
+            .mapControls { MapUserLocationButton() }
+            .ignoresSafeArea()
+            // Freeform draw layer — only intercepts touches while drawing.
+            .overlay {
+                if drawMode { drawCanvas(proxy: proxy) }
+            }
+            .overlay(alignment: .topTrailing) { mapControlStack }
+            .overlay(alignment: .bottom) {
+                if drawnArea.count >= 3 { areaSummary }
+            }
+            .onAppear(perform: focusInitial)
+            .onMapCameraChange { context in
+                currentRegion = context.region
+            }
+            .onChange(of: searchRegion?.id) { _, _ in
+                guard let region = searchRegion?.region else { return }
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    camera = .region(region)
+                    currentRegion = region
+                }
             }
         }
+    }
+
+    private func drawCanvas(proxy: MapProxy) -> some View {
+        Canvas { ctx, _ in
+            guard dragScreenPoints.count > 1 else { return }
+            var path = Path()
+            path.addLines(dragScreenPoints)
+            ctx.stroke(
+                path,
+                with: .color(SwaplSemanticLight.primary),
+                style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round, dash: [1, 6])
+            )
+        }
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                .onChanged { value in dragScreenPoints.append(value.location) }
+                .onEnded { _ in
+                    let coords = dragScreenPoints.compactMap { proxy.convert($0, from: .local) }
+                    if coords.count >= 3 { drawnArea = coords }
+                    dragScreenPoints = []
+                    drawMode = false
+                }
+        )
+    }
+
+    // Glass control stack: draw toggle (+ clear when a lasso exists).
+    private var mapControlStack: some View {
+        VStack(spacing: 10) {
+            Button {
+                drawnArea = []
+                dragScreenPoints = []
+                drawMode.toggle()
+            } label: {
+                Image(systemName: drawMode ? "pencil.slash" : "scribble.variable")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(drawMode ? SwaplSemanticLight.primaryForeground : AirbnbPalette.text)
+                    .frame(width: 44, height: 44)
+                    .background {
+                        if drawMode { Circle().fill(SwaplSemanticLight.primary) }
+                    }
+                    .glassEffect(.regular.interactive(), in: .circle)
+            }
+            .accessibilityLabel(Text(drawMode ? "Cancel drawing" : "Draw an area to search"))
+
+            if drawnArea.count >= 3 {
+                Button {
+                    withAnimation(.snappy) { drawnArea = [] }
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .frame(width: 44, height: 44)
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .accessibilityLabel(Text("Clear drawn area"))
+            }
+        }
+        .padding(.top, 8)
+        .padding(.trailing, 14)
+    }
+
+    private var areaSummary: some View {
+        Text(displayedPoints.count == 1
+             ? String(localized: "1 home in this area")
+             : String(localized: "\(displayedPoints.count) homes in this area"))
+            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+            .foregroundStyle(AirbnbPalette.text)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 12)
+            .glassEffect(.regular, in: .capsule)
+            .padding(.bottom, 28)
+    }
+
+    // Ray-casting point-in-polygon over lat/lng (fine at city zoom levels).
+    private func isInside(_ c: CLLocationCoordinate2D, polygon: [CLLocationCoordinate2D]) -> Bool {
+        guard polygon.count >= 3 else { return true }
+        var inside = false
+        var j = polygon.count - 1
+        for i in 0..<polygon.count {
+            let a = polygon[i], b = polygon[j]
+            if ((a.latitude > c.latitude) != (b.latitude > c.latitude)) &&
+                (c.longitude < (b.longitude - a.longitude) * (c.latitude - a.latitude) / (b.latitude - a.latitude) + a.longitude) {
+                inside.toggle()
+            }
+            j = i
+        }
+        return inside
     }
 
     private func focusInitial() {

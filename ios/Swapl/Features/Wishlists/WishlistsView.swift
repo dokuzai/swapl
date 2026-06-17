@@ -21,6 +21,12 @@ final class WishlistsViewModel {
         case none, country, city
     }
     var groupBy: GroupOption = .none
+
+    // Display options: two-column grid vs single-column list, and card density.
+    enum Layout: String, CaseIterable { case grid, list }
+    enum Density: String, CaseIterable { case comfortable, compact }
+    var layout: Layout = .grid
+    var density: Density = .comfortable
     var filterStart: Date?
     var filterEnd: Date?
     var hasDateFilter: Bool { filterStart != nil && filterEnd != nil }
@@ -47,10 +53,12 @@ struct WishlistsView: View {
     @State private var vm = WishlistsViewModel()
     @State private var showDateFilter = false
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 18, alignment: .top),
-        GridItem(.flexible(), spacing: 18, alignment: .top)
-    ]
+    private var columns: [GridItem] {
+        let spacing: CGFloat = vm.density == .compact ? 12 : 18
+        let item = GridItem(.flexible(), spacing: spacing, alignment: .top)
+        return vm.layout == .list ? [item] : [item, item]
+    }
+    private var rowSpacing: CGFloat { vm.density == .compact ? 14 : 24 }
 
     var body: some View {
         NavigationStack {
@@ -187,6 +195,24 @@ struct WishlistsView: View {
     private var titleFilters: some View {
         HStack(spacing: 8) {
             Menu {
+                Picker(String(localized: "Layout"), selection: Bindable(vm).layout) {
+                    Label(String(localized: "Grid"), systemImage: "square.grid.2x2").tag(WishlistsViewModel.Layout.grid)
+                    Label(String(localized: "List"), systemImage: "list.bullet").tag(WishlistsViewModel.Layout.list)
+                }
+                Picker(String(localized: "Density"), selection: Bindable(vm).density) {
+                    Text(String(localized: "Comfortable")).tag(WishlistsViewModel.Density.comfortable)
+                    Text(String(localized: "Compact")).tag(WishlistsViewModel.Density.compact)
+                }
+            } label: {
+                Image(systemName: vm.layout == .list ? "list.bullet" : "square.grid.2x2")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
+            }
+            .accessibilityLabel(Text("Display options"))
+
+            Menu {
                 Picker(String(localized: "Order by"), selection: Bindable(vm).sortBy) {
                     ForEach(WishlistsViewModel.SortOption.allCases, id: \.self) { opt in
                         Text(sortLabel(opt)).tag(opt)
@@ -194,9 +220,9 @@ struct WishlistsView: View {
                 }
             } label: {
                 Image(systemName: "arrow.up.arrow.down")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 44, height: 44)
                     .glassEffect(.regular.interactive(), in: .circle)
             }
             .accessibilityLabel(Text("Order by"))
@@ -209,9 +235,9 @@ struct WishlistsView: View {
                 }
             } label: {
                 Image(systemName: "square.stack.3d.up")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 44, height: 44)
                     .glassEffect(.regular.interactive(), in: .circle)
                     .overlay(alignment: .topTrailing) {
                         if vm.groupBy != .none {
@@ -223,9 +249,9 @@ struct WishlistsView: View {
 
             Button { showDateFilter = true } label: {
                 Image(systemName: "calendar")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 44, height: 44)
                     .glassEffect(.regular.interactive(), in: .circle)
                     .overlay(alignment: .topTrailing) {
                         if vm.hasDateFilter {
@@ -284,7 +310,7 @@ struct WishlistsView: View {
                             .padding(.horizontal, 22)
                             .padding(.top, 4)
                     }
-                    LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
+                    LazyVGrid(columns: columns, alignment: .leading, spacing: rowSpacing) {
                         ForEach(group.items) { listing in
                             NavigationLink(value: listing.id) {
                                 WishlistCardView(listing: listing)

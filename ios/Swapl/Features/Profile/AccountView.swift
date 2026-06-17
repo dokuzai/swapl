@@ -48,6 +48,8 @@ struct AccountView: View {
                             .buttonStyle(.plain)
                         NavigationLink { SwaplStoryView() } label: { portedMenuRow(String(localized: "Your Swapl story"), "book.closed") }
                             .buttonStyle(.plain)
+                        NavigationLink { SwapaliticsView() } label: { portedMenuRow(String(localized: "Swapalitics"), "chart.bar.xaxis") }
+                            .buttonStyle(.plain)
                         if let userId = auth.session?.id {
                             NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow(String(localized: "View public profile"), "person") }
                                 .buttonStyle(.plain)

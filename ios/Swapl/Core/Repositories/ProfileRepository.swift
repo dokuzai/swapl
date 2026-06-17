@@ -42,6 +42,7 @@ final class ProfileRepository: @unchecked Sendable {
         var showHomeCity: Bool?
         var emailNotifications: Bool?
         var pushNotifications: Bool?
+        var countDaysAbroad: Bool?
     }
 
     func updateSettings(_ patch: SettingsPatch) async throws -> UserSettings {

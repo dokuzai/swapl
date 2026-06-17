@@ -37,6 +37,7 @@ const schema = z
     notifyReviews: z.boolean(),
     notifyKeys: z.boolean(),
     notifyRecommendations: z.boolean(),
+    countDaysAbroad: z.boolean(),
   })
   .partial();
 

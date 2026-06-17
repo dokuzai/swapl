@@ -268,7 +268,7 @@ struct SwapsInboxView: View {
             Image(systemName: "line.3.horizontal.decrease")
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
-                .frame(width: 48, height: 48)
+                .frame(width: 44, height: 44)
                 .glassEffect(.regular.interactive(), in: .circle)
                 .overlay(alignment: .topTrailing) {
                     if vm.selectedFilter != "All" {
@@ -289,7 +289,7 @@ struct SwapsInboxView: View {
             Image(systemName: "arrow.up.arrow.down")
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
-                .frame(width: 48, height: 48)
+                .frame(width: 44, height: 44)
                 .glassEffect(.regular.interactive(), in: .circle)
         }
         .accessibilityLabel("Sort messages")
@@ -340,9 +340,9 @@ struct SwapsInboxView: View {
                     }
                 } label: {
                     Image(systemName: isSearching ? "xmark" : "magnifyingglass")
-                        .font(.system(size: 19, weight: .semibold))
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
-                        .frame(width: 48, height: 48)
+                        .frame(width: 44, height: 44)
                         .glassEffect(.regular.interactive(), in: .circle)
                 }
                 .accessibilityLabel(isSearching ? "Close search" : "Search messages")
@@ -619,9 +619,9 @@ struct ProposalDetailView: View {
         }
         .background(SwaplSemanticLight.background.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
-        // No solid header bar anywhere — the nav bar is transparent and the
-        // title sits in its own Liquid Glass pill (Telegram-style): destination
-        // city + date range, counterparty photo on the right (→ their profile).
+        // Transparent nav bar (no cream band — global appearance is transparent),
+        // but kept so the interactive back-swipe stays bounded. Title pill +
+        // counterparty avatar float over the content (Telegram-style).
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             if let detail = vm.detail {
@@ -632,8 +632,6 @@ struct ProposalDetailView: View {
                                 .font(.swaplBody(16, weight: .bold))
                                 .foregroundStyle(AirbnbPalette.text)
                                 .lineLimit(1)
-                            // Status dot beside the city name — slot always
-                            // reserved (opacity-only), so the pill never resizes.
                             Circle()
                                 .fill(statusColor(detail.proposal.status))
                                 .frame(width: 7, height: 7)

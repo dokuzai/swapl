@@ -96,6 +96,10 @@ struct RootView: View {
             } else {
                 await favorites.loadIdsIfNeeded()
                 await unread.refresh()
+                // Daily coarse location ping (Swapalitics "days abroad"). Sends a
+                // device fix when permission is granted, else an empty body so
+                // the server falls back to geo-IP. Guarded to once per day.
+                await LocationPingService.shared.pingIfDue()
             }
             consumePushDeepLink()
             flushStashedDeepLinkIfReady()

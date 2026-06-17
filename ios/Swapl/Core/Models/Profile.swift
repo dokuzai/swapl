@@ -63,6 +63,8 @@ struct UserSettings: Decodable, Sendable {
     let showHomeCity: Bool
     let emailNotifications: Bool
     let pushNotifications: Bool
+    // Optional for older server payloads; defaults to off.
+    var countDaysAbroad: Bool? = nil
 }
 
 struct InterestsCatalog: Decodable, Sendable {
