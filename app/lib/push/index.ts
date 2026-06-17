@@ -11,6 +11,11 @@
 // (one factory per event) so a future codegen step can keep both in lock-step.
 
 import { prisma } from "@/lib/db";
+import { notificationAllowed, type NotificationKind } from "@/lib/notifications/categories";
+import { parseSettings } from "@/lib/settings";
+
+// The push event taxonomy is shared with email — see lib/notifications.
+export type PushKind = NotificationKind;
 
 export type PushPayload = {
   title: string;
@@ -25,40 +30,15 @@ export type PushPayload = {
   };
 };
 
-export type PushKind =
-  | "proposalReceived"
-  | "proposalAccepted"
-  | "proposalDeclined"
-  | "proposalCountered"
-  | "swapMessageReceived"
-  | "insurancePolicyCreated"
-  | "preTripReminder"
-  | "verificationApproved"
-  | "verificationRejected"
-  | "featuredActivated"
-  | "addOnPurchased"
-  | "reviewReceived"
-  | "swapCancelled"
-  | "swapCompleted"
-  | "reviewReminder"
-  | "checkedIn"
-  | "checkedOut"
-  | "homeGuideReminder"
-  | "checkInNudge"
-  | "disputeOpened"
-  | "disputeStatusChanged"
-  | "disputeMessage"
-  | "identityVerified"
-  | "identityVerificationFailed"
-  | "keysGiftReceived"
-  | "keysStayRequested"
-  | "keysStayConfirmed"
-  | "keysStayDeclined"
-  | "referralRewarded"
-  | "windowProposals"
-  | "swapParticipantInvited";
-
 export async function sendPush(userId: string, payload: PushPayload): Promise<void> {
+  // Respect the recipient's notification preferences (granular notifications).
+  // Safety/trust events bypass the toggles inside notificationAllowed().
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { settings: true },
+  });
+  if (!notificationAllowed(parseSettings(user?.settings), "push", payload.data.kind)) return;
+
   const devices = await prisma.device.findMany({ where: { userId } });
   if (devices.length === 0) return;
 

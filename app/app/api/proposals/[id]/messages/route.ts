@@ -274,5 +274,7 @@ async function maybeSendEmail(
     create: { proposalId, recipientId, lastEmailedAt: new Date(now) },
     update: { lastEmailedAt: new Date(now) },
   });
-  await sendEmail(emailTemplates.swapMessageReceived(recipientEmail, fromName));
+  await sendEmail(emailTemplates.swapMessageReceived(recipientEmail, fromName), {
+    kind: "swapMessageReceived",
+  });
 }

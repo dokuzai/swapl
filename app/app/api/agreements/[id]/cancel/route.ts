@@ -65,7 +65,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/agreemen
       to: u.email,
       subject: "Your swap was cancelled — insurance refunded",
       text: `The swap between ${agreement.listing1.city} and ${agreement.listing2.city} for ${agreement.dateFrom.toDateString()} → ${agreement.dateTo.toDateString()} has been cancelled. Your insurance policy has been cancelled and any premium share refunded. Browse new matches at /listings.`,
-    }).catch((err) => console.error("[cancel:email]", err));
+    }, { kind: "swapCancelled" }).catch((err) => console.error("[cancel:email]", err));
     sendPush(u.id, pushTemplates.swapCancelled(agreement.proposalId)).catch((err) =>
       console.error("[cancel:push]", err)
     );

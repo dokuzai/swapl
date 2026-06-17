@@ -68,6 +68,8 @@ const VALID_TEXT = "A lovely stay, the flat was spotless and central.";
 const completedAgreement = {
   id: "ag-1",
   status: "COMPLETED",
+  listing1Id: "L1",
+  listing2Id: "L2",
   listing1: { userId: "u-1", user: { email: "ana@swapl.test" } },
   listing2: { userId: "u-2", user: { email: "ben@swapl.test" } },
 };
@@ -152,6 +154,8 @@ describe("POST /api/agreements/{id}/review", () => {
         agreementId: "ag-1",
         authorId: "u-1",
         subjectId: "u-2",
+        // Author owns listing1 → they reviewed the subject's home, listing2.
+        listingId: "L2",
         rating: 4,
         text: VALID_TEXT,
       },
@@ -165,6 +169,8 @@ describe("POST /api/agreements/{id}/review", () => {
     const res = await post({ rating: 5, text: VALID_TEXT });
     expect(res.status).toBe(201);
     expect(mocks.reviewCreate.mock.calls[0][0].data.subjectId).toBe("u-1");
+    // Author owns listing2 → review is about the subject's home, listing1.
+    expect(mocks.reviewCreate.mock.calls[0][0].data.listingId).toBe("L1");
   });
 
   it("notifies the subject (email + push) after creation", async () => {

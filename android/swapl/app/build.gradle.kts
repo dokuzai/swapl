@@ -17,6 +17,16 @@ val keystoreProps = Properties().apply {
     if (f.exists()) f.inputStream().use { load(it) }
 }
 
+// Per-machine config (gitignored): swapl.api.base.url / swapl.google.serverClientId.
+// `findProperty` does NOT read local.properties, so load it explicitly — that's
+// what lets a device build point at production without -P on every command.
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+fun prop(name: String): String? =
+    localProps.getProperty(name) ?: project.findProperty(name) as String?
+
 android {
     namespace = "app.swapl"
     compileSdk = 35
@@ -33,15 +43,15 @@ android {
         // from shipping stray translations pulled in by AndroidX dependencies.
         resourceConfigurations += listOf("en", "it", "fr", "de", "es", "pt", "nl", "tr")
 
-        // Read from local.properties: swapl.api.base.url=...
-        val apiBaseUrl: String = (project.findProperty("swapl.api.base.url") as String?)
-            ?: "http://10.0.2.2:3000"
+        // Read from local.properties (or -P): swapl.api.base.url=...
+        // Default is the Android emulator's host alias; a physical device needs
+        // a reachable URL (e.g. https://app.swapl.fun).
+        val apiBaseUrl: String = prop("swapl.api.base.url") ?: "http://10.0.2.2:3000"
         buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
 
         // Google Sign-In (Credential Manager). Web/server OAuth client id —
         // empty (the default) hides the Google button entirely.
-        val googleServerClientId: String =
-            (project.findProperty("swapl.google.serverClientId") as String?) ?: ""
+        val googleServerClientId: String = prop("swapl.google.serverClientId") ?: ""
         buildConfigField("String", "SWAPL_GOOGLE_SERVER_CLIENT_ID", "\"$googleServerClientId\"")
     }
 

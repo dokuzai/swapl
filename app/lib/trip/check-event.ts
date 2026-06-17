@@ -109,7 +109,9 @@ export async function handleCheckEvent(
   const tmpl = type === "checkin" ? emailTemplates.checkedIn : emailTemplates.checkedOut;
   const pushTmpl = type === "checkin" ? pushTemplates.checkedIn : pushTemplates.checkedOut;
   if (other.email) {
-    sendEmail(tmpl(other.email, myName)).catch((err) => console.error("[check-event:email]", err));
+    sendEmail(tmpl(other.email, myName), { kind: type === "checkin" ? "checkedIn" : "checkedOut" }).catch(
+      (err) => console.error("[check-event:email]", err),
+    );
   }
   sendPush(other.id, pushTmpl(agreement.proposalId, myName)).catch((err) =>
     console.error("[check-event:push]", err),

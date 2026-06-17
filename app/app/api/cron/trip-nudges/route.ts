@@ -53,7 +53,7 @@ export async function GET(req: Request) {
     for (const s of sides) {
       if (homeGuideComplete(s.guide)) continue;
       if (s.user.email) {
-        sendEmail(emailTemplates.homeGuideReminder(s.user.email, s.city)).catch((err) =>
+        sendEmail(emailTemplates.homeGuideReminder(s.user.email, s.city), { kind: "homeGuideReminder" }).catch((err) =>
           log.error("guide reminder email failed", err, { agreementId: a.id, userId: s.user.id }),
         );
       }
@@ -101,7 +101,7 @@ export async function GET(req: Request) {
     ];
     for (const r of recipients) {
       if (r.user.email) {
-        sendEmail(emailTemplates.checkInNudge(r.user.email, r.destinationCity)).catch((err) =>
+        sendEmail(emailTemplates.checkInNudge(r.user.email, r.destinationCity), { kind: "checkInNudge" }).catch((err) =>
           log.error("check-in nudge email failed", err, { agreementId: a.id, userId: r.user.id }),
         );
       }

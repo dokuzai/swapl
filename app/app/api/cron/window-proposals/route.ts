@@ -78,7 +78,9 @@ export async function GET(req: Request) {
     const month = monthLabel(w.dateFrom);
     const topCity = fresh[0].city;
     if (w.user.email) {
-      sendEmail(emailTemplates.windowProposals(w.user.email, month, fresh.length, topCity)).catch((err) =>
+      sendEmail(emailTemplates.windowProposals(w.user.email, month, fresh.length, topCity), {
+        kind: "windowProposals",
+      }).catch((err) =>
         log.error("digest email failed", err, { windowId: w.id }),
       );
     }

@@ -67,6 +67,10 @@ struct Listing: Identifiable, Codable, Hashable, Sendable {
     // Present only on your own listing detail; nil for everyone else.
     let valuationExplanation: ValuationExplanation?
 
+    // Host's average review rating (1..5), provided by the favorites endpoint so
+    // the wishlist can sort by "feedback". Nil elsewhere / unrated hosts.
+    var hostRating: Double? = nil
+
     // True when this listing is a single private room rather than a whole home.
     var isPrivateRoom: Bool { spaceType == "private_room" }
 }

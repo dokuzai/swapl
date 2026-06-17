@@ -522,6 +522,7 @@
     <!-- Swap chat -->
     <string name="chat_messages_unavailable">Messages unavailable</string>
     <string name="chat_try_again">Try again</string>
+    <string name="chat_view_trip">View trip</string>
     <string name="chat_say_hello_title">Say hello</string>
     <string name="chat_say_hello_body">Start the conversation — ask about dates, the neighbourhood, or anything you\'d like to know.</string>
     <string name="chat_load_earlier">Load earlier messages</string>

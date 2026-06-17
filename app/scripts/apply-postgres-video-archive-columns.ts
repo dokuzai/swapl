@@ -36,7 +36,8 @@ async function main() {
   await pool.query(`ALTER TABLE "SwapCheckEvent" ADD COLUMN IF NOT EXISTS "videoUrl" TEXT`);
   await pool.query(`ALTER TABLE "SwapProposal" ADD COLUMN IF NOT EXISTS "proposerArchivedAt" TIMESTAMP(3)`);
   await pool.query(`ALTER TABLE "SwapProposal" ADD COLUMN IF NOT EXISTS "targetArchivedAt" TIMESTAMP(3)`);
-  console.log("Applied: SwapCheckEvent.videoUrl, SwapProposal.proposerArchivedAt, SwapProposal.targetArchivedAt");
+  await pool.query(`ALTER TABLE "SwapReview" ADD COLUMN IF NOT EXISTS "listingId" TEXT`);
+  console.log("Applied: SwapCheckEvent.videoUrl, SwapProposal.proposer/targetArchivedAt, SwapReview.listingId");
 }
 
 main()

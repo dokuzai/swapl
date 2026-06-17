@@ -40,6 +40,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/agreemen
     select: {
       id: true,
       status: true,
+      listing1Id: true,
+      listing2Id: true,
       listing1: { select: { userId: true, user: { select: { email: true } } } },
       listing2: { select: { userId: true, user: { select: { email: true } } } },
     },
@@ -55,12 +57,18 @@ export async function POST(req: Request, { params }: RouteContext<"/api/agreemen
   const subjectId = parties.find((uid) => uid !== session.userId);
   if (!subjectId) return unprocessable("Cannot review your own listing swap.");
 
+  // The review is about the SUBJECT's listing in this swap (the home the author
+  // experienced) — so a host with several properties knows which one it concerns.
+  const listingId =
+    subjectId === agreement.listing1.userId ? agreement.listing1Id : agreement.listing2Id;
+
   try {
     const review = await prisma.swapReview.create({
       data: {
         agreementId: agreement.id,
         authorId: session.userId,
         subjectId,
+        listingId,
         rating: parsed.data.rating,
         text: parsed.data.text,
       },
@@ -79,7 +87,9 @@ export async function POST(req: Request, { params }: RouteContext<"/api/agreemen
         ? agreement.listing1.user.email
         : agreement.listing2.user.email;
     if (subjectEmail) {
-      sendEmail(emailTemplates.reviewReceived(subjectEmail, authorName, review.rating)).catch(
+      sendEmail(emailTemplates.reviewReceived(subjectEmail, authorName, review.rating), {
+        kind: "reviewReceived",
+      }).catch(
         (err) => console.error("[review:email]", err)
       );
     }

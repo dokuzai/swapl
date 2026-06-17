@@ -171,6 +171,7 @@ describe("GET /api/profiles/{id}", () => {
         rating: 5,
         text: "Wonderful host, immaculate flat.",
         createdAt: "2026-04-01T00:00:00.000Z",
+        listing: null,
       },
     ]);
     expect(mocks.reviewFindMany.mock.calls[0][0]).toMatchObject({

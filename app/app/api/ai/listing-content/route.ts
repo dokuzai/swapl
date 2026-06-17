@@ -26,6 +26,9 @@ const schema = z.object({
   availableFrom: z.string().optional(),
   availableTo: z.string().optional(),
   hostNotes: z.string().max(2000).optional(),
+  // Uploaded photo URLs — when present and a vision model is configured, the
+  // description is written from the photos.
+  photoUrls: z.array(z.string().url()).max(10).optional(),
 });
 
 export async function POST(req: Request) {

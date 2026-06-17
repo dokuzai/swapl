@@ -91,9 +91,26 @@ export function PrivacyToggles({ initial }: { initial: UserSettings }) {
   );
 }
 
+// Per-category switches (granular notifications). settingKey/titleKey/bodyKey
+// stay in lock-step with lib/notifications/categories.ts CONTROLLABLE_CATEGORIES.
+const CATEGORY_ROWS: {
+  settingKey: keyof UserSettings;
+  titleKey: DictKey;
+  bodyKey: DictKey;
+}[] = [
+  { settingKey: "notifyMessages", titleKey: "account.notifications.messages", bodyKey: "account.notifications.messagesBody" },
+  { settingKey: "notifyProposals", titleKey: "account.notifications.proposals", bodyKey: "account.notifications.proposalsBody" },
+  { settingKey: "notifyTrips", titleKey: "account.notifications.trips", bodyKey: "account.notifications.tripsBody" },
+  { settingKey: "notifyReviews", titleKey: "account.notifications.reviews", bodyKey: "account.notifications.reviewsBody" },
+  { settingKey: "notifyKeys", titleKey: "account.notifications.keys", bodyKey: "account.notifications.keysBody" },
+  { settingKey: "notifyRecommendations", titleKey: "account.notifications.recommendations", bodyKey: "account.notifications.recommendationsBody" },
+];
+
 export function NotificationToggles({ initial }: { initial: UserSettings }) {
+  const t = useT();
   return (
     <div>
+      {/* Channel master switches */}
       <SettingToggleRow
         settingKey="emailNotifications"
         titleKey="account.notifications.email"
@@ -106,6 +123,23 @@ export function NotificationToggles({ initial }: { initial: UserSettings }) {
         bodyKey="account.notifications.pushBody"
         initial={initial.pushNotifications}
       />
+
+      {/* Per-category switches */}
+      <p className="text-xs font-semibold uppercase tracking-wide pt-6 pb-1" style={{ color: "var(--navy-2)" }}>
+        {t("account.notifications.categoriesTitle")}
+      </p>
+      {CATEGORY_ROWS.map((row) => (
+        <SettingToggleRow
+          key={row.settingKey}
+          settingKey={row.settingKey}
+          titleKey={row.titleKey}
+          bodyKey={row.bodyKey}
+          initial={initial[row.settingKey]}
+        />
+      ))}
+      <p className="text-sm pt-4" style={{ color: "var(--navy-2)" }}>
+        {t("account.notifications.safetyNote")}
+      </p>
     </div>
   );
 }

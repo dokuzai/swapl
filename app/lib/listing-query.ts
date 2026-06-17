@@ -246,3 +246,14 @@ export async function getViewerListing(userId: string | undefined | null): Promi
   // The viewer's own listing — they may see their exact pin.
   return l ? toDTO(l, { includeExactCoords: true }) : null;
 }
+
+// All of the viewer's own active listings (multi-property hosts), newest first.
+export async function getViewerListings(userId: string | undefined | null): Promise<ListingDTO[]> {
+  if (!userId) return [];
+  const ls = await prisma.listing.findMany({
+    where: { userId, isActive: true },
+    include: { user: { select: { name: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+  return ls.map((l) => toDTO(l, { includeExactCoords: true }));
+}

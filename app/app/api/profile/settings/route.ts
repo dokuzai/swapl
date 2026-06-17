@@ -31,6 +31,12 @@ const schema = z
     showHomeCity: z.boolean(),
     emailNotifications: z.boolean(),
     pushNotifications: z.boolean(),
+    notifyMessages: z.boolean(),
+    notifyProposals: z.boolean(),
+    notifyTrips: z.boolean(),
+    notifyReviews: z.boolean(),
+    notifyKeys: z.boolean(),
+    notifyRecommendations: z.boolean(),
   })
   .partial();
 

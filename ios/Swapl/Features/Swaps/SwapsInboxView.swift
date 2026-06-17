@@ -57,13 +57,17 @@ final class SwapsInboxViewModel {
         }
     }
 
+    // Transient error for a failed swipe action — shown as an alert, NOT the
+    // full-screen `error` state (which would replace the whole inbox).
+    var actionError: String?
+
     // Swipe-action mutations: accept/decline/archive/unarchive, then refresh.
     func perform(_ action: ProposalRepository.Action, on id: String) async {
         do {
             _ = try await ProposalRepository.shared.act(proposalId: id, action)
             await load()
         } catch {
-            self.error = error.localizedDescription
+            self.actionError = error.localizedDescription
         }
     }
 
@@ -79,6 +83,7 @@ final class SwapsInboxViewModel {
 struct SwapsInboxView: View {
     @State private var vm = SwapsInboxViewModel()
     @State private var isSearching = false
+    @State private var navPath = NavigationPath()
     @FocusState private var searchFieldFocused: Bool
     private let filters = ["All", "Hosting", "Traveling", "Archived"]
 
@@ -95,7 +100,7 @@ struct SwapsInboxView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navPath) {
             Group {
                 if vm.isLoading && !vm.hasLoaded {
                     ProgressView()
@@ -122,6 +127,16 @@ struct SwapsInboxView: View {
                 }
             }
             .background(SwaplSemanticLight.background)
+            // Tapping a conversation opens the chat (with the trip pinned on top);
+            // the pinned header pushes the full Trip screen via the String route.
+            .navigationDestination(for: ProposalSummary.self) { summary in
+                SwapChatView(
+                    proposalId: summary.id,
+                    otherName: summary.otherName,
+                    isPrincipal: true,
+                    tripSummary: summary
+                )
+            }
             .navigationDestination(for: String.self) { id in
                 ProposalDetailView(proposalId: id)
             }
@@ -129,6 +144,14 @@ struct SwapsInboxView: View {
             .toolbar(.hidden, for: .navigationBar)
             .task { await vm.load() }
             .refreshable { await vm.load() }
+            .alert(
+                String(localized: "Couldn't complete that"),
+                isPresented: Binding(get: { vm.actionError != nil }, set: { if !$0 { vm.actionError = nil } })
+            ) {
+                Button(String(localized: "OK"), role: .cancel) {}
+            } message: {
+                Text(vm.actionError ?? "")
+            }
         }
     }
 
@@ -158,43 +181,33 @@ struct SwapsInboxView: View {
                 .listRowBackground(Color.clear)
             } else {
                 ForEach(vm.proposals) { proposal in
-                    MessageRow(proposal: proposal)
-                        .contentShape(Rectangle())
-                        // Background NavigationLink keeps row tap → detail without
-                        // the List's default disclosure chevron.
-                        .background {
-                            NavigationLink(value: proposal.id) { EmptyView() }.opacity(0)
-                        }
+                    // Only the photo + name open the conversation (not the whole
+                    // row) — the rest of the row stays inert.
+                    MessageRow(proposal: proposal, onOpen: { navPath.append(proposal) })
+                        // Concluded / cancelled / declined threads fade to grey.
+                        .opacity(proposal.isInactive ? 0.5 : 1)
+                        .grayscale(proposal.isInactive ? 0.85 : 0)
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets(top: 11, leading: 22, bottom: 11, trailing: 22))
                         .listRowBackground(Color.clear)
-                        // Not full-swipe: accepting a swap should be a deliberate
-                        // tap on the revealed button, never an accidental flick.
+                        // Leading (swipe →): Accept / Reject — an incoming proposal
+                        // awaiting your reply. Not full-swipe (deliberate tap).
                         .swipeActions(edge: .leading, allowsFullSwipe: false) {
                             if proposal.canRespond {
                                 Button { Task { await vm.perform(.accept, on: proposal.id) } } label: {
                                     Label(String(localized: "Accept"), systemImage: "checkmark")
                                 }
                                 .tint(.green)
+                                Button(role: .destructive) { Task { await vm.perform(.decline, on: proposal.id) } } label: {
+                                    Label(String(localized: "Reject"), systemImage: "xmark")
+                                }
                             }
                         }
+                        // Trailing (swipe ←): Reply + Cancel (withdraw your own
+                        // pending proposal, otherwise archive the thread).
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            if proposal.canRespond {
-                                Button(role: .destructive) { Task { await vm.perform(.decline, on: proposal.id) } } label: {
-                                    Label(String(localized: "Decline"), systemImage: "xmark")
-                                }
-                            }
-                            if proposal.isArchivedByMe {
-                                Button { Task { await vm.perform(.unarchive, on: proposal.id) } } label: {
-                                    Label(String(localized: "Unarchive"), systemImage: "tray.and.arrow.up")
-                                }
-                                .tint(.blue)
-                            } else if !proposal.isTerminal {
-                                Button { Task { await vm.perform(.archive, on: proposal.id) } } label: {
-                                    Label(String(localized: "Archive"), systemImage: "archivebox")
-                                }
-                                .tint(.gray)
-                            }
+                            replySwipeButton(proposal)
+                            annullaSwipeButton(proposal)
                         }
                 }
             }
@@ -209,10 +222,8 @@ struct SwapsInboxView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(filters, id: \.self) { filter in
-                        Button {
-                            vm.selectedFilter = filter
-                        } label: {
-                            AirbnbChip(title: filterLabel(filter), selected: vm.selectedFilter == filter)
+                        Button { vm.selectedFilter = filter } label: {
+                            glassFilterChip(filter)
                         }
                         .buttonStyle(.plain)
                     }
@@ -223,6 +234,61 @@ struct SwapsInboxView: View {
                 .padding(.trailing, 22)
         }
         .padding(.top, 8)
+    }
+
+    // Archive / Unarchive swipe button (none for terminal threads already in
+    // Archived). Shared by both swipe edges so a swipe either way archives.
+    @ViewBuilder
+    private func archiveSwipeButton(_ proposal: ProposalSummary) -> some View {
+        if proposal.isArchivedByMe {
+            Button { Task { await vm.perform(.unarchive, on: proposal.id) } } label: {
+                Label(String(localized: "Unarchive"), systemImage: "tray.and.arrow.up")
+            }
+            .tint(.blue)
+        } else if !proposal.isTerminal {
+            Button { Task { await vm.perform(.archive, on: proposal.id) } } label: {
+                Label(String(localized: "Archive"), systemImage: "archivebox")
+            }
+            .tint(.gray)
+        }
+    }
+
+    // Liquid Glass filter chip (iOS 26): selected = pink fill, otherwise glass.
+    @ViewBuilder
+    private func glassFilterChip(_ filter: String) -> some View {
+        let selected = vm.selectedFilter == filter
+        let label = Text(filterLabel(filter))
+            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+            .foregroundStyle(selected ? SwaplSemanticLight.primaryForeground : AirbnbPalette.text)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+        if selected {
+            label.background(SwaplSemanticLight.primary, in: Capsule())
+        } else {
+            label.glassEffect(.regular.interactive(), in: .capsule)
+        }
+    }
+
+    private func replySwipeButton(_ proposal: ProposalSummary) -> some View {
+        Button { navPath.append(proposal) } label: {
+            Label(String(localized: "Reply"), systemImage: "arrowshape.turn.up.left")
+        }
+        .tint(SwaplSemanticLight.primary)
+    }
+
+    // "Cancel" the thread: withdraw your own still-pending proposal, otherwise
+    // archive/unarchive it (you can't withdraw the other party's proposal).
+    @ViewBuilder
+    private func annullaSwipeButton(_ proposal: ProposalSummary) -> some View {
+        let canWithdraw = proposal.meSide == "proposer"
+            && (proposal.status == "PENDING" || proposal.status == "COUNTERED")
+        if canWithdraw {
+            Button(role: .destructive) { Task { await vm.perform(.withdraw, on: proposal.id) } } label: {
+                Label(String(localized: "Cancel"), systemImage: "xmark.circle")
+            }
+        } else {
+            archiveSwipeButton(proposal)
+        }
     }
 
     private var sortMenu: some View {
@@ -236,8 +302,7 @@ struct SwapsInboxView: View {
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
                 .frame(width: 44, height: 44)
-                .background(SwaplSemanticLight.card, in: Circle())
-                .overlay(Circle().stroke(AirbnbPalette.hairline))
+                .glassEffect(.regular.interactive(), in: .circle)
         }
         .accessibilityLabel("Sort messages")
     }
@@ -287,7 +352,7 @@ struct SwapsInboxView: View {
                     .font(.system(size: 19, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(width: 48, height: 48)
-                    .background(SwaplSemanticLight.card, in: Circle())
+                    .glassEffect(.regular.interactive(), in: .circle)
             }
             .accessibilityLabel(isSearching ? "Close search" : "Search messages")
         }
@@ -296,19 +361,30 @@ struct SwapsInboxView: View {
 
 struct MessageRow: View {
     let proposal: ProposalSummary
+    var onOpen: () -> Void = {}
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            ProposalCoverImage(proposal: proposal)
-                .frame(width: 72, height: 72)
-                .accessibilityHidden(true)
+            Button(action: onOpen) {
+                ProposalCoverImage(proposal: proposal)
+                    .frame(width: 72, height: 72)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(proposal.otherName ?? proposal.theirCity))
 
             VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(proposal.otherName ?? proposal.theirCity)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .lineLimit(1)
+                HStack(alignment: .center, spacing: 8) {
+                    Circle()
+                        .fill(proposal.statusColor)
+                        .frame(width: 9, height: 9)
+                        .accessibilityLabel(proposal.statusLabel)
+                    Button(action: onOpen) {
+                        Text(proposal.otherName ?? proposal.theirCity)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                            .foregroundStyle(AirbnbPalette.text)
+                            .lineLimit(1)
+                    }
+                    .buttonStyle(.plain)
                     Spacer()
                     Text(shortDate(proposal.updatedAt))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
@@ -349,6 +425,7 @@ struct MessageRow: View {
 // letter-tile ProposalAvatar as the fallback (no photo, bad URL, load error).
 struct ProposalCoverImage: View {
     let proposal: ProposalSummary
+    var size: CGFloat = 72
 
     var body: some View {
         Group {
@@ -366,7 +443,7 @@ struct ProposalCoverImage: View {
                 ProposalAvatar(proposal: proposal)
             }
         }
-        .frame(width: 72, height: 72)
+        .frame(width: size, height: size)
         .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
     }
 }
@@ -583,15 +660,8 @@ struct ProposalDetailView: View {
                             ListingPhotoView(listing: tripListing, cornerRadius: SwaplDesignSystem.CornerRadius.large)
                         }
                         .clipped()
-                        .overlay(alignment: .topLeading) {
-                            Text(detail.proposal.status.capitalized)
-                                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
-                                .foregroundStyle(AirbnbPalette.text)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .background(.white, in: Capsule())
-                                .padding(18)
-                        }
+                        // Status lives once, in the header badge above — no
+                        // duplicate on the photo.
                         .overlay(alignment: .bottomTrailing) {
                             HStack(spacing: 6) {
                                 Text(String(localized: "View home & photos"))
@@ -811,12 +881,22 @@ struct ProposalDetailView: View {
     }
 
     private func statusBadge(_ status: String) -> some View {
-        Text(status.capitalized)
-            .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .bold))
-            .foregroundStyle(AirbnbPalette.text)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(AirbnbPalette.softBackground, in: Capsule())
+        let color: Color = {
+            switch status {
+            case "ACCEPTED": return .green
+            case "DECLINED", "WITHDRAWN": return .red
+            default: return .orange
+            }
+        }()
+        return HStack(spacing: 7) {
+            Circle().fill(color).frame(width: 8, height: 8)
+            Text(status.capitalized)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .bold))
+                .foregroundStyle(AirbnbPalette.text)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(AirbnbPalette.softBackground, in: Capsule())
     }
 
     private func infoCard(title: String, body: String) -> some View {

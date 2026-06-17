@@ -5,7 +5,8 @@
 // Falls back to a deterministic hand-built sentence so the listing flow is
 // never blocked when no AI key is configured.
 
-import { resolveAIConfig, chat, type ResolveOptions } from "./providers";
+import Anthropic from "@anthropic-ai/sdk";
+import { resolveAIConfig, chat, type ResolveOptions, type ProviderId } from "./providers";
 import { propertyLabelEn, type PropertyType } from "@/lib/types";
 
 export type ListingFacts = {
@@ -28,6 +29,7 @@ export type ListingFacts = {
   availableFrom?: string;
   availableTo?: string;
   hostNotes?: string; // optional free-text the user typed before clicking generate
+  photoUrls?: string[]; // when present + a vision model, the copy is written FROM the photos
 };
 
 export type ListingDraft = {
@@ -47,9 +49,27 @@ Rules:
 - No hashtags. No bullet points. No "discover" / "stunning" / "perfect" / "imagine yourself". No prices.
 - If the host left notes, weave them in faithfully — don't invent details.`;
 
+// Vision adds one line to the base prompt: ground the copy in what's visible.
+const VISION_SYSTEM_PROMPT = `${SYSTEM_PROMPT}
+
+The photos ARE the home. Describe what you can actually see — the light, the
+materials, the layout, any view or outdoor space — and only state facts the
+photos or the provided fields support. Never invent rooms or features.`;
+
 export async function draftListingCopy(facts: ListingFacts, opts: ResolveOptions = {}): Promise<ListingDraft> {
   const config = resolveAIConfig(opts);
   if (!config) return fallback(facts);
+
+  // Photo-grounded copy when a vision-capable model is configured and photos
+  // were uploaded. Degrades to the text-only path on any failure.
+  if (isVisionCapable(config.provider) && (facts.photoUrls?.length ?? 0) > 0) {
+    try {
+      const fromPhotos = await draftFromPhotos(facts, config.apiKey, config.model);
+      if (fromPhotos) return fromPhotos;
+    } catch (err) {
+      console.error("[ai:listing-content:vision]", err);
+    }
+  }
 
   const userPrompt = JSON.stringify({
     city: facts.city,
@@ -114,6 +134,98 @@ function sanitiseDescription(raw: unknown, _facts: ListingFacts): string | null 
   if (trimmed.length < 60) return null;
   if (trimmed.length > 4000) return trimmed.slice(0, 3997) + "…";
   return trimmed;
+}
+
+// ---------- vision path (photo-grounded copy) ----------
+
+const VISION_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const MAX_VISION_PHOTOS = 4;
+
+function isVisionCapable(provider: ProviderId): boolean {
+  return provider === "anthropic";
+}
+
+// SSRF guard: only fetch from the UploadThing CDN the app uploads photos to.
+function isAllowedPhotoUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "https:") return false;
+    const host = u.hostname.toLowerCase();
+    return host === "utfs.io" || host.endsWith(".ufs.sh") || host.endsWith(".utfs.io");
+  } catch {
+    return false;
+  }
+}
+
+type ImageBlock = {
+  type: "image";
+  source: { type: "base64"; media_type: (typeof VISION_IMAGE_TYPES)[number]; data: string };
+};
+
+async function buildPhotoBlocks(urls: string[]): Promise<ImageBlock[]> {
+  const blocks: ImageBlock[] = [];
+  for (const url of urls.slice(0, MAX_VISION_PHOTOS)) {
+    if (!isAllowedPhotoUrl(url)) continue;
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(10_000), redirect: "error" });
+      if (!res.ok) continue;
+      const contentType = (res.headers.get("content-type") ?? "").split(";")[0].trim();
+      if (!(VISION_IMAGE_TYPES as readonly string[]).includes(contentType)) continue;
+      const buf = Buffer.from(await res.arrayBuffer());
+      if (buf.byteLength === 0 || buf.byteLength > MAX_PHOTO_BYTES) continue;
+      blocks.push({
+        type: "image",
+        source: { type: "base64", media_type: contentType as ImageBlock["source"]["media_type"], data: buf.toString("base64") },
+      });
+    } catch {
+      // Skip unfetchable photos; degrade gracefully.
+    }
+  }
+  return blocks;
+}
+
+async function draftFromPhotos(facts: ListingFacts, apiKey: string, model: string): Promise<ListingDraft | null> {
+  const blocks = await buildPhotoBlocks(facts.photoUrls ?? []);
+  if (blocks.length === 0) return null;
+  const client = new Anthropic({ apiKey });
+  const out = await client.messages.create({
+    model,
+    max_tokens: 800,
+    temperature: 0.6,
+    system: VISION_SYSTEM_PROMPT,
+    messages: [
+      { role: "user", content: [...blocks, { type: "text" as const, text: factsForPrompt(facts) }] },
+    ],
+  });
+  const text = out.content.map((b) => (b.type === "text" ? b.text : "")).join("");
+  const parsed = JSON.parse(extractJson(text));
+  const title = sanitiseTitle(parsed.title, facts);
+  const description = sanitiseDescription(parsed.description, facts);
+  if (!title || !description) return null;
+  return { title, description, source: "ai" };
+}
+
+function factsForPrompt(facts: ListingFacts): string {
+  return JSON.stringify({
+    city: facts.city,
+    neighbourhood: facts.neighbourhood,
+    country: facts.country,
+    propertyType: facts.propertyType,
+    sizeSqm: facts.sizeSqm,
+    sleeps: facts.sleeps,
+    bedrooms: facts.bedrooms,
+    bathrooms: facts.bathrooms,
+    floor: facts.floor ?? null,
+    hasElevator: facts.hasElevator ?? false,
+    stepFreeAccess: facts.stepFreeAccess ?? false,
+    petsAllowed: facts.petsAllowed ?? false,
+    petTypes: facts.petTypes ?? [],
+    wfhSetup: facts.wfhSetup ?? false,
+    wfhDesks: facts.wfhDesks ?? 0,
+    amenities: facts.amenities ?? [],
+    hostNotes: facts.hostNotes ?? "",
+  });
 }
 
 function fallback(f: ListingFacts): ListingDraft {

@@ -723,6 +723,9 @@ model SwapReview {
   author      User          @relation("ReviewsAuthored", fields: [authorId], references: [id], onDelete: Cascade)
   subjectId   String
   subject     User          @relation("ReviewsReceived", fields: [subjectId], references: [id], onDelete: Cascade)
+  // The subject's listing this review is about (the home the author experienced
+  // in this swap). Nullable for reviews written before the field existed.
+  listingId   String?
   rating      Int           // 1..5, validated at the API layer (SQLite has no CHECK via Prisma)
   text        String
   createdAt   DateTime      @default(now())

@@ -6,6 +6,10 @@
 // here is a thin sync façade over the same templates so older call sites
 // don't break — both forms route through sendEmail().
 
+import { prisma } from "@/lib/db";
+import { notificationAllowed, type NotificationKind } from "@/lib/notifications/categories";
+import { parseSettings } from "@/lib/settings";
+
 type EmailMessage = {
   to: string;
   subject: string;
@@ -13,8 +17,30 @@ type EmailMessage = {
   html?: string;
 };
 
-export async function sendEmail(msg: EmailMessage | Promise<EmailMessage>): Promise<void> {
+// Pass `{ kind }` for notification mail so it honours the recipient's
+// preferences (granular notifications). Omit it for transactional mail
+// (password reset, login codes, email verification, receipts) — those must
+// always send and have no kind in the taxonomy.
+type SendEmailOptions = { kind?: NotificationKind };
+
+export async function sendEmail(
+  msg: EmailMessage | Promise<EmailMessage>,
+  opts: SendEmailOptions = {}
+): Promise<void> {
   const m = msg instanceof Promise ? await msg : msg;
+
+  if (opts.kind) {
+    const user = await prisma.user.findUnique({
+      where: { email: m.to },
+      select: { settings: true },
+    });
+    // Unknown recipient (e.g. an invite to someone not yet registered) has no
+    // preferences to honour — default to sending.
+    if (user && !notificationAllowed(parseSettings(user.settings), "email", opts.kind)) {
+      return;
+    }
+  }
+
   const key = process.env.RESEND_API_KEY;
   if (!key) {
     console.log(

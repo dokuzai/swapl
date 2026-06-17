@@ -14,6 +14,13 @@ final class ListingRepository: @unchecked Sendable {
         try await APIClient.shared.send("GET", "/api/listings/\(id)")
     }
 
+    // All of the caller's own listings (multi-property hosts).
+    struct MyListingsResponse: Decodable, Sendable { let items: [Listing] }
+    func myListings() async throws -> [Listing] {
+        let r: MyListingsResponse = try await APIClient.shared.send("GET", "/api/me/listings")
+        return r.items
+    }
+
     func create(_ draft: ListingCreateDraft) async throws -> ListingCreateResponse {
         try await APIClient.shared.send("POST", "/api/listings", body: draft)
     }

@@ -317,17 +317,20 @@ private fun HomeShell(
                 }
             }
             HomeDest.Swaps -> NavHost(navController = swapsNav, startDestination = "inbox") {
-                composable("inbox") { SwapsInboxScreen(onOpen = { id -> swapsNav.navigate("thread/$id") }) }
+                // Tapping a message opens the CONVERSATION directly; the trip is
+                // pinned at the top of the chat (→ the full Trip/thread screen).
+                composable("inbox") { SwapsInboxScreen(onOpen = { id -> swapsNav.navigate("chat/$id") }) }
                 composable("thread/{proposalId}", arguments = listOf(navArgument("proposalId") { type = NavType.StringType })) {
                     SwapThreadScreen(
                         onOpenProfile = { id -> swapsNav.navigate("profile/$id") },
                         onOpenChat = { id -> swapsNav.navigate("chat/$id") },
                     )
                 }
-                composable("chat/{proposalId}", arguments = listOf(navArgument("proposalId") { type = NavType.StringType })) {
+                composable("chat/{proposalId}", arguments = listOf(navArgument("proposalId") { type = NavType.StringType })) { backStackEntry ->
                     // Reading the thread clears its unread; refresh the badge on exit.
                     DisposableEffect(Unit) { onDispose { unreadVm.refresh() } }
-                    SwapChatScreen()
+                    val proposalId = backStackEntry.arguments?.getString("proposalId")
+                    SwapChatScreen(onOpenTrip = { proposalId?.let { swapsNav.navigate("thread/$it") } })
                 }
                 composable("profile/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
                     PublicProfileScreen()

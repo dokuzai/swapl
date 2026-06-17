@@ -7,8 +7,19 @@ export type UserSettings = {
   searchEngineIndexing: boolean;
   /** false → homeCity/homeCountry omitted from the public profile. */
   showHomeCity: boolean;
+  /** Channel master switches — gate the controllable category flags below. */
   emailNotifications: boolean;
   pushNotifications: boolean;
+  // Per-category switches (granular notifications). Each suppresses both the
+  // push and the email for its event group on top of the channel masters.
+  // Safety/trust categories (disputes, identity, verification) are always-on
+  // and intentionally have no flag — see lib/notifications/categories.ts.
+  notifyMessages: boolean;
+  notifyProposals: boolean;
+  notifyTrips: boolean;
+  notifyReviews: boolean;
+  notifyKeys: boolean;
+  notifyRecommendations: boolean;
 };
 
 export const DEFAULT_SETTINGS: UserSettings = {
@@ -16,6 +27,12 @@ export const DEFAULT_SETTINGS: UserSettings = {
   showHomeCity: true,
   emailNotifications: true,
   pushNotifications: true,
+  notifyMessages: true,
+  notifyProposals: true,
+  notifyTrips: true,
+  notifyReviews: true,
+  notifyKeys: true,
+  notifyRecommendations: true,
 };
 
 const KEYS = Object.keys(DEFAULT_SETTINGS) as (keyof UserSettings)[];

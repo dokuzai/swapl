@@ -148,7 +148,9 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       console.error("[participant:push]", err)
     );
     if (user.email) {
-      sendEmail(emailTemplates.swapParticipantInvited(user.email, fromName)).catch((err) =>
+      sendEmail(emailTemplates.swapParticipantInvited(user.email, fromName), {
+        kind: "swapParticipantInvited",
+      }).catch((err) =>
         console.error("[participant:email]", err)
       );
     }
@@ -197,7 +199,9 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       console.error("[participant:push]", err)
     );
     if (existingUser.email) {
-      sendEmail(emailTemplates.swapParticipantInvited(existingUser.email, fromName)).catch((err) =>
+      sendEmail(emailTemplates.swapParticipantInvited(existingUser.email, fromName), {
+        kind: "swapParticipantInvited",
+      }).catch((err) =>
         console.error("[participant:email]", err)
       );
     }
@@ -230,7 +234,9 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     update: { status: "pending", invitedById: session.userId },
   });
 
-  sendEmail(emailTemplates.swapParticipantInvited(email, fromName)).catch((err) =>
+  sendEmail(emailTemplates.swapParticipantInvited(email, fromName), {
+    kind: "swapParticipantInvited",
+  }).catch((err) =>
     console.error("[participant:email]", err)
   );
 

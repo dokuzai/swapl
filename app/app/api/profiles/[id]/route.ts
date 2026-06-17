@@ -85,6 +85,16 @@ export async function GET(req: Request, { params }: RouteContext<"/api/profiles/
     }),
   ]);
 
+  // Resolve the property each review is about (covers inactive listings too).
+  const reviewListingIds = [...new Set(reviews.map((r) => r.listingId).filter((x): x is string => !!x))];
+  const reviewListings = reviewListingIds.length
+    ? await prisma.listing.findMany({
+        where: { id: { in: reviewListingIds } },
+        select: { id: true, title: true, city: true, neighbourhood: true },
+      })
+    : [];
+  const reviewListingById = new Map(reviewListings.map((l) => [l.id, l]));
+
   // Visited cities, deduped (a repeat swap to the same city in the same year
   // collapses), newest first.
   const seen = new Set<string>();
@@ -137,6 +147,8 @@ export async function GET(req: Request, { params }: RouteContext<"/api/profiles/
       rating: r.rating,
       text: r.text,
       createdAt: r.createdAt.toISOString(),
+      // Which of this host's properties the review is about (null for older reviews).
+      listing: r.listingId ? reviewListingById.get(r.listingId) ?? null : null,
     })),
     listings: listings.map((l) => toDTO(l)),
   });

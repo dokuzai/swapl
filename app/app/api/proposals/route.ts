@@ -165,7 +165,8 @@ export async function POST(req: Request) {
         target.user.email,
         session.name ?? session.email,
         target.city
-      )
+      ),
+      { kind: "proposalReceived" }
     ).catch((err) => console.error("[proposal:email]", err));
   }
   sendPush(

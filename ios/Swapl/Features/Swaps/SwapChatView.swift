@@ -136,10 +136,16 @@ struct SwapChatView: View {
     // (DOK-187) — guests see the roster but none of the management affordances.
     let isPrincipal: Bool
 
-    init(proposalId: String, otherName: String?, isPrincipal: Bool) {
+    // When opened from the inbox we carry the trip summary so the conversation
+    // can pin a tappable trip header on top (→ the full Trip screen). Nil when
+    // opened from inside the Trip screen itself (no need to link back to it).
+    let tripSummary: ProposalSummary?
+
+    init(proposalId: String, otherName: String?, isPrincipal: Bool, tripSummary: ProposalSummary? = nil) {
         _vm = State(initialValue: SwapChatViewModel(proposalId: proposalId))
         self.otherName = otherName
         self.isPrincipal = isPrincipal
+        self.tripSummary = tripSummary
     }
 
     var body: some View {
@@ -151,12 +157,49 @@ struct SwapChatView: View {
         // Hide the bottom tab bar inside a conversation so the composer sits
         // flush at the bottom, like other messaging apps (WhatsApp etc.).
         .toolbar(.hidden, for: .tabBar)
-        .navigationTitle(otherName ?? String(localized: "Messages"))
         .navigationBarTitleDisplayMode(.inline)
+        // Telegram-style header: name + trip subtitle (tap → the Trip screen),
+        // with the home thumbnail as a round avatar on the right.
+        .toolbar {
+            ToolbarItem(placement: .principal) { chatTitle }
+            if let trip = tripSummary {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(value: trip.id) {
+                        ProposalCoverImage(proposal: trip, size: 32)
+                            .clipShape(Circle())
+                    }
+                    .accessibilityLabel(Text("Open trip"))
+                }
+            }
+        }
         .task { await vm.load() }
         .task(id: scenePhase) { await pollLoop() }
         .onChange(of: photoItems) { _, items in
             Task { await upload(items) }
+        }
+    }
+
+    @ViewBuilder
+    private var chatTitle: some View {
+        let name = otherName ?? String(localized: "Messages")
+        if let trip = tripSummary {
+            NavigationLink(value: trip.id) {
+                VStack(spacing: 1) {
+                    Text(name)
+                        .font(.swaplBody(16, weight: .bold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+                    Text(SwaplDateText.range(from: trip.dateFrom, to: trip.dateTo))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(1)
+                }
+            }
+            .buttonStyle(.plain)
+        } else {
+            Text(name)
+                .font(.swaplBody(16, weight: .bold))
+                .foregroundStyle(AirbnbPalette.text)
         }
     }
 
@@ -277,8 +320,7 @@ struct SwapChatView: View {
                         }
                     }
                     .frame(width: 44, height: 44)
-                    .background(SwaplSemanticLight.card, in: Circle())
-                    .overlay(Circle().stroke(AirbnbPalette.hairline))
+                    .glassEffect(.regular.interactive(), in: .circle)
                 }
                 .accessibilityLabel("Add photo")
 
@@ -290,8 +332,7 @@ struct SwapChatView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 11)
                     .frame(minHeight: 44)
-                    .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(AirbnbPalette.hairline))
+                    .glassEffect(.regular, in: .rect(cornerRadius: 22))
 
                 Button {
                     Task { await vm.send() }

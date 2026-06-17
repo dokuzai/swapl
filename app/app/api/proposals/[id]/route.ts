@@ -205,7 +205,9 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     // Pay-on-accept: a declined proposal can never be charged.
     await cancelInspirePackagePayment(id).catch((err) => console.error("[inspire:cancel-payment]", err));
     if (proposal.proposerListing.user.email) {
-      sendEmail(emailTemplates.proposalDeclined(proposal.proposerListing.user.email)).catch(console.error);
+      sendEmail(emailTemplates.proposalDeclined(proposal.proposerListing.user.email), {
+        kind: "proposalDeclined",
+      }).catch(console.error);
     }
     sendPush(proposal.proposerId, pushTemplates.proposalDeclined(proposal.id)).catch(console.error);
     return NextResponse.json({ ok: true });
@@ -232,7 +234,10 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       },
     });
     const otherEmail = isProposer ? proposal.targetListing.user.email : proposal.proposerListing.user.email;
-    if (otherEmail) sendEmail(emailTemplates.proposalCountered(otherEmail)).catch(console.error);
+    if (otherEmail)
+      sendEmail(emailTemplates.proposalCountered(otherEmail), { kind: "proposalCountered" }).catch(
+        console.error
+      );
     const otherUserId = isProposer ? proposal.targetListing.userId : proposal.proposerId;
     sendPush(otherUserId, pushTemplates.proposalCountered(proposal.id)).catch(console.error);
     return NextResponse.json({ ok: true });
@@ -416,7 +421,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
 
     // Notify both sides
     [proposal.proposerListing.user.email, proposal.targetListing.user.email].forEach((e) => {
-      if (e) sendEmail(emailTemplates.proposalAccepted(e)).catch(console.error);
+      if (e) sendEmail(emailTemplates.proposalAccepted(e), { kind: "proposalAccepted" }).catch(console.error);
     });
     [proposal.proposerId, proposal.targetListing.userId].forEach((uid) => {
       sendPush(uid, pushTemplates.proposalAccepted(proposal.id)).catch(console.error);

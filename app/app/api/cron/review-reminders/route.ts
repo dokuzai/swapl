@@ -53,7 +53,7 @@ export async function GET(req: Request) {
 
     for (const r of pending) {
       if (r.email) {
-        sendEmail(emailTemplates.reviewReminder(r.email, r.otherCity)).catch((err) =>
+        sendEmail(emailTemplates.reviewReminder(r.email, r.otherCity), { kind: "reviewReminder" }).catch((err) =>
           log.error("reminder email failed", err, { agreementId: a.id, userId: r.userId })
         );
       }

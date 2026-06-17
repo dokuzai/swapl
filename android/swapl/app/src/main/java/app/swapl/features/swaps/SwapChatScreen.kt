@@ -26,8 +26,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.DoneAll
@@ -345,6 +348,7 @@ class SwapChatViewModel @Inject constructor(
 @Composable
 fun SwapChatScreen(
     otherName: String? = null,
+    onOpenTrip: () -> Unit = {},
     vm: SwapChatViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
@@ -376,6 +380,25 @@ fun SwapChatScreen(
     }
 
     Column(Modifier.fillMaxSize()) {
+        // Pinned trip access: the conversation is bound to a swap, so keep a tap
+        // target to the full Trip screen at the very top.
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onOpenTrip)
+                .padding(horizontal = SwaplSpacing.s4, vertical = SwaplSpacing.s3),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(SwaplSpacing.s2),
+        ) {
+            Text(
+                text = stringResource(R.string.chat_view_trip),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+        }
+        HorizontalDivider()
+
         // People panel (DOK-187) — who's in this conversation, plus invite/remove
         // for principals. Guests see the roster but no controls.
         if (vm.participants.isNotEmpty()) {

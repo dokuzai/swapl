@@ -8,6 +8,37 @@ import Foundation
 final class AIDraftRepository: @unchecked Sendable {
     static let shared = AIDraftRepository()
 
+    // POST /api/ai/listing-content — draft a listing title + description from the
+    // form facts and (when a vision model is set) the uploaded photos.
+    struct ListingContentRequest: Encodable, Sendable {
+        let city: String
+        let neighbourhood: String
+        let country: String?
+        let propertyType: String
+        let sizeSqm: Int
+        let sleeps: Int
+        let bedrooms: Int
+        let bathrooms: Int
+        let floor: Int?
+        let hasElevator: Bool?
+        let stepFreeAccess: Bool?
+        let petsAllowed: Bool?
+        let wfhSetup: Bool?
+        let amenities: [String]?
+        let hostNotes: String?
+        let photoUrls: [String]?
+    }
+
+    struct ListingContentResponse: Decodable, Sendable {
+        let title: String
+        let description: String
+        let source: String?
+    }
+
+    func listingContent(_ body: ListingContentRequest) async throws -> ListingContentResponse {
+        try await APIClient.shared.send("POST", "/api/ai/listing-content", body: body)
+    }
+
     struct ProposalMessageRequest: Encodable, Sendable {
         let proposerListingId: String
         let targetListingId: String

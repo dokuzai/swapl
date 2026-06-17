@@ -3,13 +3,14 @@ import CoreLocation
 import MapKit
 import PhotosUI
 import UIKit
+import ImageIO
 import SwaplDesignTokens
 
 struct AccountView: View {
     @Environment(AuthService.self) private var auth
     @State private var isConfirmingSignOut = false
     @State private var isCreatingListing = false
-    @State private var myListing: Listing?
+    @State private var myListings: [Listing] = []
     @State private var editingListing: Listing?
     @State private var helpItem: SafariItem?
     @State private var isChangingPassword = false
@@ -29,7 +30,7 @@ struct AccountView: View {
                         // Didit identity check — hides itself when the feature
                         // is off server-side or the user is already verified.
                         IdentityVerificationCard()
-                        becomeHostCard
+                        hostSection
                         keysCard
                         inviteCard
                         Color.clear.frame(height: 20)
@@ -120,16 +121,16 @@ struct AccountView: View {
             }
             .toolbar(.hidden, for: .navigationBar)
             .fullScreenCover(isPresented: $isCreatingListing, onDismiss: {
-                Task { await loadMyListing() }
+                Task { await loadMyListings() }
             }) {
                 ListingCreationView()
             }
             .fullScreenCover(item: $editingListing) { listing in
                 ListingCreationView(editing: listing) {
-                    Task { await loadMyListing() }
+                    Task { await loadMyListings() }
                 }
             }
-            .task { await loadMyListing() }
+            .task { await loadMyListings() }
             .task { await loadMe() }
             .sheet(isPresented: $isChangingPassword) {
                 ChangePasswordSheet()
@@ -241,30 +242,91 @@ struct AccountView: View {
         }
     }
 
+    // Host section: the empty-state CTA, or the list of the member's properties
+    // (multi-listing) plus an "add another" row.
+    @ViewBuilder
+    private var hostSection: some View {
+        if myListings.isEmpty {
+            becomeHostCard
+        } else {
+            VStack(spacing: 12) {
+                ForEach(myListings) { listing in
+                    Button { editingListing = listing } label: { listingRow(listing) }
+                        .buttonStyle(.plain)
+                }
+                Button { isCreatingListing = true } label: { addPropertyRow }
+                    .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private func listingRow(_ listing: Listing) -> some View {
+        HStack(spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                    .fill(SwaplSemanticLight.accent)
+                Image(systemName: "house.fill")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+            }
+            .frame(width: 56, height: 56)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(listing.title)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .lineLimit(1)
+                Text("\(listing.neighbourhood), \(listing.city)")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .lineLimit(1)
+            }
+            Spacer()
+            Image(systemName: "square.and.pencil")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
+    }
+
+    private var addPropertyRow: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "plus.circle.fill")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+            Text(String(localized: "Add another property"))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+            Spacer()
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SwaplSemanticLight.accent.opacity(0.5), in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
+    }
+
     private var becomeHostCard: some View {
         Button {
-            if let myListing {
-                editingListing = myListing
-            } else {
-                isCreatingListing = true
-            }
+            isCreatingListing = true
         } label: {
             HStack(spacing: 18) {
                 ZStack {
                     RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
                         .fill(SwaplSemanticLight.accent)
-                    Image(systemName: myListing == nil ? "house.and.flag" : "square.and.pencil")
+                    Image(systemName: "house.and.flag")
                         .font(.system(size: 32, weight: .semibold))
                         .foregroundStyle(SwaplSemanticLight.primary)
                 }
                 .frame(width: 86, height: 86)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(myListing == nil ? String(localized: "Become a host") : String(localized: "Edit your home"))
+                    Text(String(localized: "Become a host"))
                         .font(.swaplDisplay(23, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
-                    Text(myListing.map { String(localized: "Update \"\($0.title)\" — photos, dates, amenities.") }
-                        ?? String(localized: "Create your home listing and start proposing swaps."))
+                    Text(String(localized: "Create your home listing and start proposing swaps."))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(2)
@@ -397,17 +459,12 @@ struct AccountView: View {
     // The user's own published listing, if any. The search response carries
     // viewerListingId (the session user's active listing); the detail endpoint
     // then provides the full model used to prefill the edit wizard.
-    private func loadMyListing() async {
+    private func loadMyListings() async {
         guard auth.session != nil else { return }
         do {
-            let search = try await ListingRepository.shared.search(filters: SearchFilters())
-            guard let id = search.viewerListingId else {
-                myListing = nil
-                return
-            }
-            myListing = try await ListingRepository.shared.detail(id: id).listing
+            myListings = try await ListingRepository.shared.myListings()
         } catch {
-            // Non-fatal: the card simply stays in "Become a host" mode.
+            // Non-fatal: an empty list just shows the "Become a host" CTA.
         }
     }
 
@@ -487,6 +544,7 @@ struct ListingCreationView: View {
     @State private var createdListingId: String?
     @State private var photoItems: [PhotosPickerItem] = []
     @State private var uploadingPhotos = false
+    @State private var isGeneratingCopy = false
 
     // Publish acknowledgment (DOK-162). The host picks the hosting mode and must
     // tick a self-attestation before a NEW listing can publish; never shown when
@@ -499,7 +557,7 @@ struct ListingCreationView: View {
     private let editingListingId: String?
     private let onSaved: (() -> Void)?
 
-    private let steps = ["Location", "Space", "Amenities", "Dates", "Review"]
+    private let steps = ["Photos", "Location", "Space", "Amenities", "Dates", "Review"]
 
     init(extractedInfo: ExtractedListingInfo? = nil) {
         editingListingId = nil
@@ -602,15 +660,30 @@ struct ListingCreationView: View {
     private var currentStep: some View {
         switch step {
         case 0:
-            locationStep
+            photosStep
         case 1:
-            spaceStep
+            locationStep
         case 2:
-            amenitiesStep
+            spaceStep
         case 3:
+            amenitiesStep
+        case 4:
             datesStep
         default:
             reviewStep
+        }
+    }
+
+    private var photosStep: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Start with the photos")
+                .font(.swaplDisplay(26, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+            Text("Add your home's photos first — we read the location from them where possible and draft the description for you. You confirm and tweak everything in the next steps.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+            photosSection
         }
     }
 
@@ -646,6 +719,7 @@ struct ListingCreationView: View {
             spaceTypeSelector
             ListingField(title: "Title", text: $draft.title, placeholder: "Sunny apartment near the water")
             ListingLongField(title: "Description", text: $draft.description, placeholder: "Describe the home, light, neighbourhood, and what makes the stay easy.")
+            generateWithAIButton
             ListingPicker(title: "Property type", selection: $draft.propertyType, values: ["APARTMENT", "HOUSE", "ROOM", "STUDIO"])
             StepperCard(title: "Size", value: $draft.sizeSqm, range: 20...800, suffix: "sqm", step: 5)
             StepperCard(title: "Guests", value: $draft.sleeps, range: 1...20, suffix: "guests")
@@ -698,7 +772,6 @@ struct ListingCreationView: View {
             DateCard(title: "Available to", date: $draft.availableTo)
             StepperCard(title: "Minimum stay", value: $draft.minStayDays, range: 1...180, suffix: "nights")
             StepperCard(title: "Maximum stay", value: $draft.maxStayDays, range: 1...365, suffix: "nights")
-            photosSection
         }
     }
 
@@ -763,17 +836,75 @@ struct ListingCreationView: View {
         }
     }
 
+    // AI: draft a title + description from the photos (vision) and the facts
+    // entered so far. Needs a location, so it's enabled once city is set.
+    private var generateWithAIButton: some View {
+        Button {
+            Task { await generateListingCopy() }
+        } label: {
+            HStack(spacing: 8) {
+                if isGeneratingCopy {
+                    ProgressView().tint(SwaplSemanticLight.primary)
+                } else {
+                    Image(systemName: "sparkles")
+                }
+                Text(isGeneratingCopy
+                     ? String(localized: "Writing from your photos…")
+                     : String(localized: "Generate with AI"))
+            }
+            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+            .foregroundStyle(SwaplSemanticLight.primary)
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background(SwaplSemanticLight.accent.opacity(0.5), in: Capsule())
+        }
+        .disabled(isGeneratingCopy || draft.city.isEmpty || draft.neighbourhood.isEmpty)
+    }
+
+    private func generateListingCopy() async {
+        isGeneratingCopy = true
+        error = nil
+        defer { isGeneratingCopy = false }
+        do {
+            let result = try await AIDraftRepository.shared.listingContent(
+                AIDraftRepository.ListingContentRequest(
+                    city: draft.city,
+                    neighbourhood: draft.neighbourhood,
+                    country: draft.country.isEmpty ? nil : draft.country,
+                    propertyType: draft.propertyType,
+                    sizeSqm: draft.sizeSqm,
+                    sleeps: draft.sleeps,
+                    bedrooms: draft.bedrooms,
+                    bathrooms: draft.bathrooms,
+                    floor: nil,
+                    hasElevator: draft.hasElevator,
+                    stepFreeAccess: draft.stepFreeAccess,
+                    petsAllowed: draft.petsAllowed,
+                    wfhSetup: draft.wfhSetup,
+                    amenities: nil,
+                    // Pass any text the host already wrote as guidance.
+                    hostNotes: draft.description.isEmpty ? nil : draft.description,
+                    photoUrls: draft.photos.isEmpty ? nil : draft.photos
+                )
+            )
+            draft.title = result.title
+            draft.description = result.description
+        } catch {
+            self.error = String(localized: "Couldn't generate the copy. Try again, or write it yourself.")
+        }
+    }
+
     private func uploadPhotos(_ items: [PhotosPickerItem]) async {
         guard !items.isEmpty else { return }
         uploadingPhotos = true
         error = nil
         defer { uploadingPhotos = false }
         var urls: [String] = []
+        var firstOriginal: Data?
         for item in items {
-            guard
-                let data = try? await item.loadTransferable(type: Data.self),
-                let jpeg = Self.downscaledJPEG(from: data)
-            else { continue }
+            guard let data = try? await item.loadTransferable(type: Data.self) else { continue }
+            if firstOriginal == nil { firstOriginal = data }   // keep EXIF before downscale
+            guard let jpeg = Self.downscaledJPEG(from: data) else { continue }
             do {
                 let url = try await APIClient.shared.uploadListingPhoto(jpeg)
                 urls.append(url)
@@ -787,6 +918,50 @@ struct ListingCreationView: View {
             draft.photos.append(contentsOf: urls.filter { !draft.photos.contains($0) })
         }
         photoItems = []
+
+        // Pull the location from the photo's GPS EXIF, if present and the host
+        // hasn't already entered a city — they confirm it on the Location step.
+        if draft.city.isEmpty, let data = firstOriginal, let coord = Self.gpsCoordinate(from: data) {
+            await prefillLocation(from: coord)
+        }
+    }
+
+    // GPS coordinate from a photo's EXIF metadata (nil when the photo carries no
+    // location — e.g. stripped on share or shot with location off).
+    private static func gpsCoordinate(from data: Data) -> CLLocationCoordinate2D? {
+        guard
+            let src = CGImageSourceCreateWithData(data as CFData, nil),
+            let props = CGImageSourceCopyPropertiesAtIndex(src, 0, nil) as? [CFString: Any],
+            let gps = props[kCGImagePropertyGPSDictionary] as? [CFString: Any],
+            let lat = gps[kCGImagePropertyGPSLatitude] as? Double,
+            let lon = gps[kCGImagePropertyGPSLongitude] as? Double,
+            let latRef = gps[kCGImagePropertyGPSLatitudeRef] as? String,
+            let lonRef = gps[kCGImagePropertyGPSLongitudeRef] as? String
+        else { return nil }
+        return CLLocationCoordinate2D(
+            latitude: latRef == "S" ? -lat : lat,
+            longitude: lonRef == "W" ? -lon : lon
+        )
+    }
+
+    // Reverse-geocode the EXIF coordinate and prefill the location fields. The
+    // host confirms/edits on the Location step. CLGeocoder is the only API with
+    // sub-locality (neighbourhood); deprecated on iOS 26 with no replacement.
+    @available(iOS, deprecated: 26.0, message: "CLGeocoder is the only source of subLocality")
+    private func prefillLocation(from coord: CLLocationCoordinate2D) async {
+        let location = CLLocation(latitude: coord.latitude, longitude: coord.longitude)
+        guard let placemark = try? await CLGeocoder().reverseGeocodeLocation(location).first else { return }
+        draft.lat = coord.latitude
+        draft.lng = coord.longitude
+        if draft.city.isEmpty, let city = placemark.locality { draft.city = city }
+        if draft.neighbourhood.isEmpty, let hood = placemark.subLocality ?? placemark.locality {
+            draft.neighbourhood = hood
+        }
+        if draft.country.isEmpty, let country = placemark.country { draft.country = country }
+        if draft.address.isEmpty {
+            let street = [placemark.thoroughfare, placemark.subThoroughfare].compactMap { $0 }.joined(separator: " ")
+            if !street.isEmpty { draft.address = street }
+        }
     }
 
     // Re-encode to a reasonably-sized JPEG so HEIC/large originals upload
@@ -1399,6 +1574,12 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
     }
 
+    // True only between the user tapping "use my current location" and the
+    // permission prompt resolving. Gates the authorization-change callback so a
+    // freshly-created manager (every time the edit screen appears) never
+    // auto-locates and silently overwrites the address.
+    private var awaitingAuthorizationToLocate = false
+
     func requestCurrentHomeLocation() {
         // Don't call CLLocationManager.locationServicesEnabled() here: it blocks
         // the main thread (UIKit unresponsiveness warning). Apple's guidance is
@@ -1407,6 +1588,7 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
         // locationManager(_:didFailWithError:) shows the fallback message.
         switch manager.authorizationStatus {
         case .notDetermined:
+            awaitingAuthorizationToLocate = true
             statusText = String(localized: "Allow location access to prefill your home details.")
             manager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
@@ -1421,6 +1603,11 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let status = manager.authorizationStatus
         Task { @MainActor in
+            // Only react to the permission prompt the user themselves triggered.
+            // Without this guard the callback fires on every screen appearance
+            // and overwrites a manually-entered address.
+            guard awaitingAuthorizationToLocate else { return }
+            awaitingAuthorizationToLocate = false
             switch status {
             case .authorizedWhenInUse, .authorizedAlways:
                 locate()

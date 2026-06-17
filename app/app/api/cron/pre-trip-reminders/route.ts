@@ -44,7 +44,9 @@ export async function GET(req: Request) {
     ];
     for (const r of recipients) {
       if (r.email) {
-        sendEmail(emailTemplates.preTripReminder(r.email, r.destinationCity, a.dateFrom)).catch(
+        sendEmail(emailTemplates.preTripReminder(r.email, r.destinationCity, a.dateFrom), {
+          kind: "preTripReminder",
+        }).catch(
           (err) => log.error("reminder email failed", err, { agreementId: a.id, userId: r.userId })
         );
       }

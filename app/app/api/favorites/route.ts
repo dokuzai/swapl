@@ -16,11 +16,24 @@ export async function GET(req: Request) {
     include: { listing: { include: { user: { select: { name: true } } } } },
   });
 
-  const items = favorites.map((f) =>
-    toDTO(f.listing, {
+  // Host rating (avg of published reviews) per listing owner — lets the wishlist
+  // sort by "feedback".
+  const ownerIds = [...new Set(favorites.map((f) => f.listing.userId))];
+  const ratingAgg = ownerIds.length
+    ? await prisma.swapReview.groupBy({
+        by: ["subjectId"],
+        where: { subjectId: { in: ownerIds }, status: "published" },
+        _avg: { rating: true },
+      })
+    : [];
+  const ratingByOwner = new Map(ratingAgg.map((r) => [r.subjectId, r._avg.rating]));
+
+  const items = favorites.map((f) => ({
+    ...toDTO(f.listing, {
       includeAddress: f.listing.userId === session.userId,
       includeExactCoords: f.listing.userId === session.userId,
-    })
-  );
+    }),
+    hostRating: ratingByOwner.get(f.listing.userId) ?? null,
+  }));
   return NextResponse.json({ items });
 }

@@ -49,7 +49,7 @@ export async function GET(req: Request) {
     ];
     for (const r of recipients) {
       if (r.email) {
-        sendEmail(emailTemplates.swapCompleted(r.email, r.otherCity)).catch((err) =>
+        sendEmail(emailTemplates.swapCompleted(r.email, r.otherCity), { kind: "swapCompleted" }).catch((err) =>
           log.error("completion email failed", err, { agreementId: a.id, userId: r.userId })
         );
       }
