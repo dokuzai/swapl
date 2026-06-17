@@ -33,3 +33,9 @@ export const CITY_GUIDES: Record<string, CityGuide> = {
 export function getCityGuide(slug: string): CityGuide | null {
   return CITY_GUIDES[slug.toLowerCase()] ?? null;
 }
+
+// Slug + display fields for every guide we ship — used to suggest alternatives
+// when a requested city has no guide yet.
+export function allCityGuides(): Array<{ slug: string; city: string; country: string }> {
+  return Object.entries(CITY_GUIDES).map(([slug, g]) => ({ slug, city: g.city, country: g.country }));
+}

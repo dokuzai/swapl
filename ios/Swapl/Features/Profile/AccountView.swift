@@ -630,7 +630,9 @@ struct ListingCreationView: View {
                 action: { locationService.requestCurrentHomeLocation() }
             )
 
-            AddressSearchField(text: $draft.address)
+            AddressSearchField(text: $draft.address) { resolved in
+                applyResolvedAddress(resolved)
+            }
             // F23: Italian-market placeholder examples (was Istanbul / Cihangir
             // / Turkey). These are sample hints only, not stored values.
             ListingField(title: String(localized: "City"), text: $draft.city, placeholder: String(localized: "e.g. Roma"))
@@ -1022,6 +1024,18 @@ struct ListingCreationView: View {
         draft.lat = address.latitude
         draft.lng = address.longitude
     }
+
+    // A place tapped in the address autocomplete fills the same fields as the
+    // GPS path. Coordinates are stored exactly; the server fuzzes them for the
+    // public map.
+    private func applyResolvedAddress(_ resolved: ResolvedAddress) {
+        if !resolved.address.isEmpty { draft.address = resolved.address }
+        if !resolved.city.isEmpty { draft.city = resolved.city }
+        if !resolved.neighbourhood.isEmpty { draft.neighbourhood = resolved.neighbourhood }
+        if !resolved.country.isEmpty { draft.country = resolved.country }
+        draft.lat = resolved.latitude
+        draft.lng = resolved.longitude
+    }
 }
 
 private struct ListingCreationDraft {
@@ -1219,6 +1233,12 @@ private struct ListingField: View {
 
 private struct AddressSearchField: View {
     @Binding var text: String
+    // Called when the host taps a suggestion: fills address/city/neighbourhood/
+    // country/coords on the draft.
+    var onSelect: (ResolvedAddress) -> Void
+
+    @State private var search = LocationSearchService()
+    @FocusState private var focused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
@@ -1232,6 +1252,14 @@ private struct AddressSearchField: View {
                 TextField("Search or enter your home address", text: $text)
                     .font(.swaplBody(17))
                     .textInputAutocapitalization(.words)
+                    .autocorrectionDisabled()
+                    .focused($focused)
+                    .onChange(of: text) { _, newValue in
+                        search.updateSearch(newValue)
+                    }
+                if search.isSearching {
+                    ProgressView().scaleEffect(0.8)
+                }
             }
             .padding(.horizontal, 18)
             .frame(height: 58)
@@ -1239,10 +1267,65 @@ private struct AddressSearchField: View {
             .overlay {
                 Capsule().stroke(AirbnbPalette.hairline)
             }
+
+            if focused && !search.suggestions.isEmpty {
+                suggestionsDropdown
+            }
+
             Text("Only the approximate area is shown publicly.")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                 .foregroundStyle(AirbnbPalette.secondaryText)
         }
+    }
+
+    private var suggestionsDropdown: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(search.suggestions.prefix(5).enumerated()), id: \.offset) { index, suggestion in
+                Button {
+                    Task {
+                        if let resolved = await search.resolveAddress(suggestion) {
+                            text = resolved.address
+                            onSelect(resolved)
+                        }
+                        search.clearSearch()
+                        focused = false
+                    }
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: "mappin.circle")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(SwaplSemanticLight.primary)
+                            .frame(width: 24)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(suggestion.title)
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                                .foregroundStyle(AirbnbPalette.text)
+                                .lineLimit(1)
+                            if !suggestion.subtitle.isEmpty {
+                                Text(suggestion.subtitle)
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                                    .foregroundStyle(AirbnbPalette.secondaryText)
+                                    .lineLimit(1)
+                            }
+                        }
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 12)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+
+                if index < min(search.suggestions.count, 5) - 1 {
+                    Divider().overlay(AirbnbPalette.hairline).padding(.leading, 50)
+                }
+            }
+        }
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                .stroke(AirbnbPalette.hairline)
+        )
     }
 }
 
@@ -1317,11 +1400,11 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
     }
 
     func requestCurrentHomeLocation() {
-        guard CLLocationManager.locationServicesEnabled() else {
-            statusText = String(localized: "Location services are off. Enter the address manually.")
-            return
-        }
-
+        // Don't call CLLocationManager.locationServicesEnabled() here: it blocks
+        // the main thread (UIKit unresponsiveness warning). Apple's guidance is
+        // to gate on authorizationStatus and let the delegate report problems —
+        // if Location Services are off system-wide, requestLocation() fails and
+        // locationManager(_:didFailWithError:) shows the fallback message.
         switch manager.authorizationStatus {
         case .notDetermined:
             statusText = String(localized: "Allow location access to prefill your home details.")
@@ -1397,7 +1480,9 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
                 .filter { !$0.isEmpty }
                 .uniqued()
                 .joined(separator: ", ")
-            apply(city: city, country: country, address: address, location: location)
+            // MapKit gives no sub-locality — read the neighbourhood separately.
+            let neighbourhood = await subLocality(for: location) ?? ""
+            apply(city: city, neighbourhood: neighbourhood, country: country, address: address, location: location)
         } catch {
             statusText = String(localized: "Location found, but address lookup failed. Enter the address manually.")
         }
@@ -1420,22 +1505,36 @@ private final class ListingLocationService: NSObject, ObservableObject, CLLocati
                 .filter { !$0.isEmpty }
                 .uniqued()
                 .joined(separator: ", ")
-            apply(city: city, country: country, address: address, location: location)
+            apply(city: city, neighbourhood: placemark?.subLocality ?? "", country: country, address: address, location: location)
         } catch {
             statusText = String(localized: "Location found, but address lookup failed. Enter the address manually.")
         }
     }
 
-    private func apply(city: String, country: String, address: String, location: CLLocation) {
+    private func apply(city: String, neighbourhood: String, country: String, address: String, location: CLLocation) {
+        // Prefer the real sub-locality (the Turkish "mahalle", a district name);
+        // only fall back to guessing from the address string when it's missing.
+        let hood = neighbourhood.isEmpty ? inferNeighbourhood(from: address, fallback: city) : neighbourhood
         detectedAddress = DetectedHomeAddress(
             city: city,
-            neighbourhood: inferNeighbourhood(from: address, fallback: city),
+            neighbourhood: hood,
             country: country,
             address: address,
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude
         )
         statusText = city.isEmpty ? "Location found. Add the address details manually." : "Filled from your current location."
+    }
+
+    // MapKit's reverse geocoding (MKAddressRepresentations) returns city/region
+    // but NOT the sub-locality / neighbourhood. CLGeocoder is the only API that
+    // surfaces it, so we use it solely to read `subLocality`. It's deprecated on
+    // iOS 26 with no replacement for this field — a deliberate, narrow use. The
+    // annotation keeps the deprecated call from warning inside this helper.
+    @available(iOS, deprecated: 26.0, message: "CLGeocoder is the only source of subLocality; MapKit has no equivalent")
+    private func subLocality(for location: CLLocation) async -> String? {
+        let placemark = try? await CLGeocoder().reverseGeocodeLocation(location).first
+        return placemark?.subLocality
     }
 
     private func inferNeighbourhood(from address: String, fallback: String) -> String {

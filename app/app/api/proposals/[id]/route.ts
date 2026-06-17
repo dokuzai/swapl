@@ -18,6 +18,8 @@ const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
   z.object({ action: z.literal("decline") }),
   z.object({ action: z.literal("withdraw") }),
+  z.object({ action: z.literal("archive") }),
+  z.object({ action: z.literal("unarchive") }),
   z.object({
     action: z.literal("counter"),
     counterDateFrom: z.coerce.date(),
@@ -48,6 +50,10 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
   if (!isProposer && !isTarget) {
     return forbidden();
   }
+  // Ownership keyed off the listing's userId so the reveal gate is exact
+  // regardless of which side proposed the swap.
+  const ownsProposer = proposal.proposerListing.userId === session.userId;
+  const ownsTarget = proposal.targetListing.userId === session.userId;
 
   const other = isProposer ? proposal.targetListing.user : proposal.proposerListing.user;
 
@@ -114,8 +120,18 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
       createdAt: proposal.createdAt.toISOString(),
       updatedAt: proposal.updatedAt.toISOString(),
     },
-    proposerListing: toDTO(proposal.proposerListing),
-    targetListing: toDTO(proposal.targetListing),
+    // Each party always sees their OWN home's exact address + pin. The other
+    // home's exact location is revealed only once the swap reveal gate opens
+    // (addressUnlocked — dateFrom-48h or both guides complete); until then they
+    // get the fuzzed area coordinate and a null address, like any public viewer.
+    proposerListing: toDTO(proposal.proposerListing, {
+      includeAddress: ownsProposer || addressUnlocked,
+      includeExactCoords: ownsProposer || addressUnlocked,
+    }),
+    targetListing: toDTO(proposal.targetListing, {
+      includeAddress: ownsTarget || addressUnlocked,
+      includeExactCoords: ownsTarget || addressUnlocked,
+    }),
     other,
     agreement,
   });
@@ -147,6 +163,17 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
   }
 
   const action = parsed.data.action;
+
+  // Per-party inbox archive: hides the thread from MY inbox only (sets my side's
+  // flag). Allowed in any state, never touches the other party's view.
+  if (action === "archive" || action === "unarchive") {
+    const at = action === "archive" ? new Date() : null;
+    await prisma.swapProposal.update({
+      where: { id },
+      data: isProposer ? { proposerArchivedAt: at } : { targetArchivedAt: at },
+    });
+    return NextResponse.json({ ok: true });
+  }
 
   // Moderation: a swap cannot advance (accept/counter) while either party is
   // suspended — covers both a suspended caller and a suspended counterparty.

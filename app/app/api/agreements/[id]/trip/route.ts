@@ -86,6 +86,10 @@ export async function GET(req: Request, { params }: RouteContext<"/api/agreement
       : null,
     addressUnlocked: gating.unlocked,
     otherAddress: gating.unlocked ? party.otherListing.address ?? null : null,
+    // Exact pin for the home the caller is travelling to — only once the reveal
+    // gate is open, so the guest can navigate to the door.
+    otherLat: gating.unlocked ? party.otherListing.lat ?? null : null,
+    otherLng: gating.unlocked ? party.otherListing.lng ?? null : null,
     otherCity: party.otherListing.city,
     otherGuide,
     myGuideCompleteness: myCompleteness,
@@ -97,6 +101,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/agreement
       type: e.type,
       note: e.note,
       photos: JSON.parse(e.photos || "[]") as string[],
+      videoUrl: e.videoUrl,
       createdAt: e.createdAt.toISOString(),
       mine: e.userId === session.userId,
     })),

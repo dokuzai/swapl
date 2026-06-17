@@ -1,4 +1,5 @@
 import SwiftUI
+import AVKit
 import SwaplDesignTokens
 
 // The trip cockpit (DOK-152): shown inside ProposalDetailView once a swap has
@@ -31,14 +32,14 @@ final class TripCockpitViewModel {
         }
     }
 
-    func submitCheckEvent(type: String, note: String, photos: [String]) async -> Bool {
+    func submitCheckEvent(type: String, note: String, photos: [String], videoUrl: String?) async -> Bool {
         isCheckingIn = true
         defer { isCheckingIn = false }
         do {
             if type == "checkin" {
-                _ = try await TripRepository.shared.checkIn(agreementId: agreementId, note: note, photos: photos)
+                _ = try await TripRepository.shared.checkIn(agreementId: agreementId, note: note, photos: photos, videoUrl: videoUrl)
             } else {
-                _ = try await TripRepository.shared.checkOut(agreementId: agreementId, note: note, photos: photos)
+                _ = try await TripRepository.shared.checkOut(agreementId: agreementId, note: note, photos: photos, videoUrl: videoUrl)
             }
             await load()
             return true
@@ -103,8 +104,8 @@ struct TripCockpitView: View {
             CheckEventSheet(
                 kind: kind,
                 isSubmitting: vm.isCheckingIn,
-                onSubmit: { note, photos in
-                    let ok = await vm.submitCheckEvent(type: kind.apiType, note: note, photos: photos)
+                onSubmit: { note, photos, videoUrl in
+                    let ok = await vm.submitCheckEvent(type: kind.apiType, note: note, photos: photos, videoUrl: videoUrl)
                     if ok { checkSheet = nil }
                 }
             )
@@ -321,6 +322,17 @@ struct TripCockpitView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
+                // Exact pin is only present once unlocked — offer turn-by-turn.
+                if let url = mapsURL(cockpit) {
+                    Link(destination: url) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "location.fill")
+                            Text("Open in Maps")
+                        }
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                    }
+                }
                 if let fields = cockpit.otherGuide?.fields {
                     HomeGuideAccordion(fields: fields)
                 } else {
@@ -361,6 +373,23 @@ struct TripCockpitView: View {
                 }
             }
         }
+    }
+
+    // Apple Maps deep link to the exact pin, labelled with the address. Returns
+    // nil before the reveal gate opens (no coordinates in the payload).
+    private func mapsURL(_ cockpit: TripCockpit) -> URL? {
+        guard let lat = cockpit.otherLat, let lng = cockpit.otherLng else { return nil }
+        var components = URLComponents(string: "https://maps.apple.com/")
+        var items = [
+            URLQueryItem(name: "ll", value: "\(lat),\(lng)"),
+        ]
+        if let label = cockpit.otherAddress, !label.isEmpty {
+            items.append(URLQueryItem(name: "q", value: label))
+        } else {
+            items.append(URLQueryItem(name: "q", value: String(localized: "Your stay")))
+        }
+        components?.queryItems = items
+        return components?.url
     }
 
     private func unlockDate(_ date: Date) -> String {
@@ -404,7 +433,15 @@ struct TripCockpitView: View {
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
             ForEach(cockpit.checkEvents.sorted { $0.createdAt > $1.createdAt }) { event in
-                TripEventRow(event: event, otherName: otherName)
+                TripEventRow(
+                    event: event,
+                    otherName: otherName,
+                    // Let the host attach a video to their own event later — the
+                    // server merges it onto the same check event.
+                    onAddVideo: (event.mine && event.videoUrl == nil) ? { url in
+                        _ = await vm.submitCheckEvent(type: event.type, note: "", photos: [], videoUrl: url)
+                    } : nil
+                )
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -477,13 +514,17 @@ struct TripPhaseTimeline: View {
                             .foregroundStyle(done ? AirbnbPalette.text : AirbnbPalette.secondaryText)
                     }
                     .frame(maxWidth: .infinity)
-                    .overlay(alignment: .leading) {
+                    // Connector to the previous dot, sized to THIS cell's width
+                    // (was screen-width math, which risked overflowing the row).
+                    // Drawn behind the dots, centred on the dot's vertical level.
+                    .background(alignment: .topLeading) {
                         if index > 0 {
-                            Rectangle()
-                                .fill(index <= currentIndex ? AirbnbPalette.text : AirbnbPalette.hairline)
-                                .frame(height: 2)
-                                .offset(x: -UIScreen.main.bounds.width / 8, y: -16)
-                                .frame(width: UIScreen.main.bounds.width / 4)
+                            GeometryReader { geo in
+                                Rectangle()
+                                    .fill(index <= currentIndex ? AirbnbPalette.text : AirbnbPalette.hairline)
+                                    .frame(width: geo.size.width, height: 2)
+                                    .position(x: 0, y: 7)
+                            }
                         }
                     }
                 }
@@ -567,6 +608,12 @@ struct HomeGuideAccordion: View {
 struct TripEventRow: View {
     let event: TripCheckEvent
     let otherName: String?
+    // Non-nil only for the host's own event without a video yet: lets them
+    // attach one later. Receives the uploaded video URL.
+    var onAddVideo: ((String) async -> Void)? = nil
+
+    @State private var showVideo = false
+    @State private var showAddVideo = false
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -601,6 +648,35 @@ struct TripEventRow: View {
                                 .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.small, style: .continuous))
                             }
                         }
+                    }
+                }
+                if let videoString = event.videoUrl, let videoURL = URL(string: videoString) {
+                    Button { showVideo = true } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "play.rectangle.fill")
+                            Text("Watch condition video")
+                        }
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                    }
+                    .buttonStyle(.plain)
+                    .sheet(isPresented: $showVideo) {
+                        VideoPlayer(player: AVPlayer(url: videoURL))
+                            .ignoresSafeArea()
+                    }
+                }
+                if let onAddVideo {
+                    Button { showAddVideo = true } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "video.badge.plus")
+                            Text("Add a video")
+                        }
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                    }
+                    .buttonStyle(.plain)
+                    .sheet(isPresented: $showAddVideo) {
+                        AddConditionVideoSheet { url in await onAddVideo(url) }
                     }
                 }
             }

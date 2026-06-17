@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   agreementFindUnique: vi.fn(),
   checkEventFindFirst: vi.fn(),
   checkEventCreate: vi.fn(),
+  checkEventUpdate: vi.fn(),
   sendEmail: vi.fn(async (_msg: unknown) => {}),
   sendPush: vi.fn(async (_userId: string, _payload: unknown) => {}),
   checkedInEmail: vi.fn((to: string, name: string) => ({ to, subject: `${name} has checked in`, text: "" })),
@@ -31,7 +32,11 @@ vi.mock("@/lib/push", () => ({
 vi.mock("@/lib/db", () => ({
   prisma: {
     swapAgreement: { findUnique: mocks.agreementFindUnique },
-    swapCheckEvent: { findFirst: mocks.checkEventFindFirst, create: mocks.checkEventCreate },
+    swapCheckEvent: {
+      findFirst: mocks.checkEventFindFirst,
+      create: mocks.checkEventCreate,
+      update: mocks.checkEventUpdate,
+    },
   },
 }));
 
@@ -88,6 +93,17 @@ beforeEach(() => {
     createdAt: NOW,
     ...data,
   }));
+  mocks.checkEventUpdate.mockImplementation(
+    async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => ({
+      id: where.id,
+      type: "checkin",
+      note: null,
+      photos: "[]",
+      videoUrl: null,
+      createdAt: NOW,
+      ...data,
+    }),
+  );
 });
 
 describe("check-in gating", () => {
@@ -135,7 +151,7 @@ describe("check-in creates event + notifies the other party", () => {
   });
 
   it("is idempotent per (type, user) — no duplicate event, no re-notify", async () => {
-    mocks.checkEventFindFirst.mockResolvedValue({ id: "evt-existing", type: "checkin", note: null, photos: "[]", createdAt: NOW });
+    mocks.checkEventFindFirst.mockResolvedValue({ id: "evt-existing", type: "checkin", note: null, photos: "[]", videoUrl: null, createdAt: NOW });
     const res = await call(checkIn);
     const body = await res.json();
     expect(body.duplicate).toBe(true);
@@ -144,8 +160,38 @@ describe("check-in creates event + notifies the other party", () => {
     expect(mocks.sendPush).not.toHaveBeenCalled();
   });
 
+  it("attaches a video to an existing event later — enriches, no duplicate, no re-notify", async () => {
+    mocks.checkEventFindFirst.mockResolvedValue({
+      id: "evt-existing", type: "checkin", note: "Arrived",
+      photos: JSON.stringify(["https://cdn.swapl.test/a.jpg"]), videoUrl: null, createdAt: NOW,
+    });
+    const res = await call(checkIn, { videoUrl: "https://cdn.swapl.test/clip.mp4" });
+    const body = await res.json();
+    expect(body.duplicate).toBe(true);
+    expect(mocks.checkEventCreate).not.toHaveBeenCalled();
+
+    const upd = (mocks.checkEventUpdate.mock.calls[0] as unknown as [{ where: { id: string }; data: Record<string, string> }])[0];
+    expect(upd.where).toEqual({ id: "evt-existing" });
+    expect(upd.data.videoUrl).toBe("https://cdn.swapl.test/clip.mp4");
+    // Existing photos preserved (merged, not clobbered).
+    expect(JSON.parse(upd.data.photos)).toContain("https://cdn.swapl.test/a.jpg");
+    expect(mocks.sendPush).not.toHaveBeenCalled();
+  });
+
   it("rejects invalid photo URLs", async () => {
     expect((await call(checkIn, { photos: ["not-a-url"] })).status).toBe(400);
+  });
+
+  it("stores an optional before/after condition video URL", async () => {
+    const res = await call(checkIn, { videoUrl: "https://cdn.swapl.test/clip.mp4" });
+    expect(res.status).toBe(200);
+    expect(createdData().videoUrl).toBe("https://cdn.swapl.test/clip.mp4");
+    const body = await res.json();
+    expect(body.event.videoUrl).toBe("https://cdn.swapl.test/clip.mp4");
+  });
+
+  it("rejects an invalid video URL", async () => {
+    expect((await call(checkIn, { videoUrl: "not-a-url" })).status).toBe(400);
   });
 });
 

@@ -17,7 +17,10 @@ export async function GET(req: Request) {
   });
 
   const items = favorites.map((f) =>
-    toDTO(f.listing, { includeAddress: f.listing.userId === session.userId })
+    toDTO(f.listing, {
+      includeAddress: f.listing.userId === session.userId,
+      includeExactCoords: f.listing.userId === session.userId,
+    })
   );
   return NextResponse.json({ items });
 }

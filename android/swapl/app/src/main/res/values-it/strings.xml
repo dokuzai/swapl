@@ -313,6 +313,8 @@
     <string name="detail_private_room_badge_rooms">Stanza privata · %1$d stanze</string>
     <string name="detail_about_home">Su questa casa</string>
     <string name="detail_what_offered">Cosa offre questo alloggio</string>
+    <string name="detail_where">Dove ti troverai</string>
+    <string name="detail_approx_area">area approssimativa</string>
     <string name="detail_hosted_by">Ospitato da</string>
     <string name="detail_anonymous">Anonimo</string>
     <string name="detail_verified_host">Host verificato</string>

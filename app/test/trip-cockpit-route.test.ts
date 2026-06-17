@@ -44,7 +44,7 @@ function agreement(over: Record<string, unknown> = {}) {
       homeGuide: null,
     },
     listing2: {
-      userId: "u2", city: "Berlin", address: "2 Strasse B",
+      userId: "u2", city: "Berlin", address: "2 Strasse B", lat: 52.5012, lng: 13.4012,
       user: { id: "u2", name: "Ben", email: "ben@swapl.test" },
       homeGuide: fullGuide,
     },
@@ -75,6 +75,8 @@ describe("trip cockpit gating", () => {
     const body = await (await get("u1")).json();
     expect(body.addressUnlocked).toBe(false);
     expect(body.otherAddress).toBeNull();
+    expect(body.otherLat).toBeNull();
+    expect(body.otherLng).toBeNull();
     expect(body.otherGuide).toEqual({ locked: true, unlocksAt: expect.any(String) });
     // u1's own guide (listing1) is empty -> 0; u2's guide is full -> 100.
     expect(body.myGuideCompleteness).toBe(0);
@@ -93,6 +95,8 @@ describe("trip cockpit gating", () => {
     const body = await (await get("u1")).json();
     expect(body.addressUnlocked).toBe(true);
     expect(body.otherAddress).toBe("2 Strasse B");
+    expect(body.otherLat).toBe(52.5012);
+    expect(body.otherLng).toBe(13.4012);
     expect(body.otherGuide.wifiName).toBe("c");
     expect(body.phase).toBe("READY");
   });

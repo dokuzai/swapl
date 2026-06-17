@@ -213,6 +213,19 @@ fun ListingDetailScreen(
         KickerLabel(stringResource(R.string.detail_what_offered))
         AmenityGrid(amenities(d.listing))
 
+        // Approximate-area location map (fuzzed server-side for non-owners).
+        val lat = d.listing.lat
+        val lng = d.listing.lng
+        if (lat != null && lng != null) {
+            KickerLabel(stringResource(R.string.detail_where))
+            ListingLocationMap(lat, lng)
+            Text(
+                "${d.listing.neighbourhood}, ${d.listing.city} · ${stringResource(R.string.detail_approx_area)}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
         SurfaceCard(modifier = androidx.compose.ui.Modifier.clickable { onOpenHost(d.host.id) }) {
             Row(
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,

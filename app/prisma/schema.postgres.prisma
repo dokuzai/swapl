@@ -489,6 +489,10 @@ model SwapProposal {
   counterDateTo     DateTime?
   counterMessage    String?
 
+  // Per-party inbox archive (hide from my inbox without affecting the other side).
+  proposerArchivedAt DateTime?
+  targetArchivedAt   DateTime?
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -662,6 +666,7 @@ model SwapCheckEvent {
   type        String                                   // "checkin" | "checkout"
   note        String?
   photos      String        @default("[]")             // JSON array of upload URLs
+  videoUrl    String?                                   // before/after condition video (audio baked in)
   createdAt   DateTime      @default(now())
 
   @@index([agreementId])

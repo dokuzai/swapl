@@ -127,8 +127,20 @@ final class APIClient: @unchecked Sendable {
     // Multipart image upload for native clients → /api/uploads/listing-photo
     // (bearer-authed; stored in UploadThing server-side). Returns the photo URL.
     func uploadListingPhoto(_ imageData: Data, filename: String = "photo.jpg", mimeType: String = "image/jpeg") async throws -> String {
+        try await uploadMultipart(path: "/api/uploads/listing-photo", fileData: imageData, filename: filename, mimeType: mimeType)
+    }
+
+    // Multipart video upload for check-in/out condition clips (audio baked in) →
+    // /api/uploads/check-video. Returns the video URL for the check event.
+    func uploadCheckVideo(_ videoData: Data, filename: String = "clip.mp4", mimeType: String = "video/mp4") async throws -> String {
+        try await uploadMultipart(path: "/api/uploads/check-video", fileData: videoData, filename: filename, mimeType: mimeType)
+    }
+
+    // Shared bearer-authed multipart POST of a single `file` field. Returns the
+    // `url` from the JSON response.
+    private func uploadMultipart(path: String, fileData: Data, filename: String, mimeType: String) async throws -> String {
         let boundary = "swapl-\(UUID().uuidString)"
-        var req = URLRequest(url: baseURL.appendingPathComponent("/api/uploads/listing-photo"))
+        var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Accept")
         req.setValue(Locale.preferredLanguages.first ?? "en", forHTTPHeaderField: "Accept-Language")
@@ -142,7 +154,7 @@ final class APIClient: @unchecked Sendable {
         append("--\(boundary)\r\n")
         append("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n")
         append("Content-Type: \(mimeType)\r\n\r\n")
-        body.append(imageData)
+        body.append(fileData)
         append("\r\n--\(boundary)--\r\n")
         req.httpBody = body
 

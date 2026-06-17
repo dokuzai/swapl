@@ -32,6 +32,7 @@ type CheckEvent = {
   type: string;
   note: string | null;
   photos: string[];
+  videoUrl: string | null;
   createdAt: string;
   mine: boolean;
 };
@@ -456,17 +457,29 @@ function CheckPanel({
       {events.length > 0 && (
         <ul className="space-y-2 mb-4">
           {events.map((e) => (
-            <li key={e.id} className="text-sm flex items-start gap-2">
-              <span aria-hidden style={{ color: "var(--pink)" }}>
-                {e.type === "checkin" ? "→" : "←"}
-              </span>
-              <span style={{ color: "var(--navy-2)" }}>
-                {e.mine
-                  ? t(e.type === "checkin" ? "trip.event.checkin" : "trip.event.checkout")
-                  : t(e.type === "checkin" ? "trip.event.checkinThem" : "trip.event.checkoutThem", { name: "Your partner" })}{" "}
-                · {new Date(e.createdAt).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
-                {e.photos.length > 0 && <> · {t("trip.event.photos", { n: e.photos.length })}</>}
-              </span>
+            <li key={e.id} className="text-sm flex flex-col items-start gap-2">
+              <div className="flex items-start gap-2">
+                <span aria-hidden style={{ color: "var(--pink)" }}>
+                  {e.type === "checkin" ? "→" : "←"}
+                </span>
+                <span style={{ color: "var(--navy-2)" }}>
+                  {e.mine
+                    ? t(e.type === "checkin" ? "trip.event.checkin" : "trip.event.checkout")
+                    : t(e.type === "checkin" ? "trip.event.checkinThem" : "trip.event.checkoutThem", { name: "Your partner" })}{" "}
+                  · {new Date(e.createdAt).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+                  {e.photos.length > 0 && <> · {t("trip.event.photos", { n: e.photos.length })}</>}
+                  {e.videoUrl && <> · {t("trip.event.video")}</>}
+                </span>
+              </div>
+              {e.videoUrl && (
+                <video
+                  controls
+                  preload="metadata"
+                  src={e.videoUrl}
+                  className="w-full max-w-sm rounded-xl border"
+                  style={{ borderColor: "var(--hairline)" }}
+                />
+              )}
             </li>
           ))}
         </ul>

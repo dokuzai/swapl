@@ -18,6 +18,7 @@ import { StayWithKeys } from "./stay-with-keys";
 import { ValuationExplainer } from "./valuation-explainer";
 import { VerifiedBadge, FeaturedRibbon, OwnerVerifiedBadge } from "@/components/listing/badges";
 import { RecentlyViewedTracker } from "@/components/listing/recently-viewed-tracker";
+import { ListingLocationMap } from "@/components/map/listing-location-map";
 import { I18nProviderShell } from "@/components/i18n/provider-shell";
 import { getDictionary, getI18n, t } from "@/lib/i18n/server";
 
@@ -317,6 +318,17 @@ export default async function ListingDetailPage(props: PageProps<"/listings/[id]
                   <span key={c.key} className="tag-chip">{t(dict, c.key, c.vars)}</span>
                 ))}
               </div>
+            </Section>
+          )}
+
+          {dto.lat != null && dto.lng != null && (
+            <Section title={t(dict, "listing.map.title")}>
+              <ListingLocationMap
+                lat={dto.lat}
+                lng={dto.lng}
+                neighbourhood={dto.neighbourhood}
+                city={dto.city}
+              />
             </Section>
           )}
 

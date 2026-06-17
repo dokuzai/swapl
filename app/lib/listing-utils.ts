@@ -1,6 +1,7 @@
 import { parseJSON } from "@/lib/db";
 import { parseValuationExplanation, type ValuationExplanation } from "@/lib/keys/valuation";
 import { paletteForCity } from "@/lib/cities";
+import { publicCoord } from "@/lib/city-coords";
 import { parseMotif } from "@/lib/ai/city-illustration";
 import { safeParsePostcard } from "@/lib/ai/postcard-types";
 import type { Postcard } from "@/lib/ai/postcard-types";
@@ -129,8 +130,16 @@ type ListingRecord = {
 
 export function toDTO(
   l: ListingRecord,
-  opts?: { includeAddress?: boolean; includeValuation?: boolean },
+  opts?: { includeAddress?: boolean; includeValuation?: boolean; includeExactCoords?: boolean },
 ): ListingDTO {
+  // Exact coordinates only go to the owner. Everyone else (public map, browse,
+  // other hosts, anonymous profile visitors) gets the fuzzed area coordinate so
+  // the precise home location is never disclosed. Default = fuzzed, so any new
+  // call site is privacy-safe unless it explicitly opts in.
+  const coords =
+    opts?.includeExactCoords || l.lat == null || l.lng == null
+      ? { lat: l.lat, lng: l.lng }
+      : publicCoord(l.lat, l.lng, l.id);
   return {
     id: l.id,
     userId: l.userId,
@@ -175,8 +184,8 @@ export function toDTO(
     palette: (l.paletteHint as Palette | null) ?? paletteForCity(l.city),
     motif: parseMotif(l.motifHint),
     postcard: safeParsePostcard(l.postcard),
-    lat: l.lat,
-    lng: l.lng,
+    lat: coords.lat,
+    lng: coords.lng,
     isFeatured: Boolean(l.isFeatured && l.featuredUntil && l.featuredUntil > new Date()),
     isVerified: Boolean(l.isVerified),
     ownerVerified: Boolean(l.ownerVerified),

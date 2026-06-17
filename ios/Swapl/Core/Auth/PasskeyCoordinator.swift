@@ -90,12 +90,27 @@ final class PasskeyCoordinator: NSObject, ASAuthorizationControllerDelegate,
     }
 
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        MainActor.assumeIsolated {
-            UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .flatMap(\.windows)
-                .first(where: \.isKeyWindow) ?? ASPresentationAnchor()
-        }
+        MainActor.assumeIsolated { UIApplication.shared.authPresentationAnchor }
+    }
+}
+
+@MainActor
+extension UIApplication {
+    /// A window to present auth sheets from, avoiding the deprecated `UIWindow()`
+    /// fallback (`init()` is deprecated in iOS 26 — `ASPresentationAnchor()` is
+    /// that initializer). Prefers the key window, then any window, then a window
+    /// bound to an existing scene, and only as a last resort a detached window.
+    var authPresentationAnchor: UIWindow {
+        let scenes = connectedScenes.compactMap { $0 as? UIWindowScene }
+        let windows = scenes.flatMap(\.windows)
+        if let key = windows.first(where: \.isKeyWindow) { return key }
+        if let any = windows.first { return any }
+        if let scene = scenes.first { return UIWindow(windowScene: scene) }
+        // Unreachable when the system asks for a presentation anchor: the app
+        // must have a foreground window scene on screen. `init()`/`init(frame:)`
+        // are deprecated in iOS 26 and `init(windowScene:)` needs a scene we
+        // don't have here, so fail loudly rather than hand back a dead window.
+        preconditionFailure("No UIWindowScene available to anchor presentation")
     }
 }
 

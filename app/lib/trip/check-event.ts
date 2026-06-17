@@ -16,6 +16,8 @@ import { forbidden, notFound, invalidInput, unauthenticated, apiError } from "@/
 const bodySchema = z.object({
   note: z.string().max(2000).optional(),
   photos: z.array(z.string().url()).max(12).optional(),
+  // Optional before/after condition video (audio narration baked in).
+  videoUrl: z.string().url().optional(),
 });
 
 export async function handleCheckEvent(
@@ -53,20 +55,37 @@ export async function handleCheckEvent(
     return apiError(409, "Swap is no longer active");
   }
 
-  // Idempotent per (type, user): a second check-in by the same party returns
-  // the existing event instead of creating a duplicate (and re-notifying).
+  // Idempotent per (type, user): a second check-in by the same party never
+  // creates a duplicate or re-notifies. It DOES enrich the same event, so a host
+  // can come back and attach a video they recorded after checking in, add more
+  // photos, or update the note.
   const existing = await prisma.swapCheckEvent.findFirst({
     where: { agreementId: id, userId: session.userId, type },
   });
   if (existing) {
+    const mergedPhotos = Array.from(
+      new Set([
+        ...(JSON.parse(existing.photos || "[]") as string[]),
+        ...(parsed.data.photos ?? []),
+      ]),
+    );
+    const updated = await prisma.swapCheckEvent.update({
+      where: { id: existing.id },
+      data: {
+        photos: JSON.stringify(mergedPhotos),
+        videoUrl: parsed.data.videoUrl ?? existing.videoUrl,
+        note: parsed.data.note ?? existing.note,
+      },
+    });
     return NextResponse.json({
       ok: true,
       event: {
-        id: existing.id,
-        type: existing.type,
-        note: existing.note,
-        photos: JSON.parse(existing.photos || "[]") as string[],
-        createdAt: existing.createdAt.toISOString(),
+        id: updated.id,
+        type: updated.type,
+        note: updated.note,
+        photos: JSON.parse(updated.photos || "[]") as string[],
+        videoUrl: updated.videoUrl,
+        createdAt: updated.createdAt.toISOString(),
       },
       duplicate: true,
     });
@@ -79,6 +98,7 @@ export async function handleCheckEvent(
       type,
       note: parsed.data.note ?? null,
       photos: JSON.stringify(parsed.data.photos ?? []),
+      videoUrl: parsed.data.videoUrl ?? null,
     },
   });
 
@@ -102,6 +122,7 @@ export async function handleCheckEvent(
       type: event.type,
       note: event.note,
       photos: JSON.parse(event.photos || "[]") as string[],
+      videoUrl: event.videoUrl,
       createdAt: event.createdAt.toISOString(),
     },
   });

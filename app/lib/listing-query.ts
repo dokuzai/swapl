@@ -243,5 +243,6 @@ export async function getViewerListing(userId: string | undefined | null): Promi
     include: { user: { select: { name: true } } },
     orderBy: { createdAt: "desc" },
   });
-  return l ? toDTO(l) : null;
+  // The viewer's own listing — they may see their exact pin.
+  return l ? toDTO(l, { includeExactCoords: true }) : null;
 }

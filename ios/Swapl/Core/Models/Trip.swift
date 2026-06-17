@@ -19,6 +19,8 @@ struct TripCockpit: Decodable, Sendable {
     let insurance: TripInsurance?
     let addressUnlocked: Bool
     let otherAddress: String?     // nil until addressUnlocked
+    let otherLat: Double?         // exact pin, nil until addressUnlocked
+    let otherLng: Double?
     let otherCity: String?
     let otherGuide: OtherGuide?
     let myGuideCompleteness: Int  // 0..100
@@ -127,6 +129,7 @@ struct TripCheckEvent: Decodable, Identifiable, Sendable {
     let type: String          // "checkin" | "checkout"
     let note: String?
     let photos: [String]
+    let videoUrl: String?     // before/after condition video (audio baked in)
     let createdAt: String
     let mine: Bool
 }

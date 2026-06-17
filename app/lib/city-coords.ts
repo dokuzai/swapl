@@ -29,3 +29,23 @@ export function jitterCoord(base: Coord, key: string, radiusDeg = 0.025): Coord 
   const r = (((h >>> 16) & 0xffff) / 0xffff) * radiusDeg;
   return { lat: base.lat + Math.sin(a) * r, lng: base.lng + Math.cos(a) * r };
 }
+
+// Privacy fuzz applied at READ time before exact coordinates are sent to anyone
+// who is not the listing owner. We keep the precise lat/lng in the database (the
+// host opted into "use my current location"), but the public map must only reveal
+// the approximate area, never the building.
+//
+// Strategy: snap to the centre of a ~CELL-sized grid square, then add a small
+// deterministic in-cell jitter keyed by the listing id so neighbouring homes
+// don't stack on one pin. The grid snap is what guarantees privacy — even though
+// the id is public and the jitter is therefore reversible, inverting it only
+// recovers the grid cell, which is exactly the ~2 km area we intend to disclose,
+// not the true coordinate. CELL ≈ 0.02° ≈ 2.2 km of latitude.
+const CELL = 0.02;
+export function publicCoord(lat: number, lng: number, key: string): Coord {
+  const base = {
+    lat: Math.floor(lat / CELL) * CELL + CELL / 2,
+    lng: Math.floor(lng / CELL) * CELL + CELL / 2,
+  };
+  return jitterCoord(base, key, CELL / 2);
+}

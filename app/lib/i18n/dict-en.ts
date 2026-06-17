@@ -528,6 +528,8 @@ export const en = {
   "listing.matchBadge": "{score}% match",
   "listing.sizeSleeps": "{size}m² · sleeps {sleeps}",
   "map.openListing": "Open listing →",
+  "listing.map.title": "Where you'll be",
+  "listing.map.approxArea": "approximate area",
   "listing.verifiedBadge": "Verified by swapl",
   "listing.featuredRibbon": "Featured",
 
@@ -816,6 +818,7 @@ export const en = {
   "trip.event.checkinThem": "{name} checked in",
   "trip.event.checkoutThem": "{name} checked out",
   "trip.event.photos": "{n} photos",
+  "trip.event.video": "Video",
   "trip.event.at": "{time}",
   "trip.report.title": "Something not right?",
   "trip.report.body": "Reach our team any time — 24/7 line {phone} or visit our help centre.",

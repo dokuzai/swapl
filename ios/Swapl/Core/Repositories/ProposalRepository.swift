@@ -27,14 +27,18 @@ final class ProposalRepository: @unchecked Sendable {
         case accept
         case decline
         case withdraw
+        case archive
+        case unarchive
         case counter(dateFrom: String, dateTo: String, message: String?)
 
         func encode(to encoder: Encoder) throws {
             var c = encoder.container(keyedBy: CodingKeys.self)
             switch self {
-            case .accept:   try c.encode("accept", forKey: .action)
-            case .decline:  try c.encode("decline", forKey: .action)
-            case .withdraw: try c.encode("withdraw", forKey: .action)
+            case .accept:    try c.encode("accept", forKey: .action)
+            case .decline:   try c.encode("decline", forKey: .action)
+            case .withdraw:  try c.encode("withdraw", forKey: .action)
+            case .archive:   try c.encode("archive", forKey: .action)
+            case .unarchive: try c.encode("unarchive", forKey: .action)
             case let .counter(from, to, message):
                 try c.encode("counter", forKey: .action)
                 try c.encode(from, forKey: .counterDateFrom)

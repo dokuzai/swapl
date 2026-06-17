@@ -34,6 +34,7 @@ final class TripRepository: @unchecked Sendable {
     struct CheckEventBody: Encodable, Sendable {
         let note: String?
         let photos: [String]?
+        let videoUrl: String?
     }
 
     struct CheckEventResponse: Decodable, Sendable {
@@ -46,25 +47,28 @@ final class TripRepository: @unchecked Sendable {
             let type: String
             let note: String?
             let photos: [String]
+            let videoUrl: String?
             let createdAt: String
         }
     }
 
     @discardableResult
-    func checkIn(agreementId: String, note: String?, photos: [String]) async throws -> CheckEventResponse {
+    func checkIn(agreementId: String, note: String?, photos: [String], videoUrl: String?) async throws -> CheckEventResponse {
         try await APIClient.shared.send(
             "POST", "/api/agreements/\(agreementId)/check-in",
             body: CheckEventBody(note: note?.isEmpty == true ? nil : note,
-                                 photos: photos.isEmpty ? nil : photos)
+                                 photos: photos.isEmpty ? nil : photos,
+                                 videoUrl: videoUrl)
         )
     }
 
     @discardableResult
-    func checkOut(agreementId: String, note: String?, photos: [String]) async throws -> CheckEventResponse {
+    func checkOut(agreementId: String, note: String?, photos: [String], videoUrl: String?) async throws -> CheckEventResponse {
         try await APIClient.shared.send(
             "POST", "/api/agreements/\(agreementId)/check-out",
             body: CheckEventBody(note: note?.isEmpty == true ? nil : note,
-                                 photos: photos.isEmpty ? nil : photos)
+                                 photos: photos.isEmpty ? nil : photos,
+                                 videoUrl: videoUrl)
         )
     }
 }

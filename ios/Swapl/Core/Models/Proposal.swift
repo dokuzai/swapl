@@ -15,6 +15,13 @@ struct ProposalSummary: Identifiable, Codable, Hashable, Sendable {
     let theirCoverPhotoUrl: String?
     let otherName: String?
     let updatedAt: String
+    // My own archive flag (per-party). Null/absent = not archived by me.
+    var archivedAt: String? = nil
+
+    var isArchivedByMe: Bool { archivedAt != nil }
+    var isTerminal: Bool { status == "DECLINED" || status == "WITHDRAWN" }
+    // I can accept/decline only an incoming proposal still awaiting my reply.
+    var canRespond: Bool { meSide == "target" && (status == "PENDING" || status == "COUNTERED") && !isArchivedByMe }
 }
 
 struct InboxResponse: Decodable, Sendable {

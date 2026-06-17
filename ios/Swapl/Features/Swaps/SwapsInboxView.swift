@@ -11,6 +11,10 @@ final class SwapsInboxViewModel {
     var hasLoaded = false
     var selectedFilter = "All"
     var searchText = ""
+    // Default: soonest check-in first (per product). Toggleable to recent activity.
+    var sortBy: SortOption = .checkIn
+
+    enum SortOption: String, CaseIterable { case checkIn, recent }
 
     func load() async {
         isLoading = true
@@ -26,20 +30,40 @@ final class SwapsInboxViewModel {
     }
 
     var proposals: [ProposalSummary] {
-        let base: [ProposalSummary]
         guard let inbox else { return [] }
+        // Non-archived threads, partitioned by role (meSide). Hosting = I'm the
+        // host (target); Traveling = I'm the guest (proposer). Archived is its
+        // own tab. This is exact per-message, unlike the old bucket grouping.
+        let live = inbox.buckets.waitingOnYou + inbox.buckets.sent + inbox.buckets.active
+        var base: [ProposalSummary]
         switch selectedFilter {
-        case "Hosting": base = inbox.buckets.waitingOnYou
-        case "Traveling": base = inbox.buckets.sent + inbox.buckets.active
+        case "Hosting": base = live.filter { $0.meSide == "target" }
+        case "Traveling": base = live.filter { $0.meSide == "proposer" }
         case "Archived": base = inbox.buckets.archived
-        default:
-            base = inbox.buckets.waitingOnYou + inbox.buckets.sent + inbox.buckets.active + inbox.buckets.archived
+        default: base = live
         }
+
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return base }
-        return base.filter { proposal in
-            [proposal.otherName ?? "", proposal.theirCity, proposal.theirNeighbourhood, proposal.myCity]
-                .contains { $0.localizedCaseInsensitiveContains(query) }
+        if !query.isEmpty {
+            base = base.filter { proposal in
+                [proposal.otherName ?? "", proposal.theirCity, proposal.theirNeighbourhood, proposal.myCity]
+                    .contains { $0.localizedCaseInsensitiveContains(query) }
+            }
+        }
+
+        switch sortBy {
+        case .checkIn: return base.sorted { $0.dateFrom < $1.dateFrom }   // soonest first
+        case .recent:  return base.sorted { $0.updatedAt > $1.updatedAt }
+        }
+    }
+
+    // Swipe-action mutations: accept/decline/archive/unarchive, then refresh.
+    func perform(_ action: ProposalRepository.Action, on id: String) async {
+        do {
+            _ = try await ProposalRepository.shared.act(proposalId: id, action)
+            await load()
+        } catch {
+            self.error = error.localizedDescription
         }
     }
 
@@ -108,51 +132,114 @@ struct SwapsInboxView: View {
         }
     }
 
+    // A List (not LazyVStack) so each conversation row supports native
+    // `.swipeActions`. The header/search/filter live in a non-selectable first
+    // section so they scroll with the list and keep the existing look.
     private var messagesContent: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+        List {
+            Section {
                 messagesHeader
+                if isSearching { searchField }
+                filterAndSortBar
+            }
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 4, trailing: 0))
+            .listRowBackground(Color.clear)
 
-                if isSearching {
-                    searchField
-                }
-
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        ForEach(filters, id: \.self) { filter in
-                            Button {
-                                vm.selectedFilter = filter
-                            } label: {
-                                AirbnbChip(title: filterLabel(filter), selected: vm.selectedFilter == filter)
-                            }
-                            .buttonStyle(.plain)
+            if vm.proposals.isEmpty {
+                SwaplEmptyState(
+                    systemImage: "magnifyingglass",
+                    title: String(localized: "No matches"),
+                    description: String(localized: "No conversations match your current search or filter.")
+                )
+                .padding(.top, 40)
+                .frame(maxWidth: .infinity)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+            } else {
+                ForEach(vm.proposals) { proposal in
+                    MessageRow(proposal: proposal)
+                        .contentShape(Rectangle())
+                        // Background NavigationLink keeps row tap → detail without
+                        // the List's default disclosure chevron.
+                        .background {
+                            NavigationLink(value: proposal.id) { EmptyView() }.opacity(0)
                         }
-                    }
-                    .padding(.horizontal, 22)
-                }
-                .padding(.top, 8)
-
-                if vm.proposals.isEmpty {
-                    SwaplEmptyState(
-                        systemImage: "magnifyingglass",
-                        title: String(localized: "No matches"),
-                        description: String(localized: "No conversations match your current search or filter.")
-                    )
-                    .padding(.top, 48)
-                } else {
-                    LazyVStack(spacing: 22) {
-                        ForEach(vm.proposals) { proposal in
-                            NavigationLink(value: proposal.id) {
-                                MessageRow(proposal: proposal)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 11, leading: 22, bottom: 11, trailing: 22))
+                        .listRowBackground(Color.clear)
+                        // Not full-swipe: accepting a swap should be a deliberate
+                        // tap on the revealed button, never an accidental flick.
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            if proposal.canRespond {
+                                Button { Task { await vm.perform(.accept, on: proposal.id) } } label: {
+                                    Label(String(localized: "Accept"), systemImage: "checkmark")
+                                }
+                                .tint(.green)
                             }
-                            .buttonStyle(.plain)
                         }
-                    }
-                    .padding(.horizontal, 22)
-                    .padding(.bottom, 28)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            if proposal.canRespond {
+                                Button(role: .destructive) { Task { await vm.perform(.decline, on: proposal.id) } } label: {
+                                    Label(String(localized: "Decline"), systemImage: "xmark")
+                                }
+                            }
+                            if proposal.isArchivedByMe {
+                                Button { Task { await vm.perform(.unarchive, on: proposal.id) } } label: {
+                                    Label(String(localized: "Unarchive"), systemImage: "tray.and.arrow.up")
+                                }
+                                .tint(.blue)
+                            } else if !proposal.isTerminal {
+                                Button { Task { await vm.perform(.archive, on: proposal.id) } } label: {
+                                    Label(String(localized: "Archive"), systemImage: "archivebox")
+                                }
+                                .tint(.gray)
+                            }
+                        }
                 }
             }
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .environment(\.defaultMinListRowHeight, 0)
+    }
+
+    private var filterAndSortBar: some View {
+        HStack(spacing: 10) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(filters, id: \.self) { filter in
+                        Button {
+                            vm.selectedFilter = filter
+                        } label: {
+                            AirbnbChip(title: filterLabel(filter), selected: vm.selectedFilter == filter)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.leading, 22)
+            }
+            sortMenu
+                .padding(.trailing, 22)
+        }
+        .padding(.top, 8)
+    }
+
+    private var sortMenu: some View {
+        Menu {
+            Picker(String(localized: "Sort by"), selection: Bindable(vm).sortBy) {
+                Text(String(localized: "Check-in date")).tag(SwapsInboxViewModel.SortOption.checkIn)
+                Text(String(localized: "Recent activity")).tag(SwapsInboxViewModel.SortOption.recent)
+            }
+        } label: {
+            Image(systemName: "arrow.up.arrow.down")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .frame(width: 44, height: 44)
+                .background(SwaplSemanticLight.card, in: Circle())
+                .overlay(Circle().stroke(AirbnbPalette.hairline))
+        }
+        .accessibilityLabel("Sort messages")
     }
 
     private var searchField: some View {

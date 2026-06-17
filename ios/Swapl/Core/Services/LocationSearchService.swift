@@ -2,6 +2,18 @@ import Foundation
 import MapKit
 import SwiftUI
 
+/// Fully resolved place picked from the address autocomplete, ready to prefill
+/// the listing form. Coordinates are exact here (stored as-is); the server is
+/// responsible for fuzzing them before they are shown to anyone but the owner.
+struct ResolvedAddress: Equatable {
+    let address: String
+    let city: String
+    let neighbourhood: String
+    let country: String
+    let latitude: Double
+    let longitude: Double
+}
+
 /// Search-as-you-type place lookup for the browse map (DOK-182). Feed it text
 /// via `updateSearch`, read `suggestions`, then `selectSuggestion` (or
 /// `searchForText`) to get an `MKCoordinateRegion` to recenter the camera on.
@@ -54,7 +66,7 @@ final class LocationSearchService: NSObject {
             let response = try await MKLocalSearch(request: request).start()
             guard let item = response.mapItems.first else { isSearching = false; return nil }
 
-            let coordinate = item.placemark.coordinate
+            let coordinate = item.location.coordinate
             selectedLocation = coordinate
 
             let span: MKCoordinateSpan
@@ -93,10 +105,10 @@ final class LocationSearchService: NSObject {
             let response = try await MKLocalSearch(request: request).start()
             guard let item = response.mapItems.first else { isSearching = false; return nil }
             let region = MKCoordinateRegion(
-                center: item.placemark.coordinate,
+                center: item.location.coordinate,
                 span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
             )
-            selectedLocation = item.placemark.coordinate
+            selectedLocation = item.location.coordinate
             selectedRegion = region
             isSearching = false
             suggestions = []
@@ -106,6 +118,49 @@ final class LocationSearchService: NSObject {
             isSearching = false
             return nil
         }
+    }
+
+    /// Resolve a tapped suggestion into the full set of fields the listing form
+    /// needs (DOK-182): street address, city, neighbourhood, country and the
+    /// coordinate. The coordinate is stored precisely; the server fuzzes it
+    /// before showing it publicly, so the exact pin never leaks.
+    func resolveAddress(_ suggestion: MKLocalSearchCompletion) async -> ResolvedAddress? {
+        let request = MKLocalSearch.Request(completion: suggestion)
+        do {
+            let response = try await MKLocalSearch(request: request).start()
+            guard let item = response.mapItems.first else { return nil }
+            return resolvedAddress(from: item, fallbackTitle: suggestion.title)
+        } catch {
+            return nil
+        }
+    }
+
+    // MKMapItem.placemark is deprecated on iOS 26, but it is the ONLY source of
+    // the street, postal code and sub-locality (the neighbourhood / Turkish
+    // "mahalle"). The replacement MKAddressRepresentations exposes city/region
+    // only. Contained here so the deprecation lives in one documented place.
+    @available(iOS, deprecated: 26.0, message: "placemark is the only source of street + sub-locality; MapKit has no equivalent")
+    private func resolvedAddress(from item: MKMapItem, fallbackTitle: String) -> ResolvedAddress {
+        let pm = item.placemark
+        let city = pm.locality ?? pm.subAdministrativeArea ?? ""
+        // Prefer a real sub-locality (district/quartiere); fall back to city.
+        let neighbourhood = pm.subLocality ?? city
+        let street = [pm.thoroughfare, pm.subThoroughfare]
+            .compactMap { $0 }
+            .joined(separator: " ")
+        let address = [street, pm.postalCode ?? "", city]
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .uniqued()
+            .joined(separator: ", ")
+        return ResolvedAddress(
+            address: address.isEmpty ? fallbackTitle : address,
+            city: city,
+            neighbourhood: neighbourhood,
+            country: pm.country ?? "",
+            latitude: item.location.coordinate.latitude,
+            longitude: item.location.coordinate.longitude
+        )
     }
 
     /// Resolve a tapped suggestion into a city/place name suitable for a text
@@ -119,9 +174,9 @@ final class LocationSearchService: NSObject {
         let request = MKLocalSearch.Request(completion: suggestion)
         do {
             let response = try await MKLocalSearch(request: request).start()
-            let placemark = response.mapItems.first?.placemark
-            return placemark?.locality
-                ?? placemark?.administrativeArea
+            let reps = response.mapItems.first?.addressRepresentations
+            return reps?.cityName
+                ?? reps?.regionName
                 ?? titleFallback
         } catch {
             return titleFallback
@@ -132,6 +187,13 @@ final class LocationSearchService: NSObject {
         debounceTimer?.invalidate()
         searchQuery = ""; suggestions = []; isSearching = false
         selectedLocation = nil; selectedRegion = nil
+    }
+}
+
+private extension Array where Element: Hashable {
+    func uniqued() -> [Element] {
+        var seen = Set<Element>()
+        return filter { seen.insert($0).inserted }
     }
 }
 

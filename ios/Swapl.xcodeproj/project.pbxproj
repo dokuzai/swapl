@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -198,7 +198,7 @@
 		6E8E82AC515E1376E1A1FB30 /* DiscoverRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverRepository.swift; sourceTree = "<group>"; };
 		71AD1C5D134C55DFD558A982 /* DisputeFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisputeFlowView.swift; sourceTree = "<group>"; };
 		74FFE27F1A62902FFD0CFE96 /* AIDraftRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDraftRepository.swift; sourceTree = "<group>"; };
-		76DD8536C922B611CF6505BC /* SwaplUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SwaplUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		76DD8536C922B611CF6505BC /* SwaplUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwaplUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		77AD192DE305AAE02F6DBCD0 /* ConversationParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationParticipant.swift; sourceTree = "<group>"; };
 		78065E6D3BA14EC22992A812 /* InspireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspireView.swift; sourceTree = "<group>"; };
 		781B69502AE21A819387C19F /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
@@ -213,7 +213,7 @@
 		880076B1A21E1999A8C9F405 /* FilterSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSheetView.swift; sourceTree = "<group>"; };
 		88CDF96AA787954E6B258CE7 /* PublishAck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishAck.swift; sourceTree = "<group>"; };
 		88FE15DAF7CB60D8091AAB48 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		894AED6F36AAF11BFF8CA2FB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		894AED6F36AAF11BFF8CA2FB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		8E7E8D4971C41BA23909093D /* SwapMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapMessage.swift; sourceTree = "<group>"; };
 		8F55E6580093FF8311EB4091 /* TravelWindowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelWindowsView.swift; sourceTree = "<group>"; };
 		9105E39884B94E60E5BF0FCB /* Proposal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proposal.swift; sourceTree = "<group>"; };
@@ -228,7 +228,7 @@
 		9CCC5F71B34111A6A25719F4 /* Listing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Listing.swift; sourceTree = "<group>"; };
 		9F3F93F6DC0482992C95B3A1 /* SwaplCreateListingIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingIntent.swift; sourceTree = "<group>"; };
 		A14FDEA84A230FABDE69D564 /* ListingCalendarEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingCalendarEditorView.swift; sourceTree = "<group>"; };
-		A1E4A3420C9FC28FE105C9A4 /* Swapl.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Swapl.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1E4A3420C9FC28FE105C9A4 /* Swapl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swapl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A28819C43CFF4F1CECF89818 /* LocationSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchService.swift; sourceTree = "<group>"; };
 		A46C7E760D2DCAFBF17D7B01 /* KeychainTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTokenStore.swift; sourceTree = "<group>"; };
 		A688EA805E6089C0F4C00878 /* ConversationPeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationPeopleView.swift; sourceTree = "<group>"; };
@@ -705,7 +705,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					10D18CF02B59613B5EA89700 = {
 						DevelopmentTeam = 65H83C7GYT;
@@ -732,7 +732,6 @@
 			packageReferences = (
 				BA51FFC53B11E9A73DE571C5 /* XCLocalSwiftPackageReference "../packages/design-tokens/build/swift" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -909,7 +908,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Swapl/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -925,6 +924,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -961,6 +961,7 @@
 				DEVELOPMENT_TEAM = 65H83C7GYT;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -982,6 +983,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
@@ -997,7 +999,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Swapl/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1051,6 +1053,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1087,6 +1090,7 @@
 				DEVELOPMENT_TEAM = 65H83C7GYT;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1101,6 +1105,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.9;

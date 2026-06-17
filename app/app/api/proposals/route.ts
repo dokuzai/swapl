@@ -51,6 +51,8 @@ export async function GET(req: Request) {
     const otherUserId = meIsProposer ? p.targetListing.userId : p.proposerId;
     const myListing = meIsProposer ? p.proposerListing : p.targetListing;
     const theirListing = meIsProposer ? p.targetListing : p.proposerListing;
+    // Each party has its own archive flag, so I only ever see my own.
+    const myArchivedAt = meIsProposer ? p.proposerArchivedAt : p.targetArchivedAt;
     return {
       id: p.id,
       status: p.status,
@@ -66,14 +68,19 @@ export async function GET(req: Request) {
       theirCoverPhotoUrl: coverPhotoUrl(theirListing),
       otherName: nameById.get(otherUserId) ?? null,
       updatedAt: p.updatedAt.toISOString(),
+      archivedAt: myArchivedAt?.toISOString() ?? null,
     };
   });
 
+  // Manually-archived threads, plus terminal (declined/withdrawn) ones, live in
+  // Archived and are excluded from the active buckets.
+  const isArchived = (b: (typeof items)[number]) =>
+    b.archivedAt !== null || b.status === "DECLINED" || b.status === "WITHDRAWN";
   const buckets = {
-    waitingOnYou: items.filter((b) => b.meSide === "target" && (b.status === "PENDING" || b.status === "COUNTERED")),
-    sent: items.filter((b) => b.meSide === "proposer" && (b.status === "PENDING" || b.status === "COUNTERED")),
-    active: items.filter((b) => b.status === "ACCEPTED"),
-    archived: items.filter((b) => b.status === "DECLINED" || b.status === "WITHDRAWN"),
+    waitingOnYou: items.filter((b) => !isArchived(b) && b.meSide === "target" && (b.status === "PENDING" || b.status === "COUNTERED")),
+    sent: items.filter((b) => !isArchived(b) && b.meSide === "proposer" && (b.status === "PENDING" || b.status === "COUNTERED")),
+    active: items.filter((b) => !isArchived(b) && b.status === "ACCEPTED"),
+    archived: items.filter(isArchived),
   };
 
   return NextResponse.json({ buckets });

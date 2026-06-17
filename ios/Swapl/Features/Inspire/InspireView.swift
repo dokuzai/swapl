@@ -513,10 +513,7 @@ struct PackageView: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(SwaplSemanticLight.primary)
                     .padding(.top, 2)
-                Text("Understood: ").font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                + Text(understood)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                Text(understoodLabel(understood))
                     .foregroundStyle(AirbnbPalette.text)
             }
             .padding(12)
@@ -524,6 +521,16 @@ struct PackageView: View {
             .background(AirbnbPalette.accent, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
             .padding(.horizontal, 22)
         }
+    }
+
+    // Bold "Understood: " prefix + the parsed value, as one wrapping run.
+    // AttributedString keeps the inline flow without the deprecated `Text` `+`.
+    private func understoodLabel(_ understood: String) -> AttributedString {
+        var label = AttributedString("Understood: ")
+        label.font = .swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold)
+        var value = AttributedString(understood)
+        value.font = .swaplBody(SwaplDesignSystem.FontSize.bodySmall)
+        return label + value
     }
 
     // MARK: hero

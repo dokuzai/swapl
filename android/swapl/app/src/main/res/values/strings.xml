@@ -337,6 +337,8 @@
     <string name="detail_private_room_badge_rooms">Private room · %1$d rooms</string>
     <string name="detail_about_home">About this home</string>
     <string name="detail_what_offered">What this place offers</string>
+    <string name="detail_where">Where you\'ll be</string>
+    <string name="detail_approx_area">approximate area</string>
     <string name="detail_hosted_by">Hosted by</string>
     <string name="detail_anonymous">Anonymous</string>
     <string name="detail_verified_host">Verified host</string>

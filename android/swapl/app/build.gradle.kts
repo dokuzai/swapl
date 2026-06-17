@@ -127,6 +127,10 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.0.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
 
+    // Maps — osmdroid (OpenStreetMap raster tiles, keyless) for the approximate
+    // location map on listing detail. Matches the web's OSM tiles, no API key.
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
+
     // Push (FCM)
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.firebase:firebase-messaging-ktx")

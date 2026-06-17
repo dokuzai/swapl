@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 import Observation
 import SwaplDesignTokens
 
@@ -237,6 +238,7 @@ struct ListingDetailView: View {
             hostSection(detail)
             descriptionSection(detail.listing.description)
             amenitySection(detail.listing)
+            locationSection(detail.listing)
             if isOwner(detail) {
                 nightlyKeysEntry(detail.listing)
                 ownerVerificationEntry(detail)
@@ -426,6 +428,40 @@ struct ListingDetailView: View {
             }
         }
         .padding(.horizontal, 22)
+    }
+
+    // Approximate-area map (DOK-182 privacy): the server fuzzes lat/lng to a
+    // ~2km area for non-owners, so we render a soft circle, not a precise pin —
+    // the guest sees the neighbourhood they're heading to without the exact door.
+    @ViewBuilder
+    private func locationSection(_ listing: Listing) -> some View {
+        if let lat = listing.lat, let lng = listing.lng {
+            let center = CLLocationCoordinate2D(latitude: lat, longitude: lng)
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Where you'll be")
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Map(initialPosition: .region(MKCoordinateRegion(
+                    center: center, latitudinalMeters: 4500, longitudinalMeters: 4500
+                )), interactionModes: []) {
+                    MapCircle(center: center, radius: 1500)
+                        .foregroundStyle(SwaplSemanticLight.primary.opacity(0.14))
+                        .stroke(SwaplSemanticLight.primary.opacity(0.45), lineWidth: 1.5)
+                }
+                .mapStyle(.standard(pointsOfInterest: .excludingAll))
+                .frame(height: 200)
+                .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
+                .allowsHitTesting(false)
+                HStack(spacing: 6) {
+                    Image(systemName: "mappin.and.ellipse")
+                    Text("\(listing.neighbourhood), \(listing.city) · approximate area")
+                }
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            .padding(.horizontal, 22)
+        }
     }
 
     private func isOwner(_ detail: ListingDetailResponse) -> Bool {

@@ -14,6 +14,10 @@ data class Listing(
     val neighbourhood: String,
     val country: String,
     val address: String? = null,
+    // Fuzzed to a ~2km area for non-owners server-side; used for the approximate
+    // location map on the detail screen.
+    val lat: Double? = null,
+    val lng: Double? = null,
     val sizeSqm: Int,
     val sleeps: Int,
     val bedrooms: Int,

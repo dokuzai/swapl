@@ -38,7 +38,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/listings/
 
   const session = await getSessionFromRequest(req);
   const isOwner = session?.userId === listing.userId;
-  const dto = toDTO(listing, { includeAddress: isOwner, includeValuation: isOwner });
+  const dto = toDTO(listing, { includeAddress: isOwner, includeValuation: isOwner, includeExactCoords: isOwner });
   const viewer = session ? await getViewerListing(session.userId) : null;
   const matchScore =
     viewer && viewer.id !== dto.id
