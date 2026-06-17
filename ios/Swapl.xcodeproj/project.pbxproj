@@ -737,6 +737,7 @@
 				fa,
 				th,
 				id,
+				"ar-PS",
 			);
 			mainGroup = 0EA051C9F1519EEF833938DB;
 			minimizedProjectReferenceProxies = 1;

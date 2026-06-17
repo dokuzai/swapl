@@ -44,6 +44,7 @@ android {
         resourceConfigurations += listOf(
             "en", "it", "fr", "de", "es", "pt", "nl", "tr",
             "zh", "ar", "ja", "ro", "el", "fa", "th", "id",
+            "b+ar+PS",
         )
 
         // Read from local.properties (or -P): swapl.api.base.url=...

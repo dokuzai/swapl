@@ -6,6 +6,7 @@
 export const LOCALES = [
   "en", "it", "fr", "de", "es", "pt", "nl", "tr",
   "zh", "ar", "ja", "ro", "el", "fa", "th", "id",
+  "ar-PS",
 ] as const;
 export type Locale = (typeof LOCALES)[number];
 
@@ -28,6 +29,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   fa: "فارسی",
   th: "ไทย",
   id: "Bahasa Indonesia",
+  "ar-PS": "فلسطيني",
 };
 
 // Small flag glyphs for the locale-switcher chips. Pure unicode.
@@ -48,10 +50,11 @@ export const LOCALE_FLAG: Record<Locale, string> = {
   fa: "🇮🇷",
   th: "🇹🇭",
   id: "🇮🇩",
+  "ar-PS": "🇵🇸",
 };
 
 // Right-to-left locales. The <html dir> is flipped for these (see client.tsx).
-export const RTL_LOCALES: ReadonlySet<Locale> = new Set<Locale>(["ar", "fa"]);
+export const RTL_LOCALES: ReadonlySet<Locale> = new Set<Locale>(["ar", "fa", "ar-PS"]);
 
 export function localeDir(locale: Locale): "rtl" | "ltr" {
   return RTL_LOCALES.has(locale) ? "rtl" : "ltr";
@@ -74,6 +77,11 @@ export function detectLocaleFromHeader(acceptLanguage: string | null | undefined
     })
     .sort((a, b) => b.q - a.q);
   for (const { tag } of tags) {
+    // Exact match first so region-specific locales (e.g. "ar-PS") win over
+    // their primary subtag ("ar"). Tags are lowercased above, so compare
+    // case-insensitively against our canonical codes.
+    const exact = (LOCALES as readonly string[]).find((l) => l.toLowerCase() === tag);
+    if (exact) return exact as Locale;
     const primary = tag.split("-")[0];
     if (isLocale(primary)) return primary;
   }

@@ -15,6 +15,7 @@ import { el } from "@/lib/i18n/dict-el";
 import { fa } from "@/lib/i18n/dict-fa";
 import { th } from "@/lib/i18n/dict-th";
 import { id } from "@/lib/i18n/dict-id";
+import { arPS } from "@/lib/i18n/dict-ar-ps";
 
 const locales: Record<string, Partial<Record<DictKey, string>>> = {
   fr,
@@ -32,6 +33,7 @@ const locales: Record<string, Partial<Record<DictKey, string>>> = {
   fa,
   th,
   id,
+  "ar-PS": arPS,
 };
 
 // Keys where falling back to the English string is intentional (e.g. strings
