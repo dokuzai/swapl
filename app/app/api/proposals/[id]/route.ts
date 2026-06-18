@@ -8,6 +8,7 @@ import { insuranceProvider } from "@/lib/insurance";
 import { anchorIssuedPolicy } from "@/lib/insurance/anchor";
 import { chargeInspirePackageOnAccept, cancelInspirePackagePayment } from "@/lib/billing/inspire";
 import { toDTO } from "@/lib/listing-utils";
+import { publicContactChannels, ownContactChannels } from "@/lib/contact-channels";
 import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { getTripPhase, guideUnlocked, homeGuideComplete } from "@/lib/trip/phase";
 import { bookedRangesFor, rangesOverlap } from "@/lib/listing/availability";
@@ -38,8 +39,8 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
   const proposal = await prisma.swapProposal.findUnique({
     where: { id },
     include: {
-      proposerListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true } }, homeGuide: true } },
-      targetListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true } }, homeGuide: true } },
+      proposerListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true, contactChannels: true } }, homeGuide: true } },
+      targetListing: { include: { user: { select: { id: true, name: true, avatar: true, verified: true, contactChannels: true } }, homeGuide: true } },
       agreement: { include: { insurancePolicy: true, checkEvents: true } },
     },
   });
@@ -55,7 +56,23 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
   const ownsProposer = proposal.proposerListing.userId === session.userId;
   const ownsTarget = proposal.targetListing.userId === session.userId;
 
-  const other = isProposer ? proposal.targetListing.user : proposal.proposerListing.user;
+  const otherUser = isProposer ? proposal.targetListing.user : proposal.proposerListing.user;
+  // Off-platform contact channels unlock once the swap is accepted and the
+  // agreement is still live or completed. A cancelled/INTERRUPTED swap re-locks
+  // them. Locked by default (publicContactChannels returns null).
+  const contactsUnlocked =
+    proposal.agreement?.status === "ACTIVE" || proposal.agreement?.status === "COMPLETED";
+  const other = {
+    id: otherUser.id,
+    name: otherUser.name,
+    avatar: otherUser.avatar,
+    verified: otherUser.verified,
+    contactChannels: publicContactChannels(otherUser.contactChannels, { unlocked: contactsUnlocked }),
+    // Lets the UI distinguish "they have channels that unlock on acceptance"
+    // from "they share no off-platform contact" — without leaking values while
+    // locked.
+    hasContactChannels: Object.keys(ownContactChannels(otherUser.contactChannels)).length > 0,
+  };
 
   // Review eligibility (DOK-147): the caller can review once the agreement is
   // COMPLETED and they have not reviewed it yet (one review per author).
