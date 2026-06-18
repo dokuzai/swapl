@@ -56,8 +56,12 @@ export async function Navbar() {
     // per-page I18nProviderShell, so it must supply its own LocaleProvider —
     // otherwise every signed-in page crashes once the avatar menu mounts.
     <LocaleProvider locale={locale} dict={dict}>
-    <header className="sticky top-0 z-50 nav-blurred border-b border-line">
-      <nav className="wrap flex items-center justify-between gap-4 py-4">
+    {/* Transparent band — no background of its own. The nav sits in a
+        floating Liquid Glass pill so page content scrolls under it and
+        shows through the blur (DOK: liquid-glass header/footer). */}
+    <header className="sticky top-0 z-50">
+      <div className="wrap pt-3">
+      <nav className="flex items-center justify-between gap-4 rounded-[22px] liquid-glass px-5 py-3">
         <Link href="/" className="flex items-center gap-2 font-display text-[22px] font-medium tracking-tight shrink-0">
           <LogoMark color="var(--navy)" accent="var(--pink)" />
           <span>
@@ -106,12 +110,16 @@ export async function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile second row: scrollable tabs (browse pages) / search pill. */}
+      {/* Mobile second row: scrollable tabs (browse pages) / search pill —
+          its own floating glass pill below the main bar. */}
       {session && (
-        <div className="md:hidden pb-2">
-          <HeaderNav labels={navLabels} variant="mobile" />
+        <div className="md:hidden mt-2">
+          <div className="rounded-[22px] liquid-glass py-2">
+            <HeaderNav labels={navLabels} variant="mobile" />
+          </div>
         </div>
       )}
+      </div>
 
       {/* Real-time referrer toast (DOK-157): "NAME just verified — you earned
           Keys!" while the app is open. */}

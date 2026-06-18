@@ -286,7 +286,34 @@
   .swapl-switch[data-on="true"]::after { left: 18px; }
 }
 
-/* nav backdrop blur on scroll */
+/* ============================================================
+   Liquid Glass — translucent "frosted pill" used for the floating
+   header and footer bands. The band wrapper itself stays fully
+   transparent (no background); only this pill carries the glass so
+   page content scrolls *under* it and shows through the blur.
+   ============================================================ */
+.liquid-glass {
+  background: color-mix(in oklab, var(--cream) 55%, transparent);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid color-mix(in oklab, #ffffff 55%, transparent);
+  box-shadow:
+    0 10px 30px -14px rgba(26, 31, 60, 0.28),
+    inset 0 1px 0 0 color-mix(in oklab, #ffffff 75%, transparent),
+    inset 0 -1px 0 0 color-mix(in oklab, var(--navy) 6%, transparent);
+}
+
+/* Dark surfaces (e.g. the admin header) tint the glass toward navy so
+   light text stays legible over content scrolling beneath it. */
+.liquid-glass--dark {
+  background: color-mix(in oklab, var(--navy) 62%, transparent);
+  border-color: color-mix(in oklab, #ffffff 16%, transparent);
+  box-shadow:
+    0 10px 30px -14px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 0 color-mix(in oklab, #ffffff 18%, transparent);
+}
+
+/* Legacy solid nav band — kept for any third-party reference. */
 .nav-blurred {
   backdrop-filter: blur(16px);
   background: color-mix(in oklab, var(--cream) 78%, transparent);

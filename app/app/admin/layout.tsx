@@ -28,11 +28,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const me = await requireAdminPage();
   return (
     <I18nProviderShell>
-      <header
-        className="sticky top-0 z-50 border-b backdrop-blur"
-        style={{ background: "color-mix(in oklab, var(--navy) 92%, transparent)", color: "var(--cream)", borderColor: "color-mix(in oklab, var(--cream) 12%, transparent)" }}
-      >
-        <div className="wrap flex items-center justify-between gap-4 py-3">
+      {/* Transparent band with a floating Liquid Glass pill, matching the
+          rest of the app — content scrolls under it. */}
+      <header className="sticky top-0 z-50">
+        <div className="wrap pt-3">
+        <div
+          className="liquid-glass liquid-glass--dark rounded-[22px] flex items-center justify-between gap-4 px-5 py-3"
+          style={{ color: "var(--cream)" }}
+        >
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/admin" className="font-display text-lg tracking-[-0.01em] flex items-center gap-2 shrink-0">
               <span className="font-mono text-[10px] uppercase tracking-[.12em] px-2 py-0.5 rounded-full"
@@ -68,6 +71,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               </button>
             </form>
           </div>
+        </div>
         </div>
       </header>
       <main className="flex-1">

@@ -5,11 +5,9 @@ import { marketingUrl } from "@/lib/marketing/urls";
 export async function Footer() {
   const dict = await getDictionary();
   return (
-    <footer
-      className="mt-auto border-t border-line py-10 font-mono text-[13px] text-navy-3"
-      style={{ borderColor: "var(--line)" }}
-    >
-      <div className="wrap grid gap-8 sm:grid-cols-[1fr_auto_auto]">
+    <footer className="mt-auto py-4 font-mono text-[13px] text-navy-3">
+      <div className="wrap">
+        <div className="liquid-glass rounded-[22px] px-6 py-8 grid gap-8 sm:grid-cols-[1fr_auto_auto]">
         <span className="self-center">{dict["footer.tagline"]}</span>
 
         <nav className="flex flex-col gap-2 sm:items-end">
@@ -34,6 +32,7 @@ export async function Footer() {
             <a href={marketingUrl("/terms")} className="hover:text-navy">{dict["footer.terms"]}</a>
           </div>
         </nav>
+        </div>
       </div>
     </footer>
   );
