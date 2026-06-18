@@ -91,7 +91,7 @@ final class APIClient: @unchecked Sendable {
         var req = URLRequest(url: components.url!)
         req.httpMethod = method
         req.setValue("application/json", forHTTPHeaderField: "Accept")
-        req.setValue(Locale.preferredLanguages.first ?? "en", forHTTPHeaderField: "Accept-Language")
+        req.setValue(UserDefaults.standard.string(forKey: swaplAppLanguageDefaultsKey) ?? Locale.preferredLanguages.first ?? "en", forHTTPHeaderField: "Accept-Language")
         if let token = tokenProvider?() {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
@@ -143,7 +143,7 @@ final class APIClient: @unchecked Sendable {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Accept")
-        req.setValue(Locale.preferredLanguages.first ?? "en", forHTTPHeaderField: "Accept-Language")
+        req.setValue(UserDefaults.standard.string(forKey: swaplAppLanguageDefaultsKey) ?? Locale.preferredLanguages.first ?? "en", forHTTPHeaderField: "Accept-Language")
         if let token = tokenProvider?() {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }

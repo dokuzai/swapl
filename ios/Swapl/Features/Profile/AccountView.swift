@@ -1856,6 +1856,7 @@ private struct PersonalInfoSectionView: View {
     @Environment(AuthService.self) private var auth
     var body: some View {
         AccountSectionScaffold(title: String(localized: "General")) {
+            NavigationLink { LanguagePickerView() } label: { AccountSettingsRow(title: String(localized: "Language"), icon: "globe") }.buttonStyle(.plain)
             NavigationLink { PersonalInfoView() } label: { AccountSettingsRow(title: String(localized: "Personal information"), icon: "person.text.rectangle") }.buttonStyle(.plain)
             NavigationLink { InterestsEditorView() } label: { AccountSettingsRow(title: String(localized: "Interests"), icon: "heart.text.square") }.buttonStyle(.plain)
             NavigationLink { SavedSearchesView() } label: { AccountSettingsRow(title: String(localized: "Saved searches"), icon: "magnifyingglass") }.buttonStyle(.plain)

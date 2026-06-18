@@ -23,6 +23,7 @@ struct SwaplApp: App {
     @State private var pushService = PushService()
     @State private var favorites = FavoritesStore()
     @State private var unread = UnreadStore()
+    @State private var language = LanguageManager.shared
 
     init() {
         SwaplFonts.register()
@@ -68,6 +69,7 @@ struct SwaplApp: App {
                 .environment(pushService)
                 .environment(favorites)
                 .environment(unread)
+                .environment(language)
                 .tint(SwaplSemanticLight.primary)
         }
     }

@@ -16,6 +16,18 @@
 	<array>
 		<string>en</string>
 		<string>it</string>
+		<string>fr</string>
+		<string>es</string>
+		<string>ar</string>
+		<string>ar-PS</string>
+		<string>fa</string>
+		<string>el</string>
+		<string>ro</string>
+		<string>tr</string>
+		<string>id</string>
+		<string>th</string>
+		<string>zh</string>
+		<string>ja</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
@@ -43,10 +55,6 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Swapl uses the camera so you can record a quick before/after video of the home at check-in and check-out.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Swapl uses your location to fill in your home's address while you're there, and to count your days abroad for Swapalitics. Only the approximate area (country/city) is ever used — never your exact coordinates.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Swapl uses the microphone so you can dictate the trip you're dreaming of instead of typing it.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

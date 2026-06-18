@@ -10,6 +10,18 @@ options:
   knownRegions:
     - en
     - it
+    - fr
+    - es
+    - ar
+    - ar-PS
+    - fa
+    - el
+    - ro
+    - tr
+    - id
+    - th
+    - zh
+    - ja
     - Base
 packages:
   SwaplDesignTokens:
@@ -27,7 +39,9 @@ targets:
   Swapl:
     type: application
     platform: iOS
-    deploymentTarget: "17.0"
+    # Liquid Glass (glassEffect) requires iOS 26. Keep in sync with the SDK; the
+    # committed project used 26.6 — anything ≥26 builds the glass chrome.
+    deploymentTarget: "26.0"
     sources:
       - path: Swapl
     dependencies:
@@ -38,11 +52,23 @@ targets:
         CFBundleDisplayName: Swapl
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
-        # Italian-market launch: advertise both localizations so iOS offers the
-        # IT strings under an Italian device language (F1).
+        # Advertise every shipped localization so iOS offers them (and the
+        # in-app Language picker matches the System per-app picker).
         CFBundleLocalizations:
           - en
           - it
+          - fr
+          - es
+          - ar
+          - ar-PS
+          - fa
+          - el
+          - ro
+          - tr
+          - id
+          - th
+          - zh
+          - ja
         CFBundleDevelopmentRegion: en
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
