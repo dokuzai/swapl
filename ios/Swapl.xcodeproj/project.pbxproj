@@ -38,6 +38,7 @@
 		3953988739F964C99F08C0E2 /* SwapsInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1A9E41690FE45EB220FB4A /* SwapsInboxView.swift */; };
 		3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39E0749085C3E362B239A25 /* ProposalRepository.swift */; };
 		3C468E83F14C65170AB87EE2 /* ProposalDraftEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC9312485BA546DE9DDA312 /* ProposalDraftEngine.swift */; };
+		E0CF0069CFD0AF667337A32C /* ListingExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C498D9DA9BA925092D92DCB /* ListingExtractor.swift */; };
 		42E7606893193D6EE6499537 /* Inter-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6834A289CE48A812B8A38852 /* Inter-Variable.ttf */; };
 		4636472154517A8492A9A5DD /* KeysStaysSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF9C7B3EC9677F13EE45ECF1 /* KeysStaysSection.swift */; };
 		47ABC2A9A39118AAC1CA8A6C /* KeysTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B7E1278A2EF72789A9AE78 /* KeysTransactionsView.swift */; };
@@ -187,6 +188,7 @@
 		437D4F5127D670D35AE1E443 /* WaysToEarnKeysSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaysToEarnKeysSection.swift; sourceTree = "<group>"; };
 		482C55A61B818770C1E2FFE8 /* SwaplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplApp.swift; sourceTree = "<group>"; };
 		4BC9312485BA546DE9DDA312 /* ProposalDraftEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProposalDraftEngine.swift; sourceTree = "<group>"; };
+		2C498D9DA9BA925092D92DCB /* ListingExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingExtractor.swift; sourceTree = "<group>"; };
 		4BD0A0CB13B5D117AC603E41 /* CityStamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityStamp.swift; sourceTree = "<group>"; };
 		4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplCreateListingView.swift; sourceTree = "<group>"; };
 		526D3E645943E4B40E2EE02F /* AvailabilityCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCalendar.swift; sourceTree = "<group>"; };
@@ -642,6 +644,7 @@
 			isa = PBXGroup;
 			children = (
 				4BC9312485BA546DE9DDA312 /* ProposalDraftEngine.swift */,
+				2C498D9DA9BA925092D92DCB /* ListingExtractor.swift */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -891,6 +894,7 @@
 				2E03DA0A20134F3722419077 /* Proposal.swift in Sources */,
 				FEEB07E1836101E7626EFD40 /* ContactChannels.swift in Sources */,
 				3C468E83F14C65170AB87EE2 /* ProposalDraftEngine.swift in Sources */,
+				E0CF0069CFD0AF667337A32C /* ListingExtractor.swift in Sources */,
 				3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */,
 				36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */,
 				85E60D2EC077D5F6EBA8C390 /* PublishAck.swift in Sources */,

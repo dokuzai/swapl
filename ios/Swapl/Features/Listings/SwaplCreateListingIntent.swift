@@ -39,8 +39,15 @@ struct CreateListingIntent: AppIntent {
         )
     }
     
-    // Simple keyword-based extraction (no LLM required)
+    // Prefer the on-device model (Apple Intelligence) for rich, structured
+    // extraction; fall back to the keyword regex when it's unavailable.
     private func extractListingInfo(from text: String) async -> ExtractedListingInfo {
+        if let ai = await ListingExtractor.extract(fromText: text) { return ai }
+        return extractWithRegex(from: text)
+    }
+
+    // Simple keyword-based extraction (no LLM required) — the fallback path.
+    private func extractWithRegex(from text: String) -> ExtractedListingInfo {
         let lowercased = text.lowercased()
         
         // Extract bedroom count
@@ -84,6 +91,9 @@ struct ExtractedListingInfo: Codable {
     var amenities: [String]?
     var title: String?
     var description: String?
+    // Property type (apartment/house/loft/…) — populated by the on-device
+    // extractor; nil from the regex path. Additive default keeps callers valid.
+    var propertyType: String? = nil
 }
 
 // MARK: - Create Listing Snippet View

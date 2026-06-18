@@ -1278,13 +1278,30 @@ private struct ListingCreationDraft {
         if let sleeps = extractedInfo.sleeps { self.sleeps = sleeps }
         if let startDate = extractedInfo.startDate { self.availableFrom = startDate }
         if let endDate = extractedInfo.endDate { self.availableTo = endDate }
+        // Map the model's free-text type onto the picker's fixed buckets.
+        if let pt = extractedInfo.propertyType?.lowercased(), !pt.isEmpty {
+            if pt.contains("studio") { propertyType = "STUDIO" }
+            else if pt.contains("house") || pt.contains("villa") || pt.contains("cottage") { propertyType = "HOUSE" }
+            else if pt.contains("room") { propertyType = "ROOM" }
+            else if pt.contains("apartment") || pt.contains("flat") || pt.contains("loft") || pt.contains("condo") { propertyType = "APARTMENT" }
+        }
         if let amenities = extractedInfo.amenities {
             let normalized = Set(amenities.map { $0.lowercased() })
-            balcony = normalized.contains("balcony")
-            ac = normalized.contains("ac") || normalized.contains("air conditioning")
-            washer = normalized.contains("washer")
-            dishwasher = normalized.contains("dishwasher")
-            wfhSetup = normalized.contains("workspace") || normalized.contains("desk")
+            func has(_ keys: String...) -> Bool { keys.contains { normalized.contains($0) } }
+            balcony = has("balcony")
+            ac = has("ac", "air conditioning", "aircon")
+            washer = has("washer", "washing machine")
+            dryer = has("dryer")
+            dishwasher = has("dishwasher")
+            wfhSetup = has("workspace", "desk", "wfh", "office")
+            pool = has("pool", "swimming pool")
+            rooftop = has("rooftop", "roof terrace")
+            garden = has("garden")
+            hasParking = has("parking", "garage")
+            petsAllowed = has("pets", "pet friendly", "pet-friendly")
+            gym = has("gym")
+            piano = has("piano")
+            bikeIncluded = has("bike", "bicycle")
         }
     }
 
