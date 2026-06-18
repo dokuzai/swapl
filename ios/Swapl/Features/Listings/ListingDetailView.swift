@@ -64,11 +64,28 @@ struct ListingDetailView: View {
             }
         }
         .frame(maxWidth: .infinity)
+        // Let the hero photo bleed up under the transparent nav bar so the
+        // floating glass controls (back / title / share / heart) sit over the
+        // photo — no opaque header band, content slides underneath.
+        .ignoresSafeArea(edges: .top)
         .background(SwaplSemanticLight.background.ignoresSafeArea())
         .navigationTitle(vm.detail?.listing.city ?? String(localized: "Home"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
+            // Title as a floating Liquid Glass pill (same pattern as the chat
+            // header) so it stays legible over the photo without a header band.
+            ToolbarItem(placement: .principal) {
+                if let detail = vm.detail {
+                    Text(detail.listing.city)
+                        .font(.swaplBody(16, weight: .bold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .glassEffect(.regular, in: .capsule)
+                }
+            }
             // System share sheet. The link is a universal link, so recipients
             // with the app installed land straight on this listing.
             ToolbarItem(placement: .topBarTrailing) {
@@ -193,7 +210,10 @@ struct ListingDetailView: View {
             // widen the enclosing column and push content off-screen.
             Color.clear
                 .frame(maxWidth: .infinity)
-                .frame(height: 330)
+                // Taller than before: the hero now bleeds under the nav bar, so
+                // the extra height keeps a generous photo visible below the
+                // floating controls.
+                .frame(height: 380)
                 .overlay {
                     ListingPhotoGalleryView(listing: detail.listing)
                 }
@@ -505,9 +525,13 @@ struct ListingDetailView: View {
             }
             .accessibilityLabel("Edit listing")
         }
-        .padding(.horizontal, 22)
+        .padding(.horizontal, 18)
         .padding(.vertical, 14)
-        .glassEffect(.regular, in: .rect)
+        // Floating Liquid Glass card, inset from the edges — not an edge-to-edge
+        // band. Content scrolls underneath it.
+        .glassEffect(.regular, in: .rect(cornerRadius: 28))
+        .padding(.horizontal, 14)
+        .padding(.bottom, 6)
     }
 
     // Two ways to book this home, side by side (DOK-155): the direct
@@ -556,9 +580,13 @@ struct ListingDetailView: View {
                 .opacity(detail.viewerListingId == nil ? 0.45 : 1)
             }
         }
-        .padding(.horizontal, 22)
+        .padding(.horizontal, 18)
         .padding(.vertical, 14)
-        .glassEffect(.regular, in: .rect)
+        // Floating Liquid Glass card, inset from the edges — not an edge-to-edge
+        // band. Content scrolls underneath it.
+        .glassEffect(.regular, in: .rect(cornerRadius: 28))
+        .padding(.horizontal, 14)
+        .padding(.bottom, 6)
     }
 
     private func amenityChips(_ l: Listing) -> [String] {
