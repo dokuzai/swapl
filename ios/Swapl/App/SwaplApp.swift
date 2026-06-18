@@ -111,9 +111,15 @@ struct RootView: View {
             if auth.session == nil {
                 favorites.reset()
                 unread.reset()
+                // Drop the previous member's homes/swaps from Spotlight so the
+                // next account on this device doesn't inherit them.
+                await SwaplSpotlightIndex.clear()
             } else {
                 await favorites.loadIdsIfNeeded()
                 await unread.refresh()
+                // Index this member's own homes and live swaps into Spotlight /
+                // Apple Intelligence. Runs detached so it never delays the UI.
+                Task { await SwaplSpotlightIndex.reindexAll() }
                 // Daily coarse location ping (Swapalitics "days abroad"). Sends a
                 // device fix when permission is granted, else an empty body so
                 // the server falls back to geo-IP. Guarded to once per day.
