@@ -7,6 +7,7 @@ import { z } from "zod";
 import { prisma, stringifyJSON, parseJSON } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { invalidInput, unauthenticated } from "@/lib/api/errors";
+import { contactChannelsInputSchema, serializeContactChannels, ownContactChannels } from "@/lib/contact-channels";
 
 const schema = z
   .object({
@@ -18,6 +19,9 @@ const schema = z
     languages: z.array(z.string().trim().min(1).max(40)).max(10),
     homeCity: z.string().trim().max(80).nullable(),
     homeCountry: z.string().trim().max(80).nullable(),
+    // Off-platform contact channels (DOK-204). Full-replace: the editor sends
+    // the complete desired set; invalid/empty values are dropped server-side.
+    contactChannels: contactChannelsInputSchema,
   })
   .partial();
 
@@ -28,7 +32,7 @@ export async function PATCH(req: Request) {
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return invalidInput("Invalid input", { issues: parsed.error.issues });
 
-  const { name, bio, work, languages, homeCity, homeCountry } = parsed.data;
+  const { name, bio, work, languages, homeCity, homeCountry, contactChannels } = parsed.data;
   const user = await prisma.user.update({
     where: { id: session.userId },
     data: {
@@ -38,8 +42,9 @@ export async function PATCH(req: Request) {
       ...(languages !== undefined ? { languages: stringifyJSON(languages) } : {}),
       ...(homeCity !== undefined ? { homeCity: homeCity || null } : {}),
       ...(homeCountry !== undefined ? { homeCountry: homeCountry || null } : {}),
+      ...(contactChannels !== undefined ? { contactChannels: serializeContactChannels(contactChannels) } : {}),
     },
-    select: { work: true, languages: true, homeCity: true, homeCountry: true },
+    select: { work: true, languages: true, homeCity: true, homeCountry: true, contactChannels: true },
   });
 
   return NextResponse.json({
@@ -48,6 +53,7 @@ export async function PATCH(req: Request) {
       languages: parseJSON<string[]>(user.languages, []),
       homeCity: user.homeCity,
       homeCountry: user.homeCountry,
+      contactChannels: ownContactChannels(user.contactChannels),
     },
   });
 }

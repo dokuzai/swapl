@@ -1801,4 +1801,12 @@ export const it: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "Filtra per tipo",
+  "account.contact.title": "Contatti",
+  "account.contact.hint": "Condivisi con un partner di scambio solo dopo che entrambi accettate uno scambio. Lascia vuoto per mantenerli privati.",
+  "account.contact.email": "Email",
+  "account.contact.phone": "Telefono",
+  "account.contact.website": "Sito web",
+  "swaps.contact.heading": "Contatti",
+  "swaps.contact.locked": "I contatti si sbloccano quando entrambi accettate lo scambio.",
+  "swaps.accept.contactNote": "I tuoi contatti saranno condivisi con {name} alla conferma.",
 };

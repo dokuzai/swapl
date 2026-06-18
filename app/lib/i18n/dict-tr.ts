@@ -1800,4 +1800,12 @@ export const tr: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "Türe göre filtrele",
+  "account.contact.title": "İletişim",
+  "account.contact.hint": "Yalnızca ikiniz de bir takası kabul ettikten sonra takas ortağıyla paylaşılır. Gizli tutmak için boş bırakın.",
+  "account.contact.email": "E-posta",
+  "account.contact.phone": "Telefon",
+  "account.contact.website": "Web sitesi",
+  "swaps.contact.heading": "İletişim bilgileri",
+  "swaps.contact.locked": "İletişim bilgileri, ikiniz de takası kabul ettiğinizde açılır.",
+  "swaps.accept.contactNote": "İletişim bilgileriniz, onayladığınızda {name} ile paylaşılacak.",
 };

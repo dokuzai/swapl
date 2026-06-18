@@ -22,6 +22,9 @@ final class ProfileRepository: @unchecked Sendable {
         var languages: [String]?
         var homeCity: String?
         var homeCountry: String?
+        // Off-platform contact channels (DOK-204). Full-replace: the complete
+        // desired set is sent each save; the server normalizes + drops invalids.
+        var contactChannels: ContactChannels?
     }
 
     func updateProfile(_ body: ProfileUpdateBody) async throws -> EmptyResponse {

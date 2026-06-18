@@ -67,6 +67,9 @@ struct MeResponse: Decodable, Sendable {
         let languages: [String]?
         let homeCity: String?
         let homeCountry: String?
+        // Off-platform contact channels (DOK-204). Optional so older deploys
+        // that omit the key still decode.
+        var contactChannels: ContactChannels? = nil
     }
     struct Counts: Decodable, Sendable {
         let listings: Int

@@ -15,6 +15,9 @@ final class PersonalInfoViewModel {
     var languages = ""   // comma-separated in the UI, array on the wire
     var homeCity = ""
     var homeCountry = ""
+    // Off-platform contact channels (DOK-204) — only shared with a swap partner
+    // after both sides accept.
+    var contact = ContactChannels()
 
     var isLoading = true
     var isSaving = false
@@ -31,6 +34,7 @@ final class PersonalInfoViewModel {
             languages = (me.user.languages ?? []).joined(separator: ", ")
             homeCity = me.user.homeCity ?? ""
             homeCountry = me.user.homeCountry ?? ""
+            contact = me.user.contactChannels ?? ContactChannels()
             isLoading = false
         } catch {
             self.error = error.localizedDescription
@@ -55,7 +59,9 @@ final class PersonalInfoViewModel {
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 .filter { !$0.isEmpty },
             homeCity: homeCity.trimmingCharacters(in: .whitespacesAndNewlines),
-            homeCountry: homeCountry.trimmingCharacters(in: .whitespacesAndNewlines)
+            homeCountry: homeCountry.trimmingCharacters(in: .whitespacesAndNewlines),
+            // Full-replace: send the complete current set each save.
+            contactChannels: contact
         )
         do {
             _ = try await ProfileRepository.shared.updateProfile(body)
@@ -88,6 +94,8 @@ struct PersonalInfoView: View {
                         .padding(.top, -10)
                     AccountField(title: "Home city", text: Bindable(vm).homeCity, placeholder: "e.g. Milan", icon: "mappin.and.ellipse")
                     AccountField(title: "Home country", text: Bindable(vm).homeCountry, placeholder: "e.g. Italy")
+
+                    contactSection
 
                     if let error = vm.error {
                         Text(error)
@@ -128,6 +136,52 @@ struct PersonalInfoView: View {
         .swaplFloatingHeader(String(localized: "Personal information"))
         .task { await vm.load() }
     }
+
+    // MARK: Contact channels (DOK-204)
+
+    @ViewBuilder
+    private var contactSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Contact")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
+                .foregroundStyle(AirbnbPalette.text)
+                .padding(.top, 8)
+            Text("Only shared with a swap partner once you both accept a swap. Leave blank to keep private.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .padding(.top, -6)
+
+            ForEach(ContactChannelKind.allCases) { kind in
+                AccountField(
+                    title: kind.label,
+                    text: contactBinding(kind),
+                    placeholder: kind.placeholder,
+                    icon: kind.systemImage,
+                    autocapitalization: .never,
+                    keyboard: keyboard(for: kind),
+                    disableAutocorrection: true
+                )
+            }
+        }
+    }
+
+    private func contactBinding(_ kind: ContactChannelKind) -> Binding<String> {
+        Binding(
+            get: { vm.contact.value(for: kind) ?? "" },
+            set: { vm.contact.set(kind, $0) }
+        )
+    }
+
+    private func keyboard(for kind: ContactChannelKind) -> UIKeyboardType {
+        switch kind {
+        case .email: .emailAddress
+        // numbersAndPunctuation (not phonePad) so the "+" country prefix the
+        // placeholder shows is reachable.
+        case .phone, .whatsapp: .numbersAndPunctuation
+        case .website: .URL
+        default: .default
+        }
+    }
 }
 
 // MARK: - Shared field styles (account editors)
@@ -137,6 +191,9 @@ struct AccountField: View {
     @Binding var text: String
     let placeholder: String
     var icon: String?
+    var autocapitalization: TextInputAutocapitalization = .words
+    var keyboard: UIKeyboardType = .default
+    var disableAutocorrection: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
@@ -151,7 +208,9 @@ struct AccountField: View {
                 }
                 TextField(placeholder, text: $text)
                     .font(.swaplBody(17))
-                    .textInputAutocapitalization(.words)
+                    .textInputAutocapitalization(autocapitalization)
+                    .keyboardType(keyboard)
+                    .autocorrectionDisabled(disableAutocorrection)
             }
             .padding(16)
             .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))

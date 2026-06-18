@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 import Observation
+import AppIntents
 import SwaplDesignTokens
 
 @MainActor
@@ -149,6 +150,15 @@ struct ListingDetailView: View {
             Text("Your points are held until the host confirms. Track it under Trips.")
         }
         .task { await vm.load() }
+        // Onscreen awareness: tell the system which home is on screen so Siri /
+        // Apple Intelligence can resolve "open this home" against the entity.
+        .userActivity(SwaplActivity.viewingListing, isActive: vm.detail != nil) { activity in
+            SwaplActivity.annotate(
+                activity,
+                entity: EntityIdentifier(for: ListingEntity.self, identifier: vm.listingId),
+                title: vm.detail?.listing.title
+            )
+        }
     }
 
     // Web origin for shareable listing links. Kept as a constant rather than

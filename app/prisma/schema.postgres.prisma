@@ -79,6 +79,11 @@ model User {
   homeCity    String?                 // shown on the public profile when settings.showHomeCity
   homeCountry String?
 
+  // Off-platform contact channels, JSON-encoded TEXT (lib/contact-channels.ts
+  // owns shape + normalization). Revealed to a counterparty only once a swap is
+  // ACCEPTED — same gating as exact listing coordinates. null = none set.
+  contactChannels String?
+
   // User settings, JSON-encoded TEXT (lib/settings.ts owns shape + defaults):
   // { searchEngineIndexing, showHomeCity, emailNotifications, pushNotifications }
   // null means "all defaults" — rows are only written on first change.

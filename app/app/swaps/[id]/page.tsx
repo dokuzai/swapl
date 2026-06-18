@@ -6,6 +6,7 @@ import { marketingUrl } from "@/lib/marketing/urls";
 import { getI18n, t } from "@/lib/i18n/server";
 import type { DictKey } from "@/lib/i18n/dict-en";
 import { formatDateRange } from "@/lib/listing-utils";
+import { publicContactChannels, ownContactChannels } from "@/lib/contact-channels";
 import SwapActions from "./swap-actions";
 import { LeaveReview } from "./leave-review";
 import { SwapContextPanel } from "./swap-context-panel";
@@ -46,9 +47,9 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
   const proposal = await prisma.swapProposal.findUnique({
     where: { id },
     include: {
-      proposer: { select: { id: true, name: true, email: true } },
+      proposer: { select: { id: true, name: true, email: true, contactChannels: true } },
       proposerListing: { include: { user: { select: { id: true, name: true } } } },
-      targetListing: { include: { user: { select: { id: true, name: true, email: true } } } },
+      targetListing: { include: { user: { select: { id: true, name: true, email: true, contactChannels: true } } } },
       agreement: { include: { insurancePolicy: true } },
     },
   });
@@ -80,6 +81,12 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
   const myListing = isProposer ? proposal.proposerListing : proposal.targetListing;
   const theirListing = isProposer ? proposal.targetListing : proposal.proposerListing;
   const otherName = isProposer ? proposal.targetListing.user.name : proposal.proposer.name;
+  // Off-platform contact unlocks once the swap is accepted (ACTIVE/COMPLETED).
+  const otherUserRaw = isProposer ? proposal.targetListing.user.contactChannels : proposal.proposer.contactChannels;
+  const contactsUnlocked =
+    proposal.agreement?.status === "ACTIVE" || proposal.agreement?.status === "COMPLETED";
+  const otherContact = publicContactChannels(otherUserRaw, { unlocked: contactsUnlocked });
+  const otherHasContact = Object.keys(ownContactChannels(otherUserRaw)).length > 0;
   const canRespondAsTarget = isTarget && (proposal.status === "PENDING" || proposal.status === "COUNTERED");
   const canCounter = proposal.status === "PENDING" || proposal.status === "COUNTERED";
 
@@ -147,6 +154,8 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
       dateFrom={proposal.dateFrom.toISOString()}
       dateTo={proposal.dateTo.toISOString()}
       otherName={otherName}
+      otherContact={otherContact}
+      otherHasContact={otherHasContact}
       myListing={{
         id: myListing.id,
         city: myListing.city,

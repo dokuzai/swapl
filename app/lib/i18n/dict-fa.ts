@@ -1845,4 +1845,12 @@ export const fa: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "فیلتر بر اساس نوع",
+  "account.contact.title": "اطلاعات تماس",
+  "account.contact.hint": "فقط پس از اینکه هر دو یک مبادله را بپذیرید با شریک مبادله به اشتراک گذاشته می‌شود. برای خصوصی ماندن خالی بگذارید.",
+  "account.contact.email": "ایمیل",
+  "account.contact.phone": "تلفن",
+  "account.contact.website": "وب‌سایت",
+  "swaps.contact.heading": "اطلاعات تماس",
+  "swaps.contact.locked": "اطلاعات تماس پس از اینکه هر دو مبادله را بپذیرید باز می‌شود.",
+  "swaps.accept.contactNote": "اطلاعات تماس شما هنگام تأیید با {name} به اشتراک گذاشته می‌شود.",
 };

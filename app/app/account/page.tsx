@@ -18,6 +18,7 @@ import { ChangePasswordForm } from "@/components/account/change-password";
 import { PrivacyToggles, NotificationToggles } from "@/components/account/settings-toggles";
 import { toPasskeySummary } from "@/lib/auth/passkeys";
 import { parseSettings } from "@/lib/settings";
+import { ownContactChannels } from "@/lib/contact-channels";
 import { marketingUrl } from "@/lib/marketing/urls";
 import { getI18n, t as tt } from "@/lib/i18n/server";
 import type { DictKey } from "@/lib/i18n/dict-en";
@@ -121,6 +122,7 @@ export default async function AccountPage() {
                     languages: parseJSON<string[]>(user.languages, []),
                     homeCity: user.homeCity ?? "",
                     homeCountry: user.homeCountry ?? "",
+                    contactChannels: ownContactChannels(user.contactChannels),
                   }}
                 />
               </div>

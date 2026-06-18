@@ -1785,4 +1785,12 @@ export const fr: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "Filtrer par type",
+  "account.contact.title": "Contact",
+  "account.contact.hint": "Partagés avec un partenaire d'échange uniquement après que vous avez tous les deux accepté un échange. Laissez vide pour rester privé.",
+  "account.contact.email": "E-mail",
+  "account.contact.phone": "Téléphone",
+  "account.contact.website": "Site web",
+  "swaps.contact.heading": "Coordonnées",
+  "swaps.contact.locked": "Les coordonnées se débloquent une fois que vous acceptez tous les deux l'échange.",
+  "swaps.accept.contactNote": "Vos coordonnées seront partagées avec {name} à la confirmation.",
 };

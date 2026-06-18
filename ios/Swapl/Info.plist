@@ -55,12 +55,19 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
-	<key>NSMicrophoneUsageDescription</key>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>fun.swapl.viewing-proposal</string>
+		<string>fun.swapl.viewing-listing</string>
+	</array>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+		<string>Swapl reads your calendar to suggest home swaps for the dates of your trips and holidays. Your events stay on your device.</string>
+		<key>NSMicrophoneUsageDescription</key>
 	<string>Swapl uses the microphone so you can dictate the trip you're dreaming of instead of typing it.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Swapl uses your photo library so you can add photos of your home to your listing and profile.</string>
 	<key>NSSiriUsageDescription</key>
-	<string>Swapl uses Siri and Shortcuts to let you create a listing or optimize your listing photos with your voice.</string>
+	<string>Swapl uses Siri and Shortcuts to let you find home swaps, accept a swap, or create a listing with your voice.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Swapl uses speech recognition to turn your spoken trip wish into text, on your device whenever possible. Your audio is never sent to Swapl's servers.</string>
 	<key>SwaplApiBaseURL</key>

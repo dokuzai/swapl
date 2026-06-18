@@ -1800,4 +1800,12 @@ export const nl: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "Filteren op type",
+  "account.contact.title": "Contact",
+  "account.contact.hint": "Alleen gedeeld met een ruilpartner nadat jullie allebei een ruil hebben geaccepteerd. Laat leeg om privé te houden.",
+  "account.contact.email": "E-mail",
+  "account.contact.phone": "Telefoon",
+  "account.contact.website": "Website",
+  "swaps.contact.heading": "Contactgegevens",
+  "swaps.contact.locked": "De contactgegevens worden ontgrendeld zodra jullie allebei de ruil accepteren.",
+  "swaps.accept.contactNote": "Je contactgegevens worden bij bevestiging gedeeld met {name}.",
 };

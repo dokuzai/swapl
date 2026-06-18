@@ -7,6 +7,7 @@ import { RetryCoverButton } from "@/components/insurance/retry-cover-button";
 import { ProofOfCoverBadge } from "@/components/insurance/proof-of-cover-badge";
 import { en, type DictKey } from "@/lib/i18n/dict-en";
 import { getI18n, t, type Dict } from "@/lib/i18n/server";
+import type { ContactChannelKey, ContactChannels } from "@/lib/contact-channels";
 
 type PanelListing = {
   id: string;
@@ -32,6 +33,10 @@ export type SwapContextProps = {
   dateFrom: string;
   dateTo: string;
   otherName: string | null;
+  /** Counterparty's contact channels — non-null only once the swap is accepted. */
+  otherContact?: ContactChannels | null;
+  /** Whether the counterparty has any channels set (drives the locked teaser). */
+  otherHasContact?: boolean;
   myListing: PanelListing;
   theirListing: PanelListing;
   agreement: {
@@ -63,11 +68,43 @@ const STATUS_LABEL_KEY: Record<string, DictKey> = {
   WITHDRAWN: "swaps.status.withdrawn",
 };
 
+// Per-channel label + link rendering. Brand names are universal (no i18n key);
+// Discord usernames have no reliable deep link, so they're shown as text.
+const CONTACT_META: {
+  key: ContactChannelKey;
+  labelKey?: DictKey;
+  brand?: string;
+  href: (v: string) => string | null;
+}[] = [
+  { key: "email", labelKey: "account.contact.email", href: (v) => `mailto:${v}` },
+  { key: "phone", labelKey: "account.contact.phone", href: (v) => `tel:${v.replace(/[^\d+]/g, "")}` },
+  { key: "whatsapp", brand: "WhatsApp", href: (v) => `https://wa.me/${v.replace(/\D/g, "")}` },
+  { key: "telegram", brand: "Telegram", href: (v) => `https://t.me/${v.replace(/^@+/, "")}` },
+  { key: "instagram", brand: "Instagram", href: (v) => `https://instagram.com/${v.replace(/^@+/, "")}` },
+  { key: "discord", brand: "Discord", href: () => null },
+  {
+    key: "website",
+    labelKey: "account.contact.website",
+    // Re-validate the protocol here too (defense-in-depth) so a non-normalized
+    // value could never become a javascript:/data: link.
+    href: (v) => {
+      try {
+        const u = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`);
+        return u.protocol === "http:" || u.protocol === "https:" ? u.toString() : null;
+      } catch {
+        return null;
+      }
+    },
+  },
+];
+
 export async function SwapContextPanel({
   status,
   dateFrom,
   dateTo,
   otherName,
+  otherContact,
+  otherHasContact,
   myListing,
   theirListing,
   agreement,
@@ -122,6 +159,40 @@ export async function SwapContextPanel({
             {t(dict, "swaps.accept.insTitle")}
           </div>
           <InsurancePanel policy={agreement?.insurancePolicy ?? null} agreementId={agreement?.id ?? null} dict={dict} />
+        </div>
+      )}
+
+      {(otherContact || otherHasContact) && (
+        <div className="surface-card p-5">
+          <div className="font-mono text-[11px] uppercase tracking-[.08em] mb-3" style={{ color: "var(--navy-3)" }}>
+            {t(dict, "swaps.contact.heading")}
+          </div>
+          {otherContact ? (
+            <ul className="space-y-2.5">
+              {CONTACT_META.map((m) => {
+                const v = otherContact[m.key];
+                if (!v) return null;
+                const label = m.brand ?? t(dict, m.labelKey!);
+                const href = m.href(v);
+                return (
+                  <li key={m.key} className="flex items-baseline justify-between gap-3 text-sm">
+                    <span className="font-mono text-[10px] uppercase tracking-[.08em] shrink-0" style={{ color: "var(--navy-3)" }}>
+                      {label}
+                    </span>
+                    {href ? (
+                      <a href={href} target="_blank" rel="noreferrer" className="truncate text-right" style={{ color: "var(--pink)" }}>
+                        {v}
+                      </a>
+                    ) : (
+                      <span className="truncate text-right" style={{ color: "var(--navy-2)" }}>{v}</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="text-sm" style={{ color: "var(--navy-3)" }}>{t(dict, "swaps.contact.locked")}</p>
+          )}
         </div>
       )}
 

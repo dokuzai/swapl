@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { parseJSON } from "@/lib/db";
 import { parseSettings } from "@/lib/settings";
+import { ownContactChannels } from "@/lib/contact-channels";
 
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
@@ -46,6 +47,7 @@ export async function GET(req: Request) {
       languages: parseJSON<string[]>(user.languages, []),
       homeCity: user.homeCity,
       homeCountry: user.homeCountry,
+      contactChannels: ownContactChannels(user.contactChannels),
     },
     settings: parseSettings(user.settings),
     counts: {

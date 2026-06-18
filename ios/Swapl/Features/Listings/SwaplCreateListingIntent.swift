@@ -39,8 +39,15 @@ struct CreateListingIntent: AppIntent {
         )
     }
     
-    // Simple keyword-based extraction (no LLM required)
+    // Prefer the on-device model (Apple Intelligence) for rich, structured
+    // extraction; fall back to the keyword regex when it's unavailable.
     private func extractListingInfo(from text: String) async -> ExtractedListingInfo {
+        if let ai = await ListingExtractor.extract(fromText: text) { return ai }
+        return extractWithRegex(from: text)
+    }
+
+    // Simple keyword-based extraction (no LLM required) — the fallback path.
+    private func extractWithRegex(from text: String) -> ExtractedListingInfo {
         let lowercased = text.lowercased()
         
         // Extract bedroom count
@@ -84,6 +91,9 @@ struct ExtractedListingInfo: Codable {
     var amenities: [String]?
     var title: String?
     var description: String?
+    // Property type (apartment/house/loft/…) — populated by the on-device
+    // extractor; nil from the regex path. Additive default keeps callers valid.
+    var propertyType: String? = nil
 }
 
 // MARK: - Create Listing Snippet View
@@ -178,6 +188,50 @@ struct SwaplAppShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Optimize Photos",
             systemImageName: "photo.on.rectangle"
+        )
+
+        AppShortcut(
+            intent: FindSwapIntent(),
+            phrases: [
+                "Find a home swap in \(.applicationName)",
+                "Find me a home exchange in \(.applicationName)",
+                "Search for homes in \(.applicationName)",
+                "Find a place to swap in \(.applicationName)"
+            ],
+            shortTitle: "Find a Swap",
+            systemImageName: "magnifyingglass"
+        )
+
+        AppShortcut(
+            intent: FindHolidaySwapIntent(),
+            phrases: [
+                "Find a holiday home swap in \(.applicationName)",
+                "Find a swap for my holiday in \(.applicationName)",
+                "Find homes for my trip in \(.applicationName)"
+            ],
+            shortTitle: "Holiday Swap",
+            systemImageName: "sun.max"
+        )
+
+        AppShortcut(
+            intent: AcceptSwapIntent(),
+            phrases: [
+                "Accept a home swap in \(.applicationName)",
+                "Accept a swap in \(.applicationName)",
+                "Accept my home exchange in \(.applicationName)"
+            ],
+            shortTitle: "Accept a Swap",
+            systemImageName: "checkmark.circle"
+        )
+
+        AppShortcut(
+            intent: DeclineSwapIntent(),
+            phrases: [
+                "Decline a home swap in \(.applicationName)",
+                "Decline a swap in \(.applicationName)"
+            ],
+            shortTitle: "Decline a Swap",
+            systemImageName: "xmark.circle"
         )
     }
 }

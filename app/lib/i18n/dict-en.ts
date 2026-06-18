@@ -1846,6 +1846,15 @@ export const en = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "Filter by kind",
+  // ---- Contact channels (DOK-204) ----
+  "account.contact.title": "Contact",
+  "account.contact.hint": "Only shared with a swap partner after you both accept a swap. Leave blank to keep private.",
+  "account.contact.email": "Email",
+  "account.contact.phone": "Phone",
+  "account.contact.website": "Website",
+  "swaps.contact.heading": "Contact details",
+  "swaps.contact.locked": "Contact details unlock once you both accept the swap.",
+  "swaps.accept.contactNote": "Your contact details will be shared with {name} once you confirm.",
 } as const;
 
 export type DictKey = keyof typeof en;

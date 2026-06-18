@@ -1833,4 +1833,12 @@ export const th: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "กรองตามประเภท",
+  "account.contact.title": "การติดต่อ",
+  "account.contact.hint": "จะแชร์กับคู่แลกเปลี่ยนเฉพาะหลังจากที่ทั้งสองฝ่ายยอมรับการแลกเปลี่ยนแล้ว เว้นว่างไว้เพื่อเก็บเป็นส่วนตัว",
+  "account.contact.email": "อีเมล",
+  "account.contact.phone": "โทรศัพท์",
+  "account.contact.website": "เว็บไซต์",
+  "swaps.contact.heading": "ข้อมูลติดต่อ",
+  "swaps.contact.locked": "ข้อมูลติดต่อจะปลดล็อกเมื่อทั้งสองฝ่ายยอมรับการแลกเปลี่ยน",
+  "swaps.accept.contactNote": "ข้อมูลติดต่อของคุณจะถูกแชร์กับ {name} เมื่อยืนยัน",
 };

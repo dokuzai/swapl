@@ -1833,4 +1833,12 @@ export const el: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "Φιλτράρισμα κατά είδος",
+  "account.contact.title": "Επικοινωνία",
+  "account.contact.hint": "Κοινοποιούνται σε έναν συνεργάτη ανταλλαγής μόνο αφού αποδεχτείτε και οι δύο μια ανταλλαγή. Αφήστε το κενό για να παραμείνει ιδιωτικό.",
+  "account.contact.email": "Email",
+  "account.contact.phone": "Τηλέφωνο",
+  "account.contact.website": "Ιστότοπος",
+  "swaps.contact.heading": "Στοιχεία επικοινωνίας",
+  "swaps.contact.locked": "Τα στοιχεία επικοινωνίας ξεκλειδώνουν μόλις αποδεχτείτε και οι δύο την ανταλλαγή.",
+  "swaps.accept.contactNote": "Τα στοιχεία επικοινωνίας σας θα κοινοποιηθούν στον/στην {name} μόλις επιβεβαιώσετε.",
 };
