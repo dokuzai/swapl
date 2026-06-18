@@ -681,9 +681,9 @@ struct ProposalDetailView: View {
             Button(String(localized: "Cancel"), role: .cancel) {}
         } message: {
             if let detail = vm.detail {
-                Text(String(localized: "Confirming the swap for \(SwaplDateText.range(from: detail.proposal.dateFrom, to: detail.proposal.dateTo)) issues the swap insurance policy for both homes. This creates a binding agreement."))
+                Text(String(localized: "Confirming the swap for \(SwaplDateText.range(from: detail.proposal.dateFrom, to: detail.proposal.dateTo)) issues the swap insurance policy for both homes and creates a binding agreement. Your saved contact details will be shared with \(detail.other.name ?? String(localized: "your swap partner"))."))
             } else {
-                Text(String(localized: "Accepting issues the swap insurance policy for both homes and creates a binding agreement."))
+                Text(String(localized: "Accepting issues the swap insurance policy for both homes, creates a binding agreement, and shares your saved contact details with your swap partner."))
             }
         }
     }
@@ -896,6 +896,8 @@ struct ProposalDetailView: View {
                 itineraryRows(detail)
             }
 
+            contactSection(detail)
+
             reviewSection(detail)
 
             // Standalone "Message" row for every state EXCEPT the proposer's
@@ -965,6 +967,92 @@ struct ProposalDetailView: View {
             )
             .padding(.horizontal, 22)
         }
+    }
+
+    // Off-platform contact channels (DOK-204). Shown once the swap is accepted
+    // (server only sends `contactChannels` then). Before that, a teaser nudges
+    // acceptance when the other party has channels set.
+    @ViewBuilder
+    private func contactSection(_ detail: ProposalDetail) -> some View {
+        if let channels = detail.other.contactChannels, !channels.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(detail.other.name.map { String(localized: "Contact \($0)") } ?? String(localized: "Contact details"))
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                ForEach(channels.present, id: \.kind) { item in
+                    contactRow(kind: item.kind, value: item.value)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(22)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            )
+            .padding(.horizontal, 22)
+        } else if detail.other.hasContactChannels == true {
+            HStack(spacing: 12) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                Text(String(localized: "Contact details unlock once you both accept the swap."))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            )
+            .padding(.horizontal, 22)
+        }
+    }
+
+    @ViewBuilder
+    private func contactRow(kind: ContactChannelKind, value: String) -> some View {
+        if let url = kind.url(for: value) {
+            Link(destination: url) { contactRowLabel(kind: kind, value: value, linkable: true) }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("\(kind.label): \(value)")
+                .accessibilityAddTraits(.isLink)
+        } else {
+            contactRowLabel(kind: kind, value: value, linkable: false)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("\(kind.label): \(value)")
+        }
+    }
+
+    @ViewBuilder
+    private func contactRowLabel(kind: ContactChannelKind, value: String, linkable: Bool) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: kind.systemImage)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(kind.label)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                Text(value)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+            Spacer(minLength: 0)
+            if linkable {
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+        }
+        .padding(.vertical, 10)
     }
 
     // Mirrors the web proposal thread: the recipient of a PENDING/COUNTERED

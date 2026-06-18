@@ -64,6 +64,11 @@ struct ProposalDetail: Decodable, Sendable {
         let name: String?
         let avatar: String?
         let verified: Bool
+        // Off-platform contact channels (DOK-204). `contactChannels` is non-nil
+        // only once the swap is accepted; `hasContactChannels` says whether the
+        // other party set any (so the UI can tease "unlocks on acceptance").
+        var contactChannels: ContactChannels? = nil
+        var hasContactChannels: Bool? = nil
     }
     struct Agreement: Codable, Sendable {
         let id: String

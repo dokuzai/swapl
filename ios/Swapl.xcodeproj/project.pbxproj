@@ -30,6 +30,7 @@
 		2C34D1D71EA17CCE0E98CC70 /* DisputeCaseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3903F3A5CDC9027F9DE1E18E /* DisputeCaseCard.swift */; };
 		2D19F23531E912DD9178EE7E /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B99C1E41BBF19C90616B214 /* Keys.swift */; };
 		2E03DA0A20134F3722419077 /* Proposal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9105E39884B94E60E5BF0FCB /* Proposal.swift */; };
+		FEEB07E1836101E7626EFD40 /* ContactChannels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4ED778C03DDD46ED798E1EB /* ContactChannels.swift */; };
 		2E0FDD5F1194477B07D92AC2 /* SwaplCreateListingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1F33A43FA44B18F435BFEF /* SwaplCreateListingView.swift */; };
 		301DF30C90EA44C7ADFA4769 /* PropertyVerificationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD08487D5CE6C55DAB16D19 /* PropertyVerificationRepository.swift */; };
 		36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E87AFF2208189D059454DA /* PublicProfileView.swift */; };
@@ -226,6 +227,7 @@
 		8E7E8D4971C41BA23909093D /* SwapMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapMessage.swift; sourceTree = "<group>"; };
 		8F55E6580093FF8311EB4091 /* TravelWindowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelWindowsView.swift; sourceTree = "<group>"; };
 		9105E39884B94E60E5BF0FCB /* Proposal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proposal.swift; sourceTree = "<group>"; };
+		D4ED778C03DDD46ED798E1EB /* ContactChannels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactChannels.swift; sourceTree = "<group>"; };
 		9625256FBF2791330991EDB3 /* ProofOfCoverBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofOfCoverBadge.swift; sourceTree = "<group>"; };
 		967B9C41F5F9438E30143514 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		983B04B9FE3BCB6E88265F17 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
@@ -483,6 +485,7 @@
 				9CCC5F71B34111A6A25719F4 /* Listing.swift */,
 				FC8479450F71641A8B608B52 /* Profile.swift */,
 				9105E39884B94E60E5BF0FCB /* Proposal.swift */,
+				D4ED778C03DDD46ED798E1EB /* ContactChannels.swift */,
 				88CDF96AA787954E6B258CE7 /* PublishAck.swift */,
 				DBC8253E8B03396CC68DBEDE /* Referral.swift */,
 				C6399269847F1E81A5CD48B0 /* Story.swift */,
@@ -886,6 +889,7 @@
 				9239CF5AF751A30FC933193F /* ProofOfCoverBadge.swift in Sources */,
 				301DF30C90EA44C7ADFA4769 /* PropertyVerificationRepository.swift in Sources */,
 				2E03DA0A20134F3722419077 /* Proposal.swift in Sources */,
+				FEEB07E1836101E7626EFD40 /* ContactChannels.swift in Sources */,
 				3C468E83F14C65170AB87EE2 /* ProposalDraftEngine.swift in Sources */,
 				3C0B16C48AA50EA871490222 /* ProposalRepository.swift in Sources */,
 				36A3FAA2B685C712E1A7E66E /* PublicProfileView.swift in Sources */,
