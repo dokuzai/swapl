@@ -203,6 +203,17 @@ struct SwaplAppShortcuts: AppShortcutsProvider {
         )
 
         AppShortcut(
+            intent: FindHolidaySwapIntent(),
+            phrases: [
+                "Find a holiday home swap in \(.applicationName)",
+                "Find a swap for my holiday in \(.applicationName)",
+                "Find homes for my trip in \(.applicationName)"
+            ],
+            shortTitle: "Holiday Swap",
+            systemImageName: "sun.max"
+        )
+
+        AppShortcut(
             intent: AcceptSwapIntent(),
             phrases: [
                 "Accept a home swap in \(.applicationName)",

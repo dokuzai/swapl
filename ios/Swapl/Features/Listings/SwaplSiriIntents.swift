@@ -1,6 +1,7 @@
 import AppIntents
 import SwiftUI
 import Foundation
+import EventKit
 
 // MARK: - Siri / Apple Intelligence verbs (Phase 1)
 //
@@ -49,6 +50,30 @@ private enum SwaplIntentDates {
     }
 }
 
+// MARK: - Shared search
+
+/// The search both FindSwapIntent and FindHolidaySwapIntent run, so the two
+/// intents stay in lockstep.
+enum SwapSearch {
+    static func run(destination: String?, from: Date, to: Date, guests: Int? = nil) async throws -> [ListingEntity] {
+        var filters = SearchFilters()
+        if let destination, !destination.trimmingCharacters(in: .whitespaces).isEmpty {
+            filters.cities = [destination]
+        }
+        filters.dateFrom = SwaplIntentDates.isoDay(from)
+        filters.dateTo = SwaplIntentDates.isoDay(to)
+        if let guests, guests > 1 { filters.minSleeps = guests }
+        let response = try await ListingRepository.shared.search(filters: filters)
+        return response.items.prefix(5).map { ListingEntity($0.listing) }
+    }
+
+    /// " in <place>" or "" — for the spoken dialog.
+    static func destinationSuffix(_ destination: String?) -> String {
+        guard let d = destination?.trimmingCharacters(in: .whitespaces), !d.isEmpty else { return "" }
+        return " in \(d)"
+    }
+}
+
 // MARK: - FindSwapIntent
 
 struct FindSwapIntent: AppIntent {
@@ -75,26 +100,128 @@ struct FindSwapIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog & ShowsSnippetView {
         let win = SwaplIntentDates.window(from: dateFrom, to: dateTo)
-
-        var filters = SearchFilters()
-        if let destination, !destination.trimmingCharacters(in: .whitespaces).isEmpty {
-            filters.cities = [destination]
-        }
-        filters.dateFrom = SwaplIntentDates.isoDay(win.from)
-        filters.dateTo = SwaplIntentDates.isoDay(win.to)
-        if let guests, guests > 1 { filters.minSleeps = guests }
-
-        let response = try await ListingRepository.shared.search(filters: filters)
-        let listings = response.items.prefix(5).map { ListingEntity($0.listing) }
-
-        let where_ = destination.flatMap { d in
-            d.trimmingCharacters(in: .whitespaces).isEmpty ? nil : " in \(d)"
-        } ?? ""
+        let listings = try await SwapSearch.run(destination: destination, from: win.from, to: win.to, guests: guests)
+        let suffix = SwapSearch.destinationSuffix(destination)
         let dialog: IntentDialog = listings.isEmpty
-            ? "I couldn't find any home swaps\(where_) for those dates."
-            : "I found \(listings.count) home swap\(listings.count == 1 ? "" : "s")\(where_)."
+            ? "I couldn't find any home swaps\(suffix) for those dates."
+            : "I found \(listings.count) home swap\(listings.count == 1 ? "" : "s")\(suffix)."
+        return .result(dialog: dialog, view: SwapResultsSnippet(listings: listings))
+    }
+}
 
-        return .result(dialog: dialog, view: SwapResultsSnippet(listings: Array(listings)))
+// MARK: - FindHolidaySwapIntent (calendar dates)
+
+/// Reads the user's calendar to find their next holiday window, then searches
+/// swaps for those dates. "Find me a home swap for my summer holiday."
+struct FindHolidaySwapIntent: AppIntent {
+    static let title: LocalizedStringResource = "Find a Holiday Home Swap"
+    static let description = IntentDescription("Find home swaps for your next holiday, using the dates in your calendar.")
+    static let openAppWhenRun: Bool = false
+
+    @Parameter(title: "Destination")
+    var destination: String?
+
+    static var parameterSummary: some ParameterSummary {
+        Summary("Find a holiday home swap in \(\.$destination)")
+    }
+
+    @MainActor
+    func perform() async throws -> some IntentResult & ProvidesDialog & ShowsSnippetView {
+        let now = Date()
+        let horizon = Calendar.current.date(byAdding: .month, value: 6, to: now) ?? now
+        let suffix = SwapSearch.destinationSuffix(destination)
+        let lookup = await CalendarHolidayFinder.lookup(from: now, to: horizon)
+
+        if let trip = lookup.windows.first {
+            let listings = try await SwapSearch.run(destination: destination, from: trip.from, to: trip.to)
+            let label = trip.title.isEmpty ? String(localized: "your trip") : trip.title
+            let dialog: IntentDialog = listings.isEmpty
+                ? "I found \(label) in your calendar but no swaps\(suffix) for those dates."
+                : "For \(label), here \(listings.count == 1 ? "is" : "are") \(listings.count) swap\(listings.count == 1 ? "" : "s")\(suffix)."
+            return .result(dialog: dialog, view: SwapResultsSnippet(listings: listings))
+        }
+
+        // No trip to anchor on — still give a useful answer (week ahead), but be
+        // honest about WHY: missing calendar access reads very differently from
+        // "you have no trips booked".
+        let win = SwaplIntentDates.window(from: nil, to: nil)
+        let listings = try await SwapSearch.run(destination: destination, from: win.from, to: win.to)
+        let dialog: IntentDialog = lookup.accessGranted
+            ? "I couldn't find a holiday in your calendar, so here are swaps for the week ahead\(suffix)."
+            : "I can't see your calendar yet — turn on Calendar access for Swapl in Settings to search your holiday dates. For now, here are swaps for the week ahead\(suffix)."
+        return .result(dialog: dialog, view: SwapResultsSnippet(listings: listings))
+    }
+}
+
+// MARK: - Calendar holiday finder (EventKit)
+
+struct CalendarDateWindow: Sendable {
+    let title: String
+    let from: Date
+    let to: Date
+    var durationDays: Int { Calendar.current.dateComponents([.day], from: from, to: to).day ?? 0 }
+}
+
+enum CalendarHolidayFinder {
+    // Holiday/vacation/trip terms across Swapl's shipped locales (en/it/fr/es/
+    // ar/fa/el/ro/tr/id/th/zh/ja).
+    private static let holidayTerms = [
+        // en
+        "holiday", "holidays", "vacation", "trip", "getaway", "break away",
+        // it / fr / es / pt-ish / de
+        "vacanza", "vacanze", "ferie", "vacances", "vacaciones", "férias", "ferias", "urlaub",
+        // ro / tr / id
+        "concediu", "tatil", "libur", "liburan",
+        // el / ar / fa / th
+        "διακοπές", "عطلة", "إجازة", "تعطیلات", "مرخصی", "วันหยุด", "เที่ยว",
+        // zh / ja
+        "假期", "度假", "旅行", "旅游", "休暇", "夏休み",
+    ]
+
+    static func isHoliday(_ title: String?) -> Bool {
+        guard let t = title?.lowercased(), !t.isEmpty else { return false }
+        return holidayTerms.contains { t.contains($0) }
+    }
+
+    struct Lookup: Sendable {
+        let accessGranted: Bool
+        let windows: [CalendarDateWindow]
+    }
+
+    /// Candidate holiday windows in [start, end], plus whether calendar access
+    /// was actually granted (so the caller can distinguish "no access" from
+    /// "no holiday found"). Holiday-titled events rank first, then longer
+    /// all-day events, then sooner.
+    static func lookup(from start: Date, to end: Date) async -> Lookup {
+        let store = EKEventStore()
+        let granted = (try? await store.requestFullAccessToEvents()) ?? false
+        guard granted else { return Lookup(accessGranted: false, windows: []) }
+
+        let predicate = store.predicateForEvents(withStart: start, end: end, calendars: nil)
+        let cal = Calendar.current
+        let candidates: [CalendarDateWindow] = store.events(matching: predicate).compactMap { ev in
+            guard let s = ev.startDate, let e = ev.endDate, e > s else { return nil }
+            if ev.status == .canceled { return nil }
+            // Skip invites the user declined.
+            if let me = ev.attendees?.first(where: { $0.isCurrentUser }), me.participantStatus == .declined {
+                return nil
+            }
+            let days = cal.dateComponents([.day], from: s, to: e).day ?? 0
+            let titled = isHoliday(ev.title)
+            // Titled events up to ~45 days, OR a genuine multi-day all-day event
+            // (2–30 days) — long enough to be a trip, short enough to exclude
+            // conferences/terms/memberships and single-day all-day items
+            // (birthdays, reminders).
+            guard (titled && days <= 45) || (ev.isAllDay && days >= 2 && days <= 30) else { return nil }
+            return CalendarDateWindow(title: ev.title ?? "", from: s, to: e)
+        }
+        let sorted = candidates.sorted { a, b in
+            let ha = isHoliday(a.title), hb = isHoliday(b.title)
+            if ha != hb { return ha }
+            if a.durationDays != b.durationDays { return a.durationDays > b.durationDays }
+            return a.from < b.from
+        }
+        return Lookup(accessGranted: true, windows: sorted)
     }
 }
 
