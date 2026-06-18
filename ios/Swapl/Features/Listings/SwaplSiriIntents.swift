@@ -15,6 +15,30 @@ import EventKit
 // Accept/Decline run WITHOUT opening the app (openAppWhenRun = false) so they
 // work hands-free, and always ask for confirmation before the irreversible call.
 
+// MARK: - Onscreen awareness (iOS 27 / NSUserActivity)
+
+/// NSUserActivity types used to tell the system which entity is on screen, so
+/// Siri / Apple Intelligence can resolve "accept that swap" / "open this home"
+/// against the visible entity. Must be listed in Info.plist NSUserActivityTypes.
+/// (Uses NSUserActivity.appEntityIdentifier — public since iOS 18.2 — because
+/// SwiftUI's `.appEntityIdentifier` view modifier is SPI in the iOS 27 beta.)
+enum SwaplActivity {
+    static let viewingProposal = "fun.swapl.viewing-proposal"
+    static let viewingListing = "fun.swapl.viewing-listing"
+
+    /// Configure an activity purely for on-screen entity resolution: no Handoff
+    /// banner and no Spotlight / Siri-suggestion entries (entities are already
+    /// indexed via IndexedEntity), since the app has no activity-restoration
+    /// handlers — just the on-screen entity identifier + a title.
+    static func annotate(_ activity: NSUserActivity, entity: EntityIdentifier, title: String?) {
+        activity.isEligibleForHandoff = false
+        activity.isEligibleForSearch = false
+        activity.isEligibleForPrediction = false
+        activity.appEntityIdentifier = entity
+        if let title { activity.title = title }
+    }
+}
+
 // MARK: - Navigation bridge
 
 /// Lets an in-process App Intent ask the running app to navigate. Intents run in

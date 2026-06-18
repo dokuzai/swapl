@@ -1,5 +1,6 @@
 import SwiftUI
 import Observation
+import AppIntents
 import SwaplDesignTokens
 
 @MainActor
@@ -685,6 +686,15 @@ struct ProposalDetailView: View {
             } else {
                 Text(String(localized: "Accepting issues the swap insurance policy for both homes, creates a binding agreement, and shares your saved contact details with your swap partner."))
             }
+        }
+        // Onscreen awareness: surface which swap is on screen so Siri can resolve
+        // "accept that one" / "message them" against this proposal.
+        .userActivity(SwaplActivity.viewingProposal, isActive: vm.detail != nil) { activity in
+            SwaplActivity.annotate(
+                activity,
+                entity: EntityIdentifier(for: ProposalEntity.self, identifier: vm.proposalId),
+                title: vm.detail?.other.name.map { String(localized: "Swap with \($0)") }
+            )
         }
     }
 

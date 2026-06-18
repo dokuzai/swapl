@@ -55,6 +55,11 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>fun.swapl.viewing-proposal</string>
+		<string>fun.swapl.viewing-listing</string>
+	</array>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 		<string>Swapl reads your calendar to suggest home swaps for the dates of your trips and holidays. Your events stay on your device.</string>
 		<key>NSMicrophoneUsageDescription</key>
