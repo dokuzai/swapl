@@ -278,8 +278,7 @@ struct BrowseListView: View {
     private var exploreContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
-                SwaplPageTitle(String(localized: "Explore")) { inspireButton }
-                searchHeader
+                SwaplPageTitle(String(localized: "Explore")) { exploreControls }
                 categoryStrip
                 if let first = vm.items.first {
                     continueCard(first)
@@ -292,58 +291,42 @@ struct BrowseListView: View {
         .background(SwaplSemanticLight.background)
     }
 
-    // Brand pill in the Explore header (Homes chip) — opens "Get Inspired".
-    private var inspireButton: some View {
-        Button {
-            isShowingInspire = true
-        } label: {
-            HStack(spacing: 6) {
+    // Explore header controls — same 44×44 glass-circle treatment as the Trips,
+    // Wishlists and Messages tabs so the filter/sort pills line up across pages.
+    // Get Inspired keeps its brand tint; filter carries the active-filter dot.
+    private var exploreControls: some View {
+        HStack(spacing: 8) {
+            Button {
+                isShowingInspire = true
+            } label: {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 14, weight: .semibold))
-                Text("Get Inspired")
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
             }
-            .foregroundStyle(SwaplSemanticLight.primaryForeground)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(SwaplSemanticLight.primary, in: Capsule())
-        }
-        .accessibilityLabel("Get Inspired, compose a swap package")
-    }
+            .accessibilityLabel("Get Inspired, compose a swap package")
 
-    private var searchBarContent: some View {
-        HStack(spacing: 12) {
-            // The label area opens the filter sheet; the trailing menu keeps sort.
             Button {
                 isShowingFilters = true
             } label: {
-                HStack(spacing: 12) {
-                    ZStack(alignment: .topTrailing) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 20, weight: .semibold))
+                Image(systemName: "line.3.horizontal.decrease")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
+                    .overlay(alignment: .topTrailing) {
                         if vm.filters.activeFilterCount > 0 {
-                            Text("\(vm.filters.activeFilterCount)")
-                                .font(.swaplMono(11, weight: .bold))
-                                .foregroundStyle(SwaplSemanticLight.primaryForeground)
-                                .frame(minWidth: 17, minHeight: 17)
-                                .background(SwaplSemanticLight.primary, in: Circle())
-                                .offset(x: 11, y: -9)
+                            Circle().fill(SwaplSemanticLight.primary).frame(width: 9, height: 9)
                         }
                     }
-                    Text(searchBarTitle)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
-                        .lineLimit(1)
-                    Spacer(minLength: 0)
-                }
-                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
             .accessibilityLabel(
                 vm.filters.activeFilterCount > 0
                     ? "Search and filters, \(vm.filters.activeFilterCount) active"
                     : "Search and filters"
             )
+
             Menu {
                 sortButton(String(localized: "Best match"), value: "match")
                 sortButton(String(localized: "Newest"), value: "newest")
@@ -353,26 +336,10 @@ struct BrowseListView: View {
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
+                    .glassEffect(.regular.interactive(), in: .circle)
             }
             .accessibilityLabel("Sort homes")
         }
-        .foregroundStyle(AirbnbPalette.text)
-        .padding(.horizontal, 22)
-        .padding(.vertical, 18)
-    }
-
-    private var searchBarTitle: String {
-        if vm.filters.cities.isEmpty { return String(localized: "Start your search") }
-        return vm.filters.cities.joined(separator: ", ")
-    }
-
-    // List mode: solid card search bar.
-    private var searchHeader: some View {
-        searchBarContent
-            .background(SwaplSemanticLight.card, in: Capsule())
-            .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
-            .padding(.horizontal, 22)
     }
 
     // Map mode: floating search bar over the full-bleed map — Liquid Glass on
@@ -401,7 +368,7 @@ struct BrowseListView: View {
     }
 
     // Editable map search bar: filter badge + live location field + clear/loading
-    // + sort. Mirrors `searchBarContent` styling so the capsule design is intact.
+    // + sort. Self-contained capsule styling for the floating map search bar.
     private var mapSearchBarContent: some View {
         HStack(spacing: 12) {
             Button {

@@ -50,9 +50,7 @@ struct KeysWalletView: View {
                     .accessibilityLabel("Loading travel points")
             }
         }
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationTitle("Travel points")
-        .navigationBarTitleDisplayMode(.inline)
+        .swaplFloatingHeader(String(localized: "Travel points"))
         .sheet(isPresented: $isGifting, onDismiss: { Task { await vm.load() } }) {
             GiftKeysSheet()
         }

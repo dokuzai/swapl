@@ -114,44 +114,61 @@ struct ConversationPeopleView: View {
     @State private var vm: ConversationPeopleViewModel
     @State private var showInvite = false
     @State private var confirmRemove: ConversationParticipant?
+    // Collapsed by default — the roster is secondary to the conversation. Owned
+    // by the chat view so it can auto-collapse the roster when the thread scrolls.
+    @Binding var isExpanded: Bool
 
-    init(proposalId: String, isPrincipal: Bool) {
+    init(proposalId: String, isPrincipal: Bool, isExpanded: Binding<Bool>) {
         _vm = State(initialValue: ConversationPeopleViewModel(proposalId: proposalId, isPrincipal: isPrincipal))
+        _isExpanded = isExpanded
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             header
 
-            if vm.isLoading && !vm.hasLoaded {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .accessibilityLabel("Loading people")
-            } else if let error = vm.loadError, vm.participants.isEmpty {
-                Text(error)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-            } else {
-                roster
-                if let notice = vm.inviteNotice {
-                    Label(notice, systemImage: "checkmark.circle.fill")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
-                        .foregroundStyle(SwaplSemanticLight.primary)
-                }
-                if vm.isPrincipal {
-                    inviteButton
-                    reassurance
+            if isExpanded {
+                if vm.isLoading && !vm.hasLoaded {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .accessibilityLabel("Loading people")
+                } else if let error = vm.loadError, vm.participants.isEmpty {
+                    Text(error)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                } else {
+                    roster
+                    if let notice = vm.inviteNotice {
+                        Label(notice, systemImage: "checkmark.circle.fill")
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                            .foregroundStyle(SwaplSemanticLight.primary)
+                    }
+                    if vm.isPrincipal {
+                        inviteButton
+                        reassurance
+                    }
                 }
             }
         }
-        .padding(18)
+        .padding(.top, 10)
+        .padding(.bottom, 60)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
-                .stroke(AirbnbPalette.hairline)
-        )
+        // Not a solid bar: a long cream→clear fade (same concept as the hero fade
+        // on the other pages). Only a thin band behind the label stays opaque for
+        // legibility; below it the gradient is mostly transparent, so messages
+        // are faintly visible and dissolve gradually as they scroll up.
+        .background {
+            LinearGradient(
+                stops: [
+                    .init(color: SwaplSemanticLight.background, location: 0),
+                    .init(color: SwaplSemanticLight.background, location: 0.28),
+                    .init(color: SwaplSemanticLight.background.opacity(0), location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
         .task { await vm.load() }
         .sheet(isPresented: $showInvite) {
             InvitePeopleSheet(vm: vm)
@@ -172,15 +189,27 @@ struct ConversationPeopleView: View {
     }
 
     private var header: some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text("People")
-                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.text)
-            Spacer()
-            Text("\(vm.participants.count)")
-                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.secondaryText)
+        Button {
+            withAnimation(.snappy) { isExpanded.toggle() }
+        } label: {
+            HStack(spacing: 10) {
+                Text("People")
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Spacer()
+                Text("\(vm.participants.count)")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .rotationEffect(.degrees(isExpanded ? 180 : 0))
+            }
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel(isExpanded ? "Collapse people" : "Expand people")
+        .accessibilityValue("\(vm.participants.count)")
     }
 
     private var roster: some View {

@@ -53,7 +53,8 @@ struct SavedSearchesView: View {
                 )
             }
         }
-        .navigationTitle("Saved searches")
+        .scrollContentBackground(.hidden)
+        .swaplFloatingHeader(String(localized: "Saved searches"))
         .task { await vm.load() }
     }
 }

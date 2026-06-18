@@ -100,20 +100,17 @@ struct TravelWindowsView: View {
             }
             .padding(22)
         }
-        .background(SwaplSemanticLight.background)
-        .navigationTitle("Travel windows")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    isAdding = true
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(SwaplSemanticLight.primary)
-                }
-                .accessibilityLabel("Add a travel window")
+        .swaplFloatingHeader(String(localized: "Travel windows")) {
+            Button {
+                isAdding = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
             }
+            .accessibilityLabel("Add a travel window")
         }
         .sheet(isPresented: $isAdding) {
             AddTravelWindowSheet(vm: vm)

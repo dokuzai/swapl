@@ -27,6 +27,7 @@ final class ListingDetailViewModel {
 
 struct ListingDetailView: View {
     @Environment(AuthService.self) private var auth
+    @Environment(\.dismiss) private var dismiss
     @State private var vm: ListingDetailViewModel
     @State private var isShowingProposalSheet = false
     @State private var isShowingKeysStaySheet = false
@@ -42,69 +43,54 @@ struct ListingDetailView: View {
     }
 
     var body: some View {
-        ScrollView {
-            if let detail = vm.detail {
-                listingContent(detail)
-            } else if let error = vm.error {
-                SwaplEmptyState(
-                    systemImage: "exclamationmark.triangle",
-                    title: String(localized: "Home unavailable"),
-                    description: error,
-                    actionTitle: String(localized: "Try Again"),
-                    action: { Task { await vm.load() } }
-                )
-                .frame(maxWidth: .infinity)
-                .padding(.top, 80)
-            } else {
-                // Full-bleed placeholder so the push animation doesn't show a
-                // narrow strip of content over the system background.
-                ProgressView()
-                    .frame(maxWidth: .infinity, minHeight: 400)
-                    .accessibilityLabel("Loading home")
-            }
-        }
-        .frame(maxWidth: .infinity)
-        // Let the hero photo bleed up under the transparent nav bar so the
-        // floating glass controls (back / title / share / heart) sit over the
-        // photo — no opaque header band, content slides underneath.
-        .ignoresSafeArea(edges: .top)
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationTitle(vm.detail?.listing.city ?? String(localized: "Home"))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            // Title as a floating Liquid Glass pill (same pattern as the chat
-            // header) so it stays legible over the photo without a header band.
-            ToolbarItem(placement: .principal) {
+        // ZStack so the hero photo (in the ScrollView) bleeds to the true top
+        // edge while the controls float over it as a sibling layer. There is no
+        // system navigation bar — a bar would reserve a content inset and push
+        // the photo down, leaving the cream band we're getting rid of.
+        ZStack(alignment: .top) {
+            ScrollView {
                 if let detail = vm.detail {
-                    Text(detail.listing.city)
-                        .font(.swaplBody(16, weight: .bold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .lineLimit(1)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 6)
-                        .glassEffect(.regular, in: .capsule)
-                }
-            }
-            // System share sheet. The link is a universal link, so recipients
-            // with the app installed land straight on this listing.
-            ToolbarItem(placement: .topBarTrailing) {
-                if let detail = vm.detail {
-                    shareLink(detail)
-                }
-            }
-            // Save-to-wishlist heart; hidden on your own listing.
-            ToolbarItem(placement: .topBarTrailing) {
-                if let detail = vm.detail, !isOwner(detail) {
-                    FavoriteHeartButton(
-                        listingId: detail.listing.id,
-                        size: 18,
-                        unfilledColor: AirbnbPalette.text,
-                        showsShadow: false
+                    listingContent(detail)
+                } else if let error = vm.error {
+                    SwaplEmptyState(
+                        systemImage: "exclamationmark.triangle",
+                        title: String(localized: "Home unavailable"),
+                        description: error,
+                        actionTitle: String(localized: "Try Again"),
+                        action: { Task { await vm.load() } }
                     )
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 80)
+                } else {
+                    // Full-bleed placeholder so the push animation doesn't show a
+                    // narrow strip of content over the system background.
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 400)
+                        .accessibilityLabel("Loading home")
                 }
             }
+            .frame(maxWidth: .infinity)
+            // Let the hero photo bleed all the way to the top edge, under the
+            // status bar and the floating controls.
+            .ignoresSafeArea(edges: .top)
+            // Soft cream dissolve at the very top edge so the hero melts into the
+            // background under the status bar / floating controls (same treatment
+            // as the Explore map's top fade) — no hard photo edge, no header band.
+            .overlay(alignment: .top) { heroTopFade }
+            .background(SwaplSemanticLight.background.ignoresSafeArea())
+
+            // Floating glass controls — back / city / share + heart — sit
+            // directly on the fading photo. The ZStack respects the top safe
+            // area, so they land just below the status bar.
+            if let detail = vm.detail {
+                floatingHeader(detail)
+            }
         }
+        // No system nav bar at all (its content inset is what pushed the photo
+        // down). Swipe-to-go-back is preserved via the UINavigationController
+        // gesture delegate restored in SwaplApp.
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
         .safeAreaInset(edge: .bottom) {
             if let detail = vm.detail {
                 if isOwner(detail) {
@@ -201,6 +187,67 @@ struct ListingDetailView: View {
             get: { requestedStayId != nil },
             set: { if !$0 { requestedStayId = nil } }
         )
+    }
+
+    // Cream gradient that fades the hero photo into the background at the top
+    // edge, keeping the floating glass controls legible without an opaque band.
+    private var heroTopFade: some View {
+        LinearGradient(
+            colors: [SwaplSemanticLight.background, SwaplSemanticLight.background.opacity(0)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .frame(height: 140)
+        .frame(maxWidth: .infinity, alignment: .top)
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
+    }
+
+    // Floating header rendered over the hero photo (no system nav bar): back on
+    // the left, city pill centered, share + favorite grouped on the right — all
+    // Liquid Glass so they stay legible against the photo.
+    private func floatingHeader(_ detail: ListingDetailResponse) -> some View {
+        ZStack {
+            Text(detail.listing.city)
+                .font(.swaplBody(16, weight: .bold))
+                .foregroundStyle(AirbnbPalette.text)
+                .lineLimit(1)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .glassEffect(.regular, in: .capsule)
+
+            HStack(spacing: 0) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .frame(width: 44, height: 44)
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .accessibilityLabel("Back")
+
+                Spacer(minLength: 0)
+
+                HStack(spacing: 2) {
+                    shareLink(detail)
+                        .frame(width: 44, height: 44)
+                    if !isOwner(detail) {
+                        FavoriteHeartButton(
+                            listingId: detail.listing.id,
+                            size: 18,
+                            unfilledColor: AirbnbPalette.text,
+                            showsShadow: false
+                        )
+                        .frame(width: 44, height: 44)
+                    }
+                }
+                .glassEffect(.regular, in: .capsule)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 4)
     }
 
     private func listingContent(_ detail: ListingDetailResponse) -> some View {

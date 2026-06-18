@@ -72,7 +72,6 @@ struct PersonalInfoView: View {
 
     var body: some View {
         ScrollView {
-            SwaplPageTitle("Personal information")
             VStack(alignment: .leading, spacing: 18) {
                 if vm.isLoading {
                     ProgressView()
@@ -126,7 +125,7 @@ struct PersonalInfoView: View {
             .padding(.top, 24)
             .padding(.bottom, 60)
         }
-        .background(SwaplSemanticLight.background)
+        .swaplFloatingHeader(String(localized: "Personal information"))
         .task { await vm.load() }
     }
 }

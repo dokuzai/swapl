@@ -129,6 +129,9 @@ struct SwapChatView: View {
     @State private var photoItems: [PhotosPickerItem] = []
     @FocusState private var composerFocused: Bool
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dismiss) private var dismiss
+    // People roster expansion, owned here so scrolling the thread can collapse it.
+    @State private var peopleExpanded = false
 
     let otherName: String?
     // Whether the current user is one of the two swap principals (proposer or
@@ -154,42 +157,71 @@ struct SwapChatView: View {
             thread
             composer
         }
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
         // Hide the bottom tab bar inside a conversation so the composer sits
         // flush at the bottom, like other messaging apps (WhatsApp etc.).
         .toolbar(.hidden, for: .tabBar)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        // Telegram-style header: name + trip subtitle (tap → the Trip screen),
-        // with the counterparty's profile photo as a round avatar on the right
-        // (tap → their public profile).
-        .toolbar {
-            ToolbarItem(placement: .principal) { chatTitle }
-            if let trip = tripSummary {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Group {
-                        if let uid = trip.otherUserId {
-                            NavigationLink {
-                                PublicProfileView(userId: uid)
-                            } label: {
-                                CounterpartyAvatar(name: trip.otherName, avatarUrl: trip.otherAvatar, size: 32)
-                            }
-                            .accessibilityLabel(Text("View \(trip.otherName ?? String(localized: "host"))'s profile"))
-                        } else {
-                            // Older deploys without otherUserId: fall back to the trip.
-                            NavigationLink(value: trip.id) {
-                                CounterpartyAvatar(name: trip.otherName, avatarUrl: trip.otherAvatar, size: 32)
-                            }
-                            .accessibilityLabel(Text("Open trip"))
-                        }
-                    }
-                }
-            }
-        }
+        // No system nav bar — a floating glass header sits over the thread
+        // (same treatment as the listing/trip detail). Swipe-back is preserved
+        // via the gesture delegate restored in SwaplApp.
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
+        // Floating glass header reserves its own space (so messages aren't
+        // hidden) but reads as pills on the cream — no opaque bar.
+        .safeAreaInset(edge: .top) { chatFloatingHeader }
+        // Cream background applied AFTER the header inset so it fills the whole
+        // screen — including behind the floating header — with no stray band.
+        .background(SwaplSemanticLight.background.ignoresSafeArea())
         .task { await vm.load() }
         .task(id: scenePhase) { await pollLoop() }
         .onChange(of: photoItems) { _, items in
             Task { await upload(items) }
+        }
+    }
+
+    // Floating header over the thread: back on the left, the existing name +
+    // dates glass pill centered, counterparty avatar on the right.
+    private var chatFloatingHeader: some View {
+        ZStack {
+            chatTitle
+
+            HStack(spacing: 0) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .frame(width: 44, height: 44)
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .accessibilityLabel("Back")
+
+                Spacer(minLength: 0)
+
+                if let trip = tripSummary {
+                    chatHeaderAvatar(trip)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private func chatHeaderAvatar(_ trip: ProposalSummary) -> some View {
+        if let uid = trip.otherUserId {
+            NavigationLink {
+                PublicProfileView(userId: uid)
+            } label: {
+                CounterpartyAvatar(name: trip.otherName, avatarUrl: trip.otherAvatar, size: 44)
+            }
+            .accessibilityLabel(Text("View \(trip.otherName ?? String(localized: "host"))'s profile"))
+        } else {
+            // Older deploys without otherUserId: fall back to the trip.
+            NavigationLink(value: trip.id) {
+                CounterpartyAvatar(name: trip.otherName, avatarUrl: trip.otherAvatar, size: 44)
+            }
+            .accessibilityLabel(Text("Open trip"))
         }
     }
 
@@ -246,11 +278,8 @@ struct SwapChatView: View {
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
-                    .stroke(AirbnbPalette.hairline)
-            )
+            // Liquid Glass pinned bar, matching the floating header / composer.
+            .glassEffect(.regular, in: .rect(cornerRadius: SwaplDesignSystem.CornerRadius.large))
         }
         .buttonStyle(.plain)
         .padding(.horizontal, 12)
@@ -262,12 +291,8 @@ struct SwapChatView: View {
     private var thread: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 10) {
-                    // People panel (DOK-187): the roster of everyone on this
-                    // thread, plus invite/remove for the two principals.
-                    ConversationPeopleView(proposalId: vm.proposalId, isPrincipal: isPrincipal)
-                        .padding(.bottom, 6)
-
+                LazyVStack(spacing: 10, pinnedViews: [.sectionHeaders]) {
+                    Section {
                     if vm.isLoading && !vm.hasLoadedOnce {
                         ProgressView()
                             .frame(maxWidth: .infinity)
@@ -308,11 +333,24 @@ struct SwapChatView: View {
                                 .id(message.id)
                         }
                     }
+                    } header: {
+                        // People panel (DOK-187): pinned, collapsed by default —
+                        // it sticks just under the pinned listing and the messages
+                        // dissolve underneath it as the thread scrolls.
+                        ConversationPeopleView(proposalId: vm.proposalId, isPrincipal: isPrincipal, isExpanded: $peopleExpanded)
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
             }
             .scrollDismissesKeyboard(.interactively)
+            // As soon as the user starts scrolling the thread, collapse the
+            // People roster so it doesn't sit over the messages.
+            .onScrollPhaseChange { _, newPhase in
+                if newPhase == .interacting, peopleExpanded {
+                    withAnimation(.snappy) { peopleExpanded = false }
+                }
+            }
             .refreshable { await vm.load() }
             .onChange(of: vm.scrollAnchor) { _, anchor in
                 guard let anchor else { return }
@@ -376,7 +414,8 @@ struct SwapChatView: View {
                         }
                     }
                     .frame(width: 44, height: 44)
-                    .glassEffect(.regular.interactive(), in: .circle)
+                    // Solid fill (not glass) since it sits inside the glass bar.
+                    .background(SwaplSemanticLight.card, in: Circle())
                 }
                 .accessibilityLabel("Add photo")
 
@@ -388,7 +427,8 @@ struct SwapChatView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 11)
                     .frame(minHeight: 44)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 22))
+                    // Solid fill (not glass) since it sits inside the glass bar.
+                    .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
 
                 Button {
                     Task { await vm.send() }
@@ -409,11 +449,13 @@ struct SwapChatView: View {
                 .accessibilityLabel("Send message")
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 10)
-        .padding(.bottom, 8)
-        .background(.ultraThinMaterial)
-        .overlay(alignment: .top) { Divider() }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        // Floating Liquid Glass bar, inset from the edges — no opaque material
+        // band, no hairline divider (same treatment as the detail-screen CTAs).
+        .glassEffect(.regular, in: .rect(cornerRadius: 28))
+        .padding(.horizontal, 12)
+        .padding(.bottom, 6)
     }
 
     // Foreground poll loop: re-runs whenever scenePhase changes. Only polls

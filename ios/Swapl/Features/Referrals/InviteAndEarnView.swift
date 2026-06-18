@@ -56,9 +56,7 @@ struct InviteAndEarnView: View {
                     .accessibilityLabel("Loading your invites")
             }
         }
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationTitle("Invite & earn")
-        .navigationBarTitleDisplayMode(.inline)
+        .swaplFloatingHeader(String(localized: "Invite & earn"))
         .sheet(isPresented: $isInvitingToStay) {
             InviteToStaySheet()
         }
@@ -408,7 +406,7 @@ struct InviteToStaySheet: View {
                         actionTitle: nil,
                         action: nil
                     )
-                    .padding(.top, 40)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if listing?.isVerified == false {
                     // An invite from an unverified listing would leave the
                     // friend's reward unpayable (the API rejects it), so block
@@ -420,7 +418,7 @@ struct InviteToStaySheet: View {
                         actionTitle: nil,
                         action: nil
                     )
-                    .padding(.top, 40)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     form
                 }

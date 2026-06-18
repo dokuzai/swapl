@@ -1,6 +1,22 @@
 import SwiftUI
 import SwaplDesignTokens
 
+// Keep the interactive swipe-to-go-back gesture working on screens that hide
+// the system navigation bar for a full-bleed look (e.g. the listing detail,
+// where the hero photo must reach the top edge). Without this, hiding the bar
+// also disables the edge-swipe pop. The gesture only begins when there's
+// something to pop, so root screens are unaffected.
+extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = self
+    }
+
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        viewControllers.count > 1
+    }
+}
+
 @main
 struct SwaplApp: App {
     @State private var auth = AuthService()

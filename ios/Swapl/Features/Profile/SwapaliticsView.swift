@@ -38,7 +38,6 @@ struct SwapaliticsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                SwaplPageTitle("Swapalitics")
 
                 if vm.isLoading && vm.stats == nil {
                     ProgressView()
@@ -64,10 +63,7 @@ struct SwapaliticsView: View {
             }
             .padding(.bottom, 36)
         }
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationTitle(String(localized: "Swapalitics"))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .swaplFloatingHeader(String(localized: "Swapalitics"))
         .task { await vm.load() }
     }
 

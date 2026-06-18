@@ -64,17 +64,22 @@ struct InterestsEditorView: View {
                 ProgressView()
             }
         }
-        .navigationTitle("Interests · \(vm.selected.count) / 12")
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
-                    Task {
-                        await vm.save()
-                        if vm.didSave { dismiss() }
-                    }
+        .scrollContentBackground(.hidden)
+        .swaplFloatingHeader("Interests · \(vm.selected.count) / 12") {
+            Button {
+                Task {
+                    await vm.save()
+                    if vm.didSave { dismiss() }
                 }
-                .disabled(vm.isSaving)
+            } label: {
+                Text("Save")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                    .padding(.horizontal, 16)
+                    .frame(height: 44)
+                    .glassEffect(.regular.interactive(), in: .capsule)
             }
+            .disabled(vm.isSaving)
         }
         .task { await vm.load() }
     }

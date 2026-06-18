@@ -56,9 +56,7 @@ struct SwaplStoryView: View {
                     .accessibilityLabel("Loading your story")
             }
         }
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationTitle("Your Swapl story")
-        .navigationBarTitleDisplayMode(.inline)
+        .swaplFloatingHeader(String(localized: "Your Swapl story"))
         .task { await vm.load() }
         .refreshable { await vm.load() }
     }

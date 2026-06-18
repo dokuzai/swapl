@@ -12,9 +12,6 @@ struct AccountView: View {
     @State private var isCreatingListing = false
     @State private var myListings: [Listing] = []
     @State private var editingListing: Listing?
-    @State private var helpItem: SafariItem?
-    @State private var isChangingPassword = false
-    @State private var isRatingApp = false
     // Real, data-driven profile stats (F19) — replaces the previously
     // hardcoded "2 Trips / 1 Home / 2026 / verified". nil until /api/me loads.
     @State private var me: MeResponse?
@@ -37,62 +34,23 @@ struct AccountView: View {
 
                         // Airbnb-style settings jump list (DOK-147), mirroring
                         // the web /account sections.
-                        sectionHeader(String(localized: "Personal information"))
-                        NavigationLink { PersonalInfoView() } label: { portedMenuRow(String(localized: "Personal information"), "person.text.rectangle") }
-                            .buttonStyle(.plain)
-                        NavigationLink { InterestsEditorView() } label: { portedMenuRow(String(localized: "Interests"), "heart.text.square") }
-                            .buttonStyle(.plain)
-                        NavigationLink { SavedSearchesView() } label: { portedMenuRow(String(localized: "Saved searches"), "magnifyingglass") }
-                            .buttonStyle(.plain)
-                        NavigationLink { TravelWindowsView() } label: { portedMenuRow(String(localized: "Travel windows"), "calendar.badge.clock") }
-                            .buttonStyle(.plain)
-                        NavigationLink { SwaplStoryView() } label: { portedMenuRow(String(localized: "Your Swapl story"), "book.closed") }
-                            .buttonStyle(.plain)
-                        NavigationLink { SwapaliticsView() } label: { portedMenuRow(String(localized: "Swapalitics"), "chart.bar.xaxis") }
-                            .buttonStyle(.plain)
-                        if let userId = auth.session?.id {
-                            NavigationLink { PublicProfileView(userId: userId) } label: { portedMenuRow(String(localized: "View public profile"), "person") }
+                        // iOS Settings-style grouping: one row per section; tap
+                        // opens a screen listing just that section's items.
+                        VStack(spacing: 12) {
+                            NavigationLink { PersonalInfoSectionView() } label: { portedMenuRow(String(localized: "General"), "gearshape") }
                                 .buttonStyle(.plain)
-                        }
-
-                        sectionHeader(String(localized: "Login & security"))
-                        Button {
-                            isChangingPassword = true
-                        } label: {
-                            portedMenuRow(String(localized: "Change password"), "lock.rotation")
-                        }
-                        .buttonStyle(.plain)
-                        NavigationLink { PasskeysView() } label: { portedMenuRow(String(localized: "Passkeys"), "person.badge.key") }
-                            .buttonStyle(.plain)
-
-                        sectionHeader(String(localized: "Privacy"))
-                        NavigationLink { PrivacySettingsView() } label: { portedMenuRow(String(localized: "Privacy"), "hand.raised") }
-                            .buttonStyle(.plain)
-                        NavigationLink { TravelProfileView() } label: { portedMenuRow(String(localized: "Your travel profile"), "sparkles") }
-                            .buttonStyle(.plain)
-
-                        sectionHeader(String(localized: "Notifications"))
-                        NavigationLink { NotificationSettingsView() } label: { portedMenuRow(String(localized: "Notifications"), "bell") }
-                            .buttonStyle(.plain)
-
-                        sectionHeader(String(localized: "Get help"))
-                        Button {
-                            helpItem = SafariItem(url: URL(string: "https://swapl.fun/contact")!)
-                        } label: {
-                            portedMenuRow(String(localized: "Contact Swapl support"), "questionmark.circle")
-                        }
-                        .buttonStyle(.plain)
-                        Button {
-                            isRatingApp = true
-                        } label: {
-                            portedMenuRow(String(localized: "Rate the app"), "star")
-                        }
-                        .buttonStyle(.plain)
-
-                        if auth.isAdmin {
-                            sectionHeader(String(localized: "Admin"))
-                            NavigationLink { MetricsView() } label: { portedMenuRow(String(localized: "Metrics"), "chart.bar") }
+                            NavigationLink { LoginSecuritySectionView() } label: { portedMenuRow(String(localized: "Login & security"), "lock.shield") }
                                 .buttonStyle(.plain)
+                            NavigationLink { PrivacySectionView() } label: { portedMenuRow(String(localized: "Privacy"), "hand.raised") }
+                                .buttonStyle(.plain)
+                            NavigationLink { NotificationSettingsView() } label: { portedMenuRow(String(localized: "Notifications"), "bell") }
+                                .buttonStyle(.plain)
+                            NavigationLink { GetHelpSectionView() } label: { portedMenuRow(String(localized: "Get help"), "questionmark.circle") }
+                                .buttonStyle(.plain)
+                            if auth.isAdmin {
+                                NavigationLink { MetricsView() } label: { portedMenuRow(String(localized: "Admin"), "chart.bar") }
+                                    .buttonStyle(.plain)
+                            }
                         }
 
                         signOutRow
@@ -138,16 +96,6 @@ struct AccountView: View {
             }
             .task { await loadMyListings() }
             .task { await loadMe() }
-            .sheet(isPresented: $isChangingPassword) {
-                ChangePasswordSheet()
-            }
-            .sheet(isPresented: $isRatingApp) {
-                RateAppSheet()
-            }
-            .sheet(item: $helpItem) { item in
-                SafariView(url: item.url)
-                    .ignoresSafeArea()
-            }
             .confirmationDialog(String(localized: "Sign out of Swapl?"), isPresented: $isConfirmingSignOut, titleVisibility: .visible) {
                 Button(String(localized: "Sign out"), role: .destructive) {
                     Task { await auth.signOut() }
@@ -155,13 +103,6 @@ struct AccountView: View {
                 Button(String(localized: "Cancel"), role: .cancel) {}
             }
         }
-    }
-
-    private func sectionHeader(_ title: String) -> some View {
-        Text(title)
-            .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
-            .foregroundStyle(AirbnbPalette.text)
-            .padding(.top, 10)
     }
 
     // Real version string from the bundle — "Version 1.0 (1)".
@@ -1871,5 +1812,94 @@ private struct DateCard: View {
                 RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
                     .stroke(AirbnbPalette.hairline)
             }
+    }
+}
+
+// MARK: - Settings section sub-screens (iOS Settings-style navigation)
+
+// Shared row + scaffold for the per-section settings screens. Each section row
+// on the Account page pushes one of these, which lists just that section's items.
+private struct AccountSettingsRow: View {
+    let title: String
+    let icon: String
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon).font(.system(size: 18, weight: .semibold))
+            Text(title).font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+            Spacer()
+            Image(systemName: "chevron.right").font(.system(size: 14, weight: .semibold)).foregroundStyle(AirbnbPalette.secondaryText)
+        }
+        .foregroundStyle(AirbnbPalette.text)
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+    }
+}
+
+private struct AccountSectionScaffold<Content: View>: View {
+    let title: String
+    @ViewBuilder var content: () -> Content
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                content()
+            }
+            .padding(.horizontal, 22)
+            .padding(.top, 12)
+            .padding(.bottom, 40)
+        }
+        .swaplFloatingHeader(title)
+    }
+}
+
+private struct PersonalInfoSectionView: View {
+    @Environment(AuthService.self) private var auth
+    var body: some View {
+        AccountSectionScaffold(title: String(localized: "General")) {
+            NavigationLink { PersonalInfoView() } label: { AccountSettingsRow(title: String(localized: "Personal information"), icon: "person.text.rectangle") }.buttonStyle(.plain)
+            NavigationLink { InterestsEditorView() } label: { AccountSettingsRow(title: String(localized: "Interests"), icon: "heart.text.square") }.buttonStyle(.plain)
+            NavigationLink { SavedSearchesView() } label: { AccountSettingsRow(title: String(localized: "Saved searches"), icon: "magnifyingglass") }.buttonStyle(.plain)
+            NavigationLink { TravelWindowsView() } label: { AccountSettingsRow(title: String(localized: "Travel windows"), icon: "calendar.badge.clock") }.buttonStyle(.plain)
+            NavigationLink { SwaplStoryView() } label: { AccountSettingsRow(title: String(localized: "Your Swapl story"), icon: "book.closed") }.buttonStyle(.plain)
+            NavigationLink { SwapaliticsView() } label: { AccountSettingsRow(title: String(localized: "Swapalitics"), icon: "chart.bar.xaxis") }.buttonStyle(.plain)
+            if let userId = auth.session?.id {
+                NavigationLink { PublicProfileView(userId: userId) } label: { AccountSettingsRow(title: String(localized: "View public profile"), icon: "person") }.buttonStyle(.plain)
+            }
+        }
+    }
+}
+
+private struct LoginSecuritySectionView: View {
+    @State private var isChangingPassword = false
+    var body: some View {
+        AccountSectionScaffold(title: String(localized: "Login & security")) {
+            Button { isChangingPassword = true } label: { AccountSettingsRow(title: String(localized: "Change password"), icon: "lock.rotation") }.buttonStyle(.plain)
+            NavigationLink { PasskeysView() } label: { AccountSettingsRow(title: String(localized: "Passkeys"), icon: "person.badge.key") }.buttonStyle(.plain)
+        }
+        .sheet(isPresented: $isChangingPassword) { ChangePasswordSheet() }
+    }
+}
+
+private struct PrivacySectionView: View {
+    var body: some View {
+        AccountSectionScaffold(title: String(localized: "Privacy")) {
+            NavigationLink { PrivacySettingsView() } label: { AccountSettingsRow(title: String(localized: "Privacy"), icon: "hand.raised") }.buttonStyle(.plain)
+            NavigationLink { TravelProfileView() } label: { AccountSettingsRow(title: String(localized: "Your travel profile"), icon: "sparkles") }.buttonStyle(.plain)
+        }
+    }
+}
+
+private struct GetHelpSectionView: View {
+    @State private var helpItem: SafariItem?
+    @State private var isRatingApp = false
+    var body: some View {
+        AccountSectionScaffold(title: String(localized: "Get help")) {
+            Button { helpItem = SafariItem(url: URL(string: "https://swapl.fun/contact")!) } label: { AccountSettingsRow(title: String(localized: "Contact Swapl support"), icon: "questionmark.circle") }.buttonStyle(.plain)
+            Button { isRatingApp = true } label: { AccountSettingsRow(title: String(localized: "Rate the app"), icon: "star") }.buttonStyle(.plain)
+        }
+        .sheet(item: $helpItem) { item in
+            SafariView(url: item.url).ignoresSafeArea()
+        }
+        .sheet(isPresented: $isRatingApp) { RateAppSheet() }
     }
 }

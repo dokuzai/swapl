@@ -568,6 +568,7 @@ final class ProposalDetailViewModel {
 }
 
 struct ProposalDetailView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var vm: ProposalDetailViewModel
     @State private var showCounter = false
     @State private var showReview = false
@@ -587,76 +588,56 @@ struct ProposalDetailView: View {
     }
 
     var body: some View {
-        ScrollView {
-            if vm.isLoading && vm.detail == nil {
-                ProgressView()
-                    .frame(maxWidth: .infinity, minHeight: 400)
-                    .accessibilityLabel("Loading trip")
-            } else if let error = vm.error {
-                SwaplEmptyState(
-                    systemImage: "exclamationmark.triangle",
-                    title: String(localized: "Trip unavailable"),
-                    description: error,
-                    actionTitle: String(localized: "Try Again"),
-                    action: { Task { await vm.load() } }
-                )
-                .frame(maxWidth: .infinity)
-                .padding(.top, 80)
-            } else if let detail = vm.detail {
-                tripContent(detail)
+        // ZStack so the hero photo bleeds to the true top edge while the header
+        // floats over it — no system nav bar (its content inset is what left a
+        // cream band above the photo).
+        ZStack(alignment: .top) {
+            ScrollView {
+                if vm.isLoading && vm.detail == nil {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 400)
+                        .accessibilityLabel("Loading trip")
+                } else if let error = vm.error {
+                    SwaplEmptyState(
+                        systemImage: "exclamationmark.triangle",
+                        title: String(localized: "Trip unavailable"),
+                        description: error,
+                        actionTitle: String(localized: "Try Again"),
+                        action: { Task { await vm.load() } }
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 80)
+                } else if let detail = vm.detail {
+                    tripContent(detail)
+                }
             }
-        }
-        .frame(maxWidth: .infinity)
-        // Reveal the title-pill status dot only after the photo badge (~top of
-        // the hero) has scrolled under the header.
-        .onScrollGeometryChange(for: CGFloat.self) { geo in
-            geo.contentOffset.y + geo.contentInsets.top
-        } action: { _, y in
-            // Fade the dot in across the last stretch of the hero photo, so it's
-            // fully shown by the time the photo's status badge is gone.
-            let start: CGFloat = 170, end: CGFloat = 250
-            statusDotOpacity = Double(min(max((y - start) / (end - start), 0), 1))
-        }
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
-        .navigationBarTitleDisplayMode(.inline)
-        // Transparent nav bar (no cream band — global appearance is transparent),
-        // but kept so the interactive back-swipe stays bounded. Title pill +
-        // counterparty avatar float over the content (Telegram-style).
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
+            .frame(maxWidth: .infinity)
+            // Reveal the title-pill status dot only after the photo badge (~top of
+            // the hero) has scrolled under the header.
+            .onScrollGeometryChange(for: CGFloat.self) { geo in
+                geo.contentOffset.y + geo.contentInsets.top
+            } action: { _, y in
+                // Fade the dot in across the last stretch of the hero photo, so it's
+                // fully shown by the time the photo's status badge is gone.
+                let start: CGFloat = 170, end: CGFloat = 250
+                statusDotOpacity = Double(min(max((y - start) / (end - start), 0), 1))
+            }
+            // Let the hero photo bleed all the way to the top edge, under the
+            // status bar and the floating header.
+            .ignoresSafeArea(edges: .top)
+            // Soft cream dissolve at the top edge so the hero melts into the
+            // background under the status bar / floating header.
+            .overlay(alignment: .top) { heroTopFade }
+            .background(SwaplSemanticLight.background.ignoresSafeArea())
+
             if let detail = vm.detail {
-                ToolbarItem(placement: .principal) {
-                    VStack(spacing: 1) {
-                        HStack(spacing: 6) {
-                            Text(detail.tripListing.city)
-                                .font(.swaplBody(16, weight: .bold))
-                                .foregroundStyle(AirbnbPalette.text)
-                                .lineLimit(1)
-                            Circle()
-                                .fill(statusColor(detail.proposal.status))
-                                .frame(width: 7, height: 7)
-                                .opacity(statusDotOpacity)
-                                .accessibilityHidden(true)
-                        }
-                        Text(SwaplDateText.range(from: detail.proposal.dateFrom, to: detail.proposal.dateTo))
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
-                            .foregroundStyle(AirbnbPalette.secondaryText)
-                            .lineLimit(1)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 6)
-                    .glassEffect(.regular, in: .capsule)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        PublicProfileView(userId: detail.other.id)
-                    } label: {
-                        CounterpartyAvatar(name: detail.other.name, avatarUrl: detail.other.avatar, size: 32)
-                    }
-                    .accessibilityLabel(Text("View \(detail.other.name ?? String(localized: "host"))'s profile"))
-                }
+                tripFloatingHeader(detail)
             }
         }
+        // No system nav bar (its inset is what pushed the photo down). Swipe-back
+        // is preserved via the gesture delegate restored in SwaplApp.
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
         .task { await vm.load() }
         .sheet(isPresented: $showCounter) { counterSheet }
         .sheet(isPresented: $showReview) {
@@ -705,6 +686,111 @@ struct ProposalDetailView: View {
                 Text(String(localized: "Accepting issues the swap insurance policy for both homes and creates a binding agreement."))
             }
         }
+    }
+
+    // Cream gradient that fades the hero into the background at the top edge,
+    // keeping the floating title pill + avatar legible without a header band.
+    private var heroTopFade: some View {
+        LinearGradient(
+            colors: [SwaplSemanticLight.background, SwaplSemanticLight.background.opacity(0)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .frame(height: 140)
+        .frame(maxWidth: .infinity, alignment: .top)
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
+    }
+
+    // Floating header over the hero photo (no system nav bar): back on the left,
+    // city + dates pill centered (with the status dot that fades in on scroll),
+    // counterparty avatar on the right — all Liquid Glass.
+    private func tripFloatingHeader(_ detail: ProposalDetail) -> some View {
+        ZStack {
+            VStack(spacing: 1) {
+                HStack(spacing: 6) {
+                    Text(detail.tripListing.city)
+                        .font(.swaplBody(16, weight: .bold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+                    Circle()
+                        .fill(statusColor(detail.proposal.status))
+                        .frame(width: 7, height: 7)
+                        .opacity(statusDotOpacity)
+                        .accessibilityHidden(true)
+                }
+                Text(SwaplDateText.range(from: detail.proposal.dateFrom, to: detail.proposal.dateTo))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .lineLimit(1)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .glassEffect(.regular, in: .capsule)
+
+            HStack(spacing: 0) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .frame(width: 44, height: 44)
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .accessibilityLabel("Back")
+
+                Spacer(minLength: 0)
+
+                NavigationLink {
+                    PublicProfileView(userId: detail.other.id)
+                } label: {
+                    CounterpartyAvatar(name: detail.other.name, avatarUrl: detail.other.avatar, size: 44)
+                }
+                .accessibilityLabel(Text("View \(detail.other.name ?? String(localized: "host"))'s profile"))
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 4)
+    }
+
+    private func isPrincipal(_ detail: ProposalDetail) -> Bool {
+        detail.proposal.meSide == "proposer" || detail.proposal.meSide == "target"
+    }
+
+    // Whether the viewer is the proposer of a still-open proposal — the case
+    // where the Message pill sits inline beside "Withdraw proposal".
+    private func proposerCanWithdraw(_ detail: ProposalDetail) -> Bool {
+        let status = detail.proposal.status
+        return (status == "PENDING" || status == "COUNTERED") && detail.proposal.meSide == "proposer"
+    }
+
+    // Compact "Message {name}" pill — used full-width on its own row, or half
+    // width beside the withdraw action. Matches the GhostPill capsule height so
+    // the two read as a single row.
+    private func messagePill(_ detail: ProposalDetail) -> some View {
+        NavigationLink {
+            SwapChatView(
+                proposalId: vm.proposalId,
+                otherName: detail.other.name,
+                isPrincipal: isPrincipal(detail)
+            )
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "bubble.left.and.bubble.right.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                Text(String(localized: "Message \(detail.other.name ?? String(localized: "your swap partner"))"))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundStyle(SwaplSemanticLight.primary)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(SwaplSemanticLight.accent, in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("Message \(detail.other.name ?? String(localized: "your swap partner"))"))
     }
 
     private func tripContent(_ detail: ProposalDetail) -> some View {
@@ -812,35 +898,40 @@ struct ProposalDetailView: View {
 
             reviewSection(detail)
 
-            NavigationLink {
-                SwapChatView(
-                    proposalId: vm.proposalId,
-                    otherName: detail.other.name,
-                    isPrincipal: detail.proposal.meSide == "proposer" || detail.proposal.meSide == "target"
-                )
-            } label: {
-                HStack(spacing: 10) {
-                    Image(systemName: "bubble.left.and.bubble.right.fill")
-                        .font(.system(size: 16, weight: .semibold))
-                    Text(String(localized: "Message \(detail.other.name ?? String(localized: "your swap partner"))"))
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.secondaryText)
+            // Standalone "Message" row for every state EXCEPT the proposer's
+            // open proposal — there it moves inline beside "Withdraw proposal"
+            // (see actionSection).
+            if !proposerCanWithdraw(detail) {
+                NavigationLink {
+                    SwapChatView(
+                        proposalId: vm.proposalId,
+                        otherName: detail.other.name,
+                        isPrincipal: isPrincipal(detail)
+                    )
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "bubble.left.and.bubble.right.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                        Text(String(localized: "Message \(detail.other.name ?? String(localized: "your swap partner"))"))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                    }
+                    .foregroundStyle(AirbnbPalette.text)
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 18)
+                    .frame(maxWidth: .infinity)
+                    .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                            .stroke(AirbnbPalette.hairline)
+                    )
+                    .padding(.horizontal, 22)
                 }
-                .foregroundStyle(AirbnbPalette.text)
-                .padding(.vertical, 16)
-                .padding(.horizontal, 18)
-                .frame(maxWidth: .infinity)
-                .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
-                        .stroke(AirbnbPalette.hairline)
-                )
-                .padding(.horizontal, 22)
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
 
             actionSection(detail)
         }
@@ -902,7 +993,21 @@ struct ProposalDetailView: View {
                     GhostPill(title: String(localized: "Decline"), action: { isConfirmingDecline = true })
                 }
                 if canRespond && isProposer {
-                    GhostPill(title: String(localized: "Withdraw proposal"), action: { isConfirmingWithdraw = true })
+                    // Message the other host sits inline beside Withdraw so the
+                    // friendly action is right next to the destructive one.
+                    HStack(spacing: 12) {
+                        messagePill(detail)
+                        Button {
+                            isConfirmingWithdraw = true
+                        } label: {
+                            Text(String(localized: "Withdraw proposal"))
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                        }
+                        .overlay(Capsule().stroke(AirbnbPalette.text.opacity(0.18)))
+                        .foregroundStyle(AirbnbPalette.text)
+                    }
                 }
             }
             .padding(.horizontal, 22)
