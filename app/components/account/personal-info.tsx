@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n/client";
+import type { ContactChannels } from "@/lib/contact-channels";
 
 export type PersonalInfo = {
   name: string;
@@ -15,6 +16,7 @@ export type PersonalInfo = {
   languages: string[];
   homeCity: string;
   homeCountry: string;
+  contactChannels: ContactChannels;
 };
 
 const inputCls = "w-full rounded-lg border px-3 py-2 text-sm bg-transparent";
@@ -31,6 +33,22 @@ export function PersonalInfoEditor({ initial }: { initial: PersonalInfo }) {
     setForm((f) => ({ ...f, [key]: value }));
     setStatus("idle");
   }
+
+  function setChannel(key: keyof ContactChannels, value: string) {
+    setForm((f) => ({ ...f, contactChannels: { ...f.contactChannels, [key]: value } }));
+    setStatus("idle");
+  }
+
+  // Brand names (WhatsApp/Telegram/Instagram/Discord) are universal — no i18n key.
+  const contactFields: { key: keyof ContactChannels; label: string; type: string }[] = [
+    { key: "email", label: t("account.contact.email"), type: "email" },
+    { key: "phone", label: t("account.contact.phone"), type: "tel" },
+    { key: "whatsapp", label: "WhatsApp", type: "tel" },
+    { key: "telegram", label: "Telegram", type: "text" },
+    { key: "instagram", label: "Instagram", type: "text" },
+    { key: "discord", label: "Discord", type: "text" },
+    { key: "website", label: t("account.contact.website"), type: "url" },
+  ];
 
   function addLanguage() {
     const lang = langDraft.trim();
@@ -57,6 +75,8 @@ export function PersonalInfoEditor({ initial }: { initial: PersonalInfo }) {
           languages: form.languages,
           homeCity: form.homeCity.trim() || null,
           homeCountry: form.homeCountry.trim() || null,
+          // Full-replace: server normalizes + drops empty/invalid values.
+          contactChannels: form.contactChannels,
         }),
       });
       if (!res.ok) throw new Error();
@@ -185,6 +205,30 @@ export function PersonalInfoEditor({ initial }: { initial: PersonalInfo }) {
             onChange={(e) => set("homeCountry", e.target.value)}
           />
         </label>
+      </div>
+
+      <div>
+        <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+          {t("account.contact.title")}
+        </span>
+        <p className="text-sm mb-3" style={{ color: "var(--navy-2)" }}>{t("account.contact.hint")}</p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {contactFields.map((f) => (
+            <label key={f.key} className="block">
+              <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+                {f.label}
+              </span>
+              <input
+                className={inputCls}
+                style={inputStyle}
+                type={f.type}
+                value={form.contactChannels[f.key] ?? ""}
+                maxLength={200}
+                onChange={(e) => setChannel(f.key, e.target.value)}
+              />
+            </label>
+          ))}
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

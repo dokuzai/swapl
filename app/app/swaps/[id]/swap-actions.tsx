@@ -142,6 +142,10 @@ export default function SwapActions({
             </a>
           </div>
 
+          <p className="text-sm" style={{ color: "var(--navy-2)" }}>
+            {t("swaps.accept.contactNote", { name: otherName ?? "swapl host" })}
+          </p>
+
           <label className="flex items-start gap-2.5 text-sm cursor-pointer" style={{ color: "var(--navy)" }}>
             <input
               type="checkbox"

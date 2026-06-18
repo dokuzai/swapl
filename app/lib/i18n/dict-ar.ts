@@ -1844,4 +1844,12 @@ export const ar: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "تصفية حسب النوع",
+  "account.contact.title": "جهات الاتصال",
+  "account.contact.hint": "تتم مشاركتها مع شريك التبادل فقط بعد أن يقبل كلاكما التبادل. اتركها فارغة للحفاظ على خصوصيتها.",
+  "account.contact.email": "البريد الإلكتروني",
+  "account.contact.phone": "الهاتف",
+  "account.contact.website": "الموقع الإلكتروني",
+  "swaps.contact.heading": "معلومات الاتصال",
+  "swaps.contact.locked": "تُفتح معلومات الاتصال بمجرد أن يقبل كلاكما التبادل.",
+  "swaps.accept.contactNote": "ستتم مشاركة معلومات الاتصال الخاصة بك مع {name} عند التأكيد.",
 };

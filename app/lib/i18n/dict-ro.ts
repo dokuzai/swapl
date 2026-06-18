@@ -1844,4 +1844,12 @@ export const ro: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "Filtrează după tip",
+  "account.contact.title": "Contact",
+  "account.contact.hint": "Partajate cu un partener de schimb doar după ce amândoi acceptați un schimb. Lăsați gol pentru a le păstra private.",
+  "account.contact.email": "E-mail",
+  "account.contact.phone": "Telefon",
+  "account.contact.website": "Site web",
+  "swaps.contact.heading": "Date de contact",
+  "swaps.contact.locked": "Datele de contact se deblochează după ce amândoi acceptați schimbul.",
+  "swaps.accept.contactNote": "Datele tale de contact vor fi partajate cu {name} la confirmare.",
 };

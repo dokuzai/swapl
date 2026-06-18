@@ -1844,4 +1844,12 @@ export const id: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "Filter berdasarkan jenis",
+  "account.contact.title": "Kontak",
+  "account.contact.hint": "Hanya dibagikan dengan mitra tukar setelah kalian berdua menerima pertukaran. Biarkan kosong agar tetap privat.",
+  "account.contact.email": "Email",
+  "account.contact.phone": "Telepon",
+  "account.contact.website": "Situs web",
+  "swaps.contact.heading": "Info kontak",
+  "swaps.contact.locked": "Info kontak terbuka setelah kalian berdua menerima pertukaran.",
+  "swaps.accept.contactNote": "Info kontakmu akan dibagikan dengan {name} saat dikonfirmasi.",
 };

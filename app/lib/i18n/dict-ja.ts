@@ -1834,4 +1834,12 @@ export const ja: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "種類で絞り込む",
+  "account.contact.title": "連絡先",
+  "account.contact.hint": "交換を双方が承認した後にのみ、交換相手と共有されます。非公開にするには空欄のままにしてください。",
+  "account.contact.email": "メール",
+  "account.contact.phone": "電話",
+  "account.contact.website": "ウェブサイト",
+  "swaps.contact.heading": "連絡先",
+  "swaps.contact.locked": "双方が交換を承認すると連絡先が表示されます。",
+  "swaps.accept.contactNote": "確認すると、あなたの連絡先が {name} さんと共有されます。",
 };

@@ -1845,4 +1845,12 @@ export const zh: Partial<Record<DictKey, string>> = {
 
   // ---- Keys transactions (residual) ----
   "keys.tx.filterAria": "按类型筛选",
+  "account.contact.title": "联系方式",
+  "account.contact.hint": "仅在双方都接受交换后才与交换伙伴共享。留空则保持私密。",
+  "account.contact.email": "电子邮件",
+  "account.contact.phone": "电话",
+  "account.contact.website": "网站",
+  "swaps.contact.heading": "联系方式",
+  "swaps.contact.locked": "双方都接受交换后即可解锁联系方式。",
+  "swaps.accept.contactNote": "确认后，你的联系方式将与 {name} 共享。",
 };
