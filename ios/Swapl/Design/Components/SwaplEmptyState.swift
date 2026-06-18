@@ -20,10 +20,14 @@ struct SwaplEmptyState: View {
                 .background(AirbnbPalette.softBackground, in: Circle())
 
             VStack(spacing: 8) {
-                Text(title)
+                // Localize at render time: callers pass plain Strings (static UI
+                // labels, sometimes dynamic server errors) and Text(String) is
+                // verbatim. LocalizedStringKey looks each up in the catalog;
+                // unknown keys (dynamic errors) render verbatim.
+                Text(LocalizedStringKey(title))
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                Text(description)
+                Text(LocalizedStringKey(description))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
@@ -31,7 +35,7 @@ struct SwaplEmptyState: View {
 
             if let actionTitle, let action {
                 Button(action: action) {
-                    Text(actionTitle)
+                    Text(LocalizedStringKey(actionTitle))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
                         .padding(.vertical, 14)
                         .padding(.horizontal, 28)

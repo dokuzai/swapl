@@ -52,7 +52,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/profiles/
 
   const settings = parseSettings(user.settings);
 
-  const [listings, completedAgreements, reviewAgg, reviews] = await Promise.all([
+  const [listings, completedAgreements] = await Promise.all([
     prisma.listing.findMany({
       where: { userId: id, isActive: true, ineligibleReason: null },
       include: { user: { select: { name: true } } },
@@ -72,17 +72,28 @@ export async function GET(req: Request, { params }: RouteContext<"/api/profiles/
       },
       orderBy: { dateTo: "desc" },
     }),
-    prisma.swapReview.aggregate({
-      where: { subjectId: id, status: "published" },
-      _count: true,
-      _avg: { rating: true },
-    }),
-    prisma.swapReview.findMany({
-      where: { subjectId: id, status: "published" },
-      include: { author: { select: { id: true, name: true, avatar: true } } },
-      orderBy: { createdAt: "desc" },
-      take: 10,
-    }),
+  ]);
+
+  // Reviews are best-effort: a public profile should never 500 if an older prod
+  // DB is missing a review column (e.g. SwapReview.listingId from the
+  // review_listing migration). Each query degrades to empty on failure and the
+  // page renders without the reviews block until the migration is applied.
+  const [reviewAgg, reviews] = await Promise.all([
+    prisma.swapReview
+      .aggregate({
+        where: { subjectId: id, status: "published" },
+        _count: true,
+        _avg: { rating: true },
+      })
+      .catch(() => ({ _count: 0, _avg: { rating: null as number | null } })),
+    prisma.swapReview
+      .findMany({
+        where: { subjectId: id, status: "published" },
+        include: { author: { select: { id: true, name: true, avatar: true } } },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      })
+      .catch(() => [] as Array<never>),
   ]);
 
   // Resolve the property each review is about (covers inactive listings too).
