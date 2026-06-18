@@ -179,5 +179,38 @@ struct SwaplAppShortcuts: AppShortcutsProvider {
             shortTitle: "Optimize Photos",
             systemImageName: "photo.on.rectangle"
         )
+
+        AppShortcut(
+            intent: FindSwapIntent(),
+            phrases: [
+                "Find a home swap in \(.applicationName)",
+                "Find me a home exchange in \(.applicationName)",
+                "Search for homes in \(.applicationName)",
+                "Find a place to swap in \(.applicationName)"
+            ],
+            shortTitle: "Find a Swap",
+            systemImageName: "magnifyingglass"
+        )
+
+        AppShortcut(
+            intent: AcceptSwapIntent(),
+            phrases: [
+                "Accept a home swap in \(.applicationName)",
+                "Accept a swap in \(.applicationName)",
+                "Accept my home exchange in \(.applicationName)"
+            ],
+            shortTitle: "Accept a Swap",
+            systemImageName: "checkmark.circle"
+        )
+
+        AppShortcut(
+            intent: DeclineSwapIntent(),
+            phrases: [
+                "Decline a home swap in \(.applicationName)",
+                "Decline a swap in \(.applicationName)"
+            ],
+            shortTitle: "Decline a Swap",
+            systemImageName: "xmark.circle"
+        )
     }
 }

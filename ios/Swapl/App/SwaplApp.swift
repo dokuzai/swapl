@@ -88,6 +88,8 @@ struct RootView: View {
     // and is flushed once authenticated.
     @State private var activeDeepLink: DeepLinkDestination?
     @State private var stashedDeepLink: DeepLinkDestination?
+    // Navigation requested by a Siri / App Intent (e.g. tapping a result card).
+    @State private var siri = SiriRouter.shared
 
     var body: some View {
         Group {
@@ -126,6 +128,7 @@ struct RootView: View {
                 await LocationPingService.shared.pingIfDue()
             }
             consumePushDeepLink()
+            consumeSiriRoute()
             flushStashedDeepLinkIfReady()
         }
         // Custom scheme (swapl://) and universal links (https://app.swapl.fun).
@@ -135,6 +138,11 @@ struct RootView: View {
         .onChange(of: push.pendingDeepLink) { _, url in
             guard url != nil else { return }
             consumePushDeepLink()
+        }
+        // App Intent asked to navigate (e.g. tapped a Siri result card).
+        .onChange(of: siri.pending) { _, dest in
+            guard dest != nil else { return }
+            consumeSiriRoute()
         }
         // UI-test hook, same spirit as the SWAPL_API_BASE_URL override.
         .onAppear {
@@ -168,6 +176,16 @@ struct RootView: View {
         guard let url = push.pendingDeepLink else { return }
         push.pendingDeepLink = nil
         handleDeepLink(url)
+    }
+
+    private func consumeSiriRoute() {
+        guard let destination = siri.pending else { return }
+        siri.pending = nil
+        if auth.session != nil, !auth.isBootstrapping {
+            activeDeepLink = destination
+        } else {
+            stashedDeepLink = destination
+        }
     }
 
     private func flushStashedDeepLinkIfReady() {
