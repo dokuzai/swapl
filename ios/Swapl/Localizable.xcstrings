@@ -1822,6 +1822,12 @@
             "value" : "%1$@, %2$@ · area perkiraan"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %@ · zona approssimativa"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1850,12 +1856,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@，%2$@ · 大致区域"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %@ · zona approssimativa"
           }
         }
       }
@@ -3722,6 +3722,12 @@
             "value" : "Tur singkat — ceritakan sambil merekam, audionya tersimpan bersama video."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una breve panoramica — raccontala mentre filmi, l'audio viene salvato con il video."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3750,12 +3756,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拍一段简短的环屋视频——边拍边讲解，音频会随视频一同保存。"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una breve panoramica — raccontala mentre filmi, l'audio viene salvato con il video."
           }
         }
       }
@@ -4252,6 +4252,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "接受此次互换？"
+          }
+        }
+      }
+    },
+    "Accepted swaps and stays with points show up here." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli scambi accettati e i soggiorni con punti compaiono qui."
           }
         }
       }
@@ -5048,6 +5059,12 @@
             "value" : "Tambahkan video"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi un video"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5076,12 +5093,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "添加视频"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi un video"
           }
         }
       }
@@ -5958,6 +5969,12 @@
             "value" : "Tambahkan foto rumah Anda dulu — bila memungkinkan kami baca lokasinya dan buatkan draf deskripsinya. Anda konfirmasi dan sesuaikan semuanya di langkah berikutnya."
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi prima le foto della tua casa — quando possibile ne deduciamo la posizione e prepariamo una bozza della descrizione. Confermi e modifichi tutto nei passaggi successivi."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5986,12 +6003,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请先添加你家的照片——我们会尽可能从中识别位置，并为你起草描述。后续步骤中你可确认并调整一切。"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi prima le foto della tua casa — quando possibile ne deduciamo la posizione e prepariamo una bozza della descrizione. Confermi e modifichi tutto nei passaggi successivi."
           }
         }
       }
@@ -9302,6 +9313,17 @@
         }
       }
     },
+    "Calendar unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendario non disponibile"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -10042,6 +10064,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "城市"
+          }
+        }
+      }
+    },
+    "City experiences are coming soon. Check back here before your next swap." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le esperienze in città arrivano presto. Torna qui prima del tuo prossimo scambio."
           }
         }
       }
@@ -10931,6 +10964,12 @@
             "value" : "Video kondisi (opsional)"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video delle condizioni (facoltativo)"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10959,12 +10998,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "状况视频（可选）"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Video delle condizioni (facoltativo)"
           }
         }
       }
@@ -16456,6 +16489,17 @@
         }
       }
     },
+    "Experiences unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperienze non disponibili"
+          }
+        }
+      }
+    },
     "Explore" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -16750,6 +16794,12 @@
             "value" : "Filter berdasarkan tanggal"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtra per date"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16778,12 +16828,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "按日期筛选"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Filtra per date"
           }
         }
       }
@@ -16917,6 +16961,12 @@
             "value" : "Temukan perjalanan masa lalu Anda"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trova i tuoi viaggi passati"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16945,12 +16995,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查找你的过往行程"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trova i tuoi viaggi passati"
           }
         }
       }
@@ -17530,6 +17574,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "花园"
+          }
+        }
+      }
+    },
+    "General" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generali"
           }
         }
       }
@@ -18243,6 +18298,12 @@
             "value" : "Kelompokkan menurut"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raggruppa per"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18271,12 +18332,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分组方式"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Raggruppa per"
           }
         }
       }
@@ -18996,6 +19051,12 @@
             "value" : "Rumah di %@"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Casa a %@"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19024,12 +19085,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ 的住所"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Casa a %@"
           }
         }
       }
@@ -22176,6 +22231,17 @@
         }
       }
     },
+    "Invite-to-stay links are tied to your own listing. Create a home in Account, then invite a friend to come stay." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I link per invitare a soggiornare sono legati al tuo annuncio. Crea una casa in Account, poi invita un amico a venire."
+          }
+        }
+      }
+    },
     "Invited · waiting to verify" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -22255,6 +22321,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已邀请 · 等待验证"
+          }
+        }
+      }
+    },
+    "Invites unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inviti non disponibili"
           }
         }
       }
@@ -23164,6 +23241,17 @@
         }
       }
     },
+    "Language" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lingua"
+          }
+        }
+      }
+    },
     "Largest" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -23327,6 +23415,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最后更新于 %@"
+          }
+        }
+      }
+    },
+    "Later" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Più tardi"
           }
         }
       }
@@ -23739,6 +23838,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "列表"
+          }
+        }
+      }
+    },
+    "List your home first" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pubblica prima la tua casa"
           }
         }
       }
@@ -27225,6 +27335,17 @@
         }
       }
     },
+    "Metrics unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metriche non disponibili"
+          }
+        }
+      }
+    },
     "Microphone or speech recognition is turned off for Swapl — enable both in Settings to dictate your wish." : {
       "localizations" : {
         "ar" : {
@@ -28298,6 +28419,17 @@
         }
       }
     },
+    "No experiences yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora nessuna esperienza"
+          }
+        }
+      }
+    },
     "No homes found" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -28957,6 +29089,50 @@
         }
       }
     },
+    "No saved homes yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora nessuna casa salvata"
+          }
+        }
+      }
+    },
+    "No saved searches" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna ricerca salvata"
+          }
+        }
+      }
+    },
+    "No services yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora nessun servizio"
+          }
+        }
+      }
+    },
+    "No travel windows yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora nessuna finestra di viaggio"
+          }
+        }
+      }
+    },
     "No upcoming swaps" : {
       "localizations" : {
         "ar" : {
@@ -29001,6 +29177,12 @@
             "value" : "Tidak ada tukaran mendatang"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuno scambio in programma"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29029,12 +29211,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无即将到来的互换"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuno scambio in programma"
           }
         }
       }
@@ -29661,6 +29837,12 @@
             "value" : "Sekarang"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ora"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29689,12 +29871,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "现在"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ora"
           }
         }
       }
@@ -29865,6 +30041,17 @@
         }
       }
     },
+    "Once you complete your first swap or Keys stay, your trips and the guests you welcome appear here as passport stamps — a postcard of everywhere Swapl takes you." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una volta completato il primo scambio o soggiorno con punti, i tuoi viaggi e gli ospiti che accogli compaiono qui come timbri sul passaporto — una cartolina di tutti i posti in cui Swapl ti porta."
+          }
+        }
+      }
+    },
     "Only the approximate area is shown publicly." : {
       "localizations" : {
         "ar" : {
@@ -29993,6 +30180,12 @@
             "value" : "Buka di Maps"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri in Mappe"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30021,12 +30214,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在地图中打开"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri in Mappe"
           }
         }
       }
@@ -30077,6 +30264,12 @@
             "value" : "Buka perjalanan"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri viaggio"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30105,12 +30298,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "打开行程"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri viaggio"
           }
         }
       }
@@ -30326,6 +30513,12 @@
             "value" : "Urutkan menurut"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordina per"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30354,12 +30547,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "排序方式"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ordina per"
           }
         }
       }
@@ -32224,6 +32411,12 @@
             "value" : "Disematkan: lihat rumah dan foto"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In evidenza: vedi casa e foto"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32252,12 +32445,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已置顶：查看住所和照片"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In evidenza: vedi casa e foto"
           }
         }
       }
@@ -32588,6 +32775,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "只有好友完成身份验证后积分才会到账——以保证队列对所有人公平。积分是旅行额度，绝非现金。"
+          }
+        }
+      }
+    },
+    "Points unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punti non disponibili"
           }
         }
       }
@@ -33092,6 +33290,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我的"
+          }
+        }
+      }
+    },
+    "Profile unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profilo non disponibile"
           }
         }
       }
@@ -34464,6 +34673,12 @@
             "value" : "Hapus video"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi video"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34492,12 +34707,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "移除视频"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rimuovi video"
           }
         }
       }
@@ -34592,6 +34801,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Riapri Swapl per completare il passaggio a %@."
+          }
+        }
+      }
+    },
+    "Reopen to apply" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riapri per applicare"
           }
         }
       }
@@ -35586,6 +35806,17 @@
         }
       }
     },
+    "Restart now" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riavvia ora"
+          }
+        }
+      }
+    },
     "Rooftop" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -36000,6 +36231,17 @@
         }
       }
     },
+    "Save a search on the web to get notified about new matching homes." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva una ricerca sul web per ricevere notifiche sulle nuove case corrispondenti."
+          }
+        }
+      }
+    },
     "Save changes" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -36408,6 +36650,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已保存。你的公开资料已是最新。"
+          }
+        }
+      }
+    },
+    "Say hello" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saluta"
           }
         }
       }
@@ -38059,6 +38312,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服务"
+          }
+        }
+      }
+    },
+    "Services unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servizi non disponibili"
           }
         }
       }
@@ -40216,6 +40480,17 @@
         }
       }
     },
+    "Start the conversation — ask about dates, the neighbourhood, or anything you'd like to know." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia la conversazione — chiedi delle date, del quartiere o di qualsiasi cosa tu voglia sapere."
+          }
+        }
+      }
+    },
     "Start with the photos" : {
       "comment" : "A heading for the photos step of listing creation.",
       "isCommentAutoGenerated" : true,
@@ -40262,6 +40537,12 @@
             "value" : "Mulai dari foto"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia dalle foto"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40290,12 +40571,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从照片开始"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia dalle foto"
           }
         }
       }
@@ -40708,6 +40983,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已请求入住"
+          }
+        }
+      }
+    },
+    "Stay unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soggiorno non disponibile"
           }
         }
       }
@@ -41211,6 +41497,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无台阶"
+          }
+        }
+      }
+    },
+    "Story unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storia non disponibile"
           }
         }
       }
@@ -42391,6 +42688,17 @@
         }
       }
     },
+    "Tap the heart on any home to save it here." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca il cuore su qualsiasi casa per salvarla qui."
+          }
+        }
+      }
+    },
     "Tap to continue creating your listing in the app" : {
       "localizations" : {
         "ar" : {
@@ -42724,6 +43032,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "告诉我们你的互换出了什么状况%@。我们会让你的互换伙伴和客服团队介入。"
+          }
+        }
+      }
+    },
+    "Tell us when you'd like to travel — we'll bring you ready-made swaps for those dates." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dicci quando vuoi viaggiare — ti proporremo scambi pronti per quelle date."
           }
         }
       }
@@ -44790,6 +45109,17 @@
         }
       }
     },
+    "Travel services and concierge extras will appear here soon." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I servizi di viaggio e gli extra concierge appariranno presto qui."
+          }
+        }
+      }
+    },
     "Travel windows" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -45616,6 +45946,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "行程"
+          }
+        }
+      }
+    },
+    "Trips unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viaggi non disponibili"
           }
         }
       }
@@ -47861,6 +48202,17 @@
         }
       }
     },
+    "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out. Verify it from Account → your listing." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifica questo annuncio prima di invitare ospiti a soggiornare — altrimenti la ricompensa del tuo amico non può essere erogata. Verificalo da Account → il tuo annuncio."
+          }
+        }
+      }
+    },
     "Verify your email" : {
       "localizations" : {
         "ar" : {
@@ -47939,6 +48291,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "验证你的邮箱"
+          }
+        }
+      }
+    },
+    "Verify your home first" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifica prima la tua casa"
           }
         }
       }
@@ -48982,6 +49345,12 @@
             "value" : "Tonton video kondisi"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guarda il video delle condizioni"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -49010,12 +49379,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "观看状况视频"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guarda il video delle condizioni"
           }
         }
       }
@@ -50467,6 +50830,12 @@
             "value" : "Di mana Anda akan berada"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dove ti troverai"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -50495,12 +50864,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你将身处何地"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dove ti troverai"
           }
         }
       }
@@ -50666,6 +51029,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "心愿单"
+          }
+        }
+      }
+    },
+    "Wishlists unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liste dei desideri non disponibili"
           }
         }
       }
@@ -51544,6 +51918,12 @@
             "value" : "Anda menjamu %@"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ospiti a %@"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -51572,12 +51952,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你接待 %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ospiti a %@"
           }
         }
       }
@@ -53726,6 +54100,17 @@
         }
       }
     },
+    "Your story starts here" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua storia inizia qui"
+          }
+        }
+      }
+    },
     "Your swap package" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -54472,386 +54857,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你的心愿"
-          }
-        }
-      }
-    },
-    "Language" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lingua"
-          }
-        }
-      }
-    },
-    "General" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generali"
-          }
-        }
-      }
-    },
-    "Restart now" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riavvia ora"
-          }
-        }
-      }
-    },
-    "Later" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Più tardi"
-          }
-        }
-      }
-    },
-    "Reopen to apply" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riapri per applicare"
-          }
-        }
-      }
-    },
-    "Accepted swaps and stays with points show up here." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gli scambi accettati e i soggiorni con punti compaiono qui."
-          }
-        }
-      }
-    },
-    "Calendar unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calendario non disponibile"
-          }
-        }
-      }
-    },
-    "City experiences are coming soon. Check back here before your next swap." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le esperienze in città arrivano presto. Torna qui prima del tuo prossimo scambio."
-          }
-        }
-      }
-    },
-    "Experiences unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esperienze non disponibili"
-          }
-        }
-      }
-    },
-    "Invite-to-stay links are tied to your own listing. Create a home in Account, then invite a friend to come stay." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I link per invitare a soggiornare sono legati al tuo annuncio. Crea una casa in Account, poi invita un amico a venire."
-          }
-        }
-      }
-    },
-    "Invites unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inviti non disponibili"
-          }
-        }
-      }
-    },
-    "List your home first" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pubblica prima la tua casa"
-          }
-        }
-      }
-    },
-    "Metrics unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metriche non disponibili"
-          }
-        }
-      }
-    },
-    "No experiences yet" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ancora nessuna esperienza"
-          }
-        }
-      }
-    },
-    "No saved homes yet" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ancora nessuna casa salvata"
-          }
-        }
-      }
-    },
-    "No saved searches" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuna ricerca salvata"
-          }
-        }
-      }
-    },
-    "No services yet" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ancora nessun servizio"
-          }
-        }
-      }
-    },
-    "No travel windows yet" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ancora nessuna finestra di viaggio"
-          }
-        }
-      }
-    },
-    "Once you complete your first swap or Keys stay, your trips and the guests you welcome appear here as passport stamps — a postcard of everywhere Swapl takes you." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una volta completato il primo scambio o soggiorno con punti, i tuoi viaggi e gli ospiti che accogli compaiono qui come timbri sul passaporto — una cartolina di tutti i posti in cui Swapl ti porta."
-          }
-        }
-      }
-    },
-    "Points unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punti non disponibili"
-          }
-        }
-      }
-    },
-    "Profile unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profilo non disponibile"
-          }
-        }
-      }
-    },
-    "Save a search on the web to get notified about new matching homes." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salva una ricerca sul web per ricevere notifiche sulle nuove case corrispondenti."
-          }
-        }
-      }
-    },
-    "Say hello" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saluta"
-          }
-        }
-      }
-    },
-    "Services unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Servizi non disponibili"
-          }
-        }
-      }
-    },
-    "Start the conversation — ask about dates, the neighbourhood, or anything you'd like to know." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia la conversazione — chiedi delle date, del quartiere o di qualsiasi cosa tu voglia sapere."
-          }
-        }
-      }
-    },
-    "Stay unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Soggiorno non disponibile"
-          }
-        }
-      }
-    },
-    "Story unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Storia non disponibile"
-          }
-        }
-      }
-    },
-    "Tap the heart on any home to save it here." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca il cuore su qualsiasi casa per salvarla qui."
-          }
-        }
-      }
-    },
-    "Tell us when you'd like to travel — we'll bring you ready-made swaps for those dates." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dicci quando vuoi viaggiare — ti proporremo scambi pronti per quelle date."
-          }
-        }
-      }
-    },
-    "Travel services and concierge extras will appear here soon." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I servizi di viaggio e gli extra concierge appariranno presto qui."
-          }
-        }
-      }
-    },
-    "Trips unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Viaggi non disponibili"
-          }
-        }
-      }
-    },
-    "Verify this listing before inviting guests to stay — otherwise your friend's reward can't be paid out. Verify it from Account → your listing." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verifica questo annuncio prima di invitare ospiti a soggiornare — altrimenti la ricompensa del tuo amico non può essere erogata. Verificalo da Account → il tuo annuncio."
-          }
-        }
-      }
-    },
-    "Verify your home first" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verifica prima la tua casa"
-          }
-        }
-      }
-    },
-    "Wishlists unavailable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Liste dei desideri non disponibili"
-          }
-        }
-      }
-    },
-    "Your story starts here" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua storia inizia qui"
           }
         }
       }

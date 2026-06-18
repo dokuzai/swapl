@@ -70,9 +70,10 @@ final class SpeechRecorder {
         self.request = request
 
         do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
+            // Configuring/activating the audio session is slow and must not run
+            // on the main thread (AVAudioSession hang risk) — do it off the main
+            // actor and await it before wiring up the engine.
+            try await Task.detached(priority: .userInitiated) { try Self.activateSession() }.value
 
             let inputNode = audioEngine.inputNode
             let format = inputNode.outputFormat(forBus: 0)
@@ -114,6 +115,19 @@ final class SpeechRecorder {
         request = nil
         task?.cancel()
         task = nil
+        // Deactivate off the main actor too — same hang risk; fire-and-forget
+        // since teardown ordering isn't critical.
+        Task.detached(priority: .utility) { Self.deactivateSession() }
+    }
+
+    // AVAudioSession (de)activation is slow; these run off the main actor.
+    private nonisolated static func activateSession() throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.record, mode: .measurement, options: .duckOthers)
+        try session.setActive(true, options: .notifyOthersOnDeactivation)
+    }
+
+    private nonisolated static func deactivateSession() {
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }

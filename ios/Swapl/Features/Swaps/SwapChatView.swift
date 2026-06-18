@@ -367,6 +367,27 @@ struct SwapChatView: View {
         }
     }
 
+    private var photoPickerButton: some View {
+        // Read the MainActor state into a local so it isn't referenced inside the
+        // PhotosPicker label closure (which is nonisolated → concurrency warning).
+        let uploading = vm.isUploading
+        return PhotosPicker(selection: $photoItems, maxSelectionCount: 6, matching: .images) {
+            Group {
+                if uploading {
+                    ProgressView()
+                } else {
+                    Image(systemName: "photo.on.rectangle")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                }
+            }
+            .frame(width: 44, height: 44)
+            // Solid fill (not glass) since it sits inside the glass bar.
+            .background(SwaplSemanticLight.card, in: Circle())
+        }
+        .accessibilityLabel("Add photo")
+    }
+
     private var composer: some View {
         VStack(spacing: 8) {
             if let sendError = vm.sendError {
@@ -403,21 +424,7 @@ struct SwapChatView: View {
             }
 
             HStack(alignment: .bottom, spacing: 10) {
-                PhotosPicker(selection: $photoItems, maxSelectionCount: 6, matching: .images) {
-                    Group {
-                        if vm.isUploading {
-                            ProgressView()
-                        } else {
-                            Image(systemName: "photo.on.rectangle")
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundStyle(AirbnbPalette.text)
-                        }
-                    }
-                    .frame(width: 44, height: 44)
-                    // Solid fill (not glass) since it sits inside the glass bar.
-                    .background(SwaplSemanticLight.card, in: Circle())
-                }
-                .accessibilityLabel("Add photo")
+                photoPickerButton
 
                 TextField("Message", text: $vm.draft, axis: .vertical)
                     .lineLimit(1...5)
