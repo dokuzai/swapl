@@ -199,8 +199,13 @@ export async function linkRefereeByInviteToken(
 
 // Count of referrals THIS owner has already had REWARDED since `since` — the
 // magnitude of the anti-farm cap (one rewarded referral = one unit).
-async function rewardedReferralsSince(ownerId: string, since: Date): Promise<number> {
-  return prisma.referral.count({
+async function rewardedReferralsSince(
+  ownerId: string,
+  since: Date,
+  tx?: Prisma.TransactionClient,
+): Promise<number> {
+  const client = tx ?? prisma;
+  return client.referral.count({
     where: { ownerId, rewardedAt: { gte: since } },
   });
 }
@@ -346,8 +351,8 @@ export async function qualifyReferralsForReferee(
 
       // Anti-farm caps measured against THIS owner's recently-rewarded count.
       const [dayCount, monthCount] = await Promise.all([
-        rewardedReferralsSince(fresh.ownerId, new Date(now - DAY_MS)),
-        rewardedReferralsSince(fresh.ownerId, new Date(now - MONTH_MS)),
+        rewardedReferralsSince(fresh.ownerId, new Date(now - DAY_MS), tx),
+        rewardedReferralsSince(fresh.ownerId, new Date(now - MONTH_MS), tx),
       ]);
       const underCap = dayCount < REFERRAL_DAILY_CAP && monthCount < REFERRAL_MONTHLY_CAP;
 
@@ -410,8 +415,11 @@ export async function qualifyReferralsForReferee(
   // fail the verification flow. The persisted unseen-credit (ownerNotifiedAt
   // null) remains the source of truth for the polling toast, so push is purely
   // additive: clients that aren't open still catch up on next poll.
-  if (rewardedOwnerIds.length > 0) {
-    notifyReferrersRewarded(refereeUserId, rewardedOwnerIds).catch((err) =>
+  // Deduplicate owners before pushing to avoid duplicate notifications when
+  // the same referrer has multiple qualified referrals in the same batch.
+  const uniqueOwnerIds = [...new Set(rewardedOwnerIds)];
+  if (uniqueOwnerIds.length > 0) {
+    notifyReferrersRewarded(refereeUserId, uniqueOwnerIds).catch((err) =>
       console.error("[growth:referrer-push]", err),
     );
   }

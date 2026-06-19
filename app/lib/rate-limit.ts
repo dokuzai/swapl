@@ -35,6 +35,10 @@ export function checkRateLimit(
   windowMs: number
 ): { ok: boolean; remaining: number; resetAt: number } {
   const now = Date.now();
+  // Prune expired entries to prevent unbounded memory growth.
+  for (const [k, b] of buckets.entries()) {
+    if (now >= b.resetAt) buckets.delete(k);
+  }
   const b = buckets.get(key);
   if (!b || now >= b.resetAt) {
     const next = { count: 1, resetAt: now + windowMs };

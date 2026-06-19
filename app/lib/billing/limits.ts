@@ -145,34 +145,37 @@ const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 export async function ensureCanCreateProposal(userId: string): Promise<void> {
   const plan = await getEffectivePlan(userId);
   if (plan.maxProposalsMonth === 0) return; // unlimited
-  // Roll the per-user counter forward if it's older than 30 days.
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { proposalsThisMonthCount: true, proposalsCounterResetAt: true },
-  });
-  if (!user) throw new Error("user not found");
-  const now = new Date();
-  const sinceReset = now.getTime() - user.proposalsCounterResetAt.getTime();
-  let count = user.proposalsThisMonthCount;
-  if (sinceReset >= MONTH_MS) {
-    count = 0;
-    await prisma.user.update({
-      where: { id: userId },
-      data: { proposalsThisMonthCount: 0, proposalsCounterResetAt: now },
-    });
-  }
-  if (count >= plan.maxProposalsMonth) {
-    throw new PlanLimitError({
-      currentPlan: plan.id,
-      reason: `You've sent ${plan.maxProposalsMonth} proposals this month on the Free plan.`,
-      upgradeTo: "plus",
-    });
-  }
-}
 
-export async function bumpProposalCounter(userId: string): Promise<void> {
-  await prisma.user.update({
-    where: { id: userId },
-    data: { proposalsThisMonthCount: { increment: 1 } },
+  // Atomic read-check-reset-increment to prevent concurrent proposal creations
+  // from both passing the limit check. Uses a DB-level transaction with
+  // increment so the counter is always consistent.
+  await prisma.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({
+      where: { id: userId },
+      select: { proposalsThisMonthCount: true, proposalsCounterResetAt: true },
+    });
+    if (!user) throw new Error("user not found");
+
+    const now = new Date();
+    const sinceReset = now.getTime() - (user.proposalsCounterResetAt?.getTime() ?? 0);
+    let count = user.proposalsThisMonthCount;
+    if (sinceReset >= MONTH_MS) {
+      count = 0;
+      await tx.user.update({
+        where: { id: userId },
+        data: { proposalsThisMonthCount: 0, proposalsCounterResetAt: now },
+      });
+    }
+    if (count >= plan.maxProposalsMonth) {
+      throw new PlanLimitError({
+        currentPlan: plan.id,
+        reason: `You've sent ${plan.maxProposalsMonth} proposals this month on the Free plan.`,
+        upgradeTo: "plus",
+      });
+    }
+    await tx.user.update({
+      where: { id: userId },
+      data: { proposalsThisMonthCount: { increment: 1 } },
+    });
   });
 }

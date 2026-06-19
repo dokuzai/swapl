@@ -10,7 +10,9 @@ export const runtime = "nodejs";
 
 function csvCell(value: string | null | undefined): string {
   const s = value ?? "";
-  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  // Sanitise formula-triggering characters to prevent CSV formula injection.
+  const sanitized = /^[=+\-@\t]/.test(s) ? "'" + s : s;
+  return /[",\n\r]/.test(sanitized) ? `"${sanitized.replace(/"/g, '""')}"` : sanitized;
 }
 
 export async function GET() {

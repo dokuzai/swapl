@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { startSubscriptionCheckout } from "@/lib/billing/checkout";
 import { BillingNotConfigured } from "@/lib/billing/stripe";
 
@@ -21,7 +21,7 @@ const PRICE_ENV: Record<"plus" | "pro", Record<"monthly" | "yearly", string>> = 
 };
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   const body = await req.json().catch(() => null);
   const parsed = schema.safeParse(body);

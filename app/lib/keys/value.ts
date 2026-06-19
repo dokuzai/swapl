@@ -195,9 +195,15 @@ export function nightlyKeysFor(
 
 const NIGHT_MS = 24 * 60 * 60 * 1000;
 
-/** Whole nights between two dates, floored, minimum 1. */
+/** Whole nights between two dates, minimum 1. Rounds to the nearest whole day
+ * to absorb the ±1h DST shift, so a stay spanning a spring-forward or fall-back
+ * weekend still counts the correct number of nights.
+ */
 export function nightsBetween(from: Date, to: Date): number {
-  return Math.max(1, Math.floor((to.getTime() - from.getTime()) / NIGHT_MS));
+  const diffMs = to.getTime() - from.getTime();
+  // Round to nearest whole day to absorb the ±1h DST shift.
+  const days = Math.round(diffMs / NIGHT_MS);
+  return Math.max(1, days);
 }
 
 /** Total Keys cost of a stay = nightlyKeys × nights. */

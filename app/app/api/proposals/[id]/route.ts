@@ -14,6 +14,7 @@ import { getTripPhase, guideUnlocked, homeGuideComplete } from "@/lib/trip/phase
 import { bookedRangesFor, rangesOverlap } from "@/lib/listing/availability";
 import { Prisma } from "@/generated/prisma/client";
 import { isListingDateOverlapError, occupyListing } from "@/lib/listing/occupancy";
+import { randomInt } from "node:crypto";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -326,7 +327,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       console.error("[insurance:create]", err);
     }
 
-    const fallbackPolicyNumber = `SC-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`;
+    const fallbackPolicyNumber = `SC-${new Date().getFullYear()}-${randomInt(0, 1_000_000).toString().padStart(6, "0")}`;
     const fallbackExpiry = new Date(proposal.dateTo.getTime() + 30 * 24 * 60 * 60 * 1000);
 
     let result: { agreement: { id: string }; policyId: string };
@@ -383,8 +384,8 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
             listing2Id: updated.targetListingId,
             dateFrom: updated.dateFrom,
             dateTo: updated.dateTo,
-            keyCode1: Math.floor(1000 + Math.random() * 9000).toString(),
-            keyCode2: Math.floor(1000 + Math.random() * 9000).toString(),
+            keyCode1: randomInt(1000, 10000).toString(),
+            keyCode2: randomInt(1000, 10000).toString(),
             status: "ACTIVE",
           },
         });

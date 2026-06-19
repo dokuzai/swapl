@@ -10,7 +10,14 @@ import { getStripe, BillingNotConfigured } from "./stripe";
 import { prisma } from "@/lib/db";
 import { marketingUrl } from "@/lib/marketing/urls";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+
+function requireAppUrl(): string {
+  if (!APP_URL) {
+    throw new Error("NEXT_PUBLIC_APP_URL is required but not set");
+  }
+  return APP_URL;
+}
 
 export async function ensureStripeCustomer(userId: string): Promise<string> {
   const existing = await prisma.stripeCustomer.findUnique({ where: { userId } });
@@ -34,7 +41,7 @@ export async function ensureStripeCustomer(userId: string): Promise<string> {
 // Accepts app-relative paths or absolute URLs (e.g. the marketing site's
 // pricing page) for the Stripe return destinations.
 const absolute = (pathOrUrl: string) =>
-  pathOrUrl.startsWith("http") ? pathOrUrl : `${APP_URL}${pathOrUrl}`;
+  pathOrUrl.startsWith("http") ? pathOrUrl : `${requireAppUrl()}${pathOrUrl}`;
 
 const baseSession = (
   customerId: string,
@@ -122,8 +129,8 @@ export async function startCorporateCheckout(opts: {
     subscription_data: {
       metadata: { kind: "corporate", companyName: opts.companyName, seatCount: String(opts.seatCount) },
     },
-    success_url: `${APP_URL}/corporate/success?session={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${APP_URL}/corporate?status=cancel`,
+    success_url: `${requireAppUrl()}/corporate/success?session={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${requireAppUrl()}/corporate?status=cancel`,
   });
   if (!session.url) throw new Error("Stripe returned no Checkout URL");
   return session.url;
@@ -135,7 +142,7 @@ export async function createBillingPortalUrl(userId: string): Promise<string> {
   const stripe = getStripe();
   const portal = await stripe.billingPortal.sessions.create({
     customer: customer.stripeId,
-    return_url: `${APP_URL}/account/billing`,
+    return_url: `${requireAppUrl()}/account/billing`,
   });
   return portal.url;
 }

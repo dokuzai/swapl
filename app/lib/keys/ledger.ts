@@ -119,26 +119,20 @@ export type LedgerRow = {
 // reject if it would go negative, persist the new cached balance, and append
 // the ledger row. MUST run inside a transaction; pass the tx client.
 async function applyWithinTx(tx: Db, input: ApplyInput): Promise<LedgerRow> {
-  const user = await tx.user.findUnique({
+  // Atomic balance update using DB-level increment to avoid lost-update under
+  // PostgreSQL READ COMMITTED. The DB computes the new balance, so concurrent
+  // debits cannot both read the same stale value and both commit.
+  const updated = await tx.user.update({
     where: { id: input.userId },
-    select: { keysBalance: true },
+    data: { keysBalance: { increment: input.delta } },
   });
-  if (!user) {
-    throw new KeysLedgerError("USER_NOT_FOUND", `User ${input.userId} not found`);
-  }
-
-  const balanceAfter = user.keysBalance + input.delta;
-  if (balanceAfter < 0) {
+  if (updated.keysBalance < 0) {
     throw new KeysLedgerError(
       "NEGATIVE_BALANCE",
-      `Insufficient Keys: balance ${user.keysBalance}, delta ${input.delta}`,
+      `Insufficient Keys: debit of ${Math.abs(input.delta)} would bring balance below zero`,
     );
   }
-
-  await tx.user.update({
-    where: { id: input.userId },
-    data: { keysBalance: balanceAfter },
-  });
+  const balanceAfter = updated.keysBalance;
 
   const row = await tx.keysTransaction.create({
     data: {
@@ -245,9 +239,11 @@ export async function gift(
   toUserId: string,
   amount: number,
   note?: string | null,
+  validate?: (tx: Prisma.TransactionClient) => Promise<void>,
 ): Promise<{ sent: LedgerRow; received: LedgerRow }> {
   assertPositive(amount);
   return prisma.$transaction(async (tx) => {
+    if (validate) await validate(tx);
     const sent = await applyWithinTx(tx, {
       userId: fromUserId,
       delta: -amount,

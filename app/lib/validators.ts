@@ -53,6 +53,12 @@ export const listingCreateSchema = z.object({
   // What's offered (DOK-160). Defaults keep every listing a whole-home offer.
   spaceType: z.enum(["entire_place", "private_room"]).default("entire_place"),
   roomsOffered: z.number().int().min(1).max(15).optional(),
+}).refine((data) => data.availableTo > data.availableFrom, {
+  message: "availableTo must be after availableFrom",
+  path: ["availableTo"],
+}).refine((data) => data.maxStayDays >= data.minStayDays, {
+  message: "maxStayDays must be >= minStayDays",
+  path: ["maxStayDays"],
 });
 
 export type ListingCreateInput = z.infer<typeof listingCreateSchema>;
@@ -63,12 +69,18 @@ export const swapProposalSchema = z.object({
   dateFrom: z.coerce.date(),
   dateTo: z.coerce.date(),
   message: z.string().max(2000).optional(),
+}).refine((data) => data.dateTo > data.dateFrom, {
+  message: "dateTo must be after dateFrom",
+  path: ["dateTo"],
 });
 
 export const swapCounterSchema = z.object({
   counterDateFrom: z.coerce.date(),
   counterDateTo: z.coerce.date(),
   counterMessage: z.string().max(2000).optional(),
+}).refine((data) => data.counterDateTo > data.counterDateFrom, {
+  message: "counterDateTo must be after counterDateFrom",
+  path: ["counterDateTo"],
 });
 
 export const betaSignupSchema = z.object({

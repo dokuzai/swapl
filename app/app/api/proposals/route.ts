@@ -4,8 +4,8 @@ import { swapProposalSchema } from "@/lib/validators";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
-import { checkRateLimit } from "@/lib/rate-limit";
-import { ensureCanCreateProposal, bumpProposalCounter, PlanLimitError } from "@/lib/billing/limits";
+import { checkRateLimitDurable } from "@/lib/rate-limit";
+import { ensureCanCreateProposal, PlanLimitError } from "@/lib/billing/limits";
 import { apiError, accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -107,18 +107,8 @@ export async function POST(req: Request) {
     return accountSuspended();
   }
 
-  // Plan-aware monthly cap (R6): Free = 3/mo, Plus/Pro = unlimited.
-  try {
-    await ensureCanCreateProposal(session.userId);
-  } catch (err) {
-    if (err instanceof PlanLimitError) {
-      return apiError(402, err.reason, { upgradeTo: err.upgradeTo, currentPlan: err.currentPlan });
-    }
-    throw err;
-  }
-
   // Anti-burst safety net for every plan tier (kept from v0).
-  const rl = checkRateLimit(`proposals:${session.userId}`, 10, DAY_MS);
+  const rl = await checkRateLimitDurable(`proposals:${session.userId}`, 10, DAY_MS);
   if (!rl.ok) {
     return apiError(429, "You're sending proposals faster than we can deliver. Try again later.");
   }
@@ -146,6 +136,18 @@ export async function POST(req: Request) {
     return invalidInput("Cannot swap with yourself.");
   }
 
+  // Plan-aware monthly cap (R6): Free = 3/mo, Plus/Pro = unlimited.
+  // Atomic check-and-increment only AFTER all validation passes, so failed
+  // requests (429, invalid body, ownership check, etc.) don't burn quota.
+  try {
+    await ensureCanCreateProposal(session.userId);
+  } catch (err) {
+    if (err instanceof PlanLimitError) {
+      return apiError(402, err.reason, { upgradeTo: err.upgradeTo, currentPlan: err.currentPlan });
+    }
+    throw err;
+  }
+
   const proposal = await prisma.swapProposal.create({
     data: {
       proposerId: session.userId,
@@ -157,10 +159,6 @@ export async function POST(req: Request) {
       status: "PENDING",
     },
   });
-
-  // Bump the per-user counter only after a successful create so failed
-  // validation paths don't burn quota.
-  await bumpProposalCounter(session.userId);
 
   // Notify target via email + push.
   if (target.user?.email) {

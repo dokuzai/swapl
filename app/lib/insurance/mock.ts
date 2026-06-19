@@ -3,6 +3,7 @@
 // Pricing lives in ./pricing so the quote preview and the bound policy
 // always agree.
 
+import { randomInt } from "node:crypto";
 import { nightsBetween, quotePremium } from "./pricing";
 import type {
   CancelPolicyResult,
@@ -49,5 +50,5 @@ export const mockInsuranceProvider: InsuranceProvider = {
 };
 
 function randomBlock(): string {
-  return Math.floor(Math.random() * 1_000_000).toString().padStart(6, "0");
+  return randomInt(0, 1_000_000).toString().padStart(6, "0");
 }

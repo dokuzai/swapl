@@ -12,7 +12,7 @@ import { verifyGoogleIdToken } from "@/lib/auth/oauth/google";
 import { googleClientIds } from "@/lib/auth/oauth/config";
 import { findOrCreateOAuthUser } from "@/lib/auth/oauth/account";
 import { respondWithSession } from "@/lib/auth/respond";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 import { apiError, accountSuspended, invalidInput } from "@/lib/api/errors";
 import {
   attributeSignupByCode,
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   }
 
   const ip = clientIpFromRequest(req);
-  const rl = checkRateLimit(`oauth-google:${ip}`, 30, 5 * MIN_MS);
+  const rl = await checkRateLimitDurable(`oauth-google:${ip}`, 30, 5 * MIN_MS);
   if (!rl.ok) {
     return apiError(429, "Too many sign-in attempts. Try again in a few minutes.");
   }

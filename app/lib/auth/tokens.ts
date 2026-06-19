@@ -47,8 +47,13 @@ export async function consumeToken(rawToken: string, kind: TokenKind): Promise<C
   const row = await prisma.emailToken.findUnique({ where: { tokenHash } });
   if (!row || row.kind !== kind) return { ok: false, reason: "not-found" };
   if (row.usedAt) return { ok: false, reason: "used" };
-  if (row.expiresAt <= new Date()) return { ok: false, reason: "expired" };
-  await prisma.emailToken.update({ where: { tokenHash }, data: { usedAt: new Date() } });
+  if (row.expiresAt != null && row.expiresAt <= new Date()) return { ok: false, reason: "expired" };
+  // Atomic consume: only succeeds if the row is still unused at the moment of update.
+  const updated = await prisma.emailToken.updateMany({
+    where: { tokenHash, usedAt: null },
+    data: { usedAt: new Date() },
+  });
+  if (updated.count === 0) return { ok: false, reason: "used" };
   return { ok: true, userId: row.userId };
 }
 

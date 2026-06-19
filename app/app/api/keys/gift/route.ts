@@ -23,16 +23,6 @@ const bodySchema = z.object({
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MONTH_MS = 30 * DAY_MS;
 
-// Sum of Keys this user has already gifted since `since` (magnitude — gift_sent
-// rows are negative deltas).
-async function giftedSince(userId: string, since: Date): Promise<number> {
-  const agg = await prisma.keysTransaction.aggregate({
-    where: { userId, kind: "gift_sent", createdAt: { gte: since } },
-    _sum: { delta: true },
-  });
-  return Math.abs(agg._sum.delta ?? 0);
-}
-
 // POST /api/keys/gift — gift Keys to another VERIFIED user. Capped per transfer,
 // per day, and per month; rate-limited; never overdraws the sender's balance.
 // Keys cannot be bought or cashed out, so this internal transfer keeps them in
@@ -75,21 +65,30 @@ export async function POST(req: Request) {
     return forbidden("Only verified members can gift Keys");
   }
 
-  // Rolling daily + monthly caps.
+  // Rolling daily + monthly caps checked inside the gift transaction to
+  // prevent concurrent requests from bypassing the cap.
   const now = Date.now();
-  const [dayTotal, monthTotal] = await Promise.all([
-    giftedSince(session.userId, new Date(now - DAY_MS)),
-    giftedSince(session.userId, new Date(now - MONTH_MS)),
-  ]);
-  if (dayTotal + amount > GIFT_DAILY_CAP) {
-    return unprocessable("Daily gift limit reached", { limit: GIFT_DAILY_CAP, used: dayTotal });
-  }
-  if (monthTotal + amount > GIFT_MONTHLY_CAP) {
-    return unprocessable("Monthly gift limit reached", { limit: GIFT_MONTHLY_CAP, used: monthTotal });
-  }
-
   try {
-    const { sent, received } = await gift(session.userId, toUserId, amount);
+    const { sent, received } = await gift(session.userId, toUserId, amount, undefined, async (tx) => {
+      const [dayAgg, monthAgg] = await Promise.all([
+        tx.keysTransaction.aggregate({
+          where: { userId: session.userId, kind: "gift_sent", createdAt: { gte: new Date(now - DAY_MS) } },
+          _sum: { delta: true },
+        }),
+        tx.keysTransaction.aggregate({
+          where: { userId: session.userId, kind: "gift_sent", createdAt: { gte: new Date(now - MONTH_MS) } },
+          _sum: { delta: true },
+        }),
+      ]);
+      const dayTotal = Math.abs(dayAgg._sum.delta ?? 0);
+      const monthTotal = Math.abs(monthAgg._sum.delta ?? 0);
+      if (dayTotal + amount > GIFT_DAILY_CAP) {
+        throw new Error(`GIFT_DAILY_CAP_EXCEEDED:${dayTotal}`);
+      }
+      if (monthTotal + amount > GIFT_MONTHLY_CAP) {
+        throw new Error(`GIFT_MONTHLY_CAP_EXCEEDED:${monthTotal}`);
+      }
+    });
     sendPush(toUserId, pushTemplates.keysGiftReceived(amount)).catch(() => {});
     return NextResponse.json({
       ok: true,
@@ -98,6 +97,14 @@ export async function POST(req: Request) {
       recipientBalanceAfter: received.balanceAfter,
     });
   } catch (err) {
+    if (err instanceof Error && err.message.startsWith("GIFT_DAILY_CAP_EXCEEDED")) {
+      const used = parseInt(err.message.split(":")[1], 10);
+      return unprocessable("Daily gift limit reached", { limit: GIFT_DAILY_CAP, used });
+    }
+    if (err instanceof Error && err.message.startsWith("GIFT_MONTHLY_CAP_EXCEEDED")) {
+      const used = parseInt(err.message.split(":")[1], 10);
+      return unprocessable("Monthly gift limit reached", { limit: GIFT_MONTHLY_CAP, used });
+    }
     if (err instanceof KeysLedgerError && err.code === "NEGATIVE_BALANCE") {
       return unprocessable("Not enough Keys");
     }

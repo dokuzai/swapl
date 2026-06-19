@@ -47,7 +47,7 @@ export async function createOtp(channel: OtpChannel, destination: string): Promi
 
 export type OtpVerifyOutcome =
   | { ok: true; channel: OtpChannel }
-  | { ok: false; reason: "not-found" | "expired" | "too-many-attempts" | "wrong-code" };
+  | { ok: false; reason: "not-found" | "expired" | "too-many-attempts" | "wrong-code" | "used" };
 
 /**
  * Validate a code against the latest outstanding OTP for the destination.
@@ -60,26 +60,29 @@ export async function verifyOtp(destination: string, code: string): Promise<OtpV
     orderBy: { createdAt: "desc" },
   });
   if (!row) return { ok: false, reason: "not-found" };
-  if (row.expiresAt <= new Date()) return { ok: false, reason: "expired" };
+  if (row.expiresAt != null && row.expiresAt <= new Date()) return { ok: false, reason: "expired" };
   if (row.attempts >= OTP_MAX_ATTEMPTS) return { ok: false, reason: "too-many-attempts" };
 
   const a = Buffer.from(hashOtpCode(code), "hex");
   const b = Buffer.from(row.codeHash, "hex");
   const match = a.length === b.length && timingSafeEqual(a, b);
   if (!match) {
-    await prisma.loginOtp.update({
+    // Atomic increment of attempts; if already at max, another concurrent attempt
+    // may have incremented it, but we still report the current state.
+    const updated = await prisma.loginOtp.update({
       where: { id: row.id },
       data: { attempts: { increment: 1 } },
     });
-    // Report the lockout as soon as this guess exhausts the budget.
-    if (row.attempts + 1 >= OTP_MAX_ATTEMPTS) {
+    if (updated.attempts >= OTP_MAX_ATTEMPTS) {
       return { ok: false, reason: "too-many-attempts" };
     }
     return { ok: false, reason: "wrong-code" };
   }
-  await prisma.loginOtp.update({
-    where: { id: row.id },
+  // Atomic consume: only succeeds if the row is still unconsumed at the moment of update.
+  const updated = await prisma.loginOtp.updateMany({
+    where: { id: row.id, consumedAt: null },
     data: { consumedAt: new Date() },
   });
+  if (updated.count === 0) return { ok: false, reason: "used" };
   return { ok: true, channel: row.channel as OtpChannel };
 }

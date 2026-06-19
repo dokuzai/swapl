@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/session";
+import { getSessionFromRequest } from "@/lib/auth/session";
 import { createBillingPortalUrl } from "@/lib/billing/checkout";
 import { BillingNotConfigured } from "@/lib/billing/stripe";
 
-export async function POST() {
-  const session = await getSession();
+export async function POST(req: Request) {
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
   try {
     const url = await createBillingPortalUrl(session.userId);

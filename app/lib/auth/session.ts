@@ -155,7 +155,7 @@ async function getSessionFromBearer(headerValue: string | null): Promise<Session
     where: { tokenHash },
     include: { user: { select: { id: true, email: true, name: true } } },
   });
-  if (!row || row.revokedAt || row.expiresAt < new Date()) return null;
+  if (!row || row.revokedAt || (row.expiresAt != null && row.expiresAt < new Date())) return null;
   // Sliding window: bump lastSeenAt but skip if recent to avoid write amplification.
   const ageMs = Date.now() - row.lastSeenAt.getTime();
   if (ageMs > 60 * 1000) {

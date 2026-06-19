@@ -194,16 +194,18 @@ export async function grantShareConvertedBonus(args: {
   // Already awarded — idempotent no-op (the eventKey would also catch this).
   if (attribution.keysAwardedAt) return { credited: false, reason: "already_converted", eventKey };
 
-  // Stamp the conversion (first converter wins) before crediting, so the
-  // attribution reflects who realised it even if the gate/cap blocks Keys.
-  await prisma.listingShareAttribution.update({
-    where: { id: attribution.id },
+  // Atomic stamp: only succeeds if convertedById is still null (first converter wins).
+  const stampResult = await prisma.listingShareAttribution.updateMany({
+    where: { id: attribution.id, convertedById: null },
     data: {
-      convertedById: attribution.convertedById ?? args.converterId,
+      convertedById: args.converterId,
       conversionRef: args.conversionRef,
       convertedAt: new Date(),
     },
   });
+  if (stampResult.count === 0) {
+    return { credited: false, reason: "already_converted", eventKey };
+  }
 
   const outcome = await grantEarnOnce({
     userId: attribution.sharerId,

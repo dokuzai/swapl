@@ -41,8 +41,19 @@ export async function GET(req: Request) {
   for (const [name, job] of JOBS) {
     const startedAt = Date.now();
     try {
-      const res = await job(req);
-      const body = await res.json();
+      const res = await Promise.race([
+        job(req),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("TIMEOUT")), 30_000)
+        ),
+      ]);
+      let body: unknown;
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        try { body = await res.json(); } catch { body = null; }
+      } else {
+        body = await res.text();
+      }
       results[name] = body;
       const durationMs = Date.now() - startedAt;
       if (res.ok) {
@@ -52,11 +63,15 @@ export async function GET(req: Request) {
         log.error(`job ${name} failed`, undefined, { job: name, status: res.status, durationMs, result: body });
       }
     } catch (err) {
-      // A job that throws must not block the jobs after it: record the error
-      // (structured log + Sentry when configured) and move on.
       ok = false;
-      results[name] = { error: err instanceof Error ? err.message : "unknown" };
-      log.error(`job ${name} threw`, err, { job: name, durationMs: Date.now() - startedAt });
+      const error = err instanceof Error ? err.message : "unknown";
+      if (error === "TIMEOUT") {
+        results[name] = { error: "timeout" };
+        log.error(`job ${name} timed out`, undefined, { job: name, durationMs: Date.now() - startedAt });
+      } else {
+        results[name] = { error };
+        log.error(`job ${name} threw`, err, { job: name, durationMs: Date.now() - startedAt });
+      }
     }
   }
   return NextResponse.json({ ok, results }, { status: ok ? 200 : 500 });

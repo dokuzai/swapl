@@ -7,14 +7,14 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { issueToken, normaliseEmail } from "@/lib/auth/tokens";
 import { sendEmail, emailTemplates } from "@/lib/email";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 
 const schema = z.object({ email: z.string().email() });
 
 export async function POST(req: Request) {
   // Per-IP rate limit (20/hour) keeps spammers from flooding inboxes.
   const ip = clientIpFromRequest(req);
-  const rl = checkRateLimit(`forgot:${ip}`, 20, 60 * 60 * 1000);
+  const rl = await checkRateLimitDurable(`forgot:${ip}`, 20, 60 * 60 * 1000);
   if (!rl.ok) {
     return NextResponse.json({ ok: true }, { status: 200 });
   }
