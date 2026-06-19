@@ -15,7 +15,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force && tsx prisma/seed.ts",
     "db:pg-availability-constraints": "tsx scripts/apply-postgres-availability-constraints.ts",
-    "vercel-build": "prisma generate --schema prisma/schema.postgres.prisma && next build",
+    "check:prod-schema": "node scripts/check-prod-schema-drift.mjs",
+    "vercel-build": "prisma generate --schema prisma/schema.postgres.prisma && node scripts/check-prod-schema-drift.mjs && next build",
     "postinstall": "node -e \"const s=process.env.VERCEL?'prisma/schema.postgres.prisma':'prisma/schema.prisma';require('child_process').execSync('prisma generate --schema '+s,{stdio:'inherit'})\""
   },
   "dependencies": {
