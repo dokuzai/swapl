@@ -375,8 +375,11 @@ struct MessageRow: View {
                             .accessibilityLabel(proposal.statusLabel)
                         // Unread threads read in bold; already-read ones in the
                         // regular weight (DOK-216).
+                        // Display (Fraunces) like every other list title in the app
+                        // (Trips/Wishlists cards) — was the body font, which looked
+                        // foreign here (DOK-216).
                         Text(proposal.otherName ?? proposal.theirCity)
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: unread ? .bold : .regular))
+                            .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: unread ? .bold : .regular))
                             .foregroundStyle(AirbnbPalette.text)
                             .lineLimit(1)
                         Spacer()
