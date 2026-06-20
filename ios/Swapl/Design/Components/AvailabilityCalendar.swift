@@ -182,16 +182,24 @@ struct AvailabilityCalendar: View {
         VStack(alignment: .leading, spacing: 16) {
             monthNavHeader
             weekdayHeader
-            // Paged: one month per screen, swipe left/right between them.
-            TabView(selection: $monthIndex) {
-                ForEach(Array(days.months.enumerated()), id: \.offset) { idx, month in
-                    monthGrid(month)
-                        .tag(idx)
-                }
-            }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 296)
-            .animation(.snappy, value: monthIndex)
+            // One month at a time. Rendered directly (NOT a paged TabView, whose
+            // gesture swallows day-cell taps after a swipe — which blocked picking
+            // a check-out in the next month). Navigate with the arrows or a swipe;
+            // the drag has a minimum distance so plain taps still reach the days.
+            monthGrid(currentMonth)
+                .frame(height: 296)
+                .id(clampedMonthIndex)
+                .transition(.opacity)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 24)
+                        .onEnded { value in
+                            let dx = value.translation.width, dy = value.translation.height
+                            let delta = abs(dx) > abs(dy) ? dx : dy   // left/right OR up/down
+                            if delta < -40 { goToMonth(monthIndex + 1) }
+                            else if delta > 40 { goToMonth(monthIndex - 1) }
+                        }
+                )
             legend
         }
         .onAppear {
@@ -203,11 +211,23 @@ struct AvailabilityCalendar: View {
         }
     }
 
+    private var clampedMonthIndex: Int {
+        min(max(monthIndex, 0), max(0, days.months.count - 1))
+    }
+
+    private var currentMonth: Date {
+        days.months.indices.contains(clampedMonthIndex) ? days.months[clampedMonthIndex] : days.windowStart
+    }
+
+    private func goToMonth(_ i: Int) {
+        withAnimation(.snappy) { monthIndex = min(max(i, 0), max(0, days.months.count - 1)) }
+    }
+
     // ‹ Month Year › — keeps the month label + arrows fixed above the paged grid.
     private var monthNavHeader: some View {
         HStack(spacing: 0) {
             Button {
-                withAnimation(.snappy) { monthIndex = max(0, monthIndex - 1) }
+                goToMonth(monthIndex - 1)
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 15, weight: .semibold))
@@ -226,7 +246,7 @@ struct AvailabilityCalendar: View {
             Spacer()
 
             Button {
-                withAnimation(.snappy) { monthIndex = min(days.months.count - 1, monthIndex + 1) }
+                goToMonth(monthIndex + 1)
             } label: {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 15, weight: .semibold))
@@ -241,9 +261,7 @@ struct AvailabilityCalendar: View {
     }
 
     private var currentMonthTitle: String {
-        let i = min(max(monthIndex, 0), max(0, days.months.count - 1))
-        guard days.months.indices.contains(i) else { return "" }
-        return monthTitle(days.months[i])
+        days.months.isEmpty ? "" : monthTitle(currentMonth)
     }
 
     private func initialMonthIndex() -> Int {
