@@ -200,12 +200,7 @@ struct InspireView: View {
 
             if vm.useDates {
                 VStack(spacing: 0) {
-                    DatePicker("From", selection: $vm.dateFrom, in: Date()..., displayedComponents: .date)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                        .padding(.vertical, 6)
-                    Divider()
-                    DatePicker("To", selection: $vm.dateTo, in: vm.dateFrom..., displayedComponents: .date)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    RangeDatePicker(from: $vm.dateFrom, to: $vm.dateTo)
                         .padding(.vertical, 6)
                 }
                 .padding(.horizontal, 14)
@@ -585,12 +580,7 @@ struct PackageView: View {
         VStack(alignment: .leading, spacing: 10) {
             sectionTitle("Dates")
             VStack(spacing: 0) {
-                DatePicker("From", selection: $vm.dateFrom, displayedComponents: .date)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                    .padding(.vertical, 6)
-                Divider()
-                DatePicker("To", selection: $vm.dateTo, in: vm.dateFrom..., displayedComponents: .date)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                RangeDatePicker(from: $vm.dateFrom, to: $vm.dateTo)
                     .padding(.vertical, 6)
             }
             .padding(.horizontal, 14)

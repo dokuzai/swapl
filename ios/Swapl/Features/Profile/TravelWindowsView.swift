@@ -505,12 +505,7 @@ private struct AddTravelWindowSheet: View {
 
     private var datesCard: some View {
         VStack(spacing: 0) {
-            DatePicker("From", selection: $dateFrom, in: Date()..., displayedComponents: .date)
-                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                .padding(.vertical, 6)
-            Divider()
-            DatePicker("To", selection: $dateTo, in: dateFrom..., displayedComponents: .date)
-                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+            RangeDatePicker(from: $dateFrom, to: $dateTo)
                 .padding(.vertical, 6)
         }
         .padding(.horizontal, 14)

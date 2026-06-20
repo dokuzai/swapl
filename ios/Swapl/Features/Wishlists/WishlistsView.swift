@@ -269,8 +269,7 @@ struct WishlistsView: View {
     private var dateFilterSheet: some View {
         NavigationStack {
             Form {
-                DatePicker(String(localized: "From"), selection: $draftStart, displayedComponents: .date)
-                DatePicker(String(localized: "To"), selection: $draftEnd, in: draftStart..., displayedComponents: .date)
+                RangeDatePicker(from: $draftStart, to: $draftEnd)
             }
             .navigationTitle(String(localized: "Filter by dates"))
             .navigationBarTitleDisplayMode(.inline)

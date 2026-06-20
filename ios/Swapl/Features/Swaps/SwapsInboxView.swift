@@ -1152,8 +1152,7 @@ struct ProposalDetailView: View {
         NavigationStack {
             Form {
                 Section(String(localized: "New dates")) {
-                    DatePicker(String(localized: "From"), selection: $vm.counterFrom, displayedComponents: .date)
-                    DatePicker(String(localized: "To"), selection: $vm.counterTo, displayedComponents: .date)
+                    RangeDatePicker(from: $vm.counterFrom, to: $vm.counterTo)
                 }
                 Section(String(localized: "Note (optional)")) {
                     TextField(String(localized: "e.g. would these dates work?"), text: $vm.counterMessage, axis: .vertical)

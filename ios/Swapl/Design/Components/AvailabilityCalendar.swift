@@ -165,6 +165,14 @@ struct AvailabilityCalendar: View {
     // Called whenever the selection changes to a complete (or cleared) range.
     var onSelectionChange: ((Date?, Date?) -> Void)? = nil
 
+    // The tap state machine runs off this internal state, NOT the bindings:
+    // callers commonly back the bindings with non-optional storage, so the
+    // bindings never read nil after the first tap and the start→end flow would
+    // get stuck restarting. localEnd truly goes nil between the two taps.
+    @State private var localStart: Date?
+    @State private var localEnd: Date?
+    @State private var didInit = false
+
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
     private var cal: Calendar { AvailabilityDays.utcCalendar }
 
@@ -175,6 +183,12 @@ struct AvailabilityCalendar: View {
                 monthView(month)
             }
             legend
+        }
+        .onAppear {
+            guard !didInit else { return }
+            localStart = selectionStart
+            localEnd = selectionEnd
+            didInit = true
         }
     }
 
@@ -284,42 +298,49 @@ struct AvailabilityCalendar: View {
 
     private func isEndpoint(_ date: Date) -> Bool {
         let day = days.startOfDay(date)
-        if let start = selectionStart, days.startOfDay(start) == day { return true }
-        if let end = selectionEnd, days.startOfDay(end) == day { return true }
+        if let start = localStart, days.startOfDay(start) == day { return true }
+        if let end = localEnd, days.startOfDay(end) == day { return true }
         return false
     }
 
     private func isSelected(_ date: Date) -> Bool {
-        guard let start = selectionStart else { return false }
+        guard let start = localStart else { return false }
         let day = days.startOfDay(date)
         let s = days.startOfDay(start)
-        guard let end = selectionEnd else { return day == s }
+        guard let end = localEnd else { return day == s }
         let e = days.startOfDay(end)
         return day >= s && day <= e
     }
 
     private func tap(_ date: Date) {
         let day = days.startOfDay(date)
-        // Restart selection if nothing is pending, both ends are set, or the new
-        // tap falls before the current start.
-        if selectionStart == nil || selectionEnd != nil || day <= days.startOfDay(selectionStart!) {
-            selectionStart = day
-            selectionEnd = nil
-            onSelectionChange?(day, nil)
+        // First tap (or a restart): set the check-in and wait for a check-out.
+        // Restart when there's no start yet, a full range already exists, or the
+        // tap lands on/before the current start.
+        if localStart == nil || localEnd != nil || day <= days.startOfDay(localStart!) {
+            localStart = day
+            localEnd = nil
+            commit(day, nil)
             return
         }
-        // Closing the range. In .range mode reject it if any night in between is
-        // taken or it violates min/max stay; in .blocking mode accept anything.
+        // Second tap closes the range. In .range mode reject an end that crosses a
+        // taken night or breaks min/max stay; in .blocking mode accept anything.
         let candidateEnd = day
-        if mode == .range && !days.rangeIsBookable(from: selectionStart!, to: candidateEnd) {
-            // Invalid end — treat the tap as a fresh start instead.
-            selectionStart = day
-            selectionEnd = nil
-            onSelectionChange?(day, nil)
+        if mode == .range && !days.rangeIsBookable(from: localStart!, to: candidateEnd) {
+            localStart = day
+            localEnd = nil
+            commit(day, nil)
             return
         }
-        selectionEnd = candidateEnd
-        onSelectionChange?(selectionStart, candidateEnd)
+        localEnd = candidateEnd
+        commit(localStart, candidateEnd)
+    }
+
+    // Keep the public bindings + callback in step with the internal state.
+    private func commit(_ start: Date?, _ end: Date?) {
+        selectionStart = start
+        selectionEnd = end
+        onSelectionChange?(start, end)
     }
 
     private func monthTitle(_ month: Date) -> String {
@@ -338,5 +359,33 @@ struct AvailabilityCalendar: View {
         if !withinWindow { return "\(day), unavailable" }
         if booked { return "\(day), taken" }
         return "\(day), available"
+    }
+}
+
+// One-view range picker for date filters/searches with no specific listing
+// (DOK-216): wraps AvailabilityCalendar over an open future window so every
+// from/to picker in the app gets the same tap-check-in-then-check-out flow
+// instead of two system DatePickers. Bridges the Date? calendar API to plain
+// non-optional Date bindings the callers already use.
+struct RangeDatePicker: View {
+    @Binding var from: Date
+    @Binding var to: Date
+    var monthsAhead: Int = 12
+
+    private var windowEnd: Date {
+        Calendar.current.date(byAdding: .month, value: monthsAhead, to: Date()) ?? Date()
+    }
+
+    var body: some View {
+        AvailabilityCalendar(
+            days: AvailabilityDays(openWindowFrom: Date(), to: windowEnd),
+            mode: .range,
+            selectionStart: Binding(get: { from }, set: { if let v = $0 { from = v } }),
+            selectionEnd: Binding(get: { to }, set: { to = $0 ?? from }),
+            onSelectionChange: { f, t in
+                if let f { from = f }
+                to = t ?? Calendar.current.date(byAdding: .day, value: 1, to: f ?? from) ?? from
+            }
+        )
     }
 }

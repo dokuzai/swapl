@@ -777,10 +777,9 @@ struct ProposalSheetView: View {
                         )
                         .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
                     } else {
-                        // Availability still loading — fall back to plain pickers so
-                        // the user is never blocked from proposing.
-                        DatePicker("From", selection: $dateFrom, displayedComponents: .date)
-                        DatePicker("To", selection: $dateTo, displayedComponents: .date)
+                        // Availability still loading — open-window range picker so the
+                        // experience matches the calendar shown once it loads.
+                        RangeDatePicker(from: $dateFrom, to: $dateTo)
                     }
                 } header: {
                     Text("Dates")
