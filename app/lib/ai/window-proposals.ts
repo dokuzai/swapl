@@ -15,6 +15,7 @@ import { prisma, parseJSON } from "@/lib/db";
 import { computeMatchScore, type ScoreableListing } from "@/lib/match/score";
 import { isRangeAvailable, bookedRangesFor, type AvailabilityListing } from "@/lib/listing/availability";
 import { readTravelProfile, buildTravelProfile, type TravelProfileData } from "./travel-profile";
+import { EXTENDED_CITIES } from "@/lib/cities-extended";
 
 const CANDIDATE_POOL = 60;
 const TOP_COUNT = 6;
@@ -153,6 +154,83 @@ export function parseDestinations(raw: string | null): string[] {
   return arr.filter((d): d is string => typeof d === "string" && d.trim().length > 0).map((d) => d.trim());
 }
 
+// --- Free-text destination inference (DOK-216) ---------------------------------
+// A window's destination is often only in its free-text note ("I want to go to
+// the beach in Turkey") while the structured `destinations` is empty. Without
+// this, the matcher ignores the intent and suggests anywhere (e.g. Seoul). We
+// scan the note for known countries/cities and treat them as destinations.
+
+// Common English exonyms / short forms → the canonical country string we store.
+const COUNTRY_EXONYMS: Record<string, string> = {
+  turkey: "Türkiye",
+  turkiye: "Türkiye",
+  holland: "Netherlands",
+  america: "USA",
+  "united states": "USA",
+  "u.s.a.": "USA",
+  "u.s.": "USA",
+  uk: "United Kingdom",
+  britain: "United Kingdom",
+  england: "United Kingdom",
+  uae: "United Arab Emirates",
+};
+
+// City names that double as everyday English words — skip so "a nice beach"
+// doesn't resolve to Nice, France.
+const AMBIGUOUS_CITIES = new Set(["nice", "bath", "split", "male", "of", "as"]);
+
+type Keyword = { kw: string; canonical: string; isCountry: boolean };
+let KEYWORD_INDEX: Keyword[] | null = null;
+
+function keywordIndex(): Keyword[] {
+  if (KEYWORD_INDEX) return KEYWORD_INDEX;
+  const out: Keyword[] = [];
+  const seenCountry = new Set<string>();
+  for (const c of EXTENDED_CITIES) {
+    const cityKw = c.name.toLowerCase();
+    if (!AMBIGUOUS_CITIES.has(cityKw)) out.push({ kw: cityKw, canonical: c.name, isCountry: false });
+    for (const a of c.aliases ?? []) {
+      const al = a.toLowerCase();
+      if (!AMBIGUOUS_CITIES.has(al)) out.push({ kw: al, canonical: c.name, isCountry: false });
+    }
+    const countryKw = c.country.toLowerCase();
+    if (!seenCountry.has(countryKw)) {
+      seenCountry.add(countryKw);
+      out.push({ kw: countryKw, canonical: c.country, isCountry: true });
+    }
+  }
+  for (const [k, v] of Object.entries(COUNTRY_EXONYMS)) out.push({ kw: k, canonical: v, isCountry: true });
+  // Longest first so "south korea" wins over a bare substring.
+  out.sort((a, b) => b.kw.length - a.kw.length);
+  KEYWORD_INDEX = out;
+  return out;
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Pull canonical destination tokens out of a free-text note. Countries take
+ * precedence: if any country is named we ignore city hits (so "a beach in
+ * Turkey" → Türkiye, not some city that happens to appear). Whole-word matches
+ * only. Returns [] when nothing recognisable is found.
+ */
+export function extractDestinationsFromNotes(notes: string | null): string[] {
+  if (!notes || !notes.trim()) return [];
+  const hay = ` ${notes.toLowerCase()} `;
+  const countries = new Set<string>();
+  const cities = new Set<string>();
+  for (const { kw, canonical, isCountry } of keywordIndex()) {
+    const re = new RegExp(`(^|[^a-zà-ÿ])${escapeRegex(kw)}([^a-zà-ÿ]|$)`);
+    if (re.test(hay)) {
+      if (isCountry) countries.add(canonical);
+      else cities.add(canonical);
+    }
+  }
+  return countries.size > 0 ? [...countries] : [...cities];
+}
+
 export type WindowLike = {
   id: string;
   userId: string;
@@ -160,6 +238,7 @@ export type WindowLike = {
   dateTo: Date;
   flexible: boolean;
   destinations: string | null;
+  notes: string | null;
 };
 
 /**
@@ -176,7 +255,12 @@ export type WindowLike = {
 export async function composeWindowProposals(window: WindowLike): Promise<WindowProposalsResult> {
   const from = window.dateFrom;
   const to = window.dateTo;
-  const destinations = parseDestinations(window.destinations);
+  // Prefer the structured destinations; if none were set, infer them from the
+  // window's free-text note so "beach in Turkey" doesn't surface Seoul (DOK-216).
+  const explicitDestinations = parseDestinations(window.destinations);
+  const destinations = explicitDestinations.length > 0
+    ? explicitDestinations
+    : extractDestinationsFromNotes(window.notes);
 
   const [mine, favorites, profile] = await Promise.all([
     prisma.listing.findFirst({
