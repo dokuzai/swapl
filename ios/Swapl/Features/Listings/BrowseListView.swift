@@ -1010,9 +1010,14 @@ struct BrowseMapView: View {
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
             .ignoresSafeArea()
-            // Freeform draw layer — only intercepts touches while drawing.
+            // Draw-to-search: the gesture lives on the Map itself (canonical
+            // MapReader pattern) so its .local matches proxy.convert(.local) — no
+            // offset, no named space, no frame change. Active only while drawing;
+            // otherwise masked so normal map pan/pin taps work.
+            .gesture(drawGesture(proxy: proxy), including: drawMode ? .gesture : .subviews)
+            // Ink stroke is a non-interactive overlay.
             .overlay {
-                if drawMode { drawCanvas(proxy: proxy) }
+                if drawMode { drawStroke }
             }
             .overlay(alignment: .bottomTrailing) { mapControlStack }
             .overlay(alignment: .bottom) {
@@ -1032,7 +1037,7 @@ struct BrowseMapView: View {
         }
     }
 
-    private func drawCanvas(proxy: MapProxy) -> some View {
+    private var drawStroke: some View {
         Canvas { ctx, _ in
             guard dragScreenPoints.count > 1 else { return }
             var path = Path()
@@ -1043,17 +1048,36 @@ struct BrowseMapView: View {
                 style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round, dash: [1, 6])
             )
         }
-        .contentShape(Rectangle())
-        .gesture(
-            DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                .onChanged { value in dragScreenPoints.append(value.location) }
-                .onEnded { _ in
-                    let coords = dragScreenPoints.compactMap { proxy.convert($0, from: .local) }
-                    if coords.count >= 3 { drawnArea = coords }
-                    dragScreenPoints = []
-                    drawMode = false
+        .allowsHitTesting(false)
+    }
+
+    // The map ignores the safe area (full-bleed), but proxy.convert(.local) maps
+    // against the safe-area frame — so converted points land offset by the top
+    // inset. Compensate with the real inset (not a guessed number) (DOK-216).
+    private var topSafeInset: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .safeAreaInsets.top ?? 0
+    }
+
+    private func drawGesture(proxy: MapProxy) -> some Gesture {
+        DragGesture(minimumDistance: 0, coordinateSpace: .local)
+            .onChanged { value in
+                guard drawMode else { return }
+                dragScreenPoints.append(value.location)
+            }
+            .onEnded { _ in
+                guard drawMode else { return }
+                let inset = topSafeInset
+                let coords = dragScreenPoints.compactMap {
+                    proxy.convert(CGPoint(x: $0.x, y: $0.y + inset), from: .local)
                 }
-        )
+                if coords.count >= 3 { drawnArea = coords }
+                dragScreenPoints = []
+                drawMode = false
+            }
     }
 
     // Glass control stack: locate-me, draw toggle (+ clear when a lasso exists).
