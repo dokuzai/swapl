@@ -172,24 +172,84 @@ struct AvailabilityCalendar: View {
     @State private var localStart: Date?
     @State private var localEnd: Date?
     @State private var didInit = false
+    // One month on screen at a time; swipe (or the ‹ › arrows) pages between them.
+    @State private var monthIndex = 0
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
     private var cal: Calendar { AvailabilityDays.utcCalendar }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 16) {
+            monthNavHeader
             weekdayHeader
-            ForEach(days.months, id: \.self) { month in
-                monthView(month)
+            // Paged: one month per screen, swipe left/right between them.
+            TabView(selection: $monthIndex) {
+                ForEach(Array(days.months.enumerated()), id: \.offset) { idx, month in
+                    monthGrid(month)
+                        .tag(idx)
+                }
             }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 296)
+            .animation(.snappy, value: monthIndex)
             legend
         }
         .onAppear {
             guard !didInit else { return }
             localStart = selectionStart
             localEnd = selectionEnd
+            monthIndex = initialMonthIndex()
             didInit = true
         }
+    }
+
+    // ‹ Month Year › — keeps the month label + arrows fixed above the paged grid.
+    private var monthNavHeader: some View {
+        HStack(spacing: 0) {
+            Button {
+                withAnimation(.snappy) { monthIndex = max(0, monthIndex - 1) }
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(monthIndex > 0 ? AirbnbPalette.text : AirbnbPalette.secondaryText.opacity(0.35))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .disabled(monthIndex <= 0)
+            .accessibilityLabel("Previous month")
+
+            Spacer()
+            Text(currentMonthTitle)
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+            Spacer()
+
+            Button {
+                withAnimation(.snappy) { monthIndex = min(days.months.count - 1, monthIndex + 1) }
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(monthIndex < days.months.count - 1 ? AirbnbPalette.text : AirbnbPalette.secondaryText.opacity(0.35))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .disabled(monthIndex >= days.months.count - 1)
+            .accessibilityLabel("Next month")
+        }
+    }
+
+    private var currentMonthTitle: String {
+        let i = min(max(monthIndex, 0), max(0, days.months.count - 1))
+        guard days.months.indices.contains(i) else { return "" }
+        return monthTitle(days.months[i])
+    }
+
+    private func initialMonthIndex() -> Int {
+        let anchor = localStart ?? days.windowStart
+        let target = cal.dateInterval(of: .month, for: anchor)?.start ?? anchor
+        return days.months.firstIndex { cal.isDate($0, equalTo: target, toGranularity: .month) } ?? 0
     }
 
     private var weekdayHeader: some View {
@@ -209,21 +269,17 @@ struct AvailabilityCalendar: View {
         return Array(symbols[first...] + symbols[..<first])
     }
 
-    private func monthView(_ month: Date) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(monthTitle(month))
-                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.text)
-            LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(Array(days.daysGrid(for: month).enumerated()), id: \.offset) { _, date in
-                    if let date {
-                        dayCell(date)
-                    } else {
-                        Color.clear.frame(height: 44)
-                    }
+    private func monthGrid(_ month: Date) -> some View {
+        LazyVGrid(columns: columns, spacing: 4) {
+            ForEach(Array(days.daysGrid(for: month).enumerated()), id: \.offset) { _, date in
+                if let date {
+                    dayCell(date)
+                } else {
+                    Color.clear.frame(height: 44)
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     private func dayCell(_ date: Date) -> some View {
