@@ -133,14 +133,24 @@ struct AccountView: View {
         HStack(spacing: 22) {
             VStack(spacing: 12) {
                 ZStack(alignment: .bottomTrailing) {
-                    Circle()
-                        .fill(SwaplSemanticLight.primary)
-                        .frame(width: 118, height: 118)
-                        .overlay {
-                            Text(initials)
-                                .font(.swaplDisplay(44, weight: .semibold))
-                                .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                    // Show the uploaded profile picture when set (DOK-216); reads
+                    // auth.session so it updates the moment refreshSession() runs
+                    // after an upload. Falls back to the initials monogram.
+                    Group {
+                        if let raw = auth.session?.avatar, let url = URL(string: raw) {
+                            AsyncImage(url: url) { phase in
+                                if case .success(let image) = phase {
+                                    image.resizable().scaledToFill()
+                                } else {
+                                    initialsCircle
+                                }
+                            }
+                        } else {
+                            initialsCircle
                         }
+                    }
+                    .frame(width: 118, height: 118)
+                    .clipShape(Circle())
                     // Verified badge is gated on real verification status
                     // (F19) — only an ID-verified member sees the shield.
                     if me?.user.verified == true {
@@ -452,6 +462,16 @@ struct AccountView: View {
 
     private var initials: String {
         String(displayName.prefix(1)).uppercased()
+    }
+
+    private var initialsCircle: some View {
+        Circle()
+            .fill(SwaplSemanticLight.primary)
+            .overlay {
+                Text(initials)
+                    .font(.swaplDisplay(44, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primaryForeground)
+            }
     }
 }
 

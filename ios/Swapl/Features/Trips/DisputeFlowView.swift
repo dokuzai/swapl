@@ -97,18 +97,28 @@ final class DisputeFlowViewModel {
 }
 
 struct DisputeFlowView: View {
+    // Optional inline "Message <partner>" pill rendered beside "Report a problem"
+    // so the two share one row (DOK-216). When nil, only the report entry shows.
+    struct InlineMessage {
+        let proposalId: String
+        let partnerName: String?
+        let isPrincipal: Bool
+    }
+
     @State private var vm: DisputeFlowViewModel
     let otherName: String?
     let myUserId: String?
+    let inlineMessage: InlineMessage?
 
     @State private var showOpenForm = false
     @State private var helpItem: SafariItem?
     @State private var phoneFallback: PhoneFallbackAlert?
 
-    init(agreementId: String, otherName: String?, myUserId: String?) {
+    init(agreementId: String, otherName: String?, myUserId: String?, inlineMessage: InlineMessage? = nil) {
         _vm = State(initialValue: DisputeFlowViewModel(agreementId: agreementId))
         self.otherName = otherName
         self.myUserId = myUserId
+        self.inlineMessage = inlineMessage
     }
 
     var body: some View {
@@ -172,21 +182,56 @@ struct DisputeFlowView: View {
         Binding(get: { phoneFallback != nil }, set: { if !$0 { phoneFallback = nil } })
     }
 
+    // Report + (optional) Message on one row, both as glass pills — Report clear,
+    // Message colour-tinted (DOK-216).
     private func reportEntry(title: String) -> some View {
+        HStack(spacing: 12) {
+            reportPill(title: title)
+            if let m = inlineMessage {
+                messagePill(m)
+            }
+        }
+        .padding(.horizontal, 22)
+    }
+
+    private func reportPill(title: String) -> some View {
         Button { showOpenForm = true } label: {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.bubble")
                 Text(title)
-                Spacer()
-                Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
             .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
             .foregroundStyle(AirbnbPalette.text)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 22)
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 54)
+            .glassEffect(.regular.interactive(), in: .capsule)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Report a problem with this trip")
+    }
+
+    private func messagePill(_ m: InlineMessage) -> some View {
+        NavigationLink {
+            SwapChatView(proposalId: m.proposalId, otherName: m.partnerName, isPrincipal: m.isPrincipal)
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "bubble.left.and.bubble.right.fill")
+                // First name only so the pill fits at half width (DOK-216).
+                Text(m.partnerName.flatMap { $0.split(separator: " ").first.map(String.init) }
+                    .map { String(localized: "Message \($0)") } ?? String(localized: "Message"))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+            .foregroundStyle(SwaplSemanticLight.primaryForeground)
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 54)
+            .glassEffect(.regular.tint(SwaplSemanticLight.primary).interactive(), in: .capsule)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(m.partnerName.map { "Message \($0)" } ?? "Message your swap partner")
     }
 
     // The 24/7 line. We have no in-app phone number, so foregrounding it means

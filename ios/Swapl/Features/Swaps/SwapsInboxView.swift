@@ -900,7 +900,14 @@ struct ProposalDetailView: View {
                     agreementId: agreement.id,
                     otherName: detail.other.name,
                     otherListingId: tripListing.id,
-                    myListingId: homeListing.id
+                    myListingId: homeListing.id,
+                    // Render "Message <partner>" inline beside "Report a problem"
+                    // instead of as a separate row below (DOK-216).
+                    inlineMessage: DisputeFlowView.InlineMessage(
+                        proposalId: vm.proposalId,
+                        partnerName: detail.other.name,
+                        isPrincipal: isPrincipal(detail)
+                    )
                 )
             } else {
                 itineraryRows(detail)
@@ -911,9 +918,9 @@ struct ProposalDetailView: View {
             reviewSection(detail)
 
             // Standalone "Message" row for every state EXCEPT the proposer's
-            // open proposal — there it moves inline beside "Withdraw proposal"
-            // (see actionSection).
-            if !proposerCanWithdraw(detail) {
+            // open proposal (it moves inline beside "Withdraw proposal") and the
+            // accepted/cockpit state (it moves beside "Report a problem", DOK-216).
+            if !proposerCanWithdraw(detail) && detail.agreement == nil {
                 NavigationLink {
                     SwapChatView(
                         proposalId: vm.proposalId,

@@ -232,7 +232,22 @@ struct BrowseListView: View {
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .multilineTextAlignment(.center)
-            if !mapSearchText.isEmpty || vm.filters.activeFilterCount > 0 {
+            // Widen the search (drop the city, keep dates/guests) — the practical
+            // "increase the radius" (DOK-216); falls back to a full clear.
+            if !vm.filters.cities.isEmpty {
+                Button {
+                    widenSearch()
+                } label: {
+                    Text("Search a wider area")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                        .padding(.horizontal, 22)
+                        .padding(.vertical, 12)
+                        .background(SwaplSemanticLight.primary, in: Capsule())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 4)
+            } else if !mapSearchText.isEmpty || vm.filters.activeFilterCount > 0 {
                 Button {
                     clearSearchAndFilters()
                 } label: {
@@ -265,6 +280,16 @@ struct BrowseListView: View {
         locationSearch.clearSearch()
         var f = SearchFilters()
         f.sort = vm.filters.sort
+        Task { await vm.apply(f) }
+    }
+
+    // Broaden the search by dropping the city/destination filter while keeping
+    // dates, guests and other filters (DOK-216 "increase the radius").
+    private func widenSearch() {
+        mapSearchText = ""
+        locationSearch.clearSearch()
+        var f = vm.filters
+        f.cities = []
         Task { await vm.apply(f) }
     }
 
@@ -986,7 +1011,7 @@ struct BrowseMapView: View {
             .overlay {
                 if drawMode { drawCanvas(proxy: proxy) }
             }
-            .overlay(alignment: .topTrailing) { mapControlStack }
+            .overlay(alignment: .bottomTrailing) { mapControlStack }
             .overlay(alignment: .bottom) {
                 if drawnArea.count >= 3 { areaSummary }
             }
@@ -1088,8 +1113,10 @@ struct BrowseMapView: View {
                 .accessibilityLabel(Text("Clear drawn area"))
             }
         }
-        .padding(.top, 8)
+        // Bottom-right, lifted clear of the tab bar so the search bar at the top
+        // no longer hides these (DOK-216).
         .padding(.trailing, 14)
+        .padding(.bottom, 100)
     }
 
     private var areaSummary: some View {

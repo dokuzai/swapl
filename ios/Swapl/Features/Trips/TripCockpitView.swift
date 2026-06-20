@@ -56,6 +56,8 @@ struct TripCockpitView: View {
     let otherName: String?
     let otherListingId: String   // the home I'm staying in (other party's)
     let myListingId: String      // my own home (for the guide editor)
+    // Optional inline Message pill rendered beside "Report a problem" (DOK-216).
+    let inlineMessage: DisputeFlowView.InlineMessage?
 
     @State private var checkSheet: CheckEventKind?
     @State private var showGuideEditor = false
@@ -63,11 +65,12 @@ struct TripCockpitView: View {
     // so we present the rate-app sheet once with surface "post-swap".
     @State private var feedbackAfterSwap: AppFeedbackContext?
 
-    init(agreementId: String, otherName: String?, otherListingId: String, myListingId: String) {
+    init(agreementId: String, otherName: String?, otherListingId: String, myListingId: String, inlineMessage: DisputeFlowView.InlineMessage? = nil) {
         _vm = State(initialValue: TripCockpitViewModel(agreementId: agreementId))
         self.otherName = otherName
         self.otherListingId = otherListingId
         self.myListingId = myListingId
+        self.inlineMessage = inlineMessage
     }
 
     enum CheckEventKind: Identifiable {
@@ -165,7 +168,8 @@ struct TripCockpitView: View {
             DisputeFlowView(
                 agreementId: vm.agreementId,
                 otherName: otherName,
-                myUserId: auth.session?.id
+                myUserId: auth.session?.id,
+                inlineMessage: inlineMessage
             )
         }
     }

@@ -755,6 +755,7 @@ struct ProposalSheetView: View {
         NavigationStack {
             Form {
                 Section {
+                    exchangeTypeChip
                     if let availability {
                         // One in-place range picker: tap check-in then check-out to
                         // fill both dates; unavailable/booked days are disabled.
@@ -820,6 +821,35 @@ struct ProposalSheetView: View {
 
     private func loadAvailability() async {
         availability = try? await CalendarRepository.shared.availability(listingId: detail.listing.id)
+    }
+
+    // Which exchange types the host offers, derived from the listing (DOK-216):
+    // a per-night Keys value means Stay-with-Keys is on top of the direct swap
+    // ("mixed"); otherwise it's a direct (contextual) swap only.
+    private var exchangeTypeChip: some View {
+        let keys = detail.listing.nightlyKeys ?? 0
+        let mixed = keys > 0
+        let label = mixed
+            ? String(localized: "Mixed — direct swap or Swapl Points")
+            : String(localized: "Direct swap only")
+        return HStack(spacing: 8) {
+            Image(systemName: mixed ? "arrow.left.arrow.right.circle.fill" : "arrow.left.arrow.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+            Text(label)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+            if mixed {
+                Text("· \(keys) Keys/night")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 4)
+        .accessibilityLabel(mixed
+            ? "This home accepts a direct swap or Stay with Keys at \(keys) Keys per night"
+            : "This home accepts a direct swap only")
     }
 
     // MARK: - Draft with AI
