@@ -332,7 +332,7 @@ export const en = {
     "No money changes hands and nobody is a paying guest. You trade keys with another homeowner who wants your city while you want theirs. That alignment changes the dynamic — both sides are owners, both sides are guests, both sides have skin in the game.",
   "privacy.s1.title": "What we collect",
   "privacy.s1.body":
-    "Account email and name, listing details you publish, swap proposals and messages with other members, identity-verification metadata (we don't store passport scans — our KYC partner does), and basic device + analytics signals (page, locale, viewport). That's it.",
+    "Account email and name, listing details you publish, swap proposals and messages with other members, identity-verification metadata (we don't store passport scans — our KYC partner does), and basic device + analytics signals (page, locale, viewport). Only if you switch on “days abroad” do we collect a coarse daily location — it's off by default. That's it.",
   "privacy.s2.title": "Why we collect it",
   "privacy.s2.body":
     "To run the swap (matching, messaging, insurance), to verify you're a real person before your first acceptance, and to improve the product. We use a small set of privacy-respecting analytics — no advertising trackers, no cross-site profiling.",

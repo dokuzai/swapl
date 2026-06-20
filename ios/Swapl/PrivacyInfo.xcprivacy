@@ -85,6 +85,21 @@
 				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
 			</array>
 		</dict>
+		<dict>
+			<!-- Opt-in only (default OFF): the "days abroad" feature sends a
+			     coarse daily location fix to /api/location/ping when the member
+			     turns it on. Never used for tracking. -->
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeCoarseLocation</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
 	</array>
 	<!-- Required-reason APIs (Apple ITMS-91053). The app reads/writes its own
 	     UserDefaults (Accept-Language preference, once-a-day location-ping guard,
