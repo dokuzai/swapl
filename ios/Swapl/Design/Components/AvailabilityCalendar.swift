@@ -59,6 +59,20 @@ struct AvailabilityDays {
         self.bookedDays = booked
     }
 
+    // Open-window calendar for the SEARCH composer (DOK-216): no listing, so no
+    // booked ranges — just a future window the guest can pick any range within,
+    // reusing the exact tap-start-then-end interaction of the listing pickers.
+    init(openWindowFrom from: Date, to: Date, minStay: Int = 1, maxStay: Int = 365) {
+        var cal = Self.utcCalendar
+        cal.firstWeekday = Calendar.current.firstWeekday
+        self.calendar = cal
+        self.minStay = max(1, minStay)
+        self.maxStay = max(self.minStay, maxStay)
+        self.windowStart = cal.startOfDay(for: from)
+        self.windowEnd = cal.startOfDay(for: to)
+        self.bookedDays = []
+    }
+
     func startOfDay(_ date: Date) -> Date { calendar.startOfDay(for: date) }
 
     // A day is selectable only if it's inside the window and not booked. The

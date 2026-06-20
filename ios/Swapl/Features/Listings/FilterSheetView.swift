@@ -262,22 +262,30 @@ struct FilterSheetView: View {
             .tint(SwaplSemanticLight.primary)
 
             if filterByDates {
-                VStack(spacing: 0) {
-                    DatePicker("From", selection: $dateFrom, displayedComponents: .date)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body))
-                        .padding(.horizontal, 16)
-                        .frame(minHeight: 52)
-                    Divider().padding(.leading, 16)
-                    DatePicker("To", selection: $dateTo, in: dateFrom..., displayedComponents: .date)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body))
-                        .padding(.horizontal, 16)
-                        .frame(minHeight: 52)
-                }
-                .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
-                        .stroke(AirbnbPalette.hairline)
+                // One calendar: tap a start day then an end day to fill the whole
+                // interval — no system DatePicker, no tap-outside-to-confirm (DOK-216).
+                AvailabilityCalendar(
+                    days: AvailabilityDays(
+                        openWindowFrom: Date(),
+                        to: Calendar.current.date(byAdding: .month, value: 12, to: Date()) ?? Date()
+                    ),
+                    mode: .range,
+                    selectionStart: Binding(
+                        get: { dateFrom },
+                        set: { if let v = $0 { dateFrom = v } }
+                    ),
+                    selectionEnd: Binding(
+                        get: { dateTo },
+                        set: { dateTo = $0 ?? dateFrom }
+                    ),
+                    onSelectionChange: { from, to in
+                        if let from { dateFrom = from }
+                        dateTo = to ?? Calendar.current.date(byAdding: .day, value: 1, to: from ?? dateFrom) ?? dateFrom
+                    }
                 )
+                Text("Tap a start day, then an end day, to set your whole stay.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
             }
         }
     }
