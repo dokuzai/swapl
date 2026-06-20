@@ -1010,9 +1010,6 @@ struct BrowseMapView: View {
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
             .ignoresSafeArea()
-            // Name the FULL-SCREEN map frame so the draw gesture, the live stroke
-            // and proxy.convert all share one origin (DOK-216).
-            .coordinateSpace(.named(Self.mapSpace))
             // Freeform draw layer — only intercepts touches while drawing.
             .overlay {
                 if drawMode { drawCanvas(proxy: proxy) }
@@ -1035,8 +1032,6 @@ struct BrowseMapView: View {
         }
     }
 
-    private static let mapSpace = "swaplBrowseMap"
-
     private func drawCanvas(proxy: MapProxy) -> some View {
         Canvas { ctx, _ in
             guard dragScreenPoints.count > 1 else { return }
@@ -1050,10 +1045,10 @@ struct BrowseMapView: View {
         }
         .contentShape(Rectangle())
         .gesture(
-            DragGesture(minimumDistance: 0, coordinateSpace: .named(Self.mapSpace))
+            DragGesture(minimumDistance: 0, coordinateSpace: .local)
                 .onChanged { value in dragScreenPoints.append(value.location) }
                 .onEnded { _ in
-                    let coords = dragScreenPoints.compactMap { proxy.convert($0, from: .named(Self.mapSpace)) }
+                    let coords = dragScreenPoints.compactMap { proxy.convert($0, from: .local) }
                     if coords.count >= 3 { drawnArea = coords }
                     dragScreenPoints = []
                     drawMode = false
