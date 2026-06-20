@@ -43,6 +43,28 @@ export async function GET(req: Request) {
   const nameById = new Map(others.map((u) => [u.id, u.name]));
   const avatarById = new Map(others.map((u) => [u.id, u.avatar]));
 
+  // Per-viewer unread counts (DOK-216): inbound (other-party) messages created
+  // after MY read cursor for each thread. Mirrors lib swaps/conversations.ts so
+  // the mobile inbox can bold threads with unread messages.
+  const ids = proposals.map((p) => p.id);
+  const unreadByProposal = new Map<string, number>();
+  if (ids.length) {
+    const cursors = await prisma.conversationRead.findMany({
+      where: { userId: session.userId, proposalId: { in: ids } },
+      select: { proposalId: true, lastReadAt: true },
+    });
+    const cursorByProposal = new Map(cursors.map((c) => [c.proposalId, c.lastReadAt]));
+    const grouped = await prisma.swapMessage.groupBy({
+      by: ["proposalId"],
+      where: {
+        authorId: { not: session.userId },
+        OR: ids.map((pid) => ({ proposalId: pid, createdAt: { gt: cursorByProposal.get(pid) ?? new Date(0) } })),
+      },
+      _count: { _all: true },
+    });
+    for (const g of grouped) unreadByProposal.set(g.proposalId, g._count._all);
+  }
+
   // First photo of a listing, or null — `photos` is a JSON-encoded string[].
   const coverPhotoUrl = (listing: { photos: string }) =>
     parseJSON<string[]>(listing.photos, [])[0] ?? null;
@@ -73,6 +95,7 @@ export async function GET(req: Request) {
       otherAvatar: avatarById.get(otherUserId) ?? null,
       updatedAt: p.updatedAt.toISOString(),
       archivedAt: myArchivedAt?.toISOString() ?? null,
+      unreadCount: unreadByProposal.get(p.id) ?? 0,
     };
   });
 
