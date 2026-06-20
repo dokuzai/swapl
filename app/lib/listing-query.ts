@@ -41,7 +41,25 @@ export async function queryListings(
     ineligibleReason: null,
     user: { suspendedAt: null },
   };
-  if (filters.cities.length) where.city = { in: filters.cities };
+  // City filter, case/whitespace-insensitive (DOK-216). The iOS map/search
+  // resolves a display name (e.g. "Castelleone") that may differ only in case
+  // or spacing from the stored value, and Prisma's `mode: "insensitive"` isn't
+  // supported on SQLite (local dev) — so resolve the actual stored city
+  // strings that match case-insensitively and constrain to those exact values.
+  if (filters.cities.length) {
+    const wanted = new Set(filters.cities.map((c) => c.trim().toLowerCase()));
+    const distinctCities = await prisma.listing.findMany({
+      where: { isActive: true, ineligibleReason: null },
+      select: { city: true },
+      distinct: ["city"],
+    });
+    const matched = distinctCities
+      .map((r) => r.city)
+      .filter((c) => wanted.has(c.trim().toLowerCase()));
+    // No case-insensitive match → keep the raw values so the result is empty
+    // rather than unfiltered.
+    where.city = { in: matched.length ? matched : filters.cities };
+  }
   if (filters.propertyTypes.length) where.propertyType = { in: filters.propertyTypes };
   if (filters.minSqm > 30) where.sizeSqm = { gte: filters.minSqm };
   if (filters.minSleeps > 1) where.sleeps = { gte: filters.minSleeps };

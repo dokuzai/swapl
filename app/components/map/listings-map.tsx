@@ -16,7 +16,22 @@ const Inner = dynamic(() => import("./listings-map-client"), {
   ),
 });
 
-export function ListingsMap({ listings }: { listings: ListingDTO[] }) {
+export type MapEmptyState = {
+  title: string;
+  body: string;
+  resetHref: string;
+  resetLabel: string;
+};
+
+export function ListingsMap({
+  listings,
+  empty,
+  centeredCity,
+}: {
+  listings: ListingDTO[];
+  empty?: MapEmptyState;
+  centeredCity?: string | null;
+}) {
   return (
     <Inner
       listings={listings.map((l) => ({
@@ -30,6 +45,8 @@ export function ListingsMap({ listings }: { listings: ListingDTO[] }) {
         lat: l.lat,
         lng: l.lng,
       }))}
+      empty={empty}
+      centeredCity={centeredCity ?? null}
     />
   );
 }

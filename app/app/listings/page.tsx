@@ -177,7 +177,21 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
             </div>
           </div>
 
-          {items.length === 0 ? (
+          {view === "map" ? (
+            // Map view stays mounted even with zero results so the user keeps
+            // their map context (DOK-216) — the no-results message overlays the
+            // map instead of replacing it with an empty card.
+            <ListingsMap
+              listings={items.map((i) => i.listing)}
+              centeredCity={filters.cities[0] ?? null}
+              empty={{
+                title: dict["listings.empty.title"],
+                body: dict["listings.empty.body"],
+                resetHref: "/listings",
+                resetLabel: dict["listings.empty.reset"],
+              }}
+            />
+          ) : items.length === 0 ? (
             <div className="surface-card p-10 text-center">
               <h2 className="font-display text-2xl mb-2">{dict["listings.empty.title"]}</h2>
               <p className="mb-5" style={{ color: "var(--navy-2)" }}>
@@ -187,8 +201,6 @@ export default async function ListingsPage(props: PageProps<"/listings">) {
                 {dict["listings.empty.reset"]}
               </Link>
             </div>
-          ) : view === "map" ? (
-            <ListingsMap listings={items.map((i) => i.listing)} />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {items.map(({ listing, matchScore }) => (

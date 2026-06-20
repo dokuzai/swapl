@@ -46,10 +46,21 @@ function FitBounds({ pts }: { pts: Array<[number, number]> }) {
   return null;
 }
 
+type MapEmptyState = {
+  title: string;
+  body: string;
+  resetHref: string;
+  resetLabel: string;
+};
+
 export default function ListingsMapClient({
   listings,
+  empty,
+  centeredCity,
 }: {
   listings: Array<Pick<ListingDTO, "id" | "city" | "neighbourhood" | "lat" | "lng" | "palette" | "sizeSqm" | "sleeps" | "title">>;
+  empty?: MapEmptyState;
+  centeredCity?: string | null;
 }) {
   const t = useT();
   const points = useMemo(
@@ -59,15 +70,22 @@ export default function ListingsMapClient({
         .map((l) => ({ ...l, color: PALETTE_HEX[l.palette] ?? PINK })),
     [listings]
   );
-  const center: [number, number] = points.length
-    ? [points[0].lat, points[0].lng]
-    : [25, 10];
+  // Prefer centering on the filtered city's first pin; fall back to the first
+  // pin, then to a world view when there are no results at all (DOK-216).
+  const center: [number, number] = useMemo(() => {
+    if (centeredCity) {
+      const match = points.find((p) => p.city.toLowerCase() === centeredCity.toLowerCase());
+      if (match) return [match.lat, match.lng];
+    }
+    return points.length ? [points[0].lat, points[0].lng] : [25, 10];
+  }, [points, centeredCity]);
+  const hasResults = points.length > 0;
 
   return (
-    <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "var(--line)", height: "70vh" }}>
+    <div className="relative rounded-2xl overflow-hidden border" style={{ borderColor: "var(--line)", height: "70vh" }}>
       <MapContainer
         center={center}
-        zoom={2}
+        zoom={hasResults ? 2 : 3}
         scrollWheelZoom
         style={{ height: "100%", width: "100%", background: "var(--cream-2)" }}
       >
@@ -106,6 +124,19 @@ export default function ListingsMapClient({
         ))}
         <FitBounds pts={points.map((p) => [p.lat, p.lng])} />
       </MapContainer>
+      {!hasResults && empty && (
+        <div className="absolute inset-0 z-[1000] grid place-items-center p-6" style={{ background: "rgba(255,255,255,0.55)" }}>
+          <div className="surface-card max-w-sm p-6 text-center" style={{ pointerEvents: "auto" }}>
+            <h2 className="font-display text-xl mb-2">{empty.title}</h2>
+            <p className="mb-4 text-sm" style={{ color: "var(--navy-2)" }}>
+              {empty.body}
+            </p>
+            <Link href={empty.resetHref} className="pill-primary">
+              {empty.resetLabel}
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

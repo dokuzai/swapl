@@ -14,6 +14,9 @@ const schema = z
     // Additive (DOK-147 web settings): display name + bio, both optional so
     // older clients that never send them are unaffected.
     name: z.string().trim().min(1).max(80),
+    // Profile picture URL (DOK-216). Uploaded via /api/uploads/listing-photo,
+    // then the returned URL is saved here. Nullable so it can be cleared.
+    avatar: z.string().url().max(1000).nullable(),
     bio: z.string().trim().max(1000).nullable(),
     work: z.string().trim().max(120).nullable(),
     languages: z.array(z.string().trim().min(1).max(40)).max(10),
@@ -32,11 +35,12 @@ export async function PATCH(req: Request) {
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return invalidInput("Invalid input", { issues: parsed.error.issues });
 
-  const { name, bio, work, languages, homeCity, homeCountry, contactChannels } = parsed.data;
+  const { name, avatar, bio, work, languages, homeCity, homeCountry, contactChannels } = parsed.data;
   const user = await prisma.user.update({
     where: { id: session.userId },
     data: {
       ...(name !== undefined ? { name } : {}),
+      ...(avatar !== undefined ? { avatar: avatar || null } : {}),
       ...(bio !== undefined ? { bio: bio || null } : {}),
       ...(work !== undefined ? { work: work || null } : {}),
       ...(languages !== undefined ? { languages: stringifyJSON(languages) } : {}),
@@ -44,11 +48,12 @@ export async function PATCH(req: Request) {
       ...(homeCountry !== undefined ? { homeCountry: homeCountry || null } : {}),
       ...(contactChannels !== undefined ? { contactChannels: serializeContactChannels(contactChannels) } : {}),
     },
-    select: { work: true, languages: true, homeCity: true, homeCountry: true, contactChannels: true },
+    select: { avatar: true, work: true, languages: true, homeCity: true, homeCountry: true, contactChannels: true },
   });
 
   return NextResponse.json({
     profile: {
+      avatar: user.avatar,
       work: user.work,
       languages: parseJSON<string[]>(user.languages, []),
       homeCity: user.homeCity,
