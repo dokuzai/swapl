@@ -1030,11 +1030,6 @@ struct BrowseMapView: View {
                 }
             }
         }
-        // Make the MapReader's own bounds full-screen too, so proxy.convert(.local)
-        // and the draw gesture's .local share the SAME origin. Without this the
-        // map ignored the safe area but the reader didn't, so the lasso landed
-        // offset from the finger (DOK-216). No named space → no freeze.
-        .ignoresSafeArea()
     }
 
     private func drawCanvas(proxy: MapProxy) -> some View {
