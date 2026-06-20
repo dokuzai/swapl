@@ -213,14 +213,81 @@ struct AccountView: View {
                 Text(myListings.count == 1 ? String(localized: "Your property") : String(localized: "Your properties"))
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                ForEach(myListings) { listing in
-                    Button { editingListing = listing } label: { listingRow(listing) }
+                if myListings.count == 1, let only = myListings.first {
+                    // A single property reads fine as a full-width row.
+                    Button { editingListing = only } label: { listingRow(only) }
                         .buttonStyle(.plain)
+                    Button { isCreatingListing = true } label: { addPropertyRow }
+                        .buttonStyle(.plain)
+                } else {
+                    // Multiple properties: horizontal swipe so the list doesn't eat
+                    // the whole screen (DOK-216).
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(alignment: .top, spacing: 12) {
+                            ForEach(myListings) { listing in
+                                Button { editingListing = listing } label: { listingCardCompact(listing) }
+                                    .buttonStyle(.plain)
+                            }
+                            Button { isCreatingListing = true } label: { addPropertyCardCompact }
+                                .buttonStyle(.plain)
+                        }
+                    }
                 }
-                Button { isCreatingListing = true } label: { addPropertyRow }
-                    .buttonStyle(.plain)
             }
         }
+    }
+
+    // Fixed-width card for the horizontal "Your properties" rail.
+    private func listingCardCompact(_ listing: Listing) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ZStack {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                    .fill(SwaplSemanticLight.accent)
+                Image(systemName: "house.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+            }
+            .frame(width: 44, height: 44)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(listing.title)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .lineLimit(2)
+                Text("\(listing.neighbourhood), \(listing.city)")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 0)
+            HStack(spacing: 5) {
+                Image(systemName: "square.and.pencil").font(.system(size: 13, weight: .semibold))
+                Text(String(localized: "Edit")).font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+            }
+            .foregroundStyle(SwaplSemanticLight.primary)
+        }
+        .padding(14)
+        .frame(width: 178, height: 158, alignment: .leading)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
+    }
+
+    private var addPropertyCardCompact: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "plus.circle.fill")
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+            Text(String(localized: "Add property"))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .multilineTextAlignment(.center)
+        }
+        .frame(width: 120, height: 158)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                .strokeBorder(AirbnbPalette.hairline, style: StrokeStyle(lineWidth: 1, dash: [5]))
+        )
     }
 
     private func listingRow(_ listing: Listing) -> some View {

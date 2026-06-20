@@ -187,7 +187,6 @@ struct AvailabilityCalendar: View {
             // a check-out in the next month). Navigate with the arrows or a swipe;
             // the drag has a minimum distance so plain taps still reach the days.
             monthGrid(currentMonth)
-                .frame(height: 296)
                 .id(clampedMonthIndex)
                 .transition(.opacity)
                 .contentShape(Rectangle())
@@ -297,7 +296,7 @@ struct AvailabilityCalendar: View {
                 }
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, alignment: .top)
     }
 
     private func dayCell(_ date: Date) -> some View {
