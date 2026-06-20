@@ -1010,6 +1010,9 @@ struct BrowseMapView: View {
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
             .ignoresSafeArea()
+            // Name the FULL-SCREEN map frame so the draw gesture, the live stroke
+            // and proxy.convert all share one origin (DOK-216).
+            .coordinateSpace(.named(Self.mapSpace))
             // Freeform draw layer — only intercepts touches while drawing.
             .overlay {
                 if drawMode { drawCanvas(proxy: proxy) }
@@ -1032,6 +1035,8 @@ struct BrowseMapView: View {
         }
     }
 
+    private static let mapSpace = "swaplBrowseMap"
+
     private func drawCanvas(proxy: MapProxy) -> some View {
         Canvas { ctx, _ in
             guard dragScreenPoints.count > 1 else { return }
@@ -1045,10 +1050,10 @@ struct BrowseMapView: View {
         }
         .contentShape(Rectangle())
         .gesture(
-            DragGesture(minimumDistance: 0, coordinateSpace: .local)
+            DragGesture(minimumDistance: 0, coordinateSpace: .named(Self.mapSpace))
                 .onChanged { value in dragScreenPoints.append(value.location) }
                 .onEnded { _ in
-                    let coords = dragScreenPoints.compactMap { proxy.convert($0, from: .local) }
+                    let coords = dragScreenPoints.compactMap { proxy.convert($0, from: .named(Self.mapSpace)) }
                     if coords.count >= 3 { drawnArea = coords }
                     dragScreenPoints = []
                     drawMode = false
@@ -1131,7 +1136,8 @@ struct BrowseMapView: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 12)
             .glassEffect(.regular, in: .capsule)
-            .padding(.bottom, 28)
+            // Sit above the List/Map toggle instead of under it (DOK-216).
+            .padding(.bottom, 120)
     }
 
     // Ray-casting point-in-polygon over lat/lng (fine at city zoom levels).
