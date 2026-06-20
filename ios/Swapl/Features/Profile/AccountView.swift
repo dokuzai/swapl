@@ -1908,13 +1908,58 @@ private struct PersonalInfoSectionView: View {
 }
 
 private struct LoginSecuritySectionView: View {
+    @Environment(AuthService.self) private var auth
     @State private var isChangingPassword = false
+    @State private var isConfirmingDelete = false
+    @State private var isDeleting = false
+    @State private var deleteError: String?
     var body: some View {
         AccountSectionScaffold(title: String(localized: "Login & security")) {
             Button { isChangingPassword = true } label: { AccountSettingsRow(title: String(localized: "Change password"), icon: "lock.rotation") }.buttonStyle(.plain)
             NavigationLink { PasskeysView() } label: { AccountSettingsRow(title: String(localized: "Passkeys"), icon: "person.badge.key") }.buttonStyle(.plain)
+
+            // In-app account deletion (Apple Guideline 5.1.1(v)).
+            Button { isConfirmingDelete = true } label: {
+                HStack(spacing: 14) {
+                    if isDeleting {
+                        ProgressView().controlSize(.small)
+                    } else {
+                        Image(systemName: "trash").font(.system(size: 18, weight: .semibold))
+                    }
+                    Text("Delete account").font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    Spacer()
+                }
+                .foregroundStyle(SwaplSemanticLight.destructive)
+                .padding(18)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .disabled(isDeleting)
         }
         .sheet(isPresented: $isChangingPassword) { ChangePasswordSheet() }
+        .confirmationDialog(
+            String(localized: "Delete your account?"),
+            isPresented: $isConfirmingDelete,
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "Delete account"), role: .destructive) {
+                Task {
+                    isDeleting = true
+                    defer { isDeleting = false }
+                    do { try await auth.deleteAccount() }
+                    catch { deleteError = error.localizedDescription }
+                }
+            }
+            Button(String(localized: "Cancel"), role: .cancel) {}
+        } message: {
+            Text("This permanently deletes your account and removes your personal data. Your homes are taken down and you'll be signed out. This can't be undone.")
+        }
+        .alert(String(localized: "Couldn't delete account"), isPresented: Binding(get: { deleteError != nil }, set: { if !$0 { deleteError = nil } })) {
+            Button(String(localized: "OK"), role: .cancel) {}
+        } message: {
+            Text(deleteError ?? "")
+        }
     }
 }
 

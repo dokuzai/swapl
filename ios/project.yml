@@ -142,8 +142,9 @@ targets:
           # to list this app under "webcredentials".
           - webcredentials:app.swapl.fun
         # APNs — PushService registers the device token with /api/devices.
-        # Xcode rewrites this to "production" when exporting for App Store.
-        aps-environment: development
+        # Production so push works on TestFlight/App Store (those use the
+        # production APNs gateway). Dev-device push needs a dev-signed build.
+        aps-environment: production
         # Explicit access group for KeychainTokenStore (auth token storage).
         # AppIntents (Siri/Shortcuts) need no entitlement on iOS 16+, so no
         # com.apple.developer.siri here — that one is SiriKit-only.

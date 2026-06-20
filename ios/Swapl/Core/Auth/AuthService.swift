@@ -403,4 +403,15 @@ final class AuthService {
         isVerified = false
         role = nil
     }
+
+    // Permanently delete the account (Apple 5.1.1(v)). The server anonymises and
+    // blocks the account; on success we drop all local session state, which
+    // returns the app to the login screen. Throws so the UI can surface failures.
+    func deleteAccount() async throws {
+        _ = try await APIClient.shared.send("DELETE", "/api/account", as: EmptyResponse.self)
+        keychain.delete()
+        session = nil
+        isVerified = false
+        role = nil
+    }
 }
