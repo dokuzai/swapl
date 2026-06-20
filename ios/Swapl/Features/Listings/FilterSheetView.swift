@@ -7,7 +7,15 @@ import SwaplDesignTokens
 // copy of SearchFilters and hands it back on Apply; mirrors the web's
 // FilterSidebar semantics (city, type, minSqm, minSleeps, must-haves, dates).
 struct FilterSheetView: View {
+    // Which slice of filters this sheet edits (DOK-216):
+    // - .search: the "research" composer — destination, dates, guests, pets.
+    // - .more:   everything else — space type, property type, size, must-haves.
+    // Both edit a full local copy seeded from initialFilters, so applying one
+    // never drops the other's selections.
+    enum Scope { case search, more }
+
     let initialFilters: SearchFilters
+    var scope: Scope = .search
     let onApply: (SearchFilters) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -40,8 +48,9 @@ struct FilterSheetView: View {
         ("TOWNHOUSE", "Townhouse")
     ]
 
-    init(initialFilters: SearchFilters, onApply: @escaping (SearchFilters) -> Void) {
+    init(initialFilters: SearchFilters, scope: Scope = .search, onApply: @escaping (SearchFilters) -> Void) {
         self.initialFilters = initialFilters
+        self.scope = scope
         self.onApply = onApply
         _cities = State(initialValue: initialFilters.cities)
         _propertyTypes = State(initialValue: Set(initialFilters.propertyTypes))
@@ -64,20 +73,24 @@ struct FilterSheetView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
-                    destinationSection
-                    datesSection
-                    spaceTypeSection
-                    propertyTypeSection
-                    sizeSection
-                    sleepsSection
-                    mustHavesSection
+                    if scope == .search {
+                        destinationSection
+                        datesSection
+                        sleepsSection
+                        petsSection
+                    } else {
+                        spaceTypeSection
+                        propertyTypeSection
+                        sizeSection
+                        moreMustHavesSection
+                    }
                 }
                 .padding(.horizontal, 22)
                 .padding(.top, 16)
                 .padding(.bottom, 24)
             }
             .background(SwaplSemanticLight.background)
-            .navigationTitle("Filters")
+            .navigationTitle(scope == .search ? "Search" : "Filters")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -116,6 +129,11 @@ struct FilterSheetView: View {
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.words)
                     .focused($cityFieldFocused)
+                    .submitLabel(.search)
+                    // Add the typed text directly (DOK-216): MapKit doesn't always
+                    // suggest small towns (e.g. Castelleone), so pressing return
+                    // must still add the destination as a filter chip.
+                    .onSubmit { addTypedCity() }
                     .accessibilityLabel("Search destination cities")
                 if location.isSearching || resolvingCity {
                     ProgressView().controlSize(.small)
@@ -202,6 +220,19 @@ struct FilterSheetView: View {
                 }
             }
         }
+    }
+
+    // Add whatever the user typed (no suggestion needed). Takes the part before
+    // the first comma so "Castelleone, CR, Italy" stores just "Castelleone".
+    private func addTypedCity() {
+        let city = cityQuery.split(separator: ",").first
+            .map { String($0).trimmingCharacters(in: .whitespaces) }
+            ?? cityQuery.trimmingCharacters(in: .whitespaces)
+        cityQuery = ""
+        location.clearSearch()
+        cityFieldFocused = false
+        guard !city.isEmpty, !cities.contains(city) else { return }
+        cities.append(city)
     }
 
     // Resolve a tapped MapKit suggestion to a city name, then add it as a chip.
@@ -320,14 +351,28 @@ struct FilterSheetView: View {
         }
     }
 
-    // MARK: - Must-haves
+    // MARK: - Pets (search composer) + other must-haves (more filters)
 
-    private var mustHavesSection: some View {
+    // Animals live in the search composer alongside guests (DOK-216).
+    private var petsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionTitle("Travelling with pets?")
+            VStack(spacing: 0) {
+                mustHaveRow("Pet-friendly", icon: "pawprint", isOn: $petsRequired)
+            }
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            )
+        }
+    }
+
+    // Everything that isn't part of the search composer lives in More filters.
+    private var moreMustHavesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionTitle("Must-haves")
             VStack(spacing: 0) {
-                mustHaveRow("Pet-friendly", icon: "pawprint", isOn: $petsRequired)
-                Divider().padding(.leading, 50)
                 mustHaveRow("Work-from-home setup", icon: "desktopcomputer", isOn: $wfhRequired)
                 Divider().padding(.leading, 50)
                 mustHaveRow("Step-free access", icon: "figure.roll", isOn: $stepFreeRequired)

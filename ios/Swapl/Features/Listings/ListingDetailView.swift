@@ -218,13 +218,26 @@ struct ListingDetailView: View {
     // Liquid Glass so they stay legible against the photo.
     private func floatingHeader(_ detail: ListingDetailResponse) -> some View {
         ZStack {
-            Text(detail.listing.city)
-                .font(.swaplBody(16, weight: .bold))
-                .foregroundStyle(AirbnbPalette.text)
-                .lineLimit(1)
+            // Tapping the city jumps to the Explore map centered there (DOK-216).
+            Button {
+                ExploreRouter.shared.pendingMapCity = detail.listing.city
+                dismiss()
+            } label: {
+                HStack(spacing: 6) {
+                    Text(detail.listing.city)
+                        .font(.swaplBody(16, weight: .bold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+                    Image(systemName: "map")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
                 .padding(.horizontal, 18)
                 .padding(.vertical, 10)
-                .glassEffect(.regular, in: .capsule)
+                .glassEffect(.regular.interactive(), in: .capsule)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Show \(detail.listing.city) on the map")
 
             HStack(spacing: 0) {
                 Button {
@@ -719,6 +732,9 @@ struct ProposalSheetView: View {
     @State private var message = ""
     @State private var error: String?
     @State private var isSubmitting = false
+    // Real availability so the picker can show booked/out-of-window days and
+    // block their selection, and a single in-place range fills both dates (DOK-216).
+    @State private var availability: ListingAvailability?
 
     // "Draft with AI" state.
     @State private var isDrafting = false
@@ -739,10 +755,36 @@ struct ProposalSheetView: View {
         NavigationStack {
             Form {
                 Section {
-                    DatePicker("From", selection: $dateFrom, displayedComponents: .date)
-                    DatePicker("To", selection: $dateTo, displayedComponents: .date)
+                    if let availability {
+                        // One in-place range picker: tap check-in then check-out to
+                        // fill both dates; unavailable/booked days are disabled.
+                        AvailabilityCalendar(
+                            days: AvailabilityDays(availability: availability),
+                            mode: .range,
+                            selectionStart: Binding(
+                                get: { dateFrom },
+                                set: { if let v = $0 { dateFrom = v } }
+                            ),
+                            selectionEnd: Binding(
+                                get: { dateTo },
+                                set: { dateTo = $0 ?? dateFrom }
+                            ),
+                            onSelectionChange: { from, to in
+                                if let from { dateFrom = from }
+                                dateTo = to ?? Calendar.current.date(byAdding: .day, value: 1, to: from ?? dateFrom) ?? dateFrom
+                            }
+                        )
+                        .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                    } else {
+                        // Availability still loading — fall back to plain pickers so
+                        // the user is never blocked from proposing.
+                        DatePicker("From", selection: $dateFrom, displayedComponents: .date)
+                        DatePicker("To", selection: $dateTo, displayedComponents: .date)
+                    }
+                } header: {
+                    Text("Dates")
                 } footer: {
-                    Text("Choose dates that fit both homes' availability.")
+                    Text("Tap a check-in then a check-out that fit both homes' availability. Taken dates are greyed out.")
                 }
 
                 Section("Message") {
@@ -772,7 +814,12 @@ struct ProposalSheetView: View {
                     .disabled(isSubmitting || dateTo <= dateFrom)
                 }
             }
+            .task { await loadAvailability() }
         }
+    }
+
+    private func loadAvailability() async {
+        availability = try? await CalendarRepository.shared.availability(listingId: detail.listing.id)
     }
 
     // MARK: - Draft with AI

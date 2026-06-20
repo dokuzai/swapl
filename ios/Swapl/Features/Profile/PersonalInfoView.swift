@@ -1,5 +1,7 @@
 import SwiftUI
 import Observation
+import PhotosUI
+import UIKit
 import SwaplDesignTokens
 
 // Account → Personal information (DOK-147). Mirrors the web /account editor:
@@ -10,6 +12,8 @@ import SwaplDesignTokens
 @Observable
 final class PersonalInfoViewModel {
     var name = ""
+    var avatar: String?  // current profile-picture URL (DOK-216)
+    var isUploadingAvatar = false
     var bio = ""
     var work = ""
     var languages = ""   // comma-separated in the UI, array on the wire
@@ -29,6 +33,7 @@ final class PersonalInfoViewModel {
         do {
             let me = try await ProfileRepository.shared.me()
             name = me.user.name ?? ""
+            avatar = me.user.avatar
             bio = me.user.bio ?? ""
             work = me.user.work ?? ""
             languages = (me.user.languages ?? []).joined(separator: ", ")
@@ -52,6 +57,7 @@ final class PersonalInfoViewModel {
             // The API requires a non-empty name; skip the key when blank so
             // the stored name is kept rather than rejected.
             name: trimmedName.isEmpty ? nil : trimmedName,
+            avatar: avatar,
             bio: bio.trimmingCharacters(in: .whitespacesAndNewlines),
             work: work.trimmingCharacters(in: .whitespacesAndNewlines),
             languages: languages
@@ -70,11 +76,43 @@ final class PersonalInfoViewModel {
             self.error = error.localizedDescription
         }
     }
+
+    // Upload a picked image, then persist its URL onto the profile immediately so
+    // the new avatar shows everywhere without waiting for the Save tap (DOK-216).
+    func setAvatar(from data: Data) async {
+        isUploadingAvatar = true
+        error = nil
+        defer { isUploadingAvatar = false }
+        guard let jpeg = Self.downscaledJPEG(from: data) else {
+            error = String(localized: "Couldn't read that image.")
+            return
+        }
+        do {
+            let url = try await APIClient.shared.uploadAvatar(jpeg)
+            avatar = url
+            await save()
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
+    // Downscale + JPEG-encode so we never upload a 12 MP original for a thumbnail.
+    private static func downscaledJPEG(from data: Data, maxDimension: CGFloat = 1024, quality: CGFloat = 0.85) -> Data? {
+        guard let image = UIImage(data: data) else { return nil }
+        let longest = max(image.size.width, image.size.height)
+        let scale = longest > maxDimension ? maxDimension / longest : 1
+        if scale >= 1 { return image.jpegData(compressionQuality: quality) }
+        let newSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        let resized = renderer.image { _ in image.draw(in: CGRect(origin: .zero, size: newSize)) }
+        return resized.jpegData(compressionQuality: quality)
+    }
 }
 
 struct PersonalInfoView: View {
     @Environment(AuthService.self) private var auth
     @State private var vm = PersonalInfoViewModel()
+    @State private var avatarItem: PhotosPickerItem?
 
     var body: some View {
         ScrollView {
@@ -84,6 +122,7 @@ struct PersonalInfoView: View {
                         .frame(maxWidth: .infinity, minHeight: 200)
                         .accessibilityLabel("Loading your details")
                 } else {
+                    avatarSection
                     AccountField(title: "Display name", text: Bindable(vm).name, placeholder: "Your name")
                     AccountLongField(title: "About you", text: Bindable(vm).bio, placeholder: "Tell hosts a little about yourself.")
                     AccountField(title: "My work", text: Bindable(vm).work, placeholder: "e.g. Architect", icon: "briefcase")
@@ -135,6 +174,66 @@ struct PersonalInfoView: View {
         }
         .swaplFloatingHeader(String(localized: "Personal information"))
         .task { await vm.load() }
+        .onChange(of: avatarItem) { _, item in
+            guard let item else { return }
+            Task {
+                if let data = try? await item.loadTransferable(type: Data.self) {
+                    await vm.setAvatar(from: data)
+                    if vm.savedAt != nil { await auth.refreshSession() }
+                }
+                avatarItem = nil
+            }
+        }
+    }
+
+    // MARK: - Profile picture (DOK-216)
+
+    @ViewBuilder
+    private var avatarSection: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                if let raw = vm.avatar, let url = URL(string: raw) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image): image.resizable().scaledToFill()
+                        default: avatarPlaceholder
+                        }
+                    }
+                } else {
+                    avatarPlaceholder
+                }
+                if vm.isUploadingAvatar {
+                    Color.black.opacity(0.35)
+                    ProgressView().tint(.white)
+                }
+            }
+            .frame(width: 72, height: 72)
+            .clipShape(Circle())
+            .overlay(Circle().stroke(AirbnbPalette.hairline))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Profile picture")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(AirbnbPalette.text)
+                PhotosPicker(selection: $avatarItem, matching: .images) {
+                    Text(vm.avatar == nil ? String(localized: "Add a photo") : String(localized: "Change photo"))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                }
+                .disabled(vm.isUploadingAvatar)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.bottom, 4)
+    }
+
+    private var avatarPlaceholder: some View {
+        ZStack {
+            SwaplSemanticLight.accent
+            Text(vm.name.first.map { String($0).uppercased() } ?? "?")
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+        }
     }
 
     // MARK: Contact channels (DOK-204)

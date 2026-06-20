@@ -64,6 +64,8 @@
 		<string>Swapl reads your calendar to suggest home swaps for the dates of your trips and holidays. Your events stay on your device.</string>
 		<key>NSMicrophoneUsageDescription</key>
 	<string>Swapl uses the microphone so you can dictate the trip you're dreaming of instead of typing it.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Swapl uses your location to center the map on where you are, so you can find home swaps nearby.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Swapl uses your photo library so you can add photos of your home to your listing and profile.</string>
 	<key>NSSiriUsageDescription</key>

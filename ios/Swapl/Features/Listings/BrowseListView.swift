@@ -82,6 +82,8 @@ struct BrowseListView: View {
     @State private var viewMode: BrowseViewMode = .list
     @State private var selectedMapId: String?
     @State private var isShowingFilters = false
+    // Search composer (Where/When/Who + pets) vs the top "more filters" pill (DOK-216).
+    @State private var isShowingSearch = false
     @State private var category: BrowseCategory = .homes
     // "Get Inspired" (DOK-146): sheet + confirmed-proposal handoff. The thread
     // opens AFTER the sheet closes, through the existing deep-link route
@@ -94,6 +96,8 @@ struct BrowseListView: View {
     @State private var mapSearchText = ""
     @State private var mapRecenterTarget: MapRecenterTarget?
     @FocusState private var mapSearchFocused: Bool
+    // Cross-view jump to the map for a city (set by the listing-detail city pill, DOK-216).
+    @State private var exploreRouter = ExploreRouter.shared
 
     var body: some View {
         NavigationStack {
@@ -115,8 +119,31 @@ struct BrowseListView: View {
             }
             .task { await vm.load() }
             .refreshable { await vm.load() }
+            // A tapped city pill on the listing detail jumps here: show the map
+            // centered on that city (DOK-216).
+            .onChange(of: exploreRouter.pendingMapCity) { _, city in
+                guard let city else { return }
+                exploreRouter.pendingMapCity = nil
+                category = .homes
+                withAnimation(.snappy) { viewMode = .map }
+                Task {
+                    if let region = await locationSearch.searchForText(city) {
+                        recenterMap(to: region, label: city)
+                    } else {
+                        var f = vm.filters
+                        f.cities = [city]
+                        await vm.apply(f)
+                    }
+                }
+            }
             .sheet(isPresented: $isShowingFilters) {
-                FilterSheetView(initialFilters: vm.filters) { newFilters in
+                FilterSheetView(initialFilters: vm.filters, scope: .more) { newFilters in
+                    Task { await vm.apply(newFilters) }
+                }
+                .presentationDetents([.large])
+            }
+            .sheet(isPresented: $isShowingSearch) {
+                FilterSheetView(initialFilters: vm.filters, scope: .search) { newFilters in
                     Task { await vm.apply(newFilters) }
                 }
                 .presentationDetents([.large])
@@ -164,22 +191,11 @@ struct BrowseListView: View {
                     action: { Task { await vm.load() } }
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if vm.items.isEmpty {
-                SwaplEmptyState(
-                    systemImage: "house",
-                    title: String(localized: "No homes found"),
-                    description: String(localized: "Try a different city, date range, or sort order."),
-                    actionTitle: vm.filters.activeFilterCount > 0 ? String(localized: "Adjust Filters") : String(localized: "Refresh"),
-                    action: {
-                        if vm.filters.activeFilterCount > 0 {
-                            isShowingFilters = true
-                        } else {
-                            Task { await vm.load() }
-                        }
-                    }
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
+                // No-results is handled per-mode INSIDE this stack (DOK-216):
+                // the map stays mounted with an overlay, and the list keeps its
+                // search bar + chips above an inline empty state — so the user
+                // never lands on a blank page that drops them out of context.
                 ZStack(alignment: .bottom) {
                     if viewMode == .map {
                         mapContent
@@ -196,7 +212,60 @@ struct BrowseListView: View {
             BrowseMapView(items: vm.items, selectedId: $selectedMapId, searchRegion: $mapRecenterTarget)
             mapTopFade
             mapSearchHeader
+            if vm.items.isEmpty {
+                mapEmptyOverlay
+            }
         }
+    }
+
+    // Map mode, zero results: keep the map visible and float a dismissable
+    // "no homes here" card over it instead of unmounting to a blank page.
+    private var mapEmptyOverlay: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "mappin.slash")
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+            Text("No homes found")
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+            Text("Try a different city, date range, or sort order.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .multilineTextAlignment(.center)
+            if !mapSearchText.isEmpty || vm.filters.activeFilterCount > 0 {
+                Button {
+                    clearSearchAndFilters()
+                } label: {
+                    Text("Clear search")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                        .padding(.horizontal, 22)
+                        .padding(.vertical, 12)
+                        .background(SwaplSemanticLight.primary, in: Capsule())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 4)
+            }
+        }
+        .padding(24)
+        .frame(maxWidth: 320)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                .stroke(AirbnbPalette.hairline)
+        )
+        .shadow(color: .black.opacity(0.14), radius: 20, x: 0, y: 10)
+        .padding(.horizontal, 28)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .accessibilityElement(children: .combine)
+    }
+
+    private func clearSearchAndFilters() {
+        mapSearchText = ""
+        locationSearch.clearSearch()
+        var f = SearchFilters()
+        f.sort = vm.filters.sort
+        Task { await vm.apply(f) }
     }
 
     @ViewBuilder
@@ -279,16 +348,95 @@ struct BrowseListView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
                 SwaplPageTitle(String(localized: "Explore")) { exploreControls }
+                exploreSearchField
                 categoryStrip
-                if let first = vm.items.first {
-                    continueCard(first)
+                if vm.items.isEmpty {
+                    // List mode, zero results: stay on the page with the search
+                    // bar + chips above, so the user can refine in place (DOK-216).
+                    exploreInlineEmpty
+                } else {
+                    if let first = vm.items.first {
+                        continueCard(first)
+                    }
+                    listingSection(title: String(localized: "Homes guests love"), items: Array(vm.items.prefix(6)), compact: true)
+                    // "Available for similar dates" only makes sense once the user
+                    // has actually specified dates to compare against (DOK-216).
+                    if vm.filters.dateFrom != nil || vm.filters.dateTo != nil {
+                        listingSection(title: String(localized: "Available for similar dates"), items: Array(vm.items.dropFirst(3).prefix(6)), compact: false)
+                    }
                 }
-                listingSection(title: String(localized: "Homes guests love"), items: Array(vm.items.prefix(6)), compact: true)
-                listingSection(title: String(localized: "Available for similar dates"), items: Array(vm.items.dropFirst(3).prefix(6)), compact: false)
             }
             .padding(.bottom, 110)
         }
         .background(SwaplSemanticLight.background)
+    }
+
+    // Explore search bar (DOK-216): a tappable Where/When/Who pill that opens the
+    // full search composer (destination + dates + guests + pets), Airbnb-style —
+    // so search is no longer city-only. The composer is FilterSheetView, which
+    // already owns the destination autocomplete, date range, guests and pets.
+    private var exploreSearchField: some View {
+        Button {
+            isShowingSearch = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                Text(searchSummaryTitle)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .foregroundStyle(vm.filters.cities.isEmpty ? AirbnbPalette.secondaryText : AirbnbPalette.text)
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 20)
+            .frame(height: 54)
+            .frame(maxWidth: .infinity)
+            .glassEffect(.regular.interactive(), in: .capsule)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 22)
+        .accessibilityLabel("Search homes by destination, dates and guests")
+    }
+
+    private var searchSummaryTitle: String {
+        vm.filters.cities.isEmpty
+            ? String(localized: "Where to?")
+            : vm.filters.cities.joined(separator: ", ")
+    }
+
+    private var exploreInlineEmpty: some View {
+        VStack(spacing: 14) {
+            Image(systemName: "house")
+                .font(.system(size: 30, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+            Text("No homes found")
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+            Text("Try a different city, date range, or sort order.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .multilineTextAlignment(.center)
+            Button {
+                if vm.filters.activeFilterCount > 0 {
+                    clearSearchAndFilters()
+                } else {
+                    isShowingFilters = true
+                }
+            } label: {
+                Text(vm.filters.activeFilterCount > 0 ? String(localized: "Clear search") : String(localized: "Adjust Filters"))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                    .padding(.horizontal, 22)
+                    .padding(.vertical, 12)
+                    .background(SwaplSemanticLight.primary, in: Capsule())
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 4)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 60)
+        .padding(.horizontal, 22)
     }
 
     // Explore header controls — same 44×44 glass-circle treatment as the Trips,
@@ -323,8 +471,8 @@ struct BrowseListView: View {
             }
             .accessibilityLabel(
                 vm.filters.activeFilterCount > 0
-                    ? "Search and filters, \(vm.filters.activeFilterCount) active"
-                    : "Search and filters"
+                    ? "More filters, \(vm.filters.activeFilterCount) active"
+                    : "More filters"
             )
 
             Menu {
@@ -791,6 +939,7 @@ struct BrowseMapView: View {
     @State private var camera: MapCameraPosition = .automatic
     @State private var didFocus = false
     @State private var currentRegion: MKCoordinateRegion?
+    @State private var locator = UserLocator()
 
     // Draw-to-search: when on, dragging traces a freeform lasso (map panning is
     // disabled). On release the screen path is converted to coordinates and the
@@ -827,9 +976,11 @@ struct BrowseMapView: View {
                         .foregroundStyle(SwaplSemanticLight.primary.opacity(0.12))
                         .stroke(SwaplSemanticLight.primary, lineWidth: 2)
                 }
+
+                // The blue "you are here" dot (shown once location is authorized).
+                UserAnnotation()
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
-            .mapControls { MapUserLocationButton() }
             .ignoresSafeArea()
             // Freeform draw layer — only intercepts touches while drawing.
             .overlay {
@@ -877,9 +1028,37 @@ struct BrowseMapView: View {
         )
     }
 
-    // Glass control stack: draw toggle (+ clear when a lasso exists).
+    // Glass control stack: locate-me, draw toggle (+ clear when a lasso exists).
     private var mapControlStack: some View {
         VStack(spacing: 10) {
+            Button {
+                Task {
+                    if let coord = await locator.locate() {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            let region = MKCoordinateRegion(
+                                center: coord,
+                                span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
+                            )
+                            camera = .region(region)
+                            currentRegion = region
+                        }
+                    }
+                }
+            } label: {
+                Group {
+                    if locator.isLocating {
+                        ProgressView()
+                    } else {
+                        Image(systemName: "location.fill")
+                    }
+                }
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+                .frame(width: 44, height: 44)
+                .glassEffect(.regular.interactive(), in: .circle)
+            }
+            .accessibilityLabel(Text("Center on my location"))
+
             Button {
                 drawnArea = []
                 dragScreenPoints = []
@@ -1013,6 +1192,68 @@ struct ListingMapPoint: Identifiable {
 // per-listing offset so multiple homes in the same city don't stack exactly.
 // When a city has no known centroid, we DO NOT drop a pin on a hardcoded
 // foreign city — we return nil so the listing simply isn't plotted (F3/F23).
+// Lightweight cross-view router so the listing-detail city pill can ask the
+// Explore tab to show the map centered on a city (DOK-216). Mirrors SiriRouter.
+@MainActor
+@Observable
+final class ExploreRouter {
+    static let shared = ExploreRouter()
+    private init() {}
+    var pendingMapCity: String?
+}
+
+// One-shot "where am I" helper for the map's locate button (DOK-216). Requests
+// When-In-Use permission if needed, then returns a single current-location fix.
+@MainActor
+@Observable
+final class UserLocator: NSObject, CLLocationManagerDelegate {
+    private let manager = CLLocationManager()
+    private var authCont: CheckedContinuation<Void, Never>?
+    private var locCont: CheckedContinuation<CLLocationCoordinate2D?, Never>?
+    var isLocating = false
+
+    override init() {
+        super.init()
+        manager.delegate = self
+    }
+
+    func locate() async -> CLLocationCoordinate2D? {
+        isLocating = true
+        defer { isLocating = false }
+        if manager.authorizationStatus == .notDetermined {
+            await withCheckedContinuation { (c: CheckedContinuation<Void, Never>) in
+                authCont = c
+                manager.requestWhenInUseAuthorization()
+            }
+        }
+        guard manager.authorizationStatus == .authorizedWhenInUse
+            || manager.authorizationStatus == .authorizedAlways else { return nil }
+        return await withCheckedContinuation { (c: CheckedContinuation<CLLocationCoordinate2D?, Never>) in
+            locCont = c
+            manager.requestLocation()
+        }
+    }
+
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        Task { @MainActor in
+            guard manager.authorizationStatus != .notDetermined else { return }
+            authCont?.resume(); authCont = nil
+        }
+    }
+
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        Task { @MainActor in
+            locCont?.resume(returning: locations.first?.coordinate); locCont = nil
+        }
+    }
+
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        Task { @MainActor in
+            locCont?.resume(returning: nil); locCont = nil
+        }
+    }
+}
+
 enum ListingGeo {
     static func coordinate(for listing: Listing) -> CLLocationCoordinate2D? {
         if let lat = listing.lat, let lng = listing.lng {

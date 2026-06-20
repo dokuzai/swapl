@@ -130,6 +130,12 @@ final class APIClient: @unchecked Sendable {
         try await uploadMultipart(path: "/api/uploads/listing-photo", fileData: imageData, filename: filename, mimeType: mimeType)
     }
 
+    // Profile avatar (DOK-216) reuses the same image upload endpoint + CDN; the
+    // returned URL is then saved onto the user via PATCH /api/profile.
+    func uploadAvatar(_ imageData: Data, filename: String = "avatar.jpg", mimeType: String = "image/jpeg") async throws -> String {
+        try await uploadMultipart(path: "/api/uploads/listing-photo", fileData: imageData, filename: filename, mimeType: mimeType)
+    }
+
     // Multipart video upload for check-in/out condition clips (audio baked in) →
     // /api/uploads/check-video. Returns the video URL for the check event.
     func uploadCheckVideo(_ videoData: Data, filename: String = "clip.mp4", mimeType: String = "video/mp4") async throws -> String {

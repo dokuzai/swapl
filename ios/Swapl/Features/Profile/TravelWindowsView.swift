@@ -291,10 +291,16 @@ private struct WindowProposalsSection: View {
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                 } else {
-                    VStack(spacing: 12) {
-                        ForEach(proposals) { proposal in
-                            WindowProposalCard(proposal: proposal)
+                    // Horizontal slider, highest % match first (DOK-216) — the
+                    // list can get long, so it scrolls sideways instead of down.
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(alignment: .top, spacing: 12) {
+                            ForEach(proposals.sorted { $0.matchScore > $1.matchScore }) { proposal in
+                                WindowProposalCard(proposal: proposal)
+                                    .frame(width: 260)
+                            }
                         }
+                        .padding(.vertical, 2)
                     }
                 }
             }

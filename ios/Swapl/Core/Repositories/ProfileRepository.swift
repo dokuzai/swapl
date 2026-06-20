@@ -17,6 +17,8 @@ final class ProfileRepository: @unchecked Sendable {
     // Strings are nullable server-side so empty input clears the field.
     struct ProfileUpdateBody: Encodable {
         var name: String?
+        // Profile picture URL (DOK-216), uploaded via APIClient.uploadAvatar.
+        var avatar: String?
         var bio: String?
         var work: String?
         var languages: [String]?
