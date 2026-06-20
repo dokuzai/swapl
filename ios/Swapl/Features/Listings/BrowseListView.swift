@@ -364,7 +364,10 @@ struct BrowseListView: View {
                     .stroke(AirbnbPalette.hairline)
             )
             .shadow(color: .black.opacity(0.12), radius: 16, x: 0, y: 8)
-            .padding(.horizontal, 22)
+            // Leave room on the right so the selection card sits on the SAME LINE
+            // as the locate/draw pills instead of covering them (DOK-216).
+            .padding(.leading, 22)
+            .padding(.trailing, 70)
         }
         .buttonStyle(.plain)
     }
