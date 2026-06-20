@@ -1,5 +1,6 @@
 import SwiftUI
 import AVKit
+import MapKit
 import SwaplDesignTokens
 
 // The trip cockpit (DOK-152): shown inside ProposalDetailView once a swap has
@@ -58,6 +59,9 @@ struct TripCockpitView: View {
     let myListingId: String      // my own home (for the guide editor)
     // Optional inline Message pill rendered beside "Report a problem" (DOK-216).
     let inlineMessage: DisputeFlowView.InlineMessage?
+    // The home I'm staying in, with fuzzed coords — lets the swap page show the
+    // approximate area before the exact address unlocks (DOK-216).
+    let tripHome: Listing?
 
     @State private var checkSheet: CheckEventKind?
     @State private var showGuideEditor = false
@@ -65,12 +69,13 @@ struct TripCockpitView: View {
     // so we present the rate-app sheet once with surface "post-swap".
     @State private var feedbackAfterSwap: AppFeedbackContext?
 
-    init(agreementId: String, otherName: String?, otherListingId: String, myListingId: String, inlineMessage: DisputeFlowView.InlineMessage? = nil) {
+    init(agreementId: String, otherName: String?, otherListingId: String, myListingId: String, inlineMessage: DisputeFlowView.InlineMessage? = nil, tripHome: Listing? = nil) {
         _vm = State(initialValue: TripCockpitViewModel(agreementId: agreementId))
         self.otherName = otherName
         self.otherListingId = otherListingId
         self.myListingId = myListingId
         self.inlineMessage = inlineMessage
+        self.tripHome = tripHome
     }
 
     enum CheckEventKind: Identifiable {
@@ -314,6 +319,13 @@ struct TripCockpitView: View {
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
 
+            // Approximate-area map (DOK-216): show the neighbourhood even before
+            // the exact address unlocks, like the listing page. Coords are the
+            // server-fuzzed ones, so this never reveals the exact door.
+            if let home = tripHome, let lat = home.lat, let lng = home.lng {
+                homeAreaMap(lat: lat, lng: lng, label: "\(home.neighbourhood), \(home.city)")
+            }
+
             if cockpit.addressUnlocked {
                 if let address = cockpit.otherAddress, !address.isEmpty {
                     HStack(alignment: .top, spacing: 10) {
@@ -353,6 +365,31 @@ struct TripCockpitView: View {
         .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
         .padding(.horizontal, 22)
+    }
+
+    // Soft-circle approximate-area map (mirrors the listing page's locationSection).
+    private func homeAreaMap(lat: Double, lng: Double, label: String) -> some View {
+        let center = CLLocationCoordinate2D(latitude: lat, longitude: lng)
+        return VStack(alignment: .leading, spacing: 8) {
+            Map(initialPosition: .region(MKCoordinateRegion(
+                center: center, latitudinalMeters: 4500, longitudinalMeters: 4500
+            )), interactionModes: []) {
+                MapCircle(center: center, radius: 1500)
+                    .foregroundStyle(SwaplSemanticLight.primary.opacity(0.14))
+                    .stroke(SwaplSemanticLight.primary.opacity(0.45), lineWidth: 1.5)
+            }
+            .mapStyle(.standard(pointsOfInterest: .excludingAll))
+            .frame(height: 160)
+            .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous).stroke(AirbnbPalette.hairline))
+            .allowsHitTesting(false)
+            HStack(spacing: 6) {
+                Image(systemName: "mappin.and.ellipse")
+                Text("\(label) · approximate area")
+            }
+            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+            .foregroundStyle(AirbnbPalette.secondaryText)
+        }
     }
 
     @ViewBuilder

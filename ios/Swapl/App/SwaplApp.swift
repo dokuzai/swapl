@@ -267,6 +267,9 @@ struct MainTabView: View {
     @Environment(UnreadStore.self) private var unread
     @Environment(\.scenePhase) private var scenePhase
     @State private var selection: AppSection = .explore
+    // When a city pill is tapped anywhere (e.g. a listing detail or the swap
+    // page), jump to the Explore tab so its map can recenter there (DOK-216).
+    @State private var exploreRouter = ExploreRouter.shared
 
     var body: some View {
         content
@@ -280,6 +283,9 @@ struct MainTabView: View {
                     guard scenePhase == .active else { break }
                     await unread.refresh()
                 }
+            }
+            .onChange(of: exploreRouter.pendingMapCity) { _, city in
+                if city != nil { selection = .explore }
             }
     }
 
@@ -303,18 +309,23 @@ struct MainTabView: View {
                 }
             }
         } else {
-            TabView {
+            TabView(selection: $selection) {
                 BrowseListView()
                     .tabItem { Label("Explore", systemImage: "magnifyingglass") }
+                    .tag(AppSection.explore)
                 WishlistsView()
                     .tabItem { Label("Wishlists", systemImage: "heart") }
+                    .tag(AppSection.wishlists)
                 TripsView()
                     .tabItem { Label("Trips", systemImage: "suitcase.rolling") }
+                    .tag(AppSection.trips)
                 SwapsInboxView()
                     .tabItem { Label("Messages", systemImage: "message") }
                     .badge(unread.totalUnread)
+                    .tag(AppSection.messages)
                 AccountView()
                     .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+                    .tag(AppSection.profile)
             }
             .tint(SwaplSemanticLight.primary)
             .onAppear {

@@ -19,6 +19,8 @@ struct ProposalSummary: Identifiable, Codable, Hashable, Sendable {
     // to their public profile. Optional: older deploys omit them.
     var otherUserId: String? = nil
     var otherAvatar: String? = nil
+    // Inbound messages I haven't read yet (DOK-216) — drives the bold inbox row.
+    var unreadCount: Int = 0
     let updatedAt: String
     // My own archive flag (per-party). Null/absent = not archived by me.
     var archivedAt: String? = nil

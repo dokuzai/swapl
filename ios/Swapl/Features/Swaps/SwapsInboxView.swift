@@ -356,6 +356,8 @@ struct MessageRow: View {
     let proposal: ProposalSummary
     var onOpen: () -> Void = {}
 
+    private var unread: Bool { proposal.unreadCount > 0 }
+
     var body: some View {
         // The whole row opens the conversation. Wrapping in a single Button (no
         // inner buttons) means the leading-edge photo no longer swallows the
@@ -371,23 +373,33 @@ struct MessageRow: View {
                             .fill(proposal.statusColor)
                             .frame(width: 9, height: 9)
                             .accessibilityLabel(proposal.statusLabel)
+                        // Unread threads read in bold; already-read ones in the
+                        // regular weight (DOK-216).
                         Text(proposal.otherName ?? proposal.theirCity)
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: unread ? .bold : .regular))
                             .foregroundStyle(AirbnbPalette.text)
                             .lineLimit(1)
                         Spacer()
+                        if unread {
+                            Text("\(proposal.unreadCount)")
+                                .font(.swaplMono(11, weight: .bold))
+                                .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                                .frame(minWidth: 18, minHeight: 18)
+                                .padding(.horizontal, 4)
+                                .background(SwaplSemanticLight.primary, in: Capsule())
+                        }
                         Text(shortDate(proposal.updatedAt))
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: unread ? .bold : .regular))
                             .foregroundStyle(AirbnbPalette.secondaryText)
                     }
 
                     Text(statusLine)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: unread ? .bold : .regular))
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(1)
 
                     Text("\(SwaplDateText.range(from: proposal.dateFrom, to: proposal.dateTo)) · \(proposal.theirCity)")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: unread ? .semibold : .regular))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(1)
                 }
@@ -719,10 +731,23 @@ struct ProposalDetailView: View {
         ZStack {
             VStack(spacing: 1) {
                 HStack(spacing: 6) {
-                    Text(detail.tripListing.city)
-                        .font(.swaplBody(16, weight: .bold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .lineLimit(1)
+                    // Tapping the city opens the Explore map there, so you can see
+                    // the area and other homes around it (DOK-216).
+                    Button {
+                        ExploreRouter.shared.pendingMapCity = detail.tripListing.city
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(detail.tripListing.city)
+                                .font(.swaplBody(16, weight: .bold))
+                                .foregroundStyle(AirbnbPalette.text)
+                                .lineLimit(1)
+                            Image(systemName: "map")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(AirbnbPalette.secondaryText)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Show \(detail.tripListing.city) on the map")
                     Circle()
                         .fill(statusColor(detail.proposal.status))
                         .frame(width: 7, height: 7)
@@ -907,7 +932,8 @@ struct ProposalDetailView: View {
                         proposalId: vm.proposalId,
                         partnerName: detail.other.name,
                         isPrincipal: isPrincipal(detail)
-                    )
+                    ),
+                    tripHome: tripListing
                 )
             } else {
                 itineraryRows(detail)
