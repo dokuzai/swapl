@@ -65,13 +65,23 @@ export async function sendEmail(
   // Lazy-import so projects without Resend installed don't break the bundle.
   const { Resend } = await import("resend");
   const resend = new Resend(key);
-  await resend.emails.send({
+  // Resend returns { data, error } and does NOT throw on API-level failures
+  // (unverified domain, invalid `from`, suppressed recipient, rate limit).
+  // Ignoring `error` would silently drop mail — verification links would
+  // never arrive with no trace in the logs. Surface it as a thrown error so
+  // callers' .catch() handlers log it (and best-effort senders stay best-effort).
+  const { error } = await resend.emails.send({
     from,
     to: m.to,
     subject: m.subject,
     text: m.text,
     html: m.html ?? m.text.replace(/\n/g, "<br>"),
   });
+  if (error) {
+    throw new Error(
+      `Resend rejected "${m.subject}" to ${m.to} (from "${from}"): ${error.name ?? "error"} — ${error.message ?? String(error)}`
+    );
+  }
 }
 
 // Re-export the branded templates so existing imports keep working. Each
