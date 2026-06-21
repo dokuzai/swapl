@@ -60,8 +60,13 @@ export async function startSubscriptionCheckout(opts: {
   userId: string;
   priceId: string;
   trialDays?: number;
+  // Distinguishes a plan subscription ("membership") from an add-on like the
+  // Couchsurfer membership ("couchsurfer_membership"), so the webhook routes the
+  // subscription to the right table. Defaults to the plan path.
+  kind?: string;
 }): Promise<string> {
   if (!opts.priceId) throw new BillingNotConfigured("subscribe (no price id)");
+  const kind = opts.kind ?? "membership";
   const customerId = await ensureStripeCustomer(opts.userId);
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.create({
@@ -69,9 +74,9 @@ export async function startSubscriptionCheckout(opts: {
     line_items: [{ price: opts.priceId, quantity: 1 }],
     subscription_data: {
       trial_period_days: opts.trialDays,
-      metadata: { userId: opts.userId, kind: "membership" },
+      metadata: { userId: opts.userId, kind },
     },
-    metadata: { userId: opts.userId, kind: "membership" },
+    metadata: { userId: opts.userId, kind },
     ...baseSession(customerId, "/account/billing", marketingUrl("/pricing")),
   });
   if (!session.url) throw new Error("Stripe returned no Checkout URL");

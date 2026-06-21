@@ -5506,6 +5506,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/billing/checkout/couchsurfer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a Couchsurfer membership checkout (DOK-219)
+         * @description Stripe Checkout session for the yearly Couchsurfer membership — a per-user add-on (stackable on any plan) that unlocks sending free couch requests. Returns the hosted checkout URL.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Checkout created */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            url: string;
+                        };
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Already a Couchsurfer member */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Couchsurfer membership not configured */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/billing/portal": {
         parameters: {
             query?: never;
@@ -7262,6 +7324,11 @@ export interface paths {
                         dateFrom: string;
                         /** Format: date-time */
                         dateTo: string;
+                        /**
+                         * @description DOK-219 — "keys" (default) spends Keys; "couchsurf" is a free request that requires a Couchsurfer membership and a host who offers a couch (422 COUCHSURFER_MEMBERSHIP_REQUIRED otherwise).
+                         * @enum {string}
+                         */
+                        kind?: "keys" | "couchsurf";
                         /** @description Optional share token (?s=TOKEN) the guest arrived via (DOK-164). When it resolves to another user's share of this listing, the sharer earns a one-time bonus once the host confirms the stay. */
                         shareToken?: string;
                     };
@@ -8480,6 +8547,8 @@ export interface components {
             spaceType?: "entire_place" | "private_room";
             /** @description Number of rooms offered when spaceType is private_room. */
             roomsOffered?: number | null;
+            /** @description DOK-219 — the host also offers a free couch. A guest with a Couchsurfer membership can send a free couch request for this home. */
+            couchsurfingAvailable?: boolean;
             /** @description Persisted value-per-night in Keys (DOK-163 unified valuation v2). */
             nightlyKeys?: number | null;
             /** @description Destination-desirability tier 1..5 (1 = most desirable). */
@@ -8603,6 +8672,8 @@ export interface components {
             spaceType?: "entire_place" | "private_room";
             /** @description Rooms offered when spaceType is private_room (1..15). */
             roomsOffered?: number | null;
+            /** @description DOK-219 — host also offers a free couch (defaults to false). */
+            couchsurfingAvailable?: boolean;
             /** @description Publish acknowledgment (DOK-162). REQUIRED on create (POST /api/listings): the host self-attests they have the right to host in the chosen mode. Ignored on update. Missing/false -> 400 PUBLISH_ACK_REQUIRED. */
             ackAccepted?: boolean;
             /**

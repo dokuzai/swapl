@@ -34,7 +34,8 @@ export class KeysStayError extends Error {
       | "STAY_NOT_FOUND"
       | "NOT_HOST"
       | "NOT_GUEST"
-      | "BAD_STATE",
+      | "BAD_STATE"
+      | "COUCHSURF_UNAVAILABLE",
     message: string,
   ) {
     super(message);
@@ -121,8 +122,11 @@ export async function createKeysStay(args: {
   guestId: string;
   dateFrom: Date;
   dateTo: Date;
+  // DOK-219: "couchsurf" stays are free (no Keys) and require the host to offer a
+  // couch. The caller (route) enforces the Couchsurfer membership gate.
+  kind?: "keys" | "couchsurf";
 }): Promise<CreatedStay> {
-  const { listingId, guestId, dateFrom, dateTo } = args;
+  const { listingId, guestId, dateFrom, dateTo, kind = "keys" } = args;
 
   if (!(dateTo.getTime() > dateFrom.getTime())) {
     throw new KeysStayError("BAD_DATES", "End date must be after start date");
@@ -140,6 +144,7 @@ export async function createKeysStay(args: {
       isVerified: true,
       spaceType: true,
       roomsOffered: true,
+      couchsurfingAvailable: true,
       nightlyKeysBase: true,
       nightlyKeysAdjustment: true,
       availableFrom: true,
@@ -152,6 +157,9 @@ export async function createKeysStay(args: {
   if (!listing.isActive) throw new KeysStayError("INACTIVE_LISTING", "Listing is not active");
   if (listing.userId === guestId) {
     throw new KeysStayError("OWN_LISTING", "Cannot book your own listing");
+  }
+  if (kind === "couchsurf" && !listing.couchsurfingAvailable) {
+    throw new KeysStayError("COUCHSURF_UNAVAILABLE", "This home doesn't offer couchsurfing");
   }
 
   // Within the listing's published availability window.
@@ -171,8 +179,8 @@ export async function createKeysStay(args: {
     throw new KeysStayError("DATES_TAKEN", "Those dates are already booked");
   }
 
-  const nightly = nightlyKeysFor(listing);
-  const keysCost = keysCostFor(nightly, nights);
+  // Couchsurf stays are free; Keys stays cost capacity × nights.
+  const keysCost = kind === "couchsurf" ? 0 : keysCostFor(nightlyKeysFor(listing), nights);
 
   // Create the stay row and hold the guest's Keys in one transaction. The
   // ledger guard throws NEGATIVE_BALANCE if the guest can't afford it, rolling
@@ -208,6 +216,7 @@ export async function createKeysStay(args: {
         dateTo,
         nights,
         keysCost,
+        kind,
         status: "pending",
       },
     });
@@ -218,7 +227,10 @@ export async function createKeysStay(args: {
       dateFrom,
       dateTo,
     });
-    await hold(guestId, keysCost, { stayId: created.id, note: `Hold for stay ${created.id}` }, tx as Prisma.TransactionClient);
+    // Couchsurf stays move no Keys — skip the hold entirely.
+    if (kind !== "couchsurf") {
+      await hold(guestId, keysCost, { stayId: created.id, note: `Hold for stay ${created.id}` }, tx as Prisma.TransactionClient);
+    }
     return created;
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
   } catch (err) {
@@ -304,12 +316,14 @@ export async function confirmKeysStay(stayId: string, hostId: string): Promise<{
       throw new KeysStayError("BAD_STATE", "Stay is no longer pending");
     }
 
-    // Release the hold, then take the real spend from the guest and credit the
-    // host. Net guest effect: -keysCost (hold was already -keysCost, release
-    // +keysCost, spend -keysCost). Keeps a clean audit trail in the ledger.
-    await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: "Release hold on confirm" }, t);
-    await spend(stay.guestId, stay.keysCost, { stayId: stay.id, note: "Stay confirmed" }, t);
-    await earn(stay.hostId, stay.keysCost, { stayId: stay.id, note: "Hosted a Keys stay" }, t);
+    // Keys stays move Keys: release the hold, take the real spend from the guest
+    // and credit the host (net guest effect -keysCost). Couchsurf stays are free,
+    // so no Keys moved at request time and none move now.
+    if (stay.kind !== "couchsurf") {
+      await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: "Release hold on confirm" }, t);
+      await spend(stay.guestId, stay.keysCost, { stayId: stay.id, note: "Stay confirmed" }, t);
+      await earn(stay.hostId, stay.keysCost, { stayId: stay.id, note: "Hosted a Keys stay" }, t);
+    }
 
     await t.keysStay.update({
       where: { id: stay.id },
@@ -335,7 +349,7 @@ export async function releaseKeysStay(
 ): Promise<{ id: string }> {
   const stay = await prisma.keysStay.findUnique({
     where: { id: stayId },
-    select: { id: true, status: true, guestId: true, hostId: true, keysCost: true },
+    select: { id: true, status: true, guestId: true, hostId: true, keysCost: true, kind: true },
   });
   if (!stay) throw new KeysStayError("STAY_NOT_FOUND", "Stay not found");
 
@@ -355,7 +369,10 @@ export async function releaseKeysStay(
     if (!fresh || fresh.status !== "pending") {
       throw new KeysStayError("BAD_STATE", "Stay is no longer pending");
     }
-    await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: `Hold released (${outcome})` }, t);
+    // Only Keys stays have a hold to release; couchsurf stays moved no Keys.
+    if (stay.kind !== "couchsurf") {
+      await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: `Hold released (${outcome})` }, t);
+    }
     await t.keysStay.update({ where: { id: stay.id }, data: { status: outcome } });
     await releaseListingOccupancy(t, { source: "keys_stay", sourceId: stay.id });
   });

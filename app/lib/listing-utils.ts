@@ -64,6 +64,8 @@ export type ListingDTO = {
   // Unified valuation v2 (DOK-163 / DOK-160).
   spaceType: "entire_place" | "private_room";
   roomsOffered: number | null;
+  // DOK-219: host also offers a free couch (couchsurf requests need a membership).
+  couchsurfingAvailable: boolean;
   nightlyKeys: number | null;
   locationTier: number | null;
   // Structured "how is this calculated" explanation — owner-only (null for
@@ -123,6 +125,7 @@ type ListingRecord = {
   featuredUntil?: Date | null;
   spaceType?: string;
   roomsOffered?: number | null;
+  couchsurfingAvailable?: boolean;
   nightlyKeys?: number | null;
   locationTier?: number | null;
   valuationExplanation?: string | null;
@@ -191,6 +194,7 @@ export function toDTO(
     ownerVerified: Boolean(l.ownerVerified),
     spaceType: (l.spaceType as ListingDTO["spaceType"]) ?? "entire_place",
     roomsOffered: l.roomsOffered ?? null,
+    couchsurfingAvailable: l.couchsurfingAvailable ?? false,
     nightlyKeys: l.nightlyKeys ?? null,
     locationTier: l.locationTier ?? null,
     valuationExplanation: opts?.includeValuation

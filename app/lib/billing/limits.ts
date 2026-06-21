@@ -110,6 +110,23 @@ export async function getEffectivePlan(userId: string): Promise<PlanLimits> {
   return PLAN_LIMITS.free;
 }
 
+/**
+ * Couchsurfer membership (DOK-219) — a yearly add-on, independent of the plan
+ * tier. True when the user holds an active/trialing membership that hasn't
+ * lapsed. Admins are always treated as members (parity with plan resolution).
+ */
+export async function isCouchsurferMember(userId: string): Promise<boolean> {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  if (user?.role === "swapl_admin") return true;
+  const m = await prisma.couchsurferMembership.findUnique({
+    where: { userId },
+    select: { status: true, currentPeriodEnd: true },
+  });
+  if (!m) return false;
+  if (m.status !== "active" && m.status !== "trialing" && m.status !== "past_due") return false;
+  return m.currentPeriodEnd.getTime() > Date.now();
+}
+
 export async function ensureCanCreateListing(userId: string): Promise<void> {
   const plan = await getEffectivePlan(userId);
   if (plan.maxListings === 0) return;

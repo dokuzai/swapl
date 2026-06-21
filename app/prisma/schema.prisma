@@ -96,6 +96,7 @@ model User {
   reportsReceived Report[]        @relation("ReportsReceived")
 
   subscription    Subscription?
+  couchsurferMembership CouchsurferMembership?
   invoices        BillingInvoice[]
   stripeCustomer  StripeCustomer?
   orderAddOns     OrderAddOn[]
@@ -426,6 +427,9 @@ model Listing {
   // a multi-room offer back up. Defaults keep every legacy row = whole home.
   spaceType      String   @default("entire_place") // entire_place | private_room
   roomsOffered   Int?     // # of rooms offered when spaceType=private_room (null/1 = one room)
+  // DOK-219: host also offers a free couch. Couchsurf requests are free and need
+  // a Couchsurfer membership; independent of the swap/Keys offering.
+  couchsurfingAvailable Boolean @default(false)
 
   // Unified valuation v2 (DOK-163). The nightly value is split into a persisted
   // BASE (deterministic + AI feature signal + location tier) and a bounded
@@ -854,6 +858,10 @@ model KeysStay {
   nights            Int
   keysCost          Int
 
+  // "keys" | "couchsurf" (DOK-219). Couchsurf stays are free (keysCost 0) and
+  // gated by a Couchsurfer membership instead of the Keys ledger.
+  kind              String   @default("keys")
+
   // pending | confirmed | declined | cancelled | completed
   status            String   @default("pending")
 
@@ -1104,6 +1112,26 @@ model Subscription {
   plan                 Plan     @relation(fields: [planId], references: [id])
 
   @@index([planId, status])
+}
+
+// Couchsurfer membership (DOK-219): a yearly add-on entitlement that lets a user
+// send free couchsurf hosting requests. Independent of the plan tier — a free or
+// Plus/Pro user can also be a Couchsurfer — so it's a separate model, not a
+// second Subscription row (Subscription is 1:1 with the plan).
+model CouchsurferMembership {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  stripeSubscriptionId String?  @unique
+  status               String                                  // active | past_due | canceled | trialing | unpaid | incomplete
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  source               String   @default("stripe")             // stripe | grandfather | dev_seed
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
 }
 
 model StripeCustomer {

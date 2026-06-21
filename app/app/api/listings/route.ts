@@ -130,6 +130,7 @@ export async function POST(req: Request) {
       sizeSqm: data.sizeSqm,
       spaceType: data.spaceType,
       roomsOffered: data.roomsOffered ?? null,
+      couchsurfingAvailable: data.couchsurfingAvailable,
       nightlyKeys: baseNightly,
       nightlyKeysBase: baseNightly,
       sleeps: data.sleeps,

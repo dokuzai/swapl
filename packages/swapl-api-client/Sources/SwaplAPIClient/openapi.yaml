@@ -875,6 +875,11 @@ components:
           type: integer
           nullable: true
           description: Number of rooms offered when spaceType is private_room.
+        couchsurfingAvailable:
+          type: boolean
+          description: >-
+            DOK-219 — the host also offers a free couch. A guest with a Couchsurfer
+            membership can send a free couch request for this home.
         nightlyKeys:
           type: integer
           nullable: true
@@ -1055,6 +1060,9 @@ components:
           type: integer
           nullable: true
           description: Rooms offered when spaceType is private_room (1..15).
+        couchsurfingAvailable:
+          type: boolean
+          description: DOK-219 — host also offers a free couch (defaults to false).
         ackAccepted:
           type: boolean
           description: >-
@@ -4292,6 +4300,29 @@ paths:
         '401': { description: Unauthenticated }
         '503': { description: Billing not configured for this plan/cycle }
 
+  /api/billing/checkout/couchsurfer:
+    post:
+      tags: [billing]
+      summary: Start a Couchsurfer membership checkout (DOK-219)
+      description: >-
+        Stripe Checkout session for the yearly Couchsurfer membership — a per-user
+        add-on (stackable on any plan) that unlocks sending free couch requests.
+        Returns the hosted checkout URL.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Checkout created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties:
+                  url: { type: string }
+        '401': { description: Unauthenticated }
+        '409': { description: Already a Couchsurfer member }
+        '503': { description: Couchsurfer membership not configured }
+
   /api/billing/portal:
     post:
       tags: [billing]
@@ -5040,6 +5071,13 @@ paths:
                 listingId: { type: string }
                 dateFrom: { type: string, format: date-time }
                 dateTo: { type: string, format: date-time }
+                kind:
+                  type: string
+                  enum: [keys, couchsurf]
+                  description: >-
+                    DOK-219 — "keys" (default) spends Keys; "couchsurf" is a free
+                    request that requires a Couchsurfer membership and a host who
+                    offers a couch (422 COUCHSURFER_MEMBERSHIP_REQUIRED otherwise).
                 shareToken:
                   type: string
                   description: >-

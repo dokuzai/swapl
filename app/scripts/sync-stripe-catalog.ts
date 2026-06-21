@@ -22,7 +22,8 @@ type SwaplKey =
   | "pro_monthly"  | "pro_yearly"
   | "verify_listing" | "feature_14d" | "feature_30d"
   | "insurance_plus" | "insurance_pro"
-  | "corporate_seat";
+  | "corporate_seat"
+  | "couchsurfer_yearly";
 
 type CatalogEntry = {
   key: SwaplKey;
@@ -53,6 +54,9 @@ const CATALOG: CatalogEntry[] = [
 
   // Corporate
   { key: "corporate_seat", productName: "swapl Corporate (per seat)", productDescription: "Per-seat annual subscription", unitAmount: 19900, currency: "eur", recurring: { interval: "year" }, envVar: "STRIPE_PRICE_CORPORATE_SEAT" },
+
+  // Couchsurfer membership (DOK-219) — yearly add-on to send free couch requests.
+  { key: "couchsurfer_yearly", productName: "swapl Couchsurfer", productDescription: "Couchsurfer membership — yearly", unitAmount: 1900, currency: "eur", recurring: { interval: "year" }, envVar: "STRIPE_PRICE_COUCHSURFER_YEARLY" },
 ];
 
 async function findOrCreateProduct(entry: CatalogEntry): Promise<Stripe.Product> {

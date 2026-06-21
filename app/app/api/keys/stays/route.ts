@@ -6,6 +6,7 @@ import { invalidInput, notFound, rateLimited, unauthenticated, unprocessable } f
 import { checkRateLimitDurable } from "@/lib/rate-limit";
 import { createKeysStay, KeysStayError } from "@/lib/keys/stay";
 import { KeysLedgerError } from "@/lib/keys/ledger";
+import { isCouchsurferMember } from "@/lib/billing/limits";
 import { STAY_RATE_LIMIT, STAY_RATE_WINDOW_MS } from "@/lib/keys/config";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { resolveShareToken } from "@/lib/keys/earn";
@@ -14,6 +15,9 @@ const bodySchema = z.object({
   listingId: z.string().min(1),
   dateFrom: z.coerce.date(),
   dateTo: z.coerce.date(),
+  // DOK-219: "couchsurf" sends a free request (gated by a Couchsurfer membership)
+  // instead of spending Keys. Defaults to a normal Keys stay.
+  kind: z.enum(["keys", "couchsurf"]).default("keys"),
   // DOK-164: optional share token (?s=TOKEN) the guest arrived via. When it
   // resolves to a share of THIS listing by another user, we record the pending
   // conversion on the stay so the sharer is credited once the host confirms.
@@ -60,12 +64,20 @@ export async function POST(req: Request) {
   const rl = await checkRateLimitDurable(`keys-stay:${session.userId}`, STAY_RATE_LIMIT, STAY_RATE_WINDOW_MS);
   if (!rl.ok) return rateLimited();
 
+  // DOK-219: sending a couchsurf hosting request requires a Couchsurfer membership.
+  if (parsed.data.kind === "couchsurf" && !(await isCouchsurferMember(session.userId))) {
+    return unprocessable("A Couchsurfer membership is required to send couch requests.", {
+      code: "COUCHSURFER_MEMBERSHIP_REQUIRED",
+    });
+  }
+
   try {
     const stay = await createKeysStay({
       listingId: parsed.data.listingId,
       guestId: session.userId,
       dateFrom: parsed.data.dateFrom,
       dateTo: parsed.data.dateTo,
+      kind: parsed.data.kind,
     });
     sendPush(stay.hostId, pushTemplates.keysStayRequested(stay.id, stay.nights, stay.keysCost)).catch(() => {});
 

@@ -54,6 +54,9 @@ export const listingCreateSchema = z.object({
   spaceType: z.enum(["entire_place", "private_room"]).default("entire_place"),
   roomsOffered: z.number().int().min(1).max(15).optional(),
 
+  // DOK-219: host also offers a free couch. Independent of the swap/Keys offer.
+  couchsurfingAvailable: z.boolean().default(false),
+
   // Closed-by-default availability (DOK-219). When present, the listing is
   // bookable ONLY on these ranges (the rest of the window is closed). An empty
   // array means nothing is bookable until the host opens dates. When omitted

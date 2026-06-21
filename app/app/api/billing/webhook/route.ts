@@ -149,6 +149,7 @@ async function handleSubscriptionChange(sub: Stripe.Subscription) {
   // the Organization model — handled by Feature 5.
   const kind = sub.metadata?.kind;
   if (kind === "corporate") return; // Feature 5 wires this.
+  if (kind === "couchsurfer_membership") return handleCouchsurferMembershipChange(sub);
 
   const userId = sub.metadata?.userId;
   if (!userId) {
@@ -190,6 +191,37 @@ async function handleSubscriptionChange(sub: Stripe.Subscription) {
       stripeSubscriptionId: sub.id,
       status,
       cancelAtPeriodEnd: sub.cancel_at_period_end,
+      currentPeriodStart,
+      currentPeriodEnd,
+    },
+  });
+}
+
+// Couchsurfer membership (DOK-219) — a yearly add-on, recorded on its own table
+// so it stacks on any plan. Routed here by metadata.kind === "couchsurfer_membership".
+async function handleCouchsurferMembershipChange(sub: Stripe.Subscription) {
+  const userId = sub.metadata?.userId;
+  if (!userId) {
+    console.warn("[stripe:webhook] couchsurfer membership without userId metadata", sub.id);
+    return;
+  }
+  const status = sub.status;
+  const item = sub.items.data[0];
+  const currentPeriodStart = new Date((item?.current_period_start ?? sub.created) * 1000);
+  const currentPeriodEnd = new Date((item?.current_period_end ?? sub.created) * 1000);
+
+  await prisma.couchsurferMembership.upsert({
+    where: { userId },
+    create: {
+      userId,
+      stripeSubscriptionId: sub.id,
+      status,
+      currentPeriodStart,
+      currentPeriodEnd,
+    },
+    update: {
+      stripeSubscriptionId: sub.id,
+      status,
       currentPeriodStart,
       currentPeriodEnd,
     },

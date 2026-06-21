@@ -182,6 +182,7 @@ function seed() {
     country: "Portugal",
     address: null,
     isVerified: true,
+    couchsurfingAvailable: true,
     availableFrom: new Date("2026-07-01"),
     availableTo: new Date("2026-08-31"),
     minStayDays: 3,
@@ -295,5 +296,32 @@ describe("releaseKeysStay", () => {
     const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
     await expect(releaseKeysStay(stay.id, "guest", "declined")).rejects.toMatchObject({ code: "NOT_HOST" });
     await expect(releaseKeysStay(stay.id, "host", "cancelled")).rejects.toMatchObject({ code: "NOT_GUEST" });
+  });
+});
+
+describe("couchsurf stays (DOK-219)", () => {
+  it("are free and move no Keys on request or confirm", async () => {
+    const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to, kind: "couchsurf" });
+    expect(stay.keysCost).toBe(0);
+    expect(store.stays.get(stay.id)!.kind).toBe("couchsurf");
+    // No hold — guest balance untouched, no ledger rows.
+    expect(store.users.get("guest")!.keysBalance).toBe(100);
+    expect(store.txns).toHaveLength(0);
+    // Occupancy still blocks the dates like any stay.
+    expect(store.occupancies.size).toBe(1);
+
+    await confirmKeysStay(stay.id, "host");
+    expect(store.users.get("guest")!.keysBalance).toBe(100);
+    expect(store.users.get("host")!.keysBalance).toBe(0); // host earns no Keys from a couch stay
+    expect(store.txns).toHaveLength(0);
+    expect(store.stays.get(stay.id)!.status).toBe("confirmed");
+  });
+
+  it("are rejected when the home doesn't offer couchsurfing", async () => {
+    store.listings.get("L1")!.couchsurfingAvailable = false;
+    await expect(
+      createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to, kind: "couchsurf" }),
+    ).rejects.toMatchObject({ code: "COUCHSURF_UNAVAILABLE" });
+    expect(store.stays.size).toBe(0);
   });
 });

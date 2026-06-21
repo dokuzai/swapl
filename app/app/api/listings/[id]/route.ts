@@ -162,6 +162,7 @@ export async function PUT(req: Request, { params }: RouteContext<"/api/listings/
       sizeSqm: data.sizeSqm,
       spaceType: data.spaceType,
       roomsOffered: data.roomsOffered ?? null,
+      couchsurfingAvailable: data.couchsurfingAvailable,
       // Keys economy (DOK-155/DOK-163): recompute the deterministic BASE since
       // size/sleeps/city/space may have changed; verification status is
       // unchanged here. Preserve the existing location tier + review feedback
