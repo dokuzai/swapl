@@ -20,19 +20,12 @@
 import { parseJSON } from "@/lib/db";
 import {
   computeBaseNightlyKeys,
-  applyAdjustment,
   clampAdjustment,
   roomsCoefficient,
-  sizePoints,
-  sleepsPoints,
-  verifiedBonus,
-  locationTierPoints,
   seedLocationTier,
-  BASE_NIGHTLY_KEYS,
   FEEDBACK_BAND,
 } from "@/lib/keys/value";
 import {
-  valuateListingFeatures,
   type AIFeatureValuation,
   type ValuationFactor,
 } from "@/lib/ai/listing-valuation";
@@ -133,22 +126,13 @@ export async function composeValuation(
   input: ListingValuationInput,
   opts: ResolveOptions = {},
 ): Promise<ComposedValuation> {
+  void opts; // AI feature appraisal is no longer used — value is pure capacity (DOK-219).
   const tier = input.locationTier ?? seedLocationTier(input.city);
 
-  const ai = await valuateListingFeatures(
-    {
-      city: input.city,
-      country: input.country,
-      spaceType: input.spaceType,
-      sizeSqm: input.sizeSqm,
-      sleeps: input.sleeps,
-      photoCount: input.photoCount,
-      amenities: input.amenities,
-      description: input.description,
-    },
-    opts,
-  );
-
+  // Value = the home's guest capacity (DOK-219). The old size/location/verified/
+  // AI/review-feedback engine is retired: the feedback adjustment is frozen at 0
+  // and the single factor is the capacity itself, so the explainer reads as one
+  // honest line ("worth N — it sleeps N").
   const base = computeBaseNightlyKeys({
     sizeSqm: input.sizeSqm,
     sleeps: input.sleeps,
@@ -156,31 +140,14 @@ export async function composeValuation(
     isVerified: input.isVerified,
     spaceType: input.spaceType,
     roomsOffered: input.roomsOffered,
-    locationTier: tier,
-    aiFeatureBonus: ai.bonus,
   });
-
-  const adjustment = nextFeedbackAdjustment({
-    current: input.currentAdjustment ?? 0,
-    avgRating: input.avgRating,
-    reviewCount: input.reviewCount,
-  });
-
-  const nightlyKeys = applyAdjustment(base, adjustment);
+  const adjustment = 0;
+  const nightlyKeys = base;
   const coeff = roomsCoefficient(input.spaceType, input.roomsOffered);
 
   const factors: ValuationFactor[] = [
-    { key: "base", label: "Base", points: BASE_NIGHTLY_KEYS },
-    { key: "size", label: "Size", points: sizePoints(input.sizeSqm) },
-    { key: "sleeps", label: "Sleeps", points: sleepsPoints(input.sleeps) },
-    { key: "location_tier", label: "Location appeal", points: locationTierPoints(tier) },
-    { key: "verified", label: "Verified home", points: verifiedBonus(input.isVerified) },
-    { key: "ai_appeal", label: "Home appeal (AI)", points: ai.bonus },
-    // Always surface location_tier (even at +0) and the AI appeal factor so the
-    // explainer can show the "standard, valued equally" / "most homes score 0"
-    // reassurance to small-town and average hosts — a 0 here is meaningful, not
-    // noise to hide. Other zero-valued factors stay collapsed.
-  ].filter((f) => f.points !== 0 || f.key === "base" || f.key === "location_tier" || f.key === "ai_appeal");
+    { key: "capacity", label: "Guests it can host", points: base },
+  ];
 
   const explanation: ValuationExplanation = {
     version: 2,
@@ -191,11 +158,11 @@ export async function composeValuation(
     spaceType: input.spaceType,
     roomsCoefficient: coeff,
     factors,
-    ai: { source: ai.source, bonus: ai.bonus, summary: ai.summary },
+    ai: { source: "fallback", bonus: 0, summary: "" },
     feedback: {
       reviewCount: input.reviewCount,
       avgRating: input.avgRating,
-      applied: input.reviewCount >= FEEDBACK_MIN_REVIEWS,
+      applied: false,
     },
   };
 
@@ -204,7 +171,7 @@ export async function composeValuation(
     nightlyKeysAdjustment: adjustment,
     nightlyKeys,
     locationTier: tier,
-    aiSource: ai.source,
+    aiSource: "fallback",
     explanation,
   };
 }

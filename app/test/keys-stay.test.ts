@@ -46,7 +46,12 @@ const h = vi.hoisted(() => {
       },
       async update({ where, data }: any) {
         const u = store.users.get(where.id)!;
-        Object.assign(u, data);
+        // Simulate Prisma atomic ops so balance math (hold/spend/earn/release) works.
+        for (const [k, v] of Object.entries<any>(data)) {
+          if (v && typeof v === "object" && "increment" in v) u[k] = (u[k] ?? 0) + v.increment;
+          else if (v && typeof v === "object" && "decrement" in v) u[k] = (u[k] ?? 0) - v.decrement;
+          else u[k] = v;
+        }
         return { ...u };
       },
     },
@@ -200,10 +205,10 @@ const to = new Date("2026-07-17"); // 7 nights
 describe("createKeysStay", () => {
   it("holds the guest's Keys and creates a pending stay", async () => {
     const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
-    // nightly: base4 + size(60→2) + sleeps(4→2) + tier2(2) + verified(2) = 12; ×7 = 84
+    // nightly = capacity (sleeps 4) = 4; ×7 nights = 28 (DOK-219)
     expect(stay.nights).toBe(7);
-    expect(stay.keysCost).toBe(84);
-    expect(store.users.get("guest")!.keysBalance).toBe(16); // 100 - 84 held
+    expect(stay.keysCost).toBe(28);
+    expect(store.users.get("guest")!.keysBalance).toBe(72); // 100 - 28 held
     expect(store.txns.filter((t) => t.kind === "hold")).toHaveLength(1);
     expect(store.stays.get(stay.id)!.status).toBe("pending");
     expect([...store.occupancies.values()]).toEqual([
@@ -245,9 +250,9 @@ describe("confirmKeysStay", () => {
   it("turns the hold into spend (guest) + earn (host) and issues a policy", async () => {
     const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
     const res = await confirmKeysStay(stay.id, "host");
-    expect(res.keysCost).toBe(84);
-    expect(store.users.get("guest")!.keysBalance).toBe(16); // net -84
-    expect(store.users.get("host")!.keysBalance).toBe(84);
+    expect(res.keysCost).toBe(28);
+    expect(store.users.get("guest")!.keysBalance).toBe(72); // net -28
+    expect(store.users.get("host")!.keysBalance).toBe(28);
     const fresh = store.stays.get(stay.id)!;
     expect(fresh.status).toBe("confirmed");
     expect(fresh.insurancePolicyId).toBe("ext_123");
@@ -270,7 +275,7 @@ describe("confirmKeysStay", () => {
 describe("releaseKeysStay", () => {
   it("decline releases the held Keys back to the guest", async () => {
     const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
-    expect(store.users.get("guest")!.keysBalance).toBe(16);
+    expect(store.users.get("guest")!.keysBalance).toBe(72);
     await releaseKeysStay(stay.id, "host", "declined");
     expect(store.users.get("guest")!.keysBalance).toBe(100);
     expect(store.stays.get(stay.id)!.status).toBe("declined");

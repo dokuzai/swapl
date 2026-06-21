@@ -143,21 +143,29 @@ export function clampNightly(raw: number): number {
   return Math.max(MIN_NIGHTLY_KEYS, Math.min(MAX_NIGHTLY_KEYS, Math.round(raw)));
 }
 
+// ---------- Capacity-based value (DOK-219) ----------
+// A home's nightly Keys value is simply how many people it can host — its
+// `sleeps` capacity. One night hosting an N-capacity home is worth N Keys, so N
+// Keys buys N person-nights (e.g. N nights for one person, or one night for N).
+// This deliberately replaces the old multi-factor valuation (size, location
+// tier, verification, AI appeal, review feedback): the value is one transparent
+// number a member can predict. The old helpers above are retained only for
+// back-compat imports; they no longer drive the value.
+export const MIN_CAPACITY_KEYS = 1; // a solo/1-guest place is worth 1/night
+
+/** Keys-per-night = guest capacity, clamped to the allowed range. */
+export function capacityNightlyKeys(sleeps: number): number {
+  const n = Math.round(Number.isFinite(sleeps) ? sleeps : 0);
+  return Math.max(MIN_CAPACITY_KEYS, Math.min(MAX_NIGHTLY_KEYS, n));
+}
+
 /**
- * The BASE value-per-night (pre-feedback). Deterministic given its inputs.
- * This is what gets persisted as Listing.nightlyKeysBase.
+ * The BASE value-per-night. Now just the home's capacity (DOK-219). Persisted as
+ * Listing.nightlyKeysBase; with the feedback adjustment frozen at 0 the final
+ * nightlyKeys equals this.
  */
 export function computeBaseNightlyKeys(listing: ValuableListing): number {
-  const tier = listing.locationTier ?? seedLocationTier(listing.city);
-  const raw =
-    BASE_NIGHTLY_KEYS +
-    sizePoints(listing.sizeSqm) +
-    sleepsPoints(listing.sleeps) +
-    locationTierPoints(tier) +
-    verifiedBonus(listing.isVerified) +
-    (listing.aiFeatureBonus ?? 0);
-  const scaled = raw * roomsCoefficient(listing.spaceType ?? "entire_place", listing.roomsOffered);
-  return clampNightly(scaled);
+  return capacityNightlyKeys(listing.sleeps);
 }
 
 /** Clamp a feedback adjustment into the hard ±FEEDBACK_BAND band. */
@@ -187,10 +195,10 @@ export function applyAdjustment(base: number, adjustment: number): number {
 export function nightlyKeysFor(
   listing: ValuableListing & { nightlyKeysBase?: number | null; nightlyKeysAdjustment?: number | null },
 ): number {
-  if (typeof listing.nightlyKeysBase === "number") {
-    return applyAdjustment(listing.nightlyKeysBase, listing.nightlyKeysAdjustment ?? 0);
-  }
-  return computeBaseNightlyKeys(listing);
+  // Value = capacity (DOK-219). We ignore any persisted base/adjustment so that
+  // even listings not yet recomputed by the cron/backfill transact at the new
+  // capacity value immediately — the cached columns are display-only now.
+  return capacityNightlyKeys(listing.sleeps);
 }
 
 const NIGHT_MS = 24 * 60 * 60 * 1000;

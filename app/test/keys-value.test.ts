@@ -2,46 +2,45 @@
 
 import { describe, expect, it } from "vitest";
 import {
-  BASE_NIGHTLY_KEYS,
   MAX_NIGHTLY_KEYS,
-  MIN_NIGHTLY_KEYS,
-  cityTier,
+  MIN_CAPACITY_KEYS,
+  capacityNightlyKeys,
   keysCostFor,
   nightlyKeysFor,
   nightsBetween,
 } from "@/lib/keys/value";
 
-describe("cityTier", () => {
-  it("classifies known tier-1 / tier-2 cities case-insensitively", () => {
-    expect(cityTier("Paris")).toBe(1);
-    expect(cityTier("paris")).toBe(1);
-    expect(cityTier("Lisbon")).toBe(2);
-    expect(cityTier("Nowheresville")).toBe(3);
+// DOK-219: a home's nightly Keys value is its guest capacity (sleeps). One night
+// hosting an N-capacity home is worth N Keys; the old size/location/verified/AI
+// factors no longer apply.
+describe("nightlyKeysFor (capacity-based)", () => {
+  it("equals the home's capacity regardless of size, city, or verification", () => {
+    expect(nightlyKeysFor({ sizeSqm: 60, sleeps: 4, city: "Lisbon", isVerified: true })).toBe(4);
+    expect(nightlyKeysFor({ sizeSqm: 200, sleeps: 4, city: "Tokyo", isVerified: true })).toBe(4);
+    expect(nightlyKeysFor({ sizeSqm: 30, sleeps: 2, city: "Smalltown", isVerified: false })).toBe(2);
+  });
+
+  it("ignores any persisted base/adjustment (capacity wins immediately)", () => {
+    const v = nightlyKeysFor({
+      sizeSqm: 60, sleeps: 3, city: "Roma", isVerified: false,
+      nightlyKeysBase: 18, nightlyKeysAdjustment: 0.2,
+    });
+    expect(v).toBe(3);
+  });
+
+  it("a solo place is worth the floor of 1; capacity is clamped to the ceiling", () => {
+    expect(nightlyKeysFor({ sizeSqm: 18, sleeps: 1, city: "Smalltown", isVerified: false })).toBe(MIN_CAPACITY_KEYS);
+    expect(capacityNightlyKeys(0)).toBe(MIN_CAPACITY_KEYS);
+    expect(capacityNightlyKeys(99)).toBe(MAX_NIGHTLY_KEYS);
   });
 });
 
-describe("nightlyKeysFor", () => {
-  it("prices a typical mid-size verified flat in a popular city around 10", () => {
-    // base 4 + size(60→2) + sleeps(4→2) + tier2(2) + verified(2) = 12
-    const v = nightlyKeysFor({ sizeSqm: 60, sleeps: 4, city: "Lisbon", isVerified: true });
-    expect(v).toBe(12);
-  });
-
-  it("a small unverified place in a quiet city sits near the floor", () => {
-    // base 4 + size(30→1) + sleeps(2→0) + tier3(0) + verified(0) = 5
-    const v = nightlyKeysFor({ sizeSqm: 30, sleeps: 2, city: "Smalltown", isVerified: false });
-    expect(v).toBe(5);
-  });
-
-  it("never goes below the floor", () => {
-    const v = nightlyKeysFor({ sizeSqm: 0, sleeps: 0, city: "Smalltown", isVerified: false });
-    expect(v).toBeGreaterThanOrEqual(MIN_NIGHTLY_KEYS);
-    expect(v).toBe(BASE_NIGHTLY_KEYS); // base 4, all bonuses 0
-  });
-
-  it("clamps a huge verified home in a top city at the ceiling", () => {
-    const v = nightlyKeysFor({ sizeSqm: 1000, sleeps: 20, city: "Tokyo", isVerified: true });
-    expect(v).toBe(MAX_NIGHTLY_KEYS);
+describe("capacity-nights symmetry (DOK-219)", () => {
+  it("7 guests for 1 night earns 7 Keys → 7 nights alone in a 1-capacity place", () => {
+    const earned = keysCostFor(capacityNightlyKeys(7), 1); // host a 7-sleeps home, 1 night
+    expect(earned).toBe(7);
+    const soloStay = keysCostFor(capacityNightlyKeys(1), 7); // stay alone, 7 nights
+    expect(soloStay).toBe(7);
   });
 });
 

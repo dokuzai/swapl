@@ -1,15 +1,17 @@
-// Unified nightly-Keys valuation v2 (DOK-163, DOK-160): AI feature signal,
-// location tier, review feedback loop, rooms coefficient. Tests focus on the
-// pure engine — stability (no swings), bounding/clamp, deterministic fallback
-// without an AI key, the rooms coefficient, the feedback band + per-cycle cap,
-// and that the location tier never zeroes out small centers.
+// Nightly-Keys valuation (DOK-219): value = the home's guest capacity (sleeps).
+// The old multi-factor engine (size, location tier, verification, AI appeal,
+// review feedback) is retired — composeValuation now emits the capacity with the
+// feedback adjustment frozen at 0. A few pure helpers (rooms coefficient, tier
+// points, feedback math, AI fallback) still exist for back-compat and are kept
+// under unit test here even though they no longer drive the value.
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  MIN_NIGHTLY_KEYS,
   MAX_NIGHTLY_KEYS,
+  MIN_CAPACITY_KEYS,
   FEEDBACK_BAND,
   computeBaseNightlyKeys,
+  capacityNightlyKeys,
   nightlyKeysFor,
   applyAdjustment,
   clampAdjustment,
@@ -40,159 +42,32 @@ const SAMPLE = {
   avgRating: null as number | null,
 };
 
-describe("deterministic base — back-compat + bounding", () => {
-  it("matches the legacy whole-home value (no AI, no tier override)", () => {
-    // base 4 + size(60→2) + sleeps(4→2) + tier2(2) + verified(2) = 12
-    expect(computeBaseNightlyKeys({ sizeSqm: 60, sleeps: 4, city: "Lisbon", isVerified: true })).toBe(12);
+describe("capacity value — the only factor (DOK-219)", () => {
+  it("base equals the home's capacity, ignoring size / city / verification", () => {
+    expect(computeBaseNightlyKeys({ sizeSqm: 60, sleeps: 4, city: "Lisbon", isVerified: true })).toBe(4);
+    expect(computeBaseNightlyKeys({ sizeSqm: 1000, sleeps: 4, city: "Tokyo", isVerified: true })).toBe(4);
+    expect(computeBaseNightlyKeys({ sizeSqm: 18, sleeps: 2, city: "Tiny Village", isVerified: false })).toBe(2);
   });
 
-  it("clamps to the floor and ceiling", () => {
-    expect(computeBaseNightlyKeys({ sizeSqm: 0, sleeps: 0, city: "Nowhere", isVerified: false })).toBeGreaterThanOrEqual(
-      MIN_NIGHTLY_KEYS,
-    );
-    const huge = computeBaseNightlyKeys({
-      sizeSqm: 1000,
-      sleeps: 20,
-      city: "Tokyo",
-      isVerified: true,
-      aiFeatureBonus: 3,
-    });
-    expect(huge).toBe(MAX_NIGHTLY_KEYS);
+  it("clamps to the floor (1) and ceiling", () => {
+    expect(computeBaseNightlyKeys({ sizeSqm: 0, sleeps: 0, city: "Nowhere", isVerified: false })).toBe(MIN_CAPACITY_KEYS);
+    expect(computeBaseNightlyKeys({ sizeSqm: 1000, sleeps: 99, city: "Tokyo", isVerified: true })).toBe(MAX_NIGHTLY_KEYS);
   });
 
-  it("nightlyKeysFor prefers the persisted base+adjustment when present", () => {
-    // persisted base 10, +20% → 12
-    expect(nightlyKeysFor({ sizeSqm: 60, sleeps: 4, city: "Lisbon", isVerified: true, nightlyKeysBase: 10, nightlyKeysAdjustment: 0.2 })).toBe(12);
-    // falls back to deterministic compute when no persisted base
-    expect(nightlyKeysFor({ sizeSqm: 60, sleeps: 4, city: "Lisbon", isVerified: true })).toBe(12);
+  it("nightlyKeysFor returns capacity and ignores any persisted base/adjustment", () => {
+    expect(
+      nightlyKeysFor({ sizeSqm: 60, sleeps: 4, city: "Lisbon", isVerified: true, nightlyKeysBase: 10, nightlyKeysAdjustment: 0.2 }),
+    ).toBe(4);
+    expect(nightlyKeysFor({ sizeSqm: 60, sleeps: 4, city: "Lisbon", isVerified: true })).toBe(4);
+  });
+
+  it("a private room is valued by its own capacity (no separate coefficient)", () => {
+    const room = computeBaseNightlyKeys({ sizeSqm: 80, sleeps: 2, city: "Lisbon", isVerified: true, spaceType: "private_room", roomsOffered: 1 });
+    expect(room).toBe(2);
   });
 });
 
-describe("location tier — bounded boost, small centers stay visible", () => {
-  it("never gives a tier-5 city a negative or huge swing", () => {
-    expect(locationTierPoints(5)).toBe(0);
-    expect(locationTierPoints(1)).toBe(4);
-    // an unknown small town is tier 5 — no bonus, but still a real value
-    expect(seedLocationTier("Tiny Village")).toBe(5);
-    expect(computeBaseNightlyKeys({ sizeSqm: 40, sleeps: 2, city: "Tiny Village", isVerified: false })).toBeGreaterThanOrEqual(
-      MIN_NIGHTLY_KEYS,
-    );
-  });
-
-  it("browse boost is small and capped (small centers not buried)", () => {
-    expect(browseTierBoost(5)).toBe(0);
-    expect(browseTierBoost(1)).toBe(BROWSE_TIER_MAX_BOOST);
-    // monotonic, never exceeds the cap
-    for (let t = 1; t <= 5; t++) {
-      expect(browseTierBoost(t)).toBeGreaterThanOrEqual(0);
-      expect(browseTierBoost(t)).toBeLessThanOrEqual(BROWSE_TIER_MAX_BOOST);
-    }
-  });
-});
-
-describe("rooms coefficient (DOK-160)", () => {
-  it("entire_place is full value; a private room is a fraction", () => {
-    expect(roomsCoefficient("entire_place")).toBe(1);
-    expect(roomsCoefficient("private_room", 1)).toBe(0.5);
-    expect(roomsCoefficient("private_room", 3)).toBeGreaterThan(0.5);
-    // never reaches a whole home even with many rooms
-    expect(roomsCoefficient("private_room", 99)).toBeLessThan(1);
-  });
-
-  it("a private room is worth fewer Keys/night than the whole home", () => {
-    const whole = computeBaseNightlyKeys({ sizeSqm: 80, sleeps: 4, city: "Lisbon", isVerified: true, spaceType: "entire_place" });
-    const room = computeBaseNightlyKeys({ sizeSqm: 80, sleeps: 4, city: "Lisbon", isVerified: true, spaceType: "private_room", roomsOffered: 1 });
-    expect(room).toBeLessThan(whole);
-    expect(room).toBeGreaterThanOrEqual(MIN_NIGHTLY_KEYS);
-  });
-});
-
-describe("feedback loop — band, threshold, per-cycle cap, anti-gaming", () => {
-  it("target adjustment stays inside ±band for any rating", () => {
-    for (const r of [1, 2, 3, 3.4, 4, 5]) {
-      const t = feedbackTargetAdjustment(r);
-      expect(t).toBeGreaterThanOrEqual(-FEEDBACK_BAND);
-      expect(t).toBeLessThanOrEqual(FEEDBACK_BAND);
-    }
-    expect(feedbackTargetAdjustment(5)).toBeCloseTo(FEEDBACK_BAND, 5);
-  });
-
-  it("is frozen below the minimum review count (anti-gaming)", () => {
-    const next = nextFeedbackAdjustment({ current: 0, avgRating: 5, reviewCount: FEEDBACK_MIN_REVIEWS - 1 });
-    expect(next).toBe(0);
-  });
-
-  it("moves at most one small step per cycle (no swings)", () => {
-    const step1 = nextFeedbackAdjustment({ current: 0, avgRating: 5, reviewCount: 10 });
-    expect(Math.abs(step1)).toBeLessThanOrEqual(FEEDBACK_STEP_PER_CYCLE + 1e-9);
-    const step2 = nextFeedbackAdjustment({ current: step1, avgRating: 5, reviewCount: 10 });
-    expect(step2).toBeGreaterThan(step1);
-    expect(Math.abs(step2 - step1)).toBeLessThanOrEqual(FEEDBACK_STEP_PER_CYCLE + 1e-9);
-  });
-
-  it("converges to and never exceeds the band over many cycles", () => {
-    let adj = 0;
-    for (let i = 0; i < 100; i++) adj = nextFeedbackAdjustment({ current: adj, avgRating: 5, reviewCount: 10 });
-    expect(adj).toBeLessThanOrEqual(FEEDBACK_BAND + 1e-9);
-    expect(adj).toBeCloseTo(FEEDBACK_BAND, 5);
-  });
-
-  it("applyAdjustment clamps the resulting nightly value", () => {
-    expect(applyAdjustment(20, 0.2)).toBe(MAX_NIGHTLY_KEYS);
-    expect(clampAdjustment(5)).toBe(FEEDBACK_BAND);
-    expect(clampAdjustment(-5)).toBe(-FEEDBACK_BAND);
-  });
-});
-
-describe("AI feature valuation — env-gated, bounded, deterministic fallback", () => {
-  const OLD = { ...process.env };
-  beforeEach(() => {
-    delete process.env.AI_PROVIDER;
-    delete process.env.AI_API_KEY;
-    delete process.env.AI_MODEL;
-    delete process.env.KIMI_API_KEY;
-    delete process.env.MOONSHOT_API_KEY;
-    delete process.env.OPENAI_API_KEY;
-    delete process.env.ANTHROPIC_API_KEY;
-  });
-  afterEach(() => {
-    process.env = { ...OLD };
-    vi.restoreAllMocks();
-  });
-
-  it("with no AI key, falls back to a deterministic bounded bonus", async () => {
-    const v = await valuateListingFeatures({
-      city: "Lisbon",
-      spaceType: "entire_place",
-      sizeSqm: 60,
-      sleeps: 4,
-      photoCount: 6,
-      amenities: ["Balcony", "Pool", "AC", "Washer", "Dryer", "Parking"],
-      description: "x".repeat(420),
-    });
-    expect(v.source).toBe("fallback");
-    expect(v.bonus).toBeLessThanOrEqual(AI_FEATURE_BONUS_MAX);
-    expect(v.bonus).toBeGreaterThanOrEqual(-2);
-    expect(Array.isArray(v.factors)).toBe(true);
-  });
-
-  it("same inputs → same fallback bonus (stable, no swing)", async () => {
-    const input = {
-      city: "Lisbon",
-      spaceType: "entire_place",
-      sizeSqm: 60,
-      sleeps: 4,
-      photoCount: 0,
-      amenities: [] as string[],
-      description: "short",
-    };
-    const a = await valuateListingFeatures(input);
-    const b = await valuateListingFeatures(input);
-    expect(a.bonus).toBe(b.bonus);
-  });
-});
-
-describe("composeValuation — stability + fallback == deterministic", () => {
+describe("composeValuation — capacity, frozen feedback", () => {
   const OLD = { ...process.env };
   beforeEach(() => {
     for (const k of ["AI_PROVIDER", "AI_API_KEY", "AI_MODEL", "KIMI_API_KEY", "MOONSHOT_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"]) delete process.env[k];
@@ -201,32 +76,104 @@ describe("composeValuation — stability + fallback == deterministic", () => {
     process.env = { ...OLD };
   });
 
-  it("is deterministic across runs with the same input (no swing)", async () => {
+  it("is deterministic and sets nightlyKeys = capacity, adjustment 0", async () => {
     const a = await composeValuation(SAMPLE);
     const b = await composeValuation(SAMPLE);
     expect(b).toEqual(a);
+    expect(a.nightlyKeysBase).toBe(4);
+    expect(a.nightlyKeys).toBe(4);
+    expect(a.nightlyKeysAdjustment).toBe(0);
   });
 
-  it("without reviews, adjustment is 0 and base drives the value", async () => {
-    const v = await composeValuation(SAMPLE);
+  it("never drifts with reviews (feedback retired)", async () => {
+    const v = await composeValuation({ ...SAMPLE, reviewCount: 8, avgRating: 5, currentAdjustment: 0 });
     expect(v.nightlyKeysAdjustment).toBe(0);
-    expect(v.nightlyKeys).toBe(applyAdjustment(v.nightlyKeysBase, 0));
+    expect(v.nightlyKeys).toBe(4);
     expect(v.explanation.feedback.applied).toBe(false);
   });
 
-  it("a well-reviewed home drifts up at most one cycle step, never beyond the band", async () => {
-    const reviewed = { ...SAMPLE, reviewCount: 8, avgRating: 5, currentAdjustment: 0 };
-    const v = await composeValuation(reviewed);
-    expect(v.nightlyKeysAdjustment).toBeGreaterThan(0);
-    expect(v.nightlyKeysAdjustment).toBeLessThanOrEqual(FEEDBACK_BAND + 1e-9);
-    expect(v.explanation.feedback.applied).toBe(true);
-  });
-
-  it("explanation exposes structured factors + AI source for the UI", async () => {
+  it("explanation exposes a single capacity factor for the UI", async () => {
     const v = await composeValuation(SAMPLE);
     expect(v.explanation.version).toBe(2);
     expect(v.explanation.ai.source).toBe("fallback");
-    expect(v.explanation.factors.find((f) => f.key === "base")?.points).toBe(4);
-    expect(typeof v.explanation.locationTier).toBe("number");
+    expect(v.explanation.factors).toHaveLength(1);
+    expect(v.explanation.factors[0]?.key).toBe("capacity");
+    expect(v.explanation.factors[0]?.points).toBe(4);
+  });
+});
+
+describe("capacity-nights symmetry", () => {
+  it("host N-capacity for 1 night == stay solo for N nights", () => {
+    expect(capacityNightlyKeys(7)).toBe(7);
+    expect(capacityNightlyKeys(1)).toBe(1);
+  });
+});
+
+// ---- Retained pure helpers (no longer drive the value, still unit-tested) ----
+
+describe("rooms coefficient (retained helper)", () => {
+  it("entire_place is full value; a private room is a fraction", () => {
+    expect(roomsCoefficient("entire_place")).toBe(1);
+    expect(roomsCoefficient("private_room", 1)).toBe(0.5);
+    expect(roomsCoefficient("private_room", 99)).toBeLessThan(1);
+  });
+});
+
+describe("location tier (retained helper)", () => {
+  it("tier points are bounded; small towns are tier 5", () => {
+    expect(locationTierPoints(5)).toBe(0);
+    expect(locationTierPoints(1)).toBe(4);
+    expect(seedLocationTier("Tiny Village")).toBe(5);
+  });
+
+  it("browse boost is small and capped", () => {
+    expect(browseTierBoost(5)).toBe(0);
+    expect(browseTierBoost(1)).toBe(BROWSE_TIER_MAX_BOOST);
+    for (let t = 1; t <= 5; t++) {
+      expect(browseTierBoost(t)).toBeGreaterThanOrEqual(0);
+      expect(browseTierBoost(t)).toBeLessThanOrEqual(BROWSE_TIER_MAX_BOOST);
+    }
+  });
+});
+
+describe("feedback math (retained helper)", () => {
+  it("target adjustment stays inside ±band", () => {
+    for (const r of [1, 2, 3, 3.4, 4, 5]) {
+      const t = feedbackTargetAdjustment(r);
+      expect(t).toBeGreaterThanOrEqual(-FEEDBACK_BAND);
+      expect(t).toBeLessThanOrEqual(FEEDBACK_BAND);
+    }
+  });
+
+  it("is frozen below the review threshold and steps slowly above it", () => {
+    expect(nextFeedbackAdjustment({ current: 0, avgRating: 5, reviewCount: FEEDBACK_MIN_REVIEWS - 1 })).toBe(0);
+    const step1 = nextFeedbackAdjustment({ current: 0, avgRating: 5, reviewCount: 10 });
+    expect(Math.abs(step1)).toBeLessThanOrEqual(FEEDBACK_STEP_PER_CYCLE + 1e-9);
+  });
+
+  it("applyAdjustment + clampAdjustment clamp correctly", () => {
+    expect(applyAdjustment(20, 0.2)).toBe(MAX_NIGHTLY_KEYS);
+    expect(clampAdjustment(5)).toBe(FEEDBACK_BAND);
+    expect(clampAdjustment(-5)).toBe(-FEEDBACK_BAND);
+  });
+});
+
+describe("AI feature valuation (retained helper, no longer used in value)", () => {
+  const OLD = { ...process.env };
+  beforeEach(() => {
+    for (const k of ["AI_PROVIDER", "AI_API_KEY", "AI_MODEL", "KIMI_API_KEY", "MOONSHOT_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"]) delete process.env[k];
+  });
+  afterEach(() => {
+    process.env = { ...OLD };
+    vi.restoreAllMocks();
+  });
+
+  it("falls back to a deterministic bounded bonus with no AI key", async () => {
+    const v = await valuateListingFeatures({
+      city: "Lisbon", spaceType: "entire_place", sizeSqm: 60, sleeps: 4,
+      photoCount: 6, amenities: ["Balcony", "Pool"], description: "x".repeat(420),
+    });
+    expect(v.source).toBe("fallback");
+    expect(v.bonus).toBeLessThanOrEqual(AI_FEATURE_BONUS_MAX);
   });
 });
