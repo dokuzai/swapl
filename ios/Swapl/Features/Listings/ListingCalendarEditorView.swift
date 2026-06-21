@@ -62,6 +62,27 @@ final class ListingCalendarEditorViewModel {
             self.error = error.localizedDescription
         }
     }
+
+    // Open a span for booking (DOK-219): carves it out of the closed blocks.
+    // The inverse of block(); used by the quick "open month / year / range" actions
+    // for the closed-by-default model.
+    @discardableResult
+    func open(from: Date, to: Date) async -> Bool {
+        isMutating = true
+        defer { isMutating = false }
+        do {
+            try await CalendarRepository.shared.openDates(
+                listingId: listingId,
+                dateFrom: SwaplDateText.apiString(from: from),
+                dateTo: SwaplDateText.apiString(from: to)
+            )
+            await load()
+            return true
+        } catch {
+            self.error = error.localizedDescription
+            return false
+        }
+    }
 }
 
 struct ListingCalendarEditorView: View {
@@ -71,6 +92,11 @@ struct ListingCalendarEditorView: View {
     @State private var selectionEnd: Date?
     @State private var blockNote = ""
     @State private var showBlockError = false
+
+    // Closed-by-default availability (DOK-219): the "open a specific range" sheet.
+    @State private var isAddingOpenRange = false
+    @State private var newOpenFrom = Calendar.current.startOfDay(for: Date())
+    @State private var newOpenTo = Calendar.current.date(byAdding: .day, value: 7, to: Calendar.current.startOfDay(for: Date())) ?? Date()
 
     let listingTitle: String
 
@@ -119,6 +145,8 @@ struct ListingCalendarEditorView: View {
             VStack(alignment: .leading, spacing: 28) {
                 header
 
+                openActions(availability)
+
                 AvailabilityCalendar(
                     days: days,
                     mode: .blocking,
@@ -134,6 +162,104 @@ struct ListingCalendarEditorView: View {
             .padding(.top, 16)
             .padding(.bottom, 24)
         }
+        .sheet(isPresented: $isAddingOpenRange) { openRangeSheet }
+    }
+
+    // Quick "open dates" actions (DOK-219). Listings are closed by default, so
+    // the host opens periods here; the calendar below stays the place to close
+    // (block) specific dates back up.
+    private func openActions(_ availability: ListingAvailability) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Open dates for booking")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                .foregroundStyle(AirbnbPalette.text)
+            HStack(spacing: 10) {
+                quickOpenButton(title: String(localized: "Open this month"), systemImage: "calendar") {
+                    let r = openThisMonthRange(availability)
+                    Task { await vm.open(from: r.from, to: r.to) }
+                }
+                quickOpenButton(title: String(localized: "Open the whole year"), systemImage: "calendar.badge.checkmark") {
+                    let r = wholeWindowRange(availability)
+                    Task { await vm.open(from: r.from, to: r.to) }
+                }
+            }
+            Button { isAddingOpenRange = true } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "calendar.badge.plus")
+                    Text("Open a specific range…")
+                }
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 48)
+                .background(SwaplSemanticLight.accent.opacity(0.5), in: Capsule())
+            }
+            .disabled(vm.isMutating)
+        }
+    }
+
+    private func quickOpenButton(title: String, systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                Image(systemName: systemImage).font(.system(size: 18, weight: .semibold))
+                Text(title)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                    .multilineTextAlignment(.center)
+            }
+            .foregroundStyle(AirbnbPalette.text)
+            .frame(maxWidth: .infinity)
+            .frame(height: 72)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            }
+        }
+        .disabled(vm.isMutating)
+    }
+
+    private var openRangeSheet: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                RangeDatePicker(from: $newOpenFrom, to: $newOpenTo)
+                    .padding(.horizontal, 14)
+                    .padding(.top, 8)
+                Spacer()
+            }
+            .background(SwaplSemanticLight.background)
+            .navigationTitle("Open a range")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { isAddingOpenRange = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Open") {
+                        let from = newOpenFrom, to = newOpenTo
+                        isAddingOpenRange = false
+                        if to > from { Task { await vm.open(from: from, to: to) } }
+                    }
+                }
+            }
+        }
+    }
+
+    // The remainder of the current month, clamped to the listing window.
+    private func openThisMonthRange(_ a: ListingAvailability) -> (from: Date, to: Date) {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let startOfMonth = cal.date(from: cal.dateComponents([.year, .month], from: today)) ?? today
+        let nextMonth = cal.date(byAdding: .month, value: 1, to: startOfMonth) ?? today
+        let windowEnd = SwaplDateText.parse(a.availableTo) ?? nextMonth
+        return (max(today, startOfMonth), min(nextMonth, windowEnd))
+    }
+
+    private func wholeWindowRange(_ a: ListingAvailability) -> (from: Date, to: Date) {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let windowStart = SwaplDateText.parse(a.availableFrom) ?? today
+        let windowEnd = SwaplDateText.parse(a.availableTo) ?? today
+        return (max(today, windowStart), windowEnd)
     }
 
     private var header: some View {
@@ -141,7 +267,7 @@ struct ListingCalendarEditorView: View {
             Text(listingTitle)
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
-            Text("Tap a start date, then an end date to block dates you don't want bookable. Swaps and Stay-with-Keys bookings are shown struck through and can't be edited here.")
+            Text("Your home is bookable only on the dates you open. Open periods with the quick actions below; tap a start and end date on the calendar to close dates back up. Swaps and Stay-with-Keys bookings are struck through and can't be edited here.")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)

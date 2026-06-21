@@ -56696,6 +56696,1072 @@
           }
         }
       }
+    },
+    "Open the dates you can host" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح التواريخ التي يمكنك الاستضافة فيها"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح التواريخ التي يمكنك الاستضافة فيها"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιξε τις ημερομηνίες που μπορείς να φιλοξενήσεις"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre las fechas en las que puedes alojar"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تاریخ‌هایی که می‌توانی میزبانی کنی را باز کن"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrez les dates où vous pouvez accueillir"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka tanggal saat kamu bisa menjadi tuan rumah"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri le date in cui puoi ospitare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホストできる日付を開放"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide datele în care poți găzdui"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดวันที่ที่คุณรับรองแขกได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ev sahipliği yapabileceğin tarihleri aç"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开放你能接待的日期"
+          }
+        }
+      }
+    },
+    "Your calendar starts closed. Open only the periods you can actually host — guests can't request dates you haven't opened." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يبدأ تقويمك مغلقًا. افتح فقط الفترات التي يمكنك الاستضافة فيها فعليًا — لا يمكن للضيوف طلب تواريخ لم تفتحها."
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يبدأ تقويمك مغلقًا. افتح فقط الفترات التي يمكنك الاستضافة فيها فعليًا — لا يمكن للضيوف طلب تواريخ لم تفتحها."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Το ημερολόγιό σου ξεκινά κλειστό. Άνοιξε μόνο τις περιόδους που μπορείς πραγματικά να φιλοξενήσεις — οι επισκέπτες δεν μπορούν να ζητήσουν ημερομηνίες που δεν έχεις ανοίξει."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu calendario empieza cerrado. Abre solo los periodos en los que realmente puedes alojar: los huéspedes no pueden solicitar fechas que no hayas abierto."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تقویم شما در ابتدا بسته است. فقط دوره‌هایی را که واقعاً می‌توانی میزبانی کنی باز کن — مهمان‌ها نمی‌توانند تاریخ‌هایی را که باز نکرده‌ای درخواست کنند."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre calendrier est fermé au départ. Ouvrez seulement les périodes où vous pouvez vraiment accueillir — les voyageurs ne peuvent pas demander des dates que vous n'avez pas ouvertes."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalendermu mulai tertutup. Buka hanya periode saat kamu benar-benar bisa menjadi tuan rumah — tamu tidak bisa meminta tanggal yang belum kamu buka."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo calendario parte chiuso. Apri solo i periodi in cui puoi davvero ospitare — gli ospiti non possono richiedere date che non hai aperto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カレンダーは最初は閉じています。実際にホストできる期間だけを開放してください。ゲストは開放していない日付をリクエストできません。"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendarul tău începe închis. Deschide doar perioadele în care chiar poți găzdui — oaspeții nu pot cere date pe care nu le-ai deschis."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ปฏิทินของคุณเริ่มต้นแบบปิด เปิดเฉพาะช่วงที่คุณรับรองแขกได้จริง — แขกไม่สามารถขอวันที่ที่คุณยังไม่ได้เปิด"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takvimin kapalı başlar. Yalnızca gerçekten ev sahipliği yapabileceğin dönemleri aç — misafirler açmadığın tarihleri talep edemez."
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的日历默认关闭。只开放你确实能接待的时段——房客无法申请你未开放的日期。"
+          }
+        }
+      }
+    },
+    "Open this month" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح هذا الشهر"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح هذا الشهر"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιξε αυτόν τον μήνα"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir este mes"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "این ماه را باز کن"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir ce mois"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka bulan ini"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri questo mese"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月を開放"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide luna aceasta"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดเดือนนี้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ayı aç"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开放本月"
+          }
+        }
+      }
+    },
+    "Open the whole year" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح السنة كاملة"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح السنة كاملة"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιξε όλο τον χρόνο"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir todo el año"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "کل سال را باز کن"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir toute l'année"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka sepanjang tahun"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri tutto l'anno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1年間すべてを開放"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide tot anul"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดทั้งปี"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm yılı aç"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开放全年"
+          }
+        }
+      }
+    },
+    "Open a specific range…" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح نطاقًا محددًا…"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح نطاقًا محددًا…"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιξε ένα συγκεκριμένο διάστημα…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir un intervalo específico…"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "یک بازه مشخص را باز کن…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir une période précise…"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka rentang tertentu…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri un intervallo specifico…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "特定の期間を開放…"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide un interval anume…"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดช่วงที่ระบุ…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belirli bir aralığı aç…"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开放指定时间段…"
+          }
+        }
+      }
+    },
+    "No open dates yet — your home isn't bookable until you open some." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا توجد تواريخ مفتوحة بعد — لا يمكن حجز منزلك حتى تفتح بعضها."
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا توجد تواريخ مفتوحة بعد — لا يمكن حجز منزلك حتى تفتح بعضها."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Δεν υπάρχουν ανοιχτές ημερομηνίες ακόμα — το σπίτι σου δεν μπορεί να κρατηθεί μέχρι να ανοίξεις κάποιες."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay fechas abiertas: tu casa no se puede reservar hasta que abras algunas."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هنوز تاریخ بازی وجود ندارد — تا زمانی که چند تاریخ باز نکنی خانه‌ات قابل رزرو نیست."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune date ouverte pour l'instant — votre logement n'est pas réservable tant que vous n'en ouvrez pas."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belum ada tanggal terbuka — rumahmu tidak bisa dipesan sampai kamu membuka beberapa."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna data aperta — la tua casa non è prenotabile finché non ne apri qualcuna."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開放された日付がありません — 日付を開放するまで予約できません。"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Încă nu ai date deschise — locuința nu poate fi rezervată până nu deschizi câteva."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ยังไม่มีวันที่เปิด — บ้านของคุณจะจองไม่ได้จนกว่าคุณจะเปิดบางวัน"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz açık tarih yok — birkaçını açana kadar eviniz rezerve edilemez."
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没有开放的日期——在你开放之前，房源无法被预订。"
+          }
+        }
+      }
+    },
+    "Open a range" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح نطاقًا"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح نطاقًا"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιγμα διαστήματος"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir un intervalo"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "یک بازه باز کن"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir une période"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka rentang"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri un intervallo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期間を開放"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide un interval"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดช่วงวันที่"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir aralık aç"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开放时间段"
+          }
+        }
+      }
+    },
+    "Open" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιγμα"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "باز کن"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開放"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิด"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aç"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开放"
+          }
+        }
+      }
+    },
+    "Remove open range" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إزالة النطاق المفتوح"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إزالة النطاق المفتوح"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αφαίρεση ανοιχτού διαστήματος"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar intervalo abierto"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حذف بازه باز"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer la période ouverte"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hapus rentang terbuka"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi intervallo aperto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開放した期間を削除"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elimină intervalul deschis"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ลบช่วงที่เปิด"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açık aralığı kaldır"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除开放的时间段"
+          }
+        }
+      }
+    },
+    "Open or close individual dates from your listing's calendar after saving." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح أو أغلق تواريخ فردية من تقويم الإعلان بعد الحفظ."
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح أو أغلق تواريخ فردية من تقويم الإعلان بعد الحفظ."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιξε ή κλείσε μεμονωμένες ημερομηνίες από το ημερολόγιο της καταχώρισης μετά την αποθήκευση."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre o cierra fechas concretas desde el calendario del anuncio después de guardar."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پس از ذخیره، می‌توانی تاریخ‌های جداگانه را از تقویم آگهی باز یا بسته کنی."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrez ou fermez des dates précises depuis le calendrier de l'annonce après l'enregistrement."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka atau tutup tanggal tertentu dari kalender listing setelah menyimpan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri o chiudi singole date dal calendario dell'annuncio dopo aver salvato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存後、リスティングのカレンダーから個々の日付を開閉できます。"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide sau închide date individuale din calendarul anunțului după salvare."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดหรือปิดวันที่แต่ละวันจากปฏิทินประกาศได้หลังบันทึก"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydettikten sonra ilan takviminden tek tek tarihleri açıp kapatabilirsin."
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存后可在房源日历中单独开放或关闭日期。"
+          }
+        }
+      }
+    },
+    "Open dates for booking" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح تواريخ للحجز"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح تواريخ للحجز"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άνοιξε ημερομηνίες για κρατήσεις"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir fechas para reservar"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تاریخ‌ها را برای رزرو باز کن"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir des dates à la réservation"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka tanggal untuk pemesanan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri date per la prenotazione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "予約できる日付を開放"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deschide date pentru rezervare"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิดวันที่สำหรับการจอง"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezervasyona tarih aç"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开放可预订的日期"
+          }
+        }
+      }
+    },
+    "Your home is bookable only on the dates you open. Open periods with the quick actions below; tap a start and end date on the calendar to close dates back up. Swaps and Stay-with-Keys bookings are struck through and can't be edited here." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا يمكن حجز منزلك إلا في التواريخ التي تفتحها. افتح الفترات عبر الإجراءات السريعة أدناه؛ المس تاريخ بداية ونهاية على التقويم لإغلاق التواريخ مجددًا. تظهر عمليات التبادل وحجوزات Stay-with-Keys مشطوبة ولا يمكن تعديلها هنا."
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا يمكن حجز منزلك إلا في التواريخ التي تفتحها. افتح الفترات عبر الإجراءات السريعة أدناه؛ المس تاريخ بداية ونهاية على التقويم لإغلاق التواريخ مجددًا. تظهر عمليات التبادل وحجوزات Stay-with-Keys مشطوبة ولا يمكن تعديلها هنا."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Το σπίτι σου μπορεί να κρατηθεί μόνο τις ημερομηνίες που ανοίγεις. Άνοιξε περιόδους με τις γρήγορες ενέργειες παρακάτω· πάτησε μια ημερομηνία έναρξης και λήξης στο ημερολόγιο για να ξανακλείσεις ημερομηνίες. Οι ανταλλαγές και οι κρατήσεις Stay-with-Keys εμφανίζονται διαγραμμένες και δεν επεξεργάζονται εδώ."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu casa solo se puede reservar en las fechas que abras. Abre periodos con las acciones rápidas de abajo; toca una fecha de inicio y otra de fin en el calendario para volver a cerrar fechas. Los intercambios y las reservas Stay-with-Keys aparecen tachados y no se editan aquí."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خانه‌ات فقط در تاریخ‌هایی که باز می‌کنی قابل رزرو است. با اقدامات سریع پایین دوره‌ها را باز کن؛ برای بستن دوباره تاریخ‌ها، روی تقویم یک تاریخ شروع و پایان را لمس کن. مبادله‌ها و رزروهای Stay-with-Keys خط‌خورده نمایش داده می‌شوند و اینجا قابل ویرایش نیستند."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre logement n'est réservable qu'aux dates que vous ouvrez. Ouvrez des périodes avec les actions rapides ci-dessous ; touchez une date de début et de fin sur le calendrier pour refermer des dates. Les échanges et les réservations Stay-with-Keys sont barrés et ne se modifient pas ici."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rumahmu hanya bisa dipesan pada tanggal yang kamu buka. Buka periode dengan aksi cepat di bawah; ketuk tanggal mulai dan selesai di kalender untuk menutup tanggal lagi. Pertukaran dan pemesanan Stay-with-Keys dicoret dan tidak bisa diedit di sini."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua casa è prenotabile solo nelle date che apri. Apri i periodi con le azioni rapide qui sotto; tocca una data di inizio e una di fine sul calendario per richiudere le date. Gli scambi e le prenotazioni Stay-with-Keys sono barrati e non si modificano qui."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あなたの住まいは、開放した日付のみ予約可能です。下のクイック操作で期間を開放し、カレンダーで開始日と終了日をタップすると日付を再び閉じられます。スワップとStay-with-Keysの予約は取り消し線付きで表示され、ここでは編集できません。"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locuința poate fi rezervată doar în datele pe care le deschizi. Deschide perioade cu acțiunile rapide de mai jos; atinge o dată de început și una de sfârșit pe calendar pentru a închide din nou datele. Schimburile și rezervările Stay-with-Keys sunt tăiate și nu pot fi editate aici."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "บ้านของคุณจองได้เฉพาะวันที่คุณเปิดเท่านั้น เปิดช่วงเวลาด้วยการดำเนินการด่วนด้านล่าง แตะวันเริ่มต้นและวันสิ้นสุดบนปฏิทินเพื่อปิดวันที่อีกครั้ง การแลกเปลี่ยนและการจอง Stay-with-Keys จะถูกขีดฆ่าและแก้ไขที่นี่ไม่ได้"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eviniz yalnızca açtığınız tarihlerde rezerve edilebilir. Aşağıdaki hızlı işlemlerle dönemleri açın; tarihleri tekrar kapatmak için takvimde bir başlangıç ve bitiş tarihine dokunun. Takaslar ve Stay-with-Keys rezervasyonları üstü çizili gösterilir ve burada düzenlenemez."
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的房源只能在你开放的日期被预订。用下方的快捷操作开放时段；在日历上点击开始和结束日期可重新关闭日期。换房和 Stay-with-Keys 预订以删除线显示，无法在此编辑。"
+          }
+        }
+      }
+    },
+    "Add" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إضافة"
+          }
+        },
+        "ar-PS" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إضافة"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Προσθήκη"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افزودن"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tambah"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaugă"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เพิ่ม"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekle"
+          }
+        },
+        "zh" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"
