@@ -730,6 +730,7 @@ struct ProposalSheetView: View {
     @State private var dateFrom: Date
     @State private var dateTo: Date
     @State private var message = ""
+    @State private var guestCount = 1   // DOK-219: travellers, capped at the home's capacity
     @State private var error: String?
     @State private var isSubmitting = false
     // Real availability so the picker can show booked/out-of-window days and
@@ -785,6 +786,21 @@ struct ProposalSheetView: View {
                     Text("Dates")
                 } footer: {
                     Text("Tap a check-in then a check-out that fit both homes' availability. Taken dates are greyed out.")
+                }
+
+                Section {
+                    Stepper(value: $guestCount, in: 1...max(1, detail.listing.sleeps)) {
+                        HStack {
+                            Text("Guests")
+                            Spacer()
+                            Text("\(guestCount)")
+                                .foregroundStyle(AirbnbPalette.secondaryText)
+                        }
+                    }
+                } header: {
+                    Text("Guests")
+                } footer: {
+                    Text("This home sleeps \(detail.listing.sleeps).")
                 }
 
                 Section("Message") {
@@ -948,7 +964,8 @@ struct ProposalSheetView: View {
                 targetListingId: detail.listing.id,
                 dateFrom: SwaplDateText.apiString(from: dateFrom),
                 dateTo: SwaplDateText.apiString(from: dateTo),
-                message: message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : message
+                message: message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : message,
+                guestCount: guestCount
             )
             let response = try await ProposalRepository.shared.create(draft)
             onCreated(response.id)

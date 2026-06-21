@@ -77,6 +77,9 @@ struct ProposalDraft: Encodable, Sendable {
     let dateFrom: String
     let dateTo: String
     let message: String?
+    // Guests travelling to the target home (DOK-219). Validated server-side
+    // against the target's capacity. Optional so older call sites still compile.
+    var guestCount: Int? = nil
 }
 
 struct ProposalCreateResponse: Decodable, Sendable {
