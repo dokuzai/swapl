@@ -5,7 +5,9 @@
 //   premium = 1.4€/m² of the smaller home × number of nights, capped at €120
 //   platformShare = round(premium * 0.20)   // 20% partner kickback
 
-export const COVERAGE_AMOUNT_EUR = 150_000;
+// Swapl Guarantee, not insurance: Full-cover ceiling and excess (franchigia).
+export const COVERAGE_AMOUNT_EUR = 5_000;
+export const DEDUCTIBLE_AMOUNT_EUR = 750;
 const PREMIUM_PER_SQM_PER_NIGHT_CENTS = 1.4;
 const PREMIUM_CAP_CENTS = 12_000;
 const PLATFORM_SHARE = 0.2;

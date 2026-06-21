@@ -408,7 +408,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
             agreementId: agreement.id,
             provider: provider.name,
             policyNumber: policyResult?.policyNumber ?? fallbackPolicyNumber,
-            coverageAmount: policyResult?.coverageAmount ?? 150_000,
+            coverageAmount: policyResult?.coverageAmount ?? 5_000,
             status: policyResult ? "active" : "pending",
             premiumCents: policyResult?.premiumCents ?? 0,
             platformShareCents: policyResult?.platformShareCents ?? 0,

@@ -1,5 +1,5 @@
 // Non-binding premium preview for a pending proposal. Lets the swap-accept UI
-// show "covered up to €150,000 — €X premium" before the user commits, so the
+// show "Full cover up to €5,000 — €X" before the user commits, so the
 // quote always matches what the bind path (proposal accept) will charge.
 
 import { NextResponse } from "next/server";

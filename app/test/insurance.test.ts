@@ -82,7 +82,9 @@ const samplePolicy: PolicyRecord = {
   provider: "swapl-cover",
   policyNumber: "SC-2026-123456",
   status: "active",
-  coverageAmount: 150_000,
+  tier: "full",
+  coverageAmount: 5_000,
+  deductibleAmount: 750,
   premiumCents: 700,
   platformShareCents: 140,
   documentsUrl: "/api/insurance/documents/SC-2026-123456",
@@ -140,10 +142,12 @@ describe("policyView", () => {
 });
 
 describe("renderCertificate", () => {
-  it("includes the policy number, coverage, both homes and the stay window", () => {
+  it("includes the guarantee number, cover, excess, both homes and the stay window", () => {
     const cert = renderCertificate(samplePolicy, sampleAgreement);
     expect(cert).toContain("SC-2026-123456");
-    expect(cert).toContain("€150,000");
+    expect(cert).toContain("€5,000");
+    expect(cert).toContain("€750");
+    expect(cert).toContain("not insurance");
     expect(cert).toContain("Alfama, Lisbon, Portugal");
     expect(cert).toContain("Kreuzberg, Berlin, Germany");
     expect(cert).toContain("2026-06-01 → 2026-06-11");
