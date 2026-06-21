@@ -80,11 +80,21 @@ struct ListingCreateDraft: Encodable, Sendable {
     var spaceType: String
     // Rooms offered when spaceType == "private_room" (1–15); 1 for a whole place.
     var roomsOffered: Int
+    // Closed-by-default availability (DOK-219). When non-nil, the new listing is
+    // bookable only on these ranges (empty = nothing bookable until the host opens
+    // dates). Sent on create only; left nil on update so the edit body omits it
+    // and never resets the host's calendar.
+    var openRanges: [ListingOpenRange]? = nil
     // Publish acknowledgment (DOK-162). REQUIRED on create: the host self-attests
     // they have the right to host in the chosen mode. Ignored on update — left nil
     // so the edit flow's encoded body omits them entirely.
     var ackAccepted: Bool? = nil
     var mode: String? = nil
+}
+
+struct ListingOpenRange: Encodable, Sendable {
+    var dateFrom: String
+    var dateTo: String
 }
 
 struct SearchFilters: Sendable {

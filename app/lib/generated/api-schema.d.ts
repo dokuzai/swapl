@@ -6519,6 +6519,78 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/app-feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit app-experience feedback
+         * @description Authenticated member feedback for app surfaces. Upserts one row per user, surface, and contextKey.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        score: number;
+                        comment?: string;
+                        /** @enum {string} */
+                        source: "web" | "ios" | "android";
+                        /**
+                         * @default account
+                         * @enum {string}
+                         */
+                        surface?: "account" | "post-swap" | "post-review";
+                        /** @default  */
+                        contextKey?: string;
+                        context?: {
+                            [key: string]: unknown;
+                        };
+                    };
+                };
+            };
+            responses: {
+                /** @description Feedback stored */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/i18n/locale": {
         parameters: {
             query?: never;
@@ -7050,6 +7122,84 @@ export interface paths {
                 };
             };
         };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/listings/{id}/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Open a date range for booking (owner only)
+         * @description Closed-by-default availability (DOK-219). Opens the half-open [dateFrom, dateTo) span so it becomes bookable, by carving it out of the host blocks covering it. Real bookings are never freed. The inverse (close) is POST /api/listings/{id}/blocked-ranges. Clients compute the span for their quick actions (open this month / open the whole year / custom range).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** Format: date-time */
+                        dateFrom: string;
+                        /** Format: date-time */
+                        dateTo: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Opened */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not the owner */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Listing not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -8439,6 +8589,11 @@ export interface components {
             availableTo: string;
             minStayDays: number;
             maxStayDays: number;
+            /** @description Closed-by-default availability (DOK-219). When present, the listing is bookable ONLY on these half-open [dateFrom, dateTo) ranges (within the window); everything else is closed. An empty array means nothing is bookable until the host opens dates. Omit to keep the whole window open (legacy behaviour). Open more dates later via POST /api/listings/{id}/availability. */
+            openRanges?: {
+                dateFrom: string;
+                dateTo: string;
+            }[];
             photos: string[];
             tags: string[];
             /**

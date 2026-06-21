@@ -23,6 +23,33 @@ export function rangesOverlap(aFrom: Date, aTo: Date, bFrom: Date, bTo: Date): b
 
 export type DateRange = { dateFrom: Date; dateTo: Date };
 
+/**
+ * Subtract every `cut` from `base`, returning the disjoint half-open remainders
+ * (in order). Used by host availability: closing a window except the opened
+ * ranges (base = window, cuts = open ranges) and opening a span out of a block
+ * (base = block, cuts = [open]). Zero-length remainders are dropped.
+ */
+export function subtractRanges(base: DateRange, cuts: DateRange[]): DateRange[] {
+  let segments: DateRange[] = [base];
+  for (const cut of cuts) {
+    const next: DateRange[] = [];
+    for (const seg of segments) {
+      if (cut.dateTo <= seg.dateFrom || cut.dateFrom >= seg.dateTo) {
+        next.push(seg); // no overlap — keep the segment whole
+        continue;
+      }
+      if (cut.dateFrom > seg.dateFrom) {
+        next.push({ dateFrom: seg.dateFrom, dateTo: new Date(Math.min(cut.dateFrom.getTime(), seg.dateTo.getTime())) });
+      }
+      if (cut.dateTo < seg.dateTo) {
+        next.push({ dateFrom: new Date(Math.max(cut.dateTo.getTime(), seg.dateFrom.getTime())), dateTo: seg.dateTo });
+      }
+    }
+    segments = next.filter((s) => s.dateTo.getTime() > s.dateFrom.getTime());
+  }
+  return segments;
+}
+
 export type BookedRange = {
   dateFrom: string;
   dateTo: string;

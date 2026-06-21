@@ -596,6 +596,11 @@ struct ListingCreationView: View {
     @State private var isDetectingLocation = false
     @State private var locationPermissionDenied = false
 
+    // Closed-by-default availability (DOK-219): the "open a specific range" sheet.
+    @State private var isAddingOpenRange = false
+    @State private var newRangeFrom = Calendar.current.startOfDay(for: Date())
+    @State private var newRangeTo = Calendar.current.date(byAdding: .day, value: 7, to: Calendar.current.startOfDay(for: Date())) ?? Date()
+
     // Publish acknowledgment (DOK-162). The host picks the hosting mode and must
     // tick a self-attestation before a NEW listing can publish; never shown when
     // editing (the ack is logged once at create time).
@@ -872,58 +877,162 @@ struct ListingCreationView: View {
         }
     }
 
+    @ViewBuilder
     private var datesStep: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            // From → To summary, mirroring the booking calendars.
-            HStack(spacing: 10) {
-                availabilityChip(title: String(localized: "Available from"), date: draft.availableFrom)
-                Image(systemName: "arrow.right")
-                    .font(.system(size: 13, weight: .semibold))
+        if isEditing {
+            // Editing keeps availability where it lives — the listing's calendar —
+            // so we don't reset it here. Just the stay limits.
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Open or close individual dates from your listing's calendar after saving.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
                     .foregroundStyle(AirbnbPalette.secondaryText)
-                availabilityChip(title: String(localized: "Available to"), date: draft.availableTo)
+                    .fixedSize(horizontal: false, vertical: true)
+                StepperCard(title: "Minimum stay", value: $draft.minStayDays, range: 1...180, suffix: "nights")
+                StepperCard(title: "Maximum stay", value: $draft.maxStayDays, range: 1...365, suffix: "nights")
+            }
+        } else {
+            createDatesStep
+        }
+    }
+
+    // Closed-by-default availability (DOK-219): the host opens only the periods
+    // they can host. Nothing is bookable until they do — lowering the risk of
+    // being booked when unavailable. Quick actions cover the common cases.
+    private var createDatesStep: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Open the dates you can host")
+                    .font(.swaplDisplay(22, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Text("Your calendar starts closed. Open only the periods you can actually host — guests can't request dates you haven't opened.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
-            // Same in-place range calendar as the rest of the app: tap a start
-            // day, then an end day. Replaces the two single-date pickers that
-            // couldn't express a from→to range.
-            VStack(spacing: 0) {
-                RangeDatePicker(from: $draft.availableFrom, to: $draft.availableTo)
-                    .padding(.vertical, 6)
+            HStack(spacing: 10) {
+                quickOpenButton(title: String(localized: "Open this month"), systemImage: "calendar") {
+                    addOpenRange(openThisMonthRange())
+                }
+                quickOpenButton(title: String(localized: "Open the whole year"), systemImage: "calendar.badge.checkmark") {
+                    openWholeYear()
+                }
             }
-            .padding(.horizontal, 14)
-            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
-                    .stroke(AirbnbPalette.hairline)
-            )
+            Button { isAddingOpenRange = true } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "calendar.badge.plus")
+                    Text("Open a specific range…")
+                }
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 48)
+                .background(SwaplSemanticLight.accent.opacity(0.5), in: Capsule())
+            }
 
-            Text("Tap a start day, then an end day, to set your whole stay.")
-                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
-                .foregroundStyle(AirbnbPalette.secondaryText)
-                .fixedSize(horizontal: false, vertical: true)
+            if draft.openRanges.isEmpty {
+                Label("No open dates yet — your home isn't bookable until you open some.", systemImage: "lock")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                VStack(spacing: 8) {
+                    ForEach(draft.openRanges) { openRangeRow($0) }
+                }
+            }
 
             StepperCard(title: "Minimum stay", value: $draft.minStayDays, range: 1...180, suffix: "nights")
             StepperCard(title: "Maximum stay", value: $draft.maxStayDays, range: 1...365, suffix: "nights")
         }
+        .sheet(isPresented: $isAddingOpenRange) { addOpenRangeSheet }
     }
 
-    private func availabilityChip(title: String, date: Date) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(title)
-                .font(.swaplBody(SwaplDesignSystem.FontSize.tiny, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.secondaryText)
-                .textCase(.uppercase)
-            Text(SwaplDateText.medium(from: SwaplDateText.apiString(from: date)))
-                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
-                .foregroundStyle(AirbnbPalette.text)
+    private func quickOpenButton(title: String, systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                Image(systemName: systemImage).font(.system(size: 18, weight: .semibold))
+                Text(title)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                    .multilineTextAlignment(.center)
+            }
+            .foregroundStyle(AirbnbPalette.text)
+            .frame(maxWidth: .infinity)
+            .frame(height: 72)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func openRangeRow(_ range: DraftDateRange) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: "calendar").foregroundStyle(SwaplSemanticLight.primary)
+            Text(SwaplDateText.range(from: SwaplDateText.apiString(from: range.from), to: SwaplDateText.apiString(from: range.to)))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+            Spacer()
+            Button {
+                draft.openRanges.removeAll { $0.id == range.id }
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(SwaplSemanticLight.primaryForeground, Color.black.opacity(0.35))
+            }
+            .accessibilityLabel("Remove open range")
+        }
         .padding(12)
         .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
-        .overlay(
+        .overlay {
             RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
                 .stroke(AirbnbPalette.hairline)
-        )
+        }
+    }
+
+    private var addOpenRangeSheet: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                RangeDatePicker(from: $newRangeFrom, to: $newRangeTo)
+                    .padding(.horizontal, 14)
+                    .padding(.top, 8)
+                Spacer()
+            }
+            .background(SwaplSemanticLight.background)
+            .navigationTitle("Open a range")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { isAddingOpenRange = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        addOpenRange(DraftDateRange(from: newRangeFrom, to: newRangeTo))
+                        isAddingOpenRange = false
+                    }
+                }
+            }
+        }
+    }
+
+    private func addOpenRange(_ range: DraftDateRange) {
+        guard range.to > range.from else { return }
+        draft.openRanges.append(range)
+    }
+
+    // The remainder of the current month (from today), so "Open this month"
+    // never opens dates already in the past.
+    private func openThisMonthRange() -> DraftDateRange {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let startOfMonth = cal.date(from: cal.dateComponents([.year, .month], from: today)) ?? today
+        let nextMonth = cal.date(byAdding: .month, value: 1, to: startOfMonth) ?? today
+        return DraftDateRange(from: max(today, startOfMonth), to: nextMonth)
+    }
+
+    private func openWholeYear() {
+        draft.openRanges = [DraftDateRange(from: draft.availableFrom, to: draft.availableTo)]
     }
 
     private var photosSection: some View {
@@ -1377,6 +1486,10 @@ struct ListingCreationView: View {
                 var payload = draft.payload
                 payload.ackAccepted = true
                 payload.mode = ackMode.rawValue
+                // Closed-by-default availability (DOK-219): always send the opened
+                // ranges on create (empty = nothing bookable until the host opens
+                // dates). Only on create — edit never resets the calendar.
+                payload.openRanges = draft.openRangesPayload
                 response = try await ListingRepository.shared.create(payload)
             }
             createdListingId = response.id
@@ -1446,8 +1559,12 @@ private struct ListingCreationDraft {
     var ac = true
     var washer = true
     var dishwasher = true
-    var availableFrom = Calendar.current.date(byAdding: .day, value: 60, to: Date()) ?? Date()
-    var availableTo = Calendar.current.date(byAdding: .day, value: 90, to: Date()) ?? Date()
+    // Closed-by-default availability (DOK-219): the window is a broad outer bound
+    // (today … +12 months) and the host opens the periods they can host inside it.
+    // `openRanges` starts empty → nothing bookable until the host opens dates.
+    var availableFrom = Calendar.current.startOfDay(for: Date())
+    var availableTo = Calendar.current.date(byAdding: .month, value: 12, to: Calendar.current.startOfDay(for: Date())) ?? Date()
+    var openRanges: [DraftDateRange] = []
     var minStayDays = 7
     var maxStayDays = 30
     var photos: [String] = []
@@ -1602,6 +1719,21 @@ private struct ListingCreationDraft {
             roomsOffered: spaceType == "private_room" ? max(1, min(roomsOffered, 15)) : 1
         )
     }
+
+    // Open ranges encoded for POST /api/listings (create only). Empty array =
+    // closed by default. Half-open [from, to) — drops any zero-length range.
+    var openRangesPayload: [ListingOpenRange] {
+        openRanges
+            .filter { $0.to > $0.from }
+            .map { ListingOpenRange(dateFrom: SwaplDateText.apiString(from: $0.from), dateTo: SwaplDateText.apiString(from: $0.to)) }
+    }
+}
+
+// A host-chosen bookable span in the create flow (DOK-219).
+struct DraftDateRange: Identifiable, Equatable {
+    let id = UUID()
+    var from: Date
+    var to: Date
 }
 
 private struct ListingField: View {

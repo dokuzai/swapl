@@ -6,6 +6,7 @@ import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { checkRateLimitDurable } from "@/lib/rate-limit";
 import { ensureCanCreateProposal, PlanLimitError } from "@/lib/billing/limits";
+import { isAvailable } from "@/lib/listing/availability";
 import { apiError, accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -157,6 +158,22 @@ export async function POST(req: Request) {
   if (!target) return notFound("Target listing not found");
   if (target.userId === session.userId) {
     return invalidInput("Cannot swap with yourself.");
+  }
+
+  // Dates must fit BOTH homes' availability (DOK-219). A swap is simultaneous —
+  // both homes are occupied [dateFrom, dateTo) — so the requested range has to
+  // be free (within the published window, min/max stay, and not already taken)
+  // on each side. This is the guard that stops guests requesting dates the host
+  // isn't open for, and stops hosts promising dates they can't honour.
+  const [targetFree, mineFree] = await Promise.all([
+    isAvailable(target, dateFrom, dateTo),
+    isAvailable(mine, dateFrom, dateTo),
+  ]);
+  if (!targetFree) {
+    return invalidInput("Those dates aren't available for that home. Pick dates inside its open calendar.");
+  }
+  if (!mineFree) {
+    return invalidInput("Your home isn't available for those dates. Open them on your calendar or pick others.");
   }
 
   // Plan-aware monthly cap (R6): Free = 3/mo, Plus/Pro = unlimited.

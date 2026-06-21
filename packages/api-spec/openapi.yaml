@@ -1026,6 +1026,21 @@ components:
         availableTo: { type: string }
         minStayDays: { type: integer }
         maxStayDays: { type: integer }
+        openRanges:
+          type: array
+          description: >-
+            Closed-by-default availability (DOK-219). When present, the listing is
+            bookable ONLY on these half-open [dateFrom, dateTo) ranges (within the
+            window); everything else is closed. An empty array means nothing is
+            bookable until the host opens dates. Omit to keep the whole window
+            open (legacy behaviour). Open more dates later via
+            POST /api/listings/{id}/availability.
+          items:
+            type: object
+            required: [dateFrom, dateTo]
+            properties:
+              dateFrom: { type: string }
+              dateTo: { type: string }
         photos:
           type: array
           items: { type: string }
@@ -4946,6 +4961,41 @@ paths:
         '401': { description: Unauthenticated }
         '403': { description: Not the owner }
         '404': { description: Listing or range not found }
+
+  /api/listings/{id}/availability:
+    post:
+      tags: [listings]
+      summary: Open a date range for booking (owner only)
+      description: >-
+        Closed-by-default availability (DOK-219). Opens the half-open
+        [dateFrom, dateTo) span so it becomes bookable, by carving it out of the
+        host blocks covering it. Real bookings are never freed. The inverse
+        (close) is POST /api/listings/{id}/blocked-ranges. Clients compute the
+        span for their quick actions (open this month / open the whole year /
+        custom range).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dateFrom, dateTo]
+              properties:
+                dateFrom: { type: string, format: date-time }
+                dateTo: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Opened
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the owner }
+        '404': { description: Listing not found }
 
   /api/keys/stays:
     get:

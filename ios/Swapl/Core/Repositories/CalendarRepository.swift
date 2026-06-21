@@ -37,4 +37,19 @@ final class CalendarRepository: @unchecked Sendable {
             body: HostBlockDeleteRequest(rangeId: rangeId)
         )
     }
+
+    // POST — open a date range so it becomes bookable (DOK-219). The inverse of
+    // blockDates; carves the span out of the host's closed blocks. Owner-only.
+    @discardableResult
+    func openDates(listingId: String, dateFrom: String, dateTo: String) async throws -> EmptyResponse {
+        try await APIClient.shared.send(
+            "POST", "/api/listings/\(listingId)/availability",
+            body: OpenDatesRequest(dateFrom: dateFrom, dateTo: dateTo)
+        )
+    }
+}
+
+private struct OpenDatesRequest: Encodable, Sendable {
+    let dateFrom: String
+    let dateTo: String
 }

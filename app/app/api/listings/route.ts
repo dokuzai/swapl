@@ -10,6 +10,7 @@ import { queryListings, getViewerListing } from "@/lib/listing-query";
 import { apiError, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { nightlyKeysFor } from "@/lib/keys/value";
 import { PUBLISH_ACK_VERSION, ackLogTextForMode, isPublishAckMode } from "@/lib/listing/publish-ack";
+import { closeWindowExcept } from "@/lib/listing/host-availability";
 
 // Mobile / SPA-friendly listing search. Mirrors what the /listings RSC page
 // does today, returning pre-scored results so clients don't recompute.
@@ -176,6 +177,15 @@ export async function POST(req: Request) {
       mode: ackMode,
     },
   });
+
+  // Closed-by-default availability (DOK-219): if the client opted into explicit
+  // availability (sent openRanges, even empty), block everything in the window
+  // except those ranges. Clients that omit openRanges keep the whole window open.
+  if (data.openRanges) {
+    const window = { dateFrom: data.availableFrom, dateTo: data.availableTo };
+    const openRanges = data.openRanges.filter((r) => r.dateTo > r.dateFrom);
+    await prisma.$transaction((tx) => closeWindowExcept(tx, created.id, window, openRanges));
+  }
 
   return NextResponse.json({ ok: true, id: created.id });
 }
