@@ -8,6 +8,6 @@ export default function Image() {
   return renderOgImage({
     kicker: "Home swapping",
     title: "Trade keys for keys.",
-    subtitle: "Browse member homes, propose swaps and manage every stay in one place. No money ever changes hands, and every accepted stay is insured.",
+    subtitle: "Browse member homes, propose swaps and manage every stay in one place. No money ever changes hands, and every accepted stay is backed by the Swapl Guarantee.",
   });
 }

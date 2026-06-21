@@ -13,7 +13,7 @@ export default async function Image({ params }: { params: Promise<{ corridor: st
     kicker: c ? `${c.from.city} → ${c.to.city}` : "Home swap corridor",
     title: c ? `${c.from.city} → ${c.to.city}` : "Trade keys for keys.",
     subtitle: c
-      ? `Swap your ${c.from.city} home for a place in ${c.to.city}. No money, fully insured.`
-      : "Insured, money-free home swaps. Launching September 2026.",
+      ? `Swap your ${c.from.city} home for a place in ${c.to.city}. No money, backed by the Swapl Guarantee.`
+      : "Money-free home swaps, backed by the Swapl Guarantee. Launching September 2026.",
   });
 }

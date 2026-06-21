@@ -6,7 +6,7 @@ import { CorporateCalculator } from "@/components/billing/corporate-calculator";
 export const metadata = {
   title: "swapl for companies · swapl",
   description:
-    "Give relocating employees access to global homes — at a fraction of serviced-apartment cost, fully insured.",
+    "Give relocating employees access to global homes — at a fraction of serviced-apartment cost, backed by the Swapl Guarantee.",
 };
 
 export default function CorporatePage() {
@@ -29,7 +29,7 @@ export default function CorporatePage() {
           {[
             { kicker: "Cheaper than hotels", title: "€199 / seat / year", body: "Minimum 5 seats. Compare to €180+/night for a furnished serviced apartment." },
             { kicker: "Global inventory", title: "Across 92 countries", body: "Employees on long projects swap with hosts already in the destination." },
-            { kicker: "Insurance included", title: "€150k cover · auto-issued", body: "Property + liability + trip interruption every time a swap is accepted. No upsell, no opt-in." },
+            { kicker: "Swapl Guarantee included", title: "Resolution support · auto-applied", body: "A human resolution team helps make things right every time a swap is accepted. Add optional Full cover up to €5,000 (€750 excess)." },
           ].map((c) => (
             <article key={c.kicker} className="surface-card p-7">
               <p className="kicker mb-3">{c.kicker}</p>
@@ -55,7 +55,7 @@ export default function CorporatePage() {
             <p className="kicker mb-3">Get a demo</p>
             <h2 className="font-display text-3xl tracking-[-0.02em] mb-4">Talk to us</h2>
             <p className="text-sm mb-6" style={{ color: "var(--navy-2)" }}>
-              We'll walk through how your team would use swapl, send a sample policy, and a 14-day
+              We'll walk through how your team would use swapl, send sample terms, and a 14-day
               pilot agreement. Smaller teams (5–25 seats) can self-serve via{" "}
               <Link href="#self-serve" className="font-medium" style={{ color: "var(--pink)" }}>self-serve checkout</Link>.
             </p>

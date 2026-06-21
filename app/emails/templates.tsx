@@ -76,12 +76,12 @@ export const templates = {
     build({
       to: toEmail,
       subject: "Your swap is on — keys for keys",
-      preview: "Your swap was accepted. Insurance is live.",
+      preview: "Your swap was accepted. Your Swapl Guarantee is active.",
       heading: "Your swap is on.",
-      intro: "Your stay is automatically insured (€150k property + liability + trip interruption). A 24/7 support line and key-exchange instructions are in your /swaps thread.",
+      intro: "Your stay comes with the Swapl Guarantee: free goodwill resolution support if something goes wrong, plus optional Full cover for accidental damage up to €5,000 (€750 excess). A 24/7 support line and key-exchange instructions are in your /swaps thread.",
       ctaLabel: "Open swap thread",
       ctaHref: `${APP_URL}/swaps`,
-      text: `Your swap was accepted. Insurance is live (€150k cover + liability + trip interruption). Open the thread: ${APP_URL}/swaps`,
+      text: `Your swap was accepted. Your Swapl Guarantee is active: free goodwill resolution support, plus optional Full cover for accidental damage up to €5,000 (€750 excess). 24/7 support and key-exchange instructions are in the thread: ${APP_URL}/swaps`,
     }),
 
   proposalDeclined: (toEmail: string) =>
@@ -139,13 +139,13 @@ export const templates = {
   insurancePolicyCreated: (toEmail: string, policyNumber: string) =>
     build({
       to: toEmail,
-      subject: "Your swap is covered",
-      preview: `Policy ${policyNumber} active.`,
-      heading: "Your swap is covered.",
-      intro: `Policy ${policyNumber} is active for the duration of your stay plus 30 days. Property + liability + trip interruption — both directions, both homes.`,
-      ctaLabel: "View coverage",
+      subject: "Your Swapl Guarantee is active",
+      preview: `Swapl Guarantee ${policyNumber} active.`,
+      heading: "Your Swapl Guarantee is active.",
+      intro: `Your Swapl Guarantee ${policyNumber} is active for the duration of your stay plus 30 days. Our resolution team has your back; add Full cover up to €5,000 (€750 excess) for accidental damage.`,
+      ctaLabel: "View your guarantee",
       ctaHref: `${MARKETING_URL}/insurance`,
-      text: `Policy ${policyNumber} is active. Property + liability + trip interruption are covered both ways for the swap window plus 30 days.`,
+      text: `Your Swapl Guarantee ${policyNumber} is active for the duration of your stay plus 30 days. Our resolution team has your back; add Full cover up to €5,000 (€750 excess) for accidental damage.`,
     }),
 
   verificationApproved: (toEmail: string, listingTitle: string) =>

@@ -72,7 +72,7 @@ export function EmailShell({
           )}
           <Hr style={{ borderColor: TOKENS.line, margin: "28px 0 14px" }} />
           <Text style={{ margin: 0, fontSize: 12, color: TOKENS.navy3 }}>
-            {footnote ?? "swapl · keys for keys, no money, fully insured."}
+            {footnote ?? "swapl · keys for keys, no money, fully backed."}
           </Text>
         </Container>
       </Body>

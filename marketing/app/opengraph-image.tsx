@@ -8,6 +8,6 @@ export default function Image() {
   return renderOgImage({
     kicker: "Home swapping",
     title: "Trade keys for keys.",
-    subtitle: "No money ever changes hands, and every accepted stay is insured end to end. Home swapping, launching September 2026.",
+    subtitle: "No money ever changes hands, and every swap is backed by the Swapl Guarantee. Home swapping, launching September 2026.",
   });
 }

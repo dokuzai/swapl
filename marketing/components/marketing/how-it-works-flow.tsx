@@ -33,7 +33,7 @@ const STEPS = [
     icon: ShieldCheck,
     title: "You're covered — automatically",
     you: "The moment a swap is accepted, you're done negotiating and protected.",
-    behind: "An insurance policy is issued instantly, covering both homes for those dates. Both hosts are ID-verified, and each of you gets private key-exchange codes.",
+    behind: "The Swapl Guarantee applies instantly, backing both homes for those dates. Both hosts are ID-verified, and each of you gets private key-exchange codes.",
   },
   {
     icon: KeyRound,
@@ -52,7 +52,7 @@ export function HowItWorksFlow() {
           <h2 className="section-title mt-3">A swap, start to finish.</h2>
           <p className="mt-4 text-[18px] leading-[1.55]" style={{ color: "var(--navy-2)" }}>
             No money changes hands. You trade your home for someone else&apos;s, and every
-            accepted swap is insured. Here&apos;s exactly what happens, step by step.
+            accepted swap is backed by the Swapl Guarantee. Here&apos;s exactly what happens, step by step.
           </p>
         </div>
 
@@ -128,7 +128,7 @@ export function HowItWorksFlow() {
         >
           <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[12px] uppercase tracking-[.1em]" style={{ color: "var(--navy-2)" }}>
             <span className="flex items-center gap-1.5"><Check size={14} style={{ color: "var(--pink)" }} />No money</span>
-            <span className="flex items-center gap-1.5"><Check size={14} style={{ color: "var(--pink)" }} />Every swap insured</span>
+            <span className="flex items-center gap-1.5"><Check size={14} style={{ color: "var(--pink)" }} />Every swap backed</span>
             <span className="flex items-center gap-1.5"><Check size={14} style={{ color: "var(--pink)" }} />ID-verified hosts</span>
           </div>
           <a href={appUrl("/register")} className="pill-primary whitespace-nowrap">

@@ -4,7 +4,7 @@ export const id: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "Cara kerjanya",
   "nav.homes": "Rumah",
-  "nav.insurance": "Asuransi",
+  "nav.insurance": "Garansi",
   "nav.pricing": "Harga",
   "nav.companies": "Perusahaan",
   "nav.blog": "Blog",
@@ -30,24 +30,24 @@ export const id: Partial<Record<DictKey, string>> = {
 
   "footer.tagline": "© 2026 swapl · kunci untuk kunci, tanpa uang",
   "footer.howItWorks": "Cara kerjanya",
-  "footer.insurance": "Asuransi",
+  "footer.insurance": "Garansi",
   "footer.browseHomes": "Jelajahi rumah",
   "footer.blog": "Blog",
   "footer.account": "Akun",
 
   // ---- Launch banner ----
   "launchBanner.tag": "Pra-peluncuran",
-  "launchBanner.body": "Tanpa biaya, setiap tukar diasuransikan — tukar mulai aktif",
+  "launchBanner.body": "Tanpa biaya, setiap tukar didukung Garansi Swapl — tukar mulai aktif",
   "launchBanner.month": "September 2026",
   "launchBanner.cta": "Daftarkan rumah Anda →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "Tanpa biaya · Setiap tukar diasuransikan · Diluncurkan September 2026",
+  "hero.kicker": "Tanpa biaya · Setiap tukar didukung · Diluncurkan September 2026",
   "hero.titleA": "Tukar kunci dengan kunci.",
   "hero.titleB": "Tanpa uang, sepenuhnya",
-  "hero.titleEm": "diasuransikan",
+  "hero.titleEm": "didukung",
   "hero.intro":
-    "Setiap tukar yang diterima diasuransikan dari awal hingga akhir dan tidak ada uang yang berpindah tangan — hanya kunci untuk kunci. Kami sedang mendaftarkan tuan rumah pendiri menjelang peluncuran September 2026: daftarkan tempat Anda dengan akurasi penuh sekarang dan Anda akan termasuk rumah pertama yang ditampilkan saat tukar mulai aktif.",
+    "Setiap tukar yang diterima didukung oleh Garansi Swapl dan tidak ada uang yang berpindah tangan — hanya kunci untuk kunci. Kami sedang mendaftarkan tuan rumah pendiri menjelang peluncuran September 2026: daftarkan tempat Anda dengan akurasi penuh sekarang dan Anda akan termasuk rumah pertama yang ditampilkan saat tukar mulai aktif.",
   "hero.ctaList": "Daftarkan rumah saya",
   "hero.ctaHow": "Lihat cara kerjanya",
 
@@ -64,9 +64,9 @@ export const id: Partial<Record<DictKey, string>> = {
   "how.step3.title": "Ajukan & sepakati",
   "how.step3.desc":
     "Kirim permintaan tukar dengan rumah Anda sendiri terlampir. Mereka menerima, menolak, atau menawar balik. Harga bukan bagiannya — satu rumah untuk yang lain.",
-  "how.step4.title": "Bepergian, diasuransikan",
+  "how.step4.title": "Bepergian, dengan dukungan",
   "how.step4.desc":
-    "Setiap tukar yang diterima otomatis dilindungi: properti, tanggung jawab, dan gangguan perjalanan. Kalian berdua mendapat kunci, kode, dan saluran 24/7.",
+    "Setiap tukar yang diterima dilengkapi Garansi Swapl — tim penyelesaian kami selalu siap membantu, dan Anda bisa menambahkan Perlindungan penuh hingga €5.000. Kalian berdua mendapat kunci, kode, dan saluran 24/7.",
 
   "live.kicker": "02 · Rumah yang ingin bertukar",
   "live.title": "Rumah nyata. Tukar nyata. Sekarang juga.",
@@ -112,20 +112,20 @@ export const id: Partial<Record<DictKey, string>> = {
   "wizard.space.roomsOffered": "Kamar yang ditawarkan",
   "wizard.space.privateRoomKeysHint": "Kamar pribadi bernilai lebih sedikit Keys per malam dibanding seluruh tempat.",
 
-  "insuranceBand.kicker": "04 · Asuransi, selalu aktif",
-  "insuranceBand.title": "Setiap tukar dilindungi.",
+  "insuranceBand.kicker": "04 · Garansi Swapl",
+  "insuranceBand.title": "Setiap tukar, didukung.",
   "insuranceBand.titleEm": "Tanpa pendaftaran.",
   "insuranceBand.lede":
-    "Tukar bukan penyewaan, tapi tetap dua keluarga yang saling percaya dengan rumah mereka. Kami menjamin setiap pertukaran yang diterima secara otomatis — tanpa kotak centang, tanpa jualan tambahan.",
-  "insuranceBand.cardA.title": "Kerusakan properti hingga €150rb",
+    "Tukar bukan penyewaan, tapi tetap dua keluarga yang saling percaya dengan rumah mereka. Setiap pertukaran yang diterima dilengkapi Garansi Swapl — komitmen kami sendiri untuk membantu membereskan masalah. Ini garansi dari swapl, bukan polis asuransi.",
+  "insuranceBand.cardA.title": "Perlindungan penuh hingga €5.000",
   "insuranceBand.cardA.body":
-    "Jika sesuatu rusak, retak, banjir, atau hilang selama tukar, itu dilindungi — kedua arah, kedua rumah.",
-  "insuranceBand.cardB.title": "Tanggung jawab pihak ketiga",
+    "Tambahkan Perlindungan penuh ke tukar mana pun dan kami akan membantu menangani kerusakan tak disengaja hingga €5.000, dengan biaya sendiri €750 — kedua arah, kedua rumah.",
+  "insuranceBand.cardB.title": "Tim yang berpihak pada Anda",
   "insuranceBand.cardB.body":
-    "Tamu terpeleset di dapur Anda. Pipa pecah di rumah sebelah. Polis kami menangani agar tukar tidak berubah menjadi gugatan.",
-  "insuranceBand.cardC.title": "Gangguan perjalanan",
+    "Termasuk gratis di setiap tukar: jika tamu terpeleset, pipa pecah, atau tukar berjalan kacau, tim penyelesaian kami turun tangan cepat agar tidak berujung pada perselisihan buntu.",
+  "insuranceBand.cardC.title": "Rencana berubah",
   "insuranceBand.cardC.body":
-    "Penerbangan dibatalkan, partner mundur, pandemi? Anda mendapat penggantian — atau dicocokkan ulang dengan rumah yang setara dalam 48 jam.",
+    "Penerbangan dibatalkan, partner mundur? Kami membantu Anda dicocokkan ulang dengan rumah yang setara — atau memulihkan Keys yang telah Anda pakai.",
 
   "cta.title": "Rumah Anda bernilai seribu perjalanan.",
   "cta.body":
@@ -136,7 +136,7 @@ export const id: Partial<Record<DictKey, string>> = {
   "cta.error": "Ada yang salah. Coba lagi sebentar.",
   "cta.placeholder": "anda@email.com",
   "cta.stat.countries": "◦ 92 negara",
-  "cta.stat.insurance": "◦ Asuransi termasuk",
+  "cta.stat.insurance": "◦ Garansi Swapl termasuk",
   "cta.stat.noFees": "◦ Tanpa biaya tuan rumah",
   "cta.stat.noCommission": "◦ Tanpa komisi platform",
 
@@ -248,7 +248,7 @@ export const id: Partial<Record<DictKey, string>> = {
     "Kami tidak mengambil bagian dari tukar Anda. Bayar hanya jika Anda ingin alat pengguna ahli — pencarian tersimpan dengan peringatan, penempatan prioritas, akun multi-rumah, analitik daftar. Tukar inti tetap sama untuk semua orang.",
   "pricing.tags.noFees": "◦ Tanpa biaya tukar",
   "pricing.tags.noCommission": "◦ Tanpa komisi platform",
-  "pricing.tags.insurance": "◦ Asuransi termasuk di setiap paket",
+  "pricing.tags.insurance": "◦ Garansi Swapl di setiap paket",
   "pricing.toggle.monthly": "Bulanan",
   "pricing.toggle.yearly": "Tahunan · hemat 30%",
   "pricing.popular": "Paling populer",
@@ -593,8 +593,8 @@ export const id: Partial<Record<DictKey, string>> = {
   "listingDetail.to": "Sampai",
   "listingDetail.staysOf": "Menginap {min}–{max} hari",
   "listingDetail.ownListing": "Ini adalah daftar Anda sendiri.",
-  "listingDetail.coverAmount": "Pertanggungan €150rb",
-  "listingDetail.tripRefund": "Pengembalian perjalanan",
+  "listingDetail.coverAmount": "Garansi Swapl",
+  "listingDetail.tripRefund": "Bantuan pencocokan ulang",
   "listingDetail.support247": "Saluran 24/7",
   "listingDetail.hostFallback": "tuan rumah swapl",
   "listingDetail.tradeYourHome": "Tukar rumah Anda dengan rumah mereka",
@@ -619,8 +619,8 @@ export const id: Partial<Record<DictKey, string>> = {
   "verify.used.body": "Tautan verifikasi ini sudah digunakan. Email Anda sudah terverifikasi.",
   "verify.invalid.heading": "Hmm, tautan itu tampak tidak benar.",
   "verify.invalid.body": "Entah diubah atau memang tidak pernah ada. Minta yang baru dari /account.",
-  "account.coverage.title": "Pertanggungan Anda",
-  "account.coverage.body": "Setiap tukar yang diterima diasuransikan otomatis. Polis aktif dan lama Anda ada di sini.",
+  "account.coverage.title": "Garansi Swapl Anda",
+  "account.coverage.body": "Setiap tukar yang diterima otomatis dilengkapi Garansi Swapl. Garansi aktif dan lama Anda ada di sini.",
 
   "notFound.title": "Belum ada tukar di sini.",
   "notFound.body": "Daftar itu mungkin sudah dihapus atau tidak pernah ada. Coba jelajahi yang tersedia saat ini.",
@@ -679,7 +679,7 @@ export const id: Partial<Record<DictKey, string>> = {
   "swap.guestCode": "Kode tamu Anda (untuk mereka pakai di tempat Anda)",
   "swap.yourCode": "Kode Anda (untuk Anda pakai di tempat mereka)",
   "swap.policyLine":
-    "Polis {policy} · pertanggungan €{coverage} · saluran 24/7: +44 800 000 swap",
+    "Garansi {policy} · perlindungan €{coverage} · saluran 24/7: +44 800 000 swap",
 
   // ---- Common UI ----
   "ui.cancel": "Batal",
@@ -722,19 +722,19 @@ export const id: Partial<Record<DictKey, string>> = {
   "terms.updated": "Terakhir diperbarui · 24 Mei 2026",
   "faq.q1": "Bagaimana jika partner tukar merusak rumah saya?",
   "faq.a1":
-    "Setiap tukar yang diterima otomatis dilindungi untuk kerusakan properti hingga €150.000 — kedua arah, kedua rumah. Anda tidak perlu mendaftar, mengisi formulir, atau membayar premi. Jika sesuatu rusak selama penginapan, ajukan klaim melalui dasbor Anda dan polis menangani perbaikan atau penggantian.",
+    "Setiap tukar yang diterima dilengkapi Garansi Swapl. Jika ada yang tidak beres, ajukan klaim melalui dasbor Anda dan tim penyelesaian kami membantu membereskannya tanpa biaya. Untuk kerusakan properti tak disengaja, Anda bisa menambahkan Perlindungan penuh — hingga €5.000 per tukar, dengan biaya sendiri €750, kedua arah. Garansi Swapl adalah komitmen dari swapl, bukan polis asuransi.",
   "faq.q2": "Bagaimana Anda menangani pertukaran kunci?",
   "faq.a2":
     "Anda dan partner tukar memilih yang cocok untuk Anda: bertemu langsung, menyerahkan kunci ke tetangga, menggunakan lockbox, atau berbagi kode kunci pintar melalui swapl. Kami membuat kode tamu sekali pakai untuk setiap tukar agar tak ada pihak yang berbagi kredensial permanen.",
   "faq.q3": "Bisakah saya bertukar dengan seseorang yang tanggalnya tidak tumpang tindih dengan saya?",
   "faq.a3":
-    "Ya. Tukar tidak bersamaan (kadang disebut \"poin keramahan\") akan hadir setelah peluncuran. Anda akan menyimpan penginapan di rumah seseorang sekarang dan menebus milik Anda kembali ke mereka — atau ke anggota ketiga — nanti. Saat peluncuran kami mulai dengan tukar pekan yang sama karena paling aman dijamin.",
+    "Ya. Tukar tidak bersamaan (kadang disebut \"poin keramahan\") akan hadir setelah peluncuran. Anda akan menyimpan penginapan di rumah seseorang sekarang dan menebus milik Anda kembali ke mereka — atau ke anggota ketiga — nanti. Saat peluncuran kami mulai dengan tukar pekan yang sama karena paling aman untuk didukung.",
   "faq.q4": "Bagaimana dengan hewan peliharaan?",
   "faq.a4":
-    "Filter rumah ramah hewan dan Anda hanya akan melihat tempat yang pemiliknya menyambut hewan. Beberapa tuan rumah juga akan menjaga hewan Anda selama tukar. Asuransi melindungi kerusakan akibat hewan tamu persis seperti melindungi kerusakan lainnya.",
+    "Filter rumah ramah hewan dan Anda hanya akan melihat tempat yang pemiliknya menyambut hewan. Beberapa tuan rumah juga akan menjaga hewan Anda selama tukar. Garansi Swapl memperlakukan kerusakan akibat hewan tamu persis seperti kerusakan lainnya.",
   "faq.q5": "Apakah saya harus jadi anggota swapl untuk bertukar?",
   "faq.a5":
-    "Kedua pihak harus menjadi anggota agar kami bisa memverifikasi identitas, melampirkan asuransi, dan memproses kesepakatan. Keanggotaan gratis selamanya untuk tukar inti; Plus dan Pro menambah alat pengguna ahli (peringatan pencarian tersimpan, penempatan prioritas, analitik daftar) tapi tidak pernah menghalangi tukar itu sendiri.",
+    "Kedua pihak harus menjadi anggota agar kami bisa memverifikasi identitas, menerapkan Garansi Swapl, dan memproses kesepakatan. Keanggotaan gratis selamanya untuk tukar inti; Plus dan Pro menambah alat pengguna ahli (peringatan pencarian tersimpan, penempatan prioritas, analitik daftar) tapi tidak pernah menghalangi tukar itu sendiri.",
   "faq.q6": "Apa bedanya dengan Airbnb?",
   "faq.a6":
     "Tidak ada uang yang berpindah tangan dan tidak ada yang jadi tamu berbayar. Anda menukar kunci dengan pemilik rumah lain yang menginginkan kota Anda sementara Anda menginginkan kota mereka. Keselarasan itu mengubah dinamika — kedua pihak adalah pemilik, kedua pihak adalah tamu, kedua pihak punya kepentingan yang sama.",
@@ -743,7 +743,7 @@ export const id: Partial<Record<DictKey, string>> = {
     "Email dan nama akun, detail daftar yang Anda terbitkan, proposal dan pesan tukar dengan anggota lain, metadata verifikasi identitas (kami tidak menyimpan pindaian paspor — partner KYC kami yang menyimpan), dan sinyal perangkat + analitik dasar (halaman, lokal, viewport). Itu saja.",
   "privacy.s2.title": "Mengapa kami mengumpulkannya",
   "privacy.s2.body":
-    "Untuk menjalankan tukar (pencocokan, pesan, asuransi), memverifikasi Anda orang nyata sebelum penerimaan pertama, dan meningkatkan produk. Kami memakai sedikit analitik yang menghormati privasi — tanpa pelacak iklan, tanpa pemprofilan lintas situs.",
+    "Untuk menjalankan tukar (pencocokan, pesan, Garansi Swapl), memverifikasi Anda orang nyata sebelum penerimaan pertama, dan meningkatkan produk. Kami memakai sedikit analitik yang menghormati privasi — tanpa pelacak iklan, tanpa pemprofilan lintas situs.",
   "privacy.s3.title": "Siapa melihat apa",
   "privacy.s3.body":
     "Daftar Anda terlihat publik oleh anggota lain. Nama asli Anda dibagikan dengan partner tukar hanya setelah kedua pihak menerima. Verifikasi identitas dibagikan kembali hanya kepada Anda — partner melihat lencana terverifikasi, bukan dokumen Anda.",
@@ -755,19 +755,19 @@ export const id: Partial<Record<DictKey, string>> = {
     "Pertanyaan tentang cara kami menangani data Anda ditujukan ke privacy@swapl.fun. swapl dioperasikan dari Amsterdam, Belanda.",
   "terms.s1.title": "Apa itu swapl",
   "terms.s1.body":
-    "swapl adalah marketplace yang membantu pemilik rumah saling menemukan dan menukar penginapan di rumah mereka. Kami menyediakan alat (daftar, pencarian, pesan, kesepakatan, asuransi) tapi kami bukan tuan rumah. Dua anggota dalam suatu tukar adalah pihak yang mengatur kesepakatan; swapl memfasilitasinya.",
+    "swapl adalah marketplace yang membantu pemilik rumah saling menemukan dan menukar penginapan di rumah mereka. Kami menyediakan alat (daftar, pencarian, pesan, kesepakatan, Garansi Swapl) tapi kami bukan tuan rumah. Dua anggota dalam suatu tukar adalah pihak yang mengatur kesepakatan; swapl memfasilitasinya.",
   "terms.s2.title": "Akun & kelayakan",
   "terms.s2.body":
     "Anda harus berusia 18+ dan penghuni sah (pemilik atau penyewa jangka panjang dengan izin menjamu tamu) dari setiap rumah yang Anda daftarkan. Berikan detail daftar yang akurat — menggambarkan rumah Anda secara keliru adalah alasan untuk penghapusan.",
-  "terms.s3.title": "Tukar & asuransi",
+  "terms.s3.title": "Tukar & Garansi Swapl",
   "terms.s3.body":
-    "Setiap tukar yang diterima otomatis dilindungi oleh penjamin kami untuk kerusakan properti, tanggung jawab pihak ketiga, dan gangguan perjalanan. Pertanggungan melekat saat kedua pihak menerima. Asuransi bukan pengganti kehati-hatian yang wajar — Anda tetap bertanggung jawab mematuhi aturan rumah partner.",
+    "Setiap tukar yang diterima dilengkapi Garansi Swapl: jika sebuah tukar berjalan salah, tim penyelesaian kami membantu membereskannya. Anggota bisa menambahkan Perlindungan penuh untuk kerusakan properti tak disengaja hingga €5.000 per tukar, dengan biaya sendiri €750. Garansi Swapl adalah komitmen dari swapl, didanai oleh swapl — ini bukan asuransi, dan tidak ada penjamin berlisensi yang terlibat. Ini bukan pengganti kehati-hatian yang wajar: Anda tetap bertanggung jawab mematuhi aturan rumah partner.",
   "terms.s4.title": "Pembayaran",
   "terms.s4.body":
     "Tukar inti gratis selamanya. Paket Plus / Pro opsional ditagih oleh Stripe; batalkan kapan saja dari /account/billing. Kami tidak mengambil komisi atas tukar itu sendiri.",
   "terms.s5.title": "Sengketa",
   "terms.s5.body":
-    "Jika sesuatu berjalan salah selama tukar, hubungi dukungan 24/7 terlebih dahulu. Jika klaim diperlukan, penjamin kami menanganinya. Untuk sengketa dengan swapl sendiri, hukum Belanda berlaku dan pengadilan Amsterdam berwenang.",
+    "Jika sesuatu berjalan salah selama tukar, hubungi dukungan 24/7 terlebih dahulu. Jika klaim diperlukan, tim penyelesaian kami menanganinya di bawah Garansi Swapl. Untuk sengketa dengan swapl sendiri, hukum Belanda berlaku dan pengadilan Amsterdam berwenang.",
   "terms.s6.title": "Perubahan",
   "terms.s6.body":
     "Kami akan mengirim email setidaknya 30 hari sebelum perubahan material apa pun pada ketentuan ini. Penggunaan berlanjut setelah tanggal perubahan berarti penerimaan; Anda selalu bisa menghapus akun jika tidak ingin melanjutkan.",
@@ -798,7 +798,7 @@ export const id: Partial<Record<DictKey, string>> = {
   "trip.countdown.today": "Tukar Anda dimulai hari ini",
   "trip.countdown.started": "Tukar Anda sedang berlangsung",
   "trip.dates": "{from} – {to}",
-  "trip.insured": "Diasuransikan",
+  "trip.insured": "Didukung",
   "trip.checklist.title": "Sebelum berangkat",
   "trip.checklist.guide": "Isi panduan rumah Anda",
   "trip.checklist.details": "Baca detail tuan rumah Anda",
@@ -842,8 +842,8 @@ export const id: Partial<Record<DictKey, string>> = {
 
   // ---- Proof of cover on-chain (DOK-156) ----
   "cover.proof.badge": "Diverifikasi di TON",
-  "cover.proof.blurb": "Catatan anti-rusak bahwa pertanggungan Anda nyata — bukan kripto, tanpa pembayaran, tak ada yang perlu Anda lakukan.",
-  "cover.proof.view": "Lihat bukti",
+  "cover.proof.blurb": "Catatan anti-rusak atas Garansi Swapl Anda — bukan kripto, tanpa pembayaran, tak ada yang perlu Anda lakukan.",
+  "cover.proof.view": "Lihat catatan",
 
   // ---- Report a problem / dispute flow (DOK-153) ----
   "dispute.report.cta": "Dapatkan bantuan sekarang",
@@ -1126,7 +1126,7 @@ export const id: Partial<Record<DictKey, string>> = {
   "trips.keys.decline": "Tolak",
   "trips.keys.cancel": "Batalkan permintaan",
   "trips.keys.working": "Memproses…",
-  "trips.keys.insured": "Diasuransikan",
+  "trips.keys.insured": "Didukung",
   "trips.keys.hostWillConfirm": "Menunggu tuan rumah mengonfirmasi.",
   "trips.keys.actionError": "Ada yang salah — coba lagi.",
   "trips.swaps.heading": "Tukar rumah",
@@ -1406,7 +1406,7 @@ export const id: Partial<Record<DictKey, string>> = {
   "swaps.panel.hostFallback": "tuan rumah swapl",
   "swaps.panel.partnerFallback": "partner tukar Anda",
   "swaps.agreed.title": "Tukar disepakati — kunci untuk kunci",
-  "swaps.agreed.body": "Kode kunci dan sertifikat asuransi Anda ada di panel tukar",
+  "swaps.agreed.body": "Kode kunci dan detail Garansi Swapl Anda ada di panel tukar",
   "swaps.agreed.bodyAbove": " di atas",
   "swaps.agreed.bodyRight": " di sebelah kanan",
   "swaps.partners.kicker": "Rencanakan dasarnya",
@@ -1419,8 +1419,8 @@ export const id: Partial<Record<DictKey, string>> = {
   "swaps.partners.cityGuide": "Baca panduan kota {city} →",
   "swaps.guest.conversation": "Percakapan",
   "swaps.guest.peopleAside": "Orang dalam percakapan ini",
-  "swaps.cover.finalisingTitle": "Menyelesaikan pertanggungan Anda…",
-  "swaps.cover.finalisingBody": "Tukar Anda dikonfirmasi. Kami menerbitkan polis dengan penjamin kami — biasanya hanya sebentar.",
+  "swaps.cover.finalisingTitle": "Mengaktifkan garansi Anda…",
+  "swaps.cover.finalisingBody": "Tukar Anda dikonfirmasi. Kami sedang mengaktifkan Garansi Swapl Anda — biasanya hanya sebentar.",
 
   // ---- Concierge add-ons ----
   "concierge.kicker": "Buat mulus",
@@ -1507,11 +1507,11 @@ export const id: Partial<Record<DictKey, string>> = {
   "swaps.chat.live": "Langsung",
   "swaps.accept.confirmTitle": "Konfirmasi tukar?",
   "swaps.accept.recap": "Dengan {name} · {dateRange}",
-  "swaps.accept.insTitle": "Asuransi termasuk",
-  "swaps.accept.insBody": "Saat diterima, kedua rumah otomatis diasuransikan — kerusakan, tanggung jawab, dan gangguan perjalanan, kedua arah. Tanpa biaya, tanpa jualan tambahan.",
-  "swaps.accept.insLink": "Baca pertanggungannya →",
-  "swaps.accept.ack": "Saya memahami bahwa menerima mengaktifkan polis asuransi untuk tukar ini.",
-  "swaps.accept.confirm": "Konfirmasi & asuransikan",
+  "swaps.accept.insTitle": "Garansi Swapl termasuk",
+  "swaps.accept.insBody": "Saat diterima, kedua rumah didukung oleh Garansi Swapl, kedua arah. Tambahkan Perlindungan penuh untuk kerusakan tak disengaja hingga €5.000 (biaya sendiri €750). Ini garansi dari swapl, bukan asuransi.",
+  "swaps.accept.insLink": "Baca garansinya →",
+  "swaps.accept.ack": "Saya memahami bahwa menerima mengaktifkan Garansi Swapl untuk tukar ini.",
+  "swaps.accept.confirm": "Konfirmasi tukar",
   "swaps.accept.cancel": "Batal",
 
   // ---- App-experience feedback (rate the app) ----

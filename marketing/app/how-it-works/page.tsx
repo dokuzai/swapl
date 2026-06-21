@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "How home swapping works",
   description:
-    "A home swap, start to finish: list your home, find a match, propose dates, get insured automatically, and trade keys. No money changes hands.",
+    "A home swap, start to finish: list your home, find a match, propose dates, get the Swapl Guarantee automatically, and trade keys. No money changes hands.",
   alternates: { canonical: "/how-it-works" },
 };
 
