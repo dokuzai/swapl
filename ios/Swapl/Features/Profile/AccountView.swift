@@ -7,6 +7,11 @@ import UIKit
 import ImageIO
 import SwaplDesignTokens
 
+// Distinct nav route for opening a listing's detail (View) from the Profile.
+// A plain String is already routed to ProposalDetailView here, so we use a typed
+// value to avoid the collision.
+private struct ListingDetailRoute: Hashable { let id: String }
+
 struct AccountView: View {
     @Environment(AuthService.self) private var auth
     @State private var isConfirmingSignOut = false
@@ -84,6 +89,11 @@ struct AccountView: View {
             // Tapping a past trip (from the Past trips card) opens its detail.
             .navigationDestination(for: String.self) { id in
                 ProposalDetailView(proposalId: id)
+            }
+            // Viewing one of your own properties opens its detail (which has the
+            // owner Edit / Dates actions inside).
+            .navigationDestination(for: ListingDetailRoute.self) { route in
+                ListingDetailView(listingId: route.id)
             }
             .fullScreenCover(isPresented: $isCreatingListing, onDismiss: {
                 Task { await loadMyListings() }
@@ -215,8 +225,9 @@ struct AccountView: View {
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 if myListings.count == 1, let only = myListings.first {
-                    // A single property reads fine as a full-width row.
-                    Button { editingListing = only } label: { listingRow(only) }
+                    // A single property reads fine as a full-width row. Tapping
+                    // opens the listing detail (View); Edit lives inside it.
+                    NavigationLink(value: ListingDetailRoute(id: only.id)) { listingRow(only) }
                         .buttonStyle(.plain)
                     Button { isCreatingListing = true } label: { addPropertyRow }
                         .buttonStyle(.plain)
@@ -226,7 +237,7 @@ struct AccountView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .top, spacing: 12) {
                             ForEach(myListings) { listing in
-                                Button { editingListing = listing } label: { listingCardCompact(listing) }
+                                NavigationLink(value: ListingDetailRoute(id: listing.id)) { listingCardCompact(listing) }
                                     .buttonStyle(.plain)
                             }
                             Button { isCreatingListing = true } label: { addPropertyCardCompact }
@@ -238,32 +249,35 @@ struct AccountView: View {
         }
     }
 
-    // Fixed-width card for the horizontal "Your properties" rail.
+    // Fixed-width card for the horizontal "Your properties" rail. The title +
+    // location sit next to the house logo; the action opens the detail (View).
     private func listingCardCompact(_ listing: Listing) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ZStack {
-                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
-                    .fill(SwaplSemanticLight.accent)
-                Image(systemName: "house.fill")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(SwaplSemanticLight.primary)
-            }
-            .frame(width: 44, height: 44)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                        .fill(SwaplSemanticLight.accent)
+                    Image(systemName: "house.fill")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                }
+                .frame(width: 44, height: 44)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(listing.title)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .lineLimit(2)
-                Text("\(listing.neighbourhood), \(listing.city)")
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-                    .lineLimit(1)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(listing.title)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(2)
+                    Text("\(listing.neighbourhood), \(listing.city)")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(1)
+                }
             }
             Spacer(minLength: 0)
             HStack(spacing: 5) {
-                Image(systemName: "square.and.pencil").font(.system(size: 13, weight: .semibold))
-                Text(String(localized: "Edit")).font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                Image(systemName: "eye").font(.system(size: 13, weight: .semibold))
+                Text(String(localized: "View")).font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
             }
             .foregroundStyle(SwaplSemanticLight.primary)
         }
