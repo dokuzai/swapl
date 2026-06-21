@@ -1031,7 +1031,7 @@ export const id: Partial<Record<DictKey, string>> = {
   "keys.explain.perNight": "Keys / malam",
   "keys.explain.show": "Lihat rinciannya",
   "keys.explain.hide": "Sembunyikan rincian",
-  "keys.explain.intro": "Ini yang dibayar tamu per malam untuk menginap dengan Keys — dan persis jumlah yang sama yang Anda dapatkan per malam saat menjamu. Dibangun dari beberapa faktor yang jelas dan adil, bukan kotak hitam.",
+  "keys.explain.intro": "Nilai rumahmu hanyalah berapa banyak orang yang bisa diinapkan: satu Kunci per malam untuk setiap tempat tidur. Kamu mendapatkan nilai itu untuk setiap malam kamu jadi tuan rumah, dan satu masa inap berbiaya nilai rumah per malam — jadi Kunci adalah malam-orang.",
   "keys.explain.factorsTitle": "Apa yang membangun nilai dasar Anda",
   "keys.explain.factor.base": "Nilai awal",
   "keys.explain.factor.size": "Ukuran",

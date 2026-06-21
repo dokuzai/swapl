@@ -1032,7 +1032,7 @@ export const zh: Partial<Record<DictKey, string>> = {
   "keys.explain.perNight": "钥匙 / 晚",
   "keys.explain.show": "查看明细",
   "keys.explain.hide": "隐藏明细",
-  "keys.explain.intro": "这是客人用钥匙入住时每晚支付的数量——也正是你接待时每晚赚取的同一数字。它由几个清晰、公平的因素构成，而非黑箱。",
+  "keys.explain.intro": "你家的价值就是它能住多少人：每个床位每晚一把钥匙。你接待的每一晚都能赚到这个数，而入住则按该住所每晚的价值计费——所以钥匙就是「人·晚」。",
   "keys.explain.factorsTitle": "构成你基础价值的因素",
   "keys.explain.factor.base": "起始价值",
   "keys.explain.factor.size": "面积",

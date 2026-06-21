@@ -994,7 +994,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "keys.explain.perNight": "Keys / noche",
   "keys.explain.show": "Ver el desglose",
   "keys.explain.hide": "Ocultar el desglose",
-  "keys.explain.intro": "Es lo que un huésped paga por noche para alojarse con Keys — y exactamente el mismo número que ganas por noche cuando hospedas. Se construye con unos pocos factores claros y justos, no es una caja negra.",
+  "keys.explain.intro": "El valor de tu casa es simplemente a cuántas personas puede alojar: una Llave por noche por cada plaza. Ganas ese valor por cada noche que alojas, y una estancia cuesta el valor de la casa por noche — así que las Llaves son noches-persona.",
   "keys.explain.factorsTitle": "Qué compone tu valor base",
   "keys.explain.factor.base": "Valor inicial",
   "keys.explain.factor.size": "Tamaño",

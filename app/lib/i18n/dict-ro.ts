@@ -1031,7 +1031,7 @@ export const ro: Partial<Record<DictKey, string>> = {
   "keys.explain.perNight": "Chei / noapte",
   "keys.explain.show": "Vezi defalcarea",
   "keys.explain.hide": "Ascunde defalcarea",
-  "keys.explain.intro": "Aceasta e suma pe care un oaspete o plătește pe noapte ca să stea cu Chei — și exact aceeași cifră pe care o câștigi pe noapte când găzduiești. E construită din câțiva factori clari și corecți, nu dintr-o cutie neagră.",
+  "keys.explain.intro": "Valoarea locuinței tale este pur și simplu câte persoane poate găzdui: o Cheie pe noapte pentru fiecare loc de dormit. Câștigi acea valoare pentru fiecare noapte în care găzduiești, iar un sejur costă valoarea locuinței pe noapte — așa că Cheile sunt nopți-persoană.",
   "keys.explain.factorsTitle": "Ce construiește valoarea ta de bază",
   "keys.explain.factor.base": "Valoare de pornire",
   "keys.explain.factor.size": "Dimensiune",

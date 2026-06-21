@@ -1009,7 +1009,7 @@ export const nl: Partial<Record<DictKey, string>> = {
   "keys.explain.perNight": "Keys / nacht",
   "keys.explain.show": "Bekijk de opbouw",
   "keys.explain.hide": "Verberg de opbouw",
-  "keys.explain.intro": "Dit is wat een gast per nacht betaalt voor een verblijf met Keys — en precies hetzelfde aantal dat jij per nacht verdient als gastheer. Het is opgebouwd uit een paar heldere, eerlijke factoren, geen black box.",
+  "keys.explain.intro": "De waarde van je woning is simpelweg hoeveel mensen er kunnen logeren: één Sleutel per nacht per slaapplaats. Je verdient die waarde voor elke nacht die je gastheer bent, en een verblijf kost de waarde van de woning per nacht — Sleutels zijn dus persoon-nachten.",
   "keys.explain.factorsTitle": "Wat je basiswaarde opbouwt",
   "keys.explain.factor.base": "Startwaarde",
   "keys.explain.factor.size": "Oppervlakte",

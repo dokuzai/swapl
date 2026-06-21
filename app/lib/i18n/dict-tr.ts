@@ -1009,7 +1009,7 @@ export const tr: Partial<Record<DictKey, string>> = {
   "keys.explain.perNight": "Keys / gece",
   "keys.explain.show": "Dökümü gör",
   "keys.explain.hide": "Dökümü gizle",
-  "keys.explain.intro": "Bir misafirin Keys ile konaklamak için gecelik ödediği tutar bu — ve ev sahipliği yaptığında gecelik kazandığın sayının tam olarak aynısı. Birkaç açık ve adil etkenden oluşur, kara kutu değildir.",
+  "keys.explain.intro": "Evinin değeri, kaç kişiyi ağırlayabildiğidir: uyku kapasitesindeki her kişi için gecelik bir Anahtar. Ağırladığın her gece için bu değeri kazanırsın ve bir konaklama, evin gecelik değerine mal olur — yani Anahtarlar kişi-gecedir.",
   "keys.explain.factorsTitle": "Temel değerini ne oluşturur",
   "keys.explain.factor.base": "Başlangıç değeri",
   "keys.explain.factor.size": "Büyüklük",

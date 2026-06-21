@@ -1027,7 +1027,7 @@ export const ja: Partial<Record<DictKey, string>> = {
   "keys.explain.perNight": "Keys / 泊",
   "keys.explain.show": "内訳を見る",
   "keys.explain.hide": "内訳を隠す",
-  "keys.explain.intro": "これはゲストがKeysで泊まる1泊あたりの金額であり — ホストする際に1泊あたり獲得する数とまったく同じです。ブラックボックスではなく、いくつかの明確で公正な要素から作られています。",
+  "keys.explain.intro": "あなたの住まいの価値は、何人を泊められるかで決まります。眠れる人数1人につき1泊あたり1Keyです。ホストする夜ごとにその分を得て、宿泊にはその住まいの1泊分の価値がかかります。つまりKeyは「人泊」です。",
   "keys.explain.factorsTitle": "基本価値を構成するもの",
   "keys.explain.factor.base": "開始価値",
   "keys.explain.factor.size": "広さ",

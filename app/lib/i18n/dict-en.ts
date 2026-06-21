@@ -1033,7 +1033,7 @@ export const en = {
   "keys.explain.perNight": "Keys / night",
   "keys.explain.show": "See the breakdown",
   "keys.explain.hide": "Hide the breakdown",
-  "keys.explain.intro": "This is what a guest pays per night to stay with Keys — and exactly the same number you earn per night when you host. It's built from a few clear, fair factors, not a black box.",
+  "keys.explain.intro": "Your home's value is simply how many guests it can host: one Key per night for each person it sleeps. You earn that for every night you host, and a stay costs the home's value per night — so Keys are really person-nights.",
   "keys.explain.factorsTitle": "What builds your base value",
   "keys.explain.factor.base": "Starting value",
   "keys.explain.factor.size": "Size",
