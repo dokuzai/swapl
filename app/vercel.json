@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "rm -rf .next .turbo && pnpm exec prisma generate --schema prisma/schema.postgres.prisma && pnpm exec next build --webpack",
+  "buildCommand": "rm -rf .next .turbo && pnpm exec prisma generate --schema prisma/schema.postgres.prisma && node scripts/sync-prod-schema.mjs && pnpm exec next build --webpack",
   "crons": [{ "path": "/api/cron/daily", "schedule": "0 7 * * *" }]
 }
