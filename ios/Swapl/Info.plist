@@ -67,7 +67,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Swapl uses your location to center the map on where you are, so you can find home swaps nearby.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Swapl uses your photo library so you can add photos of your home to your listing and profile.</string>
+	<string>Swapl uses your photo library so you can add photos of your home to your listing and profile, and can read a photo's location tag to suggest your listing's city (you can always edit it).</string>
 	<key>NSSiriUsageDescription</key>
 	<string>Swapl uses Siri and Shortcuts to let you find home swaps, accept a swap, or create a listing with your voice.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

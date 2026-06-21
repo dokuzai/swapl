@@ -2,6 +2,7 @@ import SwiftUI
 import CoreLocation
 import MapKit
 import PhotosUI
+import Photos
 import UIKit
 import ImageIO
 import SwaplDesignTokens
@@ -586,6 +587,15 @@ struct ListingCreationView: View {
     @State private var uploadingPhotos = false
     @State private var isGeneratingCopy = false
 
+    // Auto-identify the home's location from the first photo's GPS metadata.
+    // Default on; the host opts out if their photos carry no location or they'd
+    // rather type it. `detectedLocationLabel` shows what we proposed (editable
+    // on the Location step). `isDetectingLocation` drives the inline spinner.
+    @State private var autoDetectLocation = true
+    @State private var detectedLocationLabel: String?
+    @State private var isDetectingLocation = false
+    @State private var locationPermissionDenied = false
+
     // Publish acknowledgment (DOK-162). The host picks the hosting mode and must
     // tick a self-attestation before a NEW listing can publish; never shown when
     // editing (the ack is logged once at create time).
@@ -724,6 +734,62 @@ struct ListingCreationView: View {
                 .foregroundStyle(AirbnbPalette.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
             photosSection
+            autoDetectLocationCard
+        }
+    }
+
+    // The "flag" the host can tick to auto-identify location from the photos.
+    // After a successful read we show the detected place; it stays fully editable
+    // on the next step.
+    private var autoDetectLocationCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Toggle(isOn: $autoDetectLocation) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Auto-detect location from photos")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    Text("We read the GPS tag from your first photo to propose the city. You can always edit it.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .tint(SwaplSemanticLight.primary)
+
+            if isDetectingLocation {
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small)
+                    Text("Reading location from your photo…")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
+            } else if let detectedLocationLabel {
+                Label {
+                    Text("Location found: \(detectedLocationLabel). Confirm or edit it on the next step.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .medium))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    Image(systemName: "mappin.circle.fill")
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                }
+            } else if locationPermissionDenied {
+                Text("Photo access is off, so we couldn't read the location. Turn it on in Settings, or just enter the city on the next step.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if !draft.photos.isEmpty && autoDetectLocation {
+                Text("No location tag in that photo. You can enter the city on the next step.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(14)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                .stroke(AirbnbPalette.hairline)
         }
     }
 
@@ -807,12 +873,57 @@ struct ListingCreationView: View {
     }
 
     private var datesStep: some View {
-        VStack(spacing: 14) {
-            DateCard(title: "Available from", date: $draft.availableFrom)
-            DateCard(title: "Available to", date: $draft.availableTo)
+        VStack(alignment: .leading, spacing: 14) {
+            // From → To summary, mirroring the booking calendars.
+            HStack(spacing: 10) {
+                availabilityChip(title: String(localized: "Available from"), date: draft.availableFrom)
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                availabilityChip(title: String(localized: "Available to"), date: draft.availableTo)
+            }
+
+            // Same in-place range calendar as the rest of the app: tap a start
+            // day, then an end day. Replaces the two single-date pickers that
+            // couldn't express a from→to range.
+            VStack(spacing: 0) {
+                RangeDatePicker(from: $draft.availableFrom, to: $draft.availableTo)
+                    .padding(.vertical, 6)
+            }
+            .padding(.horizontal, 14)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                    .stroke(AirbnbPalette.hairline)
+            )
+
+            Text("Tap a start day, then an end day, to set your whole stay.")
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+
             StepperCard(title: "Minimum stay", value: $draft.minStayDays, range: 1...180, suffix: "nights")
             StepperCard(title: "Maximum stay", value: $draft.maxStayDays, range: 1...365, suffix: "nights")
         }
+    }
+
+    private func availabilityChip(title: String, date: Date) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.tiny, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+                .textCase(.uppercase)
+            Text(SwaplDateText.medium(from: SwaplDateText.apiString(from: date)))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                .foregroundStyle(AirbnbPalette.text)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                .stroke(AirbnbPalette.hairline)
+        )
     }
 
     private var photosSection: some View {
@@ -824,7 +935,7 @@ struct ListingCreationView: View {
                 Spacer()
                 if uploadingPhotos { ProgressView() }
             }
-            PhotosPicker(selection: $photoItems, maxSelectionCount: 10, matching: .images) {
+            PhotosPicker(selection: $photoItems, maxSelectionCount: 10, matching: .images, photoLibrary: .shared()) {
                 HStack(spacing: 10) {
                     Image(systemName: "photo.on.rectangle.angled")
                     Text(draft.photos.isEmpty ? String(localized: "Add photos") : String(localized: "Add more photos"))
@@ -941,9 +1052,10 @@ struct ListingCreationView: View {
         defer { uploadingPhotos = false }
         var urls: [String] = []
         var firstOriginal: Data?
+        var firstItem: PhotosPickerItem?
         for item in items {
             guard let data = try? await item.loadTransferable(type: Data.self) else { continue }
-            if firstOriginal == nil { firstOriginal = data }   // keep EXIF before downscale
+            if firstOriginal == nil { firstOriginal = data; firstItem = item }   // keep EXIF before downscale
             guard let jpeg = Self.downscaledJPEG(from: data) else { continue }
             do {
                 let url = try await APIClient.shared.uploadListingPhoto(jpeg)
@@ -959,11 +1071,60 @@ struct ListingCreationView: View {
         }
         photoItems = []
 
-        // Pull the location from the photo's GPS EXIF, if present and the host
-        // hasn't already entered a city — they confirm it on the Location step.
-        if draft.city.isEmpty, let data = firstOriginal, let coord = Self.gpsCoordinate(from: data) {
-            await prefillLocation(from: coord)
+        // Auto-identify the location from the first photo, if the host opted in
+        // and hasn't already entered a city — they confirm/edit on the Location
+        // step. PhotosPicker strips GPS from the transferred Data, so the asset's
+        // own `location` (via the photo library) is the reliable source; EXIF is
+        // a best-effort fallback.
+        guard autoDetectLocation, draft.city.isEmpty else { return }
+        await detectLocation(from: firstItem, fallbackData: firstOriginal)
+    }
+
+    private func detectLocation(from item: PhotosPickerItem?, fallbackData: Data?) async {
+        isDetectingLocation = true
+        locationPermissionDenied = false
+        detectedLocationLabel = nil
+        defer { isDetectingLocation = false }
+
+        var coord: CLLocationCoordinate2D?
+        if let id = item?.itemIdentifier {
+            switch await Self.requestPhotoAccess() {
+            case .granted:
+                coord = Self.assetLocation(localIdentifier: id)
+            case .denied:
+                locationPermissionDenied = true
+            }
         }
+        // Fall back to EXIF embedded in the returned data (rarely present, but
+        // free to try) when the asset carries no location.
+        if coord == nil, let fallbackData { coord = Self.gpsCoordinate(from: fallbackData) }
+
+        guard let coord else { return }
+        await prefillLocation(from: coord)
+        let label = [draft.city, draft.country].filter { !$0.isEmpty }.joined(separator: ", ")
+        if !label.isEmpty { detectedLocationLabel = label }
+    }
+
+    private enum PhotoAccess { case granted, denied }
+
+    // Reading PHAsset.location needs at least limited photo-library access.
+    private static func requestPhotoAccess() async -> PhotoAccess {
+        switch PHPhotoLibrary.authorizationStatus(for: .readWrite) {
+        case .authorized, .limited:
+            return .granted
+        case .notDetermined:
+            let status = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+            return (status == .authorized || status == .limited) ? .granted : .denied
+        default:
+            return .denied
+        }
+    }
+
+    // The picked photo's GPS location straight from the library asset — survives
+    // the picker's metadata stripping that nils out `gpsCoordinate(from:)`.
+    private static func assetLocation(localIdentifier: String) -> CLLocationCoordinate2D? {
+        let assets = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
+        return assets.firstObject?.location?.coordinate
     }
 
     // GPS coordinate from a photo's EXIF metadata (nil when the photo carries no
@@ -1176,20 +1337,23 @@ struct ListingCreationView: View {
         }
     }
 
+    // Validate by step NAME, not index: the wizard's step order has changed
+    // (Photos was prepended) and index-based cases silently mismatched — e.g.
+    // the Location step ran the title check and showed "Add a clearer title".
     private func validate() -> String? {
-        switch step {
-        case 0:
+        switch steps[step] {
+        case "Location":
             if draft.city.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return String(localized: "Add a city.") }
             if draft.neighbourhood.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return String(localized: "Add a neighbourhood.") }
             if draft.country.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 { return String(localized: "Add a country.") }
-        case 1:
+        case "Space":
             if draft.title.trimmingCharacters(in: .whitespacesAndNewlines).count < 4 { return String(localized: "Add a clearer title.") }
             if draft.description.trimmingCharacters(in: .whitespacesAndNewlines).count < 20 { return String(localized: "Write at least 20 characters about your home.") }
-        case 3:
+        case "Dates":
             if draft.availableTo <= draft.availableFrom { return String(localized: "End date must be after start date.") }
             if draft.maxStayDays < draft.minStayDays { return String(localized: "Maximum stay must be at least the minimum stay.") }
-        case steps.count - 1:
-            // Review step: the publish acknowledgment is mandatory on create.
+        case "Review":
+            // The publish acknowledgment is mandatory on create.
             if !isEditing && !ackAccepted {
                 return String(localized: "Please confirm you have the right to host before publishing.")
             }
@@ -1899,23 +2063,6 @@ private struct ToggleCard: View {
             RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
                 .stroke(AirbnbPalette.hairline)
         }
-    }
-}
-
-private struct DateCard: View {
-    let title: String
-    @Binding var date: Date
-
-    var body: some View {
-        DatePicker(title, selection: $date, displayedComponents: .date)
-            .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
-            .tint(SwaplSemanticLight.primary)
-            .padding(18)
-            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
-                    .stroke(AirbnbPalette.hairline)
-            }
     }
 }
 
