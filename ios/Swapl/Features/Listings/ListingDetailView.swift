@@ -32,6 +32,7 @@ struct ListingDetailView: View {
     @State private var vm: ListingDetailViewModel
     @State private var isShowingProposalSheet = false
     @State private var isShowingKeysStaySheet = false
+    @State private var isShowingCouchsurfSheet = false
     @State private var isEditingListing = false
     @State private var isShowingCalendarEditor = false
     @State private var isShowingOwnerVerification = false
@@ -136,6 +137,14 @@ struct ListingDetailView: View {
                 StayWithKeysSheet(listing: listing) { stayId in
                     requestedStayId = stayId
                     isShowingKeysStaySheet = false
+                }
+            }
+        }
+        .sheet(isPresented: $isShowingCouchsurfSheet) {
+            if let listing = vm.detail?.listing {
+                CouchsurfRequestSheet(listing: listing) { stayId in
+                    requestedStayId = stayId
+                    isShowingCouchsurfSheet = false
                 }
             }
         }
@@ -648,6 +657,22 @@ struct ListingDetailView: View {
                 .buttonStyle(.plain)
                 .disabled(detail.viewerListingId == nil)
                 .opacity(detail.viewerListingId == nil ? 0.45 : 1)
+            }
+
+            // DOK-219: free couch request when the host offers one. Needs no
+            // listing of your own — gated by a Couchsurfer membership server-side.
+            if detail.listing.couchsurfingAvailable == true {
+                Button {
+                    isShowingCouchsurfSheet = true
+                } label: {
+                    Label("Request a free couch", systemImage: "bed.double")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .overlay(Capsule().stroke(AirbnbPalette.hairline))
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 18)

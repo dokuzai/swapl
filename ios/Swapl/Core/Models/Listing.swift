@@ -61,6 +61,10 @@ struct Listing: Identifiable, Codable, Hashable, Sendable {
     let spaceType: String?
     // Rooms offered when spaceType == "private_room"; nil for a whole place.
     let roomsOffered: Int?
+    // DOK-219: host also offers a free couch. A guest with a Couchsurfer
+    // membership can send a free couch request for this home. Optional for
+    // back-compat with cached/older payloads.
+    var couchsurfingAvailable: Bool? = nil
     // 1..5 desirability tier for the home's location, feeding the valuation.
     let locationTier: Int?
     // Owner-only structured explanation of how nightlyKeys is calculated (v2).

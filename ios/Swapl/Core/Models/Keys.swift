@@ -251,6 +251,9 @@ struct KeysStayRequest: Encodable, Sendable {
     let listingId: String
     let dateFrom: String
     let dateTo: String
+    // DOK-219: "couchsurf" sends a free, membership-gated request; omitted/"keys"
+    // spends Keys as usual.
+    var kind: String? = nil
 }
 
 struct KeysStayCreateResponse: Decodable, Sendable {

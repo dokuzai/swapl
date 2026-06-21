@@ -80,6 +80,8 @@ struct ListingCreateDraft: Encodable, Sendable {
     var spaceType: String
     // Rooms offered when spaceType == "private_room" (1–15); 1 for a whole place.
     var roomsOffered: Int
+    // DOK-219: host also offers a free couch (couchsurf requests need a membership).
+    var couchsurfingAvailable: Bool = false
     // Closed-by-default availability (DOK-219). When non-nil, the new listing is
     // bookable only on these ranges (empty = nothing bookable until the host opens
     // dates). Sent on create only; left nil on update so the edit body omits it

@@ -25,11 +25,19 @@ final class KeysRepository: @unchecked Sendable {
 
     // POST /api/keys/stays — request a stay. Holds the guest's Keys and notifies
     // the host. A 422 with "enough" in the message means insufficient balance.
-    func requestStay(listingId: String, dateFrom: String, dateTo: String) async throws -> KeysStayCreateResponse {
+    func requestStay(listingId: String, dateFrom: String, dateTo: String, kind: String? = nil) async throws -> KeysStayCreateResponse {
         try await APIClient.shared.send(
             "POST", "/api/keys/stays",
-            body: KeysStayRequest(listingId: listingId, dateFrom: dateFrom, dateTo: dateTo)
+            body: KeysStayRequest(listingId: listingId, dateFrom: dateFrom, dateTo: dateTo, kind: kind)
         )
+    }
+
+    // POST /api/billing/checkout/couchsurfer — start the yearly Couchsurfer
+    // membership checkout; returns the hosted Stripe URL to open (DOK-219).
+    func startCouchsurferCheckout() async throws -> String {
+        struct Resp: Decodable, Sendable { let url: String }
+        let r: Resp = try await APIClient.shared.send("POST", "/api/billing/checkout/couchsurfer")
+        return r.url
     }
 
     // POST /api/keys/gift — gift Keys to a verified member. Never overdraws.

@@ -874,6 +874,16 @@ struct ListingCreationView: View {
             ToggleCard(title: "Air conditioning", systemImage: "snowflake", isOn: $draft.ac)
             ToggleCard(title: "Washer", systemImage: "washer", isOn: $draft.washer)
             ToggleCard(title: "Dishwasher", systemImage: "dishwasher", isOn: $draft.dishwasher)
+
+            // DOK-219: opt into free couch hosting alongside the swap/Keys offer.
+            ToggleCard(title: "Also offer a free couch", systemImage: "bed.double", isOn: $draft.couchsurfingAvailable)
+            if draft.couchsurfingAvailable {
+                Text("Guests with a Couchsurfer membership can request a free stay. No Keys change hands — you just host.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
     }
 
@@ -1547,6 +1557,7 @@ private struct ListingCreationDraft {
     // the nightly Keys are reduced server-side.
     var spaceType = "entire_place"
     var roomsOffered = 1
+    var couchsurfingAvailable = false
     var sizeSqm = 80
     var sleeps = 3
     var bedrooms = 2
@@ -1603,6 +1614,7 @@ private struct ListingCreationDraft {
         propertyType = listing.propertyType
         spaceType = listing.spaceType ?? "entire_place"
         roomsOffered = listing.roomsOffered ?? 1
+        couchsurfingAvailable = listing.couchsurfingAvailable ?? false
         sizeSqm = listing.sizeSqm
         sleeps = listing.sleeps
         bedrooms = listing.bedrooms
@@ -1716,7 +1728,8 @@ private struct ListingCreationDraft {
             tags: tags,
             // Whole place always reports 1 room; a private room sends 1–15.
             spaceType: spaceType,
-            roomsOffered: spaceType == "private_room" ? max(1, min(roomsOffered, 15)) : 1
+            roomsOffered: spaceType == "private_room" ? max(1, min(roomsOffered, 15)) : 1,
+            couchsurfingAvailable: couchsurfingAvailable
         )
     }
 
