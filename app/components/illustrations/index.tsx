@@ -351,10 +351,20 @@ export function LogoMark({
   accent?: string;
   size?: number;
 }) {
+  // swapl mark: an "S" formed inside a hexagonal "house" ring with a window at the
+  // waist. `color` draws the navy half + window; `accent` draws the coral half.
   return (
-    <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" width={size} height={size} aria-hidden>
-      <polygon points="2,18 10,6 18,18" fill={color} opacity="0.85" />
-      <polygon points="10,22 18,10 26,22" fill={accent} />
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width={size} height={size} aria-hidden>
+      <g fill="none" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round">
+        <path stroke={color} d="M 32.5 100 L 32.5 61 L 100 22 L 167.5 61 Q 167.5 104 132 108 L 117 110" />
+        <path stroke={accent} d="M 167.5 100 L 167.5 139 L 100 178 L 32.5 139 Q 32.5 96 68 92 L 83 90" />
+      </g>
+      <g fill={color}>
+        <rect x="87.5" y="87.5" width="11" height="11" rx="2.6" />
+        <rect x="101.5" y="87.5" width="11" height="11" rx="2.6" />
+        <rect x="87.5" y="101.5" width="11" height="11" rx="2.6" />
+        <rect x="101.5" y="101.5" width="11" height="11" rx="2.6" />
+      </g>
     </svg>
   );
 }

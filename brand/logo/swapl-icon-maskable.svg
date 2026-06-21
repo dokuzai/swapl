@@ -1,7 +1,7 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="swapl">
-  <!-- App / favicon tile: mark on a white rounded square. -->
-  <rect width="512" height="512" rx="112" fill="#FFFFFF"/>
-  <g transform="translate(96 96) scale(1.6)">
+  <!-- Maskable PWA / Android adaptive icon: full-bleed white, mark inside the safe zone. -->
+  <rect width="512" height="512" fill="#FFFFFF"/>
+  <g transform="translate(111 111) scale(1.45)">
     <g fill="none" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="#1A1F3C" d="M 32.5 100 L 32.5 61 L 100 22 L 167.5 61 Q 167.5 104 132 108 L 117 110" />
       <path stroke="#F24B8E" d="M 167.5 100 L 167.5 139 L 100 178 L 32.5 139 Q 32.5 96 68 92 L 83 90" />

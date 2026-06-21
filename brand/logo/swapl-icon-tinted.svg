@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="swapl">
+  <!-- Tinted appearance source: grayscale silhouette on black; iOS applies the user's tint. -->
+  <rect width="512" height="512" fill="#000000"/>
+  <g transform="translate(111 111) scale(1.45)">
+    <g fill="none" stroke="#FFFFFF" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 32.5 100 L 32.5 61 L 100 22 L 167.5 61 Q 167.5 104 132 108 L 117 110" />
+      <path d="M 167.5 100 L 167.5 139 L 100 178 L 32.5 139 Q 32.5 96 68 92 L 83 90" />
+    </g>
+    <g fill="#FFFFFF">
+      <rect x="87.5" y="87.5" width="11" height="11" rx="2.6" />
+      <rect x="101.5" y="87.5" width="11" height="11" rx="2.6" />
+      <rect x="87.5" y="101.5" width="11" height="11" rx="2.6" />
+      <rect x="101.5" y="101.5" width="11" height="11" rx="2.6" />
+    </g>
+  </g>
+</svg>

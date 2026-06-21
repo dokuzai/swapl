@@ -1,0 +1,13 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="swapl">
+  <!-- Reverse mark for dark backgrounds: cream takes the place of navy, coral stays. -->
+  <g fill="none" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="#FAF6E8" d="M 32.5 100 L 32.5 61 L 100 22 L 167.5 61 Q 167.5 104 132 108 L 117 110" />
+    <path stroke="#F24B8E" d="M 167.5 100 L 167.5 139 L 100 178 L 32.5 139 Q 32.5 96 68 92 L 83 90" />
+  </g>
+  <g fill="#FAF6E8">
+    <rect x="87.5" y="87.5" width="11" height="11" rx="2.6" />
+    <rect x="101.5" y="87.5" width="11" height="11" rx="2.6" />
+    <rect x="87.5" y="101.5" width="11" height="11" rx="2.6" />
+    <rect x="101.5" y="101.5" width="11" height="11" rx="2.6" />
+  </g>
+</svg>
