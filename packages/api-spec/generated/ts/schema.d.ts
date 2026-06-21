@@ -8709,6 +8709,8 @@ export interface components {
             dateFrom: string;
             dateTo: string;
             message?: string | null;
+            /** @description Number of guests travelling to the target home (DOK-219). Validated server-side against the target's capacity (sleeps) — a larger group than the home sleeps is rejected with 400. */
+            guestCount?: number | null;
         };
         ProposalCreateResponse: {
             ok?: boolean;

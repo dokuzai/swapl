@@ -512,6 +512,9 @@ model SwapProposal {
   dateFrom          DateTime
   dateTo            DateTime
   message           String?
+  // Number of guests travelling to the target home (DOK-219). Nullable for
+  // proposals created before guest counts existed; validated <= target.sleeps.
+  guestCount        Int?
 
   status            String   @default("PENDING")
 

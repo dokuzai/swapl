@@ -78,6 +78,9 @@ export const swapProposalSchema = z.object({
   dateFrom: z.coerce.date(),
   dateTo: z.coerce.date(),
   message: z.string().max(2000).optional(),
+  // Guests travelling to the target home (DOK-219). Validated against the
+  // target's capacity in the route. Optional for back-compat with older clients.
+  guestCount: z.number().int().min(1).max(50).optional(),
 }).refine((data) => data.dateTo > data.dateFrom, {
   message: "dateTo must be after dateFrom",
   path: ["dateTo"],

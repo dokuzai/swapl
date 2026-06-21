@@ -1229,6 +1229,13 @@ components:
         dateFrom: { type: string }
         dateTo: { type: string }
         message: { type: string, nullable: true }
+        guestCount:
+          type: integer
+          nullable: true
+          description: >-
+            Number of guests travelling to the target home (DOK-219). Validated
+            server-side against the target's capacity (sleeps) — a larger group
+            than the home sleeps is rejected with 400.
 
     ProposalCreateResponse:
       type: object

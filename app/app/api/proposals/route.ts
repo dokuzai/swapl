@@ -142,7 +142,7 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return invalidInput("Invalid input", { issues: parsed.error.issues });
   }
-  const { proposerListingId, targetListingId, dateFrom, dateTo, message } = parsed.data;
+  const { proposerListingId, targetListingId, dateFrom, dateTo, message, guestCount } = parsed.data;
 
   if (dateTo <= dateFrom) {
     return invalidInput("End date must be after start.");
@@ -158,6 +158,13 @@ export async function POST(req: Request) {
   if (!target) return notFound("Target listing not found");
   if (target.userId === session.userId) {
     return invalidInput("Cannot swap with yourself.");
+  }
+
+  // Guests must fit the target home's capacity (DOK-219).
+  if (typeof guestCount === "number" && guestCount > target.sleeps) {
+    return invalidInput(
+      `That home sleeps ${target.sleeps}. Reduce your group size or pick a larger home.`,
+    );
   }
 
   // Dates must fit BOTH homes' availability (DOK-219). A swap is simultaneous —
@@ -196,6 +203,7 @@ export async function POST(req: Request) {
       dateFrom,
       dateTo,
       message: message ?? null,
+      guestCount: guestCount ?? null,
       status: "PENDING",
     },
   });
