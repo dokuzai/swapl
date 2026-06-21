@@ -28,8 +28,16 @@ final class KeysWalletViewModel {
 
 struct KeysWalletView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AuthService.self) private var auth
     @State private var vm = KeysWalletViewModel()
     @State private var isGifting = false
+    // "Verify your identity" earn row mints + opens the Didit hosted flow right
+    // here (same path as IdentityVerificationCard), instead of just closing the
+    // wallet — closing it looked like "nothing happened" since the card lives at
+    // the top of Account, off-screen after a pop.
+    @State private var verifyBusy = false
+    @State private var verifyError: String?
+    @State private var verifyWebSession = HostedVerificationSession()
 
     var body: some View {
         ScrollView {
@@ -54,8 +62,47 @@ struct KeysWalletView: View {
         .sheet(isPresented: $isGifting, onDismiss: { Task { await vm.load() } }) {
             GiftKeysSheet()
         }
+        .alert(
+            String(localized: "Verification unavailable"),
+            isPresented: Binding(get: { verifyError != nil }, set: { if !$0 { verifyError = nil } })
+        ) {
+            Button(String(localized: "OK"), role: .cancel) { verifyError = nil }
+        } message: {
+            if let verifyError { Text(verifyError) }
+        }
         .task { await vm.load() }
         .refreshable { await vm.load() }
+    }
+
+    // Mirrors IdentityVerificationCard.startVerification: mint a hosted Didit
+    // session, open it in ASWebAuthenticationSession, then refresh the wallet
+    // (the verify row flips to done) and /api/me (the profile badge updates).
+    private func startIdentityVerification() {
+        guard !verifyBusy else { return }
+        verifyBusy = true
+        verifyError = nil
+        Task {
+            defer { verifyBusy = false }
+            do {
+                let start = try await VerificationRepository.shared.createSession()
+                if start.status == "approved" {
+                    await vm.load()
+                    await auth.refreshSession()
+                    return
+                }
+                guard let raw = start.url, let url = URL(string: raw) else {
+                    verifyError = String(localized: "Verification is unavailable right now. Try again later.")
+                    return
+                }
+                await verifyWebSession.present(url: url)
+                await vm.load()
+                await auth.refreshSession()
+            } catch APIClient.APIError.status(503, _) {
+                verifyError = String(localized: "Verification is unavailable right now. Try again later.")
+            } catch {
+                verifyError = error.localizedDescription
+            }
+        }
     }
 
     // Zero balance: nothing to spend or gift. We surface the three ways to earn
@@ -84,7 +131,7 @@ struct KeysWalletView: View {
             // the server omits it (older build) we fall back to the static
             // three-paths card on a zero balance so the screen still has a CTA.
             if let earnWays = wallet.earnWays {
-                WaysToEarnKeysSection(payload: earnWays, onVerifyIdentity: { dismiss() })
+                WaysToEarnKeysSection(payload: earnWays, onVerifyIdentity: { startIdentityVerification() })
             } else if isZeroBalance(wallet) {
                 earnPathsCard
             }

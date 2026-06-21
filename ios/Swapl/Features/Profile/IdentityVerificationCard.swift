@@ -154,7 +154,10 @@ struct IdentityVerificationCard: View {
                 // Feature switched off server-side since the status fetch — hide.
                 status = nil
             } catch {
-                self.error = error.localizedDescription
+                // Couldn't mint a session (e.g. the provider rejected it — out of
+                // credits, rate-limited, unreachable). Show friendly copy instead
+                // of the raw server/error string.
+                self.error = String(localized: "Verification is unavailable right now. Try again later.")
             }
         }
     }
