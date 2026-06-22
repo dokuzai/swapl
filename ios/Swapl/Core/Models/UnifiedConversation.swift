@@ -36,6 +36,14 @@ struct UnifiedTimelinePage: Decodable, Sendable {
     var pendingChange: PendingDateChange? = nil
 }
 
+// Availability snapshot for the date-change picker + the booking's current
+// dates to preselect (DOK-221 Phase 3).
+struct DateChangeContext: Decodable, Sendable {
+    let availability: ListingAvailability
+    let currentFrom: String
+    let currentTo: String
+}
+
 // An in-flight date-change request on the conversation (DOK-221 Phase 3).
 struct PendingDateChange: Decodable, Hashable, Sendable {
     let from: String

@@ -40,6 +40,11 @@ final class ConversationRepository: @unchecked Sendable {
         )
     }
 
+    // GET /api/conversations/{id}/change-context — availability for the picker.
+    func changeContext(conversationId: String) async throws -> DateChangeContext {
+        try await APIClient.shared.send("GET", "/api/conversations/\(conversationId)/change-context")
+    }
+
     // POST /api/conversations/{id}/change-request — propose new dates (DOK-221 Phase 3).
     struct ChangeRequestBody: Encodable { let dateFrom: String; let dateTo: String }
     func requestDateChange(conversationId: String, dateFrom: String, dateTo: String) async throws {

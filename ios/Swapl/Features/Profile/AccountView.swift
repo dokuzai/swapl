@@ -63,19 +63,6 @@ struct AccountView: View {
                 }
                 .background(SwaplSemanticLight.background)
 
-                Button {
-                    isCreatingListing = true
-                } label: {
-                    Label(String(localized: "Switch to hosting"), systemImage: "arrow.up.arrow.down")
-                        .font(.swaplBody(17, weight: .bold))
-                        .foregroundStyle(SwaplSemanticLight.primaryForeground)
-                        .padding(.horizontal, 26)
-                        .frame(height: 58)
-                        .background(SwaplColor.navyDark, in: Capsule())
-                        .shadow(color: .black.opacity(0.18), radius: 18, x: 0, y: 10)
-                }
-                .padding(.bottom, 18)
-
                 // Real-time referrer toast (DOK-157): "NAME just verified — you
                 // earned Keys!" while the account screen is open.
                 ReferrerNotificationsToast()

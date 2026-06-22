@@ -93,13 +93,10 @@ struct MessagesListView: View {
     private var listContent: some View {
         List {
             Section {
-                Text("Messages")
-                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h1, weight: .bold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                SwaplPageTitle(String(localized: "Messages"))
             }
             .listRowSeparator(.hidden)
-            .listRowInsets(EdgeInsets(top: 8, leading: 22, bottom: 4, trailing: 22))
+            .listRowInsets(EdgeInsets())
             .listRowBackground(Color.clear)
 
             ForEach(vm.active) { c in

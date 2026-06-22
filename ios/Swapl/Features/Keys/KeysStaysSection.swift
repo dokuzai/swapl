@@ -137,7 +137,8 @@ struct KeysStayDetailView: View {
     @State private var error: String?
 
     var body: some View {
-        ScrollView {
+        ZStack(alignment: .top) {
+            ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 hero
 
@@ -198,11 +199,60 @@ struct KeysStayDetailView: View {
                     .padding(.horizontal, 22)
                     .padding(.bottom, 28)
             }
-            .padding(.top, 8)
+            }
+            // Let the hero bleed under the status bar + floating header, with a
+            // soft cream dissolve at the very top — same as the swap trip view.
+            .ignoresSafeArea(edges: .top)
+            .overlay(alignment: .top) { heroTopFade }
+            .background(SwaplSemanticLight.background.ignoresSafeArea())
+
+            stayFloatingHeader
         }
-        .background(SwaplSemanticLight.background)
-        .swaplFloatingHeader(stay.listing.city)
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
         .task { detail = try? await KeysRepository.shared.stayDetail(id: stay.id) }
+    }
+
+    private var heroTopFade: some View {
+        LinearGradient(
+            colors: [SwaplSemanticLight.background, SwaplSemanticLight.background.opacity(0)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .frame(height: 140)
+        .frame(maxWidth: .infinity, alignment: .top)
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
+    }
+
+    // Floating glass header over the hero: back chevron + city pill (no system
+    // nav bar), matching the swap trip view.
+    private var stayFloatingHeader: some View {
+        ZStack {
+            Text(stay.listing.city)
+                .font(.swaplBody(16, weight: .bold))
+                .foregroundStyle(AirbnbPalette.text)
+                .lineLimit(1)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .glassEffect(.regular, in: .capsule)
+
+            HStack(spacing: 0) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .frame(width: 44, height: 44)
+                        .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .accessibilityLabel("Back")
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 4)
     }
 
     @ViewBuilder
@@ -213,7 +263,7 @@ struct KeysStayDetailView: View {
             } placeholder: {
                 SwaplSemanticLight.muted
             }
-            .frame(height: 200)
+            .frame(height: 300)
             .frame(maxWidth: .infinity)
             .clipped()
         }

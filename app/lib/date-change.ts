@@ -62,6 +62,106 @@ async function occupancyExcluding(
   return [...agreements, ...stays, ...blocks];
 }
 
+// Occupied ranges WITH their source label, excluding the booking being moved —
+// for the calendar picker (greys out taken dates but not the booking's own).
+async function occupancyWithSource(
+  db: Db,
+  listingId: string,
+  exclude: { agreementId?: string; stayId?: string },
+): Promise<{ dateFrom: Date; dateTo: Date; source: string }[]> {
+  const [agreements, stays, blocks] = await Promise.all([
+    db.swapAgreement.findMany({
+      where: {
+        status: "ACTIVE",
+        OR: [{ listing1Id: listingId }, { listing2Id: listingId }],
+        ...(exclude.agreementId ? { id: { not: exclude.agreementId } } : {}),
+      },
+      select: { dateFrom: true, dateTo: true },
+    }),
+    db.keysStay.findMany({
+      where: {
+        listingId,
+        status: { in: ["pending", "confirmed"] },
+        ...(exclude.stayId ? { id: { not: exclude.stayId } } : {}),
+      },
+      select: { dateFrom: true, dateTo: true },
+    }),
+    db.listingBlockedRange.findMany({ where: { listingId }, select: { dateFrom: true, dateTo: true } }),
+  ]);
+  return [
+    ...agreements.map((a) => ({ dateFrom: a.dateFrom, dateTo: a.dateTo, source: "agreement" })),
+    ...stays.map((s) => ({ dateFrom: s.dateFrom, dateTo: s.dateTo, source: "keys_stay" })),
+    ...blocks.map((b) => ({ dateFrom: b.dateFrom, dateTo: b.dateTo, source: "blocked" })),
+  ];
+}
+
+// Availability snapshot for the date-change picker (ListingAvailability shape) +
+// the booking's current dates to preselect. For a swap it's the COMBINED picture
+// of both homes: window = intersection, min/max = tightest, taken = union (each
+// excluding this booking's own occupancy).
+export type DateChangeContext = {
+  availability: {
+    listingId: string;
+    availableFrom: string;
+    availableTo: string;
+    minStayDays: number;
+    maxStayDays: number;
+    bookedRanges: { dateFrom: string; dateTo: string; source: string }[];
+  };
+  currentFrom: string;
+  currentTo: string;
+};
+
+export async function dateChangeContext(conversationId: string, userId: string): Promise<DateChangeContext> {
+  const convo = await loadContext(prisma, conversationId);
+  const allowed = await principals(prisma, convo);
+  if (!allowed.includes(userId)) throw new DateChangeError("FORBIDDEN", "Only the booking's parties can change dates.");
+
+  if (convo.keysStay) {
+    const l = convo.keysStay.listing as AvailabilityListing;
+    const occ = await occupancyWithSource(prisma, l.id, { stayId: convo.keysStay.id });
+    return {
+      availability: {
+        listingId: l.id,
+        availableFrom: l.availableFrom.toISOString(),
+        availableTo: l.availableTo.toISOString(),
+        minStayDays: l.minStayDays,
+        maxStayDays: l.maxStayDays,
+        bookedRanges: occ.map((r) => ({ dateFrom: r.dateFrom.toISOString(), dateTo: r.dateTo.toISOString(), source: r.source })),
+      },
+      currentFrom: convo.keysStay.dateFrom.toISOString(),
+      currentTo: convo.keysStay.dateTo.toISOString(),
+    };
+  }
+  if (convo.proposal?.agreement) {
+    const agreementId = convo.proposal.agreement.id;
+    const [l1, l2] = await Promise.all([
+      prisma.listing.findUnique({ where: { id: convo.proposal.proposerListingId }, select: LISTING_SLICE }),
+      prisma.listing.findUnique({ where: { id: convo.proposal.targetListingId }, select: LISTING_SLICE }),
+    ]);
+    if (!l1 || !l2) throw new DateChangeError("NOT_FOUND", "A home in this swap no longer exists.");
+    const [o1, o2] = await Promise.all([
+      occupancyWithSource(prisma, l1.id, { agreementId }),
+      occupancyWithSource(prisma, l2.id, { agreementId }),
+    ]);
+    const availableFrom = new Date(Math.max(l1.availableFrom.getTime(), l2.availableFrom.getTime()));
+    const availableTo = new Date(Math.min(l1.availableTo.getTime(), l2.availableTo.getTime()));
+    return {
+      availability: {
+        listingId: l1.id,
+        availableFrom: availableFrom.toISOString(),
+        availableTo: availableTo.toISOString(),
+        minStayDays: Math.max(l1.minStayDays, l2.minStayDays),
+        maxStayDays: Math.min(l1.maxStayDays, l2.maxStayDays),
+        bookedRanges: [...o1, ...o2].map((r) => ({ dateFrom: r.dateFrom.toISOString(), dateTo: r.dateTo.toISOString(), source: r.source })),
+      },
+      currentFrom: convo.proposal.agreement.dateFrom.toISOString(),
+      currentTo: convo.proposal.agreement.dateTo.toISOString(),
+    };
+  }
+  throw new DateChangeError("NOT_ACCEPTED", "Date changes apply to accepted swaps and stays.");
+}
+
 type ConversationContext = Awaited<ReturnType<typeof loadContext>>;
 
 async function loadContext(db: Db, conversationId: string) {

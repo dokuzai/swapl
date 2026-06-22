@@ -192,7 +192,7 @@ struct ConversationView: View {
             Task { await upload(items) }
         }
         .sheet(isPresented: $showDateChange) {
-            DateChangeSheet { from, to in
+            DateChangeSheet(conversationId: vm.conversationId) { from, to in
                 let ok = await vm.requestChange(dateFrom: from, dateTo: to)
                 if ok { showDateChange = false }
                 return vm.changeError
@@ -603,30 +603,53 @@ struct UnifiedMessageBubble: View {
     }
 }
 
-// Two date pickers to propose a new booking range (DOK-221 Phase 3). onSubmit
-// returns an error string to show in place, or nil on success (the caller
-// dismisses the sheet).
+// Propose a new booking range (DOK-221 Phase 3) on the SAME availability-aware
+// range calendar the booking flow uses: taken dates greyed out (excluding this
+// booking's own), tap check-in then check-out. onSubmit returns an error string
+// to show in place, or nil on success (the caller dismisses).
 struct DateChangeSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var from = Calendar.current.startOfDay(for: Date())
-    @State private var to = Calendar.current.date(byAdding: .day, value: 2, to: Calendar.current.startOfDay(for: Date())) ?? Date()
+    let conversationId: String
+    let onSubmit: (_ dateFrom: String, _ dateTo: String) async -> String?
+
+    @State private var context: DateChangeContext?
+    @State private var dateFrom = Calendar.current.startOfDay(for: Date())
+    @State private var dateTo = Calendar.current.date(byAdding: .day, value: 2, to: Calendar.current.startOfDay(for: Date())) ?? Date()
+    @State private var loading = true
+    @State private var loadError: String?
     @State private var busy = false
     @State private var error: String?
-    let onSubmit: (_ dateFrom: String, _ dateTo: String) async -> String?
 
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    DatePicker(String(localized: "From"), selection: $from, displayedComponents: .date)
-                    DatePicker(String(localized: "To"), selection: $to, in: from..., displayedComponents: .date)
-                } footer: {
-                    Text("The other party will be asked to accept. Availability is re-checked, and Keys are adjusted if the number of nights changes.")
+                if let context {
+                    Section {
+                        AvailabilityCalendar(
+                            days: AvailabilityDays(availability: context.availability),
+                            mode: .range,
+                            selectionStart: Binding(get: { dateFrom }, set: { if let v = $0 { dateFrom = v } }),
+                            selectionEnd: Binding(get: { dateTo }, set: { dateTo = $0 ?? dateFrom }),
+                            onSelectionChange: { from, to in
+                                if let from { dateFrom = from }
+                                dateTo = to ?? Calendar.current.date(byAdding: .day, value: 1, to: from ?? dateFrom) ?? dateFrom
+                            }
+                        )
+                        .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                    } footer: {
+                        Text("Tap a check-in then a check-out inside the availability. The other party will be asked to accept; Keys adjust if the number of nights changes.")
+                    }
+                } else if loading {
+                    Section { ProgressView().frame(maxWidth: .infinity).padding(.vertical, 24) }
+                } else if let loadError {
+                    Section { Text(loadError).foregroundStyle(AirbnbPalette.destructive) }
                 }
                 if let error {
-                    Text(error)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
-                        .foregroundStyle(AirbnbPalette.destructive)
+                    Section {
+                        Text(error)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                            .foregroundStyle(AirbnbPalette.destructive)
+                    }
                 }
             }
             .navigationTitle(String(localized: "Propose new dates"))
@@ -640,11 +663,22 @@ struct DateChangeSheet: View {
                         Task {
                             busy = true
                             defer { busy = false }
-                            error = await onSubmit(isoDay(from), isoDay(to))
+                            error = await onSubmit(isoDay(dateFrom), isoDay(dateTo))
                         }
                     }
-                    .disabled(busy)
+                    .disabled(busy || context == nil)
                 }
+            }
+            .task {
+                do {
+                    let ctx = try await ConversationRepository.shared.changeContext(conversationId: conversationId)
+                    context = ctx
+                    if let f = SwaplDateText.parse(ctx.currentFrom) { dateFrom = f }
+                    if let t = SwaplDateText.parse(ctx.currentTo) { dateTo = t }
+                } catch {
+                    loadError = error.localizedDescription
+                }
+                loading = false
             }
         }
     }
