@@ -184,6 +184,141 @@ export async function getMessages(
   };
 }
 
+// Short, human preview line for an event row (used in the Messages list).
+function eventLabel(eventType: string | null): string {
+  switch (eventType) {
+    case "request_sent": return "Request sent";
+    case "preapproved": return "Pre-approved";
+    case "confirmed": return "Confirmed";
+    case "accepted": return "Swap accepted";
+    case "countered": return "New dates proposed";
+    case "declined": return "Declined";
+    case "withdrawn": return "Withdrawn";
+    case "cancelled": return "Cancelled";
+    case "change_requested": return "Change requested";
+    case "change_accepted": return "Change accepted";
+    case "checked_in": return "Checked in";
+    case "checked_out": return "Checked out";
+    case "completed": return "Completed";
+    default: return "Update";
+  }
+}
+
+export type ConversationListItem = {
+  id: string;
+  kind: "swap" | "stay";
+  role: "traveling" | "hosting";
+  status: string;
+  title: string;
+  city: string | null;
+  photo: string | null;
+  counterpartName: string | null;
+  dateFrom: string | null;
+  dateTo: string | null;
+  lastLine: string | null;
+  lastMessageAt: string;
+  unreadCount: number;
+};
+
+// Unified Messages list across both swap- and stay-backed threads, newest-first.
+export async function listConversationsForUser(userId: string): Promise<ConversationListItem[]> {
+  const convos = await prisma.conversation.findMany({
+    where: {
+      OR: [
+        { keysStay: { OR: [{ guestId: userId }, { hostId: userId }] } },
+        {
+          proposal: {
+            OR: [
+              { proposerId: userId },
+              { targetListing: { userId } },
+              { participants: { some: { userId, status: "active" } } },
+            ],
+          },
+        },
+      ],
+    },
+    include: {
+      reads: { where: { userId } },
+      messages: { orderBy: { createdAt: "desc" }, take: 1 },
+      keysStay: {
+        include: {
+          listing: { select: { title: true, city: true, photos: true } },
+          guest: { select: { name: true } },
+          host: { select: { name: true } },
+        },
+      },
+      proposal: {
+        include: {
+          proposerListing: { select: { city: true, photos: true, user: { select: { name: true } } } },
+          targetListing: { select: { city: true, photos: true, userId: true, user: { select: { name: true } } } },
+        },
+      },
+    },
+    orderBy: { updatedAt: "desc" },
+  });
+
+  const items: ConversationListItem[] = [];
+  for (const c of convos) {
+    const last = c.messages[0] ?? null;
+    const cursor = c.reads[0]?.lastReadAt ?? null;
+    const unreadCount = await prisma.message.count({
+      where: {
+        conversationId: c.id,
+        ...(cursor ? { createdAt: { gt: cursor } } : {}),
+        NOT: { authorId: userId },
+      },
+    });
+    const lastLine = last
+      ? last.kind === "event"
+        ? eventLabel(last.eventType)
+        : last.body ?? "Photo"
+      : null;
+    const lastMessageAt = (last?.createdAt ?? c.updatedAt).toISOString();
+
+    if (c.keysStay) {
+      const s = c.keysStay;
+      const isGuest = s.guestId === userId;
+      items.push({
+        id: c.id,
+        kind: "stay",
+        role: isGuest ? "traveling" : "hosting",
+        status: s.status,
+        title: isGuest ? `Stay in ${s.listing.city}` : `Guest at ${s.listing.title}`,
+        city: s.listing.city,
+        photo: parseJSON<string[]>(s.listing.photos, [])[0] ?? null,
+        counterpartName: (isGuest ? s.host.name : s.guest.name) ?? null,
+        dateFrom: s.dateFrom.toISOString(),
+        dateTo: s.dateTo.toISOString(),
+        lastLine,
+        lastMessageAt,
+        unreadCount,
+      });
+    } else if (c.proposal) {
+      const p = c.proposal;
+      const isProposer = p.proposerId === userId;
+      const their = isProposer ? p.targetListing : p.proposerListing;
+      items.push({
+        id: c.id,
+        kind: "swap",
+        role: isProposer ? "traveling" : "hosting",
+        status: p.status,
+        title: `Home in ${their.city}`,
+        city: their.city,
+        photo: parseJSON<string[]>(their.photos, [])[0] ?? null,
+        counterpartName: their.user?.name ?? null,
+        dateFrom: p.dateFrom.toISOString(),
+        dateTo: p.dateTo.toISOString(),
+        lastLine,
+        lastMessageAt,
+        unreadCount,
+      });
+    }
+  }
+  // Newest activity first.
+  items.sort((a, b) => (a.lastMessageAt < b.lastMessageAt ? 1 : -1));
+  return items;
+}
+
 export async function markConversationRead(conversationId: string, userId: string) {
   await prisma.conversationReadCursor.upsert({
     where: { conversationId_userId: { conversationId, userId } },

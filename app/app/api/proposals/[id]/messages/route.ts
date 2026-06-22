@@ -21,6 +21,7 @@ import { sendPush, pushTemplates } from "@/lib/push";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { accountSuspended } from "@/lib/api/errors";
 import { canAccessConversation } from "@/lib/conversation/participants";
+import { conversationForProposal, postMessage } from "@/lib/conversations";
 
 // Send at most one notification email per recipient per thread per window.
 const EMAIL_THROTTLE_MS = 15 * 60 * 1000; // 15 minutes
@@ -199,6 +200,12 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       photos: stringifyJSON(parsed.data.photos ?? []),
     },
   });
+
+  // DOK-221: mirror into the unified per-transaction timeline during the
+  // transition (until iOS reads/writes the conversation API directly). Best-effort.
+  conversationForProposal(id)
+    .then((c) => postMessage(c.id, session.userId, parsed.data.body ?? null, parsed.data.photos ?? []))
+    .catch(() => {});
 
   // Notify every OTHER member of the conversation: both principals plus active
   // guest participants, minus the author. Push fires every message; email is

@@ -12,6 +12,7 @@ import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { forbidden, notFound, invalidInput, unauthenticated, apiError } from "@/lib/api/errors";
+import { recordProposalEvent } from "@/lib/conversations";
 
 const bodySchema = z.object({
   note: z.string().max(2000).optional(),
@@ -106,6 +107,11 @@ export async function handleCheckEvent(
   const me = onSide1 ? agreement.listing1.user : agreement.listing2.user;
   const other = onSide1 ? agreement.listing2.user : agreement.listing1.user;
   const myName = me.name ?? "Your swap partner";
+
+  // DOK-221: record it on the swap's timeline.
+  recordProposalEvent(agreement.proposalId, type === "checkin" ? "checked_in" : "checked_out", {
+    by: myName,
+  }).catch(() => {});
   const tmpl = type === "checkin" ? emailTemplates.checkedIn : emailTemplates.checkedOut;
   const pushTmpl = type === "checkin" ? pushTemplates.checkedIn : pushTemplates.checkedOut;
   if (other.email) {

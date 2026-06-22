@@ -8,6 +8,7 @@ import { checkRateLimitDurable } from "@/lib/rate-limit";
 import { ensureCanCreateProposal, PlanLimitError } from "@/lib/billing/limits";
 import { isAvailable } from "@/lib/listing/availability";
 import { apiError, accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
+import { recordProposalEvent } from "@/lib/conversations";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -229,6 +230,14 @@ export async function POST(req: Request) {
     target.userId,
     pushTemplates.proposalReceived(proposal.id, session.name ?? session.email, target.city)
   ).catch((err) => console.error("[proposal:push]", err));
+
+  // DOK-221: open the per-transaction thread with the opening event + the
+  // proposer's optional intro message, so the swap chat starts as a timeline.
+  recordProposalEvent(proposal.id, "request_sent", {
+    dateFrom: dateFrom.toISOString(),
+    dateTo: dateTo.toISOString(),
+    guestCount: guestCount ?? null,
+  }).catch(() => {});
 
   return NextResponse.json({ ok: true, id: proposal.id });
 }

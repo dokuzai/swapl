@@ -12,6 +12,7 @@ import { publicContactChannels, ownContactChannels } from "@/lib/contact-channel
 import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { getTripPhase, guideUnlocked, homeGuideComplete } from "@/lib/trip/phase";
 import { bookedRangesFor, rangesOverlap } from "@/lib/listing/availability";
+import { recordProposalEvent } from "@/lib/conversations";
 import { Prisma } from "@/generated/prisma/client";
 import { isListingDateOverlapError, occupyListing } from "@/lib/listing/occupancy";
 import { randomInt } from "node:crypto";
@@ -211,6 +212,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     await prisma.swapProposal.update({ where: { id }, data: { status: "WITHDRAWN" } });
     // Pay-on-accept: a withdrawn proposal can never be charged.
     await cancelInspirePackagePayment(id).catch((err) => console.error("[inspire:cancel-payment]", err));
+    recordProposalEvent(id, "withdrawn").catch(() => {});
     return NextResponse.json({ ok: true });
   }
 
@@ -228,6 +230,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       }).catch(console.error);
     }
     sendPush(proposal.proposerId, pushTemplates.proposalDeclined(proposal.id)).catch(console.error);
+    recordProposalEvent(id, "declined").catch(() => {});
     return NextResponse.json({ ok: true });
   }
 
@@ -258,6 +261,11 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
       );
     const otherUserId = isProposer ? proposal.targetListing.userId : proposal.proposerId;
     sendPush(otherUserId, pushTemplates.proposalCountered(proposal.id)).catch(console.error);
+    recordProposalEvent(id, "countered", {
+      dateFrom: parsed.data.counterDateFrom.toISOString(),
+      dateTo: parsed.data.counterDateTo.toISOString(),
+      by: isProposer ? "proposer" : "host",
+    }).catch(() => {});
     return NextResponse.json({ ok: true });
   }
 
@@ -444,6 +452,11 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
     [proposal.proposerId, proposal.targetListing.userId].forEach((uid) => {
       sendPush(uid, pushTemplates.proposalAccepted(proposal.id)).catch(console.error);
     });
+
+    recordProposalEvent(id, "accepted", {
+      dateFrom: proposal.dateFrom.toISOString(),
+      dateTo: proposal.dateTo.toISOString(),
+    }).catch(() => {});
 
     return NextResponse.json({ ok: true, agreementId: result.agreement.id });
   }

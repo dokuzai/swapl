@@ -8,10 +8,20 @@
 import { NextResponse } from "next/server";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { getConversations } from "@/app/swaps/conversations";
+import { listConversationsForUser } from "@/lib/conversations";
 
 export async function GET(req: Request) {
   const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "UNAUTHENTICATED" }, { status: 401 });
+
+  // DOK-221: v2 returns the UNIFIED list (swap + stay threads from the new
+  // Conversation model). The default (no param) keeps the legacy swap-only shape
+  // so the current shipped app is unaffected until it adopts v2.
+  if (new URL(req.url).searchParams.get("v") === "2") {
+    const threads = await listConversationsForUser(session.userId);
+    const totalUnread = threads.reduce((s, t) => s + t.unreadCount, 0);
+    return NextResponse.json({ conversations: threads, totalUnread });
+  }
 
   const conversations = await getConversations(session.userId);
   // Most recently active thread first: a fresh message outranks an old proposal
