@@ -39,4 +39,22 @@ final class ConversationRepository: @unchecked Sendable {
             "POST", "/api/conversations/\(conversationId)/archive", body: ArchiveBody(archived: archived)
         )
     }
+
+    // POST /api/conversations/{id}/change-request — propose new dates (DOK-221 Phase 3).
+    struct ChangeRequestBody: Encodable { let dateFrom: String; let dateTo: String }
+    func requestDateChange(conversationId: String, dateFrom: String, dateTo: String) async throws {
+        let _: EmptyResponse = try await APIClient.shared.send(
+            "POST", "/api/conversations/\(conversationId)/change-request",
+            body: ChangeRequestBody(dateFrom: dateFrom, dateTo: dateTo)
+        )
+    }
+
+    // POST /api/conversations/{id}/change-response — accept/decline the pending change.
+    struct ChangeResponseBody: Encodable { let accept: Bool }
+    func respondDateChange(conversationId: String, accept: Bool) async throws {
+        let _: EmptyResponse = try await APIClient.shared.send(
+            "POST", "/api/conversations/\(conversationId)/change-response",
+            body: ChangeResponseBody(accept: accept)
+        )
+    }
 }

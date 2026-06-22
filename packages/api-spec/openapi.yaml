@@ -1850,6 +1850,17 @@ components:
           description: When the counterpart(s) read this (my messages only); null until then or for events.
         createdAt: { type: string, format: date-time }
 
+    PendingDateChange:
+      type: object
+      description: An in-flight date-change request on this conversation (DOK-221 Phase 3).
+      required: [from, to, requestedById, mine, at]
+      properties:
+        from: { type: string, format: date-time }
+        to: { type: string, format: date-time }
+        requestedById: { type: string }
+        mine: { type: boolean, description: True when the viewer is the one who proposed it. }
+        at: { type: [string, 'null'], format: date-time }
+
     UnifiedTimelineResponse:
       type: object
       required: [messages, nextCursor, hasMore]
@@ -1862,6 +1873,11 @@ components:
           type: [string, 'null']
           description: Message id to pass as ?cursor= for the next (older) page, or null.
         hasMore: { type: boolean }
+        pendingChange:
+          description: The current pending date-change request, or null.
+          oneOf:
+            - { $ref: '#/components/schemas/PendingDateChange' }
+            - { type: 'null' }
 
     UnifiedMessageCreateRequest:
       type: object
@@ -3932,6 +3948,87 @@ paths:
               schema: { $ref: '#/components/schemas/Error' }
         '401': { description: Unauthenticated }
         '403': { description: No access to this conversation }
+
+  /api/conversations/{id}/change-request:
+    post:
+      tags: [proposals]
+      summary: Propose new dates for the booking (DOK-221 Phase 3)
+      description: >-
+        A principal (swap proposer/target owner, or stay guest/host) proposes
+        new dates. Validated against availability (excluding this booking's own
+        current dates). Records a change_requested event and notifies the
+        counterpart. At most one request is in flight per conversation.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dateFrom, dateTo]
+              properties:
+                dateFrom: { type: string, format: date }
+                dateTo: { type: string, format: date }
+      responses:
+        '200':
+          description: Requested
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OkResponse' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a principal of this booking }
+        '404': { description: Conversation not found }
+        '422': { description: Dates unavailable or not applicable }
+
+  /api/conversations/{id}/change-response:
+    post:
+      tags: [proposals]
+      summary: Accept or decline the pending date change (DOK-221 Phase 3)
+      description: >-
+        Accept (counterpart only) moves the booking — re-validating availability
+        and, for a confirmed Keys stay, re-pricing the Keys settlement
+        (charge/refund the guest, adjust the host). Decline (either principal)
+        clears the request. Records change_accepted / change_declined.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accept]
+              properties:
+                accept: { type: boolean }
+      responses:
+        '200':
+          description: Resolved
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, accepted]
+                properties:
+                  ok: { type: boolean }
+                  accepted: { type: boolean }
+                  applied:
+                    description: The applied dates when accepted, else null.
+                    oneOf:
+                      - type: object
+                        properties:
+                          from: { type: string, format: date-time }
+                          to: { type: string, format: date-time }
+                      - { type: 'null' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not allowed (e.g. accepting your own request) }
+        '404': { description: Conversation not found }
+        '409': { description: No pending change }
+        '422': { description: Dates no longer available }
 
   /api/agreements/{id}/review:
     post:

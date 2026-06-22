@@ -4141,6 +4141,190 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/conversations/{id}/change-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Propose new dates for the booking (DOK-221 Phase 3)
+         * @description A principal (swap proposer/target owner, or stay guest/host) proposes new dates. Validated against availability (excluding this booking's own current dates). Records a change_requested event and notifies the counterpart. At most one request is in flight per conversation.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** Format: date */
+                        dateFrom: string;
+                        /** Format: date */
+                        dateTo: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Requested */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OkResponse"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not a principal of this booking */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Conversation not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Dates unavailable or not applicable */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations/{id}/change-response": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept or decline the pending date change (DOK-221 Phase 3)
+         * @description Accept (counterpart only) moves the booking — re-validating availability and, for a confirmed Keys stay, re-pricing the Keys settlement (charge/refund the guest, adjust the host). Decline (either principal) clears the request. Records change_accepted / change_declined.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        accept: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description Resolved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            accepted: boolean;
+                            /** @description The applied dates when accepted, else null. */
+                            applied?: {
+                                /** Format: date-time */
+                                from?: string;
+                                /** Format: date-time */
+                                to?: string;
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not allowed (e.g. accepting your own request) */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Conversation not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description No pending change */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Dates no longer available */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/agreements/{id}/review": {
         parameters: {
             query?: never;
@@ -9498,12 +9682,26 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
+        /** @description An in-flight date-change request on this conversation (DOK-221 Phase 3). */
+        PendingDateChange: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
+            requestedById: string;
+            /** @description True when the viewer is the one who proposed it. */
+            mine: boolean;
+            /** Format: date-time */
+            at: string | null;
+        };
         UnifiedTimelineResponse: {
             /** @description Oldest first within the returned page. */
             messages: components["schemas"]["UnifiedTimelineMessage"][];
             /** @description Message id to pass as ?cursor= for the next (older) page, or null. */
             nextCursor: string | null;
             hasMore: boolean;
+            /** @description The current pending date-change request, or null. */
+            pendingChange?: components["schemas"]["PendingDateChange"] | null;
         };
         /** @description Provide body, photos, or both — at least one is required. */
         UnifiedMessageCreateRequest: {

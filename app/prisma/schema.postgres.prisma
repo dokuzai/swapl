@@ -592,6 +592,13 @@ model Conversation {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  // Pending in-chat date-change request (DOK-221, Phase 3) — at most one in
+  // flight. Set when a principal proposes new dates; cleared on accept/decline.
+  pendingChangeFrom DateTime?
+  pendingChangeTo   DateTime?
+  pendingChangeById String?
+  pendingChangeAt   DateTime?
+
   messages Message[]
   reads    ConversationReadCursor[]
 

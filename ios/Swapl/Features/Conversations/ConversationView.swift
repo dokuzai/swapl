@@ -24,6 +24,10 @@ final class ConversationViewModel {
     var nextCursor: String?
     var hasMore = false
     var isLoadingMore = false
+    // In-flight date-change request (DOK-221 Phase 3), surfaced by the timeline.
+    var pendingChange: PendingDateChange?
+    var changeBusy = false
+    var changeError: String?
 
     // Bumps whenever the tail grows so the view can drive auto-scroll.
     var scrollAnchor: String?
@@ -46,6 +50,7 @@ final class ConversationViewModel {
             messages = page.messages
             nextCursor = page.nextCursor
             hasMore = page.hasMore
+            pendingChange = page.pendingChange
             hasLoadedOnce = true
             scrollAnchor = messages.last?.id
         } catch {
@@ -75,8 +80,37 @@ final class ConversationViewModel {
         do {
             let page = try await ConversationRepository.shared.timeline(conversationId: conversationId)
             merge(page.messages)
+            pendingChange = page.pendingChange
         } catch {
             // Transient poll failures are ignored; the next tick retries.
+        }
+    }
+
+    // Propose new dates (DOK-221 Phase 3). ISO yyyy-MM-dd strings.
+    func requestChange(dateFrom: String, dateTo: String) async -> Bool {
+        changeBusy = true
+        changeError = nil
+        defer { changeBusy = false }
+        do {
+            try await ConversationRepository.shared.requestDateChange(conversationId: conversationId, dateFrom: dateFrom, dateTo: dateTo)
+            await load()
+            return true
+        } catch {
+            changeError = error.localizedDescription
+            return false
+        }
+    }
+
+    // Accept / decline (or withdraw) the pending date change.
+    func respondChange(accept: Bool) async {
+        changeBusy = true
+        changeError = nil
+        defer { changeBusy = false }
+        do {
+            try await ConversationRepository.shared.respondDateChange(conversationId: conversationId, accept: accept)
+            await load()
+        } catch {
+            changeError = error.localizedDescription
         }
     }
 
@@ -125,6 +159,7 @@ struct ConversationView: View {
     // People roster expansion (swap threads only), owned here so scrolling the
     // thread can collapse it — matches the swap chat.
     @State private var peopleExpanded = false
+    @State private var showDateChange = false
 
     let title: String?
     // Swap threads carry their proposalId so the multi-party People panel
@@ -143,6 +178,7 @@ struct ConversationView: View {
         VStack(spacing: 0) {
             if let proposalId { swapDetailBanner(proposalId) }
             thread
+            if let pc = vm.pendingChange { pendingChangeCard(pc) }
             composer
         }
         .toolbar(.hidden, for: .tabBar)
@@ -154,6 +190,13 @@ struct ConversationView: View {
         .task(id: scenePhase) { await pollLoop() }
         .onChange(of: photoItems) { _, items in
             Task { await upload(items) }
+        }
+        .sheet(isPresented: $showDateChange) {
+            DateChangeSheet { from, to in
+                let ok = await vm.requestChange(dateFrom: from, dateTo: to)
+                if ok { showDateChange = false }
+                return vm.changeError
+            }
         }
     }
 
@@ -215,10 +258,85 @@ struct ConversationView: View {
                 }
                 .accessibilityLabel("Back")
                 Spacer(minLength: 0)
+                // Principals can propose new dates (DOK-221 Phase 3) when none is
+                // already in flight.
+                if isPrincipal && vm.pendingChange == nil {
+                    Button {
+                        showDateChange = true
+                    } label: {
+                        Image(systemName: "calendar.badge.clock")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(AirbnbPalette.text)
+                            .frame(width: 44, height: 44)
+                            .glassEffect(.regular.interactive(), in: .circle)
+                    }
+                    .accessibilityLabel("Propose new dates")
+                }
             }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 4)
+    }
+
+    // Pending date-change action card, pinned above the composer. The counterpart
+    // sees Accept / Decline; the proposer sees a waiting note + Withdraw.
+    private func pendingChangeCard(_ pc: PendingDateChange) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "calendar.badge.clock")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                Text(pc.mine ? String(localized: "New dates proposed") : String(localized: "New dates requested"))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(AirbnbPalette.text)
+            }
+            Text(SwaplDateText.range(from: pc.from, to: pc.to))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+
+            if let err = vm.changeError {
+                Text(err)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.destructive)
+            }
+
+            if pc.mine {
+                Button { Task { await vm.respondChange(accept: false) } } label: {
+                    Text("Withdraw")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        .frame(maxWidth: .infinity).frame(height: 44)
+                        .overlay(Capsule().stroke(AirbnbPalette.text.opacity(0.18)))
+                }
+                .buttonStyle(.plain).disabled(vm.changeBusy)
+                .foregroundStyle(AirbnbPalette.text)
+            } else {
+                HStack(spacing: 10) {
+                    Button { Task { await vm.respondChange(accept: false) } } label: {
+                        Text("Decline")
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                            .frame(maxWidth: .infinity).frame(height: 44)
+                            .overlay(Capsule().stroke(AirbnbPalette.text.opacity(0.18)))
+                    }
+                    .buttonStyle(.plain).foregroundStyle(AirbnbPalette.text)
+                    Button { Task { await vm.respondChange(accept: true) } } label: {
+                        Group {
+                            if vm.changeBusy { ProgressView().tint(SwaplSemanticLight.primaryForeground) }
+                            else { Text("Accept new dates") }
+                        }
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                        .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                        .frame(maxWidth: .infinity).frame(height: 44)
+                        .background(SwaplSemanticLight.primary, in: Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+                .disabled(vm.changeBusy)
+            }
+        }
+        .padding(14)
+        .glassEffect(.regular, in: .rect(cornerRadius: SwaplDesignSystem.CornerRadius.large))
+        .padding(.horizontal, 12)
+        .padding(.bottom, 4)
     }
 
     private var thread: some View {
@@ -485,6 +603,64 @@ struct UnifiedMessageBubble: View {
     }
 }
 
+// Two date pickers to propose a new booking range (DOK-221 Phase 3). onSubmit
+// returns an error string to show in place, or nil on success (the caller
+// dismisses the sheet).
+struct DateChangeSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var from = Calendar.current.startOfDay(for: Date())
+    @State private var to = Calendar.current.date(byAdding: .day, value: 2, to: Calendar.current.startOfDay(for: Date())) ?? Date()
+    @State private var busy = false
+    @State private var error: String?
+    let onSubmit: (_ dateFrom: String, _ dateTo: String) async -> String?
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    DatePicker(String(localized: "From"), selection: $from, displayedComponents: .date)
+                    DatePicker(String(localized: "To"), selection: $to, in: from..., displayedComponents: .date)
+                } footer: {
+                    Text("The other party will be asked to accept. Availability is re-checked, and Keys are adjusted if the number of nights changes.")
+                }
+                if let error {
+                    Text(error)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.destructive)
+                }
+            }
+            .navigationTitle(String(localized: "Propose new dates"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(String(localized: "Cancel")) { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(String(localized: "Send")) {
+                        Task {
+                            busy = true
+                            defer { busy = false }
+                            error = await onSubmit(isoDay(from), isoDay(to))
+                        }
+                    }
+                    .disabled(busy)
+                }
+            }
+        }
+    }
+
+    // The picked calendar day as yyyy-MM-dd (device calendar), matching how the
+    // booking flows send dates to the API.
+    private func isoDay(_ d: Date) -> String {
+        let f = DateFormatter()
+        f.calendar = Calendar(identifier: .gregorian)
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = .current
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: d)
+    }
+}
+
 // Localized date + time for a timeline item (DOK-221), e.g. "Jun 22, 3:04 PM"
 // (year added only when it differs from the current one). Shared by message
 // bubbles and event rows so both carry the same stamp.
@@ -526,7 +702,7 @@ struct ConversationEventRow: View {
         case "request_sent": return "paperplane"
         case "preapproved", "confirmed", "accepted", "change_accepted": return "checkmark.circle"
         case "countered", "change_requested": return "calendar"
-        case "declined", "withdrawn", "cancelled": return "xmark.circle"
+        case "declined", "withdrawn", "cancelled", "change_declined": return "xmark.circle"
         case "checked_in": return "arrow.down.to.line"
         case "checked_out": return "arrow.up.to.line"
         case "completed": return "flag.checkered"
@@ -545,8 +721,9 @@ struct ConversationEventRow: View {
         case "declined": return String(localized: "Declined")
         case "withdrawn": return String(localized: "Withdrawn")
         case "cancelled": return String(localized: "Cancelled")
-        case "change_requested": return String(localized: "Change requested")
-        case "change_accepted": return String(localized: "Change accepted")
+        case "change_requested": return String(localized: "New dates proposed")
+        case "change_accepted": return String(localized: "New dates accepted")
+        case "change_declined": return String(localized: "New dates declined")
         case "checked_in": return by.map { String(localized: "\($0) checked in") } ?? String(localized: "Checked in")
         case "checked_out": return by.map { String(localized: "\($0) checked out") } ?? String(localized: "Checked out")
         case "completed": return String(localized: "Completed")

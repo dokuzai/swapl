@@ -10,6 +10,7 @@ import {
   postMessage,
   markConversationRead,
 } from "@/lib/conversations";
+import { pendingChangeDTO } from "@/lib/date-change";
 import { sendPush } from "@/lib/push";
 
 // Unified conversation thread (DOK-221), keyed by conversationId so it serves
@@ -34,7 +35,15 @@ export async function GET(req: Request, { params }: RouteContext<"/api/conversat
 
   const page = await getMessages(id, session.userId, { limit, cursor });
   if (markRead) await markConversationRead(id, session.userId).catch(() => {});
-  return NextResponse.json(page);
+
+  // Surface any in-flight date-change request (DOK-221 Phase 3) so the client
+  // can show the Accept/Decline (or "waiting") action card.
+  const convo = await prisma.conversation.findUnique({
+    where: { id },
+    select: { pendingChangeFrom: true, pendingChangeTo: true, pendingChangeById: true, pendingChangeAt: true },
+  });
+  const pendingChange = convo ? pendingChangeDTO(convo, session.userId) : null;
+  return NextResponse.json({ ...page, pendingChange });
 }
 
 export async function POST(req: Request, { params }: RouteContext<"/api/conversations/[id]/messages">) {

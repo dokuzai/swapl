@@ -33,6 +33,16 @@ struct UnifiedTimelinePage: Decodable, Sendable {
     let messages: [UnifiedMessage]   // oldest-first within the page
     let nextCursor: String?
     let hasMore: Bool
+    var pendingChange: PendingDateChange? = nil
+}
+
+// An in-flight date-change request on the conversation (DOK-221 Phase 3).
+struct PendingDateChange: Decodable, Hashable, Sendable {
+    let from: String
+    let to: String
+    let requestedById: String
+    let mine: Bool          // the viewer proposed it (→ show "waiting" + Withdraw)
+    var at: String? = nil
 }
 
 // One row of the unified Messages list (a swap- or stay-backed thread).

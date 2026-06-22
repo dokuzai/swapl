@@ -19,6 +19,7 @@ export type ConversationEventType =
   | "accepted"
   | "change_requested"
   | "change_accepted"
+  | "change_declined"
   | "checked_in"
   | "checked_out"
   | "completed";
@@ -241,8 +242,9 @@ function eventLabel(eventType: string | null): string {
     case "declined": return "Declined";
     case "withdrawn": return "Withdrawn";
     case "cancelled": return "Cancelled";
-    case "change_requested": return "Change requested";
-    case "change_accepted": return "Change accepted";
+    case "change_requested": return "New dates proposed";
+    case "change_accepted": return "New dates accepted";
+    case "change_declined": return "New dates declined";
     case "checked_in": return "Checked in";
     case "checked_out": return "Checked out";
     case "completed": return "Completed";

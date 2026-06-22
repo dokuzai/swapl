@@ -171,7 +171,7 @@ struct KeysStayDetailView: View {
                 // (the conversation is created lazily by the detail endpoint).
                 if let conversationId = detail?.conversationId {
                     NavigationLink {
-                        ConversationView(conversationId: conversationId, title: detail?.counterpart.name ?? stay.counterpartName)
+                        ConversationView(conversationId: conversationId, title: detail?.counterpart.name ?? stay.counterpartName, isPrincipal: true)
                     } label: {
                         messageRow
                     }
