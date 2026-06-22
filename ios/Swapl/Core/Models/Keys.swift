@@ -222,7 +222,12 @@ struct KeysAvailability: Decodable, Sendable {
 struct KeysStay: Decodable, Sendable, Identifiable {
     let id: String
     let role: String          // "guest" | "host"
+    var kind: String? = nil   // "keys" | "couchsurf"
     let listing: StayListing
+    // The other party — host's name when I'm the guest, guest's when I host —
+    // so the detail can show who the stay is with on both sides.
+    var counterpartName: String? = nil
+    var counterpartAvatar: String? = nil
     let dateFrom: String
     let dateTo: String
     let nights: Int
@@ -235,10 +240,12 @@ struct KeysStay: Decodable, Sendable, Identifiable {
         let id: String
         let title: String
         let city: String
+        var photo: String? = nil
     }
 
     var isGuest: Bool { role == "guest" }
     var isPending: Bool { status == "pending" }
+    var isCouchsurf: Bool { kind == "couchsurf" }
 }
 
 struct KeysStaysResponse: Decodable, Sendable {

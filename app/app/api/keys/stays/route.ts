@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
+import { prisma, parseJSON } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { invalidInput, notFound, rateLimited, unauthenticated, unprocessable } from "@/lib/api/errors";
 import { checkRateLimitDurable } from "@/lib/rate-limit";
@@ -31,23 +31,41 @@ export async function GET(req: Request) {
 
   const stays = await prisma.keysStay.findMany({
     where: { OR: [{ guestId: session.userId }, { hostId: session.userId }] },
-    include: { listing: { select: { id: true, title: true, city: true } } },
+    include: {
+      listing: { select: { id: true, title: true, city: true, photos: true } },
+      guest: { select: { name: true, avatar: true } },
+      host: { select: { name: true, avatar: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 
   return NextResponse.json({
-    stays: stays.map((s) => ({
-      id: s.id,
-      role: s.guestId === session.userId ? "guest" : "host",
-      listing: s.listing,
-      dateFrom: s.dateFrom.toISOString(),
-      dateTo: s.dateTo.toISOString(),
-      nights: s.nights,
-      keysCost: s.keysCost,
-      status: s.status,
-      insurancePolicyId: s.insurancePolicyId,
-      createdAt: s.createdAt.toISOString(),
-    })),
+    stays: stays.map((s) => {
+      const isGuest = s.guestId === session.userId;
+      // The OTHER party: the host when I'm the guest, the guest when I'm the host
+      // — so a stay detail can name who it's with on both sides.
+      const counterpart = isGuest ? s.host : s.guest;
+      return {
+        id: s.id,
+        role: isGuest ? "guest" : "host",
+        kind: s.kind,
+        listing: {
+          id: s.listing.id,
+          title: s.listing.title,
+          city: s.listing.city,
+          photo: parseJSON<string[]>(s.listing.photos, [])[0] ?? null,
+        },
+        counterpartName: counterpart?.name ?? null,
+        counterpartAvatar: counterpart?.avatar ?? null,
+        dateFrom: s.dateFrom.toISOString(),
+        dateTo: s.dateTo.toISOString(),
+        nights: s.nights,
+        keysCost: s.keysCost,
+        status: s.status,
+        insurancePolicyId: s.insurancePolicyId,
+        createdAt: s.createdAt.toISOString(),
+      };
+    }),
   });
 }
 
