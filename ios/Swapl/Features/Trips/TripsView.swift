@@ -386,8 +386,8 @@ struct TripsView: View {
                     .fixedSize()
             }
             .foregroundStyle(AirbnbPalette.text)
-            .padding(.horizontal, 13)
-            .frame(height: 40)
+            .padding(.horizontal, 14)
+            .frame(height: 44)
             .glassEffect(.regular.interactive(), in: .capsule)
         }
         .fixedSize()
@@ -456,7 +456,7 @@ struct TripsView: View {
             Image(systemName: "line.3.horizontal.decrease")
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
-                .frame(width: 40, height: 40)
+                .frame(width: 44, height: 44)
                 .glassEffect(.regular.interactive(), in: .circle)
                 .overlay(alignment: .topTrailing) {
                     if vm.statusFilter != .all || vm.groupBy != .city || vm.sortBy != .soonest {
