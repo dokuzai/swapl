@@ -50,58 +50,10 @@ final class KeysStaysViewModel {
     }
 }
 
-// Embedded in TripsView. Renders nothing when the member has no Keys stays, so
-// it stays out of the way for swap-only users.
-struct KeysStaysSection: View {
-    // Owned by TripsView so the load shares the tab's lifecycle (reloads on every
-    // visit + pull-to-refresh, with the same auth timing as the swaps fetch).
-    // It used to own a private @State VM whose .task ran once during the
-    // cold-start auth window → a 401 that never retried, so pending stays never
-    // appeared.
-    let vm: KeysStaysViewModel
-
-    var body: some View {
-        Group {
-            if let stays = vm.stays, !stays.isEmpty {
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("Stays with points")
-                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .padding(.top, 14)
-
-                    ForEach(stays) { stay in
-                        NavigationLink {
-                            KeysStayDetailView(stay: stay, vm: vm)
-                        } label: {
-                            KeysStaySummaryCard(stay: stay)
-                        }
-                        .buttonStyle(.plain)
-                        .opacity(vm.busyStayId == stay.id ? 0.5 : 1)
-                    }
-                }
-            } else if vm.stays == nil, let error = vm.error {
-                // Load failed (distinct from "no stays", which renders nothing so
-                // swap-only members aren't cluttered). Surface it with a retry so a
-                // pending request is never silently invisible.
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Stays with points")
-                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .padding(.top, 14)
-                    HStack(spacing: 12) {
-                        Text(error)
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
-                            .foregroundStyle(AirbnbPalette.secondaryText)
-                        Spacer()
-                        Button(String(localized: "Retry")) { Task { await vm.load() } }
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
-                            .foregroundStyle(SwaplSemanticLight.primary)
-                    }
-                }
-            }
-        }
-    }
-}
+// The keys-stays UI now lives inside the unified Trips list (TripsView): the
+// list builds TripItem rows and renders KeysStaySummaryCard → KeysStayDetailView
+// directly, so a stay is just "a trip with the points method", not its own
+// section. KeysStaysViewModel is owned by TripsView and loaded with the swaps.
 
 // MARK: - Shared status + title helpers
 
@@ -172,13 +124,15 @@ private func keysStayThumbnail(_ photo: String?, size: CGFloat) -> some View {
 
 // MARK: - List summary card (tappable → detail)
 
-private struct KeysStaySummaryCard: View {
+struct KeysStaySummaryCard: View {
     let stay: KeysStay
+    var method: TripMethod = .points
 
     var body: some View {
         HStack(spacing: 14) {
             keysStayThumbnail(stay.listing.photo, size: 64)
             VStack(alignment: .leading, spacing: 4) {
+                tripMethodBadge(method)
                 Text(keysStayTitle(stay))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)

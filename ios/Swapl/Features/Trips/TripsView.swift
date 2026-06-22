@@ -97,6 +97,86 @@ extension ProposalSummary {
     }
 }
 
+// A trip's travel method — the attribute that tells the SINGLE Trips list how
+// this stay is paid for. ("mixed" = an exchange topped up with points; reserved
+// until that feature lands, so it never appears yet.)
+enum TripMethod {
+    case exchange, points, couch, mixed
+    var label: String {
+        switch self {
+        case .exchange: return String(localized: "Exchange")
+        case .points: return String(localized: "Stay with points")
+        case .couch: return String(localized: "Free couch")
+        case .mixed: return String(localized: "Mixed")
+        }
+    }
+}
+
+// One unified trip, regardless of which backend it comes from — a swap proposal
+// or a Stay-with-points. The list treats them as one kind of thing ("a trip with
+// a method") instead of two separate sections/systems.
+enum TripItem: Identifiable {
+    case swap(ProposalSummary)
+    case stay(KeysStay)
+
+    var id: String {
+        switch self {
+        case .swap(let p): return "swap-\(p.id)"
+        case .stay(let s): return "stay-\(s.id)"
+        }
+    }
+    var method: TripMethod {
+        switch self {
+        case .swap: return .exchange
+        case .stay(let s): return s.isCouchsurf ? .couch : .points
+        }
+    }
+    var dateFrom: String { switch self { case .swap(let p): return p.dateFrom; case .stay(let s): return s.dateFrom } }
+    var dateTo: String { switch self { case .swap(let p): return p.dateTo; case .stay(let s): return s.dateTo } }
+    var city: String { switch self { case .swap(let p): return p.theirCity; case .stay(let s): return s.listing.city } }
+    var country: String? { switch self { case .swap(let p): return p.theirCountry; case .stay: return nil } }
+
+    func phase(today: String) -> TripPhase {
+        if String(dateTo.prefix(10)) < today { return .past }
+        if String(dateFrom.prefix(10)) > today { return .upcoming }
+        return .active
+    }
+
+    var isCancelled: Bool {
+        switch self {
+        case .swap(let p): return p.status == "DECLINED" || p.status == "WITHDRAWN"
+        case .stay(let s): return s.status == "declined" || s.status == "cancelled"
+        }
+    }
+
+    func matchesFilter(_ f: TripsViewModel.StatusFilter) -> Bool {
+        switch f {
+        case .all: return !isCancelled
+        case .active:
+            switch self {
+            case .swap(let p): return p.status == "ACCEPTED"
+            case .stay(let s): return s.status == "confirmed" || s.status == "completed"
+            }
+        case .potential:
+            switch self {
+            case .swap(let p): return p.status == "PENDING" || p.status == "COUNTERED"
+            case .stay(let s): return s.status == "pending"
+            }
+        case .cancelled: return isCancelled
+        }
+    }
+}
+
+// Small capsule that tags a trip card with its travel method.
+func tripMethodBadge(_ method: TripMethod) -> some View {
+    Text(method.label)
+        .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .bold))
+        .foregroundStyle(AirbnbPalette.secondaryText)
+        .padding(.horizontal, 9)
+        .padding(.vertical, 4)
+        .background(AirbnbPalette.softBackground, in: Capsule())
+}
+
 extension TripPhase {
     static func todayString(_ date: Date = Date()) -> String {
         let formatter = DateFormatter()
@@ -135,55 +215,59 @@ struct TripsView: View {
 
     private var titleBar: some View { SwaplPageTitle("Trips") }
 
+    // Swaps + stays merged into one list — a trip's travel method is just an
+    // attribute on it, not a reason for a separate section.
+    private var allTripItems: [TripItem] {
+        let swaps = (vm.trips ?? []).map { TripItem.swap($0) }
+        let stays = (keysVM.stays ?? []).map { TripItem.stay($0) }
+        return swaps + stays
+    }
+
     @ViewBuilder
     private var content: some View {
+        let items = allTripItems
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                // Filter/sort controls only matter once there are swaps; otherwise
-                // show the plain title.
-                if let trips = vm.trips, !trips.isEmpty {
+                // Filter/sort controls only matter once there are trips; otherwise
+                // the plain title.
+                if !items.isEmpty {
                     SwaplPageTitle("Trips") { tripsControls }
                 } else {
                     titleBar
                 }
-
-                // Keys stays load independently of the swaps inbox, so render them
-                // in EVERY state — a slow or failed proposals fetch must never hide
-                // a pending Stay-with-points (it used to: keys stays only showed in
-                // the empty/loaded branches, not while loading or on error).
-                KeysStaysSection(vm: keysVM)
-                    .padding(.horizontal, 22)
-
-                proposalsBody
+                tripsBody(items)
             }
         }
         .refreshable { await reload() }
     }
 
     @ViewBuilder
-    private var proposalsBody: some View {
-        if vm.isLoading && vm.trips == nil && vm.error == nil {
+    private func tripsBody(_ items: [TripItem]) -> some View {
+        // Still loading both sources, nothing to show yet.
+        if vm.trips == nil && keysVM.stays == nil && vm.error == nil {
             ProgressView()
                 .frame(maxWidth: .infinity, minHeight: 240)
                 .accessibilityLabel("Loading trips")
-        } else if let error = vm.error, vm.trips == nil {
-            SwaplEmptyState(
-                systemImage: "wifi.exclamationmark",
-                title: "Trips unavailable",
-                description: error,
-                actionTitle: "Try Again",
-                action: { Task { await vm.load() } }
-            )
-            .padding(.top, 40)
-        } else if let trips = vm.trips, trips.isEmpty {
-            SwaplEmptyState(
-                systemImage: "suitcase.rolling",
-                title: "Trips",
-                description: "Accepted swaps and stays with points show up here."
-            )
-            .padding(.top, 60)
-        } else if let trips = vm.trips {
-            tripsListBody(trips)
+        } else if items.isEmpty {
+            if let error = vm.error, vm.trips == nil {
+                SwaplEmptyState(
+                    systemImage: "wifi.exclamationmark",
+                    title: "Trips unavailable",
+                    description: error,
+                    actionTitle: "Try Again",
+                    action: { Task { await reload() } }
+                )
+                .padding(.top, 40)
+            } else {
+                SwaplEmptyState(
+                    systemImage: "suitcase.rolling",
+                    title: "Trips",
+                    description: "Exchanges and stays with points show up here."
+                )
+                .padding(.top, 60)
+            }
+        } else {
+            tripsList(items)
         }
     }
 
@@ -265,22 +349,30 @@ struct TripsView: View {
         }
     }
 
-    // Just the swaps list (title + keys stays + outer scroll now live in
-    // `content`, so a proposals issue can't hide the keys section).
-    private func tripsListBody(_ allTrips: [ProposalSummary]) -> some View {
+    // One unified list: upcoming swaps + all stays grouped by destination, each
+    // tagged with its travel method. Past SWAPS keep their dedicated timeline
+    // card (PastTripsView is swap-only); stays stay inline regardless of phase
+    // (matching how the old "Stays with points" section always showed them).
+    private func tripsList(_ allItems: [TripItem]) -> some View {
         let today = TripPhase.todayString()
-        let trips = allTrips.filter { vm.matchesFilter($0) }
-        // Upcoming + active, grouped by destination city (Airbnb-style). Order
-        // by the chosen sort (soonest/latest check-in). Past → own timeline.
-        let upcoming = trips.filter { $0.tripPhase(today: today) != .past }
-            .sorted { vm.sortBy == .soonest ? $0.dateFrom < $1.dateFrom : $0.dateFrom > $1.dateFrom }
-        let past = trips.filter { $0.tripPhase(today: today) == .past }
+        let filtered = allItems.filter { $0.matchesFilter(vm.statusFilter) }
+        let pastSwaps: [ProposalSummary] = filtered
+            .compactMap { item in
+                if case let .swap(p) = item, item.phase(today: today) == .past { return p }
+                return nil
+            }
             .sorted { $0.dateTo > $1.dateTo }
-        let grouped = groupTrips(upcoming)
+        let inline = filtered
+            .filter { item in
+                if case .swap = item { return item.phase(today: today) != .past }
+                return true
+            }
+            .sorted { vm.sortBy == .soonest ? $0.dateFrom < $1.dateFrom : $0.dateFrom > $1.dateFrom }
+        let grouped = groupTrips(inline)
 
         return LazyVStack(alignment: .leading, spacing: 24) {
-            if upcoming.isEmpty {
-                Text("No upcoming swaps")
+            if inline.isEmpty && pastSwaps.isEmpty {
+                Text("No upcoming trips")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                     .padding(.top, 8)
@@ -291,18 +383,15 @@ struct TripsView: View {
                     Text(city)
                         .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
                         .foregroundStyle(AirbnbPalette.text)
-                    ForEach(list) { trip in
-                        NavigationLink(value: trip.id) {
-                            TripCard(trip: trip, isActive: trip.tripPhase(today: today) == .active)
-                        }
-                        .buttonStyle(.plain)
+                    ForEach(list) { item in
+                        tripRow(item, today: today)
                     }
                 }
             }
 
-            if !past.isEmpty {
+            if !pastSwaps.isEmpty {
                 NavigationLink {
-                    PastTripsView(trips: past)
+                    PastTripsView(trips: pastSwaps)
                 } label: {
                     findPastTripsCard
                 }
@@ -314,13 +403,33 @@ struct TripsView: View {
         .padding(.bottom, 28)
     }
 
-    // Preserve first-seen order (already sorted by soonest date), one bucket per
-    // city or country depending on the chosen grouping.
-    private func groupTrips(_ trips: [ProposalSummary]) -> [(String, [ProposalSummary])] {
+    // One row per trip, routed to the right detail by method. The method badge
+    // lives on the card so the single list reads clearly.
+    @ViewBuilder
+    private func tripRow(_ item: TripItem, today: String) -> some View {
+        switch item {
+        case .swap(let p):
+            NavigationLink(value: p.id) {
+                TripCard(trip: p, isActive: p.tripPhase(today: today) == .active, method: item.method)
+            }
+            .buttonStyle(.plain)
+        case .stay(let s):
+            NavigationLink {
+                KeysStayDetailView(stay: s, vm: keysVM)
+            } label: {
+                KeysStaySummaryCard(stay: s, method: item.method)
+            }
+            .buttonStyle(.plain)
+            .opacity(keysVM.busyStayId == s.id ? 0.5 : 1)
+        }
+    }
+
+    // Preserve first-seen order (already sorted), one bucket per city or country.
+    private func groupTrips(_ items: [TripItem]) -> [(String, [TripItem])] {
         var order: [String] = []
-        var map: [String: [ProposalSummary]] = [:]
-        for t in trips {
-            let key = vm.groupBy == .country ? (t.theirCountry ?? t.theirCity) : t.theirCity
+        var map: [String: [TripItem]] = [:]
+        for t in items {
+            let key = vm.groupBy == .country ? (t.country ?? t.city) : t.city
             if map[key] == nil { order.append(key) }
             map[key, default: []].append(t)
         }
@@ -351,6 +460,7 @@ struct TripsView: View {
 struct TripCard: View {
     let trip: ProposalSummary
     var isActive: Bool = false
+    var method: TripMethod = .exchange
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
@@ -358,6 +468,7 @@ struct TripCard: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 5) {
+                tripMethodBadge(method)
                 HStack(alignment: .center, spacing: 8) {
                     Circle()
                         .fill(trip.statusColor)
