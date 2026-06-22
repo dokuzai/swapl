@@ -23,6 +23,9 @@ struct SwaplPageTitle<Trailing: View>: View {
             Text(title)
                 .font(.swaplDisplay(SwaplDesignSystem.FontSize.display, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
+                // Keep the title on one line so trailing controls never squeeze it
+                // into a wrap (e.g. Wishlists' filter pills).
+                .lineLimit(1)
             Spacer(minLength: 0)
             trailing()
         }

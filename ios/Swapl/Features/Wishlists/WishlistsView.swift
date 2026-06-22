@@ -212,29 +212,21 @@ struct WishlistsView: View {
             }
             .accessibilityLabel(Text("Display options"))
 
+            // Sort + group folded into one menu so the title fits on a single
+            // line with the controls (same control count as Explore).
             Menu {
                 Picker(String(localized: "Order by"), selection: Bindable(vm).sortBy) {
                     ForEach(WishlistsViewModel.SortOption.allCases, id: \.self) { opt in
                         Text(sortLabel(opt)).tag(opt)
                     }
                 }
-            } label: {
-                Image(systemName: "arrow.up.arrow.down")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .frame(width: 44, height: 44)
-                    .glassEffect(.regular.interactive(), in: .circle)
-            }
-            .accessibilityLabel(Text("Order by"))
-
-            Menu {
                 Picker(String(localized: "Group by"), selection: Bindable(vm).groupBy) {
                     ForEach(WishlistsViewModel.GroupOption.allCases, id: \.self) { opt in
                         Text(groupLabel(opt)).tag(opt)
                     }
                 }
             } label: {
-                Image(systemName: "square.stack.3d.up")
+                Image(systemName: "arrow.up.arrow.down")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .frame(width: 44, height: 44)
@@ -245,7 +237,7 @@ struct WishlistsView: View {
                         }
                     }
             }
-            .accessibilityLabel(Text("Group by"))
+            .accessibilityLabel(Text("Order and group"))
 
             Button { showDateFilter = true } label: {
                 Image(systemName: "calendar")
@@ -320,7 +312,6 @@ struct WishlistsView: View {
                     .padding(.horizontal, 22)
                 }
             }
-            .padding(.top, 8)
             .padding(.bottom, 32)
         }
     }
