@@ -108,6 +108,22 @@ export async function canAccessConversation(conversationId: string, userId: stri
   return (await conversationParticipantIds(conversationId)).includes(userId);
 }
 
+// The two PRINCIPALS (no guest participants) — these are who gate a ✓✓ read
+// receipt. Swap: proposer + target owner. Stay: guest + host.
+export async function conversationPrincipalIds(conversationId: string): Promise<string[]> {
+  const convo = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    include: {
+      keysStay: { select: { guestId: true, hostId: true } },
+      proposal: { select: { proposerId: true, targetListing: { select: { userId: true } } } },
+    },
+  });
+  if (!convo) return [];
+  if (convo.keysStay) return [convo.keysStay.guestId, convo.keysStay.hostId];
+  if (convo.proposal) return [convo.proposal.proposerId, convo.proposal.targetListing.userId];
+  return [];
+}
+
 // Post a member's text message (with optional pre-uploaded photo URLs).
 export async function postMessage(
   conversationId: string,
@@ -137,8 +153,29 @@ type SerializedMessage = {
   photos: string[];
   eventType: string | null;
   eventMeta: unknown | null;
+  readAt: string | null;
   createdAt: string;
 };
+
+// A message is "read" once every PRINCIPAL recipient (the counterpart(s) — not
+// the author) has a read cursor at or past its createdAt. Returns the moment it
+// became fully read, or null if at least one recipient hasn't caught up.
+function computeReadAt(
+  m: { authorId: string | null; createdAt: Date },
+  principalIds: string[],
+  cursorByUser: Map<string, Date>,
+): Date | null {
+  if (!m.authorId) return null; // system events have no receipt
+  const recipients = principalIds.filter((id) => id && id !== m.authorId);
+  if (recipients.length === 0) return null;
+  let readAt: Date | null = null;
+  for (const r of recipients) {
+    const c = cursorByUser.get(r);
+    if (!c || c < m.createdAt) return null; // someone hasn't read it yet
+    if (!readAt || c > readAt) readAt = c;
+  }
+  return readAt;
+}
 
 function serializeMessage(m: {
   id: string;
@@ -149,7 +186,8 @@ function serializeMessage(m: {
   eventType: string | null;
   eventMeta: string | null;
   createdAt: Date;
-}, viewerId: string): SerializedMessage {
+}, viewerId: string, principalIds: string[], cursorByUser: Map<string, Date>): SerializedMessage {
+  const readAt = computeReadAt(m, principalIds, cursorByUser);
   return {
     id: m.id,
     kind: m.kind,
@@ -159,6 +197,7 @@ function serializeMessage(m: {
     photos: parseJSON<string[]>(m.photos, []),
     eventType: m.eventType,
     eventMeta: m.eventMeta ? parseJSON<unknown>(m.eventMeta, null) : null,
+    readAt: readAt ? readAt.toISOString() : null,
     createdAt: m.createdAt.toISOString(),
   };
 }
@@ -175,10 +214,17 @@ export async function getMessages(
     take: opts.limit + 1,
     ...(opts.cursor ? { cursor: { id: opts.cursor }, skip: 1 } : {}),
   });
+  // Principals' read cursors drive the per-message ✓✓ receipt (guests don't gate).
+  const principalIds = await conversationPrincipalIds(conversationId);
+  const cursors = await prisma.conversationReadCursor.findMany({
+    where: { conversationId, userId: { in: principalIds } },
+    select: { userId: true, lastReadAt: true },
+  });
+  const cursorByUser = new Map(cursors.map((c) => [c.userId, c.lastReadAt]));
   const hasMore = rows.length > opts.limit;
   const page = hasMore ? rows.slice(0, opts.limit) : rows;
   return {
-    messages: page.reverse().map((m) => serializeMessage(m, viewerId)),
+    messages: page.reverse().map((m) => serializeMessage(m, viewerId, principalIds, cursorByUser)),
     nextCursor: hasMore ? page[0]?.id ?? null : null,
     hasMore,
   };
@@ -218,6 +264,11 @@ export type ConversationListItem = {
   lastLine: string | null;
   lastMessageAt: string;
   unreadCount: number;
+  // Swap threads carry their proposalId so the chat can show the multi-party
+  // People panel (DOK-187); null for stays. isPrincipal = the viewer is a swap
+  // principal (proposer/target owner), always true for stays.
+  proposalId: string | null;
+  isPrincipal: boolean;
 };
 
 // Unified Messages list across both swap- and stay-backed threads, newest-first.
@@ -292,6 +343,8 @@ export async function listConversationsForUser(userId: string): Promise<Conversa
         lastLine,
         lastMessageAt,
         unreadCount,
+        proposalId: null,
+        isPrincipal: true,
       });
     } else if (c.proposal) {
       const p = c.proposal;
@@ -311,6 +364,8 @@ export async function listConversationsForUser(userId: string): Promise<Conversa
         lastLine,
         lastMessageAt,
         unreadCount,
+        proposalId: p.id,
+        isPrincipal: isProposer || p.targetListing.userId === userId,
       });
     }
   }

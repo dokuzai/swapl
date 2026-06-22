@@ -122,12 +122,21 @@ struct ConversationView: View {
     @FocusState private var composerFocused: Bool
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dismiss) private var dismiss
+    // People roster expansion (swap threads only), owned here so scrolling the
+    // thread can collapse it — matches the swap chat.
+    @State private var peopleExpanded = false
 
     let title: String?
+    // Swap threads carry their proposalId so the multi-party People panel
+    // (DOK-187) can show; nil for stays (always exactly guest + host).
+    let proposalId: String?
+    let isPrincipal: Bool
 
-    init(conversationId: String, title: String? = nil) {
+    init(conversationId: String, title: String? = nil, proposalId: String? = nil, isPrincipal: Bool = false) {
         _vm = State(initialValue: ConversationViewModel(conversationId: conversationId))
         self.title = title
+        self.proposalId = proposalId
+        self.isPrincipal = isPrincipal
     }
 
     var body: some View {
@@ -177,7 +186,8 @@ struct ConversationView: View {
     private var thread: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 10) {
+                LazyVStack(spacing: 10, pinnedViews: proposalId != nil ? [.sectionHeaders] : []) {
+                    Section {
                     if vm.isLoading && !vm.hasLoadedOnce {
                         ProgressView()
                             .frame(maxWidth: .infinity)
@@ -224,11 +234,22 @@ struct ConversationView: View {
                             .id(message.id)
                         }
                     }
+                    } header: {
+                        // Multi-party People panel (DOK-187) — swap threads only.
+                        if let proposalId {
+                            ConversationPeopleView(proposalId: proposalId, isPrincipal: isPrincipal, isExpanded: $peopleExpanded)
+                        }
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
             }
             .scrollDismissesKeyboard(.interactively)
+            .onScrollPhaseChange { _, newPhase in
+                if newPhase == .interacting, peopleExpanded {
+                    withAnimation(.snappy) { peopleExpanded = false }
+                }
+            }
             .refreshable { await vm.load() }
             .onChange(of: vm.scrollAnchor) { _, anchor in
                 guard let anchor else { return }
@@ -407,9 +428,19 @@ struct UnifiedMessageBubble: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                Text(timeLabel)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
+                HStack(spacing: 4) {
+                    Text(timeLabel)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                    // Read receipt: a double-check that fills in once the
+                    // counterpart has read my message.
+                    if message.mine {
+                        Image(systemName: message.readAt != nil ? "checkmark.circle.fill" : "checkmark.circle")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(message.readAt != nil ? SwaplSemanticLight.primary : AirbnbPalette.secondaryText)
+                            .accessibilityLabel(message.readAt != nil ? "Read" : "Sent")
+                    }
+                }
             }
             if !message.mine { Spacer(minLength: 48) }
         }

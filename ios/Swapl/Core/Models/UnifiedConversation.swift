@@ -15,6 +15,7 @@ struct UnifiedMessage: Identifiable, Decodable, Hashable, Sendable {
     let photos: [String]
     let eventType: String?
     let eventMeta: EventMeta?
+    var readAt: String? = nil
     let createdAt: String
 
     var isEvent: Bool { kind == "event" }
@@ -49,6 +50,8 @@ struct UnifiedConversation: Identifiable, Decodable, Hashable, Sendable {
     let lastLine: String?
     let lastMessageAt: String
     let unreadCount: Int
+    var proposalId: String? = nil
+    var isPrincipal: Bool = true
 
     var isTraveling: Bool { role == "traveling" }
 }

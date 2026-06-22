@@ -50,6 +50,8 @@ struct ProposalDetail: Decodable, Sendable {
 
     struct Proposal: Codable, Sendable {
         let id: String
+        // The per-transaction conversation (DOK-221) — opens the unified chat.
+        var conversationId: String? = nil
         let status: String
         let meSide: String
         let dateFrom: String

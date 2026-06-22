@@ -9417,6 +9417,11 @@ export interface components {
             eventMeta: {
                 [key: string]: unknown;
             } | null;
+            /**
+             * Format: date-time
+             * @description When the counterpart(s) read this (my messages only); null until then or for events.
+             */
+            readAt: string | null;
             /** Format: date-time */
             createdAt: string;
         };
@@ -9463,6 +9468,10 @@ export interface components {
             /** Format: date-time */
             lastMessageAt: string;
             unreadCount: number;
+            /** @description The underlying swap proposal id (for the People panel); null for stays. */
+            proposalId: string | null;
+            /** @description Whether the viewer is a swap principal (proposer/target owner); always true for stays. */
+            isPrincipal: boolean;
         };
         UnifiedConversationsResponse: {
             /** @description Most recently active thread first. */

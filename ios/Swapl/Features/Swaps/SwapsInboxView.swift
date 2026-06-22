@@ -802,16 +802,34 @@ struct ProposalDetailView: View {
         return (status == "PENDING" || status == "COUNTERED") && detail.proposal.meSide == "proposer"
     }
 
-    // Compact "Message {name}" pill — used full-width on its own row, or half
-    // width beside the withdraw action. Matches the GhostPill capsule height so
-    // the two read as a single row.
-    private func messagePill(_ detail: ProposalDetail) -> some View {
-        NavigationLink {
+    // The swap chat (DOK-221): the unified per-transaction thread when the
+    // backend gives us a conversationId (so swaps get inline lifecycle events +
+    // the People panel + receipts), falling back to the legacy SwapChatView on
+    // older deploys that don't return one yet.
+    @ViewBuilder
+    private func chatDestination(_ detail: ProposalDetail) -> some View {
+        if let cid = detail.proposal.conversationId {
+            ConversationView(
+                conversationId: cid,
+                title: detail.other.name,
+                proposalId: vm.proposalId,
+                isPrincipal: isPrincipal(detail)
+            )
+        } else {
             SwapChatView(
                 proposalId: vm.proposalId,
                 otherName: detail.other.name,
                 isPrincipal: isPrincipal(detail)
             )
+        }
+    }
+
+    // Compact "Message {name}" pill — used full-width on its own row, or half
+    // width beside the withdraw action. Matches the GhostPill capsule height so
+    // the two read as a single row.
+    private func messagePill(_ detail: ProposalDetail) -> some View {
+        NavigationLink {
+            chatDestination(detail)
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "bubble.left.and.bubble.right.fill")
@@ -933,7 +951,8 @@ struct ProposalDetailView: View {
                     inlineMessage: DisputeFlowView.InlineMessage(
                         proposalId: vm.proposalId,
                         partnerName: detail.other.name,
-                        isPrincipal: isPrincipal(detail)
+                        isPrincipal: isPrincipal(detail),
+                        conversationId: detail.proposal.conversationId
                     ),
                     tripHome: tripListing
                 )
@@ -950,11 +969,7 @@ struct ProposalDetailView: View {
             // accepted/cockpit state (it moves beside "Report a problem", DOK-216).
             if !proposerCanWithdraw(detail) && detail.agreement == nil {
                 NavigationLink {
-                    SwapChatView(
-                        proposalId: vm.proposalId,
-                        otherName: detail.other.name,
-                        isPrincipal: isPrincipal(detail)
-                    )
+                    chatDestination(detail)
                 } label: {
                     HStack(spacing: 10) {
                         Image(systemName: "bubble.left.and.bubble.right.fill")

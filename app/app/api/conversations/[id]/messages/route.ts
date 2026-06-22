@@ -72,6 +72,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/conversa
     photos,
     eventType: null,
     eventMeta: null,
+    readAt: null,
     createdAt: msg.createdAt.toISOString(),
   });
 }

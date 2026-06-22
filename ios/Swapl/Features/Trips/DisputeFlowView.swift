@@ -103,6 +103,9 @@ struct DisputeFlowView: View {
         let proposalId: String
         let partnerName: String?
         let isPrincipal: Bool
+        // The unified conversation (DOK-221); when set, the pill opens the
+        // ConversationView (inline events + receipts) instead of the legacy chat.
+        var conversationId: String? = nil
     }
 
     @State private var vm: DisputeFlowViewModel
@@ -212,9 +215,18 @@ struct DisputeFlowView: View {
         .accessibilityLabel("Report a problem with this trip")
     }
 
+    @ViewBuilder
+    private func messageDestination(_ m: InlineMessage) -> some View {
+        if let cid = m.conversationId {
+            ConversationView(conversationId: cid, title: m.partnerName, proposalId: m.proposalId, isPrincipal: m.isPrincipal)
+        } else {
+            SwapChatView(proposalId: m.proposalId, otherName: m.partnerName, isPrincipal: m.isPrincipal)
+        }
+    }
+
     private func messagePill(_ m: InlineMessage) -> some View {
         NavigationLink {
-            SwapChatView(proposalId: m.proposalId, otherName: m.partnerName, isPrincipal: m.isPrincipal)
+            messageDestination(m)
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "bubble.left.and.bubble.right.fill")

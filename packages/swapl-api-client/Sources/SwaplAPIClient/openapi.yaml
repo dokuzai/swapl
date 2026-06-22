@@ -1824,7 +1824,7 @@ components:
         One item of a per-transaction conversation timeline (DOK-221). A `text`
         item is a member message; an `event` item is a system row (request_sent,
         confirmed, accepted, checked_in, …) with authorId null.
-      required: [id, kind, authorId, mine, body, photos, eventType, eventMeta, createdAt]
+      required: [id, kind, authorId, mine, body, photos, eventType, eventMeta, readAt, createdAt]
       properties:
         id: { type: string }
         kind: { type: string, enum: [text, event] }
@@ -1844,6 +1844,10 @@ components:
           type: [object, 'null']
           additionalProperties: true
           description: Free-form metadata for the event (e.g. dates, guest count, actor name).
+        readAt:
+          type: [string, 'null']
+          format: date-time
+          description: When the counterpart(s) read this (my messages only); null until then or for events.
         createdAt: { type: string, format: date-time }
 
     UnifiedTimelineResponse:
@@ -1881,7 +1885,7 @@ components:
       description: One row of the unified Messages list (swap- or stay-backed thread).
       required:
         [id, kind, role, status, title, city, photo, counterpartName, dateFrom,
-         dateTo, lastLine, lastMessageAt, unreadCount]
+         dateTo, lastLine, lastMessageAt, unreadCount, proposalId, isPrincipal]
       properties:
         id: { type: string, description: The conversation id (not the underlying transaction id). }
         kind: { type: string, enum: [swap, stay] }
@@ -1899,6 +1903,12 @@ components:
         lastLine: { type: [string, 'null'], description: Preview of the last message or event. }
         lastMessageAt: { type: string, format: date-time }
         unreadCount: { type: integer }
+        proposalId:
+          type: [string, 'null']
+          description: The underlying swap proposal id (for the People panel); null for stays.
+        isPrincipal:
+          type: boolean
+          description: Whether the viewer is a swap principal (proposer/target owner); always true for stays.
 
     UnifiedConversationsResponse:
       type: object
