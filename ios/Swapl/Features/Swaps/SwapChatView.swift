@@ -554,7 +554,7 @@ struct MessageBubble: View {
     }
 
     private var timeLabel: String {
-        guard let date = SwaplDateText.parse(message.createdAt) else { return "" }
+        guard let date = SwaplDateText.parseInstant(message.createdAt) else { return "" }
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("jm")
         return formatter.string(from: date)

@@ -407,7 +407,7 @@ struct TripCockpitView: View {
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                     .fixedSize(horizontal: false, vertical: true)
-                if let unlocksAt = cockpit.otherGuide?.unlocksAt, let date = SwaplDateText.parse(unlocksAt) {
+                if let unlocksAt = cockpit.otherGuide?.unlocksAt, let date = SwaplDateText.parseInstant(unlocksAt) {
                     Text("Unlocks \(unlockDate(date)) — 48h before your stay.")
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(AirbnbPalette.secondaryText)
@@ -671,7 +671,7 @@ struct TripEventRow: View {
                 Text(title)
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                Text(SwaplDateText.parse(event.createdAt).map { dateTime($0) } ?? String(event.createdAt.prefix(10)))
+                Text(SwaplDateText.parseInstant(event.createdAt).map { dateTime($0) } ?? String(event.createdAt.prefix(10)))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                     .foregroundStyle(AirbnbPalette.secondaryText)
                 if let note = event.note, !note.isEmpty {

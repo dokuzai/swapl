@@ -80,3 +80,45 @@ struct UnifiedConversationsResponse: Decodable, Sendable {
     let conversations: [UnifiedConversation]
     let totalUnread: Int
 }
+
+// Role-aware header context for a thread (DOK-221): who's involved + a concrete
+// reference to the underlying transaction. Host sees which apartment the guest
+// chose + the Keys request; guest sees the home + request; both sides of a swap
+// see both homes of the exchange.
+struct ConversationContext: Decodable, Hashable, Sendable {
+    struct Home: Decodable, Hashable, Sendable {
+        let id: String
+        let title: String
+        let city: String?
+        let photo: String?
+    }
+    struct Participant: Decodable, Hashable, Sendable, Identifiable {
+        let id: String?
+        let name: String?
+        let avatar: String?
+        let verified: Bool
+        let role: String        // "host" | "guest"
+        let isMe: Bool
+        var isHost: Bool { role == "host" }
+    }
+    struct Keys: Decodable, Hashable, Sendable {
+        let cost: Int
+        let kind: String        // "keys" | "couchsurf"
+    }
+
+    let kind: String            // "swap" | "stay"
+    let role: String            // "traveling" | "hosting"
+    let status: String
+    let dateFrom: String
+    let dateTo: String
+    let nights: Int
+    let participants: [Participant]
+    let home: Home?
+    var myHome: Home? = nil
+    var keys: Keys? = nil
+    var proposalId: String? = nil
+    let isPrincipal: Bool
+
+    var isSwap: Bool { kind == "swap" }
+    var isHosting: Bool { role == "hosting" }
+}

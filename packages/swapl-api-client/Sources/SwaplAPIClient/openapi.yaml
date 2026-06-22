@@ -440,6 +440,26 @@ components:
           enum: [agreement, keys_stay, blocked]
           description: Why the range is unavailable.
 
+    ConversationHome:
+      type: object
+      required: [id, title]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        city: { type: string, nullable: true }
+        photo: { type: string, nullable: true }
+
+    ConversationContextParticipant:
+      type: object
+      required: [role, isMe, verified]
+      properties:
+        id: { type: string, nullable: true }
+        name: { type: string, nullable: true }
+        avatar: { type: string, nullable: true }
+        verified: { type: boolean }
+        role: { type: string, enum: [host, guest] }
+        isMe: { type: boolean }
+
     ListingCalendar:
       type: object
       required: [listingId, availableFrom, availableTo, minStayDays, maxStayDays, bookedRanges]
@@ -3948,6 +3968,51 @@ paths:
               schema: { $ref: '#/components/schemas/Error' }
         '401': { description: Unauthenticated }
         '403': { description: No access to this conversation }
+
+  /api/conversations/{id}/context:
+    get:
+      tags: [proposals]
+      summary: Role-aware header context for a conversation (DOK-221)
+      description: >-
+        The participants bar (host + guest) plus a concrete reference to the
+        underlying transaction. For a stay: which apartment the guest booked and
+        its Keys cost. For a swap: both homes of the exchange. The viewer's
+        `role` and `isPrincipal` drive what the UI emphasises.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [kind, role, status, dateFrom, dateTo, nights, participants, isPrincipal]
+                properties:
+                  kind: { type: string, enum: [swap, stay] }
+                  role: { type: string, enum: [traveling, hosting] }
+                  status: { type: string }
+                  dateFrom: { type: string, format: date-time }
+                  dateTo: { type: string, format: date-time }
+                  nights: { type: integer }
+                  proposalId: { type: string, nullable: true }
+                  isPrincipal: { type: boolean }
+                  keys:
+                    nullable: true
+                    type: object
+                    required: [cost, kind]
+                    properties:
+                      cost: { type: integer }
+                      kind: { type: string }
+                  home: { $ref: '#/components/schemas/ConversationHome', nullable: true }
+                  myHome: { $ref: '#/components/schemas/ConversationHome', nullable: true }
+                  participants:
+                    type: array
+                    items: { $ref: '#/components/schemas/ConversationContextParticipant' }
+        '401': { description: Unauthenticated }
+        '403': { description: No access to this conversation }
+        '404': { description: Conversation not found }
 
   /api/conversations/{id}/change-context:
     get:

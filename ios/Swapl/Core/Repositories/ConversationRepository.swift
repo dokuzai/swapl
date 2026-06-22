@@ -40,6 +40,12 @@ final class ConversationRepository: @unchecked Sendable {
         )
     }
 
+    // GET /api/conversations/{id}/context — role-aware header context
+    // (participants bar + the concrete transaction this thread is about).
+    func context(conversationId: String) async throws -> ConversationContext {
+        try await APIClient.shared.send("GET", "/api/conversations/\(conversationId)/context")
+    }
+
     // GET /api/conversations/{id}/change-context — availability for the picker.
     func changeContext(conversationId: String) async throws -> DateChangeContext {
         try await APIClient.shared.send("GET", "/api/conversations/\(conversationId)/change-context")

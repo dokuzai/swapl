@@ -169,7 +169,7 @@ struct TravelProfileView: View {
             Text("Built only from your in-app activity\(sourcesText(profile)).")
                 .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
                 .foregroundStyle(AirbnbPalette.secondaryText)
-            if let date = SwaplDateText.parse(profile.updatedAt) {
+            if let date = SwaplDateText.parseInstant(profile.updatedAt) {
                 Text("Last updated \(date.formatted(date: .abbreviated, time: .omitted))")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
                     .foregroundStyle(AirbnbPalette.secondaryText)

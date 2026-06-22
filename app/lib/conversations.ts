@@ -381,6 +381,124 @@ export async function listConversationsForUser(userId: string): Promise<Conversa
   return items;
 }
 
+// Role-aware context for the conversation header (DOK-221): who's involved
+// (participants bar) and a concrete reference to the underlying transaction.
+// A host sees which of their homes the guest chose; a guest sees the home + the
+// request details; both sides of a swap see both homes of the exchange.
+export type ContextHome = { id: string; title: string; city: string | null; photo: string | null };
+export type ContextParticipant = {
+  id: string | null;
+  name: string | null;
+  avatar: string | null;
+  verified: boolean;
+  role: "host" | "guest";
+  isMe: boolean;
+};
+export type ConversationContextDTO = {
+  kind: "swap" | "stay";
+  role: "traveling" | "hosting";
+  status: string;
+  dateFrom: string;
+  dateTo: string;
+  nights: number;
+  participants: ContextParticipant[];
+  // Stay: the booked apartment (so the host sees which of their homes the guest
+  // chose). Swap: the counterpart's home (the one the viewer is matched with).
+  home: ContextHome | null;
+  // Swap only: the viewer's own home in the exchange.
+  myHome: ContextHome | null;
+  // Stay only: the Keys economics of the request.
+  keys: { cost: number; kind: string } | null;
+  proposalId: string | null;
+  isPrincipal: boolean;
+};
+
+const USER_SLICE = { id: true, name: true, avatar: true, verified: true } as const;
+
+function firstPhoto(photos: string): string | null {
+  return parseJSON<string[]>(photos, [])[0] ?? null;
+}
+
+function dayCount(from: Date, to: Date): number {
+  return Math.max(0, Math.round((to.getTime() - from.getTime()) / 86_400_000));
+}
+
+export async function conversationContext(
+  conversationId: string,
+  userId: string,
+): Promise<ConversationContextDTO | null> {
+  const convo = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    include: {
+      keysStay: {
+        include: {
+          listing: { select: { id: true, title: true, city: true, photos: true } },
+          guest: { select: USER_SLICE },
+          host: { select: USER_SLICE },
+        },
+      },
+      proposal: {
+        include: {
+          proposerListing: { select: { id: true, title: true, city: true, photos: true, user: { select: USER_SLICE } } },
+          targetListing: { select: { id: true, title: true, city: true, photos: true, userId: true, user: { select: USER_SLICE } } },
+        },
+      },
+    },
+  });
+  if (!convo) return null;
+
+  if (convo.keysStay) {
+    const s = convo.keysStay;
+    const isGuest = s.guestId === userId;
+    return {
+      kind: "stay",
+      role: isGuest ? "traveling" : "hosting",
+      status: s.status,
+      dateFrom: s.dateFrom.toISOString(),
+      dateTo: s.dateTo.toISOString(),
+      nights: s.nights,
+      participants: [
+        { id: s.host.id, name: s.host.name, avatar: s.host.avatar, verified: s.host.verified, role: "host", isMe: s.host.id === userId },
+        { id: s.guest.id, name: s.guest.name, avatar: s.guest.avatar, verified: s.guest.verified, role: "guest", isMe: s.guest.id === userId },
+      ],
+      home: { id: s.listing.id, title: s.listing.title, city: s.listing.city, photo: firstPhoto(s.listing.photos) },
+      myHome: null,
+      keys: { cost: s.keysCost, kind: s.kind },
+      proposalId: null,
+      isPrincipal: true,
+    };
+  }
+
+  if (convo.proposal) {
+    const p = convo.proposal;
+    const isProposer = p.proposerId === userId;
+    const mine = isProposer ? p.proposerListing : p.targetListing;
+    const theirs = isProposer ? p.targetListing : p.proposerListing;
+    const proposerOwner = p.proposerListing.user;
+    const targetOwner = p.targetListing.user;
+    return {
+      kind: "swap",
+      role: isProposer ? "traveling" : "hosting",
+      status: p.status,
+      dateFrom: p.dateFrom.toISOString(),
+      dateTo: p.dateTo.toISOString(),
+      nights: dayCount(p.dateFrom, p.dateTo),
+      participants: [
+        // The proposer travels to the target's home (guest); the target hosts.
+        { id: proposerOwner?.id ?? null, name: proposerOwner?.name ?? null, avatar: proposerOwner?.avatar ?? null, verified: proposerOwner?.verified ?? false, role: "guest", isMe: proposerOwner?.id === userId },
+        { id: targetOwner?.id ?? null, name: targetOwner?.name ?? null, avatar: targetOwner?.avatar ?? null, verified: targetOwner?.verified ?? false, role: "host", isMe: targetOwner?.id === userId },
+      ],
+      home: { id: theirs.id, title: theirs.title, city: theirs.city, photo: firstPhoto(theirs.photos) },
+      myHome: { id: mine.id, title: mine.title, city: mine.city, photo: firstPhoto(mine.photos) },
+      keys: null,
+      proposalId: p.id,
+      isPrincipal: isProposer || p.targetListing.userId === userId,
+    };
+  }
+
+  return null;
+}
+
 export async function markConversationRead(conversationId: string, userId: string) {
   await prisma.conversationReadCursor.upsert({
     where: { conversationId_userId: { conversationId, userId } },

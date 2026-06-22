@@ -28,6 +28,10 @@ final class ConversationViewModel {
     var pendingChange: PendingDateChange?
     var changeBusy = false
     var changeError: String?
+    // Role-aware header context (DOK-221): participants + the concrete
+    // transaction this thread is about. Best-effort; a nil context just hides
+    // the header.
+    var context: ConversationContext?
 
     // Bumps whenever the tail grows so the view can drive auto-scroll.
     var scrollAnchor: String?
@@ -57,6 +61,10 @@ final class ConversationViewModel {
             loadError = error.localizedDescription
             hasLoadedOnce = true
         }
+    }
+
+    func loadContext() async {
+        context = try? await ConversationRepository.shared.context(conversationId: conversationId)
     }
 
     func loadMore() async {
@@ -94,6 +102,7 @@ final class ConversationViewModel {
         do {
             try await ConversationRepository.shared.requestDateChange(conversationId: conversationId, dateFrom: dateFrom, dateTo: dateTo)
             await load()
+            await loadContext()
             return true
         } catch {
             changeError = error.localizedDescription
@@ -109,6 +118,7 @@ final class ConversationViewModel {
         do {
             try await ConversationRepository.shared.respondDateChange(conversationId: conversationId, accept: accept)
             await load()
+            await loadContext()
         } catch {
             changeError = error.localizedDescription
         }
@@ -176,7 +186,6 @@ struct ConversationView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if let proposalId { swapDetailBanner(proposalId) }
             thread
             if let pc = vm.pendingChange { pendingChangeCard(pc) }
             composer
@@ -184,9 +193,17 @@ struct ConversationView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar(.hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
-        .safeAreaInset(edge: .top) { floatingHeader }
+        // The page header + the transaction banner float together as Liquid
+        // Glass; the timeline scrolls beneath them (no opaque background).
+        .safeAreaInset(edge: .top) {
+            VStack(spacing: 0) {
+                floatingHeader
+                if let ctx = vm.context { contextHeader(ctx) }
+            }
+        }
         .background(SwaplSemanticLight.background.ignoresSafeArea())
         .task { await vm.load() }
+        .task { await vm.loadContext() }
         .task(id: scenePhase) { await pollLoop() }
         .onChange(of: photoItems) { _, items in
             Task { await upload(items) }
@@ -200,41 +217,218 @@ struct ConversationView: View {
         }
     }
 
-    // Pinned banner (swap threads) → the swap detail, where Accept / Decline /
-    // Counter and the trip cockpit live (DOK-221). The unified Messages list is a
-    // pure chat list, so this is how a pending swap is acted on from the thread.
-    private func swapDetailBanner(_ proposalId: String) -> some View {
-        NavigationLink {
-            ProposalDetailView(proposalId: proposalId)
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: "arrow.left.arrow.right.circle.fill")
-                    .font(.system(size: 18, weight: .semibold))
+    // Role-aware header shown on EVERY thread (DOK-221): a concrete reference to
+    // the transaction (which home(s), dates, status, Keys) plus — for stays —
+    // the participants bar. Swap threads carry the richer multi-party People
+    // panel inside the timeline, so the participants bar is rendered for stays
+    // only to avoid duplicating the roster.
+    @ViewBuilder
+    private func contextHeader(_ ctx: ConversationContext) -> some View {
+        VStack(spacing: 8) {
+            transactionCard(ctx)
+            if ctx.proposalId == nil {
+                participantsBar(ctx)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.top, 6)
+        .padding(.bottom, 4)
+    }
+
+    @ViewBuilder
+    private func transactionCard(_ ctx: ConversationContext) -> some View {
+        if ctx.isSwap, let proposalId = ctx.proposalId {
+            NavigationLink { ProposalDetailView(proposalId: proposalId) } label: {
+                swapCardBody(ctx)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("Swap details — tap to respond"))
+        } else {
+            stayCardBody(ctx)
+        }
+    }
+
+    private func swapCardBody(_ ctx: ConversationContext) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                homeThumb(ctx.myHome, size: 40)
+                Image(systemName: "arrow.left.arrow.right")
+                    .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(SwaplSemanticLight.primary)
+                homeThumb(ctx.home, size: 40)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("View swap details")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    Text(homeTitle(ctx.home, fallback: String(localized: "Home exchange")))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
                         .foregroundStyle(AirbnbPalette.text)
                         .lineLimit(1)
-                    Text("Dates, home & respond")
+                    Text(exchangeSubtitle(ctx))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                         .lineLimit(1)
                 }
-                Spacer(minLength: 8)
+                Spacer(minLength: 4)
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.secondaryText)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .glassEffect(.regular, in: .rect(cornerRadius: SwaplDesignSystem.CornerRadius.large))
+            HStack(spacing: 8) {
+                statusBadge(ctx.status)
+                Text(datesLine(ctx))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .lineLimit(1)
+            }
         }
-        .buttonStyle(.plain)
-        .padding(.horizontal, 12)
-        .padding(.top, 6)
-        .padding(.bottom, 4)
-        .accessibilityLabel(Text("View swap details and respond"))
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .glassEffect(.regular, in: .rect(cornerRadius: SwaplDesignSystem.CornerRadius.large))
+    }
+
+    private func stayCardBody(_ ctx: ConversationContext) -> some View {
+        HStack(spacing: 12) {
+            homeThumb(ctx.home, size: 52)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(homeTitle(ctx.home, fallback: String(localized: "Stay")))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .lineLimit(1)
+                Text(staySubtitle(ctx))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .lineLimit(1)
+                HStack(spacing: 8) {
+                    statusBadge(ctx.status)
+                    if let keys = ctx.keys {
+                        Label(
+                            keys.kind == "couchsurf" ? String(localized: "Couchsurf") : String(localized: "\(keys.cost) Keys"),
+                            systemImage: keys.kind == "couchsurf" ? "figure.wave" : "key.fill"
+                        )
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                        .foregroundStyle(SwaplSemanticLight.primary)
+                    }
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .glassEffect(.regular, in: .rect(cornerRadius: SwaplDesignSystem.CornerRadius.large))
+    }
+
+    // The 2-party people bar (stays). Each party shows avatar, name (or "You"),
+    // their role, and a verified seal.
+    private func participantsBar(_ ctx: ConversationContext) -> some View {
+        HStack(spacing: 8) {
+            ForEach(ctx.participants) { p in
+                HStack(spacing: 7) {
+                    participantAvatar(p)
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(spacing: 3) {
+                            Text(p.isMe ? String(localized: "You") : (p.name ?? (p.isHost ? String(localized: "Host") : String(localized: "Guest"))))
+                                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+                                .foregroundStyle(AirbnbPalette.text)
+                                .lineLimit(1)
+                            if p.verified {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .foregroundStyle(SwaplSemanticLight.primary)
+                            }
+                        }
+                        Text(p.isHost ? String(localized: "Host") : String(localized: "Guest"))
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.tiny))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .glassEffect(.regular, in: .capsule)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func participantAvatar(_ p: ConversationContext.Participant) -> some View {
+        let initials = String((p.name ?? (p.isHost ? "H" : "G")).prefix(1)).uppercased()
+        return Group {
+            if let avatar = p.avatar, let url = URL(string: avatar) {
+                AsyncImage(url: url) { img in
+                    img.resizable().scaledToFill()
+                } placeholder: {
+                    SwaplSemanticLight.muted
+                }
+            } else {
+                ZStack {
+                    SwaplSemanticLight.muted
+                    Text(initials)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.tiny, weight: .bold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
+            }
+        }
+        .frame(width: 26, height: 26)
+        .clipShape(Circle())
+        .overlay(Circle().stroke(AirbnbPalette.hairline))
+    }
+
+    private func homeThumb(_ home: ConversationContext.Home?, size: CGFloat) -> some View {
+        let shape = RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.small, style: .continuous)
+        return Group {
+            if let photo = home?.photo, let url = URL(string: photo) {
+                AsyncImage(url: url) { img in
+                    img.resizable().scaledToFill()
+                } placeholder: {
+                    SwaplSemanticLight.muted
+                }
+            } else {
+                ZStack {
+                    SwaplSemanticLight.muted
+                    Image(systemName: "house.fill")
+                        .font(.system(size: size * 0.4, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(shape)
+        .overlay(shape.stroke(AirbnbPalette.hairline))
+    }
+
+    private func statusBadge(_ status: String) -> some View {
+        let s = status.lowercased()
+        let positive = ["confirmed", "accepted", "active", "completed"].contains(s)
+        let negative = ["declined", "cancelled", "withdrawn"].contains(s)
+        let color: Color = positive ? SwaplSemanticLight.primary : (negative ? AirbnbPalette.secondaryText : AirbnbPalette.text)
+        return Text(status.replacingOccurrences(of: "_", with: " ").capitalized)
+            .font(.swaplBody(SwaplDesignSystem.FontSize.tiny, weight: .bold))
+            .foregroundStyle(color)
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background(color.opacity(0.12), in: Capsule())
+    }
+
+    private func homeTitle(_ home: ConversationContext.Home?, fallback: String) -> String {
+        guard let home else { return fallback }
+        let t = home.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return t.isEmpty ? (home.city ?? fallback) : t
+    }
+
+    private func datesLine(_ ctx: ConversationContext) -> String {
+        SwaplDateText.range(from: ctx.dateFrom, to: ctx.dateTo)
+    }
+
+    private func exchangeSubtitle(_ ctx: ConversationContext) -> String {
+        let mine = ctx.myHome?.city
+        let theirs = ctx.home?.city
+        if let mine, let theirs { return "\(mine) ⇄ \(theirs)" }
+        return String(localized: "Home exchange")
+    }
+
+    private func staySubtitle(_ ctx: ConversationContext) -> String {
+        let nightsText = ctx.nights == 1 ? String(localized: "1 night") : String(localized: "\(ctx.nights) nights")
+        if let city = ctx.home?.city, !city.isEmpty {
+            return "\(city) · \(datesLine(ctx)) · \(nightsText)"
+        }
+        return "\(datesLine(ctx)) · \(nightsText)"
     }
 
     private var floatingHeader: some View {
@@ -699,7 +893,7 @@ struct DateChangeSheet: View {
 // (year added only when it differs from the current one). Shared by message
 // bubbles and event rows so both carry the same stamp.
 func conversationTimestamp(_ iso: String) -> String {
-    guard let date = SwaplDateText.parse(iso) else { return "" }
+    guard let date = SwaplDateText.parseInstant(iso) else { return "" }
     let formatter = DateFormatter()
     let sameYear = Calendar.current.isDate(date, equalTo: Date(), toGranularity: .year)
     formatter.setLocalizedDateFormatFromTemplate(sameYear ? "MMMd jm" : "MMMdyyyy jm")

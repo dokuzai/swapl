@@ -173,6 +173,27 @@ enum SwaplDateText {
         return apiFormatter.date(from: prefix) ?? ISO8601DateFormatter().date(from: value)
     }
 
+    // Full instant (date + time) for message/event timestamps. The plain `parse`
+    // above is date-only — it truncates to the yyyy-MM-dd prefix and reads it as
+    // UTC midnight, which is right for availability ranges but collapses every
+    // chat time to the same local clock value. Use this for anything that shows
+    // a time of day.
+    static func parseInstant(_ value: String) -> Date? {
+        iso8601Frac.date(from: value) ?? iso8601Plain.date(from: value) ?? parse(value)
+    }
+
+    private static let iso8601Frac: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
+
+    private static let iso8601Plain: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
+
     static func apiString(from date: Date) -> String {
         apiFormatter.string(from: date)
     }
