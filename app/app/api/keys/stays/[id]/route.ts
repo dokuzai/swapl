@@ -4,6 +4,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { forbidden, notFound, unauthenticated } from "@/lib/api/errors";
 import { publicContactChannels, ownContactChannels } from "@/lib/contact-channels";
 import { publicCoord } from "@/lib/city-coords";
+import { conversationForKeysStay } from "@/lib/conversations";
 
 // GET /api/keys/stays/{id} — rich detail for one Stay-with-points, mirroring the
 // swap trip view: the home's approximate area (fuzzed) + exact address, the
@@ -40,6 +41,9 @@ export async function GET(req: Request, { params }: RouteContext<"/api/keys/stay
 
   const counterpart = isGuest ? stay.host : stay.guest;
   const photos = parseJSON<string[]>(stay.listing.photos, []);
+  // The per-transaction conversation (DOK-221) — created lazily so the detail can
+  // open the in-app chat.
+  const conversation = await conversationForKeysStay(stay.id);
   const area =
     stay.listing.lat != null && stay.listing.lng != null
       ? publicCoord(stay.listing.lat, stay.listing.lng, stay.listing.id)
@@ -47,6 +51,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/keys/stay
 
   return NextResponse.json({
     id: stay.id,
+    conversationId: conversation.id,
     role: isGuest ? "guest" : "host",
     kind: stay.kind,
     status: stay.status,

@@ -26,6 +26,7 @@ export type PushPayload = {
     proposalId?: string;
     listingId?: string;
     stayId?: string;
+    conversationId?: string;
     deepLink: string; // e.g. "swapl://swaps/<id>"
   };
 };

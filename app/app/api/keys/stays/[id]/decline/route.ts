@@ -4,6 +4,7 @@ import { forbidden, notFound, unauthenticated, unprocessable } from "@/lib/api/e
 import { releaseKeysStay, KeysStayError } from "@/lib/keys/stay";
 import { prisma } from "@/lib/db";
 import { sendPush, pushTemplates } from "@/lib/push";
+import { recordStayEvent } from "@/lib/conversations";
 
 // POST /api/keys/stays/{id}/decline — host rejects a pending stay; the guest's
 // held Keys are released back to their wallet. Only the host may decline.
@@ -16,6 +17,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/keys/sta
     const result = await releaseKeysStay(id, session.userId, "declined");
     const stay = await prisma.keysStay.findUnique({ where: { id }, select: { guestId: true } });
     if (stay) sendPush(stay.guestId, pushTemplates.keysStayDeclined(id)).catch(() => {});
+    recordStayEvent(id, "declined").catch(() => {});
     return NextResponse.json({ ok: true, stayId: result.id });
   } catch (err) {
     if (err instanceof KeysStayError) {

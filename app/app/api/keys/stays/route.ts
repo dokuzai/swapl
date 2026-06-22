@@ -10,6 +10,7 @@ import { isCouchsurferMember } from "@/lib/billing/limits";
 import { STAY_RATE_LIMIT, STAY_RATE_WINDOW_MS } from "@/lib/keys/config";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { resolveShareToken } from "@/lib/keys/earn";
+import { recordStayEvent } from "@/lib/conversations";
 
 const bodySchema = z.object({
   listingId: z.string().min(1),
@@ -98,6 +99,8 @@ export async function POST(req: Request) {
       kind: parsed.data.kind,
     });
     sendPush(stay.hostId, pushTemplates.keysStayRequested(stay.id, stay.nights, stay.keysCost)).catch(() => {});
+    // DOK-221: open the per-transaction thread with the opening event.
+    recordStayEvent(stay.id, "request_sent", { nights: stay.nights, keysCost: stay.keysCost, kind: parsed.data.kind ?? "keys" }).catch(() => {});
 
     // DOK-164: record the pending share→conversion on the attribution row so the
     // SHARER is credited once the host confirms the stay (award happens at

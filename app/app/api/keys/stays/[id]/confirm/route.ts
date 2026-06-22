@@ -5,6 +5,7 @@ import { confirmKeysStay, KeysStayError } from "@/lib/keys/stay";
 import { prisma } from "@/lib/db";
 import { sendPush, pushTemplates } from "@/lib/push";
 import { grantShareConvertedBonus } from "@/lib/keys/earn";
+import { recordStayEvent } from "@/lib/conversations";
 
 // POST /api/keys/stays/{id}/confirm — host accepts a pending stay. The guest's
 // held Keys become a real spend, the host earns them, and a cover policy is
@@ -18,6 +19,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/keys/sta
     const result = await confirmKeysStay(id, session.userId);
     const stay = await prisma.keysStay.findUnique({ where: { id }, select: { guestId: true } });
     if (stay) sendPush(stay.guestId, pushTemplates.keysStayConfirmed(id)).catch(() => {});
+    recordStayEvent(id, "confirmed").catch(() => {});
 
     // DOK-164: a confirmed stay realises any pending share→conversion recorded
     // at booking time (attribution.conversionRef === stayId) → credit the

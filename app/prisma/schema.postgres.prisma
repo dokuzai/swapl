@@ -45,6 +45,9 @@ model User {
   aiModel    String?
   aiApiKey   String?
   conversationReads ConversationRead[]
+  // Unified per-transaction conversations (DOK-221): authored messages + read cursors.
+  conversationMessages   Message[]
+  conversationReadCursors ConversationReadCursor[]
 
   // Moderation: a suspended user cannot log in or send proposals.
   // Set/cleared by admins from /admin/users.
@@ -537,6 +540,7 @@ model SwapProposal {
   messages          SwapMessage[]
   participants      ConversationParticipant[]
   readCursors       ConversationRead[]
+  conversation      Conversation?            // DOK-221 unified thread
 
   @@index([proposerId])
   @@index([targetListingId])
@@ -569,6 +573,59 @@ model ConversationRead {
   lastReadAt DateTime @default(now())
 
   @@id([proposalId, userId])
+  @@index([userId])
+}
+
+// ---------- UNIFIED CONVERSATIONS (DOK-221) ----------
+// One conversation PER TRANSACTION: it hangs off exactly one SwapProposal OR one
+// KeysStay. Re-booking the same home later is a new KeysStay → a new thread.
+// Messages are either a member's `text` or a system `event` (request sent,
+// confirmed, change requested, checked in, …), so the chat is one timeline.
+model Conversation {
+  id         String   @id @default(cuid())
+  // Exactly one of these is set (the transaction this thread belongs to).
+  proposalId String?       @unique
+  proposal   SwapProposal? @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  keysStayId String?       @unique
+  keysStay   KeysStay?     @relation(fields: [keysStayId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  messages Message[]
+  reads    ConversationReadCursor[]
+
+  @@index([updatedAt])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  // null for system events; set for member messages.
+  authorId       String?
+  author         User?        @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  kind      String  @default("text")  // "text" | "event"
+  body      String?                    // text body (kind=text)
+  photos    String  @default("[]")     // JSON array of upload URLs (kind=text)
+  eventType String?                    // kind=event, e.g. "request_sent","confirmed"
+  eventMeta String?                    // kind=event, JSON payload (dates, etc.)
+
+  createdAt DateTime @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+// Per-(conversation, user) read cursor — per-recipient, like ConversationRead.
+model ConversationReadCursor {
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastReadAt     DateTime @default(now())
+
+  @@id([conversationId, userId])
   @@index([userId])
 }
 
@@ -869,6 +926,8 @@ model KeysStay {
   insurancePolicyId String?
 
   createdAt         DateTime @default(now())
+
+  conversation      Conversation?            // DOK-221 unified thread
 
   @@index([listingId])
   @@index([guestId])

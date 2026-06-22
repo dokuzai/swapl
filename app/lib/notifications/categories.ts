@@ -19,6 +19,7 @@ export type NotificationKind =
   | "proposalDeclined"
   | "proposalCountered"
   | "swapMessageReceived"
+  | "conversationMessage"
   | "swapParticipantInvited"
   | "insurancePolicyCreated"
   | "preTripReminder"
@@ -59,6 +60,7 @@ export type NotificationCategory =
 export const KIND_CATEGORY: Record<NotificationKind, NotificationCategory> = {
   // Conversations
   swapMessageReceived: "messages",
+  conversationMessage: "messages",
   swapParticipantInvited: "messages",
   // Proposal lifecycle
   proposalReceived: "proposals",

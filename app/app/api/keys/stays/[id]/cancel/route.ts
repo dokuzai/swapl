@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { forbidden, notFound, unauthenticated, unprocessable } from "@/lib/api/errors";
 import { releaseKeysStay, KeysStayError } from "@/lib/keys/stay";
+import { recordStayEvent } from "@/lib/conversations";
 
 // POST /api/keys/stays/{id}/cancel — guest cancels their own pending stay
 // before the host acts; the held Keys are released back to the guest. Only the
@@ -13,6 +14,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/keys/sta
   const { id } = await params;
   try {
     const result = await releaseKeysStay(id, session.userId, "cancelled");
+    recordStayEvent(id, "cancelled").catch(() => {});
     return NextResponse.json({ ok: true, stayId: result.id });
   } catch (err) {
     if (err instanceof KeysStayError) {
