@@ -19,9 +19,14 @@ final class TripsViewModel {
     enum StatusFilter: String, CaseIterable { case all, active, potential, cancelled }
     enum SortOption: String, CaseIterable { case soonest, latest }
     enum GroupOption: String, CaseIterable { case city, country }
+    // Whose side am I looking at? Traveling = I'm the guest (I initiated a swap,
+    // or I'm staying with points); Hosting = I'm the host (I received it). Same
+    // convention as the swaps inbox.
+    enum Perspective: String, CaseIterable { case traveling, hosting }
     var statusFilter: StatusFilter = .all
     var sortBy: SortOption = .soonest
     var groupBy: GroupOption = .city
+    var perspective: Perspective = .traveling
 
     private func isCancelled(_ p: ProposalSummary) -> Bool {
         p.status == "DECLINED" || p.status == "WITHDRAWN"
@@ -142,6 +147,15 @@ enum TripItem: Identifiable {
         return .active
     }
 
+    // True when I'm the guest/traveler: the swap initiator (proposer), or the
+    // one staying with points. False = I'm the host receiving them.
+    var isTraveling: Bool {
+        switch self {
+        case .swap(let p): return p.meSide == "proposer"
+        case .stay(let s): return s.isGuest
+        }
+    }
+
     var isCancelled: Bool {
         switch self {
         case .swap(let p): return p.status == "DECLINED" || p.status == "WITHDRAWN"
@@ -228,10 +242,14 @@ struct TripsView: View {
         let items = allTripItems
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                // Filter/sort controls only matter once there are trips; otherwise
-                // the plain title.
+                // Filter/sort controls + the Traveling/Hosting split only matter
+                // once there are trips; otherwise just the plain title.
                 if !items.isEmpty {
                     SwaplPageTitle("Trips") { tripsControls }
+                    perspectivePicker
+                        .padding(.horizontal, 22)
+                        .padding(.top, 4)
+                        .padding(.bottom, 10)
                 } else {
                     titleBar
                 }
@@ -241,33 +259,46 @@ struct TripsView: View {
         .refreshable { await reload() }
     }
 
+    // Traveling (I'm the guest) vs Hosting (I'm the host) — splits the one list
+    // by which side of the stay I'm on.
+    private var perspectivePicker: some View {
+        Picker("", selection: Bindable(vm).perspective) {
+            Text("Traveling").tag(TripsViewModel.Perspective.traveling)
+            Text("Hosting").tag(TripsViewModel.Perspective.hosting)
+        }
+        .pickerStyle(.segmented)
+    }
+
     @ViewBuilder
-    private func tripsBody(_ items: [TripItem]) -> some View {
+    private func tripsBody(_ allItems: [TripItem]) -> some View {
         // Still loading both sources, nothing to show yet.
         if vm.trips == nil && keysVM.stays == nil && vm.error == nil {
             ProgressView()
                 .frame(maxWidth: .infinity, minHeight: 240)
                 .accessibilityLabel("Loading trips")
-        } else if items.isEmpty {
-            if let error = vm.error, vm.trips == nil {
+        } else if allItems.isEmpty, let error = vm.error, vm.trips == nil {
+            SwaplEmptyState(
+                systemImage: "wifi.exclamationmark",
+                title: "Trips unavailable",
+                description: error,
+                actionTitle: "Try Again",
+                action: { Task { await reload() } }
+            )
+            .padding(.top, 40)
+        } else {
+            let items = allItems.filter { vm.perspective == .traveling ? $0.isTraveling : !$0.isTraveling }
+            if items.isEmpty {
                 SwaplEmptyState(
-                    systemImage: "wifi.exclamationmark",
-                    title: "Trips unavailable",
-                    description: error,
-                    actionTitle: "Try Again",
-                    action: { Task { await reload() } }
-                )
-                .padding(.top, 40)
-            } else {
-                SwaplEmptyState(
-                    systemImage: "suitcase.rolling",
-                    title: "Trips",
-                    description: "Exchanges and stays with points show up here."
+                    systemImage: vm.perspective == .traveling ? "suitcase.rolling" : "house",
+                    title: vm.perspective == .traveling ? "No trips yet" : "No guests yet",
+                    description: vm.perspective == .traveling
+                        ? "Stays and exchanges you book show up here."
+                        : "Stays and exchanges at your home show up here."
                 )
                 .padding(.top, 60)
+            } else {
+                tripsList(items)
             }
-        } else {
-            tripsList(items)
         }
     }
 
