@@ -128,12 +128,41 @@ describe("PATCH /api/profile", () => {
       languages: '["it"]',
     });
     const json = await res.json();
-    expect(json.profile).toEqual({ work: "Chef", languages: ["it"], homeCity: null, homeCountry: null });
+    expect(json.profile).toEqual({
+      work: "Chef",
+      languages: ["it"],
+      homeCity: null,
+      homeCountry: null,
+      dateOfBirth: null,
+      contactChannels: {},
+    });
   });
 
   it("400 on invalid shapes", async () => {
     expect((await patch({ languages: "italian" })).status).toBe(400);
     expect((await patch({ work: "x".repeat(121) })).status).toBe(400);
+  });
+
+  it("stores a valid date of birth at UTC midnight", async () => {
+    const res = await patch({ dateOfBirth: "1989-03-05" });
+    expect(res.status).toBe(200);
+    expect(mocks.userUpdate.mock.calls[0][0].data).toEqual({
+      dateOfBirth: new Date("1989-03-05T00:00:00.000Z"),
+    });
+  });
+
+  it("clears the date of birth with null", async () => {
+    const res = await patch({ dateOfBirth: null });
+    expect(res.status).toBe(200);
+    expect(mocks.userUpdate.mock.calls[0][0].data).toEqual({ dateOfBirth: null });
+  });
+
+  it("400 on malformed, impossible, underage or ancient dates of birth", async () => {
+    expect((await patch({ dateOfBirth: "03/05/1989" })).status).toBe(400); // wrong format
+    expect((await patch({ dateOfBirth: "2021-02-30" })).status).toBe(400); // rolls over
+    expect((await patch({ dateOfBirth: "2020-01-01" })).status).toBe(400); // under 13
+    expect((await patch({ dateOfBirth: "1850-01-01" })).status).toBe(400); // over 120
+    expect(mocks.userUpdate).not.toHaveBeenCalled();
   });
 });
 

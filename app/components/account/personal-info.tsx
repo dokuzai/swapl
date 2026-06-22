@@ -6,8 +6,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useT } from "@/lib/i18n/client";
+import { useT, useLocale } from "@/lib/i18n/client";
 import type { ContactChannels } from "@/lib/contact-channels";
+import { DatePickerSheet } from "@/components/ui/date-picker-sheet";
 
 export type PersonalInfo = {
   name: string;
@@ -16,6 +17,8 @@ export type PersonalInfo = {
   languages: string[];
   homeCity: string;
   homeCountry: string;
+  /** ISO calendar date "YYYY-MM-DD", or null when unset. */
+  dateOfBirth: string | null;
   contactChannels: ContactChannels;
 };
 
@@ -24,10 +27,18 @@ const inputStyle = { borderColor: "var(--line)", background: "var(--card-bg)" } 
 
 export function PersonalInfoEditor({ initial }: { initial: PersonalInfo }) {
   const t = useT();
+  const locale = useLocale();
   const router = useRouter();
   const [form, setForm] = useState<PersonalInfo>(initial);
   const [langDraft, setLangDraft] = useState("");
+  const [dobOpen, setDobOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  const dobLabel = form.dateOfBirth
+    ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(
+        new Date(`${form.dateOfBirth}T00:00:00`),
+      )
+    : t("account.personal.dobNotSet");
 
   function set<K extends keyof PersonalInfo>(key: K, value: PersonalInfo[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -75,6 +86,7 @@ export function PersonalInfoEditor({ initial }: { initial: PersonalInfo }) {
           languages: form.languages,
           homeCity: form.homeCity.trim() || null,
           homeCountry: form.homeCountry.trim() || null,
+          dateOfBirth: form.dateOfBirth,
           // Full-replace: server normalizes + drops empty/invalid values.
           contactChannels: form.contactChannels,
         }),
@@ -206,6 +218,37 @@ export function PersonalInfoEditor({ initial }: { initial: PersonalInfo }) {
           />
         </label>
       </div>
+
+      {/* Date of birth — opens the iOS-style picker; the value rides along with
+          the form's Save like every other field. */}
+      <div>
+        <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>
+          {t("account.personal.dob")}
+        </span>
+        <button
+          type="button"
+          onClick={() => setDobOpen(true)}
+          className="w-full flex items-center justify-between gap-3 rounded-lg border px-3 py-2.5 text-sm text-left"
+          style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
+        >
+          <span style={{ color: form.dateOfBirth ? "var(--navy)" : "var(--navy-3)" }}>{dobLabel}</span>
+          <span aria-hidden style={{ color: "var(--navy-3)" }}>›</span>
+        </button>
+        <p className="text-sm mt-1.5" style={{ color: "var(--navy-2)" }}>{t("account.personal.dobBody")}</p>
+      </div>
+
+      {/* Mounted only while open so it re-seeds from the current value each time. */}
+      {dobOpen && (
+        <DatePickerSheet
+          open
+          value={form.dateOfBirth}
+          onCancel={() => setDobOpen(false)}
+          onConfirm={(iso) => {
+            set("dateOfBirth", iso);
+            setDobOpen(false);
+          }}
+        />
+      )}
 
       <div>
         <span className="font-mono text-[10px] uppercase tracking-[.1em] block mb-1.5" style={{ color: "var(--navy-3)" }}>

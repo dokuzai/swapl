@@ -94,6 +94,32 @@ export default async function AccountPage() {
               <h1 className="font-display text-4xl tracking-[-0.02em] font-medium">{t("account.title")}</h1>
             </header>
 
+            {/* Apple-style identity header: avatar, name, email centred above
+                the settings sections. */}
+            <div className="flex flex-col items-center text-center mb-12">
+              {user.avatar ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={user.avatar}
+                  alt={user.name ?? user.email}
+                  width={96}
+                  height={96}
+                  className="rounded-full object-cover"
+                  style={{ width: 96, height: 96, border: "2px solid var(--line)" }}
+                />
+              ) : (
+                <div
+                  className="rounded-full flex items-center justify-center font-display font-medium"
+                  style={{ width: 96, height: 96, fontSize: 40, background: "var(--navy)", color: "var(--cream)" }}
+                  aria-hidden
+                >
+                  {(user.name ?? user.email).charAt(0).toUpperCase()}
+                </div>
+              )}
+              <h2 className="font-display text-2xl tracking-[-0.01em] mt-4">{user.name ?? user.email}</h2>
+              <p className="text-sm mt-1" style={{ color: "var(--navy-2)" }}>{user.email}</p>
+            </div>
+
             {/* Mobile: section list with chevrons. Desktop reads inline below. */}
             <nav aria-label={t("account.nav.title")} className="md:hidden surface-card surface-card--static mb-10 overflow-hidden">
               <ul>
@@ -122,6 +148,7 @@ export default async function AccountPage() {
                     languages: parseJSON<string[]>(user.languages, []),
                     homeCity: user.homeCity ?? "",
                     homeCountry: user.homeCountry ?? "",
+                    dateOfBirth: user.dateOfBirth ? user.dateOfBirth.toISOString().slice(0, 10) : null,
                     contactChannels: ownContactChannels(user.contactChannels),
                   }}
                 />
