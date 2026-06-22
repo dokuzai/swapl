@@ -246,10 +246,6 @@ struct TripsView: View {
                 // once there are trips; otherwise just the plain title.
                 if !items.isEmpty {
                     SwaplPageTitle("Trips") { tripsControls }
-                    perspectivePicker
-                        .padding(.horizontal, 22)
-                        .padding(.top, 4)
-                        .padding(.bottom, 10)
                 } else {
                     titleBar
                 }
@@ -259,14 +255,30 @@ struct TripsView: View {
         .refreshable { await reload() }
     }
 
-    // Traveling (I'm the guest) vs Hosting (I'm the host) — splits the one list
-    // by which side of the stay I'm on.
-    private var perspectivePicker: some View {
-        Picker("", selection: Bindable(vm).perspective) {
-            Text("Traveling").tag(TripsViewModel.Perspective.traveling)
-            Text("Hosting").tag(TripsViewModel.Perspective.hosting)
+    // Traveling (I'm the guest) vs Hosting (I'm the host) — a glass pill sitting
+    // inline with the filter/group/sort controls; switches which side of the
+    // stay the list shows.
+    private var perspectivePill: some View {
+        Menu {
+            Picker(String(localized: "View"), selection: Bindable(vm).perspective) {
+                Label("Traveling", systemImage: "suitcase").tag(TripsViewModel.Perspective.traveling)
+                Label("Hosting", systemImage: "house").tag(TripsViewModel.Perspective.hosting)
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: vm.perspective == .traveling ? "suitcase" : "house")
+                    .font(.system(size: 14, weight: .semibold))
+                Text(vm.perspective == .traveling ? "Traveling" : "Hosting")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                    .fixedSize()
+            }
+            .foregroundStyle(AirbnbPalette.text)
+            .padding(.horizontal, 13)
+            .frame(height: 40)
+            .glassEffect(.regular.interactive(), in: .capsule)
         }
-        .pickerStyle(.segmented)
+        .fixedSize()
+        .accessibilityLabel("Traveling or hosting")
     }
 
     @ViewBuilder
@@ -302,73 +314,44 @@ struct TripsView: View {
         }
     }
 
-    // Filter + sort as glass icon buttons that sit inline with the title (no
-    // chip bar). Filter = a menu of All / Active / Potential / Cancelled.
+    // The Traveling/Hosting pill + a single options menu (filter, group, sort)
+    // inline with the title. Filter/group/sort are folded into one glass button
+    // so the labeled pill fits next to the title in every language.
     private var tripsControls: some View {
         HStack(spacing: 8) {
-            tripsFilterMenu
-            tripsGroupMenu
-            tripsSortMenu
+            perspectivePill
+            tripsOptionsMenu
         }
     }
 
-    private var tripsGroupMenu: some View {
-        Menu {
-            Picker(String(localized: "Group by"), selection: Bindable(vm).groupBy) {
-                Text(String(localized: "City")).tag(TripsViewModel.GroupOption.city)
-                Text(String(localized: "Country")).tag(TripsViewModel.GroupOption.country)
-            }
-        } label: {
-            Image(systemName: "square.stack.3d.up")
-                .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.text)
-                .frame(width: 44, height: 44)
-                .glassEffect(.regular.interactive(), in: .circle)
-                .overlay(alignment: .topTrailing) {
-                    if vm.groupBy != .city {
-                        Circle().fill(SwaplSemanticLight.primary).frame(width: 9, height: 9)
-                    }
-                }
-        }
-        .accessibilityLabel("Group trips")
-    }
-
-    private var tripsFilterMenu: some View {
+    private var tripsOptionsMenu: some View {
         Menu {
             Picker(String(localized: "Show"), selection: Bindable(vm).statusFilter) {
                 ForEach(TripsViewModel.StatusFilter.allCases, id: \.self) { f in
                     Text(filterLabel(f)).tag(f)
                 }
             }
-        } label: {
-            Image(systemName: "line.3.horizontal.decrease")
-                .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(AirbnbPalette.text)
-                .frame(width: 44, height: 44)
-                .glassEffect(.regular.interactive(), in: .circle)
-                .overlay(alignment: .topTrailing) {
-                    if vm.statusFilter != .all {
-                        Circle().fill(SwaplSemanticLight.primary).frame(width: 9, height: 9)
-                    }
-                }
-        }
-        .accessibilityLabel("Filter trips")
-    }
-
-    private var tripsSortMenu: some View {
-        Menu {
+            Picker(String(localized: "Group by"), selection: Bindable(vm).groupBy) {
+                Text(String(localized: "City")).tag(TripsViewModel.GroupOption.city)
+                Text(String(localized: "Country")).tag(TripsViewModel.GroupOption.country)
+            }
             Picker(String(localized: "Order by"), selection: Bindable(vm).sortBy) {
                 Text(String(localized: "Soonest")).tag(TripsViewModel.SortOption.soonest)
                 Text(String(localized: "Latest")).tag(TripsViewModel.SortOption.latest)
             }
         } label: {
-            Image(systemName: "arrow.up.arrow.down")
+            Image(systemName: "line.3.horizontal.decrease")
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(AirbnbPalette.text)
-                .frame(width: 44, height: 44)
+                .frame(width: 40, height: 40)
                 .glassEffect(.regular.interactive(), in: .circle)
+                .overlay(alignment: .topTrailing) {
+                    if vm.statusFilter != .all || vm.groupBy != .city || vm.sortBy != .soonest {
+                        Circle().fill(SwaplSemanticLight.primary).frame(width: 9, height: 9)
+                    }
+                }
         }
-        .accessibilityLabel("Order trips")
+        .accessibilityLabel("Filter and sort trips")
     }
 
     private func filterLabel(_ f: TripsViewModel.StatusFilter) -> String {
