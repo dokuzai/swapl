@@ -12,7 +12,7 @@ import { publicContactChannels, ownContactChannels } from "@/lib/contact-channel
 import { accountSuspended, forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { getTripPhase, guideUnlocked, homeGuideComplete } from "@/lib/trip/phase";
 import { bookedRangesFor, rangesOverlap } from "@/lib/listing/availability";
-import { recordProposalEvent } from "@/lib/conversations";
+import { recordProposalEvent, conversationForProposal } from "@/lib/conversations";
 import { Prisma } from "@/generated/prisma/client";
 import { isListingDateOverlapError, occupyListing } from "@/lib/listing/occupancy";
 import { randomInt } from "node:crypto";
@@ -125,9 +125,14 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
       }
     : null;
 
+  // The per-transaction conversation (DOK-221) — lazily created so the detail
+  // can open the unified in-app chat (text + lifecycle events).
+  const conversation = await conversationForProposal(proposal.id);
+
   return NextResponse.json({
     proposal: {
       id: proposal.id,
+      conversationId: conversation.id,
       status: proposal.status,
       meSide: isProposer ? "proposer" : "target",
       dateFrom: proposal.dateFrom.toISOString(),

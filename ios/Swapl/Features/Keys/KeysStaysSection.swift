@@ -166,6 +166,19 @@ struct KeysStayDetailView: View {
 
                 contactsCard.padding(.horizontal, 22)
 
+                // In-app chat (DOK-221) — the per-transaction thread, with the
+                // stay's lifecycle events inline. Available once the detail loads
+                // (the conversation is created lazily by the detail endpoint).
+                if let conversationId = detail?.conversationId {
+                    NavigationLink {
+                        ConversationView(conversationId: conversationId, title: detail?.counterpart.name ?? stay.counterpartName)
+                    } label: {
+                        messageRow
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 22)
+                }
+
                 NavigationLink {
                     ListingDetailView(listingId: stay.listing.id)
                 } label: {
@@ -322,6 +335,33 @@ struct KeysStayDetailView: View {
         }
         .font(.swaplBody(SwaplDesignSystem.FontSize.body))
         .padding(.vertical, 14)
+    }
+
+    private var messageRow: some View {
+        let name = detail?.counterpart.name ?? stay.counterpartName
+        return HStack(spacing: 14) {
+            Image(systemName: "bubble.left.and.bubble.right.fill")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primaryForeground)
+                .frame(width: 44, height: 44)
+                .background(SwaplSemanticLight.primary, in: Circle())
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name.map { String(localized: "Message \($0)") } ?? String(localized: "Message"))
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Text("Chat in Swapl about your stay")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .lineLimit(1)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .background(AirbnbPalette.softBackground, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
     }
 
     private var viewHomeRow: some View {

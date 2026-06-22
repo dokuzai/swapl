@@ -257,6 +257,8 @@ struct KeysStaysResponse: Decodable, Sendable {
 // off-platform contacts (once confirmed), and the cover policy.
 struct KeysStayDetail: Decodable, Sendable {
     let id: String
+    // The per-transaction conversation (DOK-221) — opens the in-app chat.
+    var conversationId: String? = nil
     let role: String
     var kind: String? = nil
     let status: String
