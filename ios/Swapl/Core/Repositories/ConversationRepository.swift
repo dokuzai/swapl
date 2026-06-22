@@ -31,4 +31,12 @@ final class ConversationRepository: @unchecked Sendable {
     func markRead(conversationId: String) async throws {
         let _: EmptyResponse = try await APIClient.shared.send("POST", "/api/conversations/\(conversationId)/read")
     }
+
+    // POST /api/conversations/{id}/archive — per-user archive toggle.
+    struct ArchiveBody: Encodable { let archived: Bool }
+    func setArchived(conversationId: String, archived: Bool) async throws {
+        let _: EmptyResponse = try await APIClient.shared.send(
+            "POST", "/api/conversations/\(conversationId)/archive", body: ArchiveBody(archived: archived)
+        )
+    }
 }

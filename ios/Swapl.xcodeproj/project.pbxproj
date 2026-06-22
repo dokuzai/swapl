@@ -134,6 +134,7 @@
 		EF219F8863CF71827410F3E4 /* DisputeOpenSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2FF97BD7916B883AF9588 /* DisputeOpenSheet.swift */; };
 		EFC39E6E4220169A872C6C54 /* BrowseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1377DBF3697FDC7DB577BE96 /* BrowseListView.swift */; };
 		F12C3AA109E59CDD8B01485E /* StayWithKeysSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5F70A7273F8977F9D6AA44 /* StayWithKeysSheet.swift */; };
+		F2FCA9B7273DD5A16C084B0B /* MessagesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF8D60E88FF340C352A2DE4C /* MessagesListView.swift */; };
 		F5DED2CA60E13745ECB55392 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983B04B9FE3BCB6E88265F17 /* SafariView.swift */; };
 		F6DD61C4B515DF6184E8DCF0 /* TravelWindowRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D94E1D6419374CABF68FFC /* TravelWindowRepository.swift */; };
 		F8B86291642BA41527F4648B /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862B8E3CA191D3BF9EC25FDC /* DeepLinkRouter.swift */; };
@@ -295,6 +296,7 @@
 		FCCAE153D83BFB6194318E29 /* ExperiencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperiencesView.swift; sourceTree = "<group>"; };
 		FE175D04D0E8B92BDB0623DF /* FeatureWalkthroughTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureWalkthroughTests.swift; sourceTree = "<group>"; };
 		FE31B7FB667BE216C5111617 /* KeysRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeysRepository.swift; sourceTree = "<group>"; };
+		FF8D60E88FF340C352A2DE4C /* MessagesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesListView.swift; sourceTree = "<group>"; };
 		FF9C7B3EC9677F13EE45ECF1 /* KeysStaysSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeysStaysSection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -482,6 +484,7 @@
 			isa = PBXGroup;
 			children = (
 				5C8236B82723A2ED941CB8D5 /* ConversationView.swift */,
+				FF8D60E88FF340C352A2DE4C /* MessagesListView.swift */,
 			);
 			path = Conversations;
 			sourceTree = "<group>";
@@ -902,6 +905,7 @@
 				B0D339A23B011379C2FBD9A6 /* LocationPingService.swift in Sources */,
 				B2EC2A048FC10FF33AE343D2 /* LocationSearchService.swift in Sources */,
 				12A73281C203C687F50C0A01 /* LoginView.swift in Sources */,
+				F2FCA9B7273DD5A16C084B0B /* MessagesListView.swift in Sources */,
 				C3E296FCE8CA05711DC8BF33 /* MetricsRepository.swift in Sources */,
 				E5FF16C039C517CC58D7C964 /* MetricsView.swift in Sources */,
 				0E122F3A8ACC502ADFEBBC7D /* NightlyKeysExplainerSheet.swift in Sources */,

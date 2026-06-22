@@ -50,10 +50,12 @@ struct UnifiedConversation: Identifiable, Decodable, Hashable, Sendable {
     let lastLine: String?
     let lastMessageAt: String
     let unreadCount: Int
+    var archivedAt: String? = nil
     var proposalId: String? = nil
     var isPrincipal: Bool = true
 
     var isTraveling: Bool { role == "traveling" }
+    var isArchived: Bool { archivedAt != nil }
 }
 
 struct UnifiedConversationsResponse: Decodable, Sendable {

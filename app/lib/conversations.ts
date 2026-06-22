@@ -264,6 +264,8 @@ export type ConversationListItem = {
   lastLine: string | null;
   lastMessageAt: string;
   unreadCount: number;
+  // Per-user archive timestamp (DOK-221); null when active.
+  archivedAt: string | null;
   // Swap threads carry their proposalId so the chat can show the multi-party
   // People panel (DOK-187); null for stays. isPrincipal = the viewer is a swap
   // principal (proposer/target owner), always true for stays.
@@ -312,6 +314,7 @@ export async function listConversationsForUser(userId: string): Promise<Conversa
   for (const c of convos) {
     const last = c.messages[0] ?? null;
     const cursor = c.reads[0]?.lastReadAt ?? null;
+    const archivedAt = c.reads[0]?.archivedAt?.toISOString() ?? null;
     const unreadCount = await prisma.message.count({
       where: {
         conversationId: c.id,
@@ -343,6 +346,7 @@ export async function listConversationsForUser(userId: string): Promise<Conversa
         lastLine,
         lastMessageAt,
         unreadCount,
+        archivedAt,
         proposalId: null,
         isPrincipal: true,
       });
@@ -364,6 +368,7 @@ export async function listConversationsForUser(userId: string): Promise<Conversa
         lastLine,
         lastMessageAt,
         unreadCount,
+        archivedAt,
         proposalId: p.id,
         isPrincipal: isProposer || p.targetListing.userId === userId,
       });
@@ -379,5 +384,16 @@ export async function markConversationRead(conversationId: string, userId: strin
     where: { conversationId_userId: { conversationId, userId } },
     update: { lastReadAt: new Date() },
     create: { conversationId, userId, lastReadAt: new Date() },
+  });
+}
+
+// Per-user archive toggle (DOK-221) — hides/restores the thread in the viewer's
+// Messages list without affecting the other participant.
+export async function setConversationArchived(conversationId: string, userId: string, archived: boolean) {
+  const archivedAt = archived ? new Date() : null;
+  await prisma.conversationReadCursor.upsert({
+    where: { conversationId_userId: { conversationId, userId } },
+    update: { archivedAt },
+    create: { conversationId, userId, archivedAt },
   });
 }

@@ -4068,6 +4068,79 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/conversations/{id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archive or restore a conversation (per-user)
+         * @description Hides or restores the thread in the caller's Messages list only; the other participant is unaffected. Idempotent. Only participants may call.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        archived: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok: boolean;
+                            archived: boolean;
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description No access to this conversation */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/agreements/{id}/review": {
         parameters: {
             query?: never;
@@ -9468,6 +9541,11 @@ export interface components {
             /** Format: date-time */
             lastMessageAt: string;
             unreadCount: number;
+            /**
+             * Format: date-time
+             * @description When the viewer archived this thread; null when active.
+             */
+            archivedAt: string | null;
             /** @description The underlying swap proposal id (for the People panel); null for stays. */
             proposalId: string | null;
             /** @description Whether the viewer is a swap principal (proposer/target owner); always true for stays. */

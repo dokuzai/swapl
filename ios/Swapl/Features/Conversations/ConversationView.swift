@@ -141,6 +141,7 @@ struct ConversationView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            if let proposalId { swapDetailBanner(proposalId) }
             thread
             composer
         }
@@ -154,6 +155,43 @@ struct ConversationView: View {
         .onChange(of: photoItems) { _, items in
             Task { await upload(items) }
         }
+    }
+
+    // Pinned banner (swap threads) → the swap detail, where Accept / Decline /
+    // Counter and the trip cockpit live (DOK-221). The unified Messages list is a
+    // pure chat list, so this is how a pending swap is acted on from the thread.
+    private func swapDetailBanner(_ proposalId: String) -> some View {
+        NavigationLink {
+            ProposalDetailView(proposalId: proposalId)
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "arrow.left.arrow.right.circle.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("View swap details")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+                    Text("Dates, home & respond")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .glassEffect(.regular, in: .rect(cornerRadius: SwaplDesignSystem.CornerRadius.large))
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 12)
+        .padding(.top, 6)
+        .padding(.bottom, 4)
+        .accessibilityLabel(Text("View swap details and respond"))
     }
 
     private var floatingHeader: some View {

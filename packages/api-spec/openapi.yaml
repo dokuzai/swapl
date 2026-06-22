@@ -1885,7 +1885,7 @@ components:
       description: One row of the unified Messages list (swap- or stay-backed thread).
       required:
         [id, kind, role, status, title, city, photo, counterpartName, dateFrom,
-         dateTo, lastLine, lastMessageAt, unreadCount, proposalId, isPrincipal]
+         dateTo, lastLine, lastMessageAt, unreadCount, archivedAt, proposalId, isPrincipal]
       properties:
         id: { type: string, description: The conversation id (not the underlying transaction id). }
         kind: { type: string, enum: [swap, stay] }
@@ -1903,6 +1903,10 @@ components:
         lastLine: { type: [string, 'null'], description: Preview of the last message or event. }
         lastMessageAt: { type: string, format: date-time }
         unreadCount: { type: integer }
+        archivedAt:
+          type: [string, 'null']
+          format: date-time
+          description: When the viewer archived this thread; null when active.
         proposalId:
           type: [string, 'null']
           description: The underlying swap proposal id (for the People panel); null for stays.
@@ -3888,6 +3892,44 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ConversationReadResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: No access to this conversation }
+
+  /api/conversations/{id}/archive:
+    post:
+      tags: [proposals]
+      summary: Archive or restore a conversation (per-user)
+      description: >-
+        Hides or restores the thread in the caller's Messages list only; the
+        other participant is unaffected. Idempotent. Only participants may call.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [archived]
+              properties:
+                archived: { type: boolean }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, archived]
+                properties:
+                  ok: { type: boolean }
+                  archived: { type: boolean }
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
         '401': { description: Unauthenticated }
         '403': { description: No access to this conversation }
 

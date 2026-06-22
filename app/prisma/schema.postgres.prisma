@@ -624,6 +624,8 @@ model ConversationReadCursor {
   userId         String
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   lastReadAt     DateTime @default(now())
+  // Per-user archive (DOK-221) — hides the thread from this user's active list.
+  archivedAt     DateTime?
 
   @@id([conversationId, userId])
   @@index([userId])

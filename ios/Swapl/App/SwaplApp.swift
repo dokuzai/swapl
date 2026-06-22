@@ -303,7 +303,7 @@ struct MainTabView: View {
                 case .trips:
                     TripsView()
                 case .messages:
-                    SwapsInboxView()
+                    MessagesListView()
                 case .profile:
                     AccountView()
                 }
@@ -319,7 +319,7 @@ struct MainTabView: View {
                 TripsView()
                     .tabItem { Label("Trips", systemImage: "suitcase.rolling") }
                     .tag(AppSection.trips)
-                SwapsInboxView()
+                MessagesListView()
                     .tabItem { Label("Messages", systemImage: "message") }
                     .badge(unread.totalUnread)
                     .tag(AppSection.messages)
