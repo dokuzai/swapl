@@ -3859,12 +3859,15 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Chat list — the viewer's swap threads
-         * @description Lists the viewer's swap conversations sorted by most recent activity, each with counterpart, last message preview + time, unread count, and swap status. Powers the mobile chat list.
+         * Chat list — the viewer's threads
+         * @description Lists the viewer's conversations sorted by most recent activity. The default (no param) returns the legacy swap-only shape. Pass v=2 (DOK-221) for the unified list spanning both swap- and stay-backed threads, each with role, status, cover photo, last line, and unread count.
          */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    /** @description Set to "2" for the unified swap+stay list (UnifiedConversationsResponse). */
+                    v?: "2";
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -3877,7 +3880,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["ConversationsResponse"];
+                        "application/json": components["schemas"]["ConversationsResponse"] | components["schemas"]["UnifiedConversationsResponse"];
                     };
                 };
                 /** @description Unauthenticated */
@@ -3891,6 +3894,174 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Unified conversation timeline
+         * @description The per-transaction timeline (DOK-221) keyed by conversationId, serving both swap- and stay-backed threads. Mixes member messages with system events, oldest→newest within a page; cursor-paginated (newest pages first). By default also clears the caller's unread cursor; pass markRead=false to suppress. Only conversation participants may read.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    limit?: number;
+                    /** @description Message id from a previous nextCursor; returns older messages. */
+                    cursor?: string;
+                    /** @description Set to false to read without clearing the unread cursor. */
+                    markRead?: boolean;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UnifiedTimelineResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description No access to this conversation */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Send a message in a unified conversation
+         * @description Posts the caller's text and/or photo message. At least one of body or photos is required. Clears the caller's unread cursor and notifies the other participant(s) via push. Only conversation participants may post.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UnifiedMessageCreateRequest"];
+                };
+            };
+            responses: {
+                /** @description The created message */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UnifiedTimelineMessage"];
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Error"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description No access to this conversation */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations/{id}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark a unified conversation as read
+         * @description Advances the caller's read cursor to now, clearing the thread's unread count for the caller. Body-less; idempotent. Only participants may call.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ConversationReadResponse"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description No access to this conversation */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -7393,6 +7564,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/keys/stays/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Stay-with-points detail
+         * @description Rich detail for one stay (DOK-221), mirroring the swap trip view: the home's fuzzed area coords + (once confirmed) the exact address, the counterpart's off-platform contacts, the cover policy, and the conversation id for the in-app chat. Only the stay's guest or host may read it.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KeysStayDetail"];
+                    };
+                };
+                /** @description Unauthenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not the guest or host of this stay */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Stay not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/keys/stays/{id}/confirm": {
         parameters: {
             query?: never;
@@ -9166,6 +9399,115 @@ export interface components {
             conversations: components["schemas"]["Conversation"][];
             /** @description Sum of unread counts across all threads. */
             totalUnread: number;
+        };
+        /** @description One item of a per-transaction conversation timeline (DOK-221). A `text` item is a member message; an `event` item is a system row (request_sent, confirmed, accepted, checked_in, …) with authorId null. */
+        UnifiedTimelineMessage: {
+            id: string;
+            /** @enum {string} */
+            kind: "text" | "event";
+            /** @description The sender's user id; null for system events. */
+            authorId: string | null;
+            /** @description True when the viewer authored this message. */
+            mine: boolean;
+            body: string | null;
+            photos: string[];
+            /** @description For event rows: request_sent | preapproved | confirmed | declined | cancelled | withdrawn | countered | accepted | change_requested | change_accepted | checked_in | checked_out | completed. */
+            eventType: string | null;
+            /** @description Free-form metadata for the event (e.g. dates, guest count, actor name). */
+            eventMeta: {
+                [key: string]: unknown;
+            } | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        UnifiedTimelineResponse: {
+            /** @description Oldest first within the returned page. */
+            messages: components["schemas"]["UnifiedTimelineMessage"][];
+            /** @description Message id to pass as ?cursor= for the next (older) page, or null. */
+            nextCursor: string | null;
+            hasMore: boolean;
+        };
+        /** @description Provide body, photos, or both — at least one is required. */
+        UnifiedMessageCreateRequest: {
+            body?: string;
+            /** @description Image attachment URLs already uploaded via /api/uploads/listing-photo. */
+            photos?: string[];
+        };
+        ConversationReadResponse: {
+            ok: boolean;
+        };
+        /** @description One row of the unified Messages list (swap- or stay-backed thread). */
+        UnifiedConversation: {
+            /** @description The conversation id (not the underlying transaction id). */
+            id: string;
+            /** @enum {string} */
+            kind: "swap" | "stay";
+            /**
+             * @description traveling = I'm the guest; hosting = I'm the host.
+             * @enum {string}
+             */
+            role: "traveling" | "hosting";
+            /** @description The underlying transaction's status (swap or stay). */
+            status: string;
+            title: string;
+            city: string | null;
+            /** Format: uri */
+            photo: string | null;
+            counterpartName: string | null;
+            /** Format: date-time */
+            dateFrom: string | null;
+            /** Format: date-time */
+            dateTo: string | null;
+            /** @description Preview of the last message or event. */
+            lastLine: string | null;
+            /** Format: date-time */
+            lastMessageAt: string;
+            unreadCount: number;
+        };
+        UnifiedConversationsResponse: {
+            /** @description Most recently active thread first. */
+            conversations: components["schemas"]["UnifiedConversation"][];
+            totalUnread: number;
+        };
+        /** @description Rich detail for one Stay-with-points (DOK-221), mirroring the swap trip view. The exact address + the counterpart's off-platform contacts unlock only once the stay is confirmed. */
+        KeysStayDetail: {
+            id: string;
+            /** @description The per-transaction conversation for this stay. */
+            conversationId: string;
+            /** @enum {string} */
+            role: "guest" | "host";
+            /** @enum {string} */
+            kind: "keys" | "couchsurf";
+            status: string;
+            /** Format: date-time */
+            dateFrom: string;
+            /** Format: date-time */
+            dateTo: string;
+            nights: number;
+            keysCost: number;
+            insurancePolicyId: string | null;
+            listing: {
+                id: string;
+                title: string;
+                city: string;
+                neighbourhood: string | null;
+                /** Format: uri */
+                photo: string | null;
+                /** @description Fuzzed area latitude (never the exact pin). */
+                lat: number | null;
+                lng: number | null;
+                /** @description Exact address; only present once confirmed. */
+                address: string | null;
+            };
+            counterpart: {
+                name: string | null;
+                avatar: string | null;
+                /** @description Off-platform contacts, revealed only once confirmed. */
+                contactChannels: {
+                    [key: string]: unknown;
+                };
+                hasContactChannels: boolean;
+            };
         };
         BetaSignupRequest: {
             /** Format: email */

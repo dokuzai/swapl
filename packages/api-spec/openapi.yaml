@@ -1818,6 +1818,142 @@ components:
           description: Most recently active thread first.
         totalUnread: { type: integer, description: Sum of unread counts across all threads. }
 
+    UnifiedTimelineMessage:
+      type: object
+      description: >-
+        One item of a per-transaction conversation timeline (DOK-221). A `text`
+        item is a member message; an `event` item is a system row (request_sent,
+        confirmed, accepted, checked_in, …) with authorId null.
+      required: [id, kind, authorId, mine, body, photos, eventType, eventMeta, createdAt]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [text, event] }
+        authorId: { type: [string, 'null'], description: The sender's user id; null for system events. }
+        mine: { type: boolean, description: True when the viewer authored this message. }
+        body: { type: [string, 'null'] }
+        photos:
+          type: array
+          items: { type: string, format: uri }
+        eventType:
+          type: [string, 'null']
+          description: >-
+            For event rows: request_sent | preapproved | confirmed | declined |
+            cancelled | withdrawn | countered | accepted | change_requested |
+            change_accepted | checked_in | checked_out | completed.
+        eventMeta:
+          type: [object, 'null']
+          additionalProperties: true
+          description: Free-form metadata for the event (e.g. dates, guest count, actor name).
+        createdAt: { type: string, format: date-time }
+
+    UnifiedTimelineResponse:
+      type: object
+      required: [messages, nextCursor, hasMore]
+      properties:
+        messages:
+          type: array
+          items: { $ref: '#/components/schemas/UnifiedTimelineMessage' }
+          description: Oldest first within the returned page.
+        nextCursor:
+          type: [string, 'null']
+          description: Message id to pass as ?cursor= for the next (older) page, or null.
+        hasMore: { type: boolean }
+
+    UnifiedMessageCreateRequest:
+      type: object
+      description: Provide body, photos, or both — at least one is required.
+      properties:
+        body: { type: string, maxLength: 4000 }
+        photos:
+          type: array
+          maxItems: 10
+          items: { type: string, format: uri }
+          description: Image attachment URLs already uploaded via /api/uploads/listing-photo.
+
+    ConversationReadResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
+
+    UnifiedConversation:
+      type: object
+      description: One row of the unified Messages list (swap- or stay-backed thread).
+      required:
+        [id, kind, role, status, title, city, photo, counterpartName, dateFrom,
+         dateTo, lastLine, lastMessageAt, unreadCount]
+      properties:
+        id: { type: string, description: The conversation id (not the underlying transaction id). }
+        kind: { type: string, enum: [swap, stay] }
+        role:
+          type: string
+          enum: [traveling, hosting]
+          description: traveling = I'm the guest; hosting = I'm the host.
+        status: { type: string, description: The underlying transaction's status (swap or stay). }
+        title: { type: string }
+        city: { type: [string, 'null'] }
+        photo: { type: [string, 'null'], format: uri }
+        counterpartName: { type: [string, 'null'] }
+        dateFrom: { type: [string, 'null'], format: date-time }
+        dateTo: { type: [string, 'null'], format: date-time }
+        lastLine: { type: [string, 'null'], description: Preview of the last message or event. }
+        lastMessageAt: { type: string, format: date-time }
+        unreadCount: { type: integer }
+
+    UnifiedConversationsResponse:
+      type: object
+      required: [conversations, totalUnread]
+      properties:
+        conversations:
+          type: array
+          items: { $ref: '#/components/schemas/UnifiedConversation' }
+          description: Most recently active thread first.
+        totalUnread: { type: integer }
+
+    KeysStayDetail:
+      type: object
+      description: >-
+        Rich detail for one Stay-with-points (DOK-221), mirroring the swap trip
+        view. The exact address + the counterpart's off-platform contacts unlock
+        only once the stay is confirmed.
+      required:
+        [id, conversationId, role, kind, status, dateFrom, dateTo, nights,
+         keysCost, insurancePolicyId, listing, counterpart]
+      properties:
+        id: { type: string }
+        conversationId: { type: string, description: The per-transaction conversation for this stay. }
+        role: { type: string, enum: [guest, host] }
+        kind: { type: string, enum: [keys, couchsurf] }
+        status: { type: string }
+        dateFrom: { type: string, format: date-time }
+        dateTo: { type: string, format: date-time }
+        nights: { type: integer }
+        keysCost: { type: integer }
+        insurancePolicyId: { type: [string, 'null'] }
+        listing:
+          type: object
+          required: [id, title, city, neighbourhood, photo, lat, lng, address]
+          properties:
+            id: { type: string }
+            title: { type: string }
+            city: { type: string }
+            neighbourhood: { type: [string, 'null'] }
+            photo: { type: [string, 'null'], format: uri }
+            lat: { type: [number, 'null'], description: Fuzzed area latitude (never the exact pin). }
+            lng: { type: [number, 'null'] }
+            address: { type: [string, 'null'], description: Exact address; only present once confirmed. }
+        counterpart:
+          type: object
+          required: [name, avatar, contactChannels, hasContactChannels]
+          properties:
+            name: { type: [string, 'null'] }
+            avatar: { type: [string, 'null'] }
+            contactChannels:
+              type: object
+              additionalProperties: true
+              description: Off-platform contacts, revealed only once confirmed.
+            hasContactChannels: { type: boolean }
+
     BetaSignupRequest:
       type: object
       required: [email]
@@ -3638,19 +3774,112 @@ paths:
   /api/conversations:
     get:
       tags: [proposals]
-      summary: Chat list — the viewer's swap threads
+      summary: Chat list — the viewer's threads
       description: >-
-        Lists the viewer's swap conversations sorted by most recent activity,
-        each with counterpart, last message preview + time, unread count, and
-        swap status. Powers the mobile chat list.
+        Lists the viewer's conversations sorted by most recent activity. The
+        default (no param) returns the legacy swap-only shape. Pass v=2 (DOK-221)
+        for the unified list spanning both swap- and stay-backed threads, each
+        with role, status, cover photo, last line, and unread count.
+      parameters:
+        - name: v
+          in: query
+          required: false
+          description: Set to "2" for the unified swap+stay list (UnifiedConversationsResponse).
+          schema: { type: string, enum: ['2'] }
       security: [{ bearerAuth: [] }, { cookieAuth: [] }]
       responses:
         '200':
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/ConversationsResponse' }
+              schema:
+                oneOf:
+                  - { $ref: '#/components/schemas/ConversationsResponse' }
+                  - { $ref: '#/components/schemas/UnifiedConversationsResponse' }
         '401': { description: Unauthenticated }
+
+  /api/conversations/{id}/messages:
+    get:
+      tags: [proposals]
+      summary: Unified conversation timeline
+      description: >-
+        The per-transaction timeline (DOK-221) keyed by conversationId, serving
+        both swap- and stay-backed threads. Mixes member messages with system
+        events, oldest→newest within a page; cursor-paginated (newest pages
+        first). By default also clears the caller's unread cursor; pass
+        markRead=false to suppress. Only conversation participants may read.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 100, default: 50 }
+        - name: cursor
+          in: query
+          required: false
+          description: Message id from a previous nextCursor; returns older messages.
+          schema: { type: string }
+        - name: markRead
+          in: query
+          required: false
+          description: Set to false to read without clearing the unread cursor.
+          schema: { type: boolean, default: true }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UnifiedTimelineResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: No access to this conversation }
+    post:
+      tags: [proposals]
+      summary: Send a message in a unified conversation
+      description: >-
+        Posts the caller's text and/or photo message. At least one of body or
+        photos is required. Clears the caller's unread cursor and notifies the
+        other participant(s) via push. Only conversation participants may post.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UnifiedMessageCreateRequest' }
+      responses:
+        '200':
+          description: The created message
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UnifiedTimelineMessage' }
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { description: Unauthenticated }
+        '403': { description: No access to this conversation }
+
+  /api/conversations/{id}/read:
+    post:
+      tags: [proposals]
+      summary: Mark a unified conversation as read
+      description: >-
+        Advances the caller's read cursor to now, clearing the thread's unread
+        count for the caller. Body-less; idempotent. Only participants may call.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConversationReadResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: No access to this conversation }
 
   /api/agreements/{id}/review:
     post:
@@ -5104,6 +5333,29 @@ paths:
         '404': { description: Listing not found }
         '422': { description: Bad dates, conflict, or insufficient Keys }
         '429': { description: Rate limited }
+
+  /api/keys/stays/{id}:
+    get:
+      tags: [keys]
+      summary: Stay-with-points detail
+      description: >-
+        Rich detail for one stay (DOK-221), mirroring the swap trip view: the
+        home's fuzzed area coords + (once confirmed) the exact address, the
+        counterpart's off-platform contacts, the cover policy, and the
+        conversation id for the in-app chat. Only the stay's guest or host may
+        read it.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/KeysStayDetail' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not the guest or host of this stay }
+        '404': { description: Stay not found }
 
   /api/keys/stays/{id}/confirm:
     post:
