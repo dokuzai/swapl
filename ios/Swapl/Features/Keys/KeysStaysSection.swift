@@ -1,5 +1,6 @@
 import SwiftUI
 import Observation
+import MapKit
 import SwaplDesignTokens
 
 // Keys stays inside Trips (DOK-155). A Stay-with-Keys is one-directional, so it
@@ -129,40 +130,21 @@ struct KeysStayDetailView: View {
     let vm: KeysStaysViewModel
 
     @Environment(\.dismiss) private var dismiss
+    // Rich detail (area/address, contacts) loaded on appear; the summary renders
+    // instantly from `stay`. Mirrors the swap trip view.
+    @State private var detail: KeysStayDetail?
     @State private var busy = false
     @State private var error: String?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                if let photo = stay.listing.photo, let url = URL(string: photo) {
-                    AsyncImage(url: url) { img in
-                        img.resizable().scaledToFill()
-                    } placeholder: {
-                        SwaplSemanticLight.muted
-                    }
-                    .frame(height: 200)
-                    .frame(maxWidth: .infinity)
-                    .clipped()
-                }
+                hero
 
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(keysStayTitle(stay))
-                            .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
-                            .foregroundStyle(AirbnbPalette.text)
-                        Spacer()
-                        keysStayStatusBadge(stay)
-                    }
-                    if let line = keysStayCounterpartLine(stay) {
-                        Text(line)
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.body))
-                            .foregroundStyle(AirbnbPalette.secondaryText)
-                    }
-                }
-                .padding(.horizontal, 22)
+                header
+                    .padding(.horizontal, 22)
 
-                infoCard.padding(.horizontal, 22)
+                infoCard.padding(.horizontal, 22)   // dates / nights / points — featured
 
                 if stay.status == "confirmed" {
                     Label(
@@ -173,8 +155,16 @@ struct KeysStayDetailView: View {
                     )
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(SwaplSemanticLight.primary)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 22)
                 }
+
+                // Only the guest travels somewhere; the host is at home.
+                if stay.isGuest {
+                    whereYouStay.padding(.horizontal, 22)
+                }
+
+                contactsCard.padding(.horizontal, 22)
 
                 NavigationLink {
                     ListingDetailView(listingId: stay.listing.id)
@@ -198,8 +188,96 @@ struct KeysStayDetailView: View {
             .padding(.top, 8)
         }
         .background(SwaplSemanticLight.background)
-        .navigationTitle(String(localized: "Stay with points"))
-        .navigationBarTitleDisplayMode(.inline)
+        .swaplFloatingHeader(stay.listing.city)
+        .task { detail = try? await KeysRepository.shared.stayDetail(id: stay.id) }
+    }
+
+    @ViewBuilder
+    private var hero: some View {
+        if let photo = stay.listing.photo, let url = URL(string: photo) {
+            AsyncImage(url: url) { img in
+                img.resizable().scaledToFill()
+            } placeholder: {
+                SwaplSemanticLight.muted
+            }
+            .frame(height: 200)
+            .frame(maxWidth: .infinity)
+            .clipped()
+        }
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(keysStayTitle(stay))
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Spacer()
+                keysStayStatusBadge(stay)
+            }
+            if let line = counterpartLine {
+                Text(line)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+        }
+    }
+
+    // Prefer the freshly-loaded name; fall back to the list summary's.
+    private var counterpartLine: String? {
+        if let name = detail?.counterpart.name ?? stay.counterpartName, !name.isEmpty {
+            return stay.isGuest ? String(localized: "Hosted by \(name)") : String(localized: "Requested by \(name)")
+        }
+        return nil
+    }
+
+    @ViewBuilder
+    private var whereYouStay: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Where you're staying")
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+
+            if let d = detail?.listing, let lat = d.lat, let lng = d.lng {
+                KeysAreaMap(lat: lat, lng: lng, label: "\(d.neighbourhood ?? d.city), \(d.city)")
+            }
+
+            if let addr = detail?.listing.address, !addr.isEmpty {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "mappin.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(AirbnbPalette.text)
+                    Text(addr)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            } else {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                    Text("The exact address unlocks once your stay is confirmed.")
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(20)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
+    }
+
+    @ViewBuilder
+    private var contactsCard: some View {
+        ContactChannelsCard(
+            name: detail?.counterpart.name ?? stay.counterpartName,
+            channels: detail?.counterpart.contactChannels,
+            hasChannels: detail?.counterpart.hasContactChannels ?? false,
+            lockedMessage: String(localized: "Contact details unlock once the stay is confirmed.")
+        )
     }
 
     private var infoCard: some View {
@@ -304,5 +382,116 @@ struct KeysStayDetailView: View {
                 self.error = error.localizedDescription
             }
         }
+    }
+}
+
+// Approximate-area map (fuzzed coords) — mirrors the swap cockpit's, with the
+// width pinned so MapKit can't push the card past the screen.
+private struct KeysAreaMap: View {
+    let lat: Double
+    let lng: Double
+    let label: String
+
+    var body: some View {
+        let center = CLLocationCoordinate2D(latitude: lat, longitude: lng)
+        VStack(alignment: .leading, spacing: 8) {
+            Map(initialPosition: .region(MKCoordinateRegion(
+                center: center, latitudinalMeters: 4500, longitudinalMeters: 4500
+            )), interactionModes: []) {
+                MapCircle(center: center, radius: 1500)
+                    .foregroundStyle(SwaplSemanticLight.primary.opacity(0.14))
+                    .stroke(SwaplSemanticLight.primary.opacity(0.45), lineWidth: 1.5)
+            }
+            .mapStyle(.standard(pointsOfInterest: .excludingAll))
+            .frame(maxWidth: .infinity)
+            .frame(height: 160)
+            .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous).stroke(AirbnbPalette.hairline))
+            .allowsHitTesting(false)
+            HStack(spacing: 6) {
+                Image(systemName: "mappin.and.ellipse")
+                Text("\(label) · approximate area")
+            }
+            .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+            .foregroundStyle(AirbnbPalette.secondaryText)
+        }
+    }
+}
+
+// Off-platform contacts card (DOK-204) — shared look with the swap trip view.
+// Renders the counterpart's channels once unlocked, or a locked teaser when they
+// have channels that haven't been revealed yet.
+struct ContactChannelsCard: View {
+    let name: String?
+    let channels: ContactChannels?
+    let hasChannels: Bool
+    var lockedMessage: String = String(localized: "Contact details unlock once the stay is confirmed.")
+
+    var body: some View {
+        if let channels, !channels.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(name.map { String(localized: "Contact \($0)") } ?? String(localized: "Contact details"))
+                    .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                ForEach(channels.present, id: \.kind) { item in
+                    contactRow(kind: item.kind, value: item.value)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(22)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
+        } else if hasChannels {
+            HStack(spacing: 12) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                Text(lockedMessage)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
+            .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
+        }
+    }
+
+    @ViewBuilder
+    private func contactRow(kind: ContactChannelKind, value: String) -> some View {
+        if let url = kind.url(for: value) {
+            Link(destination: url) { contactRowLabel(kind: kind, value: value, linkable: true) }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+        } else {
+            contactRowLabel(kind: kind, value: value, linkable: false)
+        }
+    }
+
+    private func contactRowLabel(kind: ContactChannelKind, value: String, linkable: Bool) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: kind.systemImage)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(SwaplSemanticLight.primary)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(kind.label)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                Text(value)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
+                    .foregroundStyle(AirbnbPalette.text)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+            Spacer(minLength: 0)
+            if linkable {
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+        }
+        .padding(.vertical, 10)
     }
 }

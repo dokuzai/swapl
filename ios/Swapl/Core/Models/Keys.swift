@@ -252,6 +252,42 @@ struct KeysStaysResponse: Decodable, Sendable {
     let stays: [KeysStay]
 }
 
+// Rich single-stay detail (GET /api/keys/stays/{id}) — the data the standard
+// trip view needs: fuzzed area + address (once confirmed), the counterpart's
+// off-platform contacts (once confirmed), and the cover policy.
+struct KeysStayDetail: Decodable, Sendable {
+    let id: String
+    let role: String
+    var kind: String? = nil
+    let status: String
+    let dateFrom: String
+    let dateTo: String
+    let nights: Int
+    let keysCost: Int
+    let insurancePolicyId: String?
+    let listing: DetailListing
+    let counterpart: Counterpart
+
+    struct DetailListing: Decodable, Sendable {
+        let id: String
+        let title: String
+        let city: String
+        var neighbourhood: String? = nil
+        var photo: String? = nil
+        var lat: Double? = nil
+        var lng: Double? = nil
+        var address: String? = nil
+    }
+    struct Counterpart: Decodable, Sendable {
+        var name: String? = nil
+        var avatar: String? = nil
+        var contactChannels: ContactChannels? = nil
+        var hasContactChannels: Bool? = nil
+    }
+
+    var isGuest: Bool { role == "guest" }
+}
+
 // MARK: - Request/response payloads
 
 struct KeysStayRequest: Encodable, Sendable {

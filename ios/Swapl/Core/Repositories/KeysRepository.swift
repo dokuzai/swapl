@@ -23,6 +23,12 @@ final class KeysRepository: @unchecked Sendable {
         try await APIClient.shared.send("GET", "/api/keys/stays")
     }
 
+    // GET /api/keys/stays/{id} — rich detail (area/address, contacts, cover) for
+    // the standard trip view.
+    func stayDetail(id: String) async throws -> KeysStayDetail {
+        try await APIClient.shared.send("GET", "/api/keys/stays/\(id)")
+    }
+
     // POST /api/keys/stays — request a stay. Holds the guest's Keys and notifies
     // the host. A 422 with "enough" in the message means insufficient balance.
     func requestStay(listingId: String, dateFrom: String, dateTo: String, kind: String? = nil) async throws -> KeysStayCreateResponse {
