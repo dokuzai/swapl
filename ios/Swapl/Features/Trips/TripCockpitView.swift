@@ -379,6 +379,10 @@ struct TripCockpitView: View {
                     .stroke(SwaplSemanticLight.primary.opacity(0.45), lineWidth: 1.5)
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
+            // MapKit's Map is greedy: without an explicit width cap it expands
+            // past the screen, inflating the whole card so the page scrolls
+            // sideways. Pin it to the available width.
+            .frame(maxWidth: .infinity)
             .frame(height: 160)
             .clipShape(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous).stroke(AirbnbPalette.hairline))
