@@ -270,14 +270,28 @@ struct KeysStayDetailView: View {
         .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
     }
 
+    private var revealed: Bool { stay.status == "confirmed" || stay.status == "completed" }
+
     @ViewBuilder
     private var contactsCard: some View {
-        ContactChannelsCard(
-            name: detail?.counterpart.name ?? stay.counterpartName,
-            channels: detail?.counterpart.contactChannels,
-            hasChannels: detail?.counterpart.hasContactChannels ?? false,
-            lockedMessage: String(localized: "Contact details unlock once the stay is confirmed.")
-        )
+        if stay.isGuest {
+            // Guest: how to reach the host.
+            ContactChannelsCard(
+                name: detail?.counterpart.name ?? stay.counterpartName,
+                channels: detail?.counterpart.contactChannels,
+                hasChannels: detail?.counterpart.hasContactChannels ?? false,
+                lockedMessage: String(localized: "Contact details unlock once the stay is confirmed.")
+            )
+        } else {
+            // Host: who's coming + how to message them.
+            GuestCard(
+                name: detail?.counterpart.name ?? stay.counterpartName,
+                avatar: detail?.counterpart.avatar,
+                channels: detail?.counterpart.contactChannels,
+                hasChannels: detail?.counterpart.hasContactChannels ?? false,
+                confirmed: revealed
+            )
+        }
     }
 
     private var infoCard: some View {
@@ -434,7 +448,7 @@ struct ContactChannelsCard: View {
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 ForEach(channels.present, id: \.kind) { item in
-                    contactRow(kind: item.kind, value: item.value)
+                    keysContactRow(kind: item.kind, value: item.value)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -457,41 +471,123 @@ struct ContactChannelsCard: View {
             .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
         }
     }
+}
+
+// Host side: who's coming + how to reach them. The contact rows (WhatsApp /
+// Telegram / email) double as the "message them" path — keys stays have no
+// in-app chat thread (that's swap-only).
+private struct GuestCard: View {
+    let name: String?
+    let avatar: String?
+    let channels: ContactChannels?
+    let hasChannels: Bool
+    let confirmed: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Your guest")
+                .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.text)
+
+            HStack(spacing: 12) {
+                avatarView
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(name ?? String(localized: "Your guest"))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    Text(confirmed ? String(localized: "Confirmed for your dates") : String(localized: "Awaiting your confirmation"))
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                        .foregroundStyle(AirbnbPalette.secondaryText)
+                }
+                Spacer(minLength: 0)
+            }
+
+            if let channels, !channels.isEmpty {
+                Divider()
+                ForEach(channels.present, id: \.kind) { item in
+                    keysContactRow(kind: item.kind, value: item.value)
+                }
+            } else {
+                Text(emptyNote)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(22)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous).stroke(AirbnbPalette.hairline))
+    }
+
+    private var emptyNote: String {
+        if !confirmed {
+            return String(localized: "Confirm the stay to see how to reach your guest.")
+        }
+        if hasChannels {
+            return String(localized: "Contact details are unavailable right now.")
+        }
+        let who = name ?? String(localized: "Your guest")
+        return String(localized: "\(who) hasn't shared off-platform contact details.")
+    }
 
     @ViewBuilder
-    private func contactRow(kind: ContactChannelKind, value: String) -> some View {
-        if let url = kind.url(for: value) {
-            Link(destination: url) { contactRowLabel(kind: kind, value: value, linkable: true) }
-                .buttonStyle(.plain)
-                .contentShape(Rectangle())
+    private var avatarView: some View {
+        let shape = Circle()
+        if let avatar, let url = URL(string: avatar) {
+            AsyncImage(url: url) { img in
+                img.resizable().scaledToFill()
+            } placeholder: {
+                SwaplSemanticLight.muted
+            }
+            .frame(width: 48, height: 48)
+            .clipShape(shape)
         } else {
-            contactRowLabel(kind: kind, value: value, linkable: false)
+            ZStack {
+                shape.fill(SwaplSemanticLight.accent)
+                Text(String((name ?? "?").prefix(1)).uppercased())
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .foregroundStyle(SwaplSemanticLight.primary)
+            }
+            .frame(width: 48, height: 48)
         }
     }
+}
 
-    private func contactRowLabel(kind: ContactChannelKind, value: String, linkable: Bool) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: kind.systemImage)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(SwaplSemanticLight.primary)
-                .frame(width: 24)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(kind.label)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-                Text(value)
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-            }
-            Spacer(minLength: 0)
-            if linkable {
-                Image(systemName: "arrow.up.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-            }
-        }
-        .padding(.vertical, 10)
+// Shared contact row (a tappable channel) used by the contact + guest cards.
+@ViewBuilder
+private func keysContactRow(kind: ContactChannelKind, value: String) -> some View {
+    if let url = kind.url(for: value) {
+        Link(destination: url) { keysContactRowLabel(kind: kind, value: value, linkable: true) }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+    } else {
+        keysContactRowLabel(kind: kind, value: value, linkable: false)
     }
+}
+
+private func keysContactRowLabel(kind: ContactChannelKind, value: String, linkable: Bool) -> some View {
+    HStack(spacing: 12) {
+        Image(systemName: kind.systemImage)
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(SwaplSemanticLight.primary)
+            .frame(width: 24)
+        VStack(alignment: .leading, spacing: 2) {
+            Text(kind.label)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+            Text(value)
+                .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .medium))
+                .foregroundStyle(AirbnbPalette.text)
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        Spacer(minLength: 0)
+        if linkable {
+            Image(systemName: "arrow.up.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(AirbnbPalette.secondaryText)
+        }
+    }
+    .padding(.vertical, 10)
 }
