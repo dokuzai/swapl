@@ -11,7 +11,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { unauthenticated, apiError, serverError } from "@/lib/api/errors";
-import { checkRateLimitDurable } from "@/lib/rate-limit";
+import { checkRateLimitDurable, refundRateLimitDurable } from "@/lib/rate-limit";
 import {
   applyVerificationUpdate,
   createSession,
@@ -32,7 +32,9 @@ export async function POST(req: Request) {
     });
   }
 
-  const rl = await checkRateLimitDurable(`verification:session:${session.userId}`, 3, 60 * 60 * 1000);
+  const rlKey = `verification:session:${session.userId}`;
+  const rlWindowMs = 60 * 60 * 1000;
+  const rl = await checkRateLimitDurable(rlKey, 3, rlWindowMs);
   if (!rl.ok) {
     return apiError(429, "RATE_LIMITED", {
       message: "Too many verification attempts. Try again later.",
@@ -75,6 +77,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: "pending", url: created.url });
   } catch (err) {
     console.error("[verification:session] create failed", err);
+    // No session was minted, so don't make this failed attempt count toward the
+    // hourly cap — otherwise a provider/config error locks the user out for an
+    // hour through no fault of their own.
+    await refundRateLimitDurable(rlKey, rlWindowMs);
     return serverError("Could not start verification");
   }
 }

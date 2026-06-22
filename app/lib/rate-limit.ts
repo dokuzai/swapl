@@ -136,3 +136,32 @@ export async function resetRateLimitDurable(key: string, windowMs: number): Prom
     console.error("[rate-limit:reset]", err);
   }
 }
+
+// Give back ONE token in the CURRENT window — used when an attempt that already
+// consumed a token didn't actually do the limited work (e.g. the provider
+// errored before a session was minted), so a failure on our/their side doesn't
+// burn the caller's quota. Unlike resetRateLimitDurable this refunds exactly the
+// one INCR rather than clearing the window, so concurrent legitimate counts are
+// preserved. Best-effort: never throws.
+export async function refundRateLimitDurable(key: string, windowMs: number): Promise<void> {
+  const b = buckets.get(key); // in-memory path (dev / fallback)
+  if (b && b.count > 0) b.count--;
+  const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!upstashUrl || !upstashToken) return;
+  const windowIndex = Math.floor(Date.now() / windowMs);
+  const redisKey = `rl:${key}:${windowIndex}`;
+  try {
+    await fetch(`${upstashUrl}/pipeline`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${upstashToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([["DECR", redisKey]]),
+      cache: "no-store",
+    });
+  } catch (err) {
+    console.error("[rate-limit:refund]", err);
+  }
+}
