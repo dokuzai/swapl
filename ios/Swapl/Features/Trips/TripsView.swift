@@ -179,6 +179,56 @@ enum TripItem: Identifiable {
         case .cancelled: return isCancelled
         }
     }
+
+    // ---- Unified card fields (so swaps + stays render identically) ----
+
+    var photoURL: String? {
+        switch self {
+        case .swap(let p): return p.theirCoverPhotoUrl ?? p.myCoverPhotoUrl
+        case .stay(let s): return s.listing.photo
+        }
+    }
+    var title: String {
+        switch self {
+        case .swap(let p): return String(localized: "Home in \(p.theirCity)")
+        case .stay(let s): return keysStayTitle(s)
+        }
+    }
+    // Who it's with (secondary line).
+    var subtitle: String? {
+        switch self {
+        case .swap(let p):
+            guard let name = p.otherName, !name.isEmpty else { return nil }
+            return p.meSide == "proposer" ? String(localized: "Hosted by \(name)") : String(localized: "Requested by \(name)")
+        case .stay(let s): return keysStayCounterpartLine(s)
+        }
+    }
+    var dateRange: String { SwaplDateText.range(from: dateFrom, to: dateTo) }
+    // Third line: the reciprocal leg for a swap, the nights/points for a stay.
+    var detailLine: String? {
+        switch self {
+        case .swap(let p): return String(localized: "You host \(p.myCity)")
+        case .stay(let s): return keysStaySubtitle(s)
+        }
+    }
+    var statusLabel: String {
+        switch self {
+        case .swap(let p): return p.statusLabel
+        case .stay(let s): return keysStayStatusLabel(s)
+        }
+    }
+    var statusColor: Color {
+        switch self {
+        case .swap(let p): return p.statusColor
+        case .stay(let s): return keysStayStatusColor(s)
+        }
+    }
+    var isInactive: Bool {
+        switch self {
+        case .swap(let p): return p.isInactive
+        case .stay(let s): return s.status == "declined" || s.status == "cancelled"
+        }
+    }
 }
 
 // Small capsule that tags a trip card with its travel method.
@@ -189,6 +239,69 @@ func tripMethodBadge(_ method: TripMethod) -> some View {
         .padding(.horizontal, 9)
         .padding(.vertical, 4)
         .background(AirbnbPalette.softBackground, in: Capsule())
+}
+
+func tripStatusBadge(_ label: String, _ color: Color) -> some View {
+    Text(label)
+        .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .bold))
+        .foregroundStyle(color)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background(color.opacity(0.14), in: Capsule())
+}
+
+// One card design for every trip — swap or stay — so the list reads as one
+// thing. Top row keeps the method badge and the status at the same level.
+struct UnifiedTripCard: View {
+    let item: TripItem
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .center) {
+                tripMethodBadge(item.method)
+                Spacer(minLength: 8)
+                tripStatusBadge(item.statusLabel, item.statusColor)
+            }
+
+            HStack(spacing: 14) {
+                keysStayThumbnail(item.photoURL, size: 64)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(item.title)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .lineLimit(1)
+                    if let subtitle = item.subtitle {
+                        Text(subtitle)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                            .lineLimit(1)
+                    }
+                    Text(item.dateRange)
+                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    if let detail = item.detailLine {
+                        Text(detail)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                            .lineLimit(1)
+                    }
+                }
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
+                .stroke(AirbnbPalette.hairline)
+        )
+        .opacity(item.isInactive ? 0.55 : 1)
+        .contentShape(Rectangle())
+    }
 }
 
 extension TripPhase {
@@ -424,14 +537,14 @@ struct TripsView: View {
         switch item {
         case .swap(let p):
             NavigationLink(value: p.id) {
-                TripCard(trip: p, isActive: p.tripPhase(today: today) == .active, method: item.method)
+                UnifiedTripCard(item: item)
             }
             .buttonStyle(.plain)
         case .stay(let s):
             NavigationLink {
                 KeysStayDetailView(stay: s, vm: keysVM)
             } label: {
-                KeysStaySummaryCard(stay: s, method: item.method)
+                UnifiedTripCard(item: item)
             }
             .buttonStyle(.plain)
             .opacity(keysVM.busyStayId == s.id ? 0.5 : 1)
@@ -466,63 +579,6 @@ struct TripsView: View {
         .padding(18)
         .frame(maxWidth: .infinity)
         .background(AirbnbPalette.softBackground, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
-    }
-}
-
-// Every swap is reciprocal: you're the guest at their place and host of yours
-// for the same dates. Trip-forward card framed around the destination.
-struct TripCard: View {
-    let trip: ProposalSummary
-    var isActive: Bool = false
-    var method: TripMethod = .exchange
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            ProposalCoverImage(proposal: trip, size: 84)
-                .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 5) {
-                tripMethodBadge(method)
-                HStack(alignment: .center, spacing: 8) {
-                    Circle()
-                        .fill(trip.statusColor)
-                        .frame(width: 9, height: 9)
-                        .accessibilityLabel(trip.statusLabel)
-                    Text("Home in \(trip.theirCity)")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
-                        .foregroundStyle(AirbnbPalette.text)
-                        .lineLimit(1)
-                    if isActive {
-                        Text("Now")
-                            .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .bold))
-                            .foregroundStyle(AirbnbPalette.text)
-                            .padding(.horizontal, 9)
-                            .padding(.vertical, 4)
-                            .background(AirbnbPalette.softBackground, in: Capsule())
-                    }
-                }
-                Text(SwaplDateText.range(from: trip.dateFrom, to: trip.dateTo)
-                     + (trip.otherName.map { " · Hosted by \($0)" } ?? ""))
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-                    .lineLimit(2)
-                Text("You host \(trip.myCity)")
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-                    .lineLimit(1)
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
-                .stroke(AirbnbPalette.hairline)
-        )
-        // Cancelled/declined upcoming swaps fade to grey.
-        .opacity(trip.isInactive ? 0.5 : 1)
-        .grayscale(trip.isInactive ? 0.85 : 0)
     }
 }
 

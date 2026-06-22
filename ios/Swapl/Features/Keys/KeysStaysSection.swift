@@ -57,23 +57,23 @@ final class KeysStaysViewModel {
 
 // MARK: - Shared status + title helpers
 
-private func keysStayTitle(_ stay: KeysStay) -> String {
+func keysStayTitle(_ stay: KeysStay) -> String {
     stay.isGuest
         ? String(localized: "Stay in \(stay.listing.city)")
         : String(localized: "Guest at \(stay.listing.title)")
 }
 
-private func keysStayCounterpartLine(_ stay: KeysStay) -> String? {
+func keysStayCounterpartLine(_ stay: KeysStay) -> String? {
     guard let name = stay.counterpartName, !name.isEmpty else { return nil }
     return stay.isGuest ? String(localized: "Hosted by \(name)") : String(localized: "Requested by \(name)")
 }
 
-private func keysStaySubtitle(_ stay: KeysStay) -> String {
+func keysStaySubtitle(_ stay: KeysStay) -> String {
     let nights = stay.nights == 1 ? String(localized: "1 night") : String(localized: "\(stay.nights) nights")
     return stay.isCouchsurf ? String(localized: "\(nights) · couch") : String(localized: "\(nights) · \(stay.keysCost) points")
 }
 
-private func keysStayStatusLabel(_ stay: KeysStay) -> String {
+func keysStayStatusLabel(_ stay: KeysStay) -> String {
     switch stay.status {
     case "pending": return stay.isGuest ? String(localized: "Awaiting host") : String(localized: "Action needed")
     case "confirmed": return String(localized: "Confirmed")
@@ -84,7 +84,7 @@ private func keysStayStatusLabel(_ stay: KeysStay) -> String {
     }
 }
 
-private func keysStayStatusColor(_ stay: KeysStay) -> Color {
+func keysStayStatusColor(_ stay: KeysStay) -> Color {
     switch stay.status {
     case "confirmed", "completed": return SwaplSemanticLight.primary
     case "declined", "cancelled": return SwaplSemanticLight.destructive
@@ -92,7 +92,7 @@ private func keysStayStatusColor(_ stay: KeysStay) -> Color {
     }
 }
 
-private func keysStayStatusBadge(_ stay: KeysStay) -> some View {
+func keysStayStatusBadge(_ stay: KeysStay) -> some View {
     Text(keysStayStatusLabel(stay))
         .font(.swaplBody(SwaplDesignSystem.FontSize.caption, weight: .bold))
         .foregroundStyle(keysStayStatusColor(stay))
@@ -102,7 +102,7 @@ private func keysStayStatusBadge(_ stay: KeysStay) -> some View {
 }
 
 @ViewBuilder
-private func keysStayThumbnail(_ photo: String?, size: CGFloat) -> some View {
+func keysStayThumbnail(_ photo: String?, size: CGFloat) -> some View {
     let shape = RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
     Group {
         if let photo, let url = URL(string: photo) {
@@ -120,53 +120,6 @@ private func keysStayThumbnail(_ photo: String?, size: CGFloat) -> some View {
     }
     .frame(width: size, height: size)
     .clipShape(shape)
-}
-
-// MARK: - List summary card (tappable → detail)
-
-struct KeysStaySummaryCard: View {
-    let stay: KeysStay
-    var method: TripMethod = .points
-
-    var body: some View {
-        HStack(spacing: 14) {
-            keysStayThumbnail(stay.listing.photo, size: 64)
-            VStack(alignment: .leading, spacing: 4) {
-                tripMethodBadge(method)
-                Text(keysStayTitle(stay))
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.h3, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                    .lineLimit(1)
-                if let line = keysStayCounterpartLine(stay) {
-                    Text(line)
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
-                        .foregroundStyle(AirbnbPalette.secondaryText)
-                        .lineLimit(1)
-                }
-                Text(SwaplDateText.range(from: stay.dateFrom, to: stay.dateTo))
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.text)
-                Text(keysStaySubtitle(stay))
-                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-            }
-            Spacer(minLength: 8)
-            VStack(alignment: .trailing, spacing: 10) {
-                keysStayStatusBadge(stay)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(AirbnbPalette.secondaryText)
-            }
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.large, style: .continuous)
-                .stroke(AirbnbPalette.hairline)
-        )
-        .contentShape(Rectangle())
-    }
 }
 
 // MARK: - Stay detail (both guest + host)
