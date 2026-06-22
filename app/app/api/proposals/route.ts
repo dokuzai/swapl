@@ -177,10 +177,16 @@ export async function POST(req: Request) {
     isAvailable(mine, dateFrom, dateTo),
   ]);
   if (!targetFree) {
-    return invalidInput("Those dates aren't available for that home. Pick dates inside its open calendar.");
+    return invalidInput("Those dates aren't available for that home. Pick dates inside its open calendar.", {
+      code: "TARGET_DATES_UNAVAILABLE",
+    });
   }
   if (!mineFree) {
-    return invalidInput("Your home isn't available for those dates. Open them on your calendar or pick others.");
+    // Stable code so the client can offer a one-tap "open my calendar" shortcut
+    // (a swap is simultaneous, so the proposer's home must be open too).
+    return invalidInput("Your home isn't available for those dates. Open them on your calendar or pick others.", {
+      code: "PROPOSER_DATES_UNAVAILABLE",
+    });
   }
 
   // Plan-aware monthly cap (R6): Free = 3/mo, Plus/Pro = unlimited.

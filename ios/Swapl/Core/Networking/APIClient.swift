@@ -76,6 +76,18 @@ final class APIClient: @unchecked Sendable {
             else { return nil }
             return message
         }
+
+        // Stable machine-readable tag some error bodies carry alongside the human
+        // message (e.g. {"error":"…","code":"PROPOSER_DATES_UNAVAILABLE"}), so the
+        // UI can branch on the cause without matching localized copy.
+        var serverCode: String? {
+            guard case let .status(_, body) = self,
+                  let body, let data = body.data(using: .utf8),
+                  let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let code = object["code"] as? String
+            else { return nil }
+            return code
+        }
     }
 
     func send<Response: Decodable>(

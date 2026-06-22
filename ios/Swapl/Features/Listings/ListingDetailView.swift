@@ -758,6 +758,11 @@ struct ProposalSheetView: View {
     @State private var guestCount = 1   // DOK-219: travellers, capped at the home's capacity
     @State private var error: String?
     @State private var isSubmitting = false
+    // Set when the swap is blocked because the PROPOSER's home isn't open for the
+    // dates — drives a one-tap "Open my calendar" shortcut (a swap is
+    // simultaneous, so my home must be open too).
+    @State private var proposerCalendarBlocked = false
+    @State private var isShowingMyCalendar = false
     // Real availability so the picker can show booked/out-of-window days and
     // block their selection, and a single in-place range fills both dates (DOK-216).
     @State private var availability: ListingAvailability?
@@ -839,11 +844,23 @@ struct ProposalSheetView: View {
                     Section {
                         Text(error)
                             .foregroundStyle(SwaplSemanticLight.destructive)
+                        if proposerCalendarBlocked {
+                            Button {
+                                isShowingMyCalendar = true
+                            } label: {
+                                Label("Open my calendar", systemImage: "calendar.badge.plus")
+                                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                                    .foregroundStyle(SwaplSemanticLight.primary)
+                            }
+                        }
                     }
                 }
             }
             .navigationTitle("Propose a swap")
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $isShowingMyCalendar, onDismiss: { Task { await loadAvailability() } }) {
+                ListingCalendarEditorView(listingId: proposerListingId, listingTitle: String(localized: "Your home"))
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -982,6 +999,7 @@ struct ProposalSheetView: View {
         }
         isSubmitting = true
         error = nil
+        proposerCalendarBlocked = false
         defer { isSubmitting = false }
         do {
             let draft = ProposalDraft(
@@ -994,6 +1012,11 @@ struct ProposalSheetView: View {
             )
             let response = try await ProposalRepository.shared.create(draft)
             onCreated(response.id)
+        } catch let err as APIClient.APIError where err.serverCode == "PROPOSER_DATES_UNAVAILABLE" {
+            // A swap is simultaneous — my home must be open for these dates too.
+            // Offer to open my calendar right here instead of a dead-end error.
+            self.error = err.errorDescription
+            self.proposerCalendarBlocked = true
         } catch {
             self.error = error.localizedDescription
         }

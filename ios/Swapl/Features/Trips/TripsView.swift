@@ -108,6 +108,9 @@ extension TripPhase {
 
 struct TripsView: View {
     @State private var vm = TripsViewModel()
+    // Owned here (not inside KeysStaysSection) so keys stays reload on every tab
+    // visit + pull-to-refresh with the same auth timing as the swaps fetch.
+    @State private var keysVM = KeysStaysViewModel()
 
     var body: some View {
         NavigationStack {
@@ -119,49 +122,68 @@ struct TripsView: View {
             .navigationDestination(for: String.self) { id in
                 ProposalDetailView(proposalId: id)
             }
-            .task { await vm.load() }
+            .task { await reload() }
         }
+    }
+
+    // Load swaps + keys stays together so neither hides behind the other.
+    private func reload() async {
+        async let swaps: Void = vm.load()
+        async let keys: Void = keysVM.load()
+        _ = await (swaps, keys)
     }
 
     private var titleBar: some View { SwaplPageTitle("Trips") }
 
     @ViewBuilder
     private var content: some View {
-        if vm.isLoading && vm.trips == nil && vm.error == nil {
-            VStack(spacing: 0) {
-                titleBar
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .accessibilityLabel("Loading trips")
-            }
-        } else if let error = vm.error {
-            VStack(spacing: 0) {
-                titleBar
-                SwaplEmptyState(
-                    systemImage: "wifi.exclamationmark",
-                    title: "Trips unavailable",
-                    description: error,
-                    actionTitle: "Try Again",
-                    action: { Task { await vm.load() } }
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-        } else if let trips = vm.trips, trips.isEmpty {
-            ScrollView {
-                titleBar
-                // Keys stays show even with no reciprocal swaps yet.
-                KeysStaysSection()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                // Filter/sort controls only matter once there are swaps; otherwise
+                // show the plain title.
+                if let trips = vm.trips, !trips.isEmpty {
+                    SwaplPageTitle("Trips") { tripsControls }
+                } else {
+                    titleBar
+                }
+
+                // Keys stays load independently of the swaps inbox, so render them
+                // in EVERY state — a slow or failed proposals fetch must never hide
+                // a pending Stay-with-points (it used to: keys stays only showed in
+                // the empty/loaded branches, not while loading or on error).
+                KeysStaysSection(vm: keysVM)
                     .padding(.horizontal, 22)
-                SwaplEmptyState(
-                    systemImage: "suitcase.rolling",
-                    title: "Trips",
-                    description: "Accepted swaps and stays with points show up here."
-                )
-                .padding(.top, 80)
+
+                proposalsBody
             }
-            .refreshable { await vm.load() }
+        }
+        .refreshable { await reload() }
+    }
+
+    @ViewBuilder
+    private var proposalsBody: some View {
+        if vm.isLoading && vm.trips == nil && vm.error == nil {
+            ProgressView()
+                .frame(maxWidth: .infinity, minHeight: 240)
+                .accessibilityLabel("Loading trips")
+        } else if let error = vm.error, vm.trips == nil {
+            SwaplEmptyState(
+                systemImage: "wifi.exclamationmark",
+                title: "Trips unavailable",
+                description: error,
+                actionTitle: "Try Again",
+                action: { Task { await vm.load() } }
+            )
+            .padding(.top, 40)
+        } else if let trips = vm.trips, trips.isEmpty {
+            SwaplEmptyState(
+                systemImage: "suitcase.rolling",
+                title: "Trips",
+                description: "Accepted swaps and stays with points show up here."
+            )
+            .padding(.top, 60)
         } else if let trips = vm.trips {
-            tripsList(trips)
+            tripsListBody(trips)
         }
     }
 
@@ -243,7 +265,9 @@ struct TripsView: View {
         }
     }
 
-    private func tripsList(_ allTrips: [ProposalSummary]) -> some View {
+    // Just the swaps list (title + keys stays + outer scroll now live in
+    // `content`, so a proposals issue can't hide the keys section).
+    private func tripsListBody(_ allTrips: [ProposalSummary]) -> some View {
         let today = TripPhase.todayString()
         let trips = allTrips.filter { vm.matchesFilter($0) }
         // Upcoming + active, grouped by destination city (Airbnb-style). Order
@@ -254,48 +278,40 @@ struct TripsView: View {
             .sorted { $0.dateTo > $1.dateTo }
         let grouped = groupTrips(upcoming)
 
-        return ScrollView {
-          VStack(alignment: .leading, spacing: 0) {
-            SwaplPageTitle("Trips") { tripsControls }
-            LazyVStack(alignment: .leading, spacing: 24) {
-                KeysStaysSection()
+        return LazyVStack(alignment: .leading, spacing: 24) {
+            if upcoming.isEmpty {
+                Text("No upcoming swaps")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .padding(.top, 8)
+            }
 
-                if upcoming.isEmpty {
-                    Text("No upcoming swaps")
-                        .font(.swaplBody(SwaplDesignSystem.FontSize.body))
-                        .foregroundStyle(AirbnbPalette.secondaryText)
-                        .padding(.top, 8)
-                }
-
-                ForEach(grouped, id: \.0) { city, list in
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(city)
-                            .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
-                            .foregroundStyle(AirbnbPalette.text)
-                        ForEach(list) { trip in
-                            NavigationLink(value: trip.id) {
-                                TripCard(trip: trip, isActive: trip.tripPhase(today: today) == .active)
-                            }
-                            .buttonStyle(.plain)
+            ForEach(grouped, id: \.0) { city, list in
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(city)
+                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h2, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                    ForEach(list) { trip in
+                        NavigationLink(value: trip.id) {
+                            TripCard(trip: trip, isActive: trip.tripPhase(today: today) == .active)
                         }
+                        .buttonStyle(.plain)
                     }
-                }
-
-                if !past.isEmpty {
-                    NavigationLink {
-                        PastTripsView(trips: past)
-                    } label: {
-                        findPastTripsCard
-                    }
-                    .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 22)
-            .padding(.top, 8)
-            .padding(.bottom, 28)
-          }
+
+            if !past.isEmpty {
+                NavigationLink {
+                    PastTripsView(trips: past)
+                } label: {
+                    findPastTripsCard
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .refreshable { await vm.load() }
+        .padding(.horizontal, 22)
+        .padding(.top, 8)
+        .padding(.bottom, 28)
     }
 
     // Preserve first-seen order (already sorted by soonest date), one bucket per

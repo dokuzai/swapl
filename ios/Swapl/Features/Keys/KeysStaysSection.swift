@@ -16,8 +16,19 @@ final class KeysStaysViewModel {
     var busyStayId: String?
 
     func load() async {
+        await load(retryOnAuth: true)
+    }
+
+    private func load(retryOnAuth: Bool) async {
         do {
             stays = try await KeysRepository.shared.stays().stays
+            error = nil
+        } catch APIClient.APIError.unauthenticated where retryOnAuth {
+            // Cold-start race: this can fire before the bearer token is attached,
+            // yielding a 401. Wait briefly and retry once before giving up, so a
+            // pending stay isn't lost to launch timing.
+            try? await Task.sleep(for: .milliseconds(700))
+            await load(retryOnAuth: false)
         } catch {
             if stays == nil { self.error = error.localizedDescription }
         }
@@ -42,7 +53,12 @@ final class KeysStaysViewModel {
 // Embedded in TripsView. Renders nothing when the member has no Keys stays, so
 // it stays out of the way for swap-only users.
 struct KeysStaysSection: View {
-    @State private var vm = KeysStaysViewModel()
+    // Owned by TripsView so the load shares the tab's lifecycle (reloads on every
+    // visit + pull-to-refresh, with the same auth timing as the swaps fetch).
+    // It used to own a private @State VM whose .task ran once during the
+    // cold-start auth window → a 401 that never retried, so pending stays never
+    // appeared.
+    let vm: KeysStaysViewModel
 
     var body: some View {
         Group {
@@ -63,9 +79,27 @@ struct KeysStaysSection: View {
                         )
                     }
                 }
+            } else if vm.stays == nil, let error = vm.error {
+                // Load failed (distinct from "no stays", which renders nothing so
+                // swap-only members aren't cluttered). Surface it with a retry so a
+                // pending request is never silently invisible.
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Stays with points")
+                        .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
+                        .foregroundStyle(AirbnbPalette.text)
+                        .padding(.top, 14)
+                    HStack(spacing: 12) {
+                        Text(error)
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                            .foregroundStyle(AirbnbPalette.secondaryText)
+                        Spacer()
+                        Button(String(localized: "Retry")) { Task { await vm.load() } }
+                            .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
+                            .foregroundStyle(SwaplSemanticLight.primary)
+                    }
+                }
             }
         }
-        .task { await vm.load() }
     }
 }
 
