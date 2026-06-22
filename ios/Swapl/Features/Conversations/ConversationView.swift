@@ -467,7 +467,7 @@ struct UnifiedMessageBubble: View {
                 }
 
                 HStack(spacing: 4) {
-                    Text(timeLabel)
+                    Text(conversationTimestamp(message.createdAt))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                     // Read receipt: a double-check that fills in once the
@@ -483,13 +483,17 @@ struct UnifiedMessageBubble: View {
             if !message.mine { Spacer(minLength: 48) }
         }
     }
+}
 
-    private var timeLabel: String {
-        guard let date = SwaplDateText.parse(message.createdAt) else { return "" }
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("jm")
-        return formatter.string(from: date)
-    }
+// Localized date + time for a timeline item (DOK-221), e.g. "Jun 22, 3:04 PM"
+// (year added only when it differs from the current one). Shared by message
+// bubbles and event rows so both carry the same stamp.
+func conversationTimestamp(_ iso: String) -> String {
+    guard let date = SwaplDateText.parse(iso) else { return "" }
+    let formatter = DateFormatter()
+    let sameYear = Calendar.current.isDate(date, equalTo: Date(), toGranularity: .year)
+    formatter.setLocalizedDateFormatFromTemplate(sameYear ? "MMMd jm" : "MMMdyyyy jm")
+    return formatter.string(from: date)
 }
 
 // A centered system-event row: a small glass pill describing a lifecycle moment
@@ -498,16 +502,22 @@ struct ConversationEventRow: View {
     let message: UnifiedMessage
 
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.system(size: 11, weight: .semibold))
-            Text(label)
-                .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+        VStack(spacing: 3) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 11, weight: .semibold))
+                Text(label)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
+            }
+            .foregroundStyle(AirbnbPalette.secondaryText)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .glassEffect(.regular, in: .capsule)
+
+            Text(conversationTimestamp(message.createdAt))
+                .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                .foregroundStyle(AirbnbPalette.secondaryText.opacity(0.75))
         }
-        .foregroundStyle(AirbnbPalette.secondaryText)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .glassEffect(.regular, in: .capsule)
         .frame(maxWidth: .infinity)
     }
 
