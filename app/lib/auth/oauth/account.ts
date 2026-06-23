@@ -46,7 +46,18 @@ export async function findOrCreateOAuthUser(profile: ProviderProfile): Promise<R
     include: { user: true },
   });
   if (existingAccount) {
-    const u = existingAccount.user;
+    let u = existingAccount.user;
+    // Self-heal: accounts created before Apple/Google sign-in marked the inbox
+    // verified come back with emailVerifiedAt = null and stay stuck behind the
+    // "confirm your email" banner. A returning Apple/Google identity is proof the
+    // provider still controls this (always-real, never synthetic) email, so
+    // backfill it now. Telegram is excluded — it uses synthetic placeholders.
+    if (!u.emailVerifiedAt && (profile.provider === "apple" || profile.provider === "google")) {
+      u = await prisma.user.update({
+        where: { id: u.id },
+        data: { emailVerifiedAt: new Date() },
+      });
+    }
     return {
       id: u.id,
       email: u.email,

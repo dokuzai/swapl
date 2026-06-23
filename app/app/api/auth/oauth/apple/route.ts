@@ -44,7 +44,7 @@ export async function POST(req: Request) {
   if (!verified.ok) {
     return apiError(401, "Invalid Apple token");
   }
-  const { providerUserId, email, emailVerified } = verified.identity;
+  const { providerUserId, email } = verified.identity;
 
   // Returning Apple identity? Resolve by sub without needing the email.
   const existing = await prisma.oAuthAccount.findUnique({
@@ -65,7 +65,14 @@ export async function POST(req: Request) {
     // For returning users the email is ignored (resolved by sub); the
     // placeholder keeps the type satisfied without ever being written.
     email: email ?? `apple-${providerUserId}@invalid.local`,
-    emailVerified: Boolean(email) && emailVerified,
+    // A successful Sign in with Apple is itself proof the user controls this
+    // Apple ID, and Apple only ever issues a token for an email it has verified
+    // (private-relay addresses included). So a present email is verified — don't
+    // gate on the `email_verified` claim, which Apple sometimes omits/stringifies
+    // and which would otherwise leave the user stuck behind the "confirm your
+    // email" banner. (email is always present for new users: the no-email case
+    // returns APPLE_EMAIL_MISSING above before we reach creation.)
+    emailVerified: Boolean(email),
     // fullName arrives client-side only on first authorization → used solely
     // at account creation (findOrCreateOAuthUser ignores it for existing users).
     name: parsed.data.fullName ?? null,
