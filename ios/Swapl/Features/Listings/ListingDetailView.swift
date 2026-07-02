@@ -79,7 +79,7 @@ struct ListingDetailView: View {
             // background under the status bar / floating controls (same treatment
             // as the Explore map's top fade) — no hard photo edge, no header band.
             .overlay(alignment: .top) { heroTopFade }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
 
             // Floating glass controls — back / city / share + heart — sit
             // directly on the fading photo. The ZStack respects the top safe
@@ -321,7 +321,7 @@ struct ListingDetailView: View {
                 if let score = detail.matchScore {
                     HStack(spacing: 8) {
                         Image(systemName: "sparkles")
-                        Text("\(score)% match for your next swap")
+                        Text("\(score.swaplPercent) match for your next swap")
                     }
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
@@ -858,6 +858,7 @@ struct ProposalSheetView: View {
             }
             .navigationTitle("Propose a swap")
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .sheet(isPresented: $isShowingMyCalendar, onDismiss: { Task { await loadAvailability() } }) {
                 ListingCalendarEditorView(listingId: proposerListingId, listingTitle: String(localized: "Your home"))
             }

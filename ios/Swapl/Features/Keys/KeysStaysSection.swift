@@ -204,7 +204,7 @@ struct KeysStayDetailView: View {
             // soft cream dissolve at the very top — same as the swap trip view.
             .ignoresSafeArea(edges: .top)
             .overlay(alignment: .top) { heroTopFade }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
 
             stayFloatingHeader
         }

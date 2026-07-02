@@ -104,6 +104,7 @@ struct HomeGuideEditorView: View {
     @State private var vm: HomeGuideEditorViewModel
     let onSaved: () -> Void
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.swaplTheme) private var theme
 
     init(listingId: String, onSaved: @escaping () -> Void) {
         _vm = State(initialValue: HomeGuideEditorViewModel(listingId: listingId))
@@ -116,7 +117,7 @@ struct HomeGuideEditorView: View {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text("\(vm.completeness)% complete")
+                            Text("\(vm.completeness.swaplPercent) complete")
                                 .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                                 .foregroundStyle(AirbnbPalette.text)
                             Spacer()
@@ -160,6 +161,7 @@ struct HomeGuideEditorView: View {
             }
             .navigationTitle("Home guide")
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -182,7 +184,7 @@ struct HomeGuideEditorView: View {
             .overlay {
                 if vm.isLoading {
                     ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(SwaplSemanticLight.background.opacity(0.6))
+                        .background(theme.background.opacity(0.6))
                 }
             }
             .task { await vm.load() }

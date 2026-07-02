@@ -89,7 +89,7 @@ struct FilterSheetView: View {
                 .padding(.top, 16)
                 .padding(.bottom, 24)
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationTitle(scope == .search ? "Search" : "Filters")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

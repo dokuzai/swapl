@@ -250,7 +250,7 @@ struct TripCockpitView: View {
             if cockpit.myGuideCompleteness < 100 {
                 Button { showGuideEditor = true } label: {
                     HStack(spacing: 6) {
-                        Text("Finish your home guide (\(cockpit.myGuideCompleteness)%)")
+                        Text("Finish your home guide (\(cockpit.myGuideCompleteness.swaplPercent))")
                         Image(systemName: "chevron.right").font(.system(size: 11, weight: .semibold))
                     }
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))

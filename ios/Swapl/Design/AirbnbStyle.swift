@@ -132,6 +132,23 @@ struct ListingPhotoView: View {
     }
 }
 
+// Locale-aware percentage formatting (i18n). The percent sign's position and the
+// digit shaping differ by language — "87%", "%87" (tr), "87 %" (fr), "٪۸۷" (fa) —
+// so the number must be formatted with a FormatStyle, never built by pasting a
+// literal "%" into a localized string. We feed a 0…1 ratio to `.percent` (which
+// multiplies by 100) so the result is unambiguous regardless of integer-vs-float
+// percent-style scaling. Locale.autoupdatingCurrent reflects the in-app language
+// (set via the AppleLanguages override at launch), matching the date formatters.
+extension Int {
+    /// A whole percent (0–100) rendered for the current locale, e.g. "87%".
+    var swaplPercent: String { (Double(self) / 100).formatted(.percent.precision(.fractionLength(0))) }
+}
+
+extension Double {
+    /// A 0…1 ratio rendered as a locale-aware whole percent, e.g. 0.87 → "87%".
+    var swaplPercentRatio: String { formatted(.percent.precision(.fractionLength(0))) }
+}
+
 enum SwaplDateText {
     private static let apiFormatter: DateFormatter = {
         let formatter = DateFormatter()

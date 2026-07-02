@@ -95,6 +95,7 @@ struct CouchsurfRequestSheet: View {
             }
             .navigationTitle("Request a free couch")
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {

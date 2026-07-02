@@ -64,6 +64,75 @@ final class AccountSettingsViewModel {
     }
 }
 
+// Appearance picker (DOK-219): switch the whole app between the Swapl brand
+// look (cream canvas) and a neutral Apple/system look. The choice is persisted
+// in @AppStorage and read by SwaplThemeModifier at the app root, so flipping it
+// re-skins every screen — and the tab bar — live.
+struct AppearanceSettingsView: View {
+    @AppStorage(SwaplAppearance.storageKey) private var appearanceRaw = SwaplAppearance.swapl.rawValue
+
+    private var selection: SwaplAppearance { SwaplAppearance.resolve(appearanceRaw) }
+
+    var body: some View {
+        ScrollView {
+            SwaplPageTitle("Appearance")
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Choose how Swapl looks. This applies across the whole app.")
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+                    .padding(.bottom, 2)
+
+                ForEach(SwaplAppearance.allCases) { option in
+                    Button {
+                        appearanceRaw = option.rawValue
+                    } label: {
+                        AppearanceOptionRow(option: option, selected: option == selection)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(option == selection ? [.isSelected] : [])
+                }
+            }
+            .padding(.horizontal, 22)
+            .padding(.top, 24)
+            .padding(.bottom, 60)
+        }
+        .swaplScreenBackground()
+    }
+}
+
+private struct AppearanceOptionRow: View {
+    let option: SwaplAppearance
+    let selected: Bool
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: option.icon)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(selected ? SwaplSemanticLight.primary : AirbnbPalette.text)
+                .frame(width: 28)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(option.title)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .semibold))
+                    .foregroundStyle(AirbnbPalette.text)
+                Text(option.subtitle)
+                    .font(.swaplBody(SwaplDesignSystem.FontSize.small))
+                    .foregroundStyle(AirbnbPalette.secondaryText)
+            }
+            Spacer()
+            Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(selected ? SwaplSemanticLight.primary : AirbnbPalette.hairline)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(SwaplSemanticLight.card, in: RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: SwaplDesignSystem.CornerRadius.medium, style: .continuous)
+                .stroke(selected ? SwaplSemanticLight.primary : AirbnbPalette.hairline, lineWidth: selected ? 2 : 1)
+        }
+    }
+}
+
 struct PrivacySettingsView: View {
     @State private var vm = AccountSettingsViewModel()
 
@@ -148,7 +217,7 @@ struct PrivacySettingsView: View {
             .padding(.top, 24)
             .padding(.bottom, 60)
         }
-        .background(SwaplSemanticLight.background)
+        .swaplScreenBackground()
         .task { await vm.load() }
     }
 }
@@ -195,7 +264,7 @@ struct NotificationSettingsView: View {
             .padding(.top, 24)
             .padding(.bottom, 60)
         }
-        .background(SwaplSemanticLight.background)
+        .swaplScreenBackground()
         .task { await vm.load() }
     }
 }
@@ -262,6 +331,7 @@ struct ChangePasswordSheet: View {
             }
             .navigationTitle("Change password")
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

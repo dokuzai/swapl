@@ -376,7 +376,7 @@ struct InvitePeopleSheet: View {
                 }
                 .padding(20)
             }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
             .navigationTitle("Add co-travelers")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

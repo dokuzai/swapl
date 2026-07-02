@@ -288,8 +288,8 @@ struct AcceptSwapIntent: AppIntent {
 
         // Accept is irreversible — confirm first, showing what's at stake.
         try await requestConfirmation(
-            result: .result(dialog: "Accept the swap with \(proposal.otherName) in \(proposal.theirCity), \(proposal.dateFrom) to \(proposal.dateTo)?"),
-            confirmationActionName: .go
+            actionName: .go,
+            dialog: "Accept the swap with \(proposal.otherName) in \(proposal.theirCity), \(proposal.dateFrom) to \(proposal.dateTo)?"
         )
 
         let res = try await ProposalRepository.shared.act(proposalId: proposal.id, .accept)
@@ -320,8 +320,8 @@ struct DeclineSwapIntent: AppIntent {
         }
 
         try await requestConfirmation(
-            result: .result(dialog: "Decline the swap with \(proposal.otherName)?"),
-            confirmationActionName: .go
+            actionName: .go,
+            dialog: "Decline the swap with \(proposal.otherName)?"
         )
 
         let res = try await ProposalRepository.shared.act(proposalId: proposal.id, .decline)

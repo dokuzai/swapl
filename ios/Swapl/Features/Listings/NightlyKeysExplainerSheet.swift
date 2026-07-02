@@ -31,7 +31,7 @@ struct NightlyKeysExplainerSheet: View {
                 .padding(.top, 18)
                 .padding(.bottom, 40)
             }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
             .navigationTitle("How it's calculated")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

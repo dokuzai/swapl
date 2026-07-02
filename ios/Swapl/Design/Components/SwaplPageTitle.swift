@@ -76,8 +76,8 @@ private struct SwaplFloatingHeader<Trailing: View>: ViewModifier {
                 .padding(.horizontal, 16)
                 .padding(.top, 4)
             }
-            // Applied AFTER the inset so the cream fills behind the header too.
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            // Applied AFTER the inset so the canvas fills behind the header too.
+            .swaplScreenBackground()
     }
 }
 

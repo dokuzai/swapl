@@ -324,7 +324,7 @@ struct TripsView: View {
             // No fixed header bar: the title (and filter bar) scroll with the
             // content and fade away, like Explore.
             content
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
                 ProposalDetailView(proposalId: id)
@@ -614,7 +614,7 @@ struct PastTripsLoaderView: View {
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background(SwaplSemanticLight.background)
+        .swaplScreenBackground()
         .task { await vm.load() }
     }
 }
@@ -667,7 +667,7 @@ struct PastTripsView: View {
             .padding(.horizontal, 22)
             .padding(.bottom, 28)
         }
-        .background(SwaplSemanticLight.background)
+        .swaplScreenBackground()
         .toolbar(.hidden, for: .navigationBar)
     }
 }

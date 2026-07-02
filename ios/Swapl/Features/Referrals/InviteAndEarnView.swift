@@ -423,7 +423,7 @@ struct InviteToStaySheet: View {
                     form
                 }
             }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
             .navigationTitle("Invite to stay")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

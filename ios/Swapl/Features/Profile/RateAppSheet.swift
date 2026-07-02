@@ -49,7 +49,7 @@ struct RateAppSheet: View {
                 }
                 .padding(22)
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationTitle(String(localized: "Rate Swapl"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

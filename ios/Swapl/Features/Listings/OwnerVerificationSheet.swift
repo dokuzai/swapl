@@ -56,7 +56,7 @@ struct OwnerVerificationSheet: View {
                 }
                 .padding(22)
             }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
             .navigationTitle("Verify ownership")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

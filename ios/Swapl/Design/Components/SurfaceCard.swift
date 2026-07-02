@@ -36,7 +36,7 @@ struct MatchBadge: View {
     @Environment(\.swaplTheme) private var theme
     let percent: Int
     var body: some View {
-        Text("\(percent)% MATCH")
+        Text("\(percent.swaplPercent) MATCH")
             .font(.swaplMono(11, weight: .medium))
             .tracking(0.08 * 11)
             .foregroundStyle(theme.primaryForeground)

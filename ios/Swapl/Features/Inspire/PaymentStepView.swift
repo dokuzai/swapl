@@ -35,7 +35,7 @@ struct PaymentStepView: View {
                 }
                 .padding(22)
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

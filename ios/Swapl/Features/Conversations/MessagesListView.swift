@@ -206,7 +206,7 @@ struct MessagesListView: View {
                     listContent
                 }
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationDestination(for: UnifiedConversation.self) { c in
                 ConversationView(
                     conversationId: c.id,
