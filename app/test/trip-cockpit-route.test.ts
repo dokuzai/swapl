@@ -108,6 +108,7 @@ describe("trip cockpit gating", () => {
     expect(body.otherLat).toBe(52.5012);
     expect(body.otherLng).toBe(13.4012);
     expect(body.otherGuide.wifiName).toBe("c");
+    expect(body.otherGuide.wifiPassword).toBe("d"); // decrypted from the at-rest ciphertext (SWP-007)
     expect(body.phase).toBe("READY");
   });
 

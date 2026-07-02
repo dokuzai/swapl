@@ -141,6 +141,9 @@ describe("proposal exact-location reveal gate", () => {
     expect(body.targetListing.address).toBe("10 Real Street");
     expect(body.targetListing.lat).toBe(EXACT.lat);
     expect(body.targetListing.lng).toBe(EXACT.lng);
+    // Key codes are decrypted from the at-rest ciphertext (SWP-007).
+    expect(body.agreement.keyCode1).toBe("1111");
+    expect(body.agreement.keyCode2).toBe("2222");
   });
 });
 
