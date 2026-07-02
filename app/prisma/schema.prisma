@@ -822,9 +822,14 @@ model DisputeMessage {
 // other party of the swap). Aggregates power the public-profile stats.
 
 model SwapReview {
-  id          String        @id @default(cuid())
-  agreementId String
-  agreement   SwapAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  id          String         @id @default(cuid())
+  // A review attaches to EITHER a completed SwapAgreement OR a completed KeysStay
+  // (JRN-GP-01). Exactly one of agreementId / keysStayId is set — enforced at the
+  // API layer; the two @@unique rules keep each side one-review-per-author.
+  agreementId String?
+  agreement   SwapAgreement? @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  keysStayId  String?
+  keysStay    KeysStay?      @relation(fields: [keysStayId], references: [id], onDelete: Cascade)
   authorId    String
   author      User          @relation("ReviewsAuthored", fields: [authorId], references: [id], onDelete: Cascade)
   subjectId   String
@@ -843,6 +848,7 @@ model SwapReview {
   moderatedById String?
 
   @@unique([agreementId, authorId])
+  @@unique([keysStayId, authorId])
   @@index([subjectId])
 }
 
@@ -945,6 +951,7 @@ model KeysStay {
   createdAt         DateTime @default(now())
 
   conversation      Conversation?            // DOK-221 unified thread
+  reviews           SwapReview[]             // JRN-GP-01 guest/host reviews
 
   @@index([listingId])
   @@index([guestId])

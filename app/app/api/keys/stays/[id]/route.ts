@@ -49,12 +49,25 @@ export async function GET(req: Request, { params }: RouteContext<"/api/keys/stay
       ? publicCoord(stay.listing.lat, stay.listing.lng, stay.listing.id)
       : null;
 
+  // Whether THIS caller can still leave a review (JRN-GP-01): only after the
+  // stay completes, and not if they already reviewed. Lets the client show the
+  // "Leave a review" CTA without a second round-trip.
+  let canReview = false;
+  if (stay.status === "completed") {
+    const existing = await prisma.swapReview.findUnique({
+      where: { keysStayId_authorId: { keysStayId: stay.id, authorId: session.userId } },
+      select: { id: true },
+    });
+    canReview = !existing;
+  }
+
   return NextResponse.json({
     id: stay.id,
     conversationId: conversation.id,
     role: isGuest ? "guest" : "host",
     kind: stay.kind,
     status: stay.status,
+    canReview,
     dateFrom: stay.dateFrom.toISOString(),
     dateTo: stay.dateTo.toISOString(),
     nights: stay.nights,
