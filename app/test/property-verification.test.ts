@@ -27,6 +27,7 @@ const mocks = vi.hoisted(() => ({
   ensureCanCreateListing: vi.fn(),
   generateCityArt: vi.fn(),
   classifyPropertyDocument: vi.fn(),
+  deleteUploadThingUrls: vi.fn(async () => {}),
 }));
 
 vi.mock("@/lib/auth/session", () => ({
@@ -52,6 +53,15 @@ vi.mock("@/lib/db", () => ({
       update: mocks.pvUpdate,
     },
   },
+  parseJSON: <T,>(s: string | null | undefined, fb: T): T => {
+    if (!s) return fb;
+    try {
+      return JSON.parse(s) as T;
+    } catch {
+      return fb;
+    }
+  },
+  stringifyJSON: (v: unknown) => JSON.stringify(v),
 }));
 vi.mock("@/lib/billing/limits", () => ({
   ensureCanCreateListing: mocks.ensureCanCreateListing,
@@ -62,6 +72,12 @@ vi.mock("@/lib/ai/city-illustration", () => ({
 }));
 vi.mock("@/lib/ai/property-doc", () => ({
   classifyPropertyDocument: mocks.classifyPropertyDocument,
+}));
+// Real purgeVerificationDocuments runs (it calls prisma.propertyVerification.update
+// = pvUpdate, already mocked); only the UploadThing blob delete is stubbed.
+vi.mock("@/lib/uploadthing-server", () => ({
+  deleteUploadThingUrls: mocks.deleteUploadThingUrls,
+  fileKeyFromUploadThingUrl: (u: string) => u,
 }));
 // nightlyKeysFor + geocode helpers are pure; keep the real ones.
 
@@ -278,7 +294,7 @@ describe("admin property-verification queue + review", () => {
   });
 
   it("approve sets status approved AND flips Listing.ownerVerified = true", async () => {
-    mocks.pvFindUnique.mockResolvedValue({ id: "pv-1", listingId: "l-1", status: "pending" });
+    mocks.pvFindUnique.mockResolvedValue({ id: "pv-1", listingId: "l-1", status: "pending", documents: JSON.stringify([{ url: "https://utfs.io/f/deed", label: "deed" }]) });
     mocks.pvUpdate.mockResolvedValue({ id: "pv-1", status: "approved" });
     const res = await adminReview(
       new Request("https://swapl.test/api/admin/property-verifications/pv-1", {
@@ -294,10 +310,13 @@ describe("admin property-verification queue + review", () => {
       where: { id: "l-1" },
       data: { ownerVerified: true, ineligibleReason: null, ineligibleAt: null },
     });
+    // JRN-HPre-01: the terminal decision deletes the document + clears the URLs.
+    expect(mocks.deleteUploadThingUrls).toHaveBeenCalledWith(["https://utfs.io/f/deed"]);
+    expect(mocks.pvUpdate).toHaveBeenCalledWith({ where: { id: "pv-1" }, data: { documents: "[]" } });
   });
 
   it("reject sets status rejected and does NOT touch ownerVerified", async () => {
-    mocks.pvFindUnique.mockResolvedValue({ id: "pv-1", listingId: "l-1", status: "pending" });
+    mocks.pvFindUnique.mockResolvedValue({ id: "pv-1", listingId: "l-1", status: "pending", documents: JSON.stringify([{ url: "https://utfs.io/f/deed", label: "deed" }]) });
     mocks.pvUpdate.mockResolvedValue({ id: "pv-1", status: "rejected" });
     const res = await adminReview(
       new Request("https://swapl.test/api/admin/property-verifications/pv-1", {
@@ -309,6 +328,9 @@ describe("admin property-verification queue + review", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true, status: "rejected" });
     expect(mocks.listingUpdate).not.toHaveBeenCalled();
+    // A reject is also terminal — the document is deleted + URLs cleared.
+    expect(mocks.deleteUploadThingUrls).toHaveBeenCalledWith(["https://utfs.io/f/deed"]);
+    expect(mocks.pvUpdate).toHaveBeenCalledWith({ where: { id: "pv-1" }, data: { documents: "[]" } });
   });
 
   it("409 when reviewing a verification that is ALREADY approved", async () => {
@@ -382,6 +404,9 @@ describe("property-verification AI outcome (DOK-186)", () => {
       where: { id: "l-1" },
       data: expect.objectContaining({ ineligibleReason: "business_property" }),
     });
+    // JRN-HPre-01: an AI auto-reject is terminal — delete the doc + clear URLs.
+    expect(mocks.deleteUploadThingUrls).toHaveBeenCalledWith(["https://x.test/a.jpg"]);
+    expect(mocks.pvUpdate).toHaveBeenCalledWith({ where: { id: "pv-1" }, data: { documents: "[]" } });
   });
 
   it("low-confidence BUSINESS stays pending, no listing flag", async () => {
@@ -425,6 +450,9 @@ describe("property-verification AI outcome (DOK-186)", () => {
     );
     // Default-safe: no auto ownerVerified.
     expect(mocks.listingUpdate).not.toHaveBeenCalled();
+    // JRN-HPre-01: a PENDING row keeps its document so the admin can review it.
+    expect(mocks.deleteUploadThingUrls).not.toHaveBeenCalled();
+    expect(mocks.pvUpdate).not.toHaveBeenCalled();
   });
 
   it("private_tenant → eligible, PENDING, never sets ownerVerified", async () => {

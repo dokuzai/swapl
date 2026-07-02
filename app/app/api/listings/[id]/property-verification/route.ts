@@ -7,10 +7,11 @@
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
+import { prisma, stringifyJSON } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { forbidden, invalidInput, notFound, unauthenticated } from "@/lib/api/errors";
 import { classifyPropertyDocument } from "@/lib/ai/property-doc";
+import { purgeVerificationDocuments } from "@/lib/listing/property-verification-docs";
 import {
   decideVerificationOutcome,
   BUSINESS_INELIGIBLE_REASON,
@@ -204,6 +205,15 @@ export async function POST(
     maybeGrantListingCompleteBonus(id).catch((err) =>
       console.error("[earn:listing-complete]", err)
     );
+  }
+
+  // JRN-HPre-01: an AI auto-decision (approved/rejected) is terminal — no admin
+  // will view the document, so delete it and clear the stored URLs now. Pending
+  // rows keep their document for manual review. Reflect the cleared state in the
+  // response so the DTO matches what's persisted.
+  if (outcome.status !== "pending") {
+    await purgeVerificationDocuments(row.id, documents);
+    row.documents = stringifyJSON([]);
   }
 
   return NextResponse.json({ verification: toDTO(row) }, { status: 201 });
