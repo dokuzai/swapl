@@ -82,6 +82,11 @@ export async function GET(req: Request, { params }: RouteContext<"/api/keys/stay
     canReview = !existing;
   }
 
+  // Whether THIS caller can open a "report a problem" case (JRN-GP-03): once the
+  // stay is confirmed (during) or completed (after). Multiple cases are allowed,
+  // so there's no "already disputed" check.
+  const canDispute = stay.status === "confirmed" || stay.status === "completed";
+
   return NextResponse.json({
     id: stay.id,
     conversationId: conversation.id,
@@ -89,6 +94,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/keys/stay
     kind: stay.kind,
     status: stay.status,
     canReview,
+    canDispute,
     dateFrom: stay.dateFrom.toISOString(),
     dateTo: stay.dateTo.toISOString(),
     nights: stay.nights,

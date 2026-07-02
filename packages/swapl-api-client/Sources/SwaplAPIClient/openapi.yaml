@@ -4812,6 +4812,52 @@ paths:
         '403': { description: Not a party of the agreement }
         '404': { description: Not found }
 
+  /api/keys/stays/{id}/dispute:
+    post:
+      tags: [keys]
+      summary: Open a dispute on a Keys stay (resolution center)
+      description: >-
+        The stay's guest or host opens a "report a problem" case, only while the
+        stay is confirmed or completed. category safety|access is flagged urgent.
+        Notifies the other party + admin inbox. Photos must be pre-uploaded. Rate
+        limited 5 / 10 min per user (shared budget with swap disputes).
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DisputeCreateRequest' }
+      responses:
+        '200':
+          description: Dispute opened
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DisputeCreateResponse' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the stay }
+        '404': { description: Stay not found }
+        '422': { description: Stay not confirmed/completed yet }
+        '429': { description: Rate limited }
+    get:
+      tags: [keys]
+      summary: Dispute status + timeline for the Keys-stay parties
+      description: Disputes on this stay (newest first) with full message timelines. Guest/host only.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Disputes + timeline
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DisputeListResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the stay }
+        '404': { description: Stay not found }
+
   /api/disputes/{id}/message:
     post:
       tags: [agreements]

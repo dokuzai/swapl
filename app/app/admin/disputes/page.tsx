@@ -42,6 +42,7 @@ export default async function AdminDisputes({
           insurancePolicy: { select: { policyNumber: true } },
         },
       },
+      keysStay: { select: { id: true, insurancePolicyId: true } },
       _count: { select: { messages: true } },
     },
   });
@@ -145,21 +146,32 @@ export default async function AdminDisputes({
               {d.resolvedBy ? (d.resolvedBy.name ?? d.resolvedBy.email) : "—"}
             </span>,
             <span key="l" className="inline-flex flex-col gap-0.5">
-              <Link href={`/swaps/${d.agreement.proposalId}`} className="hover:underline">
-                Swap
-              </Link>
-              {d.agreement.insurancePolicy ? (
-                <Link
-                  href="/admin/insurance"
-                  className="font-mono text-[10px] hover:underline"
-                  style={{ color: "var(--navy-3)" }}
-                >
-                  {d.agreement.insurancePolicy.policyNumber}
-                </Link>
+              {d.agreement ? (
+                <>
+                  <Link href={`/swaps/${d.agreement.proposalId}`} className="hover:underline">
+                    Swap
+                  </Link>
+                  {d.agreement.insurancePolicy ? (
+                    <Link
+                      href="/admin/insurance"
+                      className="font-mono text-[10px] hover:underline"
+                      style={{ color: "var(--navy-3)" }}
+                    >
+                      {d.agreement.insurancePolicy.policyNumber}
+                    </Link>
+                  ) : (
+                    <span className="font-mono text-[10px]" style={{ color: "var(--navy-3)" }}>
+                      no policy
+                    </span>
+                  )}
+                </>
               ) : (
-                <span className="font-mono text-[10px]" style={{ color: "var(--navy-3)" }}>
-                  no policy
-                </span>
+                <>
+                  <span>Keys stay</span>
+                  <span className="font-mono text-[10px]" style={{ color: "var(--navy-3)" }}>
+                    {d.keysStay?.insurancePolicyId ?? "no policy"}
+                  </span>
+                </>
               )}
             </span>,
             <span key="t" className="font-mono text-[11px]" style={{ color: "var(--navy-3)" }}>
