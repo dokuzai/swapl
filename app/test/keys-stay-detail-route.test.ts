@@ -7,11 +7,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   getSessionFromRequest: vi.fn(),
   findUnique: vi.fn(),
+  reviewFindUnique: vi.fn(),
 }));
 
 vi.mock("@/lib/auth/session", () => ({ getSessionFromRequest: mocks.getSessionFromRequest }));
 vi.mock("@/lib/db", () => ({
-  prisma: { keysStay: { findUnique: mocks.findUnique } },
+  prisma: {
+    keysStay: { findUnique: mocks.findUnique },
+    swapReview: { findUnique: mocks.reviewFindUnique },
+  },
   parseJSON: <T,>(s: string | null | undefined, fb: T): T => {
     if (!s) return fb;
     try {
@@ -79,6 +83,7 @@ function get(userId: string, id = "s1") {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.findUnique.mockResolvedValue(stay());
+  mocks.reviewFindUnique.mockResolvedValue(null); // no prior review by default
 });
 
 describe("GET /api/keys/stays/[id] — home guide reveal", () => {
@@ -99,6 +104,24 @@ describe("GET /api/keys/stays/[id] — home guide reveal", () => {
   it("gives the confirmed HOST the guide too (symmetric reveal)", async () => {
     const body = await (await get("host")).json();
     expect(body.homeGuide.wifiPassword).toBe("pw");
+  });
+
+  it("canReview is true for a completed stay the caller hasn't reviewed", async () => {
+    mocks.findUnique.mockResolvedValue(stay({ status: "completed" }));
+    mocks.reviewFindUnique.mockResolvedValue(null);
+    expect((await (await get("guest")).json()).canReview).toBe(true);
+  });
+
+  it("canReview is false once the caller already reviewed", async () => {
+    mocks.findUnique.mockResolvedValue(stay({ status: "completed" }));
+    mocks.reviewFindUnique.mockResolvedValue({ id: "rev-1" });
+    expect((await (await get("guest")).json()).canReview).toBe(false);
+  });
+
+  it("canReview is false while the stay is only confirmed (not completed)", async () => {
+    const body = await (await get("guest")).json();
+    expect(body.status).toBe("confirmed");
+    expect(body.canReview).toBe(false);
   });
 
   it("hides the guide on a pending stay (locked, and address null)", async () => {

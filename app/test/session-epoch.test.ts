@@ -4,6 +4,7 @@
 // encode/decode through the public setSession → getSession pair, mocking
 // next/headers cookies() (a shared in-memory store) and the prisma epoch read.
 
+import { createHmac } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const cookieStore = new Map<string, string>();
@@ -54,23 +55,21 @@ describe("session epoch revocation", () => {
     expect(await issueThenRead(1, 1)).toEqual(payload);
   });
 
-  it("grandfathers a legacy cookie (no epoch) as 0 — valid until the first bump", async () => {
-    // Simulate a pre-feature cookie by stripping the `epoch` field from the body.
-    mocks.userFindUnique.mockResolvedValueOnce({ sessionEpoch: 0 });
-    await setSession(payload);
-    const raw = cookieStore.get("swapl_session")!;
-    const [body, sig] = raw.split(".");
-    const parsed = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
-    delete parsed.epoch;
-    // Re-sign so it stays a valid signature; the point is the MISSING epoch field.
-    // (We can't re-sign without the private helper, so instead assert the coerce
-    //  path via the user epoch: a legacy cookie behaves like an epoch-0 cookie.)
-    void sig;
-    void parsed;
-    // epoch-0 cookie + user epoch 0 → valid; + user epoch 1 → rejected.
+  it("grandfathers a legacy cookie (no epoch field) as 0 — valid until the first bump", async () => {
+    // Craft a genuinely epoch-LESS cookie (a pre-feature cookie) by building the
+    // body without `epoch` and re-signing with the same HMAC secret the module
+    // uses. This exercises the `decoded.epoch ?? 0` coercion directly.
+    const secret = "a-strong-test-secret-at-least-32-chars-long";
+    const body = Buffer.from(
+      JSON.stringify({ ...payload, exp: Date.now() + 60_000 }), // no `epoch` key
+    ).toString("base64url");
+    const sig = createHmac("sha256", secret).update(body).digest("base64url");
+    cookieStore.set("swapl_session", `${body}.${sig}`);
+
+    // Missing epoch coerces to 0: valid while the user is at epoch 0…
     mocks.userFindUnique.mockResolvedValueOnce({ sessionEpoch: 0 });
     expect(await getSession()).toEqual(payload);
-    // reload the same cookie, user now bumped
+    // …and rejected once the user's epoch is bumped above it.
     mocks.userFindUnique.mockResolvedValueOnce({ sessionEpoch: 1 });
     expect(await getSession()).toBeNull();
   });
