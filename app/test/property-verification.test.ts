@@ -409,6 +409,29 @@ describe("property-verification AI outcome (DOK-186)", () => {
     expect(mocks.pvUpdate).toHaveBeenCalledWith({ where: { id: "pv-1" }, data: { documents: "[]" } });
   });
 
+  it("a purge failure never fails the committed decision (best-effort)", async () => {
+    mocks.listingFindUnique.mockResolvedValue(ownerListing);
+    mocks.pvFindFirst.mockResolvedValue(null);
+    mocks.classifyPropertyDocument.mockResolvedValue({
+      classification: "business",
+      confidence: 0.95,
+      entityType: "company",
+      reasons: ["registered company"],
+      source: "ai",
+    });
+    mocks.pvCreate.mockResolvedValue(pvRow({ status: "rejected", aiClassification: "business" }));
+    // The URL-clearing update (only used by the purge on this create path) throws;
+    // the request must still succeed since the decision already committed.
+    mocks.pvUpdate.mockRejectedValue(new Error("db blip"));
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const res = await pvPost(submitReq({ documents: [{ url: "https://x.test/a.jpg", label: "Deed" }] }), {
+      params: Promise.resolve({ id: "l-1" }),
+    });
+    expect(res.status).toBe(201);
+    expect((await res.json()).verification.status).toBe("rejected");
+    errSpy.mockRestore();
+  });
+
   it("low-confidence BUSINESS stays pending, no listing flag", async () => {
     mocks.listingFindUnique.mockResolvedValue(ownerListing);
     mocks.pvFindFirst.mockResolvedValue(null);
