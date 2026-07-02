@@ -7,7 +7,7 @@
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
+import { prisma, parseJSON } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { ensureCanCreateTravelWindow, PlanLimitError } from "@/lib/billing/limits";
 
@@ -37,7 +37,7 @@ function toDTO(w: {
     dateFrom: w.dateFrom.toISOString().slice(0, 10),
     dateTo: w.dateTo.toISOString().slice(0, 10),
     flexible: w.flexible,
-    destinations: w.destinations ? (JSON.parse(w.destinations) as string[]) : [],
+    destinations: parseJSON<string[]>(w.destinations, []),
     notes: w.notes,
     createdAt: w.createdAt.toISOString(),
   };

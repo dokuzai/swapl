@@ -5,6 +5,7 @@
 // never the other side's address or guide content.
 
 import { NextResponse } from "next/server";
+import { parseJSON } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { forbidden, notFound, unauthenticated } from "@/lib/api/errors";
 import { loadAgreement, resolveParty, computeGating, phaseOf } from "@/lib/trip/agreement";
@@ -100,7 +101,7 @@ export async function GET(req: Request, { params }: RouteContext<"/api/agreement
       userId: e.userId,
       type: e.type,
       note: e.note,
-      photos: JSON.parse(e.photos || "[]") as string[],
+      photos: parseJSON<string[]>(e.photos, []),
       videoUrl: e.videoUrl,
       createdAt: e.createdAt.toISOString(),
       mine: e.userId === session.userId,
