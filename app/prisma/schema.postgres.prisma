@@ -792,23 +792,28 @@ model SwapCheckEvent {
 // awaiting_response|resolved|closed. photos are JSON arrays of upload URLs.
 
 model SwapDispute {
-  id           String        @id @default(cuid())
-  agreementId  String
-  agreement    SwapAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  id           String         @id @default(cuid())
+  // A dispute attaches to EITHER a SwapAgreement OR a KeysStay (JRN-GP-03).
+  // Exactly one of agreementId / keysStayId is set — enforced at the API layer.
+  agreementId  String?
+  agreement    SwapAgreement? @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  keysStayId   String?
+  keysStay     KeysStay?      @relation(fields: [keysStayId], references: [id], onDelete: Cascade)
   openedById   String
-  openedBy     User          @relation("DisputesOpened", fields: [openedById], references: [id])
+  openedBy     User           @relation("DisputesOpened", fields: [openedById], references: [id])
   category     String                                   // access|damage|cleanliness|safety|no_show|other
   description  String
-  photos       String        @default("[]")             // JSON array of upload URLs
-  status       String        @default("open")           // open|investigating|awaiting_response|resolved|closed
+  photos       String         @default("[]")            // JSON array of upload URLs
+  status       String         @default("open")          // open|investigating|awaiting_response|resolved|closed
   resolution   String?
   resolvedById String?
-  resolvedBy   User?         @relation("DisputesResolved", fields: [resolvedById], references: [id])
+  resolvedBy   User?          @relation("DisputesResolved", fields: [resolvedById], references: [id])
   messages     DisputeMessage[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@index([agreementId])
+  @@index([keysStayId])
 }
 
 model DisputeMessage {
@@ -959,6 +964,7 @@ model KeysStay {
 
   conversation      Conversation?            // DOK-221 unified thread
   reviews           SwapReview[]             // JRN-GP-01 guest/host reviews
+  disputes          SwapDispute[]            // JRN-GP-03 guest/host disputes
 
   @@index([listingId])
   @@index([guestId])

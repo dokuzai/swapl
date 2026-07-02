@@ -41,9 +41,17 @@ export async function POST(req: Request, { params }: RouteContext<"/api/disputes
     where: { id },
     include: {
       agreement: {
-        include: {
-          listing1: { select: { userId: true, user: { select: { id: true, name: true, email: true } } } },
-          listing2: { select: { userId: true, user: { select: { id: true, name: true, email: true } } } },
+        select: {
+          proposalId: true,
+          listing1: { select: { user: { select: { id: true, name: true, email: true } } } },
+          listing2: { select: { user: { select: { id: true, name: true, email: true } } } },
+        },
+      },
+      keysStay: {
+        select: {
+          id: true,
+          guest: { select: { id: true, name: true, email: true } },
+          host: { select: { id: true, name: true, email: true } },
         },
       },
     },
@@ -56,8 +64,15 @@ export async function POST(req: Request, { params }: RouteContext<"/api/disputes
   });
   if (!me) return unauthenticated();
 
-  const party1 = dispute.agreement.listing1.user;
-  const party2 = dispute.agreement.listing2.user;
+  // A dispute attaches to EITHER a swap agreement OR a Keys stay. Resolve the two
+  // parties + a display ref (proposal id or stay id) from whichever side is set.
+  const parties = dispute.agreement
+    ? { party1: dispute.agreement.listing1.user, party2: dispute.agreement.listing2.user, ref: dispute.agreement.proposalId }
+    : dispute.keysStay
+      ? { party1: dispute.keysStay.guest, party2: dispute.keysStay.host, ref: dispute.keysStay.id }
+      : null;
+  if (!parties) return apiError(500, "Dispute is not linked to a swap or stay");
+  const { party1, party2, ref } = parties;
   const isParty = party1.id === me.id || party2.id === me.id;
   const isAdmin = me.role === "swapl_admin";
   if (!isParty && !isAdmin) return forbidden();
@@ -82,18 +97,18 @@ export async function POST(req: Request, { params }: RouteContext<"/api/disputes
     await prisma.swapDispute.update({ where: { id }, data: { status: nextStatus } });
   }
 
-  const proposalId = dispute.agreement.proposalId;
   const fromName = me.name ?? (isAdmin ? "swapl support" : "Your swap partner");
 
-  // Fan out the new-message ping to everyone *except* the author.
+  // Fan out the new-message ping to everyone *except* the author. `ref` is the
+  // proposal id (swap) or stay id (Keys stay) — the notification deep-link ref.
   const partyTargets = [party1, party2].filter((p) => p.id !== me.id);
   for (const p of partyTargets) {
     if (p.email) {
-      sendEmail(emailTemplates.disputeMessage(p.email, proposalId, fromName)).catch((err) =>
+      sendEmail(emailTemplates.disputeMessage(p.email, ref, fromName)).catch((err) =>
         console.error("[dispute-message:email:party]", err),
       );
     }
-    sendPush(p.id, pushTemplates.disputeMessage(proposalId, fromName)).catch((err) =>
+    sendPush(p.id, pushTemplates.disputeMessage(ref, fromName)).catch((err) =>
       console.error("[dispute-message:push:party]", err),
     );
   }
@@ -102,7 +117,7 @@ export async function POST(req: Request, { params }: RouteContext<"/api/disputes
     disputeAdminRecipients()
       .then((recipients) => {
         for (const to of recipients) {
-          sendEmail(emailTemplates.disputeMessage(to, proposalId, fromName)).catch((err) =>
+          sendEmail(emailTemplates.disputeMessage(to, ref, fromName)).catch((err) =>
             console.error("[dispute-message:email:admin]", err),
           );
         }

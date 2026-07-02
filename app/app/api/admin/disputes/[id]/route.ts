@@ -53,6 +53,13 @@ export async function POST(req: Request, { params }: RouteContext<"/api/admin/di
           listing2: { select: { user: { select: { id: true, email: true } } } },
         },
       },
+      keysStay: {
+        select: {
+          id: true,
+          guest: { select: { id: true, email: true } },
+          host: { select: { id: true, email: true } },
+        },
+      },
     },
   });
   if (!dispute) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -72,23 +79,25 @@ export async function POST(req: Request, { params }: RouteContext<"/api/admin/di
   const updated = await prisma.swapDispute.update({ where: { id }, data });
 
   if (statusChanged) {
-    const parties = [
-      dispute.agreement.listing1.user,
-      dispute.agreement.listing2.user,
-    ];
-    const proposalId = dispute.agreement.proposalId;
-    for (const p of parties) {
+    // Resolve both parties + a deep-link ref from whichever side the dispute
+    // attaches to (swap agreement OR Keys stay).
+    const notify = dispute.agreement
+      ? { parties: [dispute.agreement.listing1.user, dispute.agreement.listing2.user], ref: dispute.agreement.proposalId }
+      : dispute.keysStay
+        ? { parties: [dispute.keysStay.guest, dispute.keysStay.host], ref: dispute.keysStay.id }
+        : { parties: [], ref: "" };
+    for (const p of notify.parties) {
       if (p.email) {
         sendEmail(
           emailTemplates.disputeStatusChanged(
             p.email,
-            proposalId,
+            notify.ref,
             updated.status,
             updated.resolution,
           ),
         ).catch((err) => console.error("[dispute-admin:email]", err));
       }
-      sendPush(p.id, pushTemplates.disputeStatusChanged(proposalId, updated.status)).catch((err) =>
+      sendPush(p.id, pushTemplates.disputeStatusChanged(notify.ref, updated.status)).catch((err) =>
         console.error("[dispute-admin:push]", err),
       );
     }

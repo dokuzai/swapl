@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   getSessionFromRequest: vi.fn(),
   requireAdminFromRequest: vi.fn(),
   agreementFindUnique: vi.fn(),
+  stayFindUnique: vi.fn(),
   disputeCreate: vi.fn(),
   disputeFindUnique: vi.fn(),
   disputeFindMany: vi.fn(),
@@ -44,6 +45,7 @@ vi.mock("@/lib/push", () => ({ sendPush: mocks.sendPush, pushTemplates: mocks.pu
 vi.mock("@/lib/db", () => ({
   prisma: {
     swapAgreement: { findUnique: mocks.agreementFindUnique },
+    keysStay: { findUnique: mocks.stayFindUnique },
     swapDispute: {
       create: mocks.disputeCreate,
       findUnique: mocks.disputeFindUnique,
@@ -56,6 +58,7 @@ vi.mock("@/lib/db", () => ({
 }));
 
 import { POST as openDispute, GET as getDispute } from "@/app/api/agreements/[id]/dispute/route";
+import { POST as openStayDispute, GET as getStayDispute } from "@/app/api/keys/stays/[id]/dispute/route";
 import { POST as postMessage } from "@/app/api/disputes/[id]/message/route";
 import { POST as adminAction } from "@/app/api/admin/disputes/[id]/route";
 
@@ -277,5 +280,116 @@ describe("POST admin action — state machine + party notify", () => {
     expect(res.status).toBe(200);
     expect(mocks.disputeUpdate).toHaveBeenCalledWith({ where: { id: "dis-1" }, data: { resolvedById: "adm" } });
     expect(emailTemplates.disputeStatusChanged).not.toHaveBeenCalled();
+  });
+});
+
+// ---- JRN-GP-03: disputes on Keys stays ----
+
+function keysStay(over: Record<string, unknown> = {}) {
+  return {
+    id: "stay-1",
+    status: "confirmed",
+    guestId: "u1",
+    hostId: "u2",
+    guest: { id: "u1", name: "Ana", email: "ana@swapl.test" },
+    host: { id: "u2", name: "Ben", email: "ben@swapl.test" },
+    ...over,
+  };
+}
+
+describe("POST/GET keys-stay dispute — gating + notify", () => {
+  beforeEach(() => {
+    mocks.stayFindUnique.mockResolvedValue(keysStay());
+  });
+
+  it("401 unauthenticated", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue(null);
+    expect((await openStayDispute(req("https://x", { category: "other", description: "x" }), ctx("stay-1"))).status).toBe(401);
+  });
+
+  it("403 for a non-party", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "stranger" });
+    expect((await openStayDispute(req("https://x", { category: "other", description: "x" }), ctx("stay-1"))).status).toBe(403);
+  });
+
+  // Fresh guest ids below: the dispute-open limiter (5/10min, keyed on user)
+  // persists across the file under fake timers, so reusing u1 (already burned by
+  // the swap tests) would 429 before the assertion.
+  it("404 when the stay is missing", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "ks-404" });
+    mocks.stayFindUnique.mockResolvedValue(null);
+    expect((await openStayDispute(req("https://x", { category: "other", description: "x" }), ctx("stay-1"))).status).toBe(404);
+  });
+
+  it("422 when the stay is still pending (not confirmed/completed)", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "ks-422" });
+    mocks.stayFindUnique.mockResolvedValue(keysStay({ status: "pending", guestId: "ks-422", guest: { id: "ks-422", name: "G", email: "g@x" } }));
+    expect((await openStayDispute(req("https://x", { category: "other", description: "problem" }), ctx("stay-1"))).status).toBe(422);
+    expect(mocks.disputeCreate).not.toHaveBeenCalled();
+  });
+
+  it("creates a keysStay-scoped dispute, notifies the OTHER party + admin", async () => {
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "ks-ok" });
+    mocks.stayFindUnique.mockResolvedValue(keysStay({ guestId: "ks-ok", guest: { id: "ks-ok", name: "Ana", email: "ana@swapl.test" } }));
+    const res = await openStayDispute(
+      req("https://x", { category: "safety", description: "Lock was broken on arrival" }),
+      ctx("stay-1"),
+    );
+    expect(res.status).toBe(200);
+    expect((await res.json()).dispute.urgent).toBe(true);
+    // Created with keysStayId (not agreementId).
+    expect(mocks.disputeCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ keysStayId: "stay-1", openedById: "ks-ok" }) }),
+    );
+    // Guest opened -> host (u2) notified; deep-link ref is the STAY id.
+    expect(emailTemplates.disputeOpened).toHaveBeenCalledWith("ben@swapl.test", "stay-1", "safety", true);
+    expect(mocks.sendPush).toHaveBeenCalledWith("u2", expect.anything());
+  });
+
+  it("GET returns the case timeline for a party (403 for a stranger)", async () => {
+    mocks.disputeFindMany.mockResolvedValue([
+      {
+        id: "dis-9", category: "access", status: "open", description: "d", photos: "[]", resolution: null,
+        openedBy: { id: "u1", name: "Ana" }, createdAt: NOW, updatedAt: NOW,
+        messages: [{ id: "m1", authorId: "u2", author: { id: "u2", name: "Ben" }, body: "hi", photos: "[]", createdAt: NOW }],
+      },
+    ]);
+    const ok = await getStayDispute(req("https://x", undefined, "GET"), ctx("stay-1"));
+    expect((await ok.json()).disputes[0].messages[0].authorName).toBe("Ben");
+
+    mocks.getSessionFromRequest.mockResolvedValue({ userId: "stranger" });
+    expect((await getStayDispute(req("https://x", undefined, "GET"), ctx("stay-1"))).status).toBe(403);
+  });
+});
+
+describe("dispute message + admin action work on a KEYS-stay dispute", () => {
+  const keysDispute = {
+    id: "dis-1",
+    status: "open",
+    agreement: null,
+    keysStay: {
+      id: "stay-1",
+      guest: { id: "u1", name: "Ana", email: "ana@swapl.test" },
+      host: { id: "u2", name: "Ben", email: "ben@swapl.test" },
+    },
+  };
+
+  it("message route resolves parties from keysStay and refs the stay id (no crash on null agreement)", async () => {
+    mocks.disputeFindUnique.mockResolvedValue(keysDispute);
+    mocks.userFindUnique.mockResolvedValue({ id: "u1", name: "Ana", role: "member" });
+    mocks.messageCreate.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ id: "msg-1", createdAt: NOW, ...data }));
+    const res = await postMessage(req("https://x", { body: "the door code failed" }), ctx("dis-1"));
+    expect(res.status).toBe(200);
+    expect(emailTemplates.disputeMessage).toHaveBeenCalledWith("ben@swapl.test", "stay-1", "Ana");
+  });
+
+  it("admin action notifies both stay parties with the stay ref (no crash on null agreement)", async () => {
+    mocks.requireAdminFromRequest.mockResolvedValue({ id: "adm", email: "a@x", name: "Adm", role: "swapl_admin" });
+    mocks.disputeFindUnique.mockResolvedValue(keysDispute);
+    mocks.disputeUpdate.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => ({ id: "dis-1", status: "open", resolution: null, resolvedById: null, ...data }));
+    const res = await adminAction(req("https://x", { status: "resolved", resolution: "Refunded the stay" }), ctx("dis-1"));
+    expect(res.status).toBe(200);
+    expect(emailTemplates.disputeStatusChanged).toHaveBeenCalledWith("ana@swapl.test", "stay-1", "resolved", "Refunded the stay");
+    expect(emailTemplates.disputeStatusChanged).toHaveBeenCalledWith("ben@swapl.test", "stay-1", "resolved", "Refunded the stay");
   });
 });
