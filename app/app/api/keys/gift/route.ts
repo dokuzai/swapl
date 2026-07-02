@@ -65,8 +65,9 @@ export async function POST(req: Request) {
     return forbidden("Only verified members can gift Keys");
   }
 
-  // Rolling daily + monthly caps checked inside the gift transaction to
-  // prevent concurrent requests from bypassing the cap.
+  // Rolling daily + monthly caps enforced inside the gift transaction, which
+  // runs at Serializable isolation — so concurrent gifts can't each read the
+  // same pre-gift total and both slip past the cap (READ COMMITTED would).
   const now = Date.now();
   try {
     const { sent, received } = await gift(session.userId, toUserId, amount, undefined, async (tx) => {
@@ -107,6 +108,11 @@ export async function POST(req: Request) {
     }
     if (err instanceof KeysLedgerError && err.code === "NEGATIVE_BALANCE") {
       return unprocessable("Not enough Keys");
+    }
+    // Serializable conflict (a concurrent gift won the race). Ask to retry
+    // rather than 500 — the cap/atomicity guarantee held.
+    if (typeof err === "object" && err !== null && (err as { code?: string }).code === "P2034") {
+      return unprocessable("Please try again");
     }
     throw err;
   }
