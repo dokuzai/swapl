@@ -6,7 +6,7 @@
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
+import { prisma, parseJSON } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
 import { sendEmail, emailTemplates } from "@/lib/email";
 import { sendPush, pushTemplates } from "@/lib/push";
@@ -66,7 +66,7 @@ export async function handleCheckEvent(
   if (existing) {
     const mergedPhotos = Array.from(
       new Set([
-        ...(JSON.parse(existing.photos || "[]") as string[]),
+        ...parseJSON<string[]>(existing.photos, []),
         ...(parsed.data.photos ?? []),
       ]),
     );
@@ -84,7 +84,7 @@ export async function handleCheckEvent(
         id: updated.id,
         type: updated.type,
         note: updated.note,
-        photos: JSON.parse(updated.photos || "[]") as string[],
+        photos: parseJSON<string[]>(updated.photos, []),
         videoUrl: updated.videoUrl,
         createdAt: updated.createdAt.toISOString(),
       },
@@ -129,7 +129,7 @@ export async function handleCheckEvent(
       id: event.id,
       type: event.type,
       note: event.note,
-      photos: JSON.parse(event.photos || "[]") as string[],
+      photos: parseJSON<string[]>(event.photos, []),
       videoUrl: event.videoUrl,
       createdAt: event.createdAt.toISOString(),
     },
