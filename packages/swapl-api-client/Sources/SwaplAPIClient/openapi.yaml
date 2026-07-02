@@ -1665,10 +1665,12 @@ components:
       properties:
         review:
           type: object
-          required: [id, agreementId, rating, text, createdAt]
+          # Exactly one of agreementId (swap) / keysStayId (Keys stay) is present.
+          required: [id, rating, text, createdAt]
           properties:
             id: { type: string }
             agreementId: { type: string }
+            keysStayId: { type: string }
             rating: { type: integer }
             text: { type: string }
             createdAt: { type: string, format: date-time }
@@ -4155,6 +4157,41 @@ paths:
         '404': { description: Agreement not found }
         '409': { description: Already reviewed }
         '422': { description: Agreement not COMPLETED yet }
+        '429': { description: Rate limited }
+
+  /api/keys/stays/{id}/review:
+    post:
+      tags: [keys]
+      summary: Review the other party of a completed Keys stay
+      description: >-
+        Only the stay's guest or host, only once the stay is completed, and at
+        most one review per author per stay. The subject is always the other
+        party; the review is about the stay's single home. Rate-limited 10/hour
+        per user (shared budget with swap reviews).
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SwapReviewCreateRequest' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SwapReviewCreateResponse' }
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of this stay }
+        '404': { description: Stay not found }
+        '409': { description: Already reviewed }
+        '422': { description: Stay not completed yet }
         '429': { description: Rate limited }
 
   /api/reports:
