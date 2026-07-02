@@ -4,6 +4,7 @@
 // percentages are always exposed (no content leak).
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { encryptSecret } from "@/lib/crypto"; // SWP-007: codes + wifi stored encrypted
 
 const mocks = vi.hoisted(() => ({
   getSessionFromRequest: vi.fn(),
@@ -31,7 +32,7 @@ const NOW = new Date("2026-06-14T12:00:00Z");
 const hours = (n: number) => n * 60 * 60 * 1000;
 
 const fullGuide = {
-  accessInstructions: "a", keyPickup: "b", wifiName: "c", wifiPassword: "d",
+  accessInstructions: "a", keyPickup: "b", wifiName: "c", wifiPassword: encryptSecret("d"),
   heatingCooling: "e", kitchen: "f", bins: "g", petsPlants: "h",
   houseRules: "rules", neighbourhood: "nbhd", emergencyContact: "112",
 };
@@ -43,8 +44,8 @@ function agreement(over: Record<string, unknown> = {}) {
     status: "ACTIVE",
     dateFrom: new Date(NOW.getTime() + hours(72)), // 3 days out -> locked
     dateTo: new Date(NOW.getTime() + hours(240)),
-    keyCode1: "1111",
-    keyCode2: "2222",
+    keyCode1: encryptSecret("1111"),
+    keyCode2: encryptSecret("2222"),
     insurancePolicy: { policyNumber: "SC-1", coverageAmount: 150000, status: "active", expiresAt: NOW },
     checkEvents: [],
     listing1: {
@@ -107,6 +108,7 @@ describe("trip cockpit gating", () => {
     expect(body.otherLat).toBe(52.5012);
     expect(body.otherLng).toBe(13.4012);
     expect(body.otherGuide.wifiName).toBe("c");
+    expect(body.otherGuide.wifiPassword).toBe("d"); // decrypted from the at-rest ciphertext (SWP-007)
     expect(body.phase).toBe("READY");
   });
 

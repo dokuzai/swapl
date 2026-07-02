@@ -6,6 +6,7 @@ import { publicContactChannels, ownContactChannels } from "@/lib/contact-channel
 import { publicCoord } from "@/lib/city-coords";
 import { conversationForKeysStay } from "@/lib/conversations";
 import { HOME_GUIDE_CORE_FIELDS } from "@/lib/trip/phase";
+import { decryptSecret } from "@/lib/crypto";
 
 // Mirrors the swap trip cockpit's GUIDE_FIELDS: the core getting-in fields plus
 // house rules, neighbourhood, and an emergency contact.
@@ -66,7 +67,10 @@ export async function GET(req: Request, { params }: RouteContext<"/api/keys/stay
   const guideRow = stay.listing.homeGuide as Record<string, string | null> | null;
   const homeGuide = unlocked
     ? guideRow
-      ? Object.fromEntries(GUIDE_FIELDS.map((f) => [f, guideRow[f] ?? null]))
+      ? Object.fromEntries(
+          // wifiPassword is encrypted at rest (SWP-007) — decrypt for the client.
+          GUIDE_FIELDS.map((f) => [f, f === "wifiPassword" ? decryptSecret(guideRow[f]) : guideRow[f] ?? null]),
+        )
       : null
     : { locked: true as const };
 

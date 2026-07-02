@@ -11,6 +11,7 @@ import { forbidden, notFound, unauthenticated } from "@/lib/api/errors";
 import { loadAgreement, resolveParty, computeGating, phaseOf } from "@/lib/trip/agreement";
 import { tonExplorerUrl } from "@/lib/insurance/access";
 import { HOME_GUIDE_CORE_FIELDS } from "@/lib/trip/phase";
+import { decryptSecret } from "@/lib/crypto";
 
 const GUIDE_FIELDS = [
   ...HOME_GUIDE_CORE_FIELDS,
@@ -49,7 +50,10 @@ export async function GET(req: Request, { params }: RouteContext<"/api/agreement
   const otherGuideRow = party.otherListing.homeGuide;
   const otherGuide = gating.unlocked
     ? otherGuideRow
-      ? Object.fromEntries(GUIDE_FIELDS.map((f) => [f, otherGuideRow[f] ?? null]))
+      ? Object.fromEntries(
+          // wifiPassword is encrypted at rest (SWP-007) — decrypt for the client.
+          GUIDE_FIELDS.map((f) => [f, f === "wifiPassword" ? decryptSecret(otherGuideRow[f]) : otherGuideRow[f] ?? null]),
+        )
       : null
     : { locked: true as const, unlocksAt: gating.unlocksAt.toISOString() };
 

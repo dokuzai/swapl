@@ -11,6 +11,7 @@ import {
   revealUnlocksAt,
   type TripPhase,
 } from "./phase";
+import { decryptSecret } from "@/lib/crypto";
 
 // A SwapAgreement loaded with everything the cockpit needs, incl. both
 // listings (with owner + home guide) and all check events.
@@ -45,7 +46,8 @@ export function resolveParty(agreement: LoadedAgreement, userId: string) {
   // The traveller's own key code is the one for the home they are going TO.
   // keyCode1 unlocks listing1, keyCode2 unlocks listing2 — a party travels to
   // the *other* listing, so they need the other side's code.
-  const myKeyCode = onSide1 ? agreement.keyCode2 : agreement.keyCode1;
+  // Key codes are encrypted at rest (SWP-007) — decrypt the traveller's own.
+  const myKeyCode = decryptSecret(onSide1 ? agreement.keyCode2 : agreement.keyCode1);
   return { side, onSide1, myListing, otherListing, myKeyCode };
 }
 

@@ -3,6 +3,7 @@
 // both guides complete; content only after). Prisma + session mocked.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { encryptSecret, decryptSecret, isEncrypted } from "@/lib/crypto"; // SWP-007: wifi stored encrypted
 
 const mocks = vi.hoisted(() => ({
   getSessionFromRequest: vi.fn(),
@@ -30,7 +31,7 @@ const fullGuide = {
   accessInstructions: "a",
   keyPickup: "b",
   wifiName: "c",
-  wifiPassword: "d",
+  wifiPassword: encryptSecret("d"),
   heatingCooling: "e",
   kitchen: "f",
   bins: "g",
@@ -154,5 +155,13 @@ describe("PUT home-guide", () => {
 
   it("rejects invalid field types", async () => {
     expect((await put("listing-1", { wifiName: 123 })).status).toBe(400);
+  });
+
+  it("encrypts the wifi password at rest on write (SWP-007)", async () => {
+    await put("listing-1", { wifiPassword: "sunset2026" });
+    const written = mocks.guideUpsert.mock.calls[0][0].update.wifiPassword as string;
+    expect(isEncrypted(written)).toBe(true);
+    expect(written).not.toContain("sunset2026");
+    expect(decryptSecret(written)).toBe("sunset2026");
   });
 });

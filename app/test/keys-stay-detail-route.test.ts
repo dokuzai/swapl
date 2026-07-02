@@ -3,6 +3,9 @@
 // the host never filled one. Mocks the prisma + session + conversation surface.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+// The dev-fallback encryption key is deterministic, so the fixture's encrypt and
+// the route's decrypt share it — the ciphertext fixture proves the decrypt wiring.
+import { encryptSecret } from "@/lib/crypto";
 
 const mocks = vi.hoisted(() => ({
   getSessionFromRequest: vi.fn(),
@@ -33,7 +36,7 @@ const guide = {
   accessInstructions: "code 1234",
   keyPickup: "keypad",
   wifiName: "Net",
-  wifiPassword: "pw",
+  wifiPassword: encryptSecret("pw"), // stored encrypted at rest (SWP-007)
   heatingCooling: null,
   kitchen: null,
   bins: null,

@@ -4,6 +4,7 @@
 // revealed. Real toDTO + real guideUnlocked run; only I/O is mocked.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { encryptSecret } from "@/lib/crypto"; // SWP-007: key codes stored encrypted
 
 const mocks = vi.hoisted(() => ({
   getSessionFromRequest: vi.fn(),
@@ -96,8 +97,8 @@ function proposal(dateFrom: Date) {
       dateFrom,
       dateTo: NOW,
       status: "ACCEPTED",
-      keyCode1: "1111",
-      keyCode2: "2222",
+      keyCode1: encryptSecret("1111"),
+      keyCode2: encryptSecret("2222"),
       insurancePolicy: null,
       checkEvents: [],
     },
@@ -140,6 +141,9 @@ describe("proposal exact-location reveal gate", () => {
     expect(body.targetListing.address).toBe("10 Real Street");
     expect(body.targetListing.lat).toBe(EXACT.lat);
     expect(body.targetListing.lng).toBe(EXACT.lng);
+    // Key codes are decrypted from the at-rest ciphertext (SWP-007).
+    expect(body.agreement.keyCode1).toBe("1111");
+    expect(body.agreement.keyCode2).toBe("2222");
   });
 });
 
