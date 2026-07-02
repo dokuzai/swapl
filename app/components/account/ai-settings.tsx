@@ -125,7 +125,7 @@ export function AISettings() {
           <p className="text-sm" style={{ color: "var(--pink)" }}>Saved.</p>
         )}
         {status === "error" && (
-          <p className="text-sm" style={{ color: "#dc2626" }}>Couldn&rsquo;t save settings.</p>
+          <p className="text-sm" style={{ color: "var(--destructive)" }}>Couldn&rsquo;t save settings.</p>
         )}
 
         <div className="flex items-center gap-3 pt-1">

@@ -69,7 +69,7 @@ export function SavedSearchTable({ items }: { items: Item[] }) {
             style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
           />
         </label>
-        {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+        {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
         <button type="submit" disabled={pending} className="pill-primary">
           {pending ? t("savedSearch.saving") : t("savedSearch.save")}
         </button>

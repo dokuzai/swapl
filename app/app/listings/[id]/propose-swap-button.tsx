@@ -216,7 +216,7 @@ export default function ProposeSwapButton({
                 )}
               </label>
 
-              {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+              {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
 
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button type="button" onClick={() => setOpen(false)} className="pill-ghost">

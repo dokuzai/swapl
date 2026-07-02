@@ -44,7 +44,7 @@ export function InviteBatchButton({ remaining }: { remaining: number }) {
         {pending ? "Inviting…" : "Invite next batch →"}
       </button>
       {status && (
-        <span className="text-xs" style={{ color: status.kind === "ok" ? "var(--pink)" : "#dc2626" }}>
+        <span className="text-xs" style={{ color: status.kind === "ok" ? "var(--pink)" : "var(--destructive)" }}>
           {status.msg}
         </span>
       )}

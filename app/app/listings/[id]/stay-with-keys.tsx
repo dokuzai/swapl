@@ -255,7 +255,7 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
         </div>
       )}
 
-      <p className="font-mono text-[11px]" style={{ color: insufficient ? "#dc2626" : "var(--navy-3)" }}>
+      <p className="font-mono text-[11px]" style={{ color: insufficient ? "var(--destructive)" : "var(--navy-3)" }}>
         {t("stay.keys.yourBalance", { count: balance })}
         {balanceNights > 0 && (
           <span style={{ color: "var(--navy-3)" }}> · {t("stay.keys.balanceScale", { count: balanceNights })}</span>
@@ -278,7 +278,7 @@ export function StayWithKeys({ listingId, balance }: { listingId: string; balanc
           </div>
         </div>
       )}
-      {error && !insufficient && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && !insufficient && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
 
       <button
         type="submit"

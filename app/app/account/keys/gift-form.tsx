@@ -97,7 +97,7 @@ export function GiftKeysForm({
         </span>
       </label>
 
-      {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
       {success && <p className="text-sm" style={{ color: "var(--pink)" }}>{success}</p>}
       {!verified && (
         <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("keys.gift.errorVerified")}</p>

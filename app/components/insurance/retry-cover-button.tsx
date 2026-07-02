@@ -36,7 +36,7 @@ export function RetryCoverButton({ agreementId }: { agreementId: string }) {
         {pending ? "Issuing…" : "Issue now"}
       </button>
       {error && (
-        <p className="mt-2 text-xs" style={{ color: "#dc2626" }}>
+        <p className="mt-2 text-xs" style={{ color: "var(--destructive)" }}>
           {error}
         </p>
       )}

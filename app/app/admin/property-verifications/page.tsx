@@ -85,7 +85,7 @@ export default async function AdminPropertyVerifications() {
                                 className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-0.5 rounded-full"
                                 style={
                                   v.aiClassification === "business"
-                                    ? { background: "#dc2626", color: "#fff" }
+                                    ? { background: "var(--destructive)", color: "#fff" }
                                     : v.aiClassification === "private_owner"
                                       ? { background: "var(--pink)", color: "#fff" }
                                       : { background: "var(--card-bg)", color: "var(--navy-2)" }
@@ -110,7 +110,7 @@ export default async function AdminPropertyVerifications() {
                             {v.listing.ineligibleReason && (
                               <span
                                 className="font-mono text-[10px] uppercase tracking-[.08em] px-2 py-0.5 rounded-full"
-                                style={{ background: "#dc2626", color: "#fff" }}
+                                style={{ background: "var(--destructive)", color: "#fff" }}
                               >
                                 {t(dict, "admin.propVerif.ineligible")}: {v.listing.ineligibleReason}
                               </span>
@@ -180,7 +180,7 @@ export default async function AdminPropertyVerifications() {
                   style={
                     v.status === "approved"
                       ? { background: "var(--pink)", color: "#fff" }
-                      : { background: "var(--cream-2)", color: "#dc2626" }
+                      : { background: "var(--cream-2)", color: "var(--destructive)" }
                   }
                 >
                   {v.status}

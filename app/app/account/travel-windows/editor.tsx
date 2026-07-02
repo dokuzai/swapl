@@ -211,7 +211,7 @@ function AddWindowForm({
         />
       </label>
 
-      {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
 
       <button type="submit" disabled={pending} className="pill-primary">
         {pending ? t("tw.form.saving") : t("tw.form.add")}
@@ -349,7 +349,7 @@ function Proposals({ windowId, month }: { windowId: string; month: string }) {
         <p className="text-sm" style={{ color: "var(--navy-3)" }}>{t("tw.proposals.loading")}</p>
       )}
       {state.kind === "error" && (
-        <p className="text-sm" style={{ color: "#dc2626" }}>{state.message}</p>
+        <p className="text-sm" style={{ color: "var(--destructive)" }}>{state.message}</p>
       )}
       {state.kind === "noListing" && (
         <p className="text-sm" style={{ color: "var(--navy-2)" }}>{t("tw.proposals.noListing")}</p>

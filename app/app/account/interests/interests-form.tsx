@@ -122,7 +122,7 @@ export function InterestsForm({ initial, initialBio }: { initial: string[]; init
 
       <div className="flex items-center justify-between gap-3">
         {status === "saved" && <span className="text-sm" style={{ color: "var(--pink)" }}>{t("interests.saved")}</span>}
-        {error && <span className="text-sm" style={{ color: "#dc2626" }}>{error}</span>}
+        {error && <span className="text-sm" style={{ color: "var(--destructive)" }}>{error}</span>}
         <button onClick={save} disabled={pending} className="pill-primary ml-auto">
           {pending ? t("interests.saving") : t("interests.saveProfile")}
         </button>

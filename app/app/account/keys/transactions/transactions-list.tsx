@@ -135,7 +135,7 @@ export function KeysTransactionsList() {
       {/* ---- List ---- */}
       <div className="surface-card surface-card--static p-6 mt-2">
         {error ? (
-          <div className="text-sm" style={{ color: "#dc2626" }}>
+          <div className="text-sm" style={{ color: "var(--destructive)" }}>
             {t("keys.tx.error")}
             <button
               type="button"

@@ -93,7 +93,7 @@ export default async function AdminReviews({
                     style={
                       r.status === "published"
                         ? { background: "var(--pink)", color: "#fff" }
-                        : { background: "var(--cream-2)", color: "#dc2626" }
+                        : { background: "var(--cream-2)", color: "var(--destructive)" }
                     }
                   >
                     {r.status}
