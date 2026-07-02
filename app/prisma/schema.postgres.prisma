@@ -852,7 +852,12 @@ model InsurancePolicy {
   agreement          SwapAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
   provider           String        @default("swapl-cover")
   policyNumber       String
-  coverageAmount     Int           @default(150000)
+  // Swapl Guarantee, not insurance. tier "goodwill" = free resolution support;
+  // "full" = paid add-on backed by the platform reserve. coverageAmount is the
+  // Full-cover ceiling in EUR (€5,000); deductibleAmount is the excess (€750).
+  tier               String        @default("goodwill") // goodwill | full
+  coverageAmount     Int           @default(5000)
+  deductibleAmount   Int           @default(750)
 
   // Feature 2 — partnership economics + lifecycle
   status             String        @default("active")  // pending | active | cancelled | claimed

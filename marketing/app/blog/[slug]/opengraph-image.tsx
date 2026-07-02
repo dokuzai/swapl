@@ -12,6 +12,6 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   return renderOgImage({
     kicker: post ? post.category : "The swapl blog",
     title: post ? post.title : "The swapl blog",
-    subtitle: post ? post.description : "Home swapping — no money, fully insured.",
+    subtitle: post ? post.description : "Home swapping — no money, backed by the Swapl Guarantee.",
   });
 }

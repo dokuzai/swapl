@@ -15,7 +15,7 @@ const SECTIONS = [
   { href: "/admin/reports",          label: "Reports" },
   { href: "/admin/disputes",         label: "Disputes" },
   { href: "/admin/reviews",          label: "Reviews" },
-  { href: "/admin/insurance",        label: "Insurance" },
+  { href: "/admin/insurance",        label: "Guarantee" },
   { href: "/admin/verifications",    label: "Verifications" },
   { href: "/admin/property-verifications", label: "Owner verification" },
   { href: "/admin/featured",         label: "Featured" },

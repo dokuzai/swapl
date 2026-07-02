@@ -1,4 +1,5 @@
-// Authorization + presentation helpers shared by the /api/insurance routes.
+// Authorization + presentation helpers for the Swapl Guarantee, shared by the
+// /api/insurance routes (route path kept stable for the mobile API contract).
 // Kept pure (no Prisma, no next/server) so the trust-critical shaping and the
 // "is this user a party to the swap" check can be unit-tested directly.
 
@@ -8,7 +9,9 @@ export interface PolicyRecord {
   provider: string;
   policyNumber: string;
   status: string;
-  coverageAmount: number;
+  tier?: string;              // "goodwill" (free) | "full" (paid add-on)
+  coverageAmount: number;     // Full-cover ceiling in EUR
+  deductibleAmount?: number;  // excess / franchigia in EUR
   premiumCents: number;
   platformShareCents: number;
   documentsUrl: string | null;
@@ -117,32 +120,36 @@ export function policyView(policy: PolicyRecord, agreement?: AgreementContext): 
   };
 }
 
-// Plain-text Certificate of Cover served by the documents endpoint. The mock
-// underwriter has no real PDF, so we render a deterministic, human-readable
-// summary from the persisted policy + swap.
+// Plain-text Swapl Guarantee cover note served by the documents endpoint. There
+// is no insurer and no real PDF, so we render a deterministic, human-readable
+// summary from the persisted guarantee record + swap.
 export function renderCertificate(policy: PolicyRecord, agreement: AgreementContext): string {
   const eur = (cents: number) => `€${(cents / 100).toFixed(2)}`;
   const day = (d: Date) => d.toISOString().slice(0, 10);
+  const excess = policy.deductibleAmount ?? 750;
   return [
-    "swapl — Certificate of Home-Swap Cover",
-    "=======================================",
+    "swapl — Swapl Guarantee Cover Note",
+    "==================================",
     "",
-    `Policy number:   ${policy.policyNumber}`,
-    `Underwriter:      ${policy.provider}`,
-    `Status:           ${policy.status.toUpperCase()}`,
-    `Coverage:         €${policy.coverageAmount.toLocaleString("en-IE")}`,
-    `Premium:          ${eur(policy.premiumCents)}`,
-    `Valid until:      ${day(policy.expiresAt)}`,
+    `Guarantee no.:   ${policy.policyNumber}`,
+    `Backed by:       ${policy.provider} (a swapl guarantee — not insurance)`,
+    `Tier:            ${(policy.tier ?? "goodwill").toUpperCase()}`,
+    `Status:          ${policy.status.toUpperCase()}`,
+    `Full cover up to: €${policy.coverageAmount.toLocaleString("en-IE")}`,
+    `Excess:          €${excess.toLocaleString("en-IE")}`,
+    `Charge:          ${eur(policy.premiumCents)}`,
+    `Valid until:     ${day(policy.expiresAt)}`,
     "",
     "Covered swap",
     "------------",
-    `Stay:             ${day(agreement.dateFrom)} → ${day(agreement.dateTo)}`,
-    `Home A:           ${agreement.listing1.neighbourhood}, ${agreement.listing1.city}, ${agreement.listing1.country}`,
-    `Home B:           ${agreement.listing2.neighbourhood}, ${agreement.listing2.city}, ${agreement.listing2.country}`,
+    `Stay:            ${day(agreement.dateFrom)} → ${day(agreement.dateTo)}`,
+    `Home A:          ${agreement.listing1.neighbourhood}, ${agreement.listing1.city}, ${agreement.listing1.country}`,
+    `Home B:          ${agreement.listing2.neighbourhood}, ${agreement.listing2.city}, ${agreement.listing2.country}`,
     "",
-    "This certificate confirms that the home swap above is covered up to the",
-    "stated amount for accidental damage during the stay, subject to the policy",
-    "terms. Keep this document for your records.",
+    "This is the Swapl Guarantee — a commitment from swapl, not an insurance",
+    "policy, and no licensed insurer is involved. With Full cover, swapl helps",
+    "with accidental damage during the stay up to the stated amount, less the",
+    "excess, subject to the guarantee terms. Keep this document for your records.",
     "",
   ].join("\n");
 }

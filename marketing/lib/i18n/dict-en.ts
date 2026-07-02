@@ -5,7 +5,7 @@ export const en = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "How it works",
   "nav.homes": "Homes",
-  "nav.insurance": "Insurance",
+  "nav.insurance": "Guarantee",
   "nav.pricing": "Pricing",
   "nav.companies": "Companies",
   "nav.blog": "Blog",
@@ -15,24 +15,24 @@ export const en = {
   "nav.dashboard": "Dashboard",
   "footer.tagline": "© 2026 swapl · keys for keys, no money",
   "footer.howItWorks": "How it works",
-  "footer.insurance": "Insurance",
+  "footer.insurance": "Guarantee",
   "footer.browseHomes": "Browse homes",
   "footer.blog": "Blog",
   "footer.account": "Account",
 
   // ---- Launch banner ----
   "launchBanner.tag": "Pre-launch",
-  "launchBanner.body": "No fees, every swap insured — swaps go live",
+  "launchBanner.body": "No fees, every swap backed by the Swapl Guarantee — swaps go live",
   "launchBanner.month": "September 2026",
   "launchBanner.cta": "List your home →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "No fees · Every swap insured · Launching September 2026",
+  "hero.kicker": "No fees · Every swap backed · Launching September 2026",
   "hero.titleA": "Trade keys for keys.",
   "hero.titleB": "No money, fully",
-  "hero.titleEm": "insured",
+  "hero.titleEm": "backed",
   "hero.intro":
-    "Every accepted swap is insured end to end and no money ever changes hands — just keys for keys. We're signing up founding hosts ahead of the September 2026 launch: list your place with ruthless accuracy now and you'll be among the first homes shown when swaps go live.",
+    "Every accepted swap is backed by the Swapl Guarantee and no money ever changes hands — just keys for keys. We're signing up founding hosts ahead of the September 2026 launch: list your place with ruthless accuracy now and you'll be among the first homes shown when swaps go live.",
   "hero.ctaList": "List my home",
   "hero.ctaHow": "See how it works",
 
@@ -49,9 +49,9 @@ export const en = {
   "how.step3.title": "Propose & agree",
   "how.step3.desc":
     "Send a swap request with your own home attached. They accept, decline, or counter. Price isn't part of it — one home for the other.",
-  "how.step4.title": "Travel, insured",
+  "how.step4.title": "Travel, backed",
   "how.step4.desc":
-    "Every accepted swap is automatically covered: property, liability, and trip interruption. You both get keys, codes, and a 24/7 line.",
+    "Every accepted swap comes with the Swapl Guarantee — our resolution team has your back, and you can add Full cover up to €5,000. You both get keys, codes, and a 24/7 line.",
 
   "live.kicker": "02 · Homes looking to swap",
   "live.title": "Real homes. Real swaps. Right now.",
@@ -79,20 +79,20 @@ export const en = {
   "filter.sortMatch": "Sort: match score ↓",
   "filter.proposeSwap": "Propose swap",
 
-  "insuranceBand.kicker": "04 · Insurance, always on",
-  "insuranceBand.title": "Every swap covered.",
+  "insuranceBand.kicker": "04 · The Swapl Guarantee",
+  "insuranceBand.title": "Every swap, backed.",
   "insuranceBand.titleEm": "No opt-in.",
   "insuranceBand.lede":
-    "Swaps aren't rentals, but they're still two families trusting each other with their homes. We underwrite every accepted exchange automatically — no checkbox, no upsell.",
-  "insuranceBand.cardA.title": "Property damage to €150k",
+    "Swaps aren't rentals, but they're still two families trusting each other with their homes. Every accepted exchange comes with the Swapl Guarantee — our own commitment to help put things right. It's a guarantee from swapl, not an insurance policy.",
+  "insuranceBand.cardA.title": "Full cover up to €5,000",
   "insuranceBand.cardA.body":
-    "If something breaks, cracks, floods, or walks off during a swap, it's covered — both directions, both homes.",
-  "insuranceBand.cardB.title": "Third-party liability",
+    "Add Full cover to any swap and we'll help with accidental damage up to €5,000, subject to a €750 excess — both directions, both homes.",
+  "insuranceBand.cardB.title": "A team on your side",
   "insuranceBand.cardB.body":
-    "A guest slips in your kitchen. A pipe bursts next door. Our policy handles it so the swap doesn't turn into a lawsuit.",
-  "insuranceBand.cardC.title": "Trip interruption",
+    "Included free on every swap: if a guest slips, a pipe bursts, or a swap goes sideways, our resolution team steps in fast so it doesn't turn into a standoff.",
+  "insuranceBand.cardC.title": "Plans change",
   "insuranceBand.cardC.body":
-    "Flight cancelled, partner pulls out, pandemic? You're reimbursed — or rematched with a home of equal fit within 48 hours.",
+    "Flight cancelled, partner pulls out? We help you rematch with a home of equal fit — or recover the Keys you spent.",
 
   "cta.title": "Your home is worth a thousand trips.",
   "cta.body":
@@ -103,7 +103,7 @@ export const en = {
   "cta.error": "Something went wrong. Try again in a moment.",
   "cta.placeholder": "your@email.com",
   "cta.stat.countries": "◦ 92 countries",
-  "cta.stat.insurance": "◦ Insurance included",
+  "cta.stat.insurance": "◦ Swapl Guarantee included",
   "cta.stat.noFees": "◦ No host fees",
   "cta.stat.noCommission": "◦ No platform commission",
 
@@ -177,7 +177,7 @@ export const en = {
     "We don't take a cut of your swap. Pay only if you want power-user tools — saved searches with alerts, priority placement, multi-home accounts, listing analytics. The core swap is, and will stay, the same for everyone.",
   "pricing.tags.noFees": "◦ No swap fees",
   "pricing.tags.noCommission": "◦ No platform commission",
-  "pricing.tags.insurance": "◦ Insurance included on every plan",
+  "pricing.tags.insurance": "◦ Swapl Guarantee on every plan",
   "pricing.toggle.monthly": "Monthly",
   "pricing.toggle.yearly": "Yearly · save 30%",
   "pricing.popular": "Most popular",
@@ -271,7 +271,7 @@ export const en = {
   "swap.guestCode": "Your guest's code (theirs to use at your place)",
   "swap.yourCode": "Your code (yours to use at their place)",
   "swap.policyLine":
-    "Policy {policy} · €{coverage} cover · 24/7 line: +44 800 000 swap",
+    "Guarantee {policy} · €{coverage} cover · 24/7 line: +44 800 000 swap",
 
   // ---- Common UI ----
   "ui.cancel": "Cancel",
@@ -314,19 +314,19 @@ export const en = {
   "terms.updated": "Last updated · 24 May 2026",
   "faq.q1": "What if a swap partner damages my home?",
   "faq.a1":
-    "Every accepted swap is automatically covered for property damage up to €150,000 — both directions, both homes. You don't opt in, fill a form, or pay a premium. If something breaks during the stay, file a claim through your dashboard and the policy handles repair or replacement.",
+    "Every accepted swap comes with the Swapl Guarantee. If something goes wrong, file a claim through your dashboard and our resolution team helps put it right at no cost. For accidental property damage you can add Full cover — up to €5,000 per swap, subject to a €750 excess, both directions. The Swapl Guarantee is a commitment from swapl, not an insurance policy.",
   "faq.q2": "How do you handle key exchange?",
   "faq.a2":
     "You and your swap partner pick what works for you: meet in person, hand keys to a neighbour, use a lockbox, or share a smart-lock code through swapl. We generate a one-time guest code for each swap so neither party shares a permanent credential.",
   "faq.q3": "Can I swap with someone whose dates don't overlap mine?",
   "faq.a3":
-    "Yes. Non-simultaneous swaps (sometimes called \"hospitality points\") are coming after launch. You'll bank a stay at someone's home now and redeem yours back to them — or to a third member — later. At launch we start with same-week swaps because they're the safest to underwrite.",
+    "Yes. Non-simultaneous swaps (sometimes called \"hospitality points\") are coming after launch. You'll bank a stay at someone's home now and redeem yours back to them — or to a third member — later. At launch we start with same-week swaps because they're the safest to support.",
   "faq.q4": "What about pets?",
   "faq.a4":
-    "Filter for pet-friendly homes and you'll only see places whose owners welcome animals. Some hosts will also pet-sit yours during the swap. Insurance covers damage caused by guest pets exactly as it covers any other damage.",
+    "Filter for pet-friendly homes and you'll only see places whose owners welcome animals. Some hosts will also pet-sit yours during the swap. The Swapl Guarantee treats damage caused by guest pets exactly like any other damage.",
   "faq.q5": "Do I have to be a swapl member to swap?",
   "faq.a5":
-    "Both sides need to be members so we can verify identity, attach insurance, and process the agreement. Membership is free forever for the core swap; Plus and Pro add power-user tools (saved-search alerts, priority placement, listing analytics) but never gate the swap itself.",
+    "Both sides need to be members so we can verify identity, apply the Swapl Guarantee, and process the agreement. Membership is free forever for the core swap; Plus and Pro add power-user tools (saved-search alerts, priority placement, listing analytics) but never gate the swap itself.",
   "faq.q6": "How is this different from Airbnb?",
   "faq.a6":
     "No money changes hands and nobody is a paying guest. You trade keys with another homeowner who wants your city while you want theirs. That alignment changes the dynamic — both sides are owners, both sides are guests, both sides have skin in the game.",
@@ -335,7 +335,7 @@ export const en = {
     "Account email and name, listing details you publish, swap proposals and messages with other members, identity-verification metadata (we don't store passport scans — our KYC partner does), and basic device + analytics signals (page, locale, viewport). Only if you switch on “days abroad” do we collect a coarse daily location — it's off by default. That's it.",
   "privacy.s2.title": "Why we collect it",
   "privacy.s2.body":
-    "To run the swap (matching, messaging, insurance), to verify you're a real person before your first acceptance, and to improve the product. We use a small set of privacy-respecting analytics — no advertising trackers, no cross-site profiling.",
+    "To run the swap (matching, messaging, the Swapl Guarantee), to verify you're a real person before your first acceptance, and to improve the product. We use a small set of privacy-respecting analytics — no advertising trackers, no cross-site profiling.",
   "privacy.s3.title": "Who sees what",
   "privacy.s3.body":
     "Your listing is public to other members. Your real name is shared with a swap partner only after both sides accept. Identity verification is shared back to you only — partners see a verified badge, not your documents.",
@@ -347,19 +347,19 @@ export const en = {
     "Questions about how we handle your data go to privacy@swapl.fun. swapl is operated from Amsterdam, Netherlands.",
   "terms.s1.title": "What swapl is",
   "terms.s1.body":
-    "swapl is a marketplace that helps homeowners find each other and exchange stays in their homes. We provide tools (listings, search, messaging, agreements, insurance) but we are not the host. The two members in a swap are the parties to the arrangement; swapl facilitates it.",
+    "swapl is a marketplace that helps homeowners find each other and exchange stays in their homes. We provide tools (listings, search, messaging, agreements, the Swapl Guarantee) but we are not the host. The two members in a swap are the parties to the arrangement; swapl facilitates it.",
   "terms.s2.title": "Account & eligibility",
   "terms.s2.body":
     "You need to be 18+ and the legal occupant (owner or long-term tenant with permission to host) of any home you list. Provide accurate listing details — misrepresenting your home is grounds for removal.",
-  "terms.s3.title": "Swaps & insurance",
+  "terms.s3.title": "Swaps & the Swapl Guarantee",
   "terms.s3.body":
-    "Every accepted swap is automatically covered by our underwriter for property damage, third-party liability, and trip interruption. Coverage attaches when both sides accept. Insurance is not a substitute for reasonable care — you remain responsible for following the partner's house rules.",
+    "Every accepted swap comes with the Swapl Guarantee: if a swap goes wrong, our resolution team helps put it right. Members can add Full cover for accidental property damage up to €5,000 per swap, subject to a €750 excess. The Swapl Guarantee is a commitment from swapl, funded by swapl — it is not insurance, and no licensed insurer is involved. It is not a substitute for reasonable care: you remain responsible for following the partner's house rules.",
   "terms.s4.title": "Payments",
   "terms.s4.body":
     "The core swap is free forever. Optional Plus / Pro plans are billed by Stripe; cancel anytime from /account/billing. We do not take a commission on the swap itself.",
   "terms.s5.title": "Disputes",
   "terms.s5.body":
-    "If something goes wrong during a swap, contact 24/7 support first. If a claim is needed, our insurer handles it. For disputes with swapl itself, Dutch law applies and the Amsterdam courts have jurisdiction.",
+    "If something goes wrong during a swap, contact 24/7 support first. If a claim is needed, our resolution team handles it under the Swapl Guarantee. For disputes with swapl itself, Dutch law applies and the Amsterdam courts have jurisdiction.",
   "terms.s6.title": "Changes",
   "terms.s6.body":
     "We'll email you at least 30 days before any material change to these terms. Continued use after the change date means acceptance; you can always delete your account if you'd rather not continue.",

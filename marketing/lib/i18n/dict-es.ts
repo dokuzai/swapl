@@ -3,7 +3,7 @@ import type { DictKey } from "./dict-en";
 export const es: Partial<Record<DictKey, string>> = {
   "nav.howItWorks": "Cómo funciona",
   "nav.homes": "Casas",
-  "nav.insurance": "Seguro",
+  "nav.insurance": "Garantía",
   "nav.pricing": "Precios",
   "nav.companies": "Empresas",
   "nav.signIn": "Acceder",
@@ -12,21 +12,21 @@ export const es: Partial<Record<DictKey, string>> = {
   "nav.dashboard": "Panel",
   "footer.tagline": "© 2026 swapl · llaves por llaves, sin dinero",
   "footer.howItWorks": "Cómo funciona",
-  "footer.insurance": "Seguro",
+  "footer.insurance": "Garantía",
   "footer.browseHomes": "Explorar casas",
   "footer.account": "Cuenta",
 
   "launchBanner.tag": "Antes del lanzamiento",
-  "launchBanner.body": "Sin comisiones, cada intercambio asegurado — los intercambios arrancan",
+  "launchBanner.body": "Sin comisiones, cada intercambio respaldado por la Garantía Swapl — los intercambios arrancan",
   "launchBanner.month": "en septiembre 2026",
   "launchBanner.cta": "Publica la tuya →",
 
-  "hero.kicker": "Sin comisiones · Cada intercambio asegurado · Lanzamiento septiembre 2026",
+  "hero.kicker": "Sin comisiones · Cada intercambio respaldado · Lanzamiento septiembre 2026",
   "hero.titleA": "Llaves por llaves.",
   "hero.titleB": "Sin dinero, todo",
-  "hero.titleEm": "asegurado",
+  "hero.titleEm": "respaldado",
   "hero.intro":
-    "Cada intercambio aceptado está asegurado de extremo a extremo y nunca cambia dinero de manos: solo llaves por llaves. Estamos reuniendo casas fundadoras antes del lanzamiento de septiembre 2026: publica la tuya con todo el detalle ahora y serás de las primeras en aparecer cuando arranquen los intercambios.",
+    "Cada intercambio aceptado está respaldado por la Garantía Swapl y nunca cambia dinero de manos: solo llaves por llaves. Estamos reuniendo casas fundadoras antes del lanzamiento de septiembre 2026: publica la tuya con todo el detalle ahora y serás de las primeras en aparecer cuando arranquen los intercambios.",
   "hero.ctaList": "Publicar mi casa",
   "hero.ctaHow": "Ver cómo funciona",
 
@@ -43,9 +43,9 @@ export const es: Partial<Record<DictKey, string>> = {
   "how.step3.title": "Propón y acordad",
   "how.step3.desc":
     "Envía una propuesta con tu casa adjunta. Aceptan, rechazan o contraproponen. El precio no entra.",
-  "how.step4.title": "Viaja, asegurado",
+  "how.step4.title": "Viaja, respaldado",
   "how.step4.desc":
-    "Cada intercambio aceptado se cubre automáticamente: daños, responsabilidad civil, interrupción del viaje. Ambos tenéis llaves, códigos y línea 24/7.",
+    "Cada intercambio aceptado incluye la Garantía Swapl: nuestro equipo de resolución te cubre las espaldas, y puedes añadir Cobertura total de hasta 5.000 €. Ambos tenéis llaves, códigos y línea 24/7.",
 
   "live.kicker": "02 · Casas buscando intercambio",
   "live.title": "Casas reales. Intercambios reales. Ahora mismo.",
@@ -73,20 +73,20 @@ export const es: Partial<Record<DictKey, string>> = {
   "filter.sortMatch": "Ordenar: match score ↓",
   "filter.proposeSwap": "Proponer intercambio",
 
-  "insuranceBand.kicker": "04 · Seguro, siempre",
-  "insuranceBand.title": "Cada intercambio cubierto.",
+  "insuranceBand.kicker": "04 · La Garantía Swapl",
+  "insuranceBand.title": "Cada intercambio, respaldado.",
   "insuranceBand.titleEm": "Sin opt-in.",
   "insuranceBand.lede":
-    "Los intercambios no son alquileres, pero siguen siendo dos familias confiándose la casa. Cada intercambio aceptado se asegura automáticamente — sin checkbox, sin upsell.",
-  "insuranceBand.cardA.title": "Daños hasta 150.000 €",
+    "Los intercambios no son alquileres, pero siguen siendo dos familias confiándose la casa. Cada intercambio aceptado incluye la Garantía Swapl — nuestro propio compromiso de ayudar a poner las cosas en su sitio. Es una garantía de swapl, no una póliza de seguro.",
+  "insuranceBand.cardA.title": "Cobertura total de hasta 5.000 €",
   "insuranceBand.cardA.body":
-    "Si algo se rompe, agrieta, inunda o desaparece durante el intercambio, está cubierto — en ambas direcciones, en ambas casas.",
-  "insuranceBand.cardB.title": "Responsabilidad civil",
+    "Añade Cobertura total a cualquier intercambio y te ayudaremos con los daños accidentales de hasta 5.000 €, con una franquicia de 750 € — en ambas direcciones, en ambas casas.",
+  "insuranceBand.cardB.title": "Un equipo de tu lado",
   "insuranceBand.cardB.body":
-    "Un invitado resbala en la cocina. Una tubería revienta al lado. La póliza lo gestiona — el intercambio no acaba en juicio.",
-  "insuranceBand.cardC.title": "Interrupción del viaje",
+    "Incluido gratis en cada intercambio: si un invitado resbala, revienta una tubería o un intercambio se tuerce, nuestro equipo de resolución entra rápido para que no acabe en un pulso.",
+  "insuranceBand.cardC.title": "Los planes cambian",
   "insuranceBand.cardC.body":
-    "¿Vuelo cancelado, pareja que se echa atrás, pandemia? Te reembolsamos — o te encontramos otra casa equivalente en 48 h.",
+    "¿Vuelo cancelado, pareja que se echa atrás? Te ayudamos a encontrar otra casa equivalente — o a recuperar las Llaves que gastaste.",
 
   "cta.title": "Tu casa vale mil viajes.",
   "cta.body":
@@ -97,7 +97,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "cta.error": "Algo salió mal. Inténtalo en un momento.",
   "cta.placeholder": "tu@email.com",
   "cta.stat.countries": "◦ 92 países",
-  "cta.stat.insurance": "◦ Seguro incluido",
+  "cta.stat.insurance": "◦ Garantía Swapl incluida",
   "cta.stat.noFees": "◦ Sin tarifas para hosts",
   "cta.stat.noCommission": "◦ Sin comisión",
 
@@ -167,7 +167,7 @@ export const es: Partial<Record<DictKey, string>> = {
     "No nos llevamos un porcentaje del intercambio. Solo pagas si quieres herramientas avanzadas — búsquedas guardadas con avisos, posicionamiento prioritario, cuentas multi-casa, analítica. El intercambio en sí es igual para todos.",
   "pricing.tags.noFees": "◦ Sin tarifas en el intercambio",
   "pricing.tags.noCommission": "◦ Sin comisión",
-  "pricing.tags.insurance": "◦ Seguro incluido en todos los planes",
+  "pricing.tags.insurance": "◦ Garantía Swapl en todos los planes",
   "pricing.toggle.monthly": "Mensual",
   "pricing.toggle.yearly": "Anual · ahorras 30%",
   "pricing.popular": "Más elegido",
@@ -257,7 +257,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "swap.guestCode": "Código de tu invitado (lo usa en tu casa)",
   "swap.yourCode": "Tu código (lo usas en la suya)",
   "swap.policyLine":
-    "Póliza {policy} · cobertura {coverage} € · línea 24/7: +44 800 000 swap",
+    "Garantía {policy} · cobertura {coverage} € · línea 24/7: +44 800 000 swap",
 
   "ui.cancel": "Cancelar",
   "ui.save": "Guardar",

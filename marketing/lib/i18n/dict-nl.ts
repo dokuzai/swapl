@@ -6,7 +6,7 @@ export const nl: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "Hoe het werkt",
   "nav.homes": "Woningen",
-  "nav.insurance": "Verzekering",
+  "nav.insurance": "Garantie",
   "nav.pricing": "Prijzen",
   "nav.companies": "Bedrijven",
   "nav.signIn": "Inloggen",
@@ -15,23 +15,23 @@ export const nl: Partial<Record<DictKey, string>> = {
   "nav.dashboard": "Dashboard",
   "footer.tagline": "© 2026 swapl · sleutels voor sleutels, geen geld",
   "footer.howItWorks": "Hoe het werkt",
-  "footer.insurance": "Verzekering",
+  "footer.insurance": "Garantie",
   "footer.browseHomes": "Bekijk woningen",
   "footer.account": "Account",
 
   // ---- Launch banner ----
   "launchBanner.tag": "Pre-launch",
-  "launchBanner.body": "Geen kosten, elke swap verzekerd — ruilen gaat live in",
+  "launchBanner.body": "Geen kosten, elke swap gedekt door de Swapl-garantie — ruilen gaat live in",
   "launchBanner.month": "September 2026",
   "launchBanner.cta": "Plaats je woning →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "Geen kosten · Elke swap verzekerd · Live in september 2026",
+  "hero.kicker": "Geen kosten · Elke swap gedekt · Live in september 2026",
   "hero.titleA": "Sleutels voor sleutels.",
   "hero.titleB": "Geen geld, volledig",
-  "hero.titleEm": "verzekerd",
+  "hero.titleEm": "gedekt",
   "hero.intro":
-    "Elke geaccepteerde swap is van begin tot eind verzekerd en er wisselt nooit geld van eigenaar — alleen sleutels voor sleutels. We verzamelen oprichter-huizen vóór de lancering in september 2026: plaats je woning nu met meedogenloze precisie en je bent een van de eerste huizen die verschijnen zodra ruilen live gaat.",
+    "Elke geaccepteerde swap wordt gedekt door de Swapl-garantie en er wisselt nooit geld van eigenaar — alleen sleutels voor sleutels. We verzamelen oprichter-huizen vóór de lancering in september 2026: plaats je woning nu met meedogenloze precisie en je bent een van de eerste huizen die verschijnen zodra ruilen live gaat.",
   "hero.ctaList": "Plaats mijn woning",
   "hero.ctaHow": "Bekijk hoe het werkt",
 
@@ -48,9 +48,9 @@ export const nl: Partial<Record<DictKey, string>> = {
   "how.step3.title": "Voorstel & akkoord",
   "how.step3.desc":
     "Stuur een ruilverzoek met je eigen woning erbij. Ze accepteren, weigeren of doen een tegenvoorstel. Prijs telt niet — het ene huis voor het andere.",
-  "how.step4.title": "Reizen, verzekerd",
+  "how.step4.title": "Reizen, gedekt",
   "how.step4.desc":
-    "Elke geaccepteerde ruil is automatisch gedekt: eigendom, aansprakelijkheid en reisonderbreking. Jullie krijgen allebei sleutels, codes en een 24/7-lijn.",
+    "Elke geaccepteerde ruil komt met de Swapl-garantie — ons resolutieteam staat voor je klaar, en je kunt Volledige dekking tot €5.000 toevoegen. Jullie krijgen allebei sleutels, codes en een 24/7-lijn.",
 
   "live.kicker": "02 · Woningen die willen ruilen",
   "live.title": "Echte huizen. Echte ruilen. Nu.",
@@ -78,20 +78,20 @@ export const nl: Partial<Record<DictKey, string>> = {
   "filter.sortMatch": "Sorteer: matchscore ↓",
   "filter.proposeSwap": "Ruil voorstellen",
 
-  "insuranceBand.kicker": "04 · Verzekering, altijd aan",
-  "insuranceBand.title": "Elke ruil gedekt.",
+  "insuranceBand.kicker": "04 · De Swapl-garantie",
+  "insuranceBand.title": "Elke ruil, gedekt.",
   "insuranceBand.titleEm": "Geen opt-in.",
   "insuranceBand.lede":
-    "Ruilen zijn geen verhuur, maar het zijn nog steeds twee gezinnen die elkaars huis vertrouwen. We verzekeren elke geaccepteerde uitwisseling automatisch — geen vinkje, geen upsell.",
-  "insuranceBand.cardA.title": "Schade tot €150k",
+    "Ruilen zijn geen verhuur, maar het zijn nog steeds twee gezinnen die elkaar hun huis toevertrouwen. Elke geaccepteerde uitwisseling komt met de Swapl-garantie — onze eigen toezegging om te helpen het recht te zetten. Het is een garantie van swapl, geen verzekeringspolis.",
+  "insuranceBand.cardA.title": "Volledige dekking tot €5.000",
   "insuranceBand.cardA.body":
-    "Als er iets breekt, scheurt, overstroomt of verdwijnt tijdens een ruil — beide kanten, beide huizen gedekt.",
-  "insuranceBand.cardB.title": "Aansprakelijkheid jegens derden",
+    "Voeg Volledige dekking toe aan elke ruil en we helpen bij accidentele schade tot €5.000, met een eigen risico van €750 — beide kanten, beide huizen.",
+  "insuranceBand.cardB.title": "Een team aan jouw kant",
   "insuranceBand.cardB.body":
-    "Een gast glijdt uit in je keuken. Een leiding springt bij de buren. Onze polis regelt het zodat de ruil geen rechtszaak wordt.",
-  "insuranceBand.cardC.title": "Reisonderbreking",
+    "Gratis bij elke ruil inbegrepen: als een gast uitglijdt, een leiding springt of een ruil misloopt, schiet ons resolutieteam snel te hulp zodat het geen patstelling wordt.",
+  "insuranceBand.cardC.title": "Plannen veranderen",
   "insuranceBand.cardC.body":
-    "Vlucht geannuleerd, partner haakt af, pandemie? Je krijgt het terug — of binnen 48 uur een gelijkwaardige woning.",
+    "Vlucht geannuleerd, partner haakt af? We helpen je opnieuw te matchen met een even passende woning — of de Keys terug te krijgen die je hebt uitgegeven.",
 
   "cta.title": "Je huis is duizend reizen waard.",
   "cta.body":
@@ -102,7 +102,7 @@ export const nl: Partial<Record<DictKey, string>> = {
   "cta.error": "Er ging iets mis. Probeer het zo nog eens.",
   "cta.placeholder": "jouw@email.com",
   "cta.stat.countries": "◦ 92 landen",
-  "cta.stat.insurance": "◦ Verzekering inbegrepen",
+  "cta.stat.insurance": "◦ Swapl-garantie inbegrepen",
   "cta.stat.noFees": "◦ Geen hostkosten",
   "cta.stat.noCommission": "◦ Geen platformcommissie",
 
@@ -176,7 +176,7 @@ export const nl: Partial<Record<DictKey, string>> = {
     "We pakken niets van je ruil. Betaal alleen als je power-tools wilt — opgeslagen zoekopdrachten met alerts, prioriteitsplaatsing, multi-woning-accounts, listing-analytics. De kern blijft voor iedereen hetzelfde.",
   "pricing.tags.noFees": "◦ Geen ruilkosten",
   "pricing.tags.noCommission": "◦ Geen platformcommissie",
-  "pricing.tags.insurance": "◦ Verzekering bij elk plan inbegrepen",
+  "pricing.tags.insurance": "◦ Swapl-garantie bij elk plan",
   "pricing.toggle.monthly": "Maandelijks",
   "pricing.toggle.yearly": "Jaarlijks · 30% korting",
   "pricing.popular": "Populairst",
@@ -270,7 +270,7 @@ export const nl: Partial<Record<DictKey, string>> = {
   "swap.guestCode": "Code van je gast (te gebruiken bij jou thuis)",
   "swap.yourCode": "Jouw code (te gebruiken bij hen thuis)",
   "swap.policyLine":
-    "Polis {policy} · €{coverage} dekking · 24/7-lijn: +44 800 000 swap",
+    "Garantie {policy} · €{coverage} dekking · 24/7-lijn: +44 800 000 swap",
 
   // ---- Common UI ----
   "ui.cancel": "Annuleren",

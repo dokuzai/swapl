@@ -6,7 +6,7 @@ export const tr: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "Nasıl çalışır",
   "nav.homes": "Evler",
-  "nav.insurance": "Sigorta",
+  "nav.insurance": "Güvence",
   "nav.pricing": "Fiyatlandırma",
   "nav.companies": "Şirketler",
   "nav.signIn": "Giriş yap",
@@ -15,23 +15,23 @@ export const tr: Partial<Record<DictKey, string>> = {
   "nav.dashboard": "Panel",
   "footer.tagline": "© 2026 swapl · anahtar için anahtar, para yok",
   "footer.howItWorks": "Nasıl çalışır",
-  "footer.insurance": "Sigorta",
+  "footer.insurance": "Güvence",
   "footer.browseHomes": "Evlere göz at",
   "footer.account": "Hesap",
 
   // ---- Launch banner ----
   "launchBanner.tag": "Lansman öncesi",
-  "launchBanner.body": "Komisyon yok, her takas sigortalı — takaslar başlıyor",
+  "launchBanner.body": "Ücret yok, her takas Swapl Güvencesi'yle korumada — takaslar başlıyor",
   "launchBanner.month": "Eylül 2026",
   "launchBanner.cta": "Evini ekle →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "Komisyon yok · Her takas sigortalı · Eylül 2026'da başlıyor",
+  "hero.kicker": "Ücret yok · Her takas korumada · Eylül 2026'da başlıyor",
   "hero.titleA": "Anahtar için anahtar.",
   "hero.titleB": "Para yok, tamamen",
-  "hero.titleEm": "sigortalı",
+  "hero.titleEm": "korumada",
   "hero.intro":
-    "Kabul edilen her takas baştan sona sigortalıdır ve hiç para el değiştirmez — yalnızca anahtar için anahtar. Eylül 2026 lansmanı öncesinde kurucu ev sahiplerini topluyoruz: evini şimdi titiz bir doğrulukla ekle ve takaslar başladığında ilk gösterilen evler arasında ol.",
+    "Kabul edilen her takas Swapl Güvencesi kapsamındadır ve hiç para el değiştirmez — yalnızca anahtar için anahtar. Eylül 2026 lansmanı öncesinde kurucu ev sahiplerini topluyoruz: evini şimdi titiz bir doğrulukla ekle ve takaslar başladığında ilk gösterilen evler arasında ol.",
   "hero.ctaList": "Evimi ekle",
   "hero.ctaHow": "Nasıl çalıştığını gör",
 
@@ -48,9 +48,9 @@ export const tr: Partial<Record<DictKey, string>> = {
   "how.step3.title": "Teklif ver ve anlaş",
   "how.step3.desc":
     "Kendi evini ekleyerek takas teklifi gönder. Kabul, reddet ya da karşı teklif. Fiyat işin parçası değil — bir ev, bir eve.",
-  "how.step4.title": "Sigortalı seyahat",
+  "how.step4.title": "Korumalı seyahat",
   "how.step4.desc":
-    "Kabul edilen her takas otomatik olarak güvence altında: mülk, sorumluluk ve seyahat aksaması. İkiniz de anahtar, kod ve 7/24 hat alırsınız.",
+    "Kabul edilen her takas Swapl Güvencesi'yle gelir — çözüm ekibimiz arkanda, ayrıca €5.000'a kadar Tam koruma ekleyebilirsin. İkiniz de anahtar, kod ve 7/24 hat alırsınız.",
 
   "live.kicker": "02 · Takas arayan evler",
   "live.title": "Gerçek evler. Gerçek takaslar. Şu anda.",
@@ -78,20 +78,20 @@ export const tr: Partial<Record<DictKey, string>> = {
   "filter.sortMatch": "Sırala: eşleşme puanı ↓",
   "filter.proposeSwap": "Takas öner",
 
-  "insuranceBand.kicker": "04 · Sigorta, her zaman açık",
-  "insuranceBand.title": "Her takas güvende.",
+  "insuranceBand.kicker": "04 · Swapl Güvencesi",
+  "insuranceBand.title": "Her takas korumada.",
   "insuranceBand.titleEm": "Onay gerekmez.",
   "insuranceBand.lede":
-    "Takaslar kira değildir, ama yine de evlerini birbirine emanet eden iki ailedir. Kabul edilen her değişimi otomatik olarak sigortalıyoruz — onay kutusu yok, ek satış yok.",
-  "insuranceBand.cardA.title": "150 bin €'ya kadar mülk hasarı",
+    "Takaslar kira değildir, ama yine de evlerini birbirine emanet eden iki ailedir. Kabul edilen her değişim Swapl Güvencesi'yle gelir — işleri yoluna koymaya yardım etme sözümüzdür. Bu, swapl'ın bir güvencesidir, bir sigorta poliçesi değildir.",
+  "insuranceBand.cardA.title": "€5.000'a kadar Tam koruma",
   "insuranceBand.cardA.body":
-    "Bir takas sırasında bir şey kırılır, çatlar, su basar veya kaybolursa — her iki yön, her iki ev için kapsam altındadır.",
-  "insuranceBand.cardB.title": "Üçüncü şahıs sorumluluğu",
+    "Herhangi bir takasa Tam koruma ekle; €750 muafiyetle, €5.000'a kadar kazara hasarda yardımcı olalım — her iki yön, her iki ev.",
+  "insuranceBand.cardB.title": "Yanında bir ekip",
   "insuranceBand.cardB.body":
-    "Misafir mutfağında kayar. Yan dairede boru patlar. Poliçemiz halleder, böylece takas davaya dönüşmez.",
-  "insuranceBand.cardC.title": "Seyahat aksaması",
+    "Her takasa ücretsiz dahil: bir misafir kayarsa, bir boru patlarsa ya da takas ters giderse, çözüm ekibimiz hızla devreye girer; iş bir çıkmaza dönüşmez.",
+  "insuranceBand.cardC.title": "Planlar değişir",
   "insuranceBand.cardC.body":
-    "Uçuş iptal, partner geri çekildi, salgın? Ya geri ödenirsin ya da 48 saat içinde eşdeğer bir evle yeniden eşleştirilirsin.",
+    "Uçuş iptal, partner geri mi çekildi? Eşit uygunlukta bir evle yeniden eşleşmene yardım ederiz — ya da harcadığın Anahtarları geri alırsın.",
 
   "cta.title": "Evin bin seyahat değerinde.",
   "cta.body":
@@ -102,7 +102,7 @@ export const tr: Partial<Record<DictKey, string>> = {
   "cta.error": "Bir şeyler ters gitti. Birazdan tekrar dene.",
   "cta.placeholder": "sen@email.com",
   "cta.stat.countries": "◦ 92 ülke",
-  "cta.stat.insurance": "◦ Sigorta dahil",
+  "cta.stat.insurance": "◦ Swapl Güvencesi dahil",
   "cta.stat.noFees": "◦ Ev sahibi ücreti yok",
   "cta.stat.noCommission": "◦ Platform komisyonu yok",
 
@@ -176,7 +176,7 @@ export const tr: Partial<Record<DictKey, string>> = {
     "Takasından komisyon almıyoruz. Yalnızca güçlü kullanıcı araçları istersen öde — uyarılı kayıtlı aramalar, öncelikli yerleştirme, çoklu ev hesapları, ilan analizleri. Temel takas herkes için aynı kalacak.",
   "pricing.tags.noFees": "◦ Takas ücreti yok",
   "pricing.tags.noCommission": "◦ Platform komisyonu yok",
-  "pricing.tags.insurance": "◦ Her planda sigorta dahil",
+  "pricing.tags.insurance": "◦ Her planda Swapl Güvencesi",
   "pricing.toggle.monthly": "Aylık",
   "pricing.toggle.yearly": "Yıllık · %30 tasarruf",
   "pricing.popular": "En popüler",
@@ -270,7 +270,7 @@ export const tr: Partial<Record<DictKey, string>> = {
   "swap.guestCode": "Misafirinin kodu (senin evinde kullanması için)",
   "swap.yourCode": "Senin kodun (onların evinde kullanman için)",
   "swap.policyLine":
-    "Poliçe {policy} · €{coverage} kapsam · 7/24 hat: +44 800 000 swap",
+    "Güvence {policy} · €{coverage} koruma · 7/24 hat: +44 800 000 swap",
 
   // ---- Common UI ----
   "ui.cancel": "İptal",

@@ -4,7 +4,7 @@ export const ja: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "仕組み",
   "nav.homes": "ホーム",
-  "nav.insurance": "保険",
+  "nav.insurance": "Swapl保証",
   "nav.pricing": "料金",
   "nav.companies": "法人向け",
   "nav.blog": "ブログ",
@@ -30,24 +30,24 @@ export const ja: Partial<Record<DictKey, string>> = {
 
   "footer.tagline": "© 2026 swapl · 鍵と鍵の交換、お金は不要",
   "footer.howItWorks": "仕組み",
-  "footer.insurance": "保険",
+  "footer.insurance": "Swapl保証",
   "footer.browseHomes": "ホームを見る",
   "footer.blog": "ブログ",
   "footer.account": "アカウント",
 
   // ---- Launch banner ----
   "launchBanner.tag": "ローンチ前",
-  "launchBanner.body": "手数料なし、すべての交換に保険付き — 交換開始は",
+  "launchBanner.body": "手数料なし、すべての交換にSwapl保証 — 交換開始は",
   "launchBanner.month": "2026年9月",
   "launchBanner.cta": "自宅を掲載する →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "手数料なし · すべての交換に保険付き · 2026年9月ローンチ",
+  "hero.kicker": "手数料なし · すべての交換を保証 · 2026年9月ローンチ",
   "hero.titleA": "鍵と鍵を交換しよう。",
-  "hero.titleB": "お金なし、すべてに",
-  "hero.titleEm": "保険",
+  "hero.titleB": "お金なし、すべてを",
+  "hero.titleEm": "保証",
   "hero.intro":
-    "成立したすべての交換には最初から最後まで保険が付き、お金のやり取りは一切ありません — ただ鍵と鍵を交換するだけ。2026年9月のローンチに先立ち、創設ホストを募集しています。今のうちに細部まで正確に自宅を掲載すれば、交換開始時に最初に表示されるホームの一つになります。",
+    "成立したすべての交換はSwapl保証に支えられ、お金のやり取りは一切ありません — ただ鍵と鍵を交換するだけ。2026年9月のローンチに先立ち、創設ホストを募集しています。今のうちに細部まで正確に自宅を掲載すれば、交換開始時に最初に表示されるホームの一つになります。",
   "hero.ctaList": "自宅を掲載する",
   "hero.ctaHow": "仕組みを見る",
 
@@ -64,9 +64,9 @@ export const ja: Partial<Record<DictKey, string>> = {
   "how.step3.title": "提案して合意",
   "how.step3.desc":
     "自分のホームを添えて交換リクエストを送信。相手は承諾、辞退、または逆提案ができます。価格は関係ありません — ホーム対ホームです。",
-  "how.step4.title": "保険付きで旅へ",
+  "how.step4.title": "保証付きで旅へ",
   "how.step4.desc":
-    "成立したすべての交換は自動的に補償されます。物的損害、賠償責任、旅行中断。お互いに鍵、暗証番号、そして24時間対応の窓口を受け取ります。",
+    "成立したすべての交換にはSwapl保証が付きます — 私たちの解決チームがあなたを支え、最大5,000ユーロまでのフルカバーを追加できます。お互いに鍵、暗証番号、そして24時間対応の窓口を受け取ります。",
 
   "live.kicker": "02 · 交換を希望するホーム",
   "live.title": "本物のホーム。本物の交換。今すぐ。",
@@ -112,20 +112,20 @@ export const ja: Partial<Record<DictKey, string>> = {
   "wizard.space.roomsOffered": "提供する部屋数",
   "wizard.space.privateRoomKeysHint": "個室は建物まるごとよりも1泊あたりのKeysが少なくなります。",
 
-  "insuranceBand.kicker": "04 · 常に有効な保険",
-  "insuranceBand.title": "すべての交換を補償。",
+  "insuranceBand.kicker": "04 · Swapl保証",
+  "insuranceBand.title": "すべての交換を、保証。",
   "insuranceBand.titleEm": "手続き不要。",
   "insuranceBand.lede":
-    "交換は賃貸ではありませんが、それでも2つの家族がお互いの家を信頼して託し合うものです。私たちは成立したすべての交換を自動的に引き受けます — チェックボックスもアップセルもありません。",
-  "insuranceBand.cardA.title": "物的損害を最大15万ユーロまで補償",
+    "交換は賃貸ではありませんが、それでも2つの家族がお互いの家を信頼して託し合うものです。成立したすべての交換にはSwapl保証が付きます — 物事を正すために私たち自身がお約束する取り組みです。これはswaplからの保証であり、保険ではありません。",
+  "insuranceBand.cardA.title": "最大5,000ユーロまでのフルカバー",
   "insuranceBand.cardA.body":
-    "交換中に何かが壊れたり、ひびが入ったり、浸水したり、なくなったりしても補償されます — 双方向、両方のホームで。",
-  "insuranceBand.cardB.title": "第三者賠償責任",
+    "どの交換にもフルカバーを追加すれば、偶発的な損害を最大5,000ユーロまでサポートします(免責額750ユーロ) — 双方向、両方のホームで。",
+  "insuranceBand.cardB.title": "あなたの味方になるチーム",
   "insuranceBand.cardB.body":
-    "ゲストがキッチンで滑った。隣の家でパイプが破裂した。私たちの保険が対応するので、交換が訴訟に発展することはありません。",
-  "insuranceBand.cardC.title": "旅行中断",
+    "すべての交換に無料で含まれます。ゲストが滑った、パイプが破裂した、交換がうまくいかなくなった — そんなとき、私たちの解決チームが素早く対応し、対立に発展させません。",
+  "insuranceBand.cardC.title": "予定は変わるもの",
   "insuranceBand.cardC.body":
-    "フライトのキャンセル、相手の辞退、パンデミック? 返金されるか、48時間以内に同等の条件のホームと再マッチングされます。",
+    "フライトがキャンセル、パートナーが辞退? 条件の合うホームと再マッチングするお手伝いをするか、使ったKeysを取り戻せます。",
 
   "cta.title": "あなたの自宅には千の旅の価値があります。",
   "cta.body":
@@ -136,7 +136,7 @@ export const ja: Partial<Record<DictKey, string>> = {
   "cta.error": "問題が発生しました。少し時間をおいて再度お試しください。",
   "cta.placeholder": "your@email.com",
   "cta.stat.countries": "◦ 92か国",
-  "cta.stat.insurance": "◦ 保険込み",
+  "cta.stat.insurance": "◦ Swapl保証込み",
   "cta.stat.noFees": "◦ ホスト手数料なし",
   "cta.stat.noCommission": "◦ プラットフォーム手数料なし",
 
@@ -248,7 +248,7 @@ export const ja: Partial<Record<DictKey, string>> = {
     "交換から手数料はいただきません。アラート付き保存検索、優先表示、複数ホームアカウント、掲載分析などのパワーユーザー向けツールが必要な場合のみお支払いください。基本の交換は誰にとっても同じで、これからも変わりません。",
   "pricing.tags.noFees": "◦ 交換手数料なし",
   "pricing.tags.noCommission": "◦ プラットフォーム手数料なし",
-  "pricing.tags.insurance": "◦ すべてのプランに保険込み",
+  "pricing.tags.insurance": "◦ すべてのプランにSwapl保証",
   "pricing.toggle.monthly": "月払い",
   "pricing.toggle.yearly": "年払い · 30%お得",
   "pricing.popular": "一番人気",
@@ -601,8 +601,8 @@ export const ja: Partial<Record<DictKey, string>> = {
   "listingDetail.to": "まで",
   "listingDetail.staysOf": "{min}〜{max}日の滞在",
   "listingDetail.ownListing": "これはあなた自身の掲載です。",
-  "listingDetail.coverAmount": "15万ユーロ補償",
-  "listingDetail.tripRefund": "旅行返金",
+  "listingDetail.coverAmount": "Swapl保証",
+  "listingDetail.tripRefund": "再マッチング支援",
   "listingDetail.support247": "24時間対応窓口",
   "listingDetail.hostFallback": "swaplホスト",
   "listingDetail.tradeYourHome": "あなたのホームと相手のホームを交換",
@@ -627,8 +627,8 @@ export const ja: Partial<Record<DictKey, string>> = {
   "verify.used.body": "この認証リンクはすでに使用されています。メールアドレスはすでに認証済みです。",
   "verify.invalid.heading": "このリンクは正しくないようです。",
   "verify.invalid.body": "改ざんされたか、もともと存在しないリンクです。/account から新しいリンクをリクエストしてください。",
-  "account.coverage.title": "あなたの補償",
-  "account.coverage.body": "成立したすべての交換は自動的に保険が付きます。有効中および過去の保険はここにあります。",
+  "account.coverage.title": "あなたのSwapl保証",
+  "account.coverage.body": "成立したすべての交換には自動的にSwapl保証が付きます。有効中および過去の保証はここにあります。",
 
   "notFound.title": "ここにはまだ交換がありません。",
   "notFound.body": "その掲載は削除されたか、もともと存在しなかった可能性があります。現在利用可能なものを見てみましょう。",
@@ -687,7 +687,7 @@ export const ja: Partial<Record<DictKey, string>> = {
   "swap.guestCode": "ゲストのコード(相手があなたのホームで使用)",
   "swap.yourCode": "あなたのコード(あなたが相手のホームで使用)",
   "swap.policyLine":
-    "保険 {policy} · €{coverage} 補償 · 24時間対応窓口: +44 800 000 swap",
+    "保証 {policy} · €{coverage} カバー · 24時間対応窓口: +44 800 000 swap",
 
   // ---- Common UI ----
   "ui.cancel": "キャンセル",
@@ -730,7 +730,7 @@ export const ja: Partial<Record<DictKey, string>> = {
   "terms.updated": "最終更新 · 2026年5月24日",
   "faq.q1": "交換相手が自宅を傷つけたらどうなりますか?",
   "faq.a1":
-    "成立したすべての交換には、最大15万ユーロまでの物的損害補償が自動的に付きます — 双方向、両方のホームで。加入手続きやフォーム記入、保険料の支払いは不要です。滞在中に何かが壊れた場合は、ダッシュボードから請求すれば、保険が修理または交換を対応します。",
+    "成立したすべての交換にはSwapl保証が付きます。何か問題が起きた場合は、ダッシュボードから申請すれば、私たちの解決チームが無償で物事を正すお手伝いをします。偶発的な物的損害については、フルカバーを追加できます — 1交換あたり最大5,000ユーロ、免責額750ユーロ、双方向で。Swapl保証はswaplからのお約束であり、保険ではありません。",
   "faq.q2": "鍵の受け渡しはどうしますか?",
   "faq.a2":
     "あなたと交換相手で都合のよい方法を選んでください。直接会う、隣人に鍵を預ける、キーボックスを使う、またはswaplを通じてスマートロックのコードを共有する。各交換ごとにワンタイムのゲストコードを生成するので、どちらも永続的な認証情報を共有することはありません。",
@@ -739,10 +739,10 @@ export const ja: Partial<Record<DictKey, string>> = {
     "はい。非同時交換(「ホスピタリティポイント」と呼ばれることもあります)はローンチ後に導入予定です。今は相手のホームでの滞在を貯めておき、後で相手 — または第三のメンバー — に自分のホームの滞在を提供します。ローンチ時は、引き受けが最も安全な同週交換から始めます。",
   "faq.q4": "ペットはどうですか?",
   "faq.a4":
-    "ペット可のホームで絞り込めば、動物を歓迎する家主の場所だけが表示されます。交換中にあなたのペットを預かってくれるホストもいます。保険は、ゲストのペットによる損害も他の損害とまったく同じように補償します。",
+    "ペット可のホームで絞り込めば、動物を歓迎する家主の場所だけが表示されます。交換中にあなたのペットを預かってくれるホストもいます。Swapl保証は、ゲストのペットによる損害も他の損害とまったく同じように扱います。",
   "faq.q5": "交換するにはswaplメンバーである必要がありますか?",
   "faq.a5":
-    "本人確認、保険の付与、合意の処理を行うため、双方がメンバーである必要があります。基本の交換についてはメンバーシップはずっと無料です。PlusとProはパワーユーザー向けツール(保存検索アラート、優先表示、掲載分析)を追加しますが、交換そのものを制限することはありません。",
+    "本人確認、Swapl保証の適用、合意の処理を行うため、双方がメンバーである必要があります。基本の交換についてはメンバーシップはずっと無料です。PlusとProはパワーユーザー向けツール(保存検索アラート、優先表示、掲載分析)を追加しますが、交換そのものを制限することはありません。",
   "faq.q6": "Airbnbとは何が違いますか?",
   "faq.a6":
     "お金のやり取りはなく、誰も有料のゲストではありません。あなたの都市を求める別の家主と鍵を交換し、あなたは相手の都市を求めます。その一致が力関係を変えます — 双方が家主であり、双方がゲストであり、双方が当事者なのです。",
@@ -751,7 +751,7 @@ export const ja: Partial<Record<DictKey, string>> = {
     "アカウントのメールアドレスと名前、あなたが公開する掲載の詳細、他のメンバーとの交換提案とメッセージ、本人確認のメタデータ(パスポートのスキャンは保存しません — KYCパートナーが保存します)、そして基本的なデバイスと分析の情報(ページ、ロケール、ビューポート)。それだけです。",
   "privacy.s2.title": "収集する理由",
   "privacy.s2.body":
-    "交換を運営するため(マッチング、メッセージング、保険)、最初の承諾前にあなたが実在する人物であることを確認するため、そしてプロダクトを改善するため。広告トラッカーやサイト間プロファイリングのない、プライバシーを尊重する少数の分析ツールを使用しています。",
+    "交換を運営するため(マッチング、メッセージング、Swapl保証)、最初の承諾前にあなたが実在する人物であることを確認するため、そしてプロダクトを改善するため。広告トラッカーやサイト間プロファイリングのない、プライバシーを尊重する少数の分析ツールを使用しています。",
   "privacy.s3.title": "誰が何を見るか",
   "privacy.s3.body":
     "あなたの掲載は他のメンバーに公開されます。本名は双方が承諾した後にのみ交換相手と共有されます。本人確認はあなた自身にのみ返されます — 相手には認証バッジが見え、書類は見えません。",
@@ -763,19 +763,19 @@ export const ja: Partial<Record<DictKey, string>> = {
     "データの取り扱いに関するご質問は privacy@swapl.fun までお寄せください。swaplはオランダのアムステルダムから運営されています。",
   "terms.s1.title": "swaplとは",
   "terms.s1.body":
-    "swaplは、家主同士が出会い、互いのホームでの滞在を交換するのを助けるマーケットプレイスです。私たちはツール(掲載、検索、メッセージング、合意、保険)を提供しますが、ホストではありません。交換における2人のメンバーが取り決めの当事者であり、swaplはそれを仲介します。",
+    "swaplは、家主同士が出会い、互いのホームでの滞在を交換するのを助けるマーケットプレイスです。私たちはツール(掲載、検索、メッセージング、合意、Swapl保証)を提供しますが、ホストではありません。交換における2人のメンバーが取り決めの当事者であり、swaplはそれを仲介します。",
   "terms.s2.title": "アカウントと参加資格",
   "terms.s2.body":
     "18歳以上で、掲載するホームの合法的な居住者(所有者またはホスト許可のある長期賃借人)である必要があります。掲載の詳細は正確に記入してください — 自宅を偽って表示することは削除の根拠となります。",
-  "terms.s3.title": "交換と保険",
+  "terms.s3.title": "交換とSwapl保証",
   "terms.s3.body":
-    "成立したすべての交換は、物的損害、第三者賠償責任、旅行中断について私たちの引受会社により自動的に補償されます。補償は双方が承諾した時点で付与されます。保険は適切な注意の代わりにはなりません — 相手のハウスルールに従う責任はあなたにあります。",
+    "成立したすべての交換にはSwapl保証が付きます。交換に問題が生じた場合は、私たちの解決チームが物事を正すお手伝いをします。メンバーは偶発的な物的損害に対してフルカバーを追加でき、1交換あたり最大5,000ユーロ、免責額750ユーロです。Swapl保証はswaplからのお約束であり、swaplが資金を負担します — 保険ではなく、認可を受けた保険会社は一切関与しません。これは適切な注意の代わりにはなりません — 相手のハウスルールに従う責任はあなたにあります。",
   "terms.s4.title": "支払い",
   "terms.s4.body":
     "基本の交換はずっと無料です。任意のPlus / ProプランはStripeによって請求されます。/account/billing からいつでもキャンセルできます。交換そのものから手数料はいただきません。",
   "terms.s5.title": "紛争",
   "terms.s5.body":
-    "交換中に問題が発生した場合は、まず24時間対応のサポートにご連絡ください。請求が必要な場合は、私たちの保険会社が対応します。swapl自体との紛争については、オランダ法が適用され、アムステルダムの裁判所が管轄権を持ちます。",
+    "交換中に問題が発生した場合は、まず24時間対応のサポートにご連絡ください。申請が必要な場合は、私たちの解決チームがSwapl保証のもとで対応します。swapl自体との紛争については、オランダ法が適用され、アムステルダムの裁判所が管轄権を持ちます。",
   "terms.s6.title": "変更",
   "terms.s6.body":
     "本規約の重要な変更については、少なくとも30日前にメールでお知らせします。変更日以降も継続して利用された場合は承諾とみなされます。続けたくない場合はいつでもアカウントを削除できます。",
@@ -806,7 +806,7 @@ export const ja: Partial<Record<DictKey, string>> = {
   "trip.countdown.today": "交換は今日始まります",
   "trip.countdown.started": "交換が進行中です",
   "trip.dates": "{from} – {to}",
-  "trip.insured": "保険付き",
+  "trip.insured": "保証付き",
   "trip.checklist.title": "出発前に",
   "trip.checklist.guide": "自宅のガイドを記入",
   "trip.checklist.details": "ホストの詳細を読む",
@@ -850,8 +850,8 @@ export const ja: Partial<Record<DictKey, string>> = {
 
   // ---- Proof of cover on-chain ----
   "cover.proof.badge": "TONで検証済み",
-  "cover.proof.blurb": "あなたの補償が本物であることの改ざん不可能な記録 — 暗号通貨ではなく、支払いも、あなたがすることも何もありません。",
-  "cover.proof.view": "証明を見る",
+  "cover.proof.blurb": "あなたのSwapl保証の改ざん不可能な記録 — 暗号通貨ではなく、支払いも、あなたがすることも何もありません。",
+  "cover.proof.view": "記録を見る",
 
   // ---- Report a problem / dispute flow ----
   "dispute.report.cta": "今すぐヘルプを受ける",
@@ -1126,7 +1126,7 @@ export const ja: Partial<Record<DictKey, string>> = {
   "trips.keys.decline": "辞退",
   "trips.keys.cancel": "リクエストをキャンセル",
   "trips.keys.working": "処理中…",
-  "trips.keys.insured": "保険付き",
+  "trips.keys.insured": "保証付き",
   "trips.keys.hostWillConfirm": "ホストの確認を待っています。",
   "trips.keys.actionError": "問題が発生しました — 再度お試しください。",
   "trips.swaps.heading": "ホーム交換",
@@ -1415,7 +1415,7 @@ export const ja: Partial<Record<DictKey, string>> = {
   "swaps.panel.hostFallback": "swaplホスト",
   "swaps.panel.partnerFallback": "交換相手",
   "swaps.agreed.title": "交換成立 — 鍵と鍵の交換",
-  "swaps.agreed.body": "鍵のコードと保険証書は交換パネルにあります",
+  "swaps.agreed.body": "鍵のコードとSwapl保証の詳細は交換パネルにあります",
   "swaps.agreed.bodyAbove": " 上の",
   "swaps.agreed.bodyRight": " 右の",
   "swaps.partners.kicker": "基本を計画する",
@@ -1428,8 +1428,8 @@ export const ja: Partial<Record<DictKey, string>> = {
   "swaps.partners.cityGuide": "{city} のシティガイドを読む →",
   "swaps.guest.conversation": "会話",
   "swaps.guest.peopleAside": "この会話の参加者",
-  "swaps.cover.finalisingTitle": "補償を確定中…",
-  "swaps.cover.finalisingBody": "交換が確定しました。引受会社と保険を発行中です — 通常すぐに完了します。",
+  "swaps.cover.finalisingTitle": "保証を有効化中…",
+  "swaps.cover.finalisingBody": "交換が確定しました。Swapl保証を有効化しています — 通常すぐに完了します。",
 
   // ---- Concierge add-ons ----
   "concierge.kicker": "スムーズに",
@@ -1516,11 +1516,11 @@ export const ja: Partial<Record<DictKey, string>> = {
   "swaps.chat.live": "ライブ",
   "swaps.accept.confirmTitle": "交換を確定しますか?",
   "swaps.accept.recap": "{name} さんと · {dateRange}",
-  "swaps.accept.insTitle": "保険込み",
-  "swaps.accept.insBody": "承諾すると両方のホームが自動的に保険対象になります — 損害、賠償責任、旅行中断、双方向で。費用なし、アップセルなし。",
-  "swaps.accept.insLink": "補償内容を読む →",
-  "swaps.accept.ack": "承諾するとこの交換の保険が有効になることを理解しています。",
-  "swaps.accept.confirm": "確定して保険を適用",
+  "swaps.accept.insTitle": "Swapl保証込み",
+  "swaps.accept.insBody": "承諾すると両方のホームがSwapl保証に支えられます — 双方向で。偶発的な損害には最大5,000ユーロまでのフルカバーを追加できます(免責額750ユーロ)。これはswaplからの保証であり、保険ではありません。",
+  "swaps.accept.insLink": "保証内容を読む →",
+  "swaps.accept.ack": "承諾するとこの交換にSwapl保証が有効になることを理解しています。",
+  "swaps.accept.confirm": "交換を確定",
   "swaps.accept.cancel": "キャンセル",
 
   // ---- App-experience feedback ----

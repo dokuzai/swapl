@@ -4,7 +4,7 @@ export const zh: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "玩法介绍",
   "nav.homes": "房源",
-  "nav.insurance": "保险",
+  "nav.insurance": "Swapl 保障",
   "nav.pricing": "价格",
   "nav.companies": "企业版",
   "nav.blog": "博客",
@@ -30,24 +30,24 @@ export const zh: Partial<Record<DictKey, string>> = {
 
   "footer.tagline": "© 2026 swapl · 以钥匙换钥匙，不涉及金钱",
   "footer.howItWorks": "玩法介绍",
-  "footer.insurance": "保险",
+  "footer.insurance": "Swapl 保障",
   "footer.browseHomes": "浏览房源",
   "footer.blog": "博客",
   "footer.account": "账户",
 
   // ---- Launch banner ----
   "launchBanner.tag": "预发布",
-  "launchBanner.body": "零费用，每次交换都有保险——交换功能上线时间",
+  "launchBanner.body": "零费用，每次交换都有 Swapl 保障护航——交换功能上线",
   "launchBanner.month": "2026 年 9 月",
   "launchBanner.cta": "发布我的房源 →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "零费用 · 每次交换都有保险 · 2026 年 9 月上线",
+  "hero.kicker": "零费用 · 每次交换都有保障 · 2026 年 9 月上线",
   "hero.titleA": "以钥匙换钥匙。",
   "hero.titleB": "不花钱，全程",
   "hero.titleEm": "有保障",
   "hero.intro":
-    "每一次确认的交换都享有端到端保险，全程不涉及任何金钱——只是钥匙换钥匙。我们正在 2026 年 9 月上线前招募创始房东：现在就精准发布你的房源，交换功能上线时你将成为最早展示的房源之一。",
+    "每一次接受的交换都有 Swapl 保障护航，全程不涉及任何金钱——只是钥匙换钥匙。我们正在 2026 年 9 月上线前招募创始房东：现在就精准发布你的房源，交换功能上线时你将成为最早展示的房源之一。",
   "hero.ctaList": "发布我的房源",
   "hero.ctaHow": "了解玩法",
 
@@ -66,7 +66,7 @@ export const zh: Partial<Record<DictKey, string>> = {
     "附上自己的房源，发出交换请求。对方可以接受、拒绝或还价。价格不在考虑之列——只是房屋换房屋。",
   "how.step4.title": "有保障地出行",
   "how.step4.desc":
-    "每次确认的交换都自动获得保障：财产、责任和行程中断险。双方都拿到钥匙、密码，以及全天候服务专线。",
+    "每次接受的交换都附带 Swapl 保障——我们的处置团队为你撑腰，你还可加购最高 €5,000 的全额保障。双方都拿到钥匙、密码，以及全天候服务专线。",
 
   "live.kicker": "02 · 等待交换的房源",
   "live.title": "真实房源。真实交换。就在此刻。",
@@ -112,20 +112,20 @@ export const zh: Partial<Record<DictKey, string>> = {
   "wizard.space.roomsOffered": "提供的房间数",
   "wizard.space.privateRoomKeysHint": "独立房间每晚的钥匙价值低于整套房屋。",
 
-  "insuranceBand.kicker": "04 · 保险，始终在线",
+  "insuranceBand.kicker": "04 · Swapl 保障",
   "insuranceBand.title": "每次交换都有保障。",
   "insuranceBand.titleEm": "无需另行选择。",
   "insuranceBand.lede":
-    "交换不是租赁，但仍是两个家庭以彼此的家相互托付。我们对每一次确认的交换自动承保——无需勾选，没有附加销售。",
-  "insuranceBand.cardA.title": "财产损失最高 €150k",
+    "交换不是租赁，但仍是两个家庭以彼此的家相互托付。每一次接受的交换都附带 Swapl 保障——这是我们自己的承诺，帮你把事情处理妥当。这是 swapl 的保障，并非保险保单。",
+  "insuranceBand.cardA.title": "全额保障最高 €5,000",
   "insuranceBand.cardA.body":
-    "若交换期间有东西损坏、开裂、被淹或不翼而飞，均在保障范围内——双向覆盖，两套房屋皆然。",
-  "insuranceBand.cardB.title": "第三方责任",
+    "为任意交换加购全额保障，我们将协助处理意外损坏，最高 €5,000，需自付 €750 免赔额——双向覆盖，两套房屋皆然。",
+  "insuranceBand.cardB.title": "一支站在你这边的团队",
   "insuranceBand.cardB.body":
-    "客人在你厨房滑倒，水管在隔壁爆裂。我们的保单负责处理，让交换不至于演变成官司。",
-  "insuranceBand.cardC.title": "行程中断",
+    "每次交换均免费包含：若客人滑倒、水管爆裂或交换出岔子，我们的处置团队会迅速介入，不让事情演变成僵局。",
+  "insuranceBand.cardC.title": "计划有变",
   "insuranceBand.cardC.body":
-    "航班取消、伙伴退出、遭遇疫情？你将获得赔付——或在 48 小时内重新匹配到同等契合的房源。",
+    "航班取消、伙伴退出？我们帮你重新匹配到同等契合的房源——或找回你花掉的钥匙。",
 
   "cta.title": "你的家值得千次旅行。",
   "cta.body":
@@ -136,7 +136,7 @@ export const zh: Partial<Record<DictKey, string>> = {
   "cta.error": "出了点问题。请稍后再试。",
   "cta.placeholder": "your@email.com",
   "cta.stat.countries": "◦ 92 个国家",
-  "cta.stat.insurance": "◦ 含保险",
+  "cta.stat.insurance": "◦ 含 Swapl 保障",
   "cta.stat.noFees": "◦ 房东零费用",
   "cta.stat.noCommission": "◦ 平台零佣金",
 
@@ -248,7 +248,7 @@ export const zh: Partial<Record<DictKey, string>> = {
     "我们不从你的交换中抽成。只有当你想要进阶工具时才付费——带提醒的已存搜索、优先展示、多房源账户、房源数据分析。核心的换房功能现在以及将来对每个人都一样。",
   "pricing.tags.noFees": "◦ 交换零费用",
   "pricing.tags.noCommission": "◦ 平台零佣金",
-  "pricing.tags.insurance": "◦ 所有套餐均含保险",
+  "pricing.tags.insurance": "◦ 所有套餐均含 Swapl 保障",
   "pricing.toggle.monthly": "按月",
   "pricing.toggle.yearly": "按年 · 省 30%",
   "pricing.popular": "最受欢迎",
@@ -602,8 +602,8 @@ export const zh: Partial<Record<DictKey, string>> = {
   "listingDetail.to": "到",
   "listingDetail.staysOf": "入住 {min}–{max} 天",
   "listingDetail.ownListing": "这是你自己的房源。",
-  "listingDetail.coverAmount": "€150k 保额",
-  "listingDetail.tripRefund": "行程退款",
+  "listingDetail.coverAmount": "Swapl 保障",
+  "listingDetail.tripRefund": "重新匹配协助",
   "listingDetail.support247": "全天候专线",
   "listingDetail.hostFallback": "swapl 房东",
   "listingDetail.tradeYourHome": "用你的家交换他们的",
@@ -628,8 +628,8 @@ export const zh: Partial<Record<DictKey, string>> = {
   "verify.used.body": "此验证链接已被使用。你的邮箱已经验证过了。",
   "verify.invalid.heading": "嗯，这个链接看起来不太对。",
   "verify.invalid.body": "要么是被篡改过，要么是从未存在过。请从 /account 申请一个新的。",
-  "account.coverage.title": "你的保障",
-  "account.coverage.body": "每次确认的交换都会自动承保。你正在生效和过往的保单都在这里。",
+  "account.coverage.title": "你的 Swapl 保障",
+  "account.coverage.body": "每次接受的交换都会自动附带 Swapl 保障。你正在生效和过往的保障都在这里。",
 
   "notFound.title": "这里还没有交换。",
   "notFound.body": "该房源可能已被移除或从未存在过。试试浏览当前可用的房源吧。",
@@ -688,7 +688,7 @@ export const zh: Partial<Record<DictKey, string>> = {
   "swap.guestCode": "你客人的密码（供他们在你家使用）",
   "swap.yourCode": "你的密码（供你在他们家使用）",
   "swap.policyLine":
-    "保单 {policy} · €{coverage} 保额 · 全天候专线：+44 800 000 swap",
+    "保障 {policy} · €{coverage} 保障额度 · 全天候专线：+44 800 000 swap",
 
   // ---- Common UI ----
   "ui.cancel": "取消",
@@ -731,19 +731,19 @@ export const zh: Partial<Record<DictKey, string>> = {
   "terms.updated": "最后更新 · 2026 年 5 月 24 日",
   "faq.q1": "如果交换伙伴损坏了我的家怎么办？",
   "faq.a1":
-    "每次确认的交换都自动为财产损失提供最高 €150,000 的保障——双向覆盖，两套房屋皆然。你无需另行选择、填写表单或支付保费。如果入住期间有东西损坏，请通过控制台提交理赔，保单将负责维修或更换。",
+    "每次接受的交换都附带 Swapl 保障。如果出了问题，请通过控制台提交申请，我们的处置团队会免费帮你把事情处理妥当。针对意外的财产损坏，你可以加购全额保障——每次交换最高 €5,000，需自付 €750 免赔额，双向覆盖。Swapl 保障是 swapl 的承诺，并非保险保单。",
   "faq.q2": "你们如何处理钥匙交接？",
   "faq.a2":
     "你和交换伙伴可选择适合你们的方式：当面会合、把钥匙交给邻居、使用密码箱，或通过 swapl 共享智能锁密码。我们为每次交换生成一次性客人密码，双方都无需共享长期凭证。",
   "faq.q3": "我能和日期与我不重叠的人交换吗？",
   "faq.a3":
-    "可以。非同步交换（有时称为「待客积分」）将在上线后推出。你现在可以先住到某人家里，之后再把你的家回赠给对方——或赠给第三位会员。上线时我们先从同周交换开始，因为它们最便于承保。",
+    "可以。非同步交换（有时称为「待客积分」）将在上线后推出。你现在可以先存入一次在某人家里的入住，之后再把你的家回赠给对方——或赠给第三位会员。上线时我们先从同周交换开始，因为它们最便于支持。",
   "faq.q4": "宠物怎么办？",
   "faq.a4":
-    "筛选可带宠物的房源，你就只会看到房主欢迎动物的地方。有些房东还会在交换期间帮你照看宠物。客人宠物造成的损坏，保险与处理任何其他损坏一样予以覆盖。",
+    "筛选可带宠物的房源，你就只会看到房主欢迎动物的地方。有些房东还会在交换期间帮你照看宠物。客人宠物造成的损坏，Swapl 保障与处理任何其他损坏完全一样。",
   "faq.q5": "我必须是 swapl 会员才能交换吗？",
   "faq.a5":
-    "双方都需成为会员，这样我们才能验证身份、附加保险并处理协议。核心交换的会员资格永久免费；Plus 和 Pro 增加进阶工具（已存搜索提醒、优先展示、房源分析），但绝不会限制交换本身。",
+    "双方都需成为会员，这样我们才能验证身份、应用 Swapl 保障并处理协议。核心交换的会员资格永久免费；Plus 和 Pro 增加进阶工具（已存搜索提醒、优先展示、房源分析），但绝不会限制交换本身。",
   "faq.q6": "这和 Airbnb 有什么不同？",
   "faq.a6":
     "没有金钱往来，也没有人是付费客人。你与另一位想去你城市、而你想去他城市的房主互换钥匙。这种契合改变了关系——双方都是房主，双方都是客人，双方都有所投入。",
@@ -752,7 +752,7 @@ export const zh: Partial<Record<DictKey, string>> = {
     "账户邮箱和姓名、你发布的房源信息、与其他会员的交换提议和消息、身份验证元数据（我们不存储护照扫描件——由我们的 KYC 合作伙伴存储），以及基本的设备 + 分析信号（页面、语言、视口）。仅此而已。",
   "privacy.s2.title": "我们为何收集",
   "privacy.s2.body":
-    "为了运营交换（匹配、消息、保险），为了在你首次接受前验证你是真实的人，以及为了改进产品。我们使用一小套尊重隐私的分析工具——没有广告追踪器，也没有跨站画像。",
+    "为了运营交换（匹配、消息、Swapl 保障），为了在你首次接受前验证你是真实的人，以及为了改进产品。我们使用一小套尊重隐私的分析工具——没有广告追踪器，也没有跨站画像。",
   "privacy.s3.title": "谁能看到什么",
   "privacy.s3.body":
     "你的房源对其他会员公开。你的真实姓名仅在双方接受后才会与交换伙伴共享。身份验证仅反馈给你本人——伙伴看到的是已验证徽章，而非你的证件。",
@@ -764,19 +764,19 @@ export const zh: Partial<Record<DictKey, string>> = {
     "关于我们如何处理你数据的问题，请发送至 privacy@swapl.fun。swapl 在荷兰阿姆斯特丹运营。",
   "terms.s1.title": "swapl 是什么",
   "terms.s1.body":
-    "swapl 是一个帮助房主彼此找到对方并交换入住其家的市场。我们提供工具（房源、搜索、消息、协议、保险），但我们不是房东。交换中的两位会员是约定的当事方；swapl 仅提供便利。",
+    "swapl 是一个帮助房主彼此找到对方并交换入住其家的市场。我们提供工具（房源、搜索、消息、协议、Swapl 保障），但我们不是房东。交换中的两位会员是约定的当事方；swapl 仅提供便利。",
   "terms.s2.title": "账户与资格",
   "terms.s2.body":
     "你需年满 18 岁，并且是你所发布任何房屋的合法占用人（房主，或经许可可接待客人的长期租户）。请提供准确的房源信息——虚报你的房屋将构成下架理由。",
-  "terms.s3.title": "交换与保险",
+  "terms.s3.title": "交换与 Swapl 保障",
   "terms.s3.body":
-    "每次确认的交换都由我们的承保方自动承保财产损失、第三方责任和行程中断。保障在双方接受时生效。保险不能替代合理的照护——你仍有责任遵守伙伴的房屋规则。",
+    "每次接受的交换都附带 Swapl 保障：如果交换出岔子，我们的处置团队会帮你把事情处理妥当。会员可为意外财产损坏加购全额保障，每次交换最高 €5,000，需自付 €750 免赔额。Swapl 保障是 swapl 的承诺，由 swapl 出资——它不是保险，也不涉及任何持牌保险公司。它不能替代合理的照护：你仍有责任遵守伙伴的房屋规则。",
   "terms.s4.title": "付款",
   "terms.s4.body":
     "核心交换永久免费。可选的 Plus / Pro 套餐由 Stripe 计费；可随时从 /account/billing 取消。我们不对交换本身收取佣金。",
   "terms.s5.title": "纠纷",
   "terms.s5.body":
-    "如果交换期间出现问题，请先联系全天候支持。若需理赔，由我们的保险方处理。对于与 swapl 本身的纠纷，适用荷兰法律，由阿姆斯特丹法院管辖。",
+    "如果交换期间出现问题，请先联系全天候支持。如需提交申请，由我们的处置团队依据 Swapl 保障处理。对于与 swapl 本身的纠纷，适用荷兰法律，由阿姆斯特丹法院管辖。",
   "terms.s6.title": "变更",
   "terms.s6.body":
     "在对这些条款做出任何实质性变更前，我们会至少提前 30 天发邮件通知你。变更日期后继续使用即表示接受；如果你不愿继续，随时可以删除账户。",
@@ -807,7 +807,7 @@ export const zh: Partial<Record<DictKey, string>> = {
   "trip.countdown.today": "你的交换今天开始",
   "trip.countdown.started": "你的交换正在进行",
   "trip.dates": "{from} – {to}",
-  "trip.insured": "已投保",
+  "trip.insured": "有保障",
   "trip.checklist.title": "出发前",
   "trip.checklist.guide": "填写你的家庭指南",
   "trip.checklist.details": "阅读房东的信息",
@@ -851,8 +851,8 @@ export const zh: Partial<Record<DictKey, string>> = {
 
   // ---- Proof of cover on-chain (DOK-156) ----
   "cover.proof.badge": "已在 TON 上验证",
-  "cover.proof.blurb": "一份防篡改记录，证明你的保障真实有效——不是加密货币，无需付款，你什么都不用做。",
-  "cover.proof.view": "查看凭证",
+  "cover.proof.blurb": "一份防篡改记录，记录你的 Swapl 保障——不是加密货币，无需付款，你什么都不用做。",
+  "cover.proof.view": "查看记录",
 
   // ---- Report a problem / dispute flow (DOK-153) ----
   "dispute.report.cta": "立即获取帮助",
@@ -1135,7 +1135,7 @@ export const zh: Partial<Record<DictKey, string>> = {
   "trips.keys.decline": "拒绝",
   "trips.keys.cancel": "取消请求",
   "trips.keys.working": "处理中…",
-  "trips.keys.insured": "已投保",
+  "trips.keys.insured": "有保障",
   "trips.keys.hostWillConfirm": "等待房东确认。",
   "trips.keys.actionError": "出了点问题——请重试。",
   "trips.swaps.heading": "换房",
@@ -1424,7 +1424,7 @@ export const zh: Partial<Record<DictKey, string>> = {
   "swaps.panel.hostFallback": "swapl 房东",
   "swaps.panel.partnerFallback": "你的交换伙伴",
   "swaps.agreed.title": "交换达成——以钥匙换钥匙",
-  "swaps.agreed.body": "钥匙密码和你的保险凭证在交换面板中",
+  "swaps.agreed.body": "钥匙密码和你的 Swapl 保障详情都在交换面板中",
   "swaps.agreed.bodyAbove": "上方",
   "swaps.agreed.bodyRight": "右侧",
   "swaps.partners.kicker": "安排好基本事项",
@@ -1437,8 +1437,8 @@ export const zh: Partial<Record<DictKey, string>> = {
   "swaps.partners.cityGuide": "阅读 {city} 城市指南 →",
   "swaps.guest.conversation": "对话",
   "swaps.guest.peopleAside": "此对话中的成员",
-  "swaps.cover.finalisingTitle": "正在敲定你的保障…",
-  "swaps.cover.finalisingBody": "你的交换已确认。我们正与承保方签发保单——通常稍等片刻即可。",
+  "swaps.cover.finalisingTitle": "正在激活你的保障…",
+  "swaps.cover.finalisingBody": "你的交换已确认。我们正在激活你的 Swapl 保障——通常稍等片刻即可。",
 
   // ---- Concierge add-ons ----
   "concierge.kicker": "让一切无缝衔接",
@@ -1525,11 +1525,11 @@ export const zh: Partial<Record<DictKey, string>> = {
   "swaps.chat.live": "在线",
   "swaps.accept.confirmTitle": "确认交换？",
   "swaps.accept.recap": "与 {name} · {dateRange}",
-  "swaps.accept.insTitle": "含保险",
-  "swaps.accept.insBody": "接受后两套房屋都自动投保——损坏、责任和行程中断，双向覆盖。零费用，无附加销售。",
+  "swaps.accept.insTitle": "含 Swapl 保障",
+  "swaps.accept.insBody": "接受后两套房屋都有 Swapl 保障护航，双向覆盖。可为意外损坏加购全额保障，最高 €5,000（自付 €750 免赔额）。这是 swapl 的保障，并非保险。",
   "swaps.accept.insLink": "阅读保障内容 →",
-  "swaps.accept.ack": "我明白接受即会为此次交换激活保险保单。",
-  "swaps.accept.confirm": "确认并投保",
+  "swaps.accept.ack": "我明白接受即会为此次交换激活 Swapl 保障。",
+  "swaps.accept.confirm": "确认交换",
   "swaps.accept.cancel": "取消",
 
   // ---- App-experience feedback (rate the app) ----

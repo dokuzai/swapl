@@ -30,7 +30,7 @@ const STRUCTURED_DATA = {
       provider: { "@id": `${SITE_URL}/#organization` },
       areaServed: "Worldwide",
       description:
-        "An insured home swap marketplace where hosts trade homes keys for keys, without nightly rates or platform commission.",
+        "A home swap marketplace where hosts trade homes keys for keys, without nightly rates or platform commission.",
       offers: {
         "@type": "Offer",
         price: "0",

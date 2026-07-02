@@ -4,7 +4,7 @@ export const ro: Partial<Record<DictKey, string>> = {
   // ---- Navbar + footer ----
   "nav.howItWorks": "Cum funcționează",
   "nav.homes": "Locuințe",
-  "nav.insurance": "Asigurare",
+  "nav.insurance": "Garanție",
   "nav.pricing": "Prețuri",
   "nav.companies": "Companii",
   "nav.blog": "Blog",
@@ -30,24 +30,24 @@ export const ro: Partial<Record<DictKey, string>> = {
 
   "footer.tagline": "© 2026 swapl · chei pentru chei, fără bani",
   "footer.howItWorks": "Cum funcționează",
-  "footer.insurance": "Asigurare",
+  "footer.insurance": "Garanție",
   "footer.browseHomes": "Răsfoiește locuințe",
   "footer.blog": "Blog",
   "footer.account": "Cont",
 
   // ---- Launch banner ----
   "launchBanner.tag": "Pre-lansare",
-  "launchBanner.body": "Fără taxe, fiecare schimb asigurat — schimburile devin active",
+  "launchBanner.body": "Fără taxe, fiecare schimb susținut de Garanția Swapl — schimburile devin active",
   "launchBanner.month": "Septembrie 2026",
   "launchBanner.cta": "Publică-ți locuința →",
 
   // ---- Marketing landing ----
-  "hero.kicker": "Fără taxe · Fiecare schimb asigurat · Lansare în septembrie 2026",
+  "hero.kicker": "Fără taxe · Fiecare schimb susținut · Lansare în septembrie 2026",
   "hero.titleA": "Schimbă chei pentru chei.",
   "hero.titleB": "Fără bani, complet",
-  "hero.titleEm": "asigurat",
+  "hero.titleEm": "susținut",
   "hero.intro":
-    "Fiecare schimb acceptat este asigurat de la cap la coadă și niciun ban nu schimbă mâinile — doar chei pentru chei. Înscriem gazde fondatoare înaintea lansării din septembrie 2026: publică-ți acum locuința cu maximă precizie și vei fi printre primele case afișate când schimburile devin active.",
+    "Fiecare schimb acceptat este susținut de Garanția Swapl și niciun ban nu schimbă mâinile — doar chei pentru chei. Înscriem gazde fondatoare înaintea lansării din septembrie 2026: publică-ți acum locuința cu maximă precizie și vei fi printre primele case afișate când schimburile devin active.",
   "hero.ctaList": "Publică-mi locuința",
   "hero.ctaHow": "Vezi cum funcționează",
 
@@ -64,9 +64,9 @@ export const ro: Partial<Record<DictKey, string>> = {
   "how.step3.title": "Propune și convine",
   "how.step3.desc":
     "Trimite o cerere de schimb cu propria locuință atașată. Ei acceptă, refuză sau contrapropun. Prețul nu intră în discuție — o casă pentru cealaltă.",
-  "how.step4.title": "Călătorește, asigurat",
+  "how.step4.title": "Călătorește, susținut",
   "how.step4.desc":
-    "Fiecare schimb acceptat este acoperit automat: bunuri, răspundere civilă și întreruperea călătoriei. Amândoi primiți chei, coduri și o linie disponibilă 24/7.",
+    "Fiecare schimb acceptat vine cu Garanția Swapl — echipa noastră de soluționare îți este alături, iar tu poți adăuga acoperire completă până la 5.000 €. Amândoi primiți chei, coduri și o linie disponibilă 24/7.",
 
   "live.kicker": "02 · Locuințe care caută schimb",
   "live.title": "Case reale. Schimburi reale. Chiar acum.",
@@ -112,20 +112,20 @@ export const ro: Partial<Record<DictKey, string>> = {
   "wizard.space.roomsOffered": "Camere oferite",
   "wizard.space.privateRoomKeysHint": "O cameră privată valorează mai puține Chei pe noapte decât o locuință întreagă.",
 
-  "insuranceBand.kicker": "04 · Asigurare, mereu activă",
-  "insuranceBand.title": "Fiecare schimb acoperit.",
+  "insuranceBand.kicker": "04 · Garanția Swapl",
+  "insuranceBand.title": "Fiecare schimb, susținut.",
   "insuranceBand.titleEm": "Fără înscriere.",
   "insuranceBand.lede":
-    "Schimburile nu sunt închirieri, dar sunt totuși două familii care își încredințează una alteia locuințele. Asigurăm automat fiecare schimb acceptat — fără bifă, fără upsell.",
-  "insuranceBand.cardA.title": "Daune materiale până la 150.000 €",
+    "Schimburile nu sunt închirieri, dar sunt totuși două familii care își încredințează una alteia locuințele. Fiecare schimb acceptat vine cu Garanția Swapl — angajamentul nostru de a ajuta să îndreptăm lucrurile. Este o garanție din partea swapl, nu o poliță de asigurare.",
+  "insuranceBand.cardA.title": "Acoperire completă până la 5.000 €",
   "insuranceBand.cardA.body":
-    "Dacă ceva se sparge, crapă, se inundă sau dispare în timpul unui schimb, este acoperit — în ambele direcții, ambele case.",
-  "insuranceBand.cardB.title": "Răspundere civilă față de terți",
+    "Adaugă acoperirea completă la orice schimb și te ajutăm cu daunele accidentale până la 5.000 €, cu o franșiză de 750 € — în ambele direcții, ambele case.",
+  "insuranceBand.cardB.title": "O echipă de partea ta",
   "insuranceBand.cardB.body":
-    "Un oaspete alunecă în bucătăria ta. O țeavă cedează la vecini. Polița noastră se ocupă de asta, ca schimbul să nu se transforme într-un proces.",
-  "insuranceBand.cardC.title": "Întreruperea călătoriei",
+    "Inclusă gratuit în fiecare schimb: dacă un oaspete alunecă, o țeavă cedează sau un schimb o ia razna, echipa noastră de soluționare intervine rapid ca să nu se transforme într-un conflict.",
+  "insuranceBand.cardC.title": "Planurile se schimbă",
   "insuranceBand.cardC.body":
-    "Zbor anulat, partener care se retrage, pandemie? Ești despăgubit — sau repotrivit cu o locuință la fel de potrivită în 48 de ore.",
+    "Zbor anulat, partener care se retrage? Te ajutăm să te repotrivești cu o locuință la fel de potrivită — sau să recuperezi Cheile cheltuite.",
 
   "cta.title": "Locuința ta valorează o mie de călătorii.",
   "cta.body":
@@ -136,7 +136,7 @@ export const ro: Partial<Record<DictKey, string>> = {
   "cta.error": "Ceva nu a mers. Încearcă din nou într-o clipă.",
   "cta.placeholder": "adresa@email.com",
   "cta.stat.countries": "◦ 92 de țări",
-  "cta.stat.insurance": "◦ Asigurare inclusă",
+  "cta.stat.insurance": "◦ Garanția Swapl inclusă",
   "cta.stat.noFees": "◦ Fără taxe pentru gazde",
   "cta.stat.noCommission": "◦ Fără comision de platformă",
 
@@ -248,7 +248,7 @@ export const ro: Partial<Record<DictKey, string>> = {
     "Nu luăm un procent din schimbul tău. Plătești doar dacă vrei instrumente pentru utilizatori avansați — căutări salvate cu alerte, plasare prioritară, conturi cu mai multe locuințe, analize pentru anunțuri. Schimbul de bază este și va rămâne la fel pentru toată lumea.",
   "pricing.tags.noFees": "◦ Fără taxe de schimb",
   "pricing.tags.noCommission": "◦ Fără comision de platformă",
-  "pricing.tags.insurance": "◦ Asigurare inclusă în orice plan",
+  "pricing.tags.insurance": "◦ Garanția Swapl în orice plan",
   "pricing.toggle.monthly": "Lunar",
   "pricing.toggle.yearly": "Anual · economisești 30%",
   "pricing.popular": "Cel mai popular",
@@ -601,8 +601,8 @@ export const ro: Partial<Record<DictKey, string>> = {
   "listingDetail.to": "Până la",
   "listingDetail.staysOf": "Sejururi de {min}–{max} zile",
   "listingDetail.ownListing": "Acesta este propriul tău anunț.",
-  "listingDetail.coverAmount": "Acoperire de 150.000 €",
-  "listingDetail.tripRefund": "Rambursare călătorie",
+  "listingDetail.coverAmount": "Garanția Swapl",
+  "listingDetail.tripRefund": "Ajutor la repotrivire",
   "listingDetail.support247": "Linie 24/7",
   "listingDetail.hostFallback": "gazdă swapl",
   "listingDetail.tradeYourHome": "Schimbă locuința ta cu a lor",
@@ -627,8 +627,8 @@ export const ro: Partial<Record<DictKey, string>> = {
   "verify.used.body": "Acest link de verificare a fost deja folosit. E-mailul tău este deja verificat.",
   "verify.invalid.heading": "Hmm, linkul ăsta nu pare în regulă.",
   "verify.invalid.body": "Fie a fost modificat, fie nu a existat niciodată. Solicită unul nou din /account.",
-  "account.coverage.title": "Acoperirea ta",
-  "account.coverage.body": "Fiecare schimb acceptat este asigurat automat. Polițele tale active și anterioare se află aici.",
+  "account.coverage.title": "Garanția ta Swapl",
+  "account.coverage.body": "Fiecare schimb acceptat vine automat cu Garanția Swapl. Garanțiile tale active și anterioare se află aici.",
 
   "notFound.title": "Niciun schimb aici încă.",
   "notFound.body": "Acel anunț poate fi eliminat sau nu a existat niciodată. Încearcă să răsfoiești ce e disponibil acum.",
@@ -687,7 +687,7 @@ export const ro: Partial<Record<DictKey, string>> = {
   "swap.guestCode": "Codul oaspetelui tău (pentru a-l folosi la locuința ta)",
   "swap.yourCode": "Codul tău (pentru a-l folosi la locuința lor)",
   "swap.policyLine":
-    "Poliță {policy} · acoperire {coverage} € · linie 24/7: +44 800 000 swap",
+    "Garanție {policy} · acoperire {coverage} € · linie 24/7: +44 800 000 swap",
 
   // ---- Common UI ----
   "ui.cancel": "Anulează",
@@ -730,19 +730,19 @@ export const ro: Partial<Record<DictKey, string>> = {
   "terms.updated": "Ultima actualizare · 24 mai 2026",
   "faq.q1": "Ce se întâmplă dacă un partener de schimb îmi avariază locuința?",
   "faq.a1":
-    "Fiecare schimb acceptat este acoperit automat pentru daune materiale până la 150.000 € — în ambele direcții, ambele case. Nu te înscrii, nu completezi un formular și nu plătești o primă. Dacă ceva se strică în timpul sejurului, depui o cerere prin panoul tău, iar polița se ocupă de reparație sau înlocuire.",
+    "Fiecare schimb acceptat vine cu Garanția Swapl. Dacă ceva merge prost, depui o cerere prin panoul tău, iar echipa noastră de soluționare ajută să îndrepte lucrurile fără niciun cost. Pentru daune accidentale aduse proprietății poți adăuga acoperirea completă — până la 5.000 € per schimb, cu o franșiză de 750 €, în ambele direcții. Garanția Swapl este un angajament din partea swapl, nu o poliță de asigurare.",
   "faq.q2": "Cum gestionați schimbul de chei?",
   "faq.a2":
     "Tu și partenerul tău de schimb alegeți ce vă convine: vă întâlniți personal, lăsați cheile la un vecin, folosiți o cutie de chei sau partajați un cod de încuietoare inteligentă prin swapl. Generăm un cod de oaspete unic pentru fiecare schimb, ca niciuna dintre părți să nu împartă o credențială permanentă.",
   "faq.q3": "Pot face schimb cu cineva ale cărui date nu se suprapun cu ale mele?",
   "faq.a3":
-    "Da. Schimburile nesimultane (uneori numite „puncte de ospitalitate”) vor veni după lansare. Vei bancariza acum un sejur la locuința cuiva și îți vei revendica al tău înapoi la el — sau la un alt membru — mai târziu. La lansare începem cu schimburi în aceeași săptămână, fiindcă sunt cele mai sigure de asigurat.",
+    "Da. Schimburile nesimultane (uneori numite „puncte de ospitalitate”) vor veni după lansare. Vei bancariza acum un sejur la locuința cuiva și îți vei revendica al tău înapoi la el — sau la un alt membru — mai târziu. La lansare începem cu schimburi în aceeași săptămână, fiindcă sunt cele mai sigure de susținut.",
   "faq.q4": "Și animalele de companie?",
   "faq.a4":
-    "Filtrează după locuințele care acceptă animale și vei vedea doar locurile ai căror proprietari primesc animale. Unele gazde îți vor și îngriji animalul în timpul schimbului. Asigurarea acoperă daunele cauzate de animalele oaspeților exact cum acoperă orice altă daună.",
+    "Filtrează după locuințele care acceptă animale și vei vedea doar locurile ai căror proprietari primesc animale. Unele gazde îți vor și îngriji animalul în timpul schimbului. Garanția Swapl tratează daunele cauzate de animalele oaspeților exact ca pe orice altă daună.",
   "faq.q5": "Trebuie să fiu membru swapl ca să fac schimb?",
   "faq.a5":
-    "Ambele părți trebuie să fie membri ca să putem verifica identitatea, atașa asigurarea și procesa acordul. Abonamentul este gratuit pentru totdeauna pentru schimbul de bază; Plus și Pro adaugă instrumente pentru utilizatori avansați (alerte la căutări salvate, plasare prioritară, analize pentru anunțuri), dar nu condiționează niciodată schimbul în sine.",
+    "Ambele părți trebuie să fie membri ca să putem verifica identitatea, aplica Garanția Swapl și procesa acordul. Abonamentul este gratuit pentru totdeauna pentru schimbul de bază; Plus și Pro adaugă instrumente pentru utilizatori avansați (alerte la căutări salvate, plasare prioritară, analize pentru anunțuri), dar nu condiționează niciodată schimbul în sine.",
   "faq.q6": "Prin ce e diferit de Airbnb?",
   "faq.a6":
     "Niciun ban nu schimbă mâinile și nimeni nu e oaspete plătitor. Schimbi chei cu alt proprietar care vrea orașul tău în timp ce tu îl vrei pe al lui. Această aliniere schimbă dinamica — ambele părți sunt proprietari, ambele sunt oaspeți, ambele au ceva de pierdut.",
@@ -751,7 +751,7 @@ export const ro: Partial<Record<DictKey, string>> = {
     "E-mailul și numele contului, detaliile anunțurilor pe care le publici, propunerile de schimb și mesajele cu alți membri, metadatele verificării identității (nu stocăm scanări de pașaport — o face partenerul nostru KYC) și semnale de bază privind dispozitivul + analize (pagină, limbă, viewport). Atât.",
   "privacy.s2.title": "De ce le colectăm",
   "privacy.s2.body":
-    "Pentru a desfășura schimbul (potrivire, mesagerie, asigurare), pentru a verifica faptul că ești o persoană reală înainte de prima acceptare și pentru a îmbunătăți produsul. Folosim un set restrâns de analize care respectă confidențialitatea — fără trackere de publicitate, fără profilare între site-uri.",
+    "Pentru a desfășura schimbul (potrivire, mesagerie, Garanția Swapl), pentru a verifica faptul că ești o persoană reală înainte de prima acceptare și pentru a îmbunătăți produsul. Folosim un set restrâns de analize care respectă confidențialitatea — fără trackere de publicitate, fără profilare între site-uri.",
   "privacy.s3.title": "Cine vede ce",
   "privacy.s3.body":
     "Anunțul tău este public pentru ceilalți membri. Numele tău real este împărtășit cu un partener de schimb doar după ce ambele părți acceptă. Verificarea identității îți este împărtășită doar ție — partenerii văd o insignă de verificat, nu documentele tale.",
@@ -763,19 +763,19 @@ export const ro: Partial<Record<DictKey, string>> = {
     "Întrebările despre modul în care gestionăm datele tale merg la privacy@swapl.fun. swapl este operat din Amsterdam, Țările de Jos.",
   "terms.s1.title": "Ce este swapl",
   "terms.s1.body":
-    "swapl este o platformă care ajută proprietarii să se găsească unul pe altul și să schimbe sejururi în locuințele lor. Oferim instrumente (anunțuri, căutare, mesagerie, acorduri, asigurare), dar nu suntem gazda. Cei doi membri ai unui schimb sunt părțile la înțelegere; swapl o facilitează.",
+    "swapl este o platformă care ajută proprietarii să se găsească unul pe altul și să schimbe sejururi în locuințele lor. Oferim instrumente (anunțuri, căutare, mesagerie, acorduri, Garanția Swapl), dar nu suntem gazda. Cei doi membri ai unui schimb sunt părțile la înțelegere; swapl o facilitează.",
   "terms.s2.title": "Cont și eligibilitate",
   "terms.s2.body":
     "Trebuie să ai 18+ ani și să fii ocupantul legal (proprietar sau chiriaș pe termen lung cu permisiunea de a găzdui) al oricărei locuințe pe care o publici. Oferă detalii exacte despre anunț — denaturarea locuinței tale este motiv de eliminare.",
-  "terms.s3.title": "Schimburi și asigurare",
+  "terms.s3.title": "Schimburi și Garanția Swapl",
   "terms.s3.body":
-    "Fiecare schimb acceptat este acoperit automat de asigurătorul nostru pentru daune materiale, răspundere civilă față de terți și întreruperea călătoriei. Acoperirea se atașează când ambele părți acceptă. Asigurarea nu înlocuiește grija rezonabilă — rămâi responsabil pentru respectarea regulilor casei partenerului.",
+    "Fiecare schimb acceptat vine cu Garanția Swapl: dacă un schimb merge prost, echipa noastră de soluționare ajută să îndrepte lucrurile. Membrii pot adăuga acoperirea completă pentru daunele accidentale aduse proprietății până la 5.000 € per schimb, cu o franșiză de 750 €. Garanția Swapl este un angajament din partea swapl, finanțat de swapl — nu este o asigurare și niciun asigurător autorizat nu este implicat. Nu înlocuiește grija rezonabilă: rămâi responsabil pentru respectarea regulilor casei partenerului.",
   "terms.s4.title": "Plăți",
   "terms.s4.body":
     "Schimbul de bază este gratuit pentru totdeauna. Planurile opționale Plus / Pro sunt facturate de Stripe; anulezi oricând din /account/billing. Nu luăm comision din schimbul în sine.",
   "terms.s5.title": "Litigii",
   "terms.s5.body":
-    "Dacă ceva merge prost în timpul unui schimb, contactează mai întâi suportul 24/7. Dacă e nevoie de o cerere de despăgubire, asigurătorul nostru se ocupă de ea. Pentru litigii cu swapl în sine, se aplică legea olandeză, iar instanțele din Amsterdam au jurisdicție.",
+    "Dacă ceva merge prost în timpul unui schimb, contactează mai întâi suportul 24/7. Dacă e nevoie de o cerere, echipa noastră de soluționare o gestionează în cadrul Garanției Swapl. Pentru litigii cu swapl în sine, se aplică legea olandeză, iar instanțele din Amsterdam au jurisdicție.",
   "terms.s6.title": "Modificări",
   "terms.s6.body":
     "Îți scriem pe e-mail cu cel puțin 30 de zile înainte de orice schimbare semnificativă a acestor termeni. Continuarea utilizării după data schimbării înseamnă acceptare; poți oricând să-ți ștergi contul dacă preferi să nu continui.",
@@ -806,7 +806,7 @@ export const ro: Partial<Record<DictKey, string>> = {
   "trip.countdown.today": "Schimbul tău începe azi",
   "trip.countdown.started": "Schimbul tău este în derulare",
   "trip.dates": "{from} – {to}",
-  "trip.insured": "Asigurat",
+  "trip.insured": "Susținut",
   "trip.checklist.title": "Înainte de plecare",
   "trip.checklist.guide": "Completează ghidul locuinței tale",
   "trip.checklist.details": "Citește detaliile gazdei tale",
@@ -850,8 +850,8 @@ export const ro: Partial<Record<DictKey, string>> = {
 
   // ---- Proof of cover on-chain (DOK-156) ----
   "cover.proof.badge": "Verificat pe TON",
-  "cover.proof.blurb": "O înregistrare imposibil de falsificat că acoperirea ta e reală — nu cripto, fără plată, nimic de făcut din partea ta.",
-  "cover.proof.view": "Vezi dovada",
+  "cover.proof.blurb": "O înregistrare imposibil de falsificat a Garanției tale Swapl — nu cripto, fără plată, nimic de făcut din partea ta.",
+  "cover.proof.view": "Vezi înregistrarea",
 
   // ---- Report a problem / dispute flow (DOK-153) ----
   "dispute.report.cta": "Obține ajutor acum",
@@ -1134,7 +1134,7 @@ export const ro: Partial<Record<DictKey, string>> = {
   "trips.keys.decline": "Refuză",
   "trips.keys.cancel": "Anulează cererea",
   "trips.keys.working": "Se lucrează…",
-  "trips.keys.insured": "Asigurat",
+  "trips.keys.insured": "Susținut",
   "trips.keys.hostWillConfirm": "Se așteaptă confirmarea gazdei.",
   "trips.keys.actionError": "Ceva nu a mers — încearcă din nou.",
   "trips.swaps.heading": "Schimburi de locuințe",
@@ -1423,7 +1423,7 @@ export const ro: Partial<Record<DictKey, string>> = {
   "swaps.panel.hostFallback": "gazdă swapl",
   "swaps.panel.partnerFallback": "partenerul tău de schimb",
   "swaps.agreed.title": "Schimb convenit — chei pentru chei",
-  "swaps.agreed.body": "Codurile de chei și certificatul tău de asigurare se află în panoul de schimb",
+  "swaps.agreed.body": "Codurile de chei și detaliile Garanției tale Swapl se află în panoul de schimb",
   "swaps.agreed.bodyAbove": " de mai sus",
   "swaps.agreed.bodyRight": " din dreapta",
   "swaps.partners.kicker": "Planifică elementele de bază",
@@ -1436,8 +1436,8 @@ export const ro: Partial<Record<DictKey, string>> = {
   "swaps.partners.cityGuide": "Citește ghidul orașului {city} →",
   "swaps.guest.conversation": "Conversație",
   "swaps.guest.peopleAside": "Persoane în această conversație",
-  "swaps.cover.finalisingTitle": "Se finalizează acoperirea ta…",
-  "swaps.cover.finalisingBody": "Schimbul tău este confirmat. Emitem polița cu asigurătorul nostru — asta durează de obicei un moment.",
+  "swaps.cover.finalisingTitle": "Se activează garanția ta…",
+  "swaps.cover.finalisingBody": "Schimbul tău este confirmat. Activăm Garanția ta Swapl — asta durează de obicei un moment.",
 
   // ---- Concierge add-ons ----
   "concierge.kicker": "Fă-l fără cusur",
@@ -1524,11 +1524,11 @@ export const ro: Partial<Record<DictKey, string>> = {
   "swaps.chat.live": "Live",
   "swaps.accept.confirmTitle": "Confirmi schimbul?",
   "swaps.accept.recap": "Cu {name} · {dateRange}",
-  "swaps.accept.insTitle": "Asigurare inclusă",
-  "swaps.accept.insBody": "La acceptare, ambele locuințe sunt asigurate automat — daune, răspundere civilă și întreruperea călătoriei, în ambele direcții. Fără cost, fără upsell.",
-  "swaps.accept.insLink": "Citește acoperirea →",
-  "swaps.accept.ack": "Înțeleg că acceptarea activează polița de asigurare pentru acest schimb.",
-  "swaps.accept.confirm": "Confirmă și asigură",
+  "swaps.accept.insTitle": "Garanția Swapl inclusă",
+  "swaps.accept.insBody": "La acceptare, ambele locuințe sunt susținute de Garanția Swapl, în ambele direcții. Adaugă acoperirea completă pentru daune accidentale până la 5.000 € (franșiză de 750 €). Este o garanție din partea swapl, nu o asigurare.",
+  "swaps.accept.insLink": "Citește garanția →",
+  "swaps.accept.ack": "Înțeleg că acceptarea activează Garanția Swapl pentru acest schimb.",
+  "swaps.accept.confirm": "Confirmă schimbul",
   "swaps.accept.cancel": "Anulează",
 
   // ---- App-experience feedback (rate the app) ----

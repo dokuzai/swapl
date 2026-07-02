@@ -13,7 +13,7 @@ const EN_COPY = {
     "The September launch depends on quality supply, not a generic waitlist. Early hosts get reviewed sooner, surface first in matching, and help shape the city corridors we open with.",
   primaryCta: "Join as a founding host",
   secondaryCta: "Request invite",
-  proofs: ["No nightly rates", "No host commission", "Mutual-match search", "Insurance included"],
+  proofs: ["No nightly rates", "No host commission", "Mutual-match search", "Swapl Guarantee included"],
   steps: [
     {
       label: "June",
@@ -28,7 +28,7 @@ const EN_COPY = {
     {
       label: "September",
       title: "Swaps open",
-      body: "Accepted matches unlock travel windows, agreements, insurance coverage, and the practical trip handoff.",
+      body: "Accepted matches unlock travel windows, agreements, the Swapl Guarantee, and the practical trip handoff.",
     },
   ],
 };
@@ -42,7 +42,7 @@ const COPY: Partial<Record<Locale, typeof EN_COPY>> = {
       "Il lancio di settembre dipende da case di qualita, non da una waitlist generica. Gli host anticipati vengono revisionati prima, compaiono piu in alto nei match e aiutano a scegliere i corridoi tra citta da aprire.",
     primaryCta: "Diventa host fondatore",
     secondaryCta: "Richiedi invito",
-    proofs: ["Nessuna tariffa notte", "Nessuna commissione host", "Ricerca reciproca", "Assicurazione inclusa"],
+    proofs: ["Nessuna tariffa notte", "Nessuna commissione host", "Ricerca reciproca", "Garanzia Swapl inclusa"],
     steps: [
       {
         label: "Giugno",
@@ -57,7 +57,7 @@ const COPY: Partial<Record<Locale, typeof EN_COPY>> = {
       {
         label: "Settembre",
         title: "Scambi aperti",
-        body: "I match accettati sbloccano finestre di viaggio, accordi, copertura assicurativa e consegna pratica del soggiorno.",
+        body: "I match accettati sbloccano finestre di viaggio, accordi, la Garanzia Swapl e consegna pratica del soggiorno.",
       },
     ],
   },
@@ -68,7 +68,7 @@ const COPY: Partial<Record<Locale, typeof EN_COPY>> = {
       "Eylul lansmani genel bir bekleme listesinden degil, kaliteli arzdan guc alacak. Erken ev sahipleri daha once incelenir, eslesmelerde daha ustte gorunur ve acacagimiz sehir koridorlarini sekillendirir.",
     primaryCta: "Kurucu ev sahibi ol",
     secondaryCta: "Davet iste",
-    proofs: ["Gecelik ucret yok", "Ev sahibi komisyonu yok", "Karsilikli eslesme", "Sigorta dahil"],
+    proofs: ["Gecelik ucret yok", "Ev sahibi komisyonu yok", "Karsilikli eslesme", "Swapl Guvencesi dahil"],
     steps: [
       {
         label: "Haziran",
@@ -83,7 +83,7 @@ const COPY: Partial<Record<Locale, typeof EN_COPY>> = {
       {
         label: "Eylul",
         title: "Takaslar acilir",
-        body: "Kabul edilen eslesmeler seyahat pencerelerini, anlasmalari, sigorta kapsamlarini ve pratik teslim surecini acar.",
+        body: "Kabul edilen eslesmeler seyahat pencerelerini, anlasmalari, Swapl Guvencesini ve pratik teslim surecini acar.",
       },
     ],
   },

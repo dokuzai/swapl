@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: "%s · swapl",
   },
   description:
-    "List your home before the September 2026 launch. swapl is a home swap marketplace for trading keys for keys, with no nightly rates and every accepted stay insured.",
+    "List your home before the September 2026 launch. swapl is a home swap marketplace for trading keys for keys, with no nightly rates and every accepted stay backed by the Swapl Guarantee.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   applicationName: "swapl",
   alternates: { canonical: "/" },

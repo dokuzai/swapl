@@ -3,7 +3,7 @@ import type { DictKey } from "./dict-en";
 export const es: Partial<Record<DictKey, string>> = {
   "nav.howItWorks": "Cómo funciona",
   "nav.homes": "Casas",
-  "nav.insurance": "Seguro",
+  "nav.insurance": "Garantía",
   "nav.pricing": "Precios",
   "nav.companies": "Empresas",
   "nav.signIn": "Acceder",
@@ -24,21 +24,21 @@ export const es: Partial<Record<DictKey, string>> = {
   "menu.waitingOnYou": "{count} esperándote",
   "footer.tagline": "© 2026 swapl · llaves por llaves, sin dinero",
   "footer.howItWorks": "Cómo funciona",
-  "footer.insurance": "Seguro",
+  "footer.insurance": "Garantía",
   "footer.browseHomes": "Explorar casas",
   "footer.account": "Cuenta",
 
   "launchBanner.tag": "Antes del lanzamiento",
-  "launchBanner.body": "Sin comisiones, cada intercambio asegurado — los intercambios arrancan",
+  "launchBanner.body": "Sin comisiones, cada intercambio respaldado por la Garantía Swapl — los intercambios arrancan",
   "launchBanner.month": "en septiembre 2026",
   "launchBanner.cta": "Publica la tuya →",
 
-  "hero.kicker": "Sin comisiones · Cada intercambio asegurado · Lanzamiento septiembre 2026",
+  "hero.kicker": "Sin comisiones · Cada intercambio respaldado · Lanzamiento septiembre 2026",
   "hero.titleA": "Llaves por llaves.",
   "hero.titleB": "Sin dinero, todo",
-  "hero.titleEm": "asegurado",
+  "hero.titleEm": "respaldado",
   "hero.intro":
-    "Cada intercambio aceptado está asegurado de extremo a extremo y nunca cambia dinero de manos: solo llaves por llaves. Estamos reuniendo casas fundadoras antes del lanzamiento de septiembre 2026: publica la tuya con todo el detalle ahora y serás de las primeras en aparecer cuando arranquen los intercambios.",
+    "Cada intercambio aceptado está respaldado por la Garantía Swapl y nunca cambia dinero de manos: solo llaves por llaves. Estamos reuniendo casas fundadoras antes del lanzamiento de septiembre 2026: publica la tuya con todo el detalle ahora y serás de las primeras en aparecer cuando arranquen los intercambios.",
   "hero.ctaList": "Publicar mi casa",
   "hero.ctaHow": "Ver cómo funciona",
 
@@ -55,9 +55,9 @@ export const es: Partial<Record<DictKey, string>> = {
   "how.step3.title": "Propón y acordad",
   "how.step3.desc":
     "Envía una propuesta con tu casa adjunta. Aceptan, rechazan o contraproponen. El precio no entra.",
-  "how.step4.title": "Viaja, asegurado",
+  "how.step4.title": "Viaja, respaldado",
   "how.step4.desc":
-    "Cada intercambio aceptado se cubre automáticamente: daños, responsabilidad civil, interrupción del viaje. Ambos tenéis llaves, códigos y línea 24/7.",
+    "Cada intercambio aceptado incluye la Garantía Swapl: nuestro equipo de resolución te respalda y puedes añadir Cobertura total hasta 5.000 €. Ambos recibís llaves, códigos y línea 24/7.",
 
   "live.kicker": "02 · Casas buscando intercambio",
   "live.title": "Casas reales. Intercambios reales. Ahora mismo.",
@@ -103,20 +103,20 @@ export const es: Partial<Record<DictKey, string>> = {
   "wizard.space.roomsOffered": "Habitaciones ofrecidas",
   "wizard.space.privateRoomKeysHint": "Una habitación privada vale menos Keys por noche que una casa entera.",
 
-  "insuranceBand.kicker": "04 · Seguro, siempre",
-  "insuranceBand.title": "Cada intercambio cubierto.",
+  "insuranceBand.kicker": "04 · La Garantía Swapl",
+  "insuranceBand.title": "Cada intercambio, respaldado.",
   "insuranceBand.titleEm": "Sin opt-in.",
   "insuranceBand.lede":
-    "Los intercambios no son alquileres, pero siguen siendo dos familias confiándose la casa. Cada intercambio aceptado se asegura automáticamente — sin checkbox, sin upsell.",
-  "insuranceBand.cardA.title": "Daños hasta 150.000 €",
+    "Los intercambios no son alquileres, pero siguen siendo dos familias confiándose la casa. Cada intercambio aceptado incluye la Garantía Swapl — nuestro propio compromiso de ayudar a poner las cosas en su sitio. Es una garantía de swapl, no una póliza de seguro.",
+  "insuranceBand.cardA.title": "Cobertura total hasta 5.000 €",
   "insuranceBand.cardA.body":
-    "Si algo se rompe, agrieta, inunda o desaparece durante el intercambio, está cubierto — en ambas direcciones, en ambas casas.",
-  "insuranceBand.cardB.title": "Responsabilidad civil",
+    "Añade Cobertura total a cualquier intercambio y te ayudamos con los daños accidentales hasta 5.000 €, con una franquicia de 750 € — en ambas direcciones, en ambas casas.",
+  "insuranceBand.cardB.title": "Un equipo de tu lado",
   "insuranceBand.cardB.body":
-    "Un invitado resbala en la cocina. Una tubería revienta al lado. La póliza lo gestiona — el intercambio no acaba en juicio.",
-  "insuranceBand.cardC.title": "Interrupción del viaje",
+    "Incluido gratis en cada intercambio: si un invitado resbala, revienta una tubería o un intercambio se tuerce, nuestro equipo de resolución entra rápido para que no acabe en un pulso.",
+  "insuranceBand.cardC.title": "Los planes cambian",
   "insuranceBand.cardC.body":
-    "¿Vuelo cancelado, pareja que se echa atrás, pandemia? Te reembolsamos — o te encontramos otra casa equivalente en 48 h.",
+    "¿Vuelo cancelado, pareja que se echa atrás? Te ayudamos a encontrar otra casa equivalente — o a recuperar las Keys que gastaste.",
 
   "cta.title": "Tu casa vale mil viajes.",
   "cta.body":
@@ -127,7 +127,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "cta.error": "Algo salió mal. Inténtalo en un momento.",
   "cta.placeholder": "tu@email.com",
   "cta.stat.countries": "◦ 92 países",
-  "cta.stat.insurance": "◦ Seguro incluido",
+  "cta.stat.insurance": "◦ Garantía Swapl incluida",
   "cta.stat.noFees": "◦ Sin tarifas para hosts",
   "cta.stat.noCommission": "◦ Sin comisión",
 
@@ -197,7 +197,7 @@ export const es: Partial<Record<DictKey, string>> = {
     "No nos llevamos un porcentaje del intercambio. Solo pagas si quieres herramientas avanzadas — búsquedas guardadas con avisos, posicionamiento prioritario, cuentas multi-casa, analítica. El intercambio en sí es igual para todos.",
   "pricing.tags.noFees": "◦ Sin tarifas en el intercambio",
   "pricing.tags.noCommission": "◦ Sin comisión",
-  "pricing.tags.insurance": "◦ Seguro incluido en todos los planes",
+  "pricing.tags.insurance": "◦ Garantía Swapl en todos los planes",
   "pricing.toggle.monthly": "Mensual",
   "pricing.toggle.yearly": "Anual · ahorras 30%",
   "pricing.popular": "Más elegido",
@@ -331,8 +331,8 @@ export const es: Partial<Record<DictKey, string>> = {
   "listingDetail.to": "Hasta",
   "listingDetail.staysOf": "Estancias de {min}–{max} días",
   "listingDetail.ownListing": "Este es tu propio anuncio.",
-  "listingDetail.coverAmount": "Cobertura 150k€",
-  "listingDetail.tripRefund": "Reembolso del viaje",
+  "listingDetail.coverAmount": "Garantía Swapl",
+  "listingDetail.tripRefund": "Ayuda para reencontrar casa",
   "listingDetail.support247": "Línea 24/7",
   "listingDetail.hostFallback": "anfitrión swapl",
   "listingDetail.tradeYourHome": "Intercambia tu casa por la suya",
@@ -355,8 +355,8 @@ export const es: Partial<Record<DictKey, string>> = {
   "verify.used.body": "Este enlace de verificación ya se ha usado. Tu correo ya está verificado.",
   "verify.invalid.heading": "Mmm, ese enlace no parece correcto.",
   "verify.invalid.body": "O fue manipulado o nunca existió. Solicita uno nuevo desde /account.",
-  "account.coverage.title": "Tu cobertura",
-  "account.coverage.body": "Cada intercambio aceptado se asegura automáticamente. Tus pólizas activas y pasadas están aquí.",
+  "account.coverage.title": "Tu Garantía Swapl",
+  "account.coverage.body": "Cada intercambio aceptado incluye la Garantía Swapl automáticamente. Tus garantías activas y pasadas están aquí.",
   "notFound.title": "Aún no hay intercambios aquí.",
   "notFound.body": "Puede que este anuncio se haya eliminado o nunca existiera. Echa un vistazo a lo que hay disponible ahora.",
   "notFound.browse": "Explorar casas",
@@ -405,7 +405,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "swap.guestCode": "Código de tu invitado (lo usa en tu casa)",
   "swap.yourCode": "Tu código (lo usas en la suya)",
   "swap.policyLine":
-    "Póliza {policy} · cobertura {coverage} € · línea 24/7: +44 800 000 swap",
+    "Garantía {policy} · cobertura {coverage} € · línea 24/7: +44 800 000 swap",
 
   "ui.cancel": "Cancelar",
   "ui.save": "Guardar",
@@ -699,19 +699,19 @@ export const es: Partial<Record<DictKey, string>> = {
   "terms.updated": "Última actualización · 24 de mayo de 2026",
   "faq.q1": "¿Y si un compañero de intercambio daña mi casa?",
   "faq.a1":
-    "Cada intercambio aceptado queda cubierto automáticamente por daños materiales hasta 150.000 € — en ambas direcciones, para ambas casas. No marcas nada, no rellenas formularios, no pagas prima. Si algo se rompe durante la estancia, abre un parte desde tu panel y la póliza se encarga de la reparación o el reemplazo.",
+    "Cada intercambio aceptado incluye la Garantía Swapl. Si algo sale mal, abre una reclamación desde tu panel y nuestro equipo de resolución te ayuda a ponerlo en orden sin coste. Para los daños accidentales en la propiedad puedes añadir Cobertura total — hasta 5.000 € por intercambio, con una franquicia de 750 €, en ambas direcciones. La Garantía Swapl es un compromiso de swapl, no una póliza de seguro.",
   "faq.q2": "¿Cómo gestionáis la entrega de llaves?",
   "faq.a2":
     "Tú y tu compañero elegís lo que os funcione: veros en persona, dejar las llaves a un vecino, usar una caja de seguridad, o compartir un código de cerradura inteligente a través de swapl. Generamos un código de invitado de un solo uso por intercambio, así nadie comparte una credencial permanente.",
   "faq.q3": "¿Puedo intercambiar con alguien cuyas fechas no coinciden con las mías?",
   "faq.a3":
-    "Sí. Los intercambios no simultáneos (a veces llamados \"puntos de hospitalidad\") llegarán después del lanzamiento. Acumulas ahora una estancia en casa de alguien y devuelves la tuya más adelante — a esa persona o a otro miembro. En el lanzamiento empezamos con intercambios en la misma semana, que son los más seguros de asegurar.",
+    "Sí. Los intercambios no simultáneos (a veces llamados \"puntos de hospitalidad\") llegarán después del lanzamiento. Acumulas ahora una estancia en casa de alguien y devuelves la tuya más adelante — a esa persona o a otro miembro. En el lanzamiento empezamos con intercambios en la misma semana, que son los más seguros de gestionar.",
   "faq.q4": "¿Y las mascotas?",
   "faq.a4":
-    "Filtra por casas que admiten mascotas y solo verás sitios cuyos dueños dan la bienvenida a los animales. Algunos anfitriones incluso cuidarán de la tuya durante el intercambio. El seguro cubre los daños causados por las mascotas invitadas exactamente igual que cualquier otro daño.",
+    "Filtra por casas que admiten mascotas y solo verás sitios cuyos dueños dan la bienvenida a los animales. Algunos anfitriones incluso cuidarán de la tuya durante el intercambio. La Garantía Swapl trata los daños causados por las mascotas invitadas exactamente igual que cualquier otro daño.",
   "faq.q5": "¿Tengo que ser miembro de swapl para intercambiar?",
   "faq.a5":
-    "Ambas partes tienen que ser miembros para que podamos verificar la identidad, adjuntar el seguro y procesar el acuerdo. La membresía es gratis para siempre para el intercambio básico; Plus y Pro añaden herramientas avanzadas (alertas de búsquedas guardadas, posicionamiento prioritario, estadísticas del anuncio) pero nunca condicionan el intercambio en sí.",
+    "Ambas partes tienen que ser miembros para que podamos verificar la identidad, aplicar la Garantía Swapl y procesar el acuerdo. La membresía es gratis para siempre para el intercambio básico; Plus y Pro añaden herramientas avanzadas (alertas de búsquedas guardadas, posicionamiento prioritario, estadísticas del anuncio) pero nunca condicionan el intercambio en sí.",
   "faq.q6": "¿En qué se diferencia de Airbnb?",
   "faq.a6":
     "No se mueve dinero y nadie es un huésped que paga. Intercambias llaves con otro propietario que quiere tu ciudad mientras tú quieres la suya. Esa alineación cambia la dinámica — ambos lados son propietarios, ambos son huéspedes, ambos se juegan algo.",
@@ -720,7 +720,7 @@ export const es: Partial<Record<DictKey, string>> = {
     "Email y nombre de la cuenta, los detalles de los anuncios que publicas, propuestas de intercambio y mensajes con otros miembros, metadatos de la verificación de identidad (no guardamos escaneos del pasaporte — lo hace nuestro partner de KYC), y señales básicas de dispositivo + analítica (página, idioma, viewport). Nada más.",
   "privacy.s2.title": "Por qué lo recogemos",
   "privacy.s2.body":
-    "Para hacer funcionar el intercambio (matching, mensajería, seguro), para verificar que eres una persona real antes de tu primera aceptación, y para mejorar el producto. Usamos un pequeño conjunto de analíticas respetuosas con la privacidad — sin rastreadores publicitarios, sin perfilado entre sitios.",
+    "Para hacer funcionar el intercambio (matching, mensajería, la Garantía Swapl), para verificar que eres una persona real antes de tu primera aceptación, y para mejorar el producto. Usamos un pequeño conjunto de analíticas respetuosas con la privacidad — sin rastreadores publicitarios, sin perfilado entre sitios.",
   "privacy.s3.title": "Quién ve qué",
   "privacy.s3.body":
     "Tu anuncio es público para otros miembros. Tu nombre real solo se comparte con un compañero de intercambio cuando ambas partes aceptan. La verificación de identidad solo te llega a ti — los compañeros ven una insignia de verificado, no tus documentos.",
@@ -732,19 +732,19 @@ export const es: Partial<Record<DictKey, string>> = {
     "Las preguntas sobre cómo tratamos tus datos van a privacy@swapl.fun. swapl se opera desde Ámsterdam, Países Bajos.",
   "terms.s1.title": "Qué es swapl",
   "terms.s1.body":
-    "swapl es un marketplace que ayuda a los propietarios a encontrarse e intercambiar estancias en sus casas. Ponemos las herramientas (anuncios, búsqueda, mensajería, acuerdos, seguro) pero no somos el anfitrión. Los dos miembros de un intercambio son las partes del acuerdo; swapl lo facilita.",
+    "swapl es un marketplace que ayuda a los propietarios a encontrarse e intercambiar estancias en sus casas. Ponemos las herramientas (anuncios, búsqueda, mensajería, acuerdos, la Garantía Swapl) pero no somos el anfitrión. Los dos miembros de un intercambio son las partes del acuerdo; swapl lo facilita.",
   "terms.s2.title": "Cuenta y requisitos",
   "terms.s2.body":
     "Debes tener 18+ años y ser el ocupante legal (propietario o inquilino de larga duración con permiso para hospedar) de cualquier casa que publiques. Da detalles exactos — tergiversar tu casa es motivo de retirada.",
-  "terms.s3.title": "Intercambios y seguro",
+  "terms.s3.title": "Intercambios y la Garantía Swapl",
   "terms.s3.body":
-    "Cada intercambio aceptado queda cubierto automáticamente por nuestra aseguradora para daños materiales, responsabilidad civil e interrupción del viaje. La cobertura se activa cuando ambas partes aceptan. El seguro no sustituye el cuidado razonable — sigues siendo responsable de seguir las normas de la casa del compañero.",
+    "Cada intercambio aceptado incluye la Garantía Swapl: si un intercambio sale mal, nuestro equipo de resolución ayuda a ponerlo en orden. Los miembros pueden añadir Cobertura total para daños accidentales en la propiedad hasta 5.000 € por intercambio, con una franquicia de 750 €. La Garantía Swapl es un compromiso de swapl, financiado por swapl — no es un seguro, y no interviene ninguna aseguradora autorizada. No sustituye el cuidado razonable: sigues siendo responsable de seguir las normas de la casa del compañero.",
   "terms.s4.title": "Pagos",
   "terms.s4.body":
     "El intercambio básico es gratis para siempre. Los planes opcionales Plus / Pro los factura Stripe; cancela cuando quieras desde /account/billing. No cobramos comisión por el intercambio en sí.",
   "terms.s5.title": "Disputas",
   "terms.s5.body":
-    "Si algo va mal durante un intercambio, contacta primero con el soporte 24/7. Si hace falta un parte, lo gestiona nuestra aseguradora. Para disputas con la propia swapl, aplica la ley neerlandesa y los tribunales de Ámsterdam tienen jurisdicción.",
+    "Si algo va mal durante un intercambio, contacta primero con el soporte 24/7. Si hace falta una reclamación, la gestiona nuestro equipo de resolución bajo la Garantía Swapl. Para disputas con la propia swapl, aplica la ley neerlandesa y los tribunales de Ámsterdam tienen jurisdicción.",
   "terms.s6.title": "Cambios",
   "terms.s6.body":
     "Te escribiremos al menos 30 días antes de cualquier cambio sustancial en estos términos. Seguir usando el servicio después de la fecha del cambio implica aceptación; siempre puedes borrar tu cuenta si prefieres no continuar.",
@@ -775,7 +775,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "trip.countdown.today": "Tu intercambio empieza hoy",
   "trip.countdown.started": "Tu intercambio está en marcha",
   "trip.dates": "{from} – {to}",
-  "trip.insured": "Asegurado",
+  "trip.insured": "Respaldado",
   "trip.checklist.title": "Antes de irte",
   "trip.checklist.guide": "Completa tu guía de la casa",
   "trip.checklist.details": "Lee los detalles de tu anfitrión",
@@ -819,8 +819,8 @@ export const es: Partial<Record<DictKey, string>> = {
 
   // ---- Prueba de cobertura on-chain (DOK-156) ----
   "cover.proof.badge": "Verificada en TON",
-  "cover.proof.blurb": "Un registro a prueba de manipulaciones de que tu cobertura es real — nada de cripto, sin pagos, nada que tengas que hacer.",
-  "cover.proof.view": "Ver la prueba",
+  "cover.proof.blurb": "Un registro a prueba de manipulaciones de tu Garantía Swapl — nada de cripto, sin pagos, nada que tengas que hacer.",
+  "cover.proof.view": "Ver el registro",
 
   // ---- Reportar un problema / disputa (DOK-153) ----
   "dispute.report.cta": "Obtén ayuda ahora",
@@ -1091,7 +1091,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "trips.keys.decline": "Rechazar",
   "trips.keys.cancel": "Cancelar solicitud",
   "trips.keys.working": "Procesando…",
-  "trips.keys.insured": "Asegurada",
+  "trips.keys.insured": "Respaldada",
   "trips.keys.hostWillConfirm": "Esperando la confirmación del anfitrión.",
   "trips.keys.actionError": "Algo salió mal — inténtalo de nuevo.",
   "trips.swaps.heading": "Intercambios de casa",
@@ -1374,7 +1374,7 @@ export const es: Partial<Record<DictKey, string>> = {
   "swaps.panel.hostFallback": "anfitrión swapl",
   "swaps.panel.partnerFallback": "tu compañero de intercambio",
   "swaps.agreed.title": "Intercambio acordado — llaves por llaves",
-  "swaps.agreed.body": "Los códigos de llave y tu certificado de seguro están en el panel del intercambio",
+  "swaps.agreed.body": "Los códigos de llave y los detalles de tu Garantía Swapl están en el panel del intercambio",
   "swaps.agreed.bodyAbove": " arriba",
   "swaps.agreed.bodyRight": " a la derecha",
   "swaps.partners.kicker": "Organiza lo básico",
@@ -1387,8 +1387,8 @@ export const es: Partial<Record<DictKey, string>> = {
   "swaps.partners.cityGuide": "Lee la guía de {city} →",
   "swaps.guest.conversation": "Conversación",
   "swaps.guest.peopleAside": "Personas en esta conversación",
-  "swaps.cover.finalisingTitle": "Finalizando tu cobertura…",
-  "swaps.cover.finalisingBody": "Tu intercambio está confirmado. Estamos emitiendo la póliza con nuestra aseguradora — suele tardar solo un momento.",
+  "swaps.cover.finalisingTitle": "Activando tu garantía…",
+  "swaps.cover.finalisingBody": "Tu intercambio está confirmado. Estamos activando tu Garantía Swapl — suele tardar solo un momento.",
   "concierge.kicker": "Hazlo perfecto",
   "concierge.title": "Extras opcionales para tu estancia",
   "concierge.partnerTag": "{category} · socio",
@@ -1467,11 +1467,11 @@ export const es: Partial<Record<DictKey, string>> = {
   "swaps.chat.live": "En directo",
   "swaps.accept.confirmTitle": "¿Confirmas el intercambio?",
   "swaps.accept.recap": "Con {name} · {dateRange}",
-  "swaps.accept.insTitle": "Seguro incluido",
-  "swaps.accept.insBody": "Al aceptar, ambas casas quedan aseguradas automáticamente — daños, responsabilidad civil e interrupción del viaje, en ambos sentidos. Sin coste, sin letra pequeña.",
-  "swaps.accept.insLink": "Lee la cobertura →",
-  "swaps.accept.ack": "Entiendo que aceptar activa la póliza de seguro para este intercambio.",
-  "swaps.accept.confirm": "Confirmar y asegurar",
+  "swaps.accept.insTitle": "Garantía Swapl incluida",
+  "swaps.accept.insBody": "Al aceptar, ambas casas quedan respaldadas por la Garantía Swapl, en ambos sentidos. Añade Cobertura total para daños accidentales hasta 5.000 € (franquicia de 750 €). Es una garantía de swapl, no un seguro.",
+  "swaps.accept.insLink": "Lee la garantía →",
+  "swaps.accept.ack": "Entiendo que aceptar activa la Garantía Swapl para este intercambio.",
+  "swaps.accept.confirm": "Confirmar intercambio",
   "swaps.accept.cancel": "Cancelar",
 
   // ---- App-experience feedback (rate the app) ----

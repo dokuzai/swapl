@@ -19,7 +19,7 @@ export async function generateMetadata(props: PageProps<"/[citySlug]">): Promise
 
   return {
     title: `${page.city} home swap launch`,
-    description: `List your ${page.city} home before the September 2026 swapl launch. Join founding hosts for insured, money-free home exchanges.`,
+    description: `List your ${page.city} home before the September 2026 swapl launch. Join founding hosts for money-free home exchanges backed by the Swapl Guarantee.`,
     alternates: { canonical: `/${page.slug}` },
     openGraph: {
       title: `${page.city} home swaps launching September 2026`,
@@ -46,7 +46,7 @@ export default async function CityLaunchPage(props: PageProps<"/[citySlug]">) {
               Home swaps in <span className="h-em">{page.city}</span>.
             </h1>
             <p className="mt-6 max-w-[56ch] text-[18px] leading-[1.55]" style={{ color: "var(--navy-2)" }}>
-              Keys for keys — no money changes hands, and every accepted swap is insured end to end. {page.angle} List before September to become a founding host, show up early in matching, and help build the first real swap routes for {page.city}.
+              Keys for keys — no money changes hands, and every swap is backed by the Swapl Guarantee. {page.angle} List before September to become a founding host, show up early in matching, and help build the first real swap routes for {page.city}.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <TrackedLink

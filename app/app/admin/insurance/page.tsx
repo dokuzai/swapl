@@ -5,7 +5,7 @@ import { insuranceProvider } from "@/lib/insurance";
 import { mockInsuranceProvider } from "@/lib/insurance/mock";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Insurance · admin" };
+export const metadata = { title: "Swapl Guarantee · admin" };
 
 export default async function AdminInsurance() {
   await requireAdminPage();
@@ -44,10 +44,10 @@ export default async function AdminInsurance() {
   return (
     <>
       <header className="mb-8">
-        <p className="kicker mb-3">Underwriter</p>
-        <h1 className="font-display text-3xl tracking-[-0.02em]">Insurance</h1>
+        <p className="kicker mb-3">Backed by swapl</p>
+        <h1 className="font-display text-3xl tracking-[-0.02em]">Swapl Guarantee</h1>
         <p className="mt-2 text-sm" style={{ color: "var(--navy-2)" }}>
-          v1 ships against the swapl-cover mock. Switch INSURANCE_PROVIDER to flip to the real underwriter.
+          A guarantee from swapl, not insurance. v1 ships against the swapl-cover mock; switch INSURANCE_PROVIDER to flip the backing provider.
         </p>
       </header>
 

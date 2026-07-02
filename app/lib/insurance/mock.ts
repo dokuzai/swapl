@@ -1,4 +1,4 @@
-// Deterministic mock underwriter. Returns plausible policy numbers so
+// Deterministic mock Guarantee provider. Returns plausible reference numbers so
 // integration tests can assert on shape without an external network call.
 // Pricing lives in ./pricing so the quote preview and the bound policy
 // always agree.

@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "swapl — home swapping",
     short_name: "swapl",
     description:
-      "Trade your home for someone else's. A home-swap marketplace — keys for keys, no nightly rates, every accepted stay insured.",
+      "Trade your home for someone else's. A home-swap marketplace — keys for keys, no nightly rates, every accepted stay backed by the Swapl Guarantee.",
     start_url: "/",
     display: "standalone",
     background_color: "#FAF6E8",

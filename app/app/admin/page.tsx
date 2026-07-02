@@ -73,7 +73,7 @@ export default async function AdminOverview() {
     { label: "Listings (active)", value: listingsActive },
     { label: "Listings (verified)", value: listingsVerified },
     { label: "Active swap agreements", value: agreements },
-    { label: "Active insurance policies", value: policies },
+    { label: "Active Swapl Guarantees", value: policies },
     { label: "Members on Free", value: freeSubs },
     { label: "Members on Plus", value: plusSubs, accent: true },
     { label: "Members on Pro", value: proSubs, accent: true },

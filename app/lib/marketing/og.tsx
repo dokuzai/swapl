@@ -94,7 +94,7 @@ export function renderOgImage({
           }}
         >
           <span style={{ color: PINK, fontWeight: 600 }}>Keys for keys.</span>
-          <span>No money · Every stay insured · Launching September 2026</span>
+          <span>No money · Every stay backed · Launching September 2026</span>
         </div>
       </div>
     ),

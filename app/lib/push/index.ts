@@ -174,8 +174,8 @@ export const pushTemplates = {
   },
   insurancePolicyCreated(proposalId: string, policyNumber: string): PushPayload {
     return {
-      title: "Your swap is covered",
-      body: `Policy ${policyNumber} — €150k cover.`,
+      title: "Your Swapl Guarantee is active",
+      body: `Swapl Guarantee ${policyNumber} is active for your swap.`,
       data: { kind: "insurancePolicyCreated", proposalId, deepLink: deepLinkProposal(proposalId) },
     };
   },

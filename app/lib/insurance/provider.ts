@@ -1,6 +1,8 @@
-// Adapter interface for the insurance underwriter. The concrete implementation
-// is selected at runtime by INSURANCE_PROVIDER (env). v1 ships with the mock
-// only — when a real underwriter signs we drop in a sibling file.
+// Adapter interface for the Swapl Guarantee backing provider (a guarantee from
+// swapl, not insurance). The concrete implementation is selected at runtime by
+// INSURANCE_PROVIDER (env). v1 ships with the mock only — when a real backing
+// provider signs we drop in a sibling file. (Type/symbol names are kept on the
+// existing wire to avoid breaking the iOS/Android API contract.)
 
 export type CreatePolicyInput = {
   agreementId: string;

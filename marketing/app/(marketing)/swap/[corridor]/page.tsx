@@ -20,18 +20,18 @@ export async function generateMetadata(props: PageProps<"/swap/[corridor]">): Pr
   const title = `${c.to.city} home swap from ${c.from.city}`;
   return {
     title,
-    description: `Swap your ${c.from.city} home for a place in ${c.to.city} — no nightly rates, every stay insured. Join founding hosts before the September 2026 swapl launch.`,
+    description: `Swap your ${c.from.city} home for a place in ${c.to.city} — no nightly rates, every swap backed by the Swapl Guarantee. Join founding hosts before the September 2026 swapl launch.`,
     alternates: { canonical: `/swap/${c.slug}` },
     keywords: [
       `${c.to.city} home swap`,
       `${c.to.city} home exchange`,
       `home swap from ${c.from.city}`,
       `${c.from.city} to ${c.to.city} apartment swap`,
-      "insured home exchange",
+      "backed home exchange",
     ],
     openGraph: {
       title: `${c.to.city} ⇄ ${c.from.city} home swaps`,
-      description: `Insured, money-free swaps between ${c.from.city} and ${c.to.city}. Launching September 2026.`,
+      description: `Money-free swaps between ${c.from.city} and ${c.to.city}, backed by the Swapl Guarantee. Launching September 2026.`,
       url: `/swap/${c.slug}`,
       type: "website",
     },
@@ -46,11 +46,11 @@ export default async function CorridorPage(props: PageProps<"/swap/[corridor]">)
   const faq = [
     {
       q: `How does a ${c.from.city}–${c.to.city} home swap work?`,
-      a: `You list your ${c.from.city} home and propose a swap with a ${c.to.city} host (or accept their proposal). No money changes hands — you trade keys for keys. The moment a swap is accepted, swapl issues an insurance policy covering both homes.`,
+      a: `You list your ${c.from.city} home and propose a swap with a ${c.to.city} host (or accept their proposal). No money changes hands — you trade keys for keys. The moment a swap is accepted, the Swapl Guarantee applies to both homes.`,
     },
     {
       q: `Is it safe to swap my home?`,
-      a: `Every accepted swap on swapl is insured automatically, hosts are identity-verified, and key-exchange codes are issued per agreement. That is the core difference from informal Facebook swap groups.`,
+      a: `Every accepted swap on swapl is backed by the Swapl Guarantee automatically, hosts are identity-verified, and key-exchange codes are issued per agreement. That is the core difference from informal Facebook swap groups.`,
     },
     {
       q: `What does it cost?`,
@@ -86,7 +86,7 @@ export default async function CorridorPage(props: PageProps<"/swap/[corridor]">)
             </h1>
             <p className="mt-6 max-w-[58ch] text-[18px] leading-[1.55]" style={{ color: "var(--navy-2)" }}>
               Trade your {c.from.city} home for a place in {c.to.city} — keys for keys, no nightly
-              rates, every accepted stay insured. {c.to.angle} List before September to be among the
+              rates, every swap backed by the Swapl Guarantee. {c.to.angle} List before September to be among the
               first {c.from.city}–{c.to.city} swaps surfaced when matching opens.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -152,7 +152,7 @@ export default async function CorridorPage(props: PageProps<"/swap/[corridor]">)
             </div>
             <ul className="grid gap-3 text-[15px]" style={{ color: "var(--navy-2)" }}>
               <li className="flex gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0" style={{ color: "var(--pink)" }} />No nightly rates and no swap fees — keys for keys.</li>
-              <li className="flex gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0" style={{ color: "var(--pink)" }} />Every accepted swap is insured the moment it's agreed.</li>
+              <li className="flex gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0" style={{ color: "var(--pink)" }} />Every accepted swap is backed by the Swapl Guarantee the moment it's agreed.</li>
               <li className="flex gap-2"><CheckCircle2 size={16} className="mt-0.5 shrink-0" style={{ color: "var(--pink)" }} />Identity-verified hosts and per-swap key-exchange codes.</li>
             </ul>
           </article>

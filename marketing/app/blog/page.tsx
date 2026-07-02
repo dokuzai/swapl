@@ -5,13 +5,13 @@ import { BLOG_POSTS } from "@/app/content/blog";
 import { BlogBrowser } from "@/components/blog/blog-browser";
 
 export const metadata: Metadata = {
-  title: "The swapl blog · home swapping, no money, fully insured",
+  title: "The swapl blog · home swapping, no money, backed by the Swapl Guarantee",
   description:
-    "Guides and honest numbers on home swapping — what it costs versus Airbnb, how insured swaps work, and where to swap into next.",
+    "Guides and honest numbers on home swapping — what it costs versus Airbnb, how the Swapl Guarantee works, and where to swap into next.",
   alternates: { canonical: "/blog" },
   openGraph: {
     title: "The swapl blog",
-    description: "Home swapping, the real cost of travel, and how insured money-free swaps work.",
+    description: "Home swapping, the real cost of travel, and how money-free swaps backed by the Swapl Guarantee work.",
     url: "/blog",
     type: "website",
   },
@@ -28,7 +28,7 @@ export default function BlogIndex() {
             Keys for keys, explained.
           </h1>
           <p className="mt-5 text-[18px] leading-[1.5] max-w-2xl" style={{ color: "var(--navy-2)" }}>
-            The real cost of travel, how insured swapping actually works, and where to swap into next.
+            The real cost of travel, how swapping backed by the Swapl Guarantee actually works, and where to swap into next.
           </p>
 
           <BlogBrowser posts={BLOG_POSTS} />

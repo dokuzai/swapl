@@ -462,7 +462,7 @@ export function StepIllust({
       <g transform="translate(78 48) rotate(-18)">
         <rect x="-18" y="-10" width="36" height="20" rx="2" fill="none" stroke={p.accent} strokeWidth="1.2" />
         <text x="0" y="4" textAnchor="middle" fontFamily="monospace" fontSize="7" fill={p.accent} fontWeight="700">
-          INSURED
+          BACKED
         </text>
       </g>
     </svg>
