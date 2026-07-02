@@ -85,7 +85,7 @@ export default function VerifyForm({ listingId }: { listingId: string }) {
           {pending ? t("verifyListing.submitting") : t("verifyListing.submit")}
         </button>
       </div>
-      {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
     </form>
   );
 }

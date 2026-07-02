@@ -282,7 +282,7 @@ export function PersonalInfoEditor({ initial }: { initial: PersonalInfo }) {
           <span className="text-sm" style={{ color: "var(--navy-2)" }}>{t("account.personal.saved")}</span>
         )}
         {status === "error" && (
-          <span className="text-sm" style={{ color: "#dc2626" }}>{t("account.personal.error")}</span>
+          <span className="text-sm" style={{ color: "var(--destructive)" }}>{t("account.personal.error")}</span>
         )}
       </div>
     </form>

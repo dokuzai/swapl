@@ -83,7 +83,7 @@ export default function SwapActions({
 
   return (
     <div className="space-y-4">
-      {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
 
       <div className="flex flex-wrap gap-3">
         {canRespondAsTarget && (

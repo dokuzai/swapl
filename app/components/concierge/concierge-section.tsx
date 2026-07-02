@@ -68,7 +68,7 @@ export function ConciergeSection({
     <section className="mt-10">
       <p className="kicker mb-3">{t("concierge.kicker")}</p>
       <h2 className="font-display text-2xl tracking-[-0.01em] mb-4">{t("concierge.title")}</h2>
-      {error && <p className="text-sm mb-3" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && <p className="text-sm mb-3" style={{ color: "var(--destructive)" }}>{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {addOns.map((a) => {

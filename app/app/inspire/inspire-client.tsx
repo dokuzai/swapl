@@ -477,7 +477,7 @@ export function InspireClient({
           )}
           {returnState === "error" && (
             <div className="surface-card p-6 lg:p-8 space-y-4">
-              <p className="text-sm" role="alert" style={{ color: "#dc2626" }}>
+              <p className="text-sm" role="alert" style={{ color: "var(--destructive)" }}>
                 {error ?? t("inspire.error.generic")}
               </p>
               <button
@@ -499,7 +499,7 @@ export function InspireClient({
             onBack={() => setPayment(null)}
           />
           {error && (
-            <p className="text-sm" role="alert" style={{ color: "#dc2626" }}>
+            <p className="text-sm" role="alert" style={{ color: "var(--destructive)" }}>
               {error}
             </p>
           )}
@@ -582,7 +582,7 @@ export function InspireClient({
             </div>
           </div>
           {error && (
-            <p className="text-sm" role="alert" style={{ color: "#dc2626" }}>
+            <p className="text-sm" role="alert" style={{ color: "var(--destructive)" }}>
               {error}
             </p>
           )}
@@ -873,7 +873,7 @@ export function InspireClient({
             )}
 
             {error && (
-              <p className="text-sm" role="alert" style={{ color: "#dc2626" }}>
+              <p className="text-sm" role="alert" style={{ color: "var(--destructive)" }}>
                 {error}
               </p>
             )}

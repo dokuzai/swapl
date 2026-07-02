@@ -86,7 +86,7 @@ export default function ResetForm() {
           style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
         />
       </label>
-      {error && <p className="text-sm mb-3" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && <p className="text-sm mb-3" style={{ color: "var(--destructive)" }}>{error}</p>}
       <button type="submit" disabled={pending} className="pill-primary w-full justify-center">
         {pending ? t("auth.reset.submitting") : t("auth.reset.submit")}
       </button>

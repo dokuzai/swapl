@@ -242,7 +242,7 @@ export function AuthProviders({ providers }: { providers: WebAuthProviders }) {
       </div>
 
       {error && (
-        <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>
+        <p className="mt-3 text-sm" style={{ color: "var(--destructive)" }}>
           {error}
         </p>
       )}
@@ -365,7 +365,7 @@ function OtpSignIn({ phoneEnabled, onSession }: { phoneEnabled: boolean; onSessi
             </span>
           )}
         </label>
-        {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+        {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
         <button type="submit" className="pill-primary justify-center" disabled={pending}>
           {pending ? t("auth.otp.sending") : t("auth.otp.send")}
         </button>
@@ -402,7 +402,7 @@ function OtpSignIn({ phoneEnabled, onSession }: { phoneEnabled: boolean; onSessi
           style={inputStyle}
         />
       </label>
-      {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
       <button type="submit" className="pill-primary justify-center" disabled={pending || code.length !== 6}>
         {pending ? t("auth.otp.verifying") : t("auth.otp.verify")}
       </button>

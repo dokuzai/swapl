@@ -45,7 +45,7 @@ export default async function VerifyPage(props: PageProps<"/listings/[id]/edit/v
               </p>
             )}
             {listing.verificationStatus === "rejected" && (
-              <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>
+              <p className="mt-3 text-sm" style={{ color: "var(--destructive)" }}>
                 {t("verifyListing.rejectedNote")}
               </p>
             )}
@@ -83,7 +83,7 @@ function StatusPill({ status, dict }: { status: string; dict: Dict }) {
     none: { labelKey: "verifyListing.statusNone", bg: "var(--cream-2)", fg: "var(--navy-3)" },
     pending: { labelKey: "verifyListing.statusPending", bg: "var(--pink-light)", fg: "var(--pink)" },
     approved: { labelKey: "verifyListing.statusApproved", bg: "var(--pink)", fg: "#fff" },
-    rejected: { labelKey: "verifyListing.statusRejected", bg: "var(--cream-2)", fg: "#dc2626" },
+    rejected: { labelKey: "verifyListing.statusRejected", bg: "var(--cream-2)", fg: "var(--destructive)" },
   };
   const s = map[status] ?? map.none;
   return (

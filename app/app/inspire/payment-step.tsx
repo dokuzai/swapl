@@ -73,7 +73,7 @@ function PaymentForm({
     <form onSubmit={submit} className="space-y-4">
       <PaymentElement options={{ layout: "tabs" }} />
       {error && (
-        <p className="text-sm" role="alert" style={{ color: "#dc2626" }}>
+        <p className="text-sm" role="alert" style={{ color: "var(--destructive)" }}>
           {error}
         </p>
       )}
