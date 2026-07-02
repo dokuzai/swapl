@@ -310,28 +310,30 @@ export async function confirmKeysStay(stayId: string, hostId: string): Promise<{
 
   await prisma.$transaction(async (tx) => {
     const t = tx as Prisma.TransactionClient;
-    // Re-read inside the tx to guard against a concurrent confirm/decline.
-    const fresh = await t.keysStay.findUnique({ where: { id: stay.id }, select: { status: true } });
-    if (!fresh || fresh.status !== "pending") {
-      throw new KeysStayError("BAD_STATE", "Stay is no longer pending");
-    }
-
-    // Keys stays move Keys: release the hold, take the real spend from the guest
-    // and credit the host (net guest effect -keysCost). Couchsurf stays are free,
-    // so no Keys moved at request time and none move now.
-    if (stay.kind !== "couchsurf") {
-      await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: "Release hold on confirm" }, t);
-      await spend(stay.guestId, stay.keysCost, { stayId: stay.id, note: "Stay confirmed" }, t);
-      await earn(stay.hostId, stay.keysCost, { stayId: stay.id, note: "Hosted a Keys stay" }, t);
-    }
-
-    await t.keysStay.update({
-      where: { id: stay.id },
+    // First-writer-wins: atomically claim the pending→confirmed transition.
+    // updateMany takes a row lock, so a concurrent confirm/decline that already
+    // flipped the row matches zero rows here and we bail without moving any Keys.
+    // (A non-locking findUnique re-read did NOT serialize under READ COMMITTED.)
+    const claimed = await t.keysStay.updateMany({
+      where: { id: stay.id, status: "pending" },
       data: {
         status: "confirmed",
         insurancePolicyId: policyResult?.externalId ?? null,
       },
     });
+    if (claimed.count !== 1) {
+      throw new KeysStayError("BAD_STATE", "Stay is no longer pending");
+    }
+
+    // Keys stays move Keys: release the hold, take the real spend from the guest
+    // and credit the host (net guest effect -keysCost). Couchsurf stays are free,
+    // so no Keys moved at request time and none move now. Each write carries a
+    // deterministic eventKey so a duplicate can never be inserted.
+    if (stay.kind !== "couchsurf") {
+      await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: "Release hold on confirm", eventKey: `keysstay:${stay.id}:confirm:release` }, t);
+      await spend(stay.guestId, stay.keysCost, { stayId: stay.id, note: "Stay confirmed", eventKey: `keysstay:${stay.id}:confirm:spend` }, t);
+      await earn(stay.hostId, stay.keysCost, { stayId: stay.id, note: "Hosted a Keys stay", eventKey: `keysstay:${stay.id}:confirm:earn` }, t);
+    }
   });
 
   return { id: stay.id, keysCost: stay.keysCost };
@@ -365,15 +367,20 @@ export async function releaseKeysStay(
 
   await prisma.$transaction(async (tx) => {
     const t = tx as Prisma.TransactionClient;
-    const fresh = await t.keysStay.findUnique({ where: { id: stay.id }, select: { status: true } });
-    if (!fresh || fresh.status !== "pending") {
+    // First-writer-wins: atomically claim the pending→outcome transition so a
+    // concurrent cancel/decline (or a double-tap) can't release the hold twice.
+    const claimed = await t.keysStay.updateMany({
+      where: { id: stay.id, status: "pending" },
+      data: { status: outcome },
+    });
+    if (claimed.count !== 1) {
       throw new KeysStayError("BAD_STATE", "Stay is no longer pending");
     }
     // Only Keys stays have a hold to release; couchsurf stays moved no Keys.
+    // eventKey makes the release idempotent even if the gate were ever bypassed.
     if (stay.kind !== "couchsurf") {
-      await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: `Hold released (${outcome})` }, t);
+      await release(stay.guestId, stay.keysCost, { stayId: stay.id, note: `Hold released (${outcome})`, eventKey: `keysstay:${stay.id}:${outcome}:release` }, t);
     }
-    await t.keysStay.update({ where: { id: stay.id }, data: { status: outcome } });
     await releaseListingOccupancy(t, { source: "keys_stay", sourceId: stay.id });
   });
 

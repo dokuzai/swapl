@@ -167,6 +167,11 @@ export async function applyTransaction(
 // positive magnitude; the helper picks the sign. They accept an optional `tx`
 // so the stay flow can compose them in one transaction.
 
+// Optional metadata for a ledger write. `eventKey` opts the row into the
+// KeysTransaction @unique idempotency guard so a duplicate credit/debit for the
+// same logical event physically cannot be written.
+type LedgerOpts = { stayId?: string | null; note?: string | null; eventKey?: string | null };
+
 function assertPositive(amount: number): void {
   if (!Number.isInteger(amount) || amount <= 0) {
     throw new KeysLedgerError("NON_POSITIVE_AMOUNT", `Amount must be a positive integer, got ${amount}`);
@@ -177,7 +182,7 @@ function assertPositive(amount: number): void {
 export function earn(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -188,7 +193,7 @@ export function earn(
 export function spend(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -199,7 +204,7 @@ export function spend(
 export function hold(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -210,7 +215,7 @@ export function hold(
 export function release(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -221,7 +226,7 @@ export function release(
 export function refund(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);

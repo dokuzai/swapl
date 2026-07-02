@@ -90,6 +90,17 @@ const h = vi.hoisted(() => {
         Object.assign(s, data);
         return { ...s };
       },
+      // Conditional status gate used by confirm/release (first-writer-wins).
+      async updateMany({ where, data }: any) {
+        let count = 0;
+        for (const s of store.stays.values()) {
+          if (where?.id && s.id !== where.id) continue;
+          if (where?.status && s.status !== where.status) continue;
+          Object.assign(s, data);
+          count++;
+        }
+        return { count };
+      },
     },
     keysTransaction: {
       async create({ data }: any) {
@@ -271,6 +282,29 @@ describe("confirmKeysStay", () => {
     await confirmKeysStay(stay.id, "host");
     await expect(confirmKeysStay(stay.id, "host")).rejects.toMatchObject({ code: "BAD_STATE" });
   });
+
+  it("double-confirm nets a single spend/earn (idempotent, no double-mint)", async () => {
+    const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
+    await confirmKeysStay(stay.id, "host");
+    // A racing/duplicate confirm must be a clean no-op — no extra Keys moved.
+    await expect(confirmKeysStay(stay.id, "host")).rejects.toMatchObject({ code: "BAD_STATE" });
+    expect(store.users.get("guest")!.keysBalance).toBe(72); // still net -28, not -56
+    expect(store.users.get("host")!.keysBalance).toBe(28); // earned once, not twice
+    expect(store.txns.filter((t) => t.kind === "spend_stay")).toHaveLength(1);
+    expect(store.txns.filter((t) => t.kind === "earn_host")).toHaveLength(1);
+    expect(store.txns.filter((t) => t.kind === "release")).toHaveLength(1);
+  });
+
+  it("stamps deterministic eventKeys on the confirm ledger rows", async () => {
+    const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
+    await confirmKeysStay(stay.id, "host");
+    const keys = store.txns.map((t) => t.eventKey).filter(Boolean).sort();
+    expect(keys).toEqual([
+      `keysstay:${stay.id}:confirm:earn`,
+      `keysstay:${stay.id}:confirm:release`,
+      `keysstay:${stay.id}:confirm:spend`,
+    ]);
+  });
 });
 
 describe("releaseKeysStay", () => {
@@ -296,6 +330,26 @@ describe("releaseKeysStay", () => {
     const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
     await expect(releaseKeysStay(stay.id, "guest", "declined")).rejects.toMatchObject({ code: "NOT_HOST" });
     await expect(releaseKeysStay(stay.id, "host", "cancelled")).rejects.toMatchObject({ code: "NOT_GUEST" });
+  });
+
+  it("double-decline releases the hold exactly once (idempotent)", async () => {
+    const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
+    expect(store.users.get("guest")!.keysBalance).toBe(72);
+    await releaseKeysStay(stay.id, "host", "declined");
+    expect(store.users.get("guest")!.keysBalance).toBe(100);
+    // A second decline must not release again (would over-credit to 128).
+    await expect(releaseKeysStay(stay.id, "host", "declined")).rejects.toMatchObject({ code: "BAD_STATE" });
+    expect(store.users.get("guest")!.keysBalance).toBe(100);
+    expect(store.txns.filter((t) => t.kind === "release")).toHaveLength(1);
+  });
+
+  it("a late decline on an already-confirmed stay cannot refund the guest", async () => {
+    const stay = await createKeysStay({ listingId: "L1", guestId: "guest", dateFrom: from, dateTo: to });
+    await confirmKeysStay(stay.id, "host");
+    await expect(releaseKeysStay(stay.id, "host", "declined")).rejects.toMatchObject({ code: "BAD_STATE" });
+    expect(store.users.get("guest")!.keysBalance).toBe(72); // stayed spent, not refunded
+    expect(store.users.get("host")!.keysBalance).toBe(28);
+    expect(store.txns.filter((t) => t.kind === "release")).toHaveLength(1); // only the confirm-release
   });
 });
 
