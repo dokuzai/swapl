@@ -242,6 +242,11 @@
   /* dashed divider used in card sections */
   .divider-dashed { border-top: 1px dashed var(--line); }
 
+  /* hide the native scrollbar (used by the date-picker wheel columns) while
+     keeping the element scrollable + snapping. */
+  .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+
   /* section kicker */
   .kicker {
     font-family: var(--font-mono);

@@ -81,6 +81,9 @@ model User {
   languages   String?                 // JSON array of language codes/names
   homeCity    String?                 // shown on the public profile when settings.showHomeCity
   homeCountry String?
+  // Date of birth (DOK-219). Stored at UTC midnight — only the calendar date is
+  // meaningful. Private: used to confirm age, never exposed on the public profile.
+  dateOfBirth DateTime?
 
   // Off-platform contact channels, JSON-encoded TEXT (lib/contact-channels.ts
   // owns shape + normalization). Revealed to a counterparty only once a swap is
