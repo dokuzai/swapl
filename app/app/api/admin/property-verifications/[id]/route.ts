@@ -8,6 +8,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdminFromRequest } from "@/lib/auth/abilities";
 import { grantPropertyVerifiedBonus, maybeGrantListingCompleteBonus } from "@/lib/keys/earn";
+import { purgeVerificationDocuments } from "@/lib/listing/property-verification-docs";
 
 const schema = z.object({
   decision: z.enum(["approve", "reject"]),
@@ -71,6 +72,11 @@ export async function POST(
       console.error("[earn:listing-complete]", err)
     );
   }
+
+  // JRN-HPre-01: the admin has made a terminal decision (approve or reject) and
+  // has already seen the document — delete the blobs + clear the stored URLs so
+  // the ownership document isn't retained. Best-effort; never fails the review.
+  await purgeVerificationDocuments(id, row.documents);
 
   return NextResponse.json({ ok: true, status: updated.status });
 }
