@@ -148,9 +148,10 @@ describe("POST /api/admin/users/[id]", () => {
     mocks.userFindUnique.mockResolvedValue({ id: "u1", role: "member", suspendedAt: null });
     const res = await postUser(req("/api/admin/users/u1", { action: "suspend" }), ctx("u1"));
     expect(res.status).toBe(200);
+    // SEC-AUTH-02: suspend also bumps the session epoch to kill live web cookies.
     expect(mocks.userUpdate).toHaveBeenCalledWith({
       where: { id: "u1" },
-      data: { suspendedAt: expect.any(Date) },
+      data: { suspendedAt: expect.any(Date), sessionEpoch: { increment: 1 } },
     });
     expect(mocks.authTokenUpdateMany).toHaveBeenCalledWith({
       where: { userId: "u1", revokedAt: null },

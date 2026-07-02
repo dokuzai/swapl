@@ -104,6 +104,8 @@ describe("POST /api/auth/change-password", () => {
     expect(update.where).toEqual({ id: "u-1" });
     expect(update.data.passwordHash).toMatch(/^\$2[aby]\$/);
     expect(update.data.passwordHash).not.toBe(currentHash);
+    // SEC-AUTH-02: bumps the session epoch to invalidate web cookies.
+    expect(update.data.sessionEpoch).toEqual({ increment: 1 });
 
     // Cookie session (no bearer) → ALL mobile tokens are revoked.
     expect(mocks.authTokenUpdateMany).toHaveBeenCalledWith({

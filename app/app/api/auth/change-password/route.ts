@@ -61,11 +61,16 @@ export async function POST(req: Request) {
   // the live session is the proof of ownership, no current password needed.
 
   const passwordHash = await hashPassword(parsed.data.newPassword);
-  await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+  // Bump the session epoch so every previously-issued WEB cookie is invalidated
+  // too (SEC-AUTH-02) — the AuthToken revocation below covers mobile bearers.
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { passwordHash, sessionEpoch: { increment: 1 } },
+  });
 
   // Security invariant: a password change logs out every other device. Keep
-  // the bearer that performed the change (web cookie sessions are stateless
-  // and unaffected — they're scoped by the signed cookie, not AuthToken).
+  // the bearer that performed the change. Web cookies are now revoked via the
+  // sessionEpoch bump above, so the acting web session must re-authenticate.
   const currentTokenHash = bearerTokenHash(req);
   await prisma.authToken.updateMany({
     where: {
