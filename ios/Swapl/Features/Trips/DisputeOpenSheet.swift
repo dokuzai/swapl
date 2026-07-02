@@ -65,7 +65,7 @@ struct DisputeOpenSheet: View {
             // reachable above the keyboard.
             .safeAreaPadding(.bottom, 16)
             .scrollDismissesKeyboard(.interactively)
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
             .navigationTitle("Report a problem")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

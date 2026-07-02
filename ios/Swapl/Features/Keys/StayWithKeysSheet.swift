@@ -271,6 +271,7 @@ struct StayWithKeysSheet: View {
                 .disabled(!canAffordAndValid || isSubmitting)
             }
         }
+        .swaplScreenBackground()
     }
 
     private var canAffordAndValid: Bool {

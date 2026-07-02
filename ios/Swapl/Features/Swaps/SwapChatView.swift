@@ -170,7 +170,7 @@ struct SwapChatView: View {
         .safeAreaInset(edge: .top) { chatFloatingHeader }
         // Cream background applied AFTER the header inset so it fills the whole
         // screen — including behind the floating header — with no stray band.
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
+        .swaplScreenBackground()
         .task { await vm.load() }
         .task(id: scenePhase) { await pollLoop() }
         .onChange(of: photoItems) { _, items in

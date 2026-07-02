@@ -93,7 +93,7 @@ struct LeaveReviewSheet: View {
                 .padding(.top, 12)
                 .padding(.bottom, 32)
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationTitle("Leave a review")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

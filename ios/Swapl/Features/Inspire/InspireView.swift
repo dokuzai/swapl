@@ -87,7 +87,7 @@ struct InspireView: View {
                 }
                 .padding(22)
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -469,7 +469,7 @@ struct PackageView: View {
             }
             .padding(.vertical, 18)
         }
-        .background(SwaplSemanticLight.background)
+        .swaplScreenBackground()
         .navigationTitle("Your swap package")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $safariItem) { item in
@@ -534,7 +534,7 @@ struct PackageView: View {
         VStack(alignment: .leading, spacing: 12) {
             CandidatePhotoView(candidate: vm.selected, height: 240)
                 .overlay(alignment: .topLeading) {
-                    Text("\(vm.selected.matchScore)% match")
+                    Text("\(vm.selected.matchScore.swaplPercent) match")
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
                         .foregroundStyle(AirbnbPalette.text)
                         .padding(.horizontal, 12)
@@ -638,7 +638,7 @@ struct PackageView: View {
                                     .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .semibold))
                                     .foregroundStyle(AirbnbPalette.text)
                                     .lineLimit(1)
-                                Text("\(candidate.matchScore)% match")
+                                Text("\(candidate.matchScore.swaplPercent) match")
                                     .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
                                     .foregroundStyle(AirbnbPalette.secondaryText)
                             }

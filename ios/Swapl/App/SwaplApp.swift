@@ -106,6 +106,11 @@ struct RootView: View {
                     }
             }
         }
+        // Resolve the brand-vs-Apple appearance for the whole tree and inject the
+        // matching theme. Pinned to Light for now (content colors aren't yet
+        // tokenized for Dark — see SwaplAppearance).
+        .swaplTheme()
+        .preferredColorScheme(.light)
         .task { await auth.bootstrap() }
         // Sync heart states with the signed-in user: load once per session,
         // clear on sign-out so the next account doesn't inherit them.
@@ -252,9 +257,10 @@ struct VerifyEmailBanner: View {
 }
 
 struct LaunchLoadingView: View {
+    @Environment(\.swaplTheme) private var theme
     var body: some View {
         ZStack {
-            SwaplSemanticLight.background.ignoresSafeArea()
+            theme.background.ignoresSafeArea()
             ProgressView()
                 .tint(SwaplSemanticLight.primary)
                 .accessibilityLabel("Loading Swapl")
@@ -266,6 +272,7 @@ struct MainTabView: View {
     @Environment(\.horizontalSizeClass) private var size
     @Environment(UnreadStore.self) private var unread
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage(SwaplAppearance.storageKey) private var appearanceRaw = SwaplAppearance.swapl.rawValue
     @State private var selection: AppSection = .explore
     // When a city pill is tapped anywhere (e.g. a listing detail or the swap
     // page), jump to the Explore tab so its map can recenter there (DOK-216).
@@ -328,26 +335,37 @@ struct MainTabView: View {
                     .tag(AppSection.profile)
             }
             .tint(SwaplSemanticLight.primary)
-            .onAppear {
-                let appearance = UITabBarAppearance()
-                appearance.configureWithDefaultBackground()
-                appearance.backgroundColor = UIColor(SwaplSemanticLight.background)
-                
-                // Customize icon colors
-                let itemAppearance = UITabBarItemAppearance()
-                itemAppearance.normal.iconColor = UIColor(AirbnbPalette.secondaryText)
-                itemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor(AirbnbPalette.secondaryText)]
-                itemAppearance.selected.iconColor = UIColor(SwaplSemanticLight.primary)
-                itemAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(SwaplSemanticLight.primary)]
-                
-                appearance.stackedLayoutAppearance = itemAppearance
-                appearance.inlineLayoutAppearance = itemAppearance
-                appearance.compactInlineLayoutAppearance = itemAppearance
-                
-                UITabBar.appearance().standardAppearance = appearance
-                UITabBar.appearance().scrollEdgeAppearance = appearance
+            .onAppear { Self.configureTabBarAppearance(for: SwaplAppearance.resolve(appearanceRaw)) }
+            // Re-skin the bar live when the user flips Swapl ↔ Apple in Settings.
+            .onChange(of: appearanceRaw) { _, raw in
+                Self.configureTabBarAppearance(for: SwaplAppearance.resolve(raw))
             }
         }
+    }
+
+    // The tab bar can't read the SwiftUI theme environment (it's a UIKit
+    // appearance proxy), so it resolves the same SwaplAppearance directly.
+    // `.swapl` tints the bar cream; `.apple` keeps the system default background.
+    static func configureTabBarAppearance(for choice: SwaplAppearance) {
+        let theme = SwaplTheme(appearance: choice)
+        let appearance = UITabBarAppearance()
+        appearance.configureWithDefaultBackground()
+        if let bar = theme.barBackgroundUIColor {
+            appearance.backgroundColor = bar
+        }
+
+        let itemAppearance = UITabBarItemAppearance()
+        itemAppearance.normal.iconColor = UIColor(AirbnbPalette.secondaryText)
+        itemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor(AirbnbPalette.secondaryText)]
+        itemAppearance.selected.iconColor = UIColor(SwaplSemanticLight.primary)
+        itemAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(SwaplSemanticLight.primary)]
+
+        appearance.stackedLayoutAppearance = itemAppearance
+        appearance.inlineLayoutAppearance = itemAppearance
+        appearance.compactInlineLayoutAppearance = itemAppearance
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 }
 

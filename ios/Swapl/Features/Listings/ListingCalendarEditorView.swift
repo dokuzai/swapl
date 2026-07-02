@@ -124,7 +124,7 @@ struct ListingCalendarEditorView: View {
                         .accessibilityLabel("Loading calendar")
                 }
             }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
             .navigationTitle("Manage dates")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -226,7 +226,7 @@ struct ListingCalendarEditorView: View {
                     .padding(.top, 8)
                 Spacer()
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationTitle("Open a range")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

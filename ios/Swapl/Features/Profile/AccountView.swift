@@ -61,7 +61,7 @@ struct AccountView: View {
                     .padding(.top, 24)
                     .padding(.bottom, 148)
                 }
-                .background(SwaplSemanticLight.background)
+                .swaplScreenBackground()
 
                 // Real-time referrer toast (DOK-157): "NAME just verified — you
                 // earned Keys!" while the account screen is open.
@@ -564,6 +564,7 @@ private struct ProfileFeatureCard: View {
 
 struct ListingCreationView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.swaplTheme) private var theme
     @StateObject private var locationService = ListingLocationService()
     @State private var step = 0
     @State private var draft = ListingCreationDraft()
@@ -635,7 +636,7 @@ struct ListingCreationView: View {
                     .padding(.top, 24)
                     .padding(.bottom, 120)
                 }
-                .background(SwaplSemanticLight.background)
+                .swaplScreenBackground()
             }
             .safeAreaInset(edge: .bottom) {
                 bottomBar
@@ -678,7 +679,7 @@ struct ListingCreationView: View {
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 12)
-        .background(SwaplSemanticLight.background)
+        .background(theme.background)
     }
 
     private var progressHeader: some View {
@@ -695,7 +696,7 @@ struct ListingCreationView: View {
         }
         .padding(.horizontal, 22)
         .padding(.bottom, 18)
-        .background(SwaplSemanticLight.background)
+        .background(theme.background)
     }
 
     @ViewBuilder
@@ -996,7 +997,7 @@ struct ListingCreationView: View {
                     .padding(.top, 8)
                 Spacer()
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationTitle("Open a range")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -2240,6 +2241,7 @@ private struct PersonalInfoSectionView: View {
     var body: some View {
         AccountSectionScaffold(title: String(localized: "General")) {
             NavigationLink { LanguagePickerView() } label: { AccountSettingsRow(title: String(localized: "Language"), icon: "globe") }.buttonStyle(.plain)
+            NavigationLink { AppearanceSettingsView() } label: { AccountSettingsRow(title: String(localized: "Appearance"), icon: "paintpalette") }.buttonStyle(.plain)
             NavigationLink { PersonalInfoView() } label: { AccountSettingsRow(title: String(localized: "Personal information"), icon: "person.text.rectangle") }.buttonStyle(.plain)
             NavigationLink { InterestsEditorView() } label: { AccountSettingsRow(title: String(localized: "Interests"), icon: "heart.text.square") }.buttonStyle(.plain)
             NavigationLink { SavedSearchesView() } label: { AccountSettingsRow(title: String(localized: "Saved searches"), icon: "magnifyingglass") }.buttonStyle(.plain)

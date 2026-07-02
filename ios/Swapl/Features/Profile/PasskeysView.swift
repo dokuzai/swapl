@@ -78,7 +78,7 @@ struct PasskeysView: View {
             .padding(.top, 24)
             .padding(.bottom, 60)
         }
-        .background(SwaplSemanticLight.background)
+        .swaplScreenBackground()
         .refreshable { await load() }
         .task { await load() }
         .confirmationDialog(

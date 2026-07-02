@@ -77,7 +77,7 @@ struct SwapaliticsView: View {
                 Text("\(s.nightsAbroad)")
                     .font(.swaplDisplay(56, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
-                Text(String(localized: "\(s.pctViaSwapl)% via Swapl"))
+                Text(String(localized: "\(s.pctViaSwapl.swaplPercent) via Swapl"))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.body, weight: .bold))
                     .foregroundStyle(SwaplSemanticLight.primary)
             }
@@ -172,7 +172,7 @@ struct SwapaliticsView: View {
                     .font(.swaplDisplay(SwaplDesignSystem.FontSize.h3, weight: .semibold))
                     .foregroundStyle(AirbnbPalette.text)
                 Spacer()
-                Text(String(localized: "Top \(s.percentile)%"))
+                Text(String(localized: "Top \(s.percentile.swaplPercent)"))
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
                     .foregroundStyle(SwaplSemanticLight.primaryForeground)
                     .padding(.horizontal, 12)

@@ -143,7 +143,7 @@ struct CheckEventSheet: View {
                 }
                 .padding(22)
             }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
             .navigationTitle(kind.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -321,7 +321,7 @@ struct AddConditionVideoSheet: View {
                 Spacer()
             }
             .padding(22)
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
             .navigationTitle("Add video")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

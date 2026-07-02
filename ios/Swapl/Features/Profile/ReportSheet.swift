@@ -70,6 +70,7 @@ struct ReportSheet: View {
             }
             .navigationTitle("Report")
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

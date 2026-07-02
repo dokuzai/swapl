@@ -300,7 +300,7 @@ struct MetricsView: View {
     }
 
     private func percentText(_ share: Double) -> String {
-        "\(Int((share * 100).rounded()))%"
+        share.swaplPercentRatio
     }
 
     // generatedAt is a full ISO timestamp; SwaplDateText.parse truncates to the

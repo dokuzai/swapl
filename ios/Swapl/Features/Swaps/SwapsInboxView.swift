@@ -128,7 +128,7 @@ struct SwapsInboxView: View {
                     messagesContent
                 }
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             // Tapping a conversation opens the chat (with the trip pinned on top);
             // the pinned header pushes the full Trip screen via the String route.
             .navigationDestination(for: ProposalSummary.self) { summary in
@@ -643,7 +643,7 @@ struct ProposalDetailView: View {
             // Soft cream dissolve at the top edge so the hero melts into the
             // background under the status bar / floating header.
             .overlay(alignment: .top) { heroTopFade }
-            .background(SwaplSemanticLight.background.ignoresSafeArea())
+            .swaplScreenBackground()
 
             if let detail = vm.detail {
                 tripFloatingHeader(detail)
@@ -1175,6 +1175,7 @@ struct ProposalDetailView: View {
             }
             .navigationTitle(String(localized: "Counter offer"))
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "Cancel")) { showCounter = false }

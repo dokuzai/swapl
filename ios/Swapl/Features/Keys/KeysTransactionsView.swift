@@ -45,7 +45,7 @@ struct KeysTransactionsView: View {
             .padding(.top, 18)
             .padding(.bottom, 40)
         }
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
+        .swaplScreenBackground()
         .navigationTitle("Points history")
         .navigationBarTitleDisplayMode(.inline)
     }

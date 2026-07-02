@@ -62,6 +62,16 @@ final class LocationPingService: NSObject {
             return nil
         }
         guard let location = await requestOneShot() else { return nil }
+        return await reverseGeocode(location)
+    }
+
+    // CLGeocoder is deprecated on iOS 26, but it stays the only source of an ISO
+    // country code — MapKit's reverse geocoding exposes region/city names only,
+    // never `isoCountryCode`, which the "days abroad" server tally needs. Kept in
+    // one place, annotated to match CLGeocoder's own deprecation so its use here
+    // doesn't warn, mirroring the containment in LocationSearchService / AccountView.
+    @available(iOS, introduced: 17.0, deprecated: 26.0, message: "CLGeocoder is the only source of isoCountryCode; MapKit has no equivalent")
+    private func reverseGeocode(_ location: CLLocation) async -> LocationFix? {
         let geocoder = CLGeocoder()
         guard let placemark = try? await geocoder.reverseGeocodeLocation(location).first,
               let country = placemark.isoCountryCode else {

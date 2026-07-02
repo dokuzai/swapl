@@ -522,6 +522,7 @@ struct GiftKeysSheet: View {
             }
             .navigationTitle("Gift points")
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }

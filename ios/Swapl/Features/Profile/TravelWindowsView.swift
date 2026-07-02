@@ -372,7 +372,7 @@ private struct WindowProposalCard: View {
                 }
             }
             .overlay(alignment: .topLeading) {
-                Text("\(proposal.matchScore)% match")
+                Text("\(proposal.matchScore.swaplPercent) match")
                     .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
                     .foregroundStyle(AirbnbPalette.text)
                     .padding(.horizontal, 10)
@@ -472,7 +472,7 @@ private struct AddTravelWindowSheet: View {
                 }
                 .padding(22)
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationTitle("Add a travel window")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

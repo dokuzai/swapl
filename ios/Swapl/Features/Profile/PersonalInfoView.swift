@@ -190,6 +190,12 @@ struct PersonalInfoView: View {
 
     @ViewBuilder
     private var avatarSection: some View {
+        // Read the MainActor-isolated avatar here in the (MainActor) body, not
+        // inside the PhotosPicker label — that closure is Sendable, so touching
+        // `vm.avatar` from within it trips strict-concurrency checking.
+        let photoButtonTitle = vm.avatar == nil
+            ? String(localized: "Add a photo")
+            : String(localized: "Change photo")
         HStack(spacing: 16) {
             ZStack {
                 if let raw = vm.avatar, let url = URL(string: raw) {
@@ -216,7 +222,7 @@ struct PersonalInfoView: View {
                     .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .bold))
                     .foregroundStyle(AirbnbPalette.text)
                 PhotosPicker(selection: $avatarItem, matching: .images) {
-                    Text(vm.avatar == nil ? String(localized: "Add a photo") : String(localized: "Change photo"))
+                    Text(photoButtonTitle)
                         .font(.swaplBody(SwaplDesignSystem.FontSize.bodySmall, weight: .semibold))
                         .foregroundStyle(SwaplSemanticLight.primary)
                 }

@@ -111,7 +111,7 @@ struct BrowseListView: View {
                     discoverScaffold { ServicesView() }
                 }
             }
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
@@ -172,7 +172,7 @@ struct BrowseListView: View {
             }
             .padding(.bottom, 110)
         }
-        .background(SwaplSemanticLight.background)
+        .swaplScreenBackground()
     }
 
     // The Homes chip: the pre-existing Explore view, unchanged.
@@ -346,7 +346,7 @@ struct BrowseListView: View {
                         .font(.swaplBody(SwaplDesignSystem.FontSize.caption))
                         .foregroundStyle(AirbnbPalette.secondaryText)
                     if let score = item.matchScore {
-                        Text("\(score)% match")
+                        Text("\(score.swaplPercent) match")
                             .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
                             .foregroundStyle(AirbnbPalette.text)
                             .padding(.horizontal, 10)
@@ -396,7 +396,7 @@ struct BrowseListView: View {
             }
             .padding(.bottom, 110)
         }
-        .background(SwaplSemanticLight.background)
+        .swaplScreenBackground()
     }
 
     // Explore search bar (DOK-216): a tappable Where/When/Who pill that opens the
@@ -850,6 +850,7 @@ struct BrowseListView: View {
 }
 
 struct ListingCardView: View {
+    @Environment(\.swaplTheme) private var theme
     let item: ListingWithScore
     var compact = false
 
@@ -874,7 +875,7 @@ struct ListingCardView: View {
                 .padding(compact ? 0 : 2)
 
                 if !compact && (item.band == "featured" || item.matchScore != nil) {
-                    Text(item.matchScore.map { String(localized: "\($0)% match") } ?? String(localized: "Guest favorite"))
+                    Text(item.matchScore.map { String(localized: "\($0.swaplPercent) match") } ?? String(localized: "Guest favorite"))
                         .font(.swaplBody(SwaplDesignSystem.FontSize.small, weight: .bold))
                         .foregroundStyle(AirbnbPalette.text)
                         .padding(.horizontal, 12)
@@ -919,14 +920,14 @@ struct ListingCardView: View {
                 .frame(height: compact ? 0 : nil)
         }
         .frame(width: cardWidth, alignment: .leading)
-        .background(SwaplSemanticLight.background)
+        .background(theme.background)
     }
 
     // F4: never synthesize a star rating from the match score. The compact card
     // shows the real match % when available, otherwise just the bed count.
     private var compactSubtitle: String {
         if let score = item.matchScore {
-            return String(localized: "\(item.listing.bedrooms) beds · \(score)% match")
+            return String(localized: "\(item.listing.bedrooms) beds · \(score.swaplPercent) match")
         }
         return String(localized: "\(item.listing.bedrooms) beds")
     }
@@ -1189,7 +1190,7 @@ struct MapListingPin: View {
         Button(action: action) {
             Group {
                 if let score = point.matchScore {
-                    Text("\(score)%")
+                    Text(score.swaplPercent)
                 } else {
                     Image(systemName: "house.fill")
                 }

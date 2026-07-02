@@ -66,7 +66,7 @@ struct WishlistsView: View {
             // Explore) — no fixed header bar. In the non-scrolling states it just
             // sits at the top.
             stateContent
-            .background(SwaplSemanticLight.background)
+            .swaplScreenBackground()
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
                 ListingDetailView(listingId: id)
@@ -265,6 +265,7 @@ struct WishlistsView: View {
             }
             .navigationTitle(String(localized: "Filter by dates"))
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "Clear")) {

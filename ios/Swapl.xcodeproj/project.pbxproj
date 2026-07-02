@@ -46,6 +46,7 @@
 		4DC7B885AC12C565DDE80C57 /* CheckEventSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F3B622AF0F19A1CE66060 /* CheckEventSheet.swift */; };
 		4F2BF100C270F1F6A1AE58C1 /* TravelProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D199358A62C764FFD50BD6 /* TravelProfileView.swift */; };
 		510830DC97DA55495B08EBC9 /* JetBrainsMono-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CEA095CED7B7CAD626BC318 /* JetBrainsMono-Variable.ttf */; };
+		5142D0307A74A2540C6EDE73 /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D154F63D69E11FDB8A43F9 /* Appearance.swift */; };
 		560B17602F689159037DD5C3 /* UnreadStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6625DA305EE56FBB09BB7C24 /* UnreadStore.swift */; };
 		56E1320794D62E4631157BE8 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03C53186E434F889C543582 /* ProfileRepository.swift */; };
 		596D7BA5FCFBEB442686F32A /* KeysWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9B4F0F13E2524FDF587BFA /* KeysWalletView.swift */; };
@@ -258,6 +259,7 @@
 		B0C16E51E119668C1E262BDB /* ListingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingRepository.swift; sourceTree = "<group>"; };
 		B2ECF15F803E263DBFEB14FC /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = "../packages/design-tokens/build/swift"; sourceTree = SOURCE_ROOT; };
 		B364CD1F6F338349526C2C65 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
+		B5D154F63D69E11FDB8A43F9 /* Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
 		B5E8D113F3B8A4A14DCC8140 /* RateAppSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateAppSheet.swift; sourceTree = "<group>"; };
 		B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaplFonts.swift; sourceTree = "<group>"; };
 		B6477E2C6B0E83939EAA03A8 /* AssistantRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantRepository.swift; sourceTree = "<group>"; };
@@ -618,6 +620,7 @@
 			isa = PBXGroup;
 			children = (
 				10FAC49377D43C349AE9CEC3 /* AirbnbStyle.swift */,
+				B5D154F63D69E11FDB8A43F9 /* Appearance.swift */,
 				B5EFCDA48BC796DFB6CD1F56 /* SwaplFonts.swift */,
 				88FE15DAF7CB60D8091AAB48 /* Theme.swift */,
 				514178AAFBA433B4FB51C2EE /* Components */,
@@ -852,6 +855,7 @@
 				817AA32D947D5384C47CFA05 /* AccountView.swift in Sources */,
 				FBEF57AC2F8FBE1ACBAF6DAD /* AirbnbStyle.swift in Sources */,
 				CA6E1F0EC764A412DA092FA5 /* AppFeedbackRepository.swift in Sources */,
+				5142D0307A74A2540C6EDE73 /* Appearance.swift in Sources */,
 				FD2ACE491285E50BADCCABC4 /* AssistantRepository.swift in Sources */,
 				274DA2C25CEC164CB11256CC /* Auth.swift in Sources */,
 				1E692ED646D45C14C7A86882 /* AuthService.swift in Sources */,

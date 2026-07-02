@@ -201,7 +201,7 @@ struct ConversationView: View {
                 if let ctx = vm.context { contextHeader(ctx) }
             }
         }
-        .background(SwaplSemanticLight.background.ignoresSafeArea())
+        .swaplScreenBackground()
         .task { await vm.load() }
         .task { await vm.loadContext() }
         .task(id: scenePhase) { await pollLoop() }
@@ -848,6 +848,7 @@ struct DateChangeSheet: View {
             }
             .navigationTitle(String(localized: "Propose new dates"))
             .navigationBarTitleDisplayMode(.inline)
+            .swaplScreenBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "Cancel")) { dismiss() }
