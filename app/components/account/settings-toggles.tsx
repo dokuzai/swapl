@@ -49,7 +49,7 @@ function SettingToggleRow({
           {t(bodyKey)}
         </p>
         {error && (
-          <p className="text-sm mt-1" style={{ color: "#dc2626" }}>
+          <p className="text-sm mt-1" style={{ color: "var(--destructive)" }}>
             {t("account.privacy.error")}
           </p>
         )}

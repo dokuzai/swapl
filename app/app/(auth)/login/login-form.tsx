@@ -74,7 +74,7 @@ export default function LoginForm({ providers }: { providers: WebAuthProviders }
             style={{ borderColor: "var(--line)", background: "var(--card-bg)" }}
           />
         </label>
-        {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+        {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
         <button type="submit" className="pill-primary justify-center" disabled={pending}>
           {pending ? t("auth.login.submitting") : t("auth.login.submit")}
         </button>

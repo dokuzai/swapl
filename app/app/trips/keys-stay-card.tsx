@@ -114,7 +114,7 @@ export function KeysStayCard({ stay }: { stay: Stay }) {
         </div>
       )}
 
-      {error && <p className="text-sm mt-3" style={{ color: "#dc2626" }}>{error}</p>}
+      {error && <p className="text-sm mt-3" style={{ color: "var(--destructive)" }}>{error}</p>}
     </div>
   );
 }

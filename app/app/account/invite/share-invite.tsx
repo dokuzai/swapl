@@ -311,7 +311,7 @@ export function ShareInvite({
         </div>
       )}
 
-      {error && <p className="text-sm" style={{ color: "#dc2626" }}>{t(error)}</p>}
+      {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{t(error)}</p>}
 
       {/* ---- One Share CTA + Copy fallback ---- */}
       <div className="flex flex-col gap-2">

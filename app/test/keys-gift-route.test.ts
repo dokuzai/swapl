@@ -47,7 +47,12 @@ beforeEach(() => {
     return null;
   });
   mocks.txAggregate.mockResolvedValue({ _sum: { delta: 0 } });
-  mocks.gift.mockResolvedValue({ sent: { balanceAfter: 80 }, received: { balanceAfter: 20 } });
+  // The route enforces the rolling caps inside gift()'s validate callback; run
+  // it against a fake tx so cap-exceeded still surfaces (real gift is mocked).
+  mocks.gift.mockImplementation(async (_from: string, _to: string, _amount: number, _note: unknown, validate?: (tx: unknown) => Promise<void>) => {
+    if (validate) await validate({ keysTransaction: { aggregate: mocks.txAggregate } });
+    return { sent: { balanceAfter: 80 }, received: { balanceAfter: 20 } };
+  });
 });
 
 describe("POST /api/keys/gift", () => {
@@ -56,7 +61,7 @@ describe("POST /api/keys/gift", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toMatchObject({ ok: true, amount: 20, balanceAfter: 80 });
-    expect(mocks.gift).toHaveBeenCalledWith("sender", "recipient", 20);
+    expect(mocks.gift).toHaveBeenCalledWith("sender", "recipient", 20, undefined, expect.any(Function));
   });
 
   it("rejects gifting to yourself", async () => {
@@ -78,7 +83,8 @@ describe("POST /api/keys/gift", () => {
     mocks.txAggregate.mockResolvedValue({ _sum: { delta: -GIFT_DAILY_CAP } }); // already at cap
     const res = await post({ toUserId: "recipient", amount: 10 });
     expect(res.status).toBe(422);
-    expect(mocks.gift).not.toHaveBeenCalled();
+    // gift() is invoked; its validate callback throws the cap error → 422.
+    expect(mocks.gift).toHaveBeenCalled();
   });
 
   it("rate-limits", async () => {

@@ -17,6 +17,8 @@ vi.mock("@/lib/db", () => ({
   prisma: {
     swapProposal: { findUnique: mocks.proposalFindUnique, update: mocks.proposalUpdate },
     swapReview: { findUnique: mocks.reviewFindUnique },
+    // DOK-221: GET /proposals/[id] lazily upserts the per-proposal conversation.
+    conversation: { upsert: vi.fn(async () => ({ id: "conv_1" })) },
   },
   // toDTO (real) pulls parseJSON from here.
   parseJSON: <T,>(v: string | null, fallback: T): T => {

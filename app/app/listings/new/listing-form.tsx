@@ -358,7 +358,7 @@ export default function ListingForm({ listing }: { listing?: ListingEditInitial 
           />
         )}
 
-        {error && <p className="text-sm mt-4" style={{ color: "#dc2626" }}>{error}</p>}
+        {error && <p className="text-sm mt-4" style={{ color: "var(--destructive)" }}>{error}</p>}
 
         <div className="flex items-center justify-between mt-8 gap-3">
           <button onClick={prev} disabled={step === 0} className="pill-ghost disabled:opacity-40">
@@ -528,7 +528,7 @@ function LocationStep({ state, set, t }: { state: FormState; set: <K extends key
           }}
         />
         {genState === "error" && (
-          <p className="text-sm mt-2" style={{ color: "#dc2626" }}>
+          <p className="text-sm mt-2" style={{ color: "var(--destructive)" }}>
             {t("wizard.loc.coverError")}
           </p>
         )}
@@ -968,7 +968,7 @@ function DescriptionStep({ state, set, t }: { state: FormState; set: <K extends 
               {source === "ai" ? t("wizard.desc.aiDraft") : t("wizard.desc.templateDraft")}
             </span>
           )}
-          {err && <span className="text-sm" style={{ color: "#dc2626" }}>{err}</span>}
+          {err && <span className="text-sm" style={{ color: "var(--destructive)" }}>{err}</span>}
         </div>
         {!ready && (
           <p className="mt-2 text-xs" style={{ color: "var(--navy-3)" }}>

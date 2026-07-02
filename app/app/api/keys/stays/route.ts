@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma, parseJSON } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth/session";
-import { invalidInput, notFound, rateLimited, unauthenticated, unprocessable } from "@/lib/api/errors";
+import { accountSuspended, invalidInput, notFound, rateLimited, unauthenticated, unprocessable } from "@/lib/api/errors";
 import { checkRateLimitDurable } from "@/lib/rate-limit";
 import { createKeysStay, KeysStayError } from "@/lib/keys/stay";
 import { KeysLedgerError } from "@/lib/keys/ledger";
@@ -82,6 +82,15 @@ export async function POST(req: Request) {
 
   const rl = await checkRateLimitDurable(`keys-stay:${session.userId}`, STAY_RATE_LIMIT, STAY_RATE_WINDOW_MS);
   if (!rl.ok) return rateLimited();
+
+  // A suspended account cannot send Keys-stay / couch requests, matching the
+  // swap-proposal gate. (Web cookie sessions are stateless — check per request.)
+  const caller = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { suspendedAt: true },
+  });
+  if (!caller) return unauthenticated();
+  if (caller.suspendedAt) return accountSuspended();
 
   // DOK-219: sending a couchsurf hosting request requires a Couchsurfer membership.
   if (parsed.data.kind === "couchsurf" && !(await isCouchsurferMember(session.userId))) {

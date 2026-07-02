@@ -26,7 +26,7 @@ export function ManageBillingButton() {
       <button onClick={open} className="pill-ghost" disabled={pending}>
         {pending ? t("billing.opening") : t("billing.manageBilling")}
       </button>
-      {error && <span className="text-xs" style={{ color: "#dc2626" }}>{error}</span>}
+      {error && <span className="text-xs" style={{ color: "var(--destructive)" }}>{error}</span>}
     </div>
   );
 }

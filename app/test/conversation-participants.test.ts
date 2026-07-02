@@ -222,6 +222,26 @@ describe("GET /participants", () => {
     expect(res.status).toBe(200);
   });
 
+  it("shows a PRINCIPAL the raw pending-invite email (SEC-PRIV-02)", async () => {
+    mocks.cpFindMany.mockResolvedValue([
+      { id: "cp-2", userId: null, invitedEmail: "invitee@example.com", status: "pending", createdAt: new Date() },
+    ]);
+    const json = await (await get()).json(); // principalSession = proposer
+    const seat = json.participants.find((p: { id: string }) => p.id === "cp-2");
+    expect(seat.invitedEmail).toBe("invitee@example.com");
+  });
+
+  it("MASKS the pending-invite email for a non-principal guest (SEC-PRIV-02)", async () => {
+    mocks.cpFindFirst.mockResolvedValue({ id: "cp-1" }); // guest has thread access
+    mocks.cpFindMany.mockResolvedValue([
+      { id: "cp-2", userId: null, invitedEmail: "invitee@example.com", status: "pending", createdAt: new Date() },
+    ]);
+    const json = await (await get({ userId: "u-guest", email: "cara@swapl.test", name: "Cara" })).json();
+    const seat = json.participants.find((p: { id: string }) => p.id === "cp-2");
+    expect(seat.invitedEmail).toBe("i•••@example.com");
+    expect(seat.invitedEmail).not.toContain("invitee");
+  });
+
   it("403s a stranger", async () => {
     mocks.cpFindFirst.mockResolvedValue(null); // no guest seat
     const res = await get({ userId: "u-stranger", email: "x@x.test", name: "X" });

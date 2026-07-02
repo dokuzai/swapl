@@ -220,7 +220,7 @@ export default function PropertyVerificationForm({
                   : t("verifyOwnership.submit")}
             </button>
           </div>
-          {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+          {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
         </form>
       )}
     </div>
@@ -275,7 +275,7 @@ function StatusBlock({
       label: t("verifyOwnership.status.rejected"),
       body: t("verifyOwnership.status.rejectedBody"),
       bg: "var(--cream-2)",
-      fg: "#dc2626",
+      fg: "var(--destructive)",
     },
   }[status];
 

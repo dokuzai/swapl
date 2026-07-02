@@ -65,6 +65,19 @@ const h = vi.hoisted(() => {
     }
     return true;
   };
+  // Mirror Prisma's atomic update operators (increment/decrement/set) so a
+  // `{ keysBalance: { increment } }` mutates the stored scalar, not overwrites it.
+  const applyData = (row: any, data: any) => {
+    for (const [k, v] of Object.entries(data)) {
+      if (v && typeof v === "object" && !(v instanceof Date)) {
+        if ("increment" in (v as any)) row[k] = (row[k] ?? 0) + (v as any).increment;
+        else if ("decrement" in (v as any)) row[k] = (row[k] ?? 0) - (v as any).decrement;
+        else if ("set" in (v as any)) row[k] = (v as any).set;
+        else row[k] = v;
+      } else row[k] = v;
+    }
+    return row;
+  };
   const client: any = {
     user: {
       async findUnique({ where, select }: any) {
@@ -77,7 +90,7 @@ const h = vi.hoisted(() => {
       },
       async update({ where, data }: any) {
         const u = store.users.get(where.id)!;
-        Object.assign(u, data);
+        applyData(u, data);
         return { ...u };
       },
     },
@@ -150,6 +163,16 @@ const h = vi.hoisted(() => {
         const row = store.shares.find((s) => s.id === where.id)!;
         Object.assign(row, data);
         return { ...row };
+      },
+      async updateMany({ where, data }: any) {
+        // First-converter-wins guard: match id plus optional convertedById: null.
+        const rows = store.shares.filter(
+          (s) =>
+            s.id === where.id &&
+            (where.convertedById === null ? s.convertedById === null : true),
+        );
+        for (const r of rows) Object.assign(r, data);
+        return { count: rows.length };
       },
       async create({ data }: any) {
         const row: ShareRow = {

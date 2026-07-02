@@ -47,7 +47,7 @@ export default function VerifyResult() {
           <button onClick={resend} disabled={pending || resent} className="pill-primary">
             {resent ? t("verify.sent") : pending ? t("verify.sending") : t("verify.resend")}
           </button>
-          {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+          {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
           <Link href="/login" className="font-mono text-xs uppercase tracking-[.08em]" style={{ color: "var(--navy-3)" }}>
             {t("verify.backToSignIn")}
           </Link>

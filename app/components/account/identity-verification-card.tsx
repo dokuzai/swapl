@@ -118,11 +118,11 @@ export function IdentityVerificationCard({ status }: { status: IdentityVerificat
           <div className="flex items-center gap-3 mb-2">
             <h2 className="font-display text-xl tracking-[-0.01em]">{t("verifyId.title")}</h2>
             {status === "pending" && pill(t("verifyId.pendingLabel"), "var(--cream-2)", "var(--navy-3)")}
-            {status === "declined" && pill(t("verifyId.declinedLabel"), "#dc2626", "#fff")}
+            {status === "declined" && pill(t("verifyId.declinedLabel"), "var(--destructive)", "#fff")}
           </div>
           <p className="text-sm" style={{ color: "var(--navy-2)" }}>{body}</p>
           {error && (
-            <p className="text-xs mt-2" style={{ color: "#dc2626" }}>{error}</p>
+            <p className="text-xs mt-2" style={{ color: "var(--destructive)" }}>{error}</p>
           )}
         </div>
         <button onClick={begin} disabled={pending} className="pill-primary shrink-0">

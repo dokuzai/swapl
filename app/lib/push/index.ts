@@ -337,6 +337,13 @@ export const pushTemplates = {
       data: { kind: "keysStayDeclined", stayId, deepLink: `swapl://keys/stays/${stayId}` },
     };
   },
+  keysStayCompleted(stayId: string): PushPayload {
+    return {
+      title: "Your Keys stay is complete 🔑",
+      body: "Your guest has checked out — see it in your hosting history.",
+      data: { kind: "keysStayCompleted", stayId, deepLink: `swapl://keys/stays/${stayId}` },
+    };
+  },
   // ---- Growth / referrals (DOK-157) ----
   // Fired at the referrer when an invitee verifies and the reward pays out —
   // the dopamine hit that the manual-refresh gap was killing.

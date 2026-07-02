@@ -72,7 +72,7 @@ export default function RegisterForm({ providers }: { providers: WebAuthProvider
           />
         </label>
         {turnstileEnabled && <TurnstileWidget onVerify={setCaptchaToken} />}
-        {error && <p className="text-sm" style={{ color: "#dc2626" }}>{error}</p>}
+        {error && <p className="text-sm" style={{ color: "var(--destructive)" }}>{error}</p>}
         <button type="submit" className="pill-primary justify-center" disabled={pending || (turnstileEnabled && !captchaToken)}>
           {pending ? t("auth.register.submitting") : t("auth.register.submit")}
         </button>

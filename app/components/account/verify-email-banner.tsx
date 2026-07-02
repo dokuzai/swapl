@@ -47,7 +47,7 @@ export function VerifyEmailBanner({ email }: { email: string }) {
           {pending ? t("verifyBanner.sending") : t("verifyBanner.resend")}
         </button>
       )}
-      {error && <span className="text-xs sm:ml-3" style={{ color: "#dc2626" }}>{error}</span>}
+      {error && <span className="text-xs sm:ml-3" style={{ color: "var(--destructive)" }}>{error}</span>}
     </div>
   );
 }

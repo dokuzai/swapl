@@ -65,7 +65,7 @@ export function CheckoutForm({
       />
       
       {errorMessage && (
-        <div className="text-red-500 text-sm mt-2">{errorMessage}</div>
+        <div className="text-destructive text-sm mt-2">{errorMessage}</div>
       )}
 
       <button

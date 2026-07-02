@@ -17,7 +17,7 @@ import {
   challengeFromClientData,
 } from "@/lib/auth/passkeys";
 import { respondWithSession, type Platform } from "@/lib/auth/respond";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 import { apiError, accountSuspended, invalidInput } from "@/lib/api/errors";
 
 const MIN_MS = 60 * 1000;
@@ -25,7 +25,7 @@ const PLATFORMS = ["ios", "android", "web-pwa"] as const;
 
 export async function POST(req: Request) {
   const ip = clientIpFromRequest(req);
-  const rl = checkRateLimit(`passkey-login-verify:${ip}`, 30, 5 * MIN_MS);
+  const rl = await checkRateLimitDurable(`passkey-login-verify:${ip}`, 30, 5 * MIN_MS);
   if (!rl.ok) {
     return apiError(429, "Too many sign-in attempts. Try again in a few minutes.");
   }

@@ -59,7 +59,7 @@ export default function FeaturedForm({ listingId }: { listingId: string }) {
         );
       })}
       <div className="sm:col-span-2 flex items-center justify-end gap-3 pt-2">
-        {error && <span className="text-sm" style={{ color: "#dc2626" }}>{error}</span>}
+        {error && <span className="text-sm" style={{ color: "var(--destructive)" }}>{error}</span>}
         <button onClick={buy} disabled={pending} className="pill-primary">
           {pending ? t("featured.processing") : t("featured.boostFor", { days: duration })}
         </button>

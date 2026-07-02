@@ -147,7 +147,7 @@ export function LeaveReview({ agreementId, otherName }: { agreementId: string; o
             </label>
 
             {state === "error" && (
-              <p className="text-sm mb-3" style={{ color: "#dc2626" }}>
+              <p className="text-sm mb-3" style={{ color: "var(--destructive)" }}>
                 {t("review.error")}
               </p>
             )}

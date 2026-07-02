@@ -80,7 +80,7 @@ export default async function AccountPage() {
     : latestIdv?.status === "pending"
       ? { label: "Pending review", bg: "var(--cream-2)", fg: "var(--navy-3)" }
       : latestIdv?.status === "declined"
-        ? { label: "Declined", bg: "#dc2626", fg: "#fff" }
+        ? { label: "Declined", bg: "var(--destructive)", fg: "#fff" }
         : { label: "Unverified", bg: "var(--cream-2)", fg: "var(--navy-3)" };
 
   return (

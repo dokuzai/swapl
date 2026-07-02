@@ -38,6 +38,15 @@ vi.mock("@/lib/db", () => ({
       update: mocks.checkEventUpdate,
     },
   },
+  // Same contract as the real helper: tolerant parse with a fallback.
+  parseJSON: <T,>(s: string | null | undefined, fallback: T): T => {
+    if (!s) return fallback;
+    try {
+      return JSON.parse(s) as T;
+    } catch {
+      return fallback;
+    }
+  },
 }));
 
 import { POST as checkIn } from "@/app/api/agreements/[id]/check-in/route";

@@ -231,7 +231,7 @@ export function CalendarEditor({ listingId }: { listingId: string }) {
       )}
 
       {error && (
-        <p className="text-sm mt-3" style={{ color: "#dc2626" }}>
+        <p className="text-sm mt-3" style={{ color: "var(--destructive)" }}>
           {error}
         </p>
       )}

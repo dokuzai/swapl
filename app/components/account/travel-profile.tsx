@@ -71,7 +71,7 @@ export function TravelProfileSection() {
       )}
 
       {state.phase === "error" && (
-        <p className="text-sm" role="alert" style={{ color: "#dc2626" }}>
+        <p className="text-sm" role="alert" style={{ color: "var(--destructive)" }}>
           {t("account.travelProfile.error")}
         </p>
       )}
@@ -125,7 +125,7 @@ export function TravelProfileSection() {
               onClick={remove}
               disabled={busy !== null}
               className="pill-ghost text-sm"
-              style={{ color: "#dc2626" }}
+              style={{ color: "var(--destructive)" }}
             >
               {busy === "delete"
                 ? t("account.travelProfile.deleting")

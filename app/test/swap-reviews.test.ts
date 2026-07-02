@@ -21,6 +21,8 @@ vi.mock("@/lib/db", () => ({
     swapAgreement: { findUnique: mocks.agreementFindUnique },
     swapReview: { create: mocks.reviewCreate, findUnique: mocks.reviewFindUnique },
     swapProposal: { findUnique: mocks.proposalFindUnique },
+    // DOK-221: proposals GET lazily upserts the per-proposal conversation.
+    conversation: { upsert: vi.fn(async () => ({ id: "conv_1" })) },
   },
   parseJSON: (s: string | null, fallback: unknown) => {
     try {

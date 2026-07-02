@@ -119,7 +119,7 @@ export function PasskeysSection({ passkeys }: { passkeys: PasskeySummary[] }) {
       )}
 
       {error && (
-        <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>
+        <p className="mt-3 text-sm" style={{ color: "var(--destructive)" }}>
           {error}
         </p>
       )}

@@ -3,14 +3,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // Replace the lazy Prisma proxy with stubs so the plan-resolution logic can be
 // exercised without a database. The factory must be self-contained — vitest
 // hoists vi.mock above the imports.
-vi.mock("@/lib/db", () => ({
-  prisma: {
+vi.mock("@/lib/db", () => {
+  const prisma: any = {
     organizationMember: { findFirst: vi.fn() },
     subscription: { findUnique: vi.fn() },
     user: { findUnique: vi.fn(), update: vi.fn() },
     listing: { count: vi.fn() },
-  },
-}));
+  };
+  // ensureCanCreateProposal now wraps read+reset+increment in a transaction;
+  // run the callback against the same fake client (the tests stub user.*).
+  prisma.$transaction = (fn: any) => (typeof fn === "function" ? fn(prisma) : Promise.all(fn));
+  return { prisma };
+});
 
 import { prisma } from "@/lib/db";
 import {
@@ -126,7 +130,8 @@ describe("ensureCanCreateProposal", () => {
     const stale = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000);
     db.user.findUnique.mockResolvedValue({ proposalsThisMonthCount: 3, proposalsCounterResetAt: stale });
     await expect(ensureCanCreateProposal("u1")).resolves.toBeUndefined();
-    expect(db.user.update).toHaveBeenCalledTimes(1);
+    // Rollover path writes twice: reset the stale counter, then increment.
+    expect(db.user.update).toHaveBeenCalledTimes(2);
   });
 
   it("is unlimited for pro members and never reads the counter", async () => {

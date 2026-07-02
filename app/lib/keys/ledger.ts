@@ -12,7 +12,8 @@
 //   - Keys are travel points: no buying, no cashing out, no withdrawal — the
 //     only peer transfer is the capped in-app gift (gift_sent/gift_received).
 
-import type { Prisma, PrismaClient } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
+import type { PrismaClient } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 
 export type KeysKind =
@@ -167,6 +168,11 @@ export async function applyTransaction(
 // positive magnitude; the helper picks the sign. They accept an optional `tx`
 // so the stay flow can compose them in one transaction.
 
+// Optional metadata for a ledger write. `eventKey` opts the row into the
+// KeysTransaction @unique idempotency guard so a duplicate credit/debit for the
+// same logical event physically cannot be written.
+type LedgerOpts = { stayId?: string | null; note?: string | null; eventKey?: string | null };
+
 function assertPositive(amount: number): void {
   if (!Number.isInteger(amount) || amount <= 0) {
     throw new KeysLedgerError("NON_POSITIVE_AMOUNT", `Amount must be a positive integer, got ${amount}`);
@@ -177,7 +183,7 @@ function assertPositive(amount: number): void {
 export function earn(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -188,7 +194,7 @@ export function earn(
 export function spend(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -199,7 +205,7 @@ export function spend(
 export function hold(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -210,7 +216,7 @@ export function hold(
 export function release(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -221,7 +227,7 @@ export function release(
 export function refund(
   userId: string,
   amount: number,
-  opts: { stayId?: string | null; note?: string | null } = {},
+  opts: LedgerOpts = {},
   tx?: Db,
 ): Promise<LedgerRow> {
   assertPositive(amount);
@@ -242,48 +248,68 @@ export async function gift(
   validate?: (tx: Prisma.TransactionClient) => Promise<void>,
 ): Promise<{ sent: LedgerRow; received: LedgerRow }> {
   assertPositive(amount);
-  return prisma.$transaction(async (tx) => {
-    if (validate) await validate(tx);
-    const sent = await applyWithinTx(tx, {
-      userId: fromUserId,
-      delta: -amount,
-      kind: "gift_sent",
-      note: note ?? `Gift to ${toUserId}`,
-    });
-    const received = await applyWithinTx(tx, {
-      userId: toUserId,
-      delta: amount,
-      kind: "gift_received",
-      note: note ?? `Gift from ${fromUserId}`,
-    });
-    return { sent, received };
-  });
+  // Serializable so the caller's `validate` (rolling gift-cap aggregates) can't
+  // be bypassed by concurrent gifts: at READ COMMITTED each tx reads the same
+  // pre-gift total and both pass. Under Serializable the conflicting write is
+  // rejected (P2034), so one gift wins and the cap holds. The route maps that
+  // to a retryable response.
+  return prisma.$transaction(
+    async (tx) => {
+      if (validate) await validate(tx);
+      const sent = await applyWithinTx(tx, {
+        userId: fromUserId,
+        delta: -amount,
+        kind: "gift_sent",
+        note: note ?? `Gift to ${toUserId}`,
+      });
+      const received = await applyWithinTx(tx, {
+        userId: toUserId,
+        delta: amount,
+        kind: "gift_received",
+        note: note ?? `Gift from ${fromUserId}`,
+      });
+      return { sent, received };
+    },
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+  );
 }
 
 /**
  * Welcome bonus — idempotent. Grants `amount` Keys once per user; a second
- * call is a no-op (returns null) because a welcome_bonus row already exists.
- * Runs the existence check + grant in a single transaction to avoid a race
- * double-granting.
+ * call is a no-op (returns null). Idempotency is enforced by the
+ * KeysTransaction.eventKey @unique constraint (key `welcome_bonus:<userId>`),
+ * so even two concurrent first-time grants can't both credit: one commits, the
+ * other hits P2002 and is treated as a no-op. The findFirst fast-path also
+ * catches legacy rows (granted before eventKeys, with eventKey=null).
  */
 export async function grantWelcomeBonus(
   userId: string,
   amount: number,
 ): Promise<LedgerRow | null> {
   assertPositive(amount);
-  return prisma.$transaction(async (tx) => {
-    const existing = await tx.keysTransaction.findFirst({
-      where: { userId, kind: "welcome_bonus" },
-      select: { id: true },
+  const eventKey = `welcome_bonus:${userId}`;
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const existing = await tx.keysTransaction.findFirst({
+        where: { userId, kind: "welcome_bonus" },
+        select: { id: true },
+      });
+      if (existing) return null;
+      return applyWithinTx(tx, {
+        userId,
+        delta: amount,
+        kind: "welcome_bonus",
+        note: "Welcome to swapl",
+        eventKey,
+      });
     });
-    if (existing) return null;
-    return applyWithinTx(tx, {
-      userId,
-      delta: amount,
-      kind: "welcome_bonus",
-      note: "Welcome to swapl",
-    });
-  });
+  } catch (err) {
+    // Concurrent grant already wrote the unique welcome_bonus row → no-op.
+    if (typeof err === "object" && err !== null && (err as { code?: string }).code === "P2002") {
+      return null;
+    }
+    throw err;
+  }
 }
 
 /**

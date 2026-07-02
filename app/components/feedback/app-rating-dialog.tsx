@@ -195,7 +195,7 @@ export function AppRatingDialog({
             )}
 
             {state === "error" && (
-              <p className="mt-3 text-sm" style={{ color: "#dc2626" }}>{t("appFeedback.error")}</p>
+              <p className="mt-3 text-sm" style={{ color: "var(--destructive)" }}>{t("appFeedback.error")}</p>
             )}
 
             <div className="mt-5 flex items-center justify-end gap-3">

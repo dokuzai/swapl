@@ -37,7 +37,7 @@ export function EmailTestButton({ defaultEmail }: { defaultEmail: string }) {
         {pending ? "Sending…" : "Send test email"}
       </button>
       {status && (
-        <span className="text-xs" style={{ color: status.kind === "ok" ? "var(--pink)" : "#dc2626" }}>
+        <span className="text-xs" style={{ color: status.kind === "ok" ? "var(--pink)" : "var(--destructive)" }}>
           {status.msg}
         </span>
       )}

@@ -21,16 +21,27 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/auth/session", () => ({ getSessionFromRequest: mocks.getSessionFromRequest }));
-vi.mock("@/lib/db", () => ({
-  prisma: {
+vi.mock("@/lib/db", () => {
+  const prisma: any = {
     user: { findUnique: mocks.userFindUnique, update: mocks.userUpdate },
     organizationMember: { findFirst: mocks.orgMemberFindFirst },
     subscription: { findUnique: mocks.subscriptionFindUnique },
     listing: { findUnique: mocks.listingFindUnique },
     swapProposal: { create: mocks.proposalCreate },
-  },
+    // Availability check reached via the real proposals POST — no bookings here.
+    swapAgreement: { findMany: vi.fn(async () => []) },
+    keysStay: { findMany: vi.fn(async () => []) },
+    listingBlockedRange: { findMany: vi.fn(async () => []) },
+  };
+  // Plan-limit counter runs inside a transaction; pass the same fake client.
+  prisma.$transaction = (fn: any) => (typeof fn === "function" ? fn(prisma) : Promise.all(fn));
+  return { prisma };
+});
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimitDurable: mocks.checkRateLimit,
+  checkRateLimit: mocks.checkRateLimit,
+  clientIpFromRequest: vi.fn(() => "1.2.3.4"),
 }));
-vi.mock("@/lib/rate-limit", () => ({ checkRateLimit: mocks.checkRateLimit }));
 vi.mock("@/lib/email", () => ({
   sendEmail: mocks.sendEmail,
   emailTemplates: { proposalReceived: vi.fn(() => ({})) },
@@ -78,7 +89,7 @@ beforeEach(() => {
   mocks.orgMemberFindFirst.mockResolvedValue(null);
   mocks.subscriptionFindUnique.mockResolvedValue(null);
   mocks.userUpdate.mockResolvedValue({});
-  mocks.checkRateLimit.mockReturnValue({ ok: true });
+  mocks.checkRateLimit.mockResolvedValue({ ok: true });
   mocks.sendEmail.mockResolvedValue(undefined);
   mocks.sendPush.mockResolvedValue(undefined);
   mocks.listingFindUnique.mockImplementation(({ where }: { where: { id: string } }) =>

@@ -136,7 +136,7 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
           <span
             role="status"
             className="text-sm"
-            style={{ color: notice.kind === "ok" ? "var(--navy-2)" : "#dc2626" }}
+            style={{ color: notice.kind === "ok" ? "var(--navy-2)" : "var(--destructive)" }}
           >
             {notice.text}
           </span>

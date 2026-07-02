@@ -36,9 +36,8 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/session", () => ({ getSessionFromRequest: mocks.getSessionFromRequest }));
-vi.mock("@/lib/db", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/lib/db")>()),
-  prisma: {
+vi.mock("@/lib/db", async (importOriginal) => {
+  const prisma: any = {
     user: { findUnique: mocks.userFindUnique, update: mocks.userUpdate },
     listing: { findFirst: mocks.listingFindFirst, findMany: mocks.listingFindMany, findUnique: mocks.listingFindUnique },
     favorite: { findMany: mocks.favoriteFindMany },
@@ -49,8 +48,16 @@ vi.mock("@/lib/db", async (importOriginal) => ({
     swapProposal: { create: mocks.proposalCreate },
     organizationMember: { findFirst: mocks.orgMemberFindFirst },
     subscription: { findUnique: mocks.subscriptionFindUnique },
-  },
-}));
+    // Availability check (bookedRangesFor) reached via the real proposals POST:
+    // no bookings in these tests, so every candidate date is free.
+    swapAgreement: { findMany: vi.fn(async () => []) },
+    keysStay: { findMany: vi.fn(async () => []) },
+    listingBlockedRange: { findMany: vi.fn(async () => []) },
+  };
+  // Plan-limit counter now runs inside a transaction; pass the same fake client.
+  prisma.$transaction = (fn: any) => (typeof fn === "function" ? fn(prisma) : Promise.all(fn));
+  return { ...(await importOriginal<typeof import("@/lib/db")>()), prisma };
+});
 vi.mock("@/lib/billing/stripe", () => ({
   getStripe: () => ({
     setupIntents: { create: mocks.setupIntentCreate, retrieve: mocks.setupIntentRetrieve },

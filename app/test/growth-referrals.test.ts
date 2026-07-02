@@ -93,7 +93,17 @@ const h = vi.hoisted(() => {
           if (clash) throw new Error("unique referralCode");
           u.referralCode = data.referralCode;
         }
-        if (data.keysBalance !== undefined) u.keysBalance = data.keysBalance;
+        if (data.keysBalance !== undefined) {
+          // Support Prisma's atomic { increment } operator, not just a scalar set.
+          const kb = data.keysBalance;
+          if (kb && typeof kb === "object") {
+            if ("increment" in kb) u.keysBalance = (u.keysBalance ?? 0) + kb.increment;
+            else if ("decrement" in kb) u.keysBalance = (u.keysBalance ?? 0) - kb.decrement;
+            else if ("set" in kb) u.keysBalance = kb.set;
+          } else {
+            u.keysBalance = kb;
+          }
+        }
         return pick(u, select);
       },
     },
