@@ -29,6 +29,18 @@ const inviteSchema = z
 
 type PrincipalUser = { id: string; name: string | null; avatar: string | null };
 
+// Mask a pending-invite email for non-principal viewers: keep the first char and
+// domain so the UI can render a recognizable placeholder without leaking the PII
+// (e.g. "j•••@example.com"). Returns null unchanged.
+function maskEmail(email: string | null): string | null {
+  if (!email) return email;
+  const at = email.indexOf("@");
+  if (at <= 0) return "•••";
+  const local = email.slice(0, at);
+  const domain = email.slice(at + 1);
+  return `${local[0]}•••@${domain}`;
+}
+
 function principalDTO(user: PrincipalUser) {
   return {
     id: `principal:${user.id}`,
@@ -84,12 +96,17 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
     principalDTO(proposal.targetListing.user),
   ];
 
+  // A pending invite's raw email is off-platform PII the invitee never agreed to
+  // share with co-travellers. Only the principals (the inviters) see the address;
+  // other viewers get a masked form so the UI can still show a pending seat.
+  const viewerIsPrincipal = isPrincipal(proposal, session.userId);
+
   const guestDTOs = guests.map((g) => {
     const u = g.userId ? userById.get(g.userId) : null;
     return {
       id: g.id,
       userId: g.userId,
-      invitedEmail: g.invitedEmail,
+      invitedEmail: viewerIsPrincipal ? g.invitedEmail : maskEmail(g.invitedEmail),
       name: u?.name ?? null,
       avatar: u?.avatar ?? null,
       role: "guest_participant" as const,
