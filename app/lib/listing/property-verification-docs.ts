@@ -13,12 +13,21 @@ import { deleteUploadThingUrls } from "@/lib/uploadthing-server";
 type StoredDoc = { url: string; label: string };
 
 export async function purgeVerificationDocuments(pvId: string, rawDocuments: string): Promise<void> {
-  const docs = parseJSON<StoredDoc[]>(rawDocuments, []);
-  // Best-effort blob delete first (non-fatal), then blank the stored URLs so
-  // nothing — DB row or CDN — retains the document after the decision.
-  await deleteUploadThingUrls(docs.map((d) => d.url));
-  await prisma.propertyVerification.update({
-    where: { id: pvId },
-    data: { documents: stringifyJSON([]) },
-  });
+  // Whole-operation best-effort: this runs AFTER the verification decision is
+  // already committed, so a transient failure here must NOT 500 a request whose
+  // outcome succeeded. A failure leaves the docs retained (logged loudly) and
+  // self-heals on the next submission/review; that's preferable to a misleading
+  // error on a committed decision.
+  try {
+    const docs = parseJSON<StoredDoc[]>(rawDocuments, []);
+    // Best-effort blob delete first (already non-fatal internally), then blank
+    // the stored URLs so nothing — DB row or CDN — retains the document.
+    await deleteUploadThingUrls(docs.map((d) => d.url));
+    await prisma.propertyVerification.update({
+      where: { id: pvId },
+      data: { documents: stringifyJSON([]) },
+    });
+  } catch (err) {
+    console.error("[property-verification:purge]", pvId, err);
+  }
 }
