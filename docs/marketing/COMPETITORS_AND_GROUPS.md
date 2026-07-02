@@ -4,6 +4,11 @@ Companion to [MARKETING_PLAN.md](MARKETING_PLAN.md) and
 [CHANNELS_AND_OUTREACH.md](CHANNELS_AND_OUTREACH.md). Built from public research +
 what the competitor's own group setup reveals (read-only; no member data taken).
 
+> **See also:** [COMPETITIVE_ANALYSIS_2026.md](COMPETITIVE_ANALYSIS_2026.md) — the
+> deep, fully-cited version (13 platforms incl. Kindred's $125M raise, per-competitor
+> teardowns, where swapl is better/worse, what to integrate, traps to avoid, and the
+> liquidity-modeling plan). This file remains the short teardown + FB-group playbook.
+
 ---
 
 ## 1. Competitor teardown → your wedge
