@@ -41,6 +41,7 @@ export async function GET(req: Request) {
       openedBy: { select: { id: true, name: true, email: true } },
       resolvedBy: { select: { id: true, name: true, email: true } },
       agreement: { select: { id: true, proposalId: true } },
+      keysStay: { select: { id: true } },
       _count: { select: { messages: true } },
     },
   });
@@ -49,7 +50,8 @@ export async function GET(req: Request) {
     disputes: disputes.map((d) => ({
       id: d.id,
       agreementId: d.agreementId,
-      proposalId: d.agreement.proposalId,
+      keysStayId: d.keysStayId,
+      proposalId: d.agreement?.proposalId ?? null,
       category: d.category,
       urgent: isUrgentCategory(d.category),
       status: d.status,

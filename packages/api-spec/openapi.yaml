@@ -42,6 +42,8 @@ tags:
   - name: keys
   - name: referrals
   - name: feedback
+  - name: location
+  - name: swapalitics
 
 components:
   securitySchemes:
@@ -62,6 +64,71 @@ components:
       properties:
         error: { type: string }
         message: { type: string }
+
+    SwapaliticsBadge:
+      type: object
+      required: [key, label, description, icon, earned]
+      properties:
+        key: { type: string }
+        label: { type: string }
+        description: { type: string }
+        icon: { type: string }
+        earned: { type: boolean }
+
+    Swapalitics:
+      type: object
+      description: Live-computed travel + impact stats for the signed-in user (no extra tables).
+      required:
+        - nightsAbroad
+        - nightsUpcoming
+        - nightsHosted
+        - swapsCompleted
+        - citiesVisited
+        - countriesVisited
+        - daysTracked
+        - daysAbroad
+        - homeCountry
+        - topCountries
+        - pctViaSwapl
+        - rank
+        - totalTravellers
+        - percentile
+        - avgNightsAllUsers
+        - peopleConnected
+        - referralsJoined
+        - reviewsWritten
+        - joinRank
+        - badges
+      properties:
+        nightsAbroad: { type: integer }
+        nightsUpcoming: { type: integer }
+        nightsHosted: { type: integer }
+        swapsCompleted: { type: integer }
+        citiesVisited: { type: integer }
+        countriesVisited: { type: integer }
+        daysTracked: { type: integer }
+        daysAbroad: { type: integer }
+        homeCountry: { type: string, nullable: true }
+        topCountries:
+          type: array
+          items:
+            type: object
+            required: [country, days]
+            properties:
+              country: { type: string }
+              days: { type: integer }
+        pctViaSwapl: { type: number }
+        rank: { type: integer }
+        totalTravellers: { type: integer }
+        percentile: { type: number }
+        avgNightsAllUsers: { type: number }
+        peopleConnected: { type: integer }
+        referralsJoined: { type: integer }
+        reviewsWritten: { type: integer }
+        joinRank: { type: integer }
+        badges:
+          type: array
+          items: { $ref: '#/components/schemas/SwapaliticsBadge' }
 
     HomeGuide:
       type: object
@@ -4745,6 +4812,52 @@ paths:
         '403': { description: Not a party of the agreement }
         '404': { description: Not found }
 
+  /api/keys/stays/{id}/dispute:
+    post:
+      tags: [keys]
+      summary: Open a dispute on a Keys stay (resolution center)
+      description: >-
+        The stay's guest or host opens a "report a problem" case, only while the
+        stay is confirmed or completed. category safety|access is flagged urgent.
+        Notifies the other party + admin inbox. Photos must be pre-uploaded. Rate
+        limited 5 / 10 min per user (shared budget with swap disputes).
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DisputeCreateRequest' }
+      responses:
+        '200':
+          description: Dispute opened
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DisputeCreateResponse' }
+        '400': { description: Invalid input }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the stay }
+        '404': { description: Stay not found }
+        '422': { description: Stay not confirmed/completed yet }
+        '429': { description: Rate limited }
+    get:
+      tags: [keys]
+      summary: Dispute status + timeline for the Keys-stay parties
+      description: Disputes on this stay (newest first) with full message timelines. Guest/host only.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Disputes + timeline
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DisputeListResponse' }
+        '401': { description: Unauthenticated }
+        '403': { description: Not a party of the stay }
+        '404': { description: Stay not found }
+
   /api/disputes/{id}/message:
     post:
       tags: [agreements]
@@ -5925,3 +6038,129 @@ paths:
                   ok: { type: boolean }
                   seen: { type: integer }
         '401': { description: Unauthenticated }
+
+  /api/account:
+    delete:
+      tags: [me]
+      summary: Delete (soft-delete + anonymize) the signed-in account
+      description: >-
+        Apple Guideline 5.1.1(v) account deletion. Soft-deletes and anonymizes:
+        sets suspendedAt, nulls PII, and best-effort cancels any Stripe subscription.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok: { type: boolean }
+        '401': { description: Unauthenticated }
+
+  /api/location/ping:
+    post:
+      tags: [location]
+      summary: Report a coarse location fix (days-abroad tracking)
+      description: >-
+        Records one coarse location fix for the caller. A device-supplied
+        country/region/city is stored as source "gps"; otherwise the server
+        falls back to geo-IP ("ip"), or "none" when nothing is resolvable.
+        Coarse only — never stores exact coordinates.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                countryCode: { type: string, minLength: 2, maxLength: 2 }
+                region: { type: string, maxLength: 64 }
+                city: { type: string, maxLength: 128 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, source]
+                properties:
+                  ok: { type: boolean }
+                  source: { type: string, enum: [gps, ip, none] }
+        '401': { description: Unauthenticated }
+
+  /api/me/listings:
+    get:
+      tags: [me]
+      summary: The caller's own active listings (with exact coordinates)
+      description: >-
+        Returns the signed-in user's active listings. Because these are the
+        caller's own homes, exact lat/lng are included (unlike public browse,
+        which fuzzes them).
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Listing' }
+        '401': { description: Unauthenticated }
+
+  /api/swapalitics:
+    get:
+      tags: [swapalitics]
+      summary: Travel + impact stats for the signed-in user
+      description: Live-computed travel/impact metrics, rankings, and badges. No extra tables.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Swapalitics' }
+        '401': { description: Unauthenticated }
+
+  /api/uploads/check-video:
+    post:
+      tags: [uploads]
+      summary: Upload a check-in/out condition video (native)
+      description: >-
+        Multipart upload of a short condition video. MP4 or QuickTime only,
+        max 256 MB, rate-limited 20/hour per user. Stored server-side via
+        UploadThing; returns the hosted URL.
+      security: [{ bearerAuth: [] }, { cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties:
+                  url: { type: string }
+        '400': { description: Missing file }
+        '401': { description: Unauthenticated }
+        '413': { description: Video too large (max 256MB) }
+        '415': { description: Only MP4 or QuickTime videos are allowed }
+        '429': { description: Rate limited }
+        '502': { description: Upload failed }
+        '503': { description: Uploads are not configured }

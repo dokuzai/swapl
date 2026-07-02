@@ -124,6 +124,14 @@ describe("GET /api/keys/stays/[id] — home guide reveal", () => {
     expect(body.canReview).toBe(false);
   });
 
+  it("canDispute is true while confirmed or completed, false while pending (JRN-GP-03)", async () => {
+    expect((await (await get("guest")).json()).canDispute).toBe(true); // confirmed
+    mocks.findUnique.mockResolvedValue(stay({ status: "completed" }));
+    expect((await (await get("guest")).json()).canDispute).toBe(true);
+    mocks.findUnique.mockResolvedValue(stay({ status: "pending" }));
+    expect((await (await get("guest")).json()).canDispute).toBe(false);
+  });
+
   it("hides the guide on a pending stay (locked, and address null)", async () => {
     mocks.findUnique.mockResolvedValue(stay({ status: "pending" }));
     const body = await (await get("guest")).json();
