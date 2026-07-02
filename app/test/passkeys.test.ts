@@ -48,7 +48,10 @@ vi.mock("@/lib/auth/session", () => ({
 }));
 vi.mock("@/lib/rate-limit", async (importOriginal) => {
   const real = await importOriginal<typeof import("@/lib/rate-limit")>();
-  return { ...real, checkRateLimit: mocks.checkRateLimit };
+  // Login options/verify now use the durable limiter (SEC-AUTH-01); register
+  // still uses the in-memory one. Point both at the same mock so the existing
+  // "is rate limited" expectations cover the login routes too.
+  return { ...real, checkRateLimit: mocks.checkRateLimit, checkRateLimitDurable: mocks.checkRateLimit };
 });
 vi.mock("@/lib/db", () => ({
   prisma: {
