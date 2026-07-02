@@ -16,6 +16,7 @@ import { recordProposalEvent, conversationForProposal } from "@/lib/conversation
 import { Prisma } from "@/generated/prisma/client";
 import { isListingDateOverlapError, occupyListing } from "@/lib/listing/occupancy";
 import { randomInt } from "node:crypto";
+import { encryptSecret, decryptSecret } from "@/lib/crypto";
 
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("accept") }),
@@ -108,8 +109,9 @@ export async function GET(req: Request, { params }: RouteContext<"/api/proposals
         dateFrom: proposal.agreement.dateFrom.toISOString(),
         dateTo: proposal.agreement.dateTo.toISOString(),
         // Only participants reach this branch, so it's safe to include keys.
-        keyCode1: proposal.agreement.keyCode1,
-        keyCode2: proposal.agreement.keyCode2,
+        // Stored encrypted at rest (SWP-007) — decrypt for the client.
+        keyCode1: decryptSecret(proposal.agreement.keyCode1),
+        keyCode2: decryptSecret(proposal.agreement.keyCode2),
         status: proposal.agreement.status,
         phase,
         addressUnlocked,
@@ -397,8 +399,9 @@ export async function POST(req: Request, { params }: RouteContext<"/api/proposal
             listing2Id: updated.targetListingId,
             dateFrom: updated.dateFrom,
             dateTo: updated.dateTo,
-            keyCode1: randomInt(1000, 10000).toString(),
-            keyCode2: randomInt(1000, 10000).toString(),
+            // Encrypted at rest (SWP-007); decrypted at every read site.
+            keyCode1: encryptSecret(randomInt(1000, 10000).toString()),
+            keyCode2: encryptSecret(randomInt(1000, 10000).toString()),
             status: "ACTIVE",
           },
         });

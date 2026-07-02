@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth/session";
+import { decryptSecret } from "@/lib/crypto";
 import { marketingUrl } from "@/lib/marketing/urls";
 import { getI18n, t } from "@/lib/i18n/server";
 import type { DictKey } from "@/lib/i18n/dict-en";
@@ -81,6 +82,9 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
   const myListing = isProposer ? proposal.proposerListing : proposal.targetListing;
   const theirListing = isProposer ? proposal.targetListing : proposal.proposerListing;
   const otherName = isProposer ? proposal.targetListing.user.name : proposal.proposer.name;
+  // Key codes are encrypted at rest (SWP-007) — decrypt once for display below.
+  const keyCode1 = decryptSecret(proposal.agreement?.keyCode1);
+  const keyCode2 = decryptSecret(proposal.agreement?.keyCode2);
   // Off-platform contact unlocks once the swap is accepted (ACTIVE/COMPLETED).
   const otherUserRaw = isProposer ? proposal.targetListing.user.contactChannels : proposal.proposer.contactChannels;
   const contactsUnlocked =
@@ -174,8 +178,8 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
         proposal.agreement
           ? {
               id: proposal.agreement.id,
-              yourGuestCode: isProposer ? proposal.agreement.keyCode2 : proposal.agreement.keyCode1,
-              yourCode: isProposer ? proposal.agreement.keyCode1 : proposal.agreement.keyCode2,
+              yourGuestCode: isProposer ? keyCode2 : keyCode1,
+              yourCode: isProposer ? keyCode1 : keyCode2,
               insurancePolicy: proposal.agreement.insurancePolicy
                 ? {
                     status: proposal.agreement.insurancePolicy.status,
@@ -202,8 +206,8 @@ export default async function SwapThreadPage(props: PageProps<"/swaps/[id]">) {
             agreementId={proposal.agreement.id}
             myListingId={myListing.id}
             myUserId={session.userId}
-            guestCode={isProposer ? proposal.agreement.keyCode2 : proposal.agreement.keyCode1}
-            myCode={isProposer ? proposal.agreement.keyCode1 : proposal.agreement.keyCode2}
+            guestCode={isProposer ? keyCode2 : keyCode1}
+            myCode={isProposer ? keyCode1 : keyCode2}
           />
         ) : undefined
       }

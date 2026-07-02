@@ -14,6 +14,7 @@ import { getSessionFromRequest } from "@/lib/auth/session";
 import { forbidden, notFound, invalidInput, unauthenticated } from "@/lib/api/errors";
 import { guideUnlocked, homeGuideComplete, homeGuideCompleteness } from "@/lib/trip/phase";
 import { maybeGrantListingCompleteBonus } from "@/lib/keys/earn";
+import { encryptSecret, decryptSecret } from "@/lib/crypto";
 
 const GUIDE_FIELDS = [
   "accessInstructions",
@@ -42,7 +43,8 @@ const putSchema = z.object(
 function serialize(guide: GuideRow | null) {
   if (!guide) return null;
   const out: Record<string, string | null> = {};
-  for (const f of GUIDE_FIELDS) out[f] = guide[f] ?? null;
+  // wifiPassword is stored encrypted at rest (SWP-007); decrypt for the client.
+  for (const f of GUIDE_FIELDS) out[f] = f === "wifiPassword" ? decryptSecret(guide[f]) : guide[f] ?? null;
   return {
     ...out,
     updatedAt: guide.updatedAt.toISOString(),
@@ -132,6 +134,12 @@ export async function PUT(req: Request, { params }: RouteContext<"/api/listings/
   const data = Object.fromEntries(
     Object.entries(parsed.data).filter(([, v]) => v !== undefined),
   );
+
+  // Encrypt the wifi password at rest (SWP-007). Only when a non-null string was
+  // provided — a null clears the field, undefined leaves it untouched.
+  if (typeof data.wifiPassword === "string") {
+    data.wifiPassword = encryptSecret(data.wifiPassword);
+  }
 
   const guide = await prisma.listingHomeGuide.upsert({
     where: { listingId: id },

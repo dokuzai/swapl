@@ -4,6 +4,7 @@
 // revealed. Real toDTO + real guideUnlocked run; only I/O is mocked.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { encryptSecret } from "@/lib/crypto"; // SWP-007: key codes stored encrypted
 
 const mocks = vi.hoisted(() => ({
   getSessionFromRequest: vi.fn(),
@@ -96,8 +97,8 @@ function proposal(dateFrom: Date) {
       dateFrom,
       dateTo: NOW,
       status: "ACCEPTED",
-      keyCode1: "1111",
-      keyCode2: "2222",
+      keyCode1: encryptSecret("1111"),
+      keyCode2: encryptSecret("2222"),
       insurancePolicy: null,
       checkEvents: [],
     },
