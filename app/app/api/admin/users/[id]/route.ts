@@ -32,7 +32,13 @@ export async function POST(req: Request, { params }: RouteContext<"/api/admin/us
     if (user.suspendedAt) {
       return NextResponse.json({ error: "Already suspended" }, { status: 409 });
     }
-    await prisma.user.update({ where: { id }, data: { suspendedAt: new Date() } });
+    // Bump the session epoch to kill live WEB cookies immediately (SEC-AUTH-02),
+    // alongside revoking mobile bearers below — no longer relying only on the
+    // per-endpoint suspendedAt re-check.
+    await prisma.user.update({
+      where: { id },
+      data: { suspendedAt: new Date(), sessionEpoch: { increment: 1 } },
+    });
     // Kill live mobile sessions immediately.
     await prisma.authToken.updateMany({
       where: { userId: id, revokedAt: null },
