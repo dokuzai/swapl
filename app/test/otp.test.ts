@@ -85,10 +85,12 @@ describe("createOtp", () => {
 describe("verifyOtp", () => {
   it("consumes the row on a correct code", async () => {
     mocks.otpFindFirst.mockResolvedValue(row());
+    // Success consumes atomically via updateMany guarded on consumedAt: null.
+    mocks.otpUpdateMany.mockResolvedValue({ count: 1 });
     const res = await verifyOtp("ada@example.com", "123456");
     expect(res).toEqual({ ok: true, channel: "email" });
-    expect(mocks.otpUpdate).toHaveBeenCalledWith({
-      where: { id: "otp1" },
+    expect(mocks.otpUpdateMany).toHaveBeenCalledWith({
+      where: { id: "otp1", consumedAt: null },
       data: { consumedAt: expect.any(Date) },
     });
   });
@@ -119,6 +121,8 @@ describe("verifyOtp", () => {
 
   it("reports the lockout on the guess that exhausts the budget", async () => {
     mocks.otpFindFirst.mockResolvedValue(row({ attempts: OTP_MAX_ATTEMPTS - 1 }));
+    // The wrong-guess increment returns the row; at the cap it reports lockout.
+    mocks.otpUpdate.mockResolvedValue({ attempts: OTP_MAX_ATTEMPTS });
     expect(await verifyOtp("ada@example.com", "000000")).toEqual({
       ok: false,
       reason: "too-many-attempts",

@@ -17,6 +17,10 @@ vi.mock("@/lib/db", () => ({
   prisma: {
     swapProposal: { findMany: mocks.proposalFindMany },
     user: { findMany: mocks.userFindMany },
+    // DOK-221 unread cursors: the inbox reads per-conversation read state and
+    // groups unread messages per proposal.
+    conversationRead: { findMany: vi.fn(async () => []) },
+    swapMessage: { groupBy: vi.fn(async () => []) },
   },
   // Same contract as the real helper: tolerant parse with a fallback.
   parseJSON: <T>(s: string | null | undefined, fallback: T): T => {

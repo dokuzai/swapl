@@ -30,6 +30,19 @@ const h = vi.hoisted(() => {
     txns: [] as TxRow[],
     seq: 0,
   };
+  // Mirror Prisma's atomic update operators so `{ keysBalance: { increment } }`
+  // mutates the stored scalar instead of overwriting it with the operator object.
+  function applyData(row: Record<string, any>, data: Record<string, any>) {
+    for (const [k, v] of Object.entries(data)) {
+      if (v && typeof v === "object" && !(v instanceof Date)) {
+        if ("increment" in v) row[k] = (row[k] ?? 0) + v.increment;
+        else if ("decrement" in v) row[k] = (row[k] ?? 0) - v.decrement;
+        else if ("set" in v) row[k] = v.set;
+        else row[k] = v;
+      } else row[k] = v;
+    }
+    return row;
+  }
   const client: any = {
     user: {
       async findUnique({ where, select }: any) {
@@ -42,7 +55,7 @@ const h = vi.hoisted(() => {
       },
       async update({ where, data }: any) {
         const u = store.users.get(where.id)!;
-        Object.assign(u, data);
+        applyData(u, data);
         return { ...u };
       },
     },
@@ -61,7 +74,17 @@ const h = vi.hoisted(() => {
       },
     },
     async $transaction(fn: any) {
-      return fn(client);
+      // Emulate rollback: the real ledger increments then throws NEGATIVE_BALANCE,
+      // relying on the tx to undo the write. Snapshot and restore on throw.
+      const snapUsers = new Map([...store.users].map(([k, v]) => [k, { ...v }]));
+      const snapLen = store.txns.length;
+      try {
+        return await fn(client);
+      } catch (err) {
+        store.users = snapUsers;
+        store.txns.length = snapLen;
+        throw err;
+      }
     },
   };
   return { store, client };
