@@ -5,6 +5,16 @@ import { forbidden, notFound, unauthenticated } from "@/lib/api/errors";
 import { publicContactChannels, ownContactChannels } from "@/lib/contact-channels";
 import { publicCoord } from "@/lib/city-coords";
 import { conversationForKeysStay } from "@/lib/conversations";
+import { HOME_GUIDE_CORE_FIELDS } from "@/lib/trip/phase";
+
+// Mirrors the swap trip cockpit's GUIDE_FIELDS: the core getting-in fields plus
+// house rules, neighbourhood, and an emergency contact.
+const GUIDE_FIELDS = [
+  ...HOME_GUIDE_CORE_FIELDS,
+  "houseRules",
+  "neighbourhood",
+  "emergencyContact",
+] as const;
 
 // GET /api/keys/stays/{id} — rich detail for one Stay-with-points, mirroring the
 // swap trip view: the home's approximate area (fuzzed) + exact address, the
@@ -49,6 +59,17 @@ export async function GET(req: Request, { params }: RouteContext<"/api/keys/stay
       ? publicCoord(stay.listing.lat, stay.listing.lng, stay.listing.id)
       : null;
 
+  // Home guide — same reveal rule as the address: only the confirmed guest/host
+  // sees it. Mirrors the swap cockpit's `otherGuide` shape. `{ locked: true }`
+  // while pending — a Keys stay unlocks on host confirmation, not on a timer, so
+  // there is no `unlocksAt`.
+  const guideRow = stay.listing.homeGuide as Record<string, string | null> | null;
+  const homeGuide = unlocked
+    ? guideRow
+      ? Object.fromEntries(GUIDE_FIELDS.map((f) => [f, guideRow[f] ?? null]))
+      : null
+    : { locked: true as const };
+
   return NextResponse.json({
     id: stay.id,
     conversationId: conversation.id,
@@ -72,6 +93,9 @@ export async function GET(req: Request, { params }: RouteContext<"/api/keys/stay
       // Exact address only once confirmed.
       address: unlocked ? stay.listing.address ?? null : null,
     },
+    // Getting-in guide (wifi, access, key pickup…) — revealed on confirmation,
+    // `{ locked: true }` while pending. Lets a Keys guest arrive prepared.
+    homeGuide,
     counterpart: {
       name: counterpart?.name ?? null,
       avatar: counterpart?.avatar ?? null,
