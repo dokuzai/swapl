@@ -14,6 +14,15 @@ vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/session", () => ({ getSessionFromRequest: mocks.getSessionFromRequest }));
 vi.mock("@/lib/db", () => ({
   prisma: { swapAgreement: { findUnique: mocks.agreementFindUnique } },
+  // Same contract as the real helper: tolerant parse with a fallback.
+  parseJSON: <T,>(s: string | null | undefined, fallback: T): T => {
+    if (!s) return fallback;
+    try {
+      return JSON.parse(s) as T;
+    } catch {
+      return fallback;
+    }
+  },
 }));
 
 import { GET } from "@/app/api/agreements/[id]/trip/route";
