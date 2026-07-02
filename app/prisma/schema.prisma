@@ -53,6 +53,13 @@ model User {
   // Set/cleared by admins from /admin/users.
   suspendedAt  DateTime?
 
+  // Session revocation epoch (SEC-AUTH-02). Stamped into the signed web cookie at
+  // issue; bumped on password change/reset and on admin suspend so every cookie
+  // whose epoch is now stale fails verification. Web cookies are otherwise
+  // stateless — this is the one server-checked field that makes them revocable.
+  // Mobile bearers are revoked via AuthToken.revokedAt instead.
+  sessionEpoch Int      @default(0)
+
   // ---- Roles + Monetization v1 ----
   role                       String   @default("member") // "member" | "swapl_admin"
   proposalsThisMonthCount    Int      @default(0)

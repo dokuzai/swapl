@@ -33,6 +33,10 @@ export async function POST(req: Request) {
     data: {
       passwordHash,
       emailVerifiedAt: new Date(),
+      // A reset is a credential change after a possible compromise — invalidate
+      // every pre-reset cookie (SEC-AUTH-02). setSession below reads this NEW
+      // epoch, so the just-issued login cookie stays valid.
+      sessionEpoch: { increment: 1 },
     },
   });
   await setSession({ userId: user.id, email: user.email, name: user.name });

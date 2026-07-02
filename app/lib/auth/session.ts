@@ -40,9 +40,14 @@ export type SessionPayload = {
   name: string | null;
 };
 
-// What is actually serialised into the cookie — the public payload plus a
-// signed expiry so a leaked/forged cookie can't be valid forever.
-type SessionBody = SessionPayload & { exp?: number };
+// What is actually serialised into the cookie — the public payload, a signed
+// expiry so a leaked/forged cookie can't be valid forever, and the user's
+// session epoch at issue time (SEC-AUTH-02) so a cookie can be revoked.
+type SessionBody = SessionPayload & { exp?: number; epoch?: number };
+
+// Internal: the decoded cookie carries the epoch so getSession() (which can
+// reach the DB) can compare it against the user's current sessionEpoch.
+type DecodedCookie = SessionPayload & { epoch?: number };
 
 function b64url(input: Buffer | string): string {
   return Buffer.from(input).toString("base64url");
@@ -52,15 +57,15 @@ function sign(payload: string): string {
   return createHmac("sha256", sessionSecret()).update(payload).digest("base64url");
 }
 
-function encode(payload: SessionPayload): string {
+function encode(payload: SessionPayload, epoch: number): string {
   const body = b64url(
-    JSON.stringify({ ...payload, exp: Date.now() + SESSION_TTL_MS } satisfies SessionBody),
+    JSON.stringify({ ...payload, exp: Date.now() + SESSION_TTL_MS, epoch } satisfies SessionBody),
   );
   const sig = sign(body);
   return `${body}.${sig}`;
 }
 
-function decode(token: string | undefined): SessionPayload | null {
+function decode(token: string | undefined): DecodedCookie | null {
   if (!token) return null;
   const [body, sig] = token.split(".");
   if (!body || !sig) return null;
@@ -73,7 +78,9 @@ function decode(token: string | undefined): SessionPayload | null {
     // Reject expired cookies. Legacy cookies without `exp` are grandfathered
     // (treated as non-expiring) so this change doesn't log everyone out.
     if (typeof parsed.exp === "number" && parsed.exp < Date.now()) return null;
-    return { userId: parsed.userId, email: parsed.email, name: parsed.name };
+    // `epoch` is inside the signed body, so an attacker can't lower it. Missing
+    // epoch (legacy cookie) is grandfathered as 0 by the caller.
+    return { userId: parsed.userId, email: parsed.email, name: parsed.name, epoch: parsed.epoch };
   } catch {
     return null;
   }
@@ -83,9 +90,26 @@ function decode(token: string | undefined): SessionPayload | null {
 
 export async function getSession(): Promise<SessionPayload | null> {
   const c = await cookies();
-  const session = decode(c.get(COOKIE_NAME)?.value);
+  const decoded = decode(c.get(COOKIE_NAME)?.value);
+  if (!decoded) return null;
+
+  // SEC-AUTH-02: reject a cookie whose epoch is behind the user's current
+  // sessionEpoch (bumped on password change/reset and suspend). One indexed
+  // PK read per authenticated web request — the mobile/bearer path already
+  // reads the DB per request, so this brings web to parity. Grandfather rule:
+  // a legacy cookie with no epoch is treated as 0, matching every existing
+  // user's default, so the deploy logs no one out.
+  const cookieEpoch = decoded.epoch ?? 0;
+  const row = await prisma.user.findUnique({
+    where: { id: decoded.userId },
+    select: { sessionEpoch: true },
+  });
+  // User deleted → reject. Cookie epoch stale → reject.
+  if (!row || cookieEpoch < row.sessionEpoch) return null;
+
+  const session: SessionPayload = { userId: decoded.userId, email: decoded.email, name: decoded.name };
   // Fire-and-forget activity tracking; throttled internally, never throws.
-  if (session) touchLastActive(session.userId);
+  touchLastActive(session.userId);
   return session;
 }
 
@@ -96,8 +120,16 @@ export async function requireSession(): Promise<SessionPayload> {
 }
 
 export async function setSession(p: SessionPayload): Promise<void> {
+  // Stamp the user's CURRENT sessionEpoch into the cookie so a later bump (on
+  // password change/reset or suspend) invalidates every cookie issued before it.
+  // One indexed read at login/register/reset only — rare, negligible.
+  const row = await prisma.user.findUnique({
+    where: { id: p.userId },
+    select: { sessionEpoch: true },
+  });
+  const epoch = row?.sessionEpoch ?? 0;
   const c = await cookies();
-  c.set(COOKIE_NAME, encode(p), {
+  c.set(COOKIE_NAME, encode(p, epoch), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
