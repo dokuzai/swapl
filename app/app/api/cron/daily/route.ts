@@ -9,6 +9,7 @@ import { createLogger } from "@/lib/log";
 import { GET as featuredExpire } from "../featured-expire/route";
 import { GET as savedSearches } from "../saved-searches/route";
 import { GET as agreementsComplete } from "../agreements-complete/route";
+import { GET as keysStaysComplete } from "../keys-stays-complete/route";
 import { GET as preTripReminders } from "../pre-trip-reminders/route";
 import { GET as reviewReminders } from "../review-reminders/route";
 import { GET as tripNudges } from "../trip-nudges/route";
@@ -23,6 +24,7 @@ const JOBS: Array<[string, (req: Request) => Promise<Response>]> = [
   ["featured-expire", featuredExpire],
   ["saved-searches", savedSearches],
   ["agreements-complete", agreementsComplete],
+  ["keys-stays-complete", keysStaysComplete],
   ["pre-trip-reminders", preTripReminders],
   ["review-reminders", reviewReminders],
   ["trip-nudges", tripNudges],

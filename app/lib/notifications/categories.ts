@@ -44,6 +44,7 @@ export type NotificationKind =
   | "keysStayRequested"
   | "keysStayConfirmed"
   | "keysStayDeclined"
+  | "keysStayCompleted"
   | "referralRewarded"
   | "windowProposals";
 
@@ -85,6 +86,7 @@ export const KIND_CATEGORY: Record<NotificationKind, NotificationCategory> = {
   keysStayRequested: "keys",
   keysStayConfirmed: "keys",
   keysStayDeclined: "keys",
+  keysStayCompleted: "keys",
   referralRewarded: "keys",
   // Suggestions / discovery
   windowProposals: "recommendations",
