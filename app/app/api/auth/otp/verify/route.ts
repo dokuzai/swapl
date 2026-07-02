@@ -9,7 +9,7 @@ import { prisma } from "@/lib/db";
 import { otpVerifySchema } from "@/lib/validators";
 import { verifyOtp, normaliseDestination } from "@/lib/auth/otp";
 import { respondWithSession } from "@/lib/auth/respond";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 import { apiError, accountSuspended, invalidInput } from "@/lib/api/errors";
 import {
   attributeSignupByCode,
@@ -21,7 +21,7 @@ const MIN_MS = 60 * 1000;
 
 export async function POST(req: Request) {
   const ip = clientIpFromRequest(req);
-  const rl = checkRateLimit(`otp-verify:${ip}`, 30, 15 * MIN_MS);
+  const rl = await checkRateLimitDurable(`otp-verify:${ip}`, 30, 15 * MIN_MS);
   if (!rl.ok) {
     return apiError(429, "Too many attempts. Try again in a few minutes.");
   }

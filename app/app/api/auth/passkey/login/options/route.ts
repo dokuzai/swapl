@@ -7,14 +7,14 @@
 import { NextResponse } from "next/server";
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
 import { relyingParty, storeChallenge } from "@/lib/auth/passkeys";
-import { checkRateLimit, clientIpFromRequest } from "@/lib/rate-limit";
+import { checkRateLimitDurable, clientIpFromRequest } from "@/lib/rate-limit";
 import { apiError, serverError } from "@/lib/api/errors";
 
 const MIN_MS = 60 * 1000;
 
 export async function POST(req: Request) {
   const ip = clientIpFromRequest(req);
-  const rl = checkRateLimit(`passkey-login-options:${ip}`, 30, 5 * MIN_MS);
+  const rl = await checkRateLimitDurable(`passkey-login-options:${ip}`, 30, 5 * MIN_MS);
   if (!rl.ok) {
     return apiError(429, "Too many sign-in attempts. Try again in a few minutes.");
   }
