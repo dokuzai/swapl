@@ -19,6 +19,7 @@ type TxRow = {
   balanceAfter: number;
   stayId: string | null;
   note: string | null;
+  eventKey: string | null;
   createdAt: Date;
 };
 
@@ -61,7 +62,14 @@ const h = vi.hoisted(() => {
     },
     keysTransaction: {
       async create({ data }: any) {
-        const row: TxRow = { id: `tx_${++store.seq}`, createdAt: new Date(), ...data };
+        // Enforce the eventKey @unique constraint like the DB so idempotency
+        // (welcome bonus, earn hooks) is actually exercised, not just assumed.
+        if (data.eventKey && store.txns.some((t) => t.eventKey === data.eventKey)) {
+          const err: any = new Error("Unique constraint failed on eventKey");
+          err.code = "P2002";
+          throw err;
+        }
+        const row: TxRow = { id: `tx_${++store.seq}`, createdAt: new Date(), eventKey: null, ...data };
         store.txns.push(row);
         return { ...row };
       },
@@ -189,6 +197,17 @@ describe("grantWelcomeBonus", () => {
     expect(second).toBeNull();
     expect(store.users.get("u1")!.keysBalance).toBe(30);
     expect(store.txns.filter((t) => t.kind === "welcome_bonus")).toHaveLength(1);
+  });
+
+  it("stamps a deterministic eventKey so a concurrent grant can't double-credit", async () => {
+    seedUser("u2", { keysBalance: 0 });
+    await grantWelcomeBonus("u2", 30);
+    const row = store.txns.find((t) => t.kind === "welcome_bonus");
+    expect(row?.eventKey).toBe("welcome_bonus:u2");
+    // A second insert with the same eventKey is refused by the unique guard,
+    // so grantWelcomeBonus swallows P2002 and returns null (no double-credit).
+    await expect(grantWelcomeBonus("u2", 30)).resolves.toBeNull();
+    expect(store.users.get("u2")!.keysBalance).toBe(30);
   });
 });
 
