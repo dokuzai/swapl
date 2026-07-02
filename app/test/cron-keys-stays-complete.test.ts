@@ -33,12 +33,12 @@ vi.mock("@/lib/db", () => ({
           .map((s) => ({ id: s.id, hostId: s.hostId }))
       ),
       updateMany: vi.fn(async ({ where, data }: {
-        where: { id: { in: string[] }; status: string };
+        where: { id: string | { in: string[] }; status: string };
         data: { status: string };
       }) => {
-        const hits = store.stays.filter(
-          (s) => where.id.in.includes(s.id) && s.status === where.status
-        );
+        const matchId = (id: string) =>
+          typeof where.id === "string" ? where.id === id : where.id.in.includes(id);
+        const hits = store.stays.filter((s) => matchId(s.id) && s.status === where.status);
         hits.forEach((s) => (s.status = data.status));
         return { count: hits.length };
       }),

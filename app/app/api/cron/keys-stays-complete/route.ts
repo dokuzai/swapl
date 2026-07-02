@@ -20,8 +20,6 @@ const log = createLogger("cron:keys-stays-complete");
 export async function GET(req: Request) {
   if (!isAuthorizedCron(req)) return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
 
-  // Select first so we know which stays transitioned (updateMany only reports a
-  // count) — the host notification goes to those ids only.
   const due = await prisma.keysStay.findMany({
     where: { status: "confirmed", dateTo: { lt: new Date() } },
     select: { id: true, hostId: true },
@@ -30,18 +28,22 @@ export async function GET(req: Request) {
 
   if (due.length === 0) return NextResponse.json({ ok: true, completed: 0 });
 
-  // Status guard keeps the transition idempotent even if another sweep ran
-  // between the select and this update.
-  const result = await prisma.keysStay.updateMany({
-    where: { id: { in: due.map((s) => s.id) }, status: "confirmed" },
-    data: { status: "completed" },
-  });
-
+  // Claim each stay individually with a status-guarded updateMany and notify the
+  // host ONLY when THIS invocation flipped it (count === 1). A concurrent sweep
+  // (or a manual re-run) that lost the race gets count 0 and sends no push, so
+  // the host is notified exactly once even under overlapping runs.
+  let completed = 0;
   for (const s of due) {
+    const claimed = await prisma.keysStay.updateMany({
+      where: { id: s.id, status: "confirmed" },
+      data: { status: "completed" },
+    });
+    if (claimed.count !== 1) continue;
+    completed++;
     sendPush(s.hostId, pushTemplates.keysStayCompleted(s.id)).catch((err) =>
       log.error("completion push failed", err, { stayId: s.id, hostId: s.hostId })
     );
   }
 
-  return NextResponse.json({ ok: true, completed: result.count });
+  return NextResponse.json({ ok: true, completed });
 }
